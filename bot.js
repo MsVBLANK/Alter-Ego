@@ -215,6 +215,8 @@ function loadGameSettings() {
         settings.diceMax,
         settings.defaultDropObject,
         settings.defaultRoomIconURL,
+        settings.defaultConcealedIconURL,
+        settings.hiddenIconURL,
         settings.autoDeleteWhisperChannels,
         embedColor,
         settings.showOnlinePlayerCount,

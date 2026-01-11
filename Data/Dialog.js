@@ -254,7 +254,6 @@ export default class Dialog extends GameConstruct {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
 	getDisplayIconForWebhook(playerCanSeeSpeaker) {
-		const defaultHiddenIconURL = "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png";
-		return this.speaker.isHidden() && !playerCanSeeSpeaker ? defaultHiddenIconURL : this.speakerDisplayIcon;
+		return this.speaker.isHidden() && !playerCanSeeSpeaker ? this.getGame().settings.hiddenIconURL : this.speakerDisplayIcon;
 	}
 }

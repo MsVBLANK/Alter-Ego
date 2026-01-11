@@ -65,6 +65,16 @@ export default class GameSettings {
 	 */
 	defaultRoomIconURL;
 	/**
+	 * The URL of an image that will be used as the display icon of a player with the `concealed` behavior attribute if a custom one isn't set.
+	 * @type {string}
+	 */
+	defaultConcealedIconURL;
+	/**
+	 * The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
+	 * @type {string}
+	 */
+	hiddenIconURL;
+	/**
 	 * Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
 	 * @type {boolean}
 	 */
@@ -113,6 +123,8 @@ export default class GameSettings {
 	 * @param {number} diceMax - The highest possible number for a standard Die roll.
 	 * @param {string} defaultDropObject - The name of the Object in each Room that Players will drop Items in if they don't specify one.
 	 * @param {string} defaultRoomIconURL - The URL of an image that will be displayed when a Player enters a Room if that Room does not have an icon URL of its own.
+	 * @param {string} defaultConcealedIconURL - The URL of an image that will be used as the display icon of a player with the `concealed` behavior attribute if a custom one isn't set.
+	 * @param {string} hiddenIconURL - The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
 	 * @param {boolean} autoDeleteWhisperChannels - Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
 	 * @param {string} embedColor - The accent color that will be used in Discord Embeds.
 	 * @param {boolean} showOnlinePlayerCount - Whether or not to show the online player count in the bot's Discord status.
@@ -133,6 +145,8 @@ export default class GameSettings {
 		diceMax,
 		defaultDropObject,
 		defaultRoomIconURL,
+		defaultConcealedIconURL,
+		hiddenIconURL,
 		autoDeleteWhisperChannels,
 		embedColor,
 		showOnlinePlayerCount,
@@ -152,6 +166,8 @@ export default class GameSettings {
 		this.diceMax = diceMax;
 		this.defaultDropFixture = defaultDropObject;
 		this.defaultRoomIconURL = defaultRoomIconURL;
+		this.defaultConcealedIconURL = defaultConcealedIconURL;
+		this.hiddenIconURL = hiddenIconURL;
 		this.autoDeleteWhisperChannels = autoDeleteWhisperChannels;
 		this.embedColor = embedColor;
 		this.showOnlinePlayerCount = showOnlinePlayerCount;

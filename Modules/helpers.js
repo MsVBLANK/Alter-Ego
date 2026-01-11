@@ -69,6 +69,17 @@ export function getSortedItemsString(items) {
 }
 
 /**
+ * Returns the given string with the first letter capitalized.
+ * @param {string} string
+ */
+export function capitalizeFirstLetter(string) {
+	if (string.length === 0) return string;
+	const uppercaseFirstLetter = string.charAt(0).toLocaleUpperCase();
+	const remainingString = string.length > 1 ? string.substring(1) : '';
+	return `${uppercaseFirstLetter}${remainingString}`;
+}
+
+/**
  * Parses a duration string and returns a duration object.
  * @param {string} durationString - An integer and a unit. Acceptable units: y, M, w, d, h, m, s.
  * @returns A duration object, or null.

@@ -1,5 +1,6 @@
 import { Collection } from "discord.js";
 import GameConstruct from "./GameConstruct.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.js";
 
 /** @typedef {import("./Game.js").default} Game */
 /** @typedef {import("./InventoryItem.js").default} InventoryItem */
@@ -245,7 +246,7 @@ export default class Dialog extends GameConstruct {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
 	getDisplayNameForWebhook(playerCanSeeSpeaker) {
-		return this.speaker.isHidden() && !playerCanSeeSpeaker ? "Someone in the room" : this.speakerDisplayName;
+		return this.speaker.isHidden() && !playerCanSeeSpeaker ? "Someone in the room" : capitalizeFirstLetter(this.speakerDisplayName);
 	}
 
 	/**

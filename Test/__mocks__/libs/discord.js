@@ -227,13 +227,14 @@ export function createMockMessage({ content = '', member = createMockMember(), a
  * Creates a mocked message by the given player.
  * @param {Player} player
  * @param {string} content
+ * @param {import("discord.js").TextChannel} [channel]
  */
-export function createPlayerMessage(player, content) {
+export function createPlayerMessage(player, content, channel = player.location.channel) {
 	return createMockMessage({
 		content: content,
 		member: player.member,
 		author: player.member.user,
-		channel: player.location.channel
+		channel: channel
 	});
 }
 

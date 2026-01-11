@@ -3,6 +3,7 @@ import Player from '../Data/Player.js';
 import AnnounceAction from '../Data/Actions/AnnounceAction.js';
 import NarrateAction from '../Data/Actions/NarrateAction.js';
 import SayAction from '../Data/Actions/SayAction.js';
+import { capitalizeFirstLetter } from './helpers.js';
 import { TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -40,11 +41,11 @@ export async function processIncomingMessage(game, message) {
         const dialog = new Dialog(game, message, player, location, message.cleanContent, isInAnnouncementChannel, whisper);
         if (dialog.isAnnouncement) {
             const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            announceAction.performAnnounce(dialog);
+            await announceAction.performAnnounce(dialog);
         }
         else {
             const sayAction = new SayAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            sayAction.performSay(dialog);
+            await sayAction.performSay(dialog);
         }
     }
     else if (isModerator && (room || whisper)) {
@@ -113,7 +114,7 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
         if (addSpectate) {
             whisper.playersCollection.forEach((player) => {
                 const hidingSpot = whisper.getGame().entityFinder.getFixture(whisper.hidingSpotName, player.location.id);
-                const preposition = hidingSpot ? hidingSpot.getPreposition().charAt(0).toLocaleUpperCase() + hidingSpot.getPreposition().substring(1) : "In";
+                const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
                 let spectateMessageText = `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${whisper.generatePlayerListString()}):*\n${messageText}`;
                 if (
                     player.canSee() &&
@@ -475,7 +476,7 @@ export async function sendDialogSpectateMessage(player, dialog, webhookUsername,
                     const webhookMessage = await sendWebhookMessage(
                         webhook,
                         messageText,
-                        webhookUsername ? webhookUsername : dialog.speakerDisplayName,
+                        webhookUsername ? webhookUsername : capitalizeFirstLetter(dialog.speakerDisplayName),
                         webhookAvatarURL ? webhookAvatarURL : dialog.speakerDisplayIcon,
                         dialog.embeds,
                         dialog.attachments.map((attachment) => attachment.url)
@@ -499,7 +500,7 @@ export async function sendDialogSpectateMessage(player, dialog, webhookUsername,
 export async function sendNarrationSpectateMessage(player, narration, webhookUsername, webhookAvatarURL, messageText = narration.content) {
     if (player.spectateChannel !== null) {
         const hidingSpot = narration.whisper?.getGame().entityFinder.getFixture(narration.whisper.hidingSpotName, player.location.id);
-        const preposition = hidingSpot ? hidingSpot.getPreposition().charAt(0).toLocaleUpperCase() + hidingSpot.getPreposition().substring(1) : "In";
+        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
         if (narration.whisper) messageText = `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${narration.whisper.generatePlayerListString()}):*\n${messageText}`;
         const webhook = await getOrCreateWebhook(player.spectateChannel);
         player.getGame().messageQueue.enqueue(

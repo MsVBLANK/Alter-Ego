@@ -31,7 +31,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} statusId - The ID of the status effect that made the player unable to speak.
 	 */
 	generatePlayerNoSpeechNotification(statusId) {
-		return `You are ${statusId}, so you cannot speak.`;
+		return `You are **${statusId}**, so you cannot speak.`;
 	}
 
 	/**

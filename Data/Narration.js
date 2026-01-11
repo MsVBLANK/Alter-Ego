@@ -1,6 +1,7 @@
 ﻿import GameConstruct from "./GameConstruct.js";
 import Player from "./Player.js";
 import UnhideAction from "./Actions/UnhideAction.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.js";
 
 /** @typedef {import("./Action.js").default} Action */
 /** @typedef {import("./Game.js").default} Game */
@@ -104,7 +105,7 @@ export default class Narration extends GameConstruct {
         this.location = location;
         // Capitalize the first letter of the content, if necessary.
         if (content.charAt(0) === content.charAt(0).toLocaleLowerCase())
-			content = content.charAt(0).toLocaleUpperCase() + content.substring(1);
+			content = capitalizeFirstLetter(content);
         this.content = content;
         // If no whisper was provided but the player is hidden, find the whisper associated with their hiding spot.
         if (!whisper && this.player && this.player.isHidden()) {

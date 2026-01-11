@@ -11,6 +11,8 @@ export default {
 	diceMax: 6,
 	defaultDropObject: "FLOOR",
 	defaultRoomIconURL: "",
+	defaultConcealedIconURL: "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
+  	hiddenIconURL: "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
 	autoDeleteWhisperChannels: true,
 	embedColor: "1F8B4C",
 	showOnlinePlayerCount: true,

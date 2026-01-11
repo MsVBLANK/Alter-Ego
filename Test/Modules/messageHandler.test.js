@@ -327,7 +327,7 @@ describe('messageHandler test', () => {
 
                     test('display name of speaker does not match her name', async () => {
                         luna.displayName = "an individual wearing a MASK";
-                        luna.displayIcon = "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png";
+                        luna.displayIcon = game.settings.defaultConcealedIconURL;
 
                         const performSaySpy = vi.spyOn(SayAction.prototype, 'performSay');
                         const message = discord.createPlayerMessage(luna, "Oh, hello!");
@@ -341,7 +341,7 @@ describe('messageHandler test', () => {
                         const lunaSpectateMessage = luna.spectateChannel.messages.cache.first();
                         expect(lunaSpectateMessage.webhookId).not.toBeNull();
                         expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe("https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png");
+                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
                         expect(lunaSpectateMessage.content).toBe("Oh, hello!");
 
                         expect(asuka.notificationChannel.messages.cache.size).toBe(0);
@@ -349,7 +349,7 @@ describe('messageHandler test', () => {
                         const asukaSpectateMessage = asuka.spectateChannel.messages.cache.first();
                         expect(asukaSpectateMessage.webhookId).not.toBeNull();
                         expect(asukaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                        expect(asukaSpectateMessage.author.avatarURL()).toBe("https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png");
+                        expect(asukaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
                         expect(asukaSpectateMessage.content).toBe("Oh, hello!");
 
                         luna.displayName = luna.name;
@@ -404,6 +404,39 @@ describe('messageHandler test', () => {
                         expect(asuka.spectateChannel.messages.cache.size).toBe(0);
 
                         asuka.cure(asleep);
+                    });
+                    
+                    describe('player notification takes priority', async () => {
+                        test('luna is mimicking asuka', async () => {
+                            luna.displayName = "an individual wearing a MASK";
+                            luna.displayIcon = game.settings.defaultConcealedIconURL;
+
+                            const performSaySpy = vi.spyOn(SayAction.prototype, 'performSay');
+                            const message = discord.createPlayerMessage(luna, "Oh, hello!");
+                            await messageHandler.processIncomingMessage(game, message);
+                            await messageHandler.sendQueuedMessages(game);
+                            expect(performSaySpy).toHaveBeenCalledOnce();
+                            expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
+
+                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
+                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
+                            const lunaSpectateMessage = luna.spectateChannel.messages.cache.first();
+                            expect(lunaSpectateMessage.webhookId).not.toBeNull();
+                            expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
+                            expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
+                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+
+                            expect(asuka.notificationChannel.messages.cache.size).toBe(0);
+                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
+                            const asukaSpectateMessage = asuka.spectateChannel.messages.cache.first();
+                            expect(asukaSpectateMessage.webhookId).not.toBeNull();
+                            expect(asukaSpectateMessage.author.username).toBe("An individual wearing a MASK");
+                            expect(asukaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
+                            expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+
+                            luna.displayName = luna.name;
+                            luna.displayIcon = null;
+                        });
                     });
                 });
             });

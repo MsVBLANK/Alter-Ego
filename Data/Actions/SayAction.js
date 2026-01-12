@@ -60,16 +60,17 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
 	#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker) {
-		return dialog.isMimicking(player) || !player.canSee() || !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker;
+		return dialog.isMimicking(player) || !player.canSee()/* || player.hasBehaviorAttribute("hear room") && !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker*/;
 	}
 
 	/**
 	 * Returns true if a player should be notified of dialog that's already being narrated in the room they're in.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 * @param {Player} player - The player hearing the dialog.
+	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
-	#playerShouldReceiveNotification(dialog, player) {
-		return dialog.isMimicking(player) || player.knows(dialog.speakerRecognitionName) || player.hasBehaviorAttribute("hear room");
+	#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) {
+		return dialog.isMimicking(player) || player.hasBehaviorAttribute("hear room") || player.knows(dialog.speakerRecognitionName) && (!playerCanSeeSpeaker || dialog.speakerDisplayNameIsDifferent);
 	}
 
 	/**
@@ -79,7 +80,7 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 * @param {string} [prefix] - A prefix to apply to the beginning of the webhook username. A space will be added before the rest of the username. Optional.
 	 */
-	#generateWebhookUsername(dialog, player, playerCanSeeSpeaker, prefix) {
+	#generateWebhookUsername(dialog, player, playerCanSeeSpeaker, prefix = "") {
 		if (prefix) prefix += ' ';
 		if (player.knows(dialog.speakerRecognitionName) && playerCanSeeSpeaker && dialog.speakerDisplayNameIsDifferent)
 			return `${prefix}${dialog.getDisplayNameForWebhook(playerCanSeeSpeaker)} (${dialog.speakerRecognitionName})`;
@@ -176,12 +177,13 @@ export default class SayAction extends Action {
 				continue;
 			}
 
-			const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
+				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
 				await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				continue;
 			}
-			if (webhookUsername || this.#playerShouldReceiveNotification(dialog, player))
+			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";
+			if (webhookUsername || notification)
 				await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, notification);
 			else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog);
 		}
@@ -196,7 +198,7 @@ export default class SayAction extends Action {
 		for (const neighboringRoom of dialog.neighboringRooms) {
 			for (const player of neighboringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
-				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player)) {
+				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player, false)) {
 					const notification = this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog, player);
 					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				}
@@ -211,7 +213,7 @@ export default class SayAction extends Action {
 			for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
 				for (const player of audioMonitoringRoom.occupants) {
 					if (this.#playerCannotReceiveCommunications(player)) continue;
-					if (this.#playerShouldReceiveNotification(dialog, player)) {
+					if (this.#playerShouldReceiveNotification(dialog, player, false)) {
 						const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
 						await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 					}
@@ -239,7 +241,7 @@ export default class SayAction extends Action {
 				}
 				const customWebhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker, `[${roomDisplayName}]`);
 				const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
-				if (customWebhookUsername || this.#playerShouldReceiveNotification(dialog, player))
+				if (customWebhookUsername || this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker))
 					await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, customWebhookUsername, webhookAvatarURL, notification);
 				else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, dialog.getDisplayNameForWebhook(playerCanSeeSpeaker), webhookAvatarURL);
 			}
@@ -256,7 +258,7 @@ export default class SayAction extends Action {
 			const receiverPlayer = this.getGame().entityFinder.getLivingPlayer(receiverPlayerName);
 			for (const player of receiverPlayer.location.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
-				if (this.#playerShouldReceiveNotification(dialog, player)) {
+				if (this.#playerShouldReceiveNotification(dialog, player, false)) {
 					const notification = this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, player, receiverItem.player.name === player.name, receiverItem.name);
 					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				}

@@ -60,7 +60,7 @@ export default class HidingSpot extends GameEntity {
 	/**
 	 * Removes a player from the hiding spot.
 	 * @param {Player} player - The player to remove from the hiding spot. 
-	 * @param {Action} action - The action that caused the player to be removed.
+	 * @param {Action} [action] - The action that caused the player to be removed.
 	 */
 	removePlayer(player, action) {
 		this.occupants.splice(this.occupants.indexOf(player), 1);

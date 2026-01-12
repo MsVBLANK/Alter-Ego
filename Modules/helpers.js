@@ -80,6 +80,14 @@ export function capitalizeFirstLetter(string) {
 }
 
 /**
+ * Returns true if the given string ends with a punctuation mark.
+ * @param {string} string 
+ */
+export function endsWithPunctuation(string) {
+	return !!string.match(/[.!?]$/);
+}
+
+/**
  * Parses a duration string and returns a duration object.
  * @param {string} durationString - An integer and a unit. Acceptable units: y, M, w, d, h, m, s.
  * @returns A duration object, or null.

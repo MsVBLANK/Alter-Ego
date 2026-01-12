@@ -53,6 +53,7 @@ export async function execute(game, message, command, args) {
         playerdefaults.defaultDescription,
         new Collection(),
         null,
+        null,
         0,
         game
     );

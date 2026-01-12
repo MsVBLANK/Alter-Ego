@@ -319,11 +319,12 @@ export default class Player extends ItemContainer {
      * @param {StatusDisplay[]} statusDisplays - A list of the names of all status effects the player currently has, including those that aren't visible. Also contains a string representation of the {@link Status.remaining|remaining time} of each status.
      * @param {string} description - The description of the player. Can contain two item lists: hands and equipment.
      * @param {Collection<string, EquipmentSlot>} inventory - All of the player's {@link EquipmentSlot | equipment slots}.
+     * @param {Messageable | null} notificationChannel - The channel where notifications to the player will be sent.
      * @param {TextChannel | null} spectateChannel - The spectate channel of the player.
      * @param {number} row - The row of the player.
      * @param {Game} game - The game this belongs to.
      */
-    constructor(id, member, name, title, pronounString, originalVoiceString, stats, alive, locationDisplayName, hidingSpot, statusDisplays, description, inventory, spectateChannel, row, game) {
+    constructor(id, member, name, title, pronounString, originalVoiceString, stats, alive, locationDisplayName, hidingSpot, statusDisplays, description, inventory, notificationChannel, spectateChannel, row, game) {
         super(game, row, description);
         this.id = id;
         this.member = member;
@@ -379,7 +380,7 @@ export default class Player extends ItemContainer {
         this.description = description;
         this.inventory = [];
         this.inventoryCollection = inventory;
-        this.notificationChannel = !this.isNPC && this.member ? this.member.dmChannel : null;
+        this.notificationChannel = notificationChannel;
         this.spectateChannel = spectateChannel;
         this.maxCarryWeight = this.getMaxCarryWeight();
         this.carryWeight = 0;

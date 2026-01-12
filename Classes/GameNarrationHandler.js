@@ -215,7 +215,7 @@ export default class GameNarrationHandler {
 			// If there are any players hidden in the fixture, notify them that they were found, and notify the player who found them.
 			// However, don't notify anyone if the player is inspecting the fixture that they're hiding in.
 			// Also ensure that the fixture isn't locked.
-			if (target instanceof Fixture && !player.isHidden() && player.hidingSpot !== target.name
+			if (target instanceof Fixture && target.hidingSpot && !player.isHidden() && player.hidingSpot !== target.name
 			&&  (target.childPuzzle === null || !target.childPuzzle.type.endsWith("lock") || target.childPuzzle.solved)) {
 				for (const occupant of target.hidingSpot.occupants) {
 					const notification = this.#game.notificationGenerator.generateHiddenPlayerFoundNotification(occupant.canSee() ? player.displayName : "someone");

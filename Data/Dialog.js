@@ -246,7 +246,7 @@ export default class Dialog extends GameConstruct {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
 	getDisplayNameForWebhook(playerCanSeeSpeaker) {
-		return this.speaker.isHidden() && !playerCanSeeSpeaker ? "Someone in the room" : capitalizeFirstLetter(this.speakerDisplayName);
+		return this.speaker.isHidden() && !playerCanSeeSpeaker ? `Someone in the room with ${this.speakerVoiceString}` : capitalizeFirstLetter(this.speakerDisplayName);
 	}
 
 	/**

@@ -15,6 +15,7 @@ import MoveAction from './Actions/MoveAction.js';
 import QueueMoveAction from './Actions/QueueMoveAction.js';
 import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
+import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
@@ -1530,7 +1531,7 @@ export default class Player extends ItemContainer {
      */
     async notify(messageText, addSpectate = true) {
         if (this.isConscious() && !this.isNPC)
-            await this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, addSpectate);
+            await this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate);
     }
 
     /**

@@ -141,7 +141,7 @@ export default class Room extends GameEntity {
             this.joinChannel(player);
 
         this.occupants.push(player);
-        this.occupantsString = this.generateOccupantsString(this.occupants.filter(occupant => !occupant.isHidden()));
+        this.setOccupantsString();
     }
 
     /**
@@ -151,16 +151,33 @@ export default class Room extends GameEntity {
     removePlayer(player) {
         this.leaveChannel(player);
         this.occupants.splice(this.occupants.indexOf(player), 1);
-        this.occupantsString = this.generateOccupantsString(this.occupants.filter(occupant => !occupant.isHidden()));
+        this.setOccupantsString();
     }
 
     /**
-     * Generates a string representing the occupants of the room.
-     * @param {Player[]} list
+     * Generates a string representing the occupants of the room, sorted alphabetically by display name.
+     * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players excluded.
      * @returns {string}
      */
-    generateOccupantsString(list) {
+    generateOccupantsString(list = this.occupants.filter(occupant => !occupant.isHidden())) {
         return generatePlayerListString(list);
+    }
+
+    /**
+     * Generates a string representing the occupants of the room excluding the given player, sorted alphabetically by display name.
+     * @param {Player} player - The player to exclude. 
+     * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
+     * @returns {string}
+     */
+    generateOccupantsStringExcluding(player, list = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)) {
+        return generatePlayerListString(list);
+    }
+
+    /**
+     * Sets the room's occupants string to the given string. By default, sets it to the room's occupants, sorted alphabetically by display name with hidden players excluded.
+     */
+    setOccupantsString(occupantsString = this.generateOccupantsString()) {
+        this.occupantsString = occupantsString;
     }
 
     /**
@@ -221,6 +238,15 @@ export default class Room extends GameEntity {
         exit.lock();
         if (this.occupants.length > 0) this.getGame().narrationHandler.narrateLock(this, exit);
         this.getGame().logHandler.logLock(this, exit);
+    }
+
+    /**
+     * Returns the URL to use for the room in the room description display component.
+     */
+    getIconURL() {
+        return this.iconURL !== "" ? this.iconURL
+            : this.getGame().settings.defaultRoomIconURL !== "" ? this.getGame().settings.defaultRoomIconURL
+                : this.getGame().guildContext.guild.iconURL();
     }
 
     /**

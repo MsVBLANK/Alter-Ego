@@ -24,7 +24,7 @@ export default class HideAction extends Action {
 			const hiddenStatus = this.getGame().entityFinder.getStatusEffect("hidden");
 			const hiddenStatusAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, false);
 			hiddenStatusAction.performInflict(hiddenStatus, true, false, true);
-			this.location.occupantsString = this.location.generateOccupantsString(this.location.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== this.player.name));
+			this.location.setOccupantsString(this.location.generateOccupantsStringExcluding(this.player));
 			successful = true;
 		}
 		this.getGame().logHandler.logHide(hidingSpot, this.player, successful, this.forced);

@@ -163,11 +163,13 @@ export default class GameCommunicationHandler {
 	 */
 	async sendDescriptionToPlayer(player, description, container, mirrorInSpectateChannel = true) {
 		if (container instanceof Room) {
+			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
 			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
 			if (defaultDropFixture)
 				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
-			await messageHandler.addRoomDescription(player, container, parseDescription(description, container, player), defaultDropFixtureString, mirrorInSpectateChannel);
+			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
+			await messageHandler.addRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
 			await this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel);

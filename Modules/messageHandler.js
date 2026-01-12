@@ -220,68 +220,18 @@ export async function addDirectNarrationWithAttachments(player, messageText, att
  * @param {Player} player - The player to send the message to.
  * @param {Room} location - The room whose description is being sent. 
  * @param {string} descriptionText - The description of the room to send. 
+ * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function addRoomDescription(player, location, descriptionText, defaultDropFixtureText, addSpectate = true) {
+export async function addRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
-        let constructedString = "";
-        const generatedString = location.generateOccupantsString(
-            location.occupants.filter((occupant) => !occupant.isHidden() && occupant.name !== player.name)
-        );
-        const generatedSleepingString = location.generateOccupantsString(
-            location.occupants.filter(
-                (occupant) => !occupant.isConscious() && !occupant.isHidden()
-            )
-        );
-
-        if (generatedString === "") constructedString = "You don't see anyone here.";
-        else if (generatedString.length <= 1000) constructedString = `You see ${generatedString} in this room.`;
-        else constructedString = "Too many players in this room.";
-
-        if (generatedSleepingString !== "") {
-            constructedString += `\n${generatedSleepingString} ${generatedSleepingString.includes(" and ") ? "are" : "is"
-                } asleep.`;
-        }
-
-        const game = location.getGame();
-        const components = [
-            new ContainerBuilder()
-                .setAccentColor(Number(`0x${game.settings.embedColor}`))
-                .addSectionComponents(
-                    new SectionBuilder()
-                        .setThumbnailAccessory(
-                            new ThumbnailBuilder()
-                                .setURL(
-                                    location.iconURL !== ""
-                                        ? location.iconURL
-                                        : game.settings.defaultRoomIconURL !== ""
-                                            ? game.settings.defaultRoomIconURL
-                                            : location.getGame().guildContext.guild.iconURL()
-                                )
-                        )
-                        .addTextDisplayComponents(
-                            new TextDisplayBuilder().setContent("_ _"),
-                            new TextDisplayBuilder().setContent(`**${location.displayName}**`),
-                            new TextDisplayBuilder().setContent("_ _")
-                        )
-                ),
-            new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-            new TextDisplayBuilder().setContent(descriptionText),
-            new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-            new TextDisplayBuilder().setContent("**Occupants**"),
-            new TextDisplayBuilder().setContent(constructedString),
-            new TextDisplayBuilder().setContent(`**${game.settings.defaultDropFixture.charAt(0) + game.settings.defaultDropFixture.substring(1).toLowerCase()}**`),
-            new TextDisplayBuilder().setContent(defaultDropFixtureText === "" ? "You don't see any items." : defaultDropFixtureText),
-            new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
-        ];
-
         if (!player.isNPC) {
             location.getGame().messageQueue.enqueue(
                 {
                     fire: async () => {
                         await player.notificationChannel.send({
-                            components: components,
+                            components: createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText),
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
@@ -294,7 +244,7 @@ export async function addRoomDescription(player, location, descriptionText, defa
                 {
                     fire: async () => {
                         await player.spectateChannel.send({
-                            components: components,
+                            components: createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText),
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
@@ -622,5 +572,40 @@ function createNarrateComponents(messageText, color) {
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         ),
+    ];
+}
+
+/**
+ * Creates an array of components for a room description.
+ * @param {Room} location - The room to be displayed.
+ * @param {string} descriptionText - The description of the room to send. 
+ * @param {string} occupantsString - The list of occupants in the room.
+ * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
+ */
+function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText) {
+    const game = location.getGame();
+    return [
+        new ContainerBuilder()
+            .setAccentColor(Number(`0x${game.settings.embedColor}`))
+            .addSectionComponents(
+                new SectionBuilder()
+                    .setThumbnailAccessory(
+                        new ThumbnailBuilder()
+                            .setURL(location.getIconURL())
+                    )
+                    .addTextDisplayComponents(
+                        new TextDisplayBuilder().setContent("_ _"),
+                        new TextDisplayBuilder().setContent(`**${location.displayName}**`),
+                        new TextDisplayBuilder().setContent("_ _")
+                    )
+            ),
+        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
+        new TextDisplayBuilder().setContent(descriptionText),
+        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
+        new TextDisplayBuilder().setContent("**Occupants**"),
+        new TextDisplayBuilder().setContent(occupantsString),
+        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(game.settings.defaultDropFixture.toLocaleLowerCase())}**`),
+        new TextDisplayBuilder().setContent(defaultDropFixtureText),
+        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
     ];
 }

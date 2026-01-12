@@ -64,11 +64,12 @@ export async function processIncomingMessage(game, message) {
  */
 export async function addNarration(room, messageText, addSpectate = true, speaker = null) {
     if (messageText !== "") {
+        const components = createNarrateComponents(messageText, room.getGame().settings.embedColor);
         room.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
                     await room.channel.send({
-                        components: createNarrateComponents(messageText, room.getGame().settings.embedColor),
+                        components: components,
                         flags: MessageFlags.IsComponentsV2,
                     });
                 },
@@ -88,7 +89,7 @@ export async function addNarration(room, messageText, addSpectate = true, speake
                         {
                             fire: async () => {
                                 await player.spectateChannel.send({
-                                    components: createNarrateComponents(messageText, room.getGame().settings.embedColor),
+                                    components: components,
                                     flags: MessageFlags.IsComponentsV2,
                                 });
                             },
@@ -226,12 +227,13 @@ export async function addDirectNarrationWithAttachments(player, messageText, att
  */
 export async function addRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
+        const components = createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedColor);
         if (!player.isNPC) {
             location.getGame().messageQueue.enqueue(
                 {
                     fire: async () => {
                         await player.notificationChannel.send({
-                            components: createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText),
+                            components: components,
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
@@ -244,7 +246,7 @@ export async function addRoomDescription(player, location, descriptionText, occu
                 {
                     fire: async () => {
                         await player.spectateChannel.send({
-                            components: createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText),
+                            components: components,
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
@@ -262,54 +264,23 @@ export async function addRoomDescription(player, location, descriptionText, occu
  * @param {Command} command - The command to display the help menu for.
  */
 export async function addCommandHelp(game, channel, command) {
-    const commandName = command.config.name.charAt(0).toUpperCase() + command.config.name.substring(1, command.config.name.indexOf('_'));
+    const commandName = capitalizeFirstLetter(command.config.name.substring(0, command.config.name.indexOf('_')));
     const title = `**${commandName} Command Help**`;
+    const description = command.config.description;
     let aliasString = "";
     for (const alias of command.config.aliases)
         aliasString += `\`${game.settings.commandPrefix}${alias}\` `;
-
-    const components = [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.embedColor}`))
-            .addSectionComponents(
-                new SectionBuilder()
-                    .setThumbnailAccessory(
-                        new ThumbnailBuilder().setURL(
-                            game.guildContext.guild.members.me.avatarURL()
-                            || game.guildContext.guild.members.me.user.avatarURL()
-                        )
-                    )
-                    .addTextDisplayComponents(
-                        new TextDisplayBuilder().setContent(title),
-                        new TextDisplayBuilder().setContent(command.config.description)
-                    )
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Aliases**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(aliasString)
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Examples**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(command.usage(game.settings))
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Description**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(command.config.details)
-            )
-    ];
+    const usage = command.usage(game.settings);
+    const details = command.config.details;
+    const thumbnailURL = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
+    const color = game.settings.embedColor;
 
     game.messageQueue.enqueue(
         {
             fire: async () =>
                 {
                     await channel.send({
-                        components: components,
+                        components: createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color),
                         flags: MessageFlags.IsComponentsV2,
                     });
                 }
@@ -563,7 +534,7 @@ export async function clearQueue(game) {
 /**
  * Creates an array of components for a narration.
  * @param {string} messageText - The text content of the narration.
- * @param {string} color - The color as a hex code. Optional 
+ * @param {string} color - The color as a hex code.
  */
 function createNarrateComponents(messageText, color) {
     return [
@@ -581,12 +552,12 @@ function createNarrateComponents(messageText, color) {
  * @param {string} descriptionText - The description of the room to send. 
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
+ * @param {string} color - The color as a hex code.
  */
-function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText) {
-    const game = location.getGame();
+function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
     return [
         new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.embedColor}`))
+            .setAccentColor(Number(`0x${color}`))
             .addSectionComponents(
                 new SectionBuilder()
                     .setThumbnailAccessory(
@@ -604,8 +575,53 @@ function createRoomDescriptionComponents(location, descriptionText, occupantsStr
         new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
         new TextDisplayBuilder().setContent("**Occupants**"),
         new TextDisplayBuilder().setContent(occupantsString),
-        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(game.settings.defaultDropFixture.toLocaleLowerCase())}**`),
+        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`),
         new TextDisplayBuilder().setContent(defaultDropFixtureText),
         new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
+    ];
+}
+
+/**
+ * Creates an array of components for a command help display.
+ * @param {string} title - The title of the help display. Should include the name of the command.
+ * @param {string} description - The description of the command.
+ * @param {string} aliasString - A comma-separated list of aliases for the command.
+ * @param {string} usage - A newline-separated list of examples of the command's usage.
+ * @param {string} details - Details about the command's usage.
+ * @param {string} thumbnailURL - The URL of an image to use as the thumbnail of the display.
+ * @param {string} color - The color as a hex code.
+ */
+function createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color) {
+    return [
+        new ContainerBuilder()
+            .setAccentColor(Number(`0x${color}`))
+            .addSectionComponents(
+                new SectionBuilder()
+                    .setThumbnailAccessory(
+                        new ThumbnailBuilder().setURL(thumbnailURL)
+                    )
+                    .addTextDisplayComponents(
+                        new TextDisplayBuilder().setContent(title),
+                        new TextDisplayBuilder().setContent(description)
+                    )
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent("**Aliases**")
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(aliasString)
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent("**Examples**")
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(usage)
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent("**Details**")
+            )
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(details)
+            )
     ];
 }

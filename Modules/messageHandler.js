@@ -67,7 +67,10 @@ export async function addNarration(room, messageText, addSpectate = true, speake
         room.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await room.channel.send(messageText);
+                    await room.channel.send({
+                        components: createNarrateComponents(messageText, room.getGame().settings.embedColor),
+                        flags: MessageFlags.IsComponentsV2,
+                    });
                 },
             },
             "tell"
@@ -84,7 +87,10 @@ export async function addNarration(room, messageText, addSpectate = true, speake
                     room.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await player.spectateChannel.send(messageText);
+                                await player.spectateChannel.send({
+                                    components: createNarrateComponents(messageText, room.getGame().settings.embedColor),
+                                    flags: MessageFlags.IsComponentsV2,
+                                });
                             },
                         },
                         "spectator"
@@ -106,7 +112,10 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await whisper.channel.send(messageText);
+                    await whisper.channel.send({
+                        components: createNarrateComponents(messageText, whisper.getGame().settings.embedColor),
+                        flags: MessageFlags.IsComponentsV2,
+                    });
                 },
             },
             "tell"
@@ -115,7 +124,7 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
             whisper.playersCollection.forEach((player) => {
                 const hidingSpot = whisper.getGame().entityFinder.getFixture(whisper.hidingSpotName, player.location.id);
                 const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
-                let spectateMessageText = `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${whisper.generatePlayerListString()}):*\n${messageText}`;
+                let spectateMessageText = `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${whisper.generatePlayerListString()}):*\n${messageText}`;
                 if (
                     player.canSee() &&
                     player.isConscious() &&
@@ -124,7 +133,10 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
                     whisper.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await player.spectateChannel.send(spectateMessageText);
+                                await player.spectateChannel.send({
+                                    components: createNarrateComponents(spectateMessageText, whisper.getGame().settings.embedColor),
+                                    flags: MessageFlags.IsComponentsV2,
+                                });
                             },
                         },
                         "spectator"
@@ -596,4 +608,19 @@ export async function sendQueuedMessages(game) {
  */
 export async function clearQueue(game) {
     game.messageQueue.clear();
+}
+
+/**
+ * Creates an array of components for a narration.
+ * @param {string} messageText - The text content of the narration.
+ * @param {string} color - The color as a hex code. Optional 
+ */
+function createNarrateComponents(messageText, color) {
+    return [
+        new ContainerBuilder()
+            .setAccentColor(Number(`0x${color}`))
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(messageText),
+        ),
+    ];
 }

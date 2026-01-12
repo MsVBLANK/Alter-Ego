@@ -138,6 +138,7 @@ export function createMockMember(id = generateSnowflake(), displayName = '') {
 		avatarURL: vi.fn(() => ''),
 		user: createMockUser(id, displayName),
 		dmChannel: mockUser.dmChannel,
+		createDM: vi.fn(async (force) => member.dmChannel),
 		roles: createMockRoleManager(),
 		permissionsIn: vi.fn((channel) => {
 			has: permissionsInHasMock

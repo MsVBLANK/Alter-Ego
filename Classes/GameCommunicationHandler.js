@@ -151,8 +151,8 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
-	async sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true) {
-		await messageHandler.sendNotification(player, messageText, mirrorInSpectateChannel);
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true) {
+		messageHandler.sendNotification(player, messageText, mirrorInSpectateChannel);
 	}
 
 	/**
@@ -162,7 +162,7 @@ export default class GameCommunicationHandler {
 	 * @param {GameEntity} container - The game entity the description belongs to.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
 	 */
-	async sendDescriptionToPlayer(player, description, container, mirrorInSpectateChannel = true) {
+	sendDescriptionToPlayer(player, description, container, mirrorInSpectateChannel = true) {
 		if (container instanceof Room) {
 			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
@@ -170,10 +170,10 @@ export default class GameCommunicationHandler {
 			if (defaultDropFixture)
 				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
 			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
-			await messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
+			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
-			await this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel);
+			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel);
 	}
 
 	/**
@@ -183,10 +183,10 @@ export default class GameCommunicationHandler {
 	 * @param {string} notification - The text of the notification to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
-	async notifyPlayer(player, action, notification, mirrorInSpectateChannel = true) {
+	notifyPlayer(player, action, notification, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await player.notify(notification, mirrorInSpectateChannel);
+			player.notify(notification, mirrorInSpectateChannel);
 		}
 	}
 
@@ -198,10 +198,10 @@ export default class GameCommunicationHandler {
 	 * @param {Collection<string, Attachment>} attachments - The attachments to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
-	async notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
+	notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await messageHandler.sendNotificationWithAttachments(player, notification, attachments, mirrorInSpectateChannel);
+			messageHandler.sendNotificationWithAttachments(player, notification, attachments, mirrorInSpectateChannel);
 		}
 	}
 
@@ -214,10 +214,10 @@ export default class GameCommunicationHandler {
 	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
 	 * @param {string} [notification] - A custom notification that will be sent to the player afterwards. Optional. This notification will not be mirrored in the spectate channel.
 	 */
-	async mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername, webhookAvatarURL, notification) {
+	mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername, webhookAvatarURL, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			await messageHandler.sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL);
+			messageHandler.sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL);
 			if (notification) this.notifyPlayer(player, action, notification, false);
 		}
 	}
@@ -231,10 +231,10 @@ export default class GameCommunicationHandler {
 	 * @param {string} webhookAvatarURL - A custom avatar URL to use for the webhook that will send the spectate message.
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
-	async mirrorNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
+	mirrorNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			await messageHandler.sendNarrationSpectateMessage(player, narration, webhookUsername, webhookAvatarURL, narrationText);
+			messageHandler.sendNarrationSpectateMessage(player, narration, webhookUsername, webhookAvatarURL, narrationText);
 		}
 	}
 
@@ -243,12 +243,12 @@ export default class GameCommunicationHandler {
 	 * @param {Narration} narration - The narration to send.
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
-	async narrateInRoom(narration, narrationText = narration.content) {
+	narrateInRoom(narration, narrationText = narration.content) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.location.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.location.channel.id);
 			if (narration.type === NarrationType.DIALOG)
-				await messageHandler.sendPlainTextNarrationToRoom(narration.location, narrationText, true, narration.player);
-			else await messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, true, narration.player);
+				messageHandler.sendPlainTextNarrationToRoom(narration.location, narrationText, true, narration.player);
+			else messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, true, narration.player);
 		}
 	}
 
@@ -259,10 +259,10 @@ export default class GameCommunicationHandler {
 	 * @param {string} narrationText - The text of the narration to send.
 	 * @param {NarrationType} narrationType - The type of the narration to send.
 	 */
-	async narrateInWhisper(whisper, action, narrationText, narrationType) {
+	narrateInWhisper(whisper, action, narrationText, narrationType) {
 		if (!this.#actionHasBeenCommunicatedInChannel(whisper.channel, action)) {
 			this.#cacheChannelFor(action, whisper.channel.id);
-			await messageHandler.sendNarrationToWhisper(whisper, narrationText, narrationType);
+			messageHandler.sendNarrationToWhisper(whisper, narrationText, narrationType);
 		}
 	}
 
@@ -271,17 +271,17 @@ export default class GameCommunicationHandler {
 	 * @param {UserMessage} message - The message that sent the help command.
 	 * @param {Command} command - The command to send the help menu for.
 	 */
-	async sendCommandHelp(message, command) {
+	sendCommandHelp(message, command) {
 		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
-		await messageHandler.sendCommandHelp(this.#game, channel, command);
+		messageHandler.sendCommandHelp(this.#game, channel, command);
 	}
 
 	/**
 	 * Sends a message to the log channel.
 	 * @param {string} logText - The message of the text to send.
 	 */
-	async sendLogMessage(logText) {
-		await messageHandler.sendLogMessage(this.#game, logText);
+	sendLogMessage(logText) {
+		messageHandler.sendLogMessage(this.#game, logText);
 	}
 
 	/**

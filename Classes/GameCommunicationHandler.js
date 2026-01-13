@@ -201,7 +201,7 @@ export default class GameCommunicationHandler {
 	async notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await messageHandler.sendNotificationWithAttachments(player, notification, attachments, mirrorInSpectateChannel);
+			await messageHandler.sendNotification(player, notification, mirrorInSpectateChannel, attachments);
 		}
 	}
 

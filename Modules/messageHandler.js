@@ -182,50 +182,20 @@ export async function sendNarrationToWhisper(whisper, messageText, narrationType
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export async function sendNotification(player, messageText, addSpectate = true) {
-    if (!player.isNPC) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await player.notificationChannel.send(messageText);
-                },
-            },
-            "tell"
-        );
-    }
-    if (addSpectate && player.spectateChannel !== null) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await player.spectateChannel.send(messageText);
-                },
-            },
-            "spectator"
-        );
-    }
-}
-
-/**
- * Sends a notification message with attached files to a player.
- * @param {Player} player - The player to send the message to.
- * @param {string} messageText - The message to send.
- * @param {Collection<string, Attachment>} attachments - The attachments to send.
- * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- */
-export async function sendNotificationWithAttachments(player, messageText, attachments, addSpectate = true) {
+export async function sendNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
-                fire: async () =>
-                    {
-                        await player.notificationChannel.send({
-                            content: messageText,
-                            files: files,
-                        });
-                    },
+                fire: async () => {
+                    await player.notificationChannel.send({
+                        content: messageText,
+                        files: files
+                    });
+                },
             },
             "tell"
         );
@@ -236,7 +206,7 @@ export async function sendNotificationWithAttachments(player, messageText, attac
                 fire: async () => {
                     await player.spectateChannel.send({
                         content: messageText,
-                        files: files,
+                        files: files
                     });
                 },
             },

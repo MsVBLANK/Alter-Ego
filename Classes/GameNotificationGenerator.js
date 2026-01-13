@@ -1,12 +1,14 @@
 import { endsWithPunctuation } from "../Modules/helpers.js";
 
 /** @typedef {import("../Data/Dialog.js").default} Dialog */
+/** @typedef {import("../Data/Fixture.js").default} Fixture */
 /** @typedef {import("../Data/Game.js").default} Game */
 /** @typedef {import("../Data/Player.js").default} Player */
 /** @typedef {import("../Data/Exit.js").default} Exit */
 /** @typedef {import("../Data/ItemInstance.js").default} ItemInstance */
 /** @typedef {import("../Data/Puzzle.js").default} Puzzle */
 /** @typedef {import("../Data/Recipe.js").default} Recipe */
+/** @typedef {import("../Data/Room.js").default} Room */
 
 /**
  * @class GameNotificationGenerator
@@ -309,6 +311,44 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
+	 * Generates a notification containing a list of occupants in the room. If any of the occupants are sleeping, includes them separately.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {Room} room - The room whose occupants are to be listed.
+	 */
+	generateRoomOccupantsNotification(player, room) {
+		let occupantsList = room.generateOccupantsStringExcluding(player);
+		const maxLength = 1000;
+		let verb1 = `see`;
+		if (occupantsList === "") {
+			verb1 = `don't see`;
+			occupantsList = `anyone`;
+		}
+		else if (occupantsList.length > maxLength) occupantsList = `a lot of people`;
+        const sleepingOccupants = room.occupants.filter(occupant => !occupant.isConscious() && !occupant.isHidden() && occupant.name !== player.name);
+        let sleepingOccupantsString = ``;
+        if (sleepingOccupants.length > 0) {
+            const verb2 = sleepingOccupants.length === 1 ? `is` : `are`;
+			const occupantsList = room.generateOccupantsString(sleepingOccupants);
+            sleepingOccupantsString = `\n${occupantsList} ${verb2} asleep.`;
+        }
+		return `You ${verb1} ${occupantsList} here.${sleepingOccupantsString}`;
+	}
+
+	/**
+	 * Generates a notification about the default drop fixture.
+	 * @param {string} parsedFixtureDescription - The default drop fixture's parsed description.
+	 * @param {Fixture} fixture - The default drop fixture in a room.
+	 * @param {string} defaultDropFixture - The game's default drop fixture.
+	 */
+	generateDefaultDropFixtureNotification(parsedFixtureDescription, fixture, defaultDropFixture) {
+		const preposition = fixture ? fixture.getPreposition() : `about`;
+		const fixturePhrase = fixture ? fixture.getContainingPhrase() : `the ${defaultDropFixture.toLocaleLowerCase()}`;
+		if (parsedFixtureDescription === "")
+			parsedFixtureDescription = `There's nothing of note ${preposition} ${fixturePhrase}.`;
+		return parsedFixtureDescription;
+	}
+
+	/**
 	 * Generates a notification indicating the player inspected the room.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
@@ -346,16 +386,29 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
-	 * Generates a notification indicating the player inspected an inventory item.
+	 * Generates a notification indicating the player inspected an inventory item that belongs to them.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectInventoryItemNotification(player, secondPerson, itemPhrase) {
+	generateInspectPlayersOwnInventoryItemNotification(player, secondPerson, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `begin` : `begins`;
 		return `${subject} ${verb1} ${itemPhrase} and ${verb2} inspecting it.`;
+	}
+
+	/**
+	 * Generates a notification indicating the player inspected an inventory item that belongs to another player.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param {Player} otherPlayer - The player the inventory item belongs to.
+	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 */
+	generateInspectOtherPlayersInventoryItemNotification(player, secondPerson, otherPlayer, itemPhrase) {
+		const subject = secondPerson ? `You` : player.displayName;
+		const verb = secondPerson ? `begin` : `begins`;
+		return `${subject} ${verb} inspecting ${otherPlayer.displayName}'s ${itemPhrase}.`;
 	}
 
 	/**

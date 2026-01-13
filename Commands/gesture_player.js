@@ -2,7 +2,7 @@
 import Fixture from '../Data/Fixture.js';
 import ItemInstance from '../Data/ItemInstance.js';
 import Puzzle from '../Data/Puzzle.js';
-import { createPaginatedEmbed } from '../Modules/helpers.js';
+import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */

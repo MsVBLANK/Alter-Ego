@@ -1,4 +1,5 @@
 ﻿import GameConstruct from './GameConstruct.js';
+import { NarrationType } from './Narration.js';
 import Room from './Room.js';
 import { generatePlayerListString } from '../Modules/helpers.js';
 import { Collection } from 'discord.js';
@@ -123,15 +124,16 @@ export default class Whisper extends GameConstruct {
      * @param {Player} player - The player to remove.
      * @param {string} [narration] - The text of the narration to send in the whisper channel when the player is removed.
      * @param {Action} [action] - The action that caused the player to be removed.
+     * @param {NarrationType} [narrationType] - The type of the narration that will be sent.
      */
-    removePlayer(player, narration, action) {
+    removePlayer(player, narration, action, narrationType) {
         this.revokeChannelAccess(player);
         this.playersCollection.delete(player.name);
         const newId = Whisper.generateValidId(this.playersCollection.map(player => player), this.location, this.hidingSpotName);
         const deleteWhisper = this.playersCollection.size === 0 || this.getGame().whispersCollection.get(newId);
         if (!deleteWhisper) {
             this.getGame().entityLoader.updateWhisperId(this, newId);
-            if (narration) this.getGame().communicationHandler.narrateInWhisper(this, action, narration);
+            if (narration) this.getGame().communicationHandler.narrateInWhisper(this, action, narration, narrationType);
         }
         else this.getGame().entityLoader.deleteWhisper(this);
     }

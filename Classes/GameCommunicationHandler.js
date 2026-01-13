@@ -1,4 +1,5 @@
 import Action from "../Data/Action.js";
+import { NarrationType } from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
@@ -133,7 +134,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send in response.
 	 */
 	reply(message, messageText) {
-		messageHandler.addReply(this.#game, message, messageText);
+		messageHandler.sendReply(this.#game, message, messageText);
 	}
 
 	/**
@@ -141,7 +142,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send.
 	 */
 	sendToCommandChannel(messageText) {
-		messageHandler.addGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText);
+		messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText);
 	}
 
 	/**
@@ -151,7 +152,7 @@ export default class GameCommunicationHandler {
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
 	async sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true) {
-		await messageHandler.addDirectNarration(player, messageText, mirrorInSpectateChannel);
+		await messageHandler.sendNotification(player, messageText, mirrorInSpectateChannel);
 	}
 
 	/**
@@ -163,11 +164,13 @@ export default class GameCommunicationHandler {
 	 */
 	async sendDescriptionToPlayer(player, description, container, mirrorInSpectateChannel = true) {
 		if (container instanceof Room) {
+			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
 			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
 			if (defaultDropFixture)
 				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
-			await messageHandler.addRoomDescription(player, container, parseDescription(description, container, player), defaultDropFixtureString, mirrorInSpectateChannel);
+			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
+			await messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
 			await this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel);
@@ -198,7 +201,7 @@ export default class GameCommunicationHandler {
 	async notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await messageHandler.addDirectNarrationWithAttachments(player, notification, attachments, mirrorInSpectateChannel);
+			await messageHandler.sendNotification(player, notification, mirrorInSpectateChannel, attachments);
 		}
 	}
 
@@ -243,7 +246,9 @@ export default class GameCommunicationHandler {
 	async narrateInRoom(narration, narrationText = narration.content) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.location.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.location.channel.id);
-			await messageHandler.addNarration(narration.location, narrationText, true, narration.player);
+			if (narration.type === NarrationType.DIALOG)
+				await messageHandler.sendPlainTextNarrationToRoom(narration.location, narrationText, true, narration.player);
+			else await messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, true, narration.player);
 		}
 	}
 
@@ -252,11 +257,12 @@ export default class GameCommunicationHandler {
 	 * @param {Whisper} whisper - The whisper to send the narration to.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {string} narrationText - The text of the narration to send.
+	 * @param {NarrationType} narrationType - The type of the narration to send.
 	 */
-	async narrateInWhisper(whisper, action, narrationText) {
+	async narrateInWhisper(whisper, action, narrationText, narrationType) {
 		if (!this.#actionHasBeenCommunicatedInChannel(whisper.channel, action)) {
 			this.#cacheChannelFor(action, whisper.channel.id);
-			await messageHandler.addNarrationToWhisper(whisper, narrationText);
+			await messageHandler.sendNarrationToWhisper(whisper, narrationText, narrationType);
 		}
 	}
 
@@ -267,7 +273,7 @@ export default class GameCommunicationHandler {
 	 */
 	async sendCommandHelp(message, command) {
 		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
-		await messageHandler.addCommandHelp(this.#game, channel, command);
+		await messageHandler.sendCommandHelp(this.#game, channel, command);
 	}
 
 	/**
@@ -275,7 +281,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} logText - The message of the text to send.
 	 */
 	async sendLogMessage(logText) {
-		await messageHandler.addLogMessage(this.#game, logText);
+		await messageHandler.sendLogMessage(this.#game, logText);
 	}
 
 	/**

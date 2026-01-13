@@ -1,5 +1,5 @@
 import Action from "../Action.js";
-import Narration from "../Narration.js";
+import { default as Narration, NarrationType } from "../Narration.js";
 import UnhideAction from "./UnhideAction.js";
 import { ChannelType } from "discord.js";
 
@@ -79,7 +79,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToLocation(narration) {
 		if (narration.player && narration.player.isHidden() && !(narration.action instanceof UnhideAction)) return;
 		this.#communicateNarrationToPlayers(narration, narration.location.occupants);
-		if (!narration.narrator) this.getGame().communicationHandler.narrateInRoom(narration);
+		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInRoom(narration);
 	}
 
 	/**
@@ -89,7 +89,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToWhisper(narration) {
 		if (!narration.whisper) return;
 		this.#communicateNarrationToPlayers(narration, narration.whisper.playersCollection.map(player => player));
-		if (!narration.narrator) this.getGame().communicationHandler.narrateInWhisper(narration.whisper, narration.action, narration.content);
+		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInWhisper(narration.whisper, narration.action, narration.content, narration.type);
 	}
 
 	/**
@@ -103,7 +103,7 @@ export default class NarrateAction extends Action {
 		const narrationText = `\`${prefix}${narration.content}\``;
 		for (const videoMonitoringRoom of narration.videoMonitoringRooms) {
 			this.#communicateNarrationToPlayers(narration, videoMonitoringRoom.occupants, `[${roomDisplayName}] ${narration.narratorDisplayName}`, narration.narratorDisplayIcon, narrationText);
-			if (!narration.narrator) this.getGame().communicationHandler.narrateInRoom(narration, narrationText);
+			if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInRoom(narration, narrationText);
 		}
 	}
 }

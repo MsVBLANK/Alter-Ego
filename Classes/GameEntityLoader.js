@@ -1684,10 +1684,12 @@ export default class GameEntityLoader extends GameEntityManager {
 					statusDisplays[i] = { id: statusId, timeRemaining: timeRemaining };
 				});
 				let member = null;
+				let notificationChannel = null;
 				let spectateChannel = null;
 				if (sheet[row][columnName] && sheet[row][columnTitle] !== "NPC") {
 					try {
 						member = sheet[row][columnId] ? this.game.guildContext.guild.members.resolve(sheet[row][columnId].trim()) : null;
+						notificationChannel = await member.createDM();
 					} catch (error) { }
 					const spectateChannelName = Room.generateValidId(sheet[row][columnName]);
 					spectateChannel = this.game.guildContext.guild.channels.cache.find(channel =>
@@ -1718,6 +1720,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					statusDisplays,
 					sheet[row][columnDescription] ? sheet[row][columnDescription].trim() : "",
 					new Collection(),
+					notificationChannel,
 					spectateChannel && spectateChannel.type === ChannelType.GuildText ? spectateChannel : null,
 					row + 3,
 					this.game

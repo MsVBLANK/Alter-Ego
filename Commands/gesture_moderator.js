@@ -1,5 +1,5 @@
 import GestureAction from '../Data/Actions/GestureAction.js';
-import { createPaginatedEmbed } from '../Modules/helpers.js';
+import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */

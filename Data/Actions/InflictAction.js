@@ -68,7 +68,7 @@ export default class InflictAction extends Action {
 			this.displayName = `An individual wearing ${maskName}`;
 			this.displayIcon = this.getGame().settings.defaultConcealedIconURL;
 			this.player.setPronouns(this.player.pronouns, "neutral");
-			this.location.occupantsString = this.location.generateOccupantsString(this.location.occupants.filter(occupant => !occupant.isHidden()));
+			this.location.setOccupantsString();
 		}
 		if (status.behaviorAttributes.has("disable all") || status.behaviorAttributes.has("disable move") || status.behaviorAttributes.has("disable run"))
 			this.player.stopMoving();

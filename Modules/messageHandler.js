@@ -35,7 +35,7 @@ export async function processIncomingMessage(game, message) {
         player.setOnline();
         const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
         if (playerNoSpeechStatusEffects.length > 0) {
-            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false);
+            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, NarrationType.ALERT);
             message.delete().catch();
             return;
         }
@@ -181,10 +181,52 @@ export async function sendNarrationToWhisper(whisper, messageText, narrationType
  * Sends a notification message to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
+ * @param {NarrationType} notificationType - The type of notification to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export async function sendNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
+export async function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
+    const components = discordUtils.createNarrateComponents(notificationType, player.getGame(), messageText, player);
+    const files = attachments.map((attachment) => attachment.url);
+
+    if (!player.isNPC) {
+        player.getGame().messageQueue.enqueue(
+            {
+                fire: async () => {
+                    await player.notificationChannel.send({
+                        components: components,
+                        flags: MessageFlags.IsComponentsV2,
+                        files: files
+                    });
+                },
+            },
+            "tell"
+        );
+    }
+    if (addSpectate && player.spectateChannel !== null) {
+        player.getGame().messageQueue.enqueue(
+            {
+                fire: async () => {
+                    await player.spectateChannel.send({
+                        components: components,
+                        flags: MessageFlags.IsComponentsV2,
+                        files: files
+                    });
+                },
+            },
+            "spectator"
+        );
+    }
+}
+
+/**
+ * Sends a notification message to a player as plain text.
+ * @param {Player} player - The player to send the message to.
+ * @param {string} messageText - The message to send.
+ * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
+ */
+export async function sendPlainTextNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {

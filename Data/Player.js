@@ -1531,10 +1531,11 @@ export default class Player extends ItemContainer {
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
      * @param {string} messageText - The content of the message to send.
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
+     * @param {NarrationType} [notificationType] - The type of notification to send. Defaults to DIALOG, or plain text.
      */
-    async notify(messageText, addSpectate = true) {
+    async notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG) {
         if (this.isConscious() && !this.isNPC)
-            await this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate);
+            await this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate, notificationType);
     }
 
     /**

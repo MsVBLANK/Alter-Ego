@@ -7,6 +7,7 @@ import ItemContainer from './ItemContainer.js';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.js';
 import Status from './Status.js';
+import { NarrationType } from './Narration.js';
 import CureAction from './Actions/CureAction.js';
 import DieAction from './Actions/DieAction.js';
 import InflictAction from './Actions/InflictAction.js';
@@ -1509,9 +1510,10 @@ export default class Player extends ItemContainer {
      * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
      */
     removeFromWhispers(narration, action) {
+        const narrationType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
         for (const whisper of this.getGame().whispersCollection.values()) {
             if (whisper.playersCollection.has(this.name))
-                whisper.removePlayer(this, narration, action);
+                whisper.removePlayer(this, narration, action, narrationType);
         }
     }
 

@@ -83,7 +83,17 @@ export default class GameSettings {
 	 * The accent color that will be used in Discord Embeds.
 	 * @type {string}
 	 */
-	embedColor;
+	embedAccentColor;
+	/**
+	 * The accent color that will be used in standard-type Narration Components.
+	 * @type {string}
+	 */
+	standardNarrationAccentColor;
+	/**
+	 * The accent color that will be used in alert-type Narration Components.
+	 * @type {string}
+	 */
+	alertNarrationAccentColor;
 	/**
 	 * Whether or not to show the online player count in the bot's Discord status.
 	 * @type {boolean}
@@ -126,7 +136,9 @@ export default class GameSettings {
 	 * @param {string} defaultConcealedIconURL - The URL of an image that will be used as the display icon of a player with the `concealed` behavior attribute if a custom one isn't set.
 	 * @param {string} hiddenIconURL - The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
 	 * @param {boolean} autoDeleteWhisperChannels - Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
-	 * @param {string} embedColor - The accent color that will be used in Discord Embeds.
+	 * @param {string} embedAccentColor - The accent color that will be used in Discord Embeds.
+	 * @param {string} standardNarrationAccentColor - The accent color that will be used in standard-type Narration Components.
+	 * @param {string} alertNarrationAccentColor - The accent color that will be used in alert-type Narration Components.
 	 * @param {boolean} showOnlinePlayerCount - Whether or not to show the online player count in the bot's Discord status.
 	 * @param {boolean} autoLoad - Whether or not the bot should automatically execute a command identical to `load all resume` upon startup.
 	 * @param {Activity} onlineActivity - The activity the bot will set for itself while it is online with no game in progress.
@@ -148,7 +160,9 @@ export default class GameSettings {
 		defaultConcealedIconURL,
 		hiddenIconURL,
 		autoDeleteWhisperChannels,
-		embedColor,
+		embedAccentColor,
+		standardNarrationAccentColor,
+		alertNarrationAccentColor,
 		showOnlinePlayerCount,
 		autoLoad,
 		onlineActivity,
@@ -169,7 +183,9 @@ export default class GameSettings {
 		this.defaultConcealedIconURL = defaultConcealedIconURL;
 		this.hiddenIconURL = hiddenIconURL;
 		this.autoDeleteWhisperChannels = autoDeleteWhisperChannels;
-		this.embedColor = embedColor;
+		this.embedAccentColor = embedAccentColor;
+		this.standardNarrationAccentColor = standardNarrationAccentColor;
+		this.alertNarrationAccentColor = alertNarrationAccentColor;
 		this.showOnlinePlayerCount = showOnlinePlayerCount;
 		this.autoLoad = autoLoad;
 		this.onlineActivity = onlineActivity;

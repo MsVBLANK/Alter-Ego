@@ -153,7 +153,7 @@ export function convertTimeStringToDurationUnits(timeString) {
  */
 export function createPaginatedEmbed(game, page, pages, authorName, authorIcon, description, getFieldName, getFieldValue) {
 	let embed = new EmbedBuilder()
-		.setColor(Number(`0x${game.settings.embedColor}`))
+		.setColor(Number(`0x${game.settings.embedAccentColor}`))
 		.setAuthor({ name: authorName, iconURL: authorIcon })
 		.setDescription(description)
 		.setFooter({ text: `Page ${page + 1}/${pages.length}` });

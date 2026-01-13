@@ -178,21 +178,27 @@ function loadGameSettings() {
     const diceMax = settings.diceMax;
     if (diceMin >= diceMax)
         errors.push("Error: diceMin setting must be less than diceMax.");
-    const embedColor = settings.embedColor;
-    const embedColorRegex = /^[\dA-F]{6}$/i;
-    if (!embedColorRegex.test(embedColor))
-        errors.push("Error: embedColor setting is not a valid hex color code. If it contains a # character, remove it.");
-    /** @type Activity */
+    const colorRegex = /^[\dA-F]{6}$/i;
+    const embedAccentColor = settings.embedAccentColor;
+    if (!colorRegex.test(embedAccentColor))
+        errors.push("Error: embedAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
+    const standardNarrationAccentColor = settings.standardNarrationAccentColor;
+    if (!colorRegex.test(standardNarrationAccentColor))
+        errors.push("Error: standardNarrationAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
+    const alertNarrationAccentColor = settings.alertNarrationAccentColor;
+    if (!colorRegex.test(alertNarrationAccentColor))
+        errors.push("Error: alertNarrationAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
+    /** @type {Activity} */
     const onlineActivity = {
         name: settings.onlineActivity.string,
         type: BotContext.getActivityType(settings.onlineActivity.type)
     };
-    /** @type Activity */
+    /** @type {Activity} */
     const debugModeActivity = {
         name: settings.debugModeActivity.string,
         type: BotContext.getActivityType(settings.debugModeActivity.type)
     };
-    /** @type Activity */
+    /** @type {Activity} */
     const gameInProgressActivity = {
         name: settings.gameInProgressActivity.string,
         type: BotContext.getActivityType(settings.gameInProgressActivity.type),
@@ -218,7 +224,9 @@ function loadGameSettings() {
         settings.defaultConcealedIconURL,
         settings.hiddenIconURL,
         settings.autoDeleteWhisperChannels,
-        embedColor,
+        embedAccentColor,
+        standardNarrationAccentColor,
+        alertNarrationAccentColor,
         settings.showOnlinePlayerCount,
         settings.autoLoad,
         onlineActivity,

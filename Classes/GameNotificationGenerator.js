@@ -386,16 +386,29 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
-	 * Generates a notification indicating the player inspected an inventory item.
+	 * Generates a notification indicating the player inspected an inventory item that belongs to them.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectInventoryItemNotification(player, secondPerson, itemPhrase) {
+	generateInspectPlayersOwnInventoryItemNotification(player, secondPerson, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `begin` : `begins`;
 		return `${subject} ${verb1} ${itemPhrase} and ${verb2} inspecting it.`;
+	}
+
+	/**
+	 * Generates a notification indicating the player inspected an inventory item that belongs to another player.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param {Player} otherPlayer - The player the inventory item belongs to.
+	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 */
+	generateInspectOtherPlayersInventoryItemNotification(player, secondPerson, otherPlayer, itemPhrase) {
+		const subject = secondPerson ? `You` : player.displayName;
+		const verb = secondPerson ? `begin` : `begins`;
+		return `${subject} ${verb} inspecting ${otherPlayer.displayName}'s ${itemPhrase}.`;
 	}
 
 	/**

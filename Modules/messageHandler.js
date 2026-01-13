@@ -1,10 +1,12 @@
 import Dialog from '../Data/Dialog.js';
+import { NarrationType } from '../Data/Narration.js';
 import Player from '../Data/Player.js';
 import AnnounceAction from '../Data/Actions/AnnounceAction.js';
 import NarrateAction from '../Data/Actions/NarrateAction.js';
 import SayAction from '../Data/Actions/SayAction.js';
+import * as discordUtils from './discordUtils.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
+import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
 /** @typedef {import('../Data/Game.js').default} Game */
 /** @typedef {import('../Data/Narration.js').default} Narration */
@@ -51,7 +53,7 @@ export async function processIncomingMessage(game, message) {
     else if (isModerator && (room || whisper)) {
         const location = whisper ? whisper.location : room;
         const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
-        game.narrationHandler.sendNarration(narrateAction, message.content, message.member);
+        game.narrationHandler.sendDialogTypeNarration(narrateAction, message.content, message.member);
     }
 }
 
@@ -59,39 +61,69 @@ export async function processIncomingMessage(game, message) {
  * Narrates a message to a room.
  * @param {Room} room - The room to send the message to.
  * @param {string} messageText - The message to send.
+ * @param {NarrationType} narrationType - The type of narration to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- * @param {Player} [speaker] - The player who originally spoke the dialog, if applicable.
+ * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export async function addNarration(room, messageText, addSpectate = true, speaker = null) {
+export async function sendNarrationToRoom(room, messageText, narrationType, addSpectate = true, player = null) {
     if (messageText !== "") {
-        const components = createNarrateComponents(messageText, room.getGame().settings.embedColor);
+        const components = discordUtils.createNarrateComponents(narrationType, room.getGame(), messageText, player);
+
         room.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
                     await room.channel.send({
                         components: components,
-                        flags: MessageFlags.IsComponentsV2,
+                        flags: MessageFlags.IsComponentsV2
                     });
                 },
             },
             "tell"
         );
         if (addSpectate) {
-            room.occupants.forEach((player) => {
-                if (
-                    (speaker === null || speaker.name !== player.name) &&
-                    (!player.hasBehaviorAttribute("no channel") || player.hasBehaviorAttribute("see room")) &&
-                    player.canSee() &&
-                    player.isConscious() &&
-                    player.spectateChannel !== null
-                ) {
+            room.occupants.forEach((occupant) => {
+                if (doMirrorInSpectateChannel(occupant, player)) {
                     room.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await player.spectateChannel.send({
+                                await occupant.spectateChannel.send({
                                     components: components,
-                                    flags: MessageFlags.IsComponentsV2,
+                                    flags: MessageFlags.IsComponentsV2
                                 });
+                            },
+                        },
+                        "spectator"
+                    );
+                }
+            });
+        }
+    }
+}
+
+/**
+ * Narrates a message to a room as plain text.
+ * @param {Room} room - The room to send the message to.
+ * @param {string} messageText - The message to send.
+ * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Player} [player] - The player whose action the narration is about, if applicable.
+ */
+export async function sendPlainTextNarrationToRoom(room, messageText, addSpectate = true, player = null) {
+    if (messageText !== "") {
+        room.getGame().messageQueue.enqueue(
+            {
+                fire: async () => {
+                    await room.channel.send(messageText);
+                },
+            },
+            "tell"
+        );
+        if (addSpectate) {
+            room.occupants.forEach((occupant) => {
+                if (doMirrorInSpectateChannel(occupant, player)) {
+                    room.getGame().messageQueue.enqueue(
+                        {
+                            fire: async () => {
+                                await occupant.spectateChannel.send(messageText);
                             },
                         },
                         "spectator"
@@ -106,15 +138,16 @@ export async function addNarration(room, messageText, addSpectate = true, speake
  * Narrates a message to a whisper.
  * @param {Whisper} whisper - The whisper to send the message to. 
  * @param {string} messageText - The message to send. 
+ * @param {NarrationType} narrationType - The type of narration to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function addNarrationToWhisper(whisper, messageText, addSpectate = true) {
+export async function sendNarrationToWhisper(whisper, messageText, narrationType, addSpectate = true) {
     if (messageText !== "") {
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
                     await whisper.channel.send({
-                        components: createNarrateComponents(messageText, whisper.getGame().settings.embedColor),
+                        components: discordUtils.createNarrateComponents(narrationType, whisper.getGame(), messageText),
                         flags: MessageFlags.IsComponentsV2,
                     });
                 },
@@ -126,16 +159,12 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
                 const hidingSpot = whisper.getGame().entityFinder.getFixture(whisper.hidingSpotName, player.location.id);
                 const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
                 let spectateMessageText = `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${whisper.generatePlayerListString()}):*\n${messageText}`;
-                if (
-                    player.canSee() &&
-                    player.isConscious() &&
-                    player.spectateChannel !== null
-                ) {
+                if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
                     whisper.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
                                 await player.spectateChannel.send({
-                                    components: createNarrateComponents(spectateMessageText, whisper.getGame().settings.embedColor),
+                                    components: discordUtils.createNarrateComponents(narrationType, whisper.getGame(), spectateMessageText),
                                     flags: MessageFlags.IsComponentsV2,
                                 });
                             },
@@ -149,12 +178,12 @@ export async function addNarrationToWhisper(whisper, messageText, addSpectate = 
 }
 
 /**
- * Narrates a message directly to a player.
+ * Sends a notification message to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function addDirectNarration(player, messageText, addSpectate = true) {
+export async function sendNotification(player, messageText, addSpectate = true) {
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
@@ -178,13 +207,13 @@ export async function addDirectNarration(player, messageText, addSpectate = true
 }
 
 /**
- * Narrates a message directly to a player with attached files.
+ * Sends a notification message with attached files to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
  * @param {Collection<string, Attachment>} attachments - The attachments to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function addDirectNarrationWithAttachments(player, messageText, attachments, addSpectate = true) {
+export async function sendNotificationWithAttachments(player, messageText, attachments, addSpectate = true) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {
@@ -225,9 +254,9 @@ export async function addDirectNarrationWithAttachments(player, messageText, att
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function addRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
+export async function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
-        const components = createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedColor);
+        const components = discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor);
         if (!player.isNPC) {
             location.getGame().messageQueue.enqueue(
                 {
@@ -263,7 +292,7 @@ export async function addRoomDescription(player, location, descriptionText, occu
  * @param {Messageable} channel - The channel to send the help menu to.
  * @param {Command} command - The command to display the help menu for.
  */
-export async function addCommandHelp(game, channel, command) {
+export async function sendCommandHelp(game, channel, command) {
     const commandName = capitalizeFirstLetter(command.config.name.substring(0, command.config.name.indexOf('_')));
     const title = `**${commandName} Command Help**`;
     const description = command.config.description;
@@ -273,14 +302,14 @@ export async function addCommandHelp(game, channel, command) {
     const usage = command.usage(game.settings);
     const details = command.config.details;
     const thumbnailURL = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-    const color = game.settings.embedColor;
+    const color = game.settings.embedAccentColor;
 
     game.messageQueue.enqueue(
         {
             fire: async () =>
                 {
                     await channel.send({
-                        components: createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color),
+                        components: discordUtils.createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color),
                         flags: MessageFlags.IsComponentsV2,
                     });
                 }
@@ -294,7 +323,7 @@ export async function addCommandHelp(game, channel, command) {
  * @param {Game} game - The game in which to send a log message.
  * @param {string} messageText - The message to send.
  */
-export async function addLogMessage(game, messageText) {
+export async function sendLogMessage(game, messageText) {
     game.messageQueue.enqueue(
         {
             fire: async () => {
@@ -311,7 +340,7 @@ export async function addLogMessage(game, messageText) {
  * @param {Messageable} channel - The channel to send the message to.
  * @param {string} messageText - The message to send.
  */
-export function addGameMechanicMessage(game, channel, messageText) {
+export function sendGameMechanicMessage(game, channel, messageText) {
     game.messageQueue.enqueue(
         {
             fire: async () => {
@@ -328,7 +357,7 @@ export function addGameMechanicMessage(game, channel, messageText) {
  * @param {UserMessage} message - The message to reply to.
  * @param {string} messageText - The text to send in response.
  */
-export async function addReply(game, message, messageText) {
+export async function sendReply(game, message, messageText) {
     game.messageQueue.enqueue(
         {
             fire: async () => {
@@ -345,6 +374,7 @@ export async function addReply(game, message, messageText) {
 
 /**
  * Mirrors a dialog message in a spectate channel.
+ * @deprecated
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {Player|PseudoPlayer|GuildMember} speaker - The player who originally sent the dialog message.
  * @param {UserMessage} message - The message in which this dialog originated.
@@ -532,96 +562,14 @@ export async function clearQueue(game) {
 }
 
 /**
- * Creates an array of components for a narration.
- * @param {string} messageText - The text content of the narration.
- * @param {string} color - The color as a hex code.
+ * Returns true if the message should be mirrored in the given player's spectate channel.
+ * @param {Player} player - The player whose spectate channel the message would be mirrored in.
+ * @param {Player} performer - The player who performed the action.
  */
-function createNarrateComponents(messageText, color) {
-    return [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${color}`))
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(messageText),
-        ),
-    ];
-}
-
-/**
- * Creates an array of components for a room description.
- * @param {Room} location - The room to be displayed.
- * @param {string} descriptionText - The description of the room to send. 
- * @param {string} occupantsString - The list of occupants in the room.
- * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
- * @param {string} color - The color as a hex code.
- */
-function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
-    return [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${color}`))
-            .addSectionComponents(
-                new SectionBuilder()
-                    .setThumbnailAccessory(
-                        new ThumbnailBuilder()
-                            .setURL(location.getIconURL())
-                    )
-                    .addTextDisplayComponents(
-                        new TextDisplayBuilder().setContent("_ _"),
-                        new TextDisplayBuilder().setContent(`**${location.displayName}**`),
-                        new TextDisplayBuilder().setContent("_ _")
-                    )
-            ),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent(descriptionText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent("**Occupants**"),
-        new TextDisplayBuilder().setContent(occupantsString),
-        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`),
-        new TextDisplayBuilder().setContent(defaultDropFixtureText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
-    ];
-}
-
-/**
- * Creates an array of components for a command help display.
- * @param {string} title - The title of the help display. Should include the name of the command.
- * @param {string} description - The description of the command.
- * @param {string} aliasString - A comma-separated list of aliases for the command.
- * @param {string} usage - A newline-separated list of examples of the command's usage.
- * @param {string} details - Details about the command's usage.
- * @param {string} thumbnailURL - The URL of an image to use as the thumbnail of the display.
- * @param {string} color - The color as a hex code.
- */
-function createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color) {
-    return [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${color}`))
-            .addSectionComponents(
-                new SectionBuilder()
-                    .setThumbnailAccessory(
-                        new ThumbnailBuilder().setURL(thumbnailURL)
-                    )
-                    .addTextDisplayComponents(
-                        new TextDisplayBuilder().setContent(title),
-                        new TextDisplayBuilder().setContent(description)
-                    )
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Aliases**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(aliasString)
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Examples**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(usage)
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent("**Details**")
-            )
-            .addTextDisplayComponents(
-                new TextDisplayBuilder().setContent(details)
-            )
-    ];
+function doMirrorInSpectateChannel(player, performer) {
+    return (performer === null || performer.name !== player.name)
+        && (!player.hasBehaviorAttribute("no channel") || player.hasBehaviorAttribute("see room"))
+        && player.canSee()
+        && player.isConscious()
+        && player.spectateChannel !== null
 }

@@ -14,7 +14,9 @@
   "defaultConcealedIconURL": "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
   "hiddenIconURL": "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
   "autoDeleteWhisperChannels": true,
-  "embedColor": "1F8B4C",
+  "embedAccentColor": "1F8B4C",
+  "standardNarrationAccentColor": "1F8B4C",
+  "alertNarrationAccentColor": "FF0E0E",
   "showOnlinePlayerCount": true,
   "onlineActivity": {
     "type": "LISTENING",

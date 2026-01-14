@@ -26,7 +26,6 @@ export function loadCredentials(): Credentials {
         const file = readFileSync(filePath, "utf8");
         credentials = JSON.parse(file);
     } catch (err) {
-        // console.warn("Warning: Could not find credentials.json file. Using environment variables instead.");
         credentials = {
             discord: {token: process.env.DISCORD_TOKEN ?? ""},
             google: {

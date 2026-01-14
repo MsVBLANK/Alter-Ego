@@ -230,7 +230,7 @@ function loadDotEnv() {
             console.error(`Error: Cannot load .env file: ${e.toString()}`);
         }
     } else {
-        console.warn(`Warning: .env file not found at ${dotenvPath}. Environment variables will not be loaded.`);
+        console.warn(`Warning: .env file not found at ${dotenvPath}. You can ignore this warning if you are using Docker.`);
     }
 }
 

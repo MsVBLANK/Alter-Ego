@@ -185,7 +185,7 @@ export async function loadServerConfig(): Promise<ServerConfig> {
     };
 }
 
-export function createCategory(guild: Guild, name: string) {
+export function createCategory(guild: Guild, name: string): Promise<GuildBasedChannel> {
     return new Promise((resolve, reject) => {
         guild.channels.create({
             name: name,

@@ -24,7 +24,11 @@ export function createMockGuildChannelManager(client) {
 	const channelManager = {
 		cache: new Collection(),
 		resolve: vi.fn((id) => channelManager.cache.get(id)),
-		create: vi.fn(async ({ name, type, parentId, parent }) => createMockChannel(generateSnowflake(), name, type, parentId, parent ? parent : channelManager.resolve(parentId), client)),
+		create: vi.fn(async ({ name, type, parent }) => {
+			const parentId = typeof parent === 'string' ? parent : parent.id;
+			const parentChannel = typeof parent === 'string' ? channelManager.resolve(parent) : parent;
+			return createMockChannel(generateSnowflake(), name, type, parentId, parentChannel, client)
+		}),
 		fetch: vi.fn(async (id) => channelManager.cache.get(id))
 	};
 	return channelManager;
@@ -129,8 +133,13 @@ export function createMockRoleManager() {
 	return roleManager;
 }
 
+function createPermissionsBitField(channel) {
+	return {
+		has: vi.fn(permission => true)
+	};
+}
+
 export function createMockMember(id = generateSnowflake(), displayName = '') {
-	const permissionsInHasMock = vi.fn((permission) => true);
 	const mockUser = createMockUser(id, displayName);
 	const member = {
 		id: id,
@@ -141,10 +150,7 @@ export function createMockMember(id = generateSnowflake(), displayName = '') {
 		dmChannel: mockUser.dmChannel,
 		createDM: vi.fn(async (force) => member.dmChannel),
 		roles: createMockRoleManager(),
-		permissionsIn: vi.fn((channel) => {
-			has: permissionsInHasMock
-		}),
-		_permissionsInHasMock: permissionsInHasMock,
+		permissionsIn: vi.fn((channel) => createPermissionsBitField(channel)),
 		send: vi.fn(async ({}) => Promise.resolve(createMockMessage({ content: '', channel: member.user.dmChannel })))
 	};
 	return member;

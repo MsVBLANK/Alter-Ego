@@ -355,8 +355,9 @@ export default class GameNotificationGenerator {
 	 */
 	generateInspectRoomNotification(player, secondPerson) {
 		const subject = secondPerson ? `You` : player.displayName;
-		const verb = secondPerson ? `begin` : `begins`;
-		return `${subject} ${verb} looking around the room.`;
+		const verb = secondPerson ? `look` : `looks`;
+		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
+		return `${subject} ${verb} around, taking in ${dpos} surroundings.`;
 	}
 
 	/**
@@ -367,8 +368,8 @@ export default class GameNotificationGenerator {
 	 */
 	generateInspectFixtureNotification(player, secondPerson, fixturePhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
-		const verb = secondPerson ? `begin` : `begins`;
-		return `${subject} ${verb} inspecting ${fixturePhrase}.`;
+		const verb = secondPerson ? `inspect` : `begins inspecting`;
+		return `${subject} ${verb} ${fixturePhrase}.`;
 	}
 
 	/**
@@ -381,8 +382,8 @@ export default class GameNotificationGenerator {
 	 */
 	generateInspectRoomItemNotification(player, secondPerson, itemPhrase, preposition, containerPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
-		const verb = secondPerson ? `begin` : `begins`;
-		return `${subject} ${verb} inspecting ${itemPhrase} ${preposition} ${containerPhrase}.`;
+		const verb = secondPerson ? `inspect` : `begins inspecting`;
+		return `${subject} ${verb} ${itemPhrase} ${preposition} ${containerPhrase}.`;
 	}
 
 	/**
@@ -394,8 +395,8 @@ export default class GameNotificationGenerator {
 	generateInspectPlayersOwnInventoryItemNotification(player, secondPerson, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb1 = secondPerson ? `take out` : `takes out`;
-		const verb2 = secondPerson ? `begin` : `begins`;
-		return `${subject} ${verb1} ${itemPhrase} and ${verb2} inspecting it.`;
+		const verb2 = secondPerson ? `inspect` : `begins inspecting`;
+		return `${subject} ${verb1} ${itemPhrase} and ${verb2} it.`;
 	}
 
 	/**
@@ -407,8 +408,8 @@ export default class GameNotificationGenerator {
 	 */
 	generateInspectOtherPlayersInventoryItemNotification(player, secondPerson, otherPlayer, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
-		const verb = secondPerson ? `begin` : `begins`;
-		return `${subject} ${verb} inspecting ${otherPlayer.displayName}'s ${itemPhrase}.`;
+		const verb = secondPerson ? `inspect` : `begins inspecting`;
+		return `${subject} ${verb} ${otherPlayer.displayName}'s ${itemPhrase}.`;
 	}
 
 	/**

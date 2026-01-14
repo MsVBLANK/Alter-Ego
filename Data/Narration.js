@@ -151,7 +151,7 @@ export default class Narration extends GameConstruct {
                 // Players with the see room attribute should receive all narrations besides their own via DM.
                 if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
                     if (!this.player || occupant.name !== this.player.name)
-                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                 }
             }
             this.getGame().communicationHandler.narrateInRoom(this);
@@ -164,7 +164,7 @@ export default class Narration extends GameConstruct {
                     if (room.id !== this.location.id) {
                         for (let occupant of room.occupants) {
                             if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
-                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                             }
                         }
                         this.getGame().communicationHandler.narrateInRoom(this);
@@ -191,7 +191,7 @@ export default class Narration extends GameConstruct {
                     if (occupant.canSee() && !occupant.isNPC
                         && (occupant.hasBehaviorAttribute("see room") || !occupant.member.permissionsIn(whisper.channel).has("ViewChannel"))) {
                         if (!this.player || occupant.name !== this.player.name)
-                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                     }
                 }
                 this.getGame().communicationHandler.narrateInWhisper(whisper, this.action, this.content, this.type);

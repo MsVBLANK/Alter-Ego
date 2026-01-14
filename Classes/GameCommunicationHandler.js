@@ -150,9 +150,12 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player to send the message to.
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
+	 * @param {NarrationType} [messageType] - The type of message to send. Defaults to DIALOG, or plain text.
 	 */
-	async sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true) {
-		await messageHandler.sendNotification(player, messageText, mirrorInSpectateChannel);
+	async sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = NarrationType.DIALOG) {
+		if (messageType === NarrationType.DIALOG)
+			await messageHandler.sendPlainTextNotification(player, messageText, mirrorInSpectateChannel);
+		else await messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
 	}
 
 	/**
@@ -173,7 +176,7 @@ export default class GameCommunicationHandler {
 			await messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
-			await this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel);
+			await this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, NarrationType.DIALOG);
 	}
 
 	/**
@@ -181,12 +184,13 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player to send the notification to.
 	 * @param {Action} action - The action that triggered the notification.
 	 * @param {string} notification - The text of the notification to send.
+	 * @param {NarrationType} notificationType - The type of notification to send. Defaults to DIALOG, or plain text.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
-	async notifyPlayer(player, action, notification, mirrorInSpectateChannel = true) {
+	async notifyPlayer(player, action, notification, notificationType = NarrationType.DIALOG, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await player.notify(notification, mirrorInSpectateChannel);
+			await player.notify(notification, mirrorInSpectateChannel, notificationType);
 		}
 	}
 
@@ -201,7 +205,7 @@ export default class GameCommunicationHandler {
 	async notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			await messageHandler.sendNotification(player, notification, mirrorInSpectateChannel, attachments);
+			await messageHandler.sendPlainTextNotification(player, notification, mirrorInSpectateChannel, attachments);
 		}
 	}
 
@@ -218,7 +222,7 @@ export default class GameCommunicationHandler {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			await messageHandler.sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL);
-			if (notification) this.notifyPlayer(player, action, notification, false);
+			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
 		}
 	}
 

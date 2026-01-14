@@ -82,7 +82,8 @@ export function createMockChannel(id, name, type, parentId, parent, client) {
 		messages: messageManager,
 		bulkDelete: vi.fn((messages, filterOld) => messageManager.cache.clear()),
 		send: vi.fn(async (content) => {
-			const message = createMockMessage({ content: content, channel: channel });
+			const messagePayload = typeof content === 'string' ? { content: content, channel: channel } : { content: content.content, channel: channel, components: content.components };
+			const message = createMockMessage(messagePayload);
 			channel.messages.cache.set(message.id, message);
 		}),
 		edit: vi.fn(({ name, lockPermissions }) => { channel.name = name; if (lockPermissions) for (const key of channel.permissionOverwrites.cache.keys()) channel.permissionOverwrites.delete(key) }),
@@ -196,14 +197,14 @@ export function createMockClient() {
  * @param {*} param0 
  * @returns {UserMessage}
  */
-export function createMockMessage({ content = '', member = createMockMember(), author = createMockUser(), channel = null, webhookId, client } = {}) {
+export function createMockMessage({ content = '', member = createMockMember(), author = createMockUser(), channel = null, webhookId, client, components = [] } = {}) {
 	const { Collection } = require('discord.js');
 	const messageChannel = channel || createMockChannel();
 	if (messageChannel && messageChannel.parent) messageChannel.parentId = messageChannel.parent.id;
 	return {
 		id: generateSnowflake(),
-		content: content,
-		cleanContent: content,
+		content: components.length > 0 ? components[0].components[0].data.content : content,
+		cleanContent: components.length > 0 ? components[0].components[0].data.content : content,
 		client: client,
 		member,
 		author,

@@ -45,9 +45,13 @@
         "noUncheckedSideEffectImports": false,
         "moduleDetection": "auto",
         "skipLibCheck": false,
-        "rewriteRelativeImportExtensions": true
+        "rewriteRelativeImportExtensions": true,
+        "erasableSyntaxOnly": true,
     },
     "include": [
         "**/*"
+    ],
+    "exclude": [
+        "coverage"
     ]
 }

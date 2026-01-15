@@ -68,7 +68,7 @@ export default class NarrateAction extends Action {
 			if (narration.player.name === player.name) continue;
 			if (this.#playerCannotReceiveCommunications(player)) continue;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.type, false);
+				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, false);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 		}
 	}

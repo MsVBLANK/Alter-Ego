@@ -19,7 +19,7 @@ import fs, {readdir, readFileSync} from 'fs';
 import {loadEnvFile} from 'node:process';
 import {loadGameSettings, loadPlayerDefaults} from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
-import {loadCredentialsSync} from "./Modules/credentialsLoader.ts";
+import {loadCredentials} from "./Modules/credentialsLoader.ts";
 
 const client = new Client({
     partials: [
@@ -303,6 +303,6 @@ process.on('unhandledRejection', error => {
 loadDotEnv();
 sendStartupLog();
 let gameSettings = loadSettings();
-let credentials = loadCredentialsSync();
+let credentials = loadCredentials();
 
 client.login(credentials.discord.token);

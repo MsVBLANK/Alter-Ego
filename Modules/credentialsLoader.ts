@@ -26,34 +26,11 @@ export interface Credentials {
  *
  * @returns Credentials object.
  */
-export function loadCredentialsSync(): Credentials {
+export function loadCredentials(): Credentials {
     let file: string, parseFile: boolean;
 
     try {
         file = readFileSync(CREDENTIALS_FILE_PATH, "utf8");
-        parseFile = true;
-    } catch (err) {
-        console.log(`Cannot read credentials file. Attempting to read from environment variables. If you intended to use a credentials file, Please check that the file exists and is readable.`);
-        parseFile = false;
-    }
-
-    if (parseFile) {
-        return parseCredentialsFile(file);
-    } else {
-        return readCredentialsEnv();
-    }
-}
-
-/**
- * Asynchronously loads credentials from the credentials.json file, or from environment variables if the file does not exist.
- *
- * @returns Credentials object.
- */
-export async function loadCredentialsAsync(): Promise<Credentials> {
-    let file: string, parseFile: boolean;
-
-    try {
-        file = await readFile(CREDENTIALS_FILE_PATH, "utf8");
         parseFile = true;
     } catch (err) {
         console.log(`Cannot read credentials file. Attempting to read from environment variables. If you intended to use a credentials file, Please check that the file exists and is readable.`);

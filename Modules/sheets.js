@@ -1,6 +1,6 @@
 ﻿import { createRequire } from 'node:module';
 import { google } from 'googleapis';
-import {loadCredentialsSync} from "./credentialsLoader.ts";
+import {loadCredentials} from "./credentialsLoader.ts";
 const sheets = google.sheets({ version: 'v4' });
 
 /**
@@ -175,7 +175,7 @@ export function appendRowsToSheet (sheetRange, data, spreadsheetId) {
 }
 
 function authorize() {
-    let credentials = loadCredentialsSync();
+    let credentials = loadCredentials();
     return new google.auth.JWT({
         email: credentials.google.client_email,
         key: credentials.google.private_key,

@@ -148,7 +148,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
         type: onlineActivityType()
     };
 
-    const debugModeActivityString = process.env.DEBUG_MODE_ACTIVITY_STRING ?? "NWP Debugger.exe";
+    const debugModeActivityString = process.env.DEBUG_MODE_ACTIVITY_STRING ?? DEFAULT_GAME_SETTINGS.debugModeActivity.name;
     const debugModeActivityType = () => {
         if (process.env.DEBUG_MODE_ACTIVITY_TYPE === undefined) return DEFAULT_GAME_SETTINGS.debugModeActivity.type;
         else return BotContext.getActivityType(process.env.DEBUG_MODE_ACTIVITY_TYPE);
@@ -158,12 +158,12 @@ export function loadGameSettings(): [GameSettings, string[]] {
         type: debugModeActivityType()
     };
 
-    const gameInProgressActivityString = process.env.GAME_IN_PROGRESS_ACTIVITY_STRING ?? "Neo World Program";
+    const gameInProgressActivityString = process.env.GAME_IN_PROGRESS_ACTIVITY_STRING ?? DEFAULT_GAME_SETTINGS.gameInProgressActivity.name;
     const gameInProgressActivityType = () => {
         if (process.env.GAME_IN_PROGRESS_ACTIVITY_TYPE === undefined) return DEFAULT_GAME_SETTINGS.gameInProgressActivity.type;
         else return BotContext.getActivityType(process.env.GAME_IN_PROGRESS_ACTIVITY_TYPE);
     }
-    const gameInProgressActivityUrl = process.env.GAME_IN_PROGRESS_ACTIVITY_URL ?? "";
+    const gameInProgressActivityUrl = process.env.GAME_IN_PROGRESS_ACTIVITY_URL ?? DEFAULT_GAME_SETTINGS.gameInProgressActivity.url;
     const gameInProgressActivity: Activity = {
         name: gameInProgressActivityString,
         type: gameInProgressActivityType(),

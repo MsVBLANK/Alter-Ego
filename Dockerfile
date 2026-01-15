@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:24
 ENV NODE_ENV=production
 
 ARG image_commit
@@ -14,7 +14,7 @@ RUN chown -R node:node /home/node/app
 
 USER node
 
-RUN npm ci
+RUN npm install
 
 COPY --chown=node:node . .
 

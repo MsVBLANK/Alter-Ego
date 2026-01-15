@@ -17,6 +17,6 @@ export default class AnnounceAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		for (const livingPlayer of this.getGame().livingPlayersCollection.values())
-			await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, this, announcement);
+			this.getGame().communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, this, announcement);
 	}
 }

@@ -24,16 +24,16 @@ export default class SayAction extends Action {
 	 * Performs a say action.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async performSay(dialog) {
+	performSay(dialog) {
 		if (this.performed) return;
 		super.perform();
 		this.#voicePuzzles = this.getGame().entityFinder.getPuzzles(undefined, undefined, "voice");
 		if (dialog.whisper) this.#communicateWhisperedDialog(dialog);
-		await this.#communicateDialogToRoomOccupants(dialog);
+		this.#communicateDialogToRoomOccupants(dialog);
 		this.#solveVoicePuzzles(dialog.location, dialog);
-		await this.#communicateDialogToNeighboringRooms(dialog);
-		await this.#communicateDialogToAudioMonitoringRooms(dialog);
-		await this.#communicateDialogToReceivers(dialog);
+		this.#communicateDialogToNeighboringRooms(dialog);
+		this.#communicateDialogToAudioMonitoringRooms(dialog);
+		this.#communicateDialogToReceivers(dialog);
 	}
 
 	/**
@@ -45,18 +45,18 @@ export default class SayAction extends Action {
 	 * @param {string} [webhookAvatarURL] - The avatar URL to use for the mirrored webhook message. If none is specified, the speaker's current displayIcon will be used.
 	 * @param {string} [notification] - A custom notification that will be sent to the player afterwards. Optional. This notification will not be mirrored in the spectate channel.
 	 */
-	async #mirrorDialogInSpectateChannel(player, dialog, messageTextPrefix = "", webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, notification) {
+	#mirrorDialogInSpectateChannel(player, dialog, messageTextPrefix = "", webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, notification) {
 		const messageText = messageTextPrefix + dialog.content;
-		await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, messageText, notification);
+		this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, messageText, notification);
 	}
 
 	/**
 	 * Mirrors the player's own dialog in their spectate channel.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async #mirrorPlayersOwnDialog(dialog) {
+	#mirrorPlayersOwnDialog(dialog) {
 		const webhookUsername = dialog.speaker.displayName !== dialog.speaker.name ? `${capitalizeFirstLetter(dialog.speaker.displayName)} (${dialog.speaker.name})` : undefined;
-		await this.#mirrorDialogInSpectateChannel(dialog.speaker, dialog, dialog.getWhisperPrefixStringForWebhook(true), webhookUsername);
+		this.#mirrorDialogInSpectateChannel(dialog.speaker, dialog, dialog.getWhisperPrefixStringForWebhook(true), webhookUsername);
 	}
 
 	/**
@@ -130,9 +130,9 @@ export default class SayAction extends Action {
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 * @param {string} narrationText - The text to narrate.
 	 */
-	async #narrateDialogAndSolveVoicePuzzles(location, dialog, narrationText) {
+	#narrateDialogAndSolveVoicePuzzles(location, dialog, narrationText) {
 		if (location.tags.has("audio monitoring") && location.tags.has("video monitoring") && dialog.locationIsAudioSurveilled && dialog.locationIsVideoSurveilled)
-			await this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
+			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
 		else
 			this.getGame().narrationHandler.narrateSay(this, dialog, location, narrationText);
 		this.#solveVoicePuzzles(location, dialog);
@@ -142,10 +142,10 @@ export default class SayAction extends Action {
 	 * Communicates whispered dialog to players in the whisper.
 	 * @param {Dialog} dialog - The dialog that was spoken. 
 	 */
-	async #communicateWhisperedDialog(dialog) {
+	#communicateWhisperedDialog(dialog) {
 		for (const player of dialog.whisper.playersCollection.values()) {
 			if (dialog.speaker.name === player.name) {
-				await this.#mirrorPlayersOwnDialog(dialog);
+				this.#mirrorPlayersOwnDialog(dialog);
 				continue;
 			}
 			if (this.#playerCannotReceiveCommunications(player)) continue;
@@ -155,12 +155,12 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-				await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				continue;
 			}
 			if (webhookUsername)
-				await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
-			else await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix);
+				this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
+			else this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix);
 		}
 	}
 
@@ -168,10 +168,10 @@ export default class SayAction extends Action {
 	 * Communicates dialog to players in the room.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async #communicateDialogToRoomOccupants(dialog) {
+	#communicateDialogToRoomOccupants(dialog) {
 		for (const player of dialog.location.occupants) {
 			if (dialog.speaker.name === player.name) {
-				await this.#mirrorPlayersOwnDialog(dialog);
+				this.#mirrorPlayersOwnDialog(dialog);
 				continue;
 			}
 			if (this.#playerCannotReceiveCommunications(player)) continue;
@@ -185,23 +185,23 @@ export default class SayAction extends Action {
 				if (player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
 					const notification = this.getGame().notificationGenerator.generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player);
 					if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-						await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 						continue;
 					}
-					await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
+					this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
 				}
 				continue;
 			}
 
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
-				await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				continue;
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";
 			if (webhookUsername || notification)
-				await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
-			else await this.#mirrorDialogInSpectateChannel(player, dialog);
+				this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
+			else this.#mirrorDialogInSpectateChannel(player, dialog);
 		}
 	}
 
@@ -209,18 +209,18 @@ export default class SayAction extends Action {
 	 * Communicates dialog to rooms neighboring the room it was spoken in.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async #communicateDialogToNeighboringRooms(dialog) {
+	#communicateDialogToNeighboringRooms(dialog) {
 		// Communicate dialog to neighboring rooms.
 		for (const neighboringRoom of dialog.neighboringRooms) {
 			for (const player of neighboringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player, false)) {
 					const notification = this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog, player);
-					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				}
 			}
 			if (dialog.isShouted)
-				await this.#narrateDialogAndSolveVoicePuzzles(neighboringRoom, dialog, this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog));
+				this.#narrateDialogAndSolveVoicePuzzles(neighboringRoom, dialog, this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog));
 		}
 		if (!dialog.isShouted) return;
 		// If any neighboring rooms have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
@@ -231,10 +231,10 @@ export default class SayAction extends Action {
 					if (this.#playerCannotReceiveCommunications(player)) continue;
 					if (this.#playerShouldReceiveNotification(dialog, player, false)) {
 						const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
-						await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 					}
 				}
-				await this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
+				this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
 			}
 		}
 	}
@@ -243,7 +243,7 @@ export default class SayAction extends Action {
 	 * Communicates dialog to rooms with the `audio monitoring` tag.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async #communicateDialogToAudioMonitoringRooms(dialog) {
+	#communicateDialogToAudioMonitoringRooms(dialog) {
 		if (!dialog.locationIsAudioSurveilled) return;
 		const roomDisplayName = dialog.location.getSurveilledDisplayName();
 		for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
@@ -253,16 +253,16 @@ export default class SayAction extends Action {
 				const webhookContentPrefix = dialog.getWhisperPrefixStringForWebhook(playerCanSeeSpeaker);
 				const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player);
 				if (!playerCanSeeSpeaker || this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 					continue;
 				}
 				const customWebhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker, `[${roomDisplayName}]`);
 				const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 				if (customWebhookUsername || this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker))
-					await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, customWebhookUsername, webhookAvatarURL, notification);
-				else await this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, dialog.getDisplayNameForWebhook(playerCanSeeSpeaker), webhookAvatarURL);
+					this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, customWebhookUsername, webhookAvatarURL, notification);
+				else this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, dialog.getDisplayNameForWebhook(playerCanSeeSpeaker), webhookAvatarURL);
 			}
-			await this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog));
+			this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog));
 		}
 	}
 
@@ -270,17 +270,17 @@ export default class SayAction extends Action {
 	 * Communicates dialog to players with the `receiver` behavior attribute.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
-	async #communicateDialogToReceivers(dialog) {
+	#communicateDialogToReceivers(dialog) {
 		for (const [receiverPlayerName, receiverItem] of dialog.receivers) {
 			const receiverPlayer = this.getGame().entityFinder.getLivingPlayer(receiverPlayerName);
 			for (const player of receiverPlayer.location.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (this.#playerShouldReceiveNotification(dialog, player, false)) {
 					const notification = this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, player, receiverItem.player.name === player.name, receiverItem.name);
-					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				}
 			}
-			await this.#narrateDialogAndSolveVoicePuzzles(receiverPlayer.location, dialog, this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, false, receiverItem.name));
+			this.#narrateDialogAndSolveVoicePuzzles(receiverPlayer.location, dialog, this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, false, receiverItem.name));
 		}
 	}
 }

@@ -95,7 +95,7 @@ export async function execute(game, message, command, args) {
     }
     else {
         const command = roleCommands.find(command => command.config.aliases.includes(args[0]));
-        if (!command) return message.reply(`couldn't find command "${args[0]}".`);
+        if (!command) return game.communicationHandler.reply(message, `Couldn't find command "${args[0]}".`);
         game.communicationHandler.sendCommandHelp(message, command);
     }
 }

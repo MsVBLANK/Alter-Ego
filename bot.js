@@ -1,8 +1,5 @@
 'use strict';
 
-import credentials from './Configs/credentials.json' with { type: 'json' };
-import serverconfig from './Configs/serverconfig.json' with { type: 'json' };
-
 import BotContext from './Classes/BotContext.js';
 import GuildContext from './Classes/GuildContext.js';
 import Game from './Data/Game.js';
@@ -22,6 +19,7 @@ import fs, {readdir, readFileSync} from 'fs';
 import {loadEnvFile} from 'node:process';
 import {loadGameSettings, loadPlayerDefaults} from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
+import {loadCredentials} from "./Modules/credentialsLoader.ts";
 
 const client = new Client({
     partials: [
@@ -92,7 +90,7 @@ async function loadCommands() {
     });
 }
 /** @returns {Promise<boolean>} */
-async function createGuildContext() {
+async function createGuildContext(){
     if (client.guilds.cache.size === 1) {
         const guild = client.guilds.cache.first();
         await createServerConfigFileIfNotExists();
@@ -199,7 +197,7 @@ function loadSettings() {
  * @returns {Promise<void>}
  */
 async function sendFirstBootMessage(settings) {
-    let moderatorRole = guildContext.guild.roles.resolve(serverconfig.moderatorRole);
+    let moderatorRole = guildContext.guild.roles.resolve(guildContext.moderatorRole);
     await guildContext.commandChannel.send(
         `Alter Ego is now ready for use. To get started, give yourself the ${moderatorRole.name} role and use the `
         + `${settings.commandPrefix}help command to learn what you can do. You can issue commands in this channel.\n\n`
@@ -305,4 +303,6 @@ process.on('unhandledRejection', error => {
 loadDotEnv();
 sendStartupLog();
 let gameSettings = loadSettings();
+let credentials = loadCredentials();
+
 client.login(credentials.discord.token);

@@ -159,7 +159,7 @@ export async function loadServerConfig(): Promise<ServerConfig> {
         throw new Error(`Failed to parse serverconfig.json file. Error: ${err}`);
     }
 
-    return {
+    let serverConfig: ServerConfig =  {
         announcementChannel: process.env.ANNOUNCEMENT_CHANNEL ?? serverConfigFile.announcementChannel,
         commandChannel: process.env.COMMAND_CHANNEL ?? serverConfigFile.commandChannel,
         deadRole: process.env.DEAD_ROLE ?? serverConfigFile.deadRole,
@@ -176,6 +176,8 @@ export async function loadServerConfig(): Promise<ServerConfig> {
         testingChannel: process.env.TESTING_CHANNEL ?? serverConfigFile.testingChannel,
         whisperCategory: process.env.WHISPER_CATEGORY ?? serverConfigFile.whisperCategory
     };
+
+    return serverConfig;
 }
 
 export function createCategory(guild: Guild, name: string) {
@@ -238,6 +240,6 @@ export async function createServerConfigFileIfNotExists() {
 }
 
 async function writeServerConfig(serverConfig: ServerConfig): Promise<void> {
-    const json = JSON.stringify(serverConfig);
+    const json = JSON.stringify(serverConfig, undefined, 4);
     await writeFile(SERVER_CONFIG_PATH, json, 'utf8');
 }

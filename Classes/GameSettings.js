@@ -103,7 +103,7 @@ export default class GameSettings {
 	 * Whether or not the bot should automatically execute a command identical to `load all resume` upon startup.
 	 * @type {boolean}
 	 */
-	autoStart;
+	autoLoad;
 	/**
 	 * The activity the bot will set for itself while it is online with no game in progress.
 	 * @type {Activity}

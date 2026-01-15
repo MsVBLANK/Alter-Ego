@@ -248,8 +248,8 @@ function sendStartupLog() {
 }
 
 client.on('clientReady', async () => {
-    console.log(`${client.user.username} is online on ${client.guilds.cache.size} server${client.guilds.cache.size !== 1 ? 's' : ''}.`);
     const doSendFirstBootMessage = await createGuildContext();
+    console.log(`${client.user.username} is online in ${client.guilds.cache.first().name}.`);
     await loadCommands();
     await checkVersion();
     await autoUpdate(gameSettings);

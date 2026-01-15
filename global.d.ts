@@ -327,7 +327,7 @@ declare global {
 	 * @property {string} [displayName] - The display name of the player.
 	 * @property {string} [displayIcon] - The display icon URL of the player.
 	 * @property {string} [title] - The title of the player.
-	 * @property {GuildMember} [member] - The Discord guild member associated with the player. 
+	 * @property {GuildMember} [member] - The Discord guild member associated with the player.
 	 * @property {number} [strength] - The strength stat of the player.
 	 * @property {number} [perception] - The perception stat of the player.
 	 * @property {number} [intelligence] - The perception stat of the player.
@@ -387,9 +387,9 @@ declare global {
 	}
 
 	interface TestParserError {
-		cell: string;
-		text: string;
-	}
+        cell: string;
+        text: string;
+    }
 
 	/**
 	 * @typedef ScriptEvaluationContext

@@ -2,10 +2,10 @@
 import RoomItem from '../Data/RoomItem.js';
 import InventoryItem from '../Data/InventoryItem.js';
 import Player from '../Data/Player.js';
-import playerdefaults from '../Configs/playerdefaults.json' with { type: 'json' };
 import { parseDescription, parseDescriptionWithErrors, addItem, removeItem } from '../Modules/parser.js';
 import { EOL } from 'os';
 import { Collection } from 'discord.js';
+import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -30,8 +30,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}testparser parse\n`
@@ -45,10 +45,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     if (args.length === 0)
@@ -58,6 +58,8 @@ export async function execute(game, message, command, args) {
     fs.writeFile(file, "", function (err) {
         if (err) return console.log(err);
     });
+
+    const [playerdefaults] = loadPlayerDefaults();
 
     let player = new Player(
         "",
@@ -99,7 +101,7 @@ export async function execute(game, message, command, args) {
             // Trim excess warnings to not exceed Discord's 2000 character limit.
             const tooManyWarnings = warnings.length > 20 || warnings.join('\n').length >= 1980;
             while (warnings.length > 20 || warnings.join('\n').length >= 1980)
-                warnings = warnings.slice(0, warnings.length - 1);  
+                warnings = warnings.slice(0, warnings.length - 1);
             if (tooManyWarnings)
                 warnings.push("Too many warnings.");
             game.communicationHandler.sendToCommandChannel(warnings.join('\n'));
@@ -136,7 +138,7 @@ export async function execute(game, message, command, args) {
         if (warnings.length > 0) {
             const tooManyWarnings = warnings.length > 20 || warnings.join('\n').length >= 1980;
             while (warnings.length > 20 || warnings.join('\n').length >= 1980)
-                warnings = warnings.slice(0, warnings.length - 1);  
+                warnings = warnings.slice(0, warnings.length - 1);
             if (tooManyWarnings)
                 warnings.push("Too many warnings.");
             game.communicationHandler.sendToCommandChannel(warnings.join('\n'));
@@ -539,7 +541,7 @@ async function testparse (game, fileName, player) {
 /**
  * Tests the parser module's addItem function on all in-game descriptions with il tags.
  * Adds 4 instances of random prefabs to each description. Writes the final results to a file.
- * @param {Game} game - The game being tested. 
+ * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  * @param {boolean} formatted - Whether or not to write the resulting text with its XML tags.
  * @param {Player|PseudoPlayer} player - The player to pass into the parser module.
@@ -786,7 +788,7 @@ async function testadd (game, fileName, formatted, player) {
  * Tests the parser module's removeItem function on all in-game descriptions with item tags.
  * Tries to remove every item from each description. Issues a warning for every description where it can't remove all items.
  * Writes the final results to a file.
- * @param {Game} game - The game being tested. 
+ * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  * @param {boolean} formatted - Whether or not to write the resulting text with its XML tags. If this is true, also tries to remove items in every possible order.
  * @param {Player|PseudoPlayer} player - The player to pass into the parser module.
@@ -1199,7 +1201,7 @@ async function testremove (game, fileName, formatted, player) {
         }
         await appendFile(fileName, text);
     }
-    
+
     return warnings;
 }
 

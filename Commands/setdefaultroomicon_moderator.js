@@ -1,5 +1,4 @@
-import fs from 'fs';
-import settings from '../Configs/settings.json' with { type: 'json' };
+import {writeFile} from 'fs/promises';
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -16,8 +15,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}setdefaultroomicon https://media.discordapp.net/attachments/1290826220367249489/1441259427411001455/sLPkDhP.png\n`
@@ -25,10 +24,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     const iconURLSyntax = RegExp('(http(s?)://.*?\\.(jpg|jpeg|png|gif|webp|avif))(\\?.*)?$');
@@ -40,10 +39,9 @@ export async function execute(game, message, command, args) {
     if (!iconURLSyntax.test(input) && input !== "") return game.communicationHandler.reply(message, `The display icon must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 
     game.settings.defaultRoomIconURL = input;
-    settings.defaultRoomIconURL = input;
 
-    const json = JSON.stringify(settings, null, "  ");
-    await fs.writeFileSync('Configs/settings.json', json, 'utf8');
+    const json = JSON.stringify(game.settings, undefined, 4);
+    await writeFile('Configs/settings.json', json, 'utf8');
 
     game.communicationHandler.sendToCommandChannel(`Successfully updated the default room icon.`);
 }

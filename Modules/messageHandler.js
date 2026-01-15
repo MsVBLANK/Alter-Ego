@@ -18,7 +18,7 @@ import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextCha
  * @param {Game} game - The game the message is intended for.
  * @param {UserMessage} message - The message to process.
  */
-export async function processIncomingMessage(game, message) {
+export function processIncomingMessage(game, message) {
     if (message.channel.type !== ChannelType.GuildText) return;
     const isInWhisperChannel = message.channel.parentId === game.guildContext.whisperCategoryId;
     const isInAnnouncementChannel = message.channel.id === game.guildContext.announcementChannel.id;
@@ -43,11 +43,11 @@ export async function processIncomingMessage(game, message) {
         const dialog = new Dialog(game, message, player, location, message.cleanContent, isInAnnouncementChannel, whisper);
         if (dialog.isAnnouncement) {
             const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            await announceAction.performAnnounce(dialog);
+            announceAction.performAnnounce(dialog);
         }
         else {
             const sayAction = new SayAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            await sayAction.performSay(dialog);
+            sayAction.performSay(dialog);
         }
     }
     else if (isModerator && (room || whisper)) {
@@ -65,7 +65,7 @@ export async function processIncomingMessage(game, message) {
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export async function sendNarrationToRoom(room, messageText, narrationType, addSpectate = true, player = null) {
+export function sendNarrationToRoom(room, messageText, narrationType, addSpectate = true, player = null) {
     if (messageText !== "") {
         const components = discordUtils.createNarrateComponents(narrationType, room.getGame(), messageText, player);
 
@@ -107,7 +107,7 @@ export async function sendNarrationToRoom(room, messageText, narrationType, addS
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export async function sendPlainTextNarrationToRoom(room, messageText, addSpectate = true, player = null) {
+export function sendPlainTextNarrationToRoom(room, messageText, addSpectate = true, player = null) {
     if (messageText !== "") {
         room.getGame().messageQueue.enqueue(
             {
@@ -141,7 +141,7 @@ export async function sendPlainTextNarrationToRoom(room, messageText, addSpectat
  * @param {NarrationType} narrationType - The type of narration to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function sendNarrationToWhisper(whisper, messageText, narrationType, addSpectate = true) {
+export function sendNarrationToWhisper(whisper, messageText, narrationType, addSpectate = true) {
     if (messageText !== "") {
         whisper.getGame().messageQueue.enqueue(
             {
@@ -185,7 +185,7 @@ export async function sendNarrationToWhisper(whisper, messageText, narrationType
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export async function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
+export function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
     const components = discordUtils.createNarrateComponents(notificationType, player.getGame(), messageText, player);
     const files = attachments.map((attachment) => attachment.url);
 
@@ -226,7 +226,7 @@ export async function sendNotification(player, messageText, notificationType, ad
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export async function sendPlainTextNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
+export function sendPlainTextNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {
@@ -266,7 +266,7 @@ export async function sendPlainTextNotification(player, messageText, addSpectate
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export async function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
+export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
         const components = discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor);
         if (!player.isNPC) {
@@ -304,7 +304,7 @@ export async function sendRoomDescription(player, location, descriptionText, occ
  * @param {Messageable} channel - The channel to send the help menu to.
  * @param {Command} command - The command to display the help menu for.
  */
-export async function sendCommandHelp(game, channel, command) {
+export function sendCommandHelp(game, channel, command) {
     const commandName = capitalizeFirstLetter(command.config.name.substring(0, command.config.name.indexOf('_')));
     const title = `**${commandName} Command Help**`;
     const description = command.config.description;
@@ -335,7 +335,7 @@ export async function sendCommandHelp(game, channel, command) {
  * @param {Game} game - The game in which to send a log message.
  * @param {string} messageText - The message to send.
  */
-export async function sendLogMessage(game, messageText) {
+export function sendLogMessage(game, messageText) {
     game.messageQueue.enqueue(
         {
             fire: async () => {
@@ -369,7 +369,7 @@ export function sendGameMechanicMessage(game, channel, messageText) {
  * @param {UserMessage} message - The message to reply to.
  * @param {string} messageText - The text to send in response.
  */
-export async function sendReply(game, message, messageText) {
+export function sendReply(game, message, messageText) {
     game.messageQueue.enqueue(
         {
             fire: async () => {
@@ -393,7 +393,7 @@ export async function sendReply(game, message, messageText) {
  * @param {Whisper} [whisper] - The whisper the dialog was sent in, if applicable.
  * @param {string} [displayName] - The displayName to use for the mirrored webhook message. If none is specified, the speaker's current displayName will be used.
  */
-export async function addSpectatedPlayerMessage(player, speaker, message, whisper = null, displayName = null) {
+export function addSpectatedPlayerMessage(player, speaker, message, whisper = null, displayName = null) {
     if (player.spectateChannel !== null) {
         const messageText =
             whisper && whisper.playersCollection.size > 1
@@ -402,12 +402,12 @@ export async function addSpectatedPlayerMessage(player, speaker, message, whispe
                     ? `*(Whispered):*\n${message.content || ""}`
                     : message.content || "";
 
-        const webhook = await getOrCreateWebhook(player.spectateChannel);
         const files = message.attachments.map((attachment) => attachment.url);
 
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
+                    const webhook = await getOrCreateWebhook(player.spectateChannel);
                     const webhookMessage = await sendWebhookMessage(
                         webhook,
                         messageText,
@@ -438,12 +438,12 @@ export async function addSpectatedPlayerMessage(player, speaker, message, whispe
  * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
  * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
  */
-export async function sendWebhookSpectateMessage(player, message, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = []) {
+export function sendWebhookSpectateMessage(player, message, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = []) {
     if (player.spectateChannel !== null) {
-        const webhook = await getOrCreateWebhook(player.spectateChannel);
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
+                    const webhook = await getOrCreateWebhook(player.spectateChannel);
                     const webhookMessage = await sendWebhookMessage(
                         webhook,
                         messageText,
@@ -466,7 +466,7 @@ export async function sendWebhookSpectateMessage(player, message, messageText, w
  * @param {UserMessage|import('discord.js').PartialMessage} messageOld - The original message being edited.
  * @param {UserMessage} messageNew - The new message after being edited.
  */
-export async function editSpectatorMessage(game, messageOld, messageNew) {
+export function editSpectatorMessage(game, messageOld, messageNew) {
     const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(messageOld);
     if (!spectateMirrors) return;
     spectateMirrors.forEach(async (mirror) => {
@@ -532,7 +532,7 @@ export async function sendQueuedMessages(game) {
 /**
  * @param {Game} game - The game whose message queue should be emptied. 
  */
-export async function clearQueue(game) {
+export function clearQueue(game) {
     game.messageQueue.clear();
 }
 

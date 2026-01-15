@@ -18,7 +18,7 @@ vi.mock(import('discord.js'), async (importOriginal) => {
         ...actual,
         discordMock
     }
-    
+
 });
 
 import GuildContext from '../Classes/GuildContext.js';
@@ -26,6 +26,7 @@ import GameSettings from '../Classes/GameSettings.js';
 import Game from '../Data/Game.js';
 import BotContext from '../Classes/BotContext.js';
 import { ChannelType, Collection } from 'discord.js';
+import {DEFAULT_GAME_SETTINGS} from "../Modules/settingsLoader.ts";
 
 vi.mock('../Configs/credentials.json', () => ({ default: credentials }));
 vi.mock('../Configs/demodata.json', () => ({ default: demodata }));
@@ -97,37 +98,8 @@ beforeAll(() => {
         spectatorRole
     );
 
-    const onlineActivity = { name: settings.onlineActivity.string, type: BotContext.getActivityType(settings.onlineActivity.type) };
-    const debugModeActivity = { name: settings.debugModeActivity.string, type: BotContext.getActivityType(settings.debugModeActivity.type) };
-    const gameInProgressActivity = { name: settings.gameInProgressActivity.string, type: BotContext.getActivityType(settings.gameInProgressActivity.type), url: settings.gameInProgressActivity.url };
-
-    const gameSettings = new GameSettings(
-        settings.commandPrefix,
-        settings.debug,
-        settings.spreadsheetID,
-        settings.pixelsPerMeter,
-        settings.staminaUseRate,
-        settings.heatedSlowdownRate,
-        settings.autoSaveInterval,
-        settings.diceMin,
-        settings.diceMax,
-        settings.defaultDropObject,
-        settings.defaultRoomIconURL,
-        settings.defaultConcealedIconURL,
-        settings.hiddenIconURL,
-        settings.autoDeleteWhisperChannels,
-        settings.embedAccentColor,
-        settings.standardNarrationAccentColor,
-        settings.alertNarrationAccentColor,
-        settings.showOnlinePlayerCount,
-        settings.autoLoad,
-        onlineActivity,
-        debugModeActivity,
-        gameInProgressActivity
-    );
-
     // Initialize game and bot context with empty command collections.
-    const game = new Game(guildContext, gameSettings);
+    const game = new Game(guildContext, DEFAULT_GAME_SETTINGS);
     const botCommands = new Collection();
     const moderatorCommands = new Collection();
     const playerCommands = new Collection();

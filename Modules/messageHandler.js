@@ -67,15 +67,12 @@ export function processIncomingMessage(game, message) {
  */
 export function sendNarrationToRoom(room, messageText, narrationType, addSpectate = true, player = null) {
     if (messageText !== "") {
-        const components = discordUtils.createNarrateComponents(narrationType, room.getGame(), messageText, player);
+        const messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(narrationType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await room.channel.send({
-                        components: components,
-                        flags: MessageFlags.IsComponentsV2
-                    });
+                    await room.channel.send(messageCreateOptions);
                 },
             },
             "tell"
@@ -86,44 +83,7 @@ export function sendNarrationToRoom(room, messageText, narrationType, addSpectat
                     room.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await occupant.spectateChannel.send({
-                                    components: components,
-                                    flags: MessageFlags.IsComponentsV2
-                                });
-                            },
-                        },
-                        "spectator"
-                    );
-                }
-            });
-        }
-    }
-}
-
-/**
- * Narrates a message to a room as plain text.
- * @param {Room} room - The room to send the message to.
- * @param {string} messageText - The message to send.
- * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- * @param {Player} [player] - The player whose action the narration is about, if applicable.
- */
-export function sendPlainTextNarrationToRoom(room, messageText, addSpectate = true, player = null) {
-    if (messageText !== "") {
-        room.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await room.channel.send(messageText);
-                },
-            },
-            "tell"
-        );
-        if (addSpectate) {
-            room.occupants.forEach((occupant) => {
-                if (doMirrorInSpectateChannel(occupant, player)) {
-                    room.getGame().messageQueue.enqueue(
-                        {
-                            fire: async () => {
-                                await occupant.spectateChannel.send(messageText);
+                                await occupant.spectateChannel.send(messageCreateOptions);
                             },
                         },
                         "spectator"
@@ -146,10 +106,7 @@ export function sendNarrationToWhisper(whisper, messageText, narrationType, addS
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await whisper.channel.send({
-                        components: discordUtils.createNarrateComponents(narrationType, whisper.getGame(), messageText),
-                        flags: MessageFlags.IsComponentsV2,
-                    });
+                    await whisper.channel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageText));
                 },
             },
             "tell"
@@ -163,10 +120,7 @@ export function sendNarrationToWhisper(whisper, messageText, narrationType, addS
                     whisper.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await player.spectateChannel.send({
-                                    components: discordUtils.createNarrateComponents(narrationType, whisper.getGame(), spectateMessageText),
-                                    flags: MessageFlags.IsComponentsV2,
-                                });
+                                await player.spectateChannel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), spectateMessageText));
                             },
                         },
                         "spectator"
@@ -186,18 +140,14 @@ export function sendNarrationToWhisper(whisper, messageText, narrationType, addS
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
 export function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
-    const components = discordUtils.createNarrateComponents(notificationType, player.getGame(), messageText, player);
     const files = attachments.map((attachment) => attachment.url);
+    const messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(notificationType, player.getGame(), messageText, player, files);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.notificationChannel.send({
-                        components: components,
-                        flags: MessageFlags.IsComponentsV2,
-                        files: files
-                    });
+                    await player.notificationChannel.send(messageCreateOptions);
                 },
             },
             "tell"
@@ -207,49 +157,7 @@ export function sendNotification(player, messageText, notificationType, addSpect
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.spectateChannel.send({
-                        components: components,
-                        flags: MessageFlags.IsComponentsV2,
-                        files: files
-                    });
-                },
-            },
-            "spectator"
-        );
-    }
-}
-
-/**
- * Sends a notification message to a player as plain text.
- * @param {Player} player - The player to send the message to.
- * @param {string} messageText - The message to send.
- * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
- */
-export function sendPlainTextNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
-    const files = attachments.map((attachment) => attachment.url);
-
-    if (!player.isNPC) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await player.notificationChannel.send({
-                        content: messageText,
-                        files: files
-                    });
-                },
-            },
-            "tell"
-        );
-    }
-    if (addSpectate && player.spectateChannel !== null) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await player.spectateChannel.send({
-                        content: messageText,
-                        files: files
-                    });
+                    await player.spectateChannel.send(messageCreateOptions);
                 },
             },
             "spectator"

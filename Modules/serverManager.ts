@@ -1,5 +1,5 @@
 import {ChannelType, type Guild, type GuildBasedChannel} from 'discord.js';
-import {readFile, writeFile, access, constants} from "node:fs/promises";
+import {access, constants, readFile, writeFile, mkdir} from "node:fs/promises";
 
 const SERVER_CONFIG_PATH = "./Configs/serverconfig.json";
 
@@ -7,7 +7,7 @@ export interface ServerConfig {
     testerRole: string;
     eligibleRole: string;
     playerRole: string;
-    headmasterRole: string;
+    freeMovementRole: string;
     moderatorRole: string;
     deadRole: string;
     spectatorRole: string;
@@ -46,10 +46,10 @@ export async function validateServerConfig(guild: Guild, serverConfig: ServerCon
             save = true;
         } else missingSettings.push("playerRole");
     }
-    if (serverConfig.headmasterRole === "") {
+    if (serverConfig.freeMovementRole === "") {
         let headmasterRole = guild.roles.cache.find(role => role.name === "Headmaster");
         if (headmasterRole) {
-            serverConfig.headmasterRole = headmasterRole.id;
+            serverConfig.freeMovementRole = headmasterRole.id;
             save = true;
         } else missingSettings.push("headmasterRole");
     }
@@ -147,25 +147,32 @@ export async function validateServerConfig(guild: Guild, serverConfig: ServerCon
 }
 
 /**
- * Loads the server configuration from the serverconfig.json file and overrides with environment variables.
+ * Loads the server configuration from the serverconfig.json file and overrides with environment variables if set.
+ *
+ * @returns ServerConfig object loaded from serverconfig.json file.
  */
 export async function loadServerConfig(): Promise<ServerConfig> {
-    let file = await readFile(SERVER_CONFIG_PATH, 'utf8');
-    let serverConfigFile: ServerConfig;
+    let file: string, serverConfigFile: ServerConfig;
+
+    try {
+        file = await readFile(SERVER_CONFIG_PATH, 'utf8');
+    } catch (err) {
+        throw new Error(`Failed to read serverconfig.json file. Please check that the file exists and is readable. Error: ${err}`);
+    }
 
     try {
         serverConfigFile = JSON.parse(file);
     } catch (err) {
-        throw new Error(`Failed to parse serverconfig.json file. Error: ${err}`);
+        throw new Error(`Cannot parse serverconfig.json file. Please check that the file is valid JSON and has the correct fields. Error: ${err}`);
     }
 
-    let serverConfig: ServerConfig =  {
+    return {
         announcementChannel: process.env.ANNOUNCEMENT_CHANNEL ?? serverConfigFile.announcementChannel,
         commandChannel: process.env.COMMAND_CHANNEL ?? serverConfigFile.commandChannel,
         deadRole: process.env.DEAD_ROLE ?? serverConfigFile.deadRole,
         eligibleRole: process.env.ELIGIBLE_ROLE ?? serverConfigFile.eligibleRole,
         generalChannel: process.env.GENERAL_CHANNEL ?? serverConfigFile.generalChannel,
-        headmasterRole: process.env.HEADMASTER_ROLE ?? serverConfigFile.headmasterRole,
+        freeMovementRole: process.env.FREE_MOVEMENT_ROLE ?? serverConfigFile.freeMovementRole,
         logChannel: process.env.LOG_CHANNEL ?? serverConfigFile.logChannel,
         moderatorRole: process.env.MODERATOR_ROLE ?? serverConfigFile.moderatorRole,
         playerRole: process.env.PLAYER_ROLE ?? serverConfigFile.playerRole,
@@ -176,8 +183,6 @@ export async function loadServerConfig(): Promise<ServerConfig> {
         testingChannel: process.env.TESTING_CHANNEL ?? serverConfigFile.testingChannel,
         whisperCategory: process.env.WHISPER_CATEGORY ?? serverConfigFile.whisperCategory
     };
-
-    return serverConfig;
 }
 
 export function createCategory(guild: Guild, name: string) {
@@ -214,13 +219,14 @@ export async function createServerConfigFileIfNotExists() {
     }
 
     if (!fileExists) {
+        console.log("No serverconfigs.json found, creating empty file.");
         let emptyServerConfig: ServerConfig = {
             announcementChannel: "",
             commandChannel: "",
             deadRole: "",
             eligibleRole: "",
             generalChannel: "",
-            headmasterRole: "",
+            freeMovementRole: "",
             logChannel: "",
             moderatorRole: "",
             playerRole: "",
@@ -231,6 +237,13 @@ export async function createServerConfigFileIfNotExists() {
             testingChannel: "",
             whisperCategory: ""
         }
+        // Create directory if it doesn't exist
+        try{
+            await mkdir("./Configs", {recursive: true});
+        } catch (err) {
+            throw new Error(`Failed to create Configs directory. Error: ${err}`);
+        }
+        // Write empty serverconfig.json file
         try {
             await writeServerConfig(emptyServerConfig);
         } catch (err) {

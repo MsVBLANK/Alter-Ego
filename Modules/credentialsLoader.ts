@@ -21,14 +21,20 @@ export interface Credentials {
     }
 }
 
-export function loadCredentials(): Credentials {
+/**
+ * Loads credentials from the credentials.json file, or from environment variables if the file does not exist.
+ *
+ * @returns Credentials object.
+ */
+export function loadCredentialsSync(): Credentials {
     let file: string, parseFile: boolean;
 
     try {
-        file = readCredentialsFile();
+        file = readFileSync(CREDENTIALS_FILE_PATH, "utf8");
         parseFile = true;
     } catch (err) {
-        console.log("Cannot read credentials file. Attempting to read from environment variables.");
+        console.warn(`Cannot read credentials file. Attempting to read from environment variables.
+        If you intended to use a credentials file, Please check that the file exists and is readable.`);
         parseFile = false;
     }
 
@@ -39,14 +45,20 @@ export function loadCredentials(): Credentials {
     }
 }
 
+/**
+ * Asynchronously loads credentials from the credentials.json file, or from environment variables if the file does not exist.
+ *
+ * @returns Credentials object.
+ */
 export async function loadCredentialsAsync(): Promise<Credentials> {
     let file: string, parseFile: boolean;
 
     try {
-        file = await readCredentialsFileAsync();
+        file = await readFile(CREDENTIALS_FILE_PATH, "utf8");
         parseFile = true;
     } catch (err) {
-        console.log("Cannot read credentials file. Attempting to read from environment variables.");
+        console.warn(`Cannot read credentials file. Attempting to read from environment variables.
+        If you intended to use a credentials file, Please check that the file exists and is readable.`);
         parseFile = false;
     }
 
@@ -57,18 +69,25 @@ export async function loadCredentialsAsync(): Promise<Credentials> {
     }
 }
 
-export function readCredentialsFile(): string {
-    return readFileSync(CREDENTIALS_FILE_PATH, "utf8");
-}
-
-export async function readCredentialsFileAsync(): Promise<string> {
-    return readFile(CREDENTIALS_FILE_PATH, "utf8");
-}
-
+/**
+ * Parses the contents of the credentials.json file into a Credentials object. Throws an error if the file cannot be parsed.
+ *
+ * @param file JSON string containing credentials.
+ * @returns Credentials object.
+ */
 export function parseCredentialsFile(file: string): Credentials {
-    return JSON.parse(file);
+    try {
+        return JSON.parse(file);
+    } catch (err) {
+        throw new Error(`Cannot parse credentials file. Please check that the file is valid JSON and has the correct fields. Error: ${err.message}`);
+    }
 }
 
+/**
+ * Reads credentials from environment variables. Throws an error if any of the required environment variables are not set.
+ *
+ * @returns Credentials object.
+ */
 export function readCredentialsEnv(): Credentials {
     let credentials: Credentials;
 

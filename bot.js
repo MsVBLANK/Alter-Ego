@@ -19,7 +19,7 @@ import fs, {readdir, readFileSync} from 'fs';
 import {loadEnvFile} from 'node:process';
 import {loadGameSettings, loadPlayerDefaults} from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
-import {loadCredentials} from "./Modules/credentialsLoader.ts";
+import {loadCredentialsSync} from "./Modules/credentialsLoader.ts";
 
 const client = new Client({
     partials: [
@@ -120,7 +120,7 @@ async function createGuildContext(){
         const testerRole = guild.roles.resolve(serverConfig.testerRole);
         const eligibleRole = guild.roles.resolve(serverConfig.eligibleRole);
         const playerRole = guild.roles.resolve(serverConfig.playerRole);
-        const freeMovementRole = guild.roles.resolve(serverConfig.headmasterRole);
+        const freeMovementRole = guild.roles.resolve(serverConfig.freeMovementRole);
         const moderatorRole = guild.roles.resolve(serverConfig.moderatorRole);
         const deadRole = guild.roles.resolve(serverConfig.deadRole);
         const spectatorRole = guild.roles.resolve(serverConfig.spectatorRole);
@@ -303,6 +303,6 @@ process.on('unhandledRejection', error => {
 loadDotEnv();
 sendStartupLog();
 let gameSettings = loadSettings();
-let credentials = loadCredentials();
+let credentials = loadCredentialsSync();
 
 client.login(credentials.discord.token);

@@ -39,7 +39,7 @@ export async function processIncomingMessage(game, message) {
             message.delete().catch();
             return;
         }
-        const location = isInAnnouncementChannel ? player.location : room;
+        const location = isInAnnouncementChannel || isInWhisperChannel ? player.location : room;
         const dialog = new Dialog(game, message, player, location, message.cleanContent, isInAnnouncementChannel, whisper);
         if (dialog.isAnnouncement) {
             const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
@@ -432,17 +432,14 @@ export async function addSpectatedPlayerMessage(player, speaker, message, whispe
  * Mirrors a dialog message in a spectate channel.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {Dialog} dialog - The dialog to mirror.
+ * @param {string} [messageTextPrefix] - The text to insert before the contents of the rest of the message. Optional.
  * @param {string} [webhookUsername] - The username to use for the mirrored webhook message. If none is specified, the speaker's current displayName will be used.
  * @param {string} [webhookAvatarURL] - The avatar URL to use for the mirrored webhook message. If none is specified, the speaker's current displayIcon will be used.
  */
-export async function sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL) {
+export async function sendDialogSpectateMessage(player, dialog, messageTextPrefix = "", webhookUsername, webhookAvatarURL) {
     if (player.spectateChannel !== null) {
-        const messageText =
-            dialog.whisper && dialog.whisper.playersCollection.size > 1
-                ? `*(Whispered to ${dialog.whisper.generatePlayerListStringExcluding(dialog.speaker)}):*\n${dialog.content || ""}`
-                : dialog.whisper
-                    ? `*(Whispered):*\n${dialog.content || ""}`
-                    : dialog.content || "";
+        let messageText = dialog.content || "";
+        messageText = messageTextPrefix + messageText;
 
         const webhook = await getOrCreateWebhook(player.spectateChannel);
         player.getGame().messageQueue.enqueue(

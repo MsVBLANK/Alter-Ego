@@ -242,6 +242,18 @@ export default class Dialog extends GameConstruct {
 	}
 
 	/**
+	 * Returns the prefix string to append before the rest of the message text in webhook messages. If the dialog was not whispered, returns an empty string.
+	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
+	 */
+	getWhisperPrefixStringForWebhook(playerCanSeeSpeaker) {
+		return this.whisper && this.whisper.playersCollection.size > 1 && playerCanSeeSpeaker
+			? `*(Whispered to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}):*\n`
+			: this.whisper
+				? `*(Whispered):*\n`
+				: "";
+	}
+
+	/**
 	 * Returns the display name to use for the speaker in webhook messages. This depends on whether or not a given player can see the speaker.
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */

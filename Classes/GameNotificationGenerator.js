@@ -85,13 +85,14 @@ export default class GameNotificationGenerator {
 		const playerCanSeeSpeaker = player.canSee() && !dialog.speaker.isHidden();
 		let speakerString = "";
 		if (player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
-			speakerString = playerCanSeeSpeaker ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
+			speakerString = dialog.speakerDisplayNameIsDifferent && playerCanSeeSpeaker ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
 		else if (!playerCanSeeSpeaker)
 			speakerString = dialog.isMimicking(player) ? `someone in the room` : `someone in the room with ${dialog.speakerVoiceString}`;
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
-		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `You overhear ${speakerString} whisper "${dialog.content}"${punctuation}`;
+		const recipientString = playerCanSeeSpeaker ? ` to ${dialog.whisper.generatePlayerListStringExcluding(dialog.speaker)}` : ``;
+		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : recipientString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
+		return `You overhear ${speakerString} whisper "${dialog.content}"${recipientString}${punctuation}`;
 	}
 
 	/**
@@ -134,7 +135,7 @@ export default class GameNotificationGenerator {
 		const playerCanSeeSpeaker = player && player.canSee() && roomIsVisible && !dialog.speaker.isHidden();
 		let speakerString = "";
 		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
-			speakerString = playerCanSeeSpeaker ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
+			speakerString = playerCanSeeSpeaker && dialog.speakerDisplayNameIsDifferent ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
 		else if (player && !playerCanSeeSpeaker || !roomIsVisible)
 			speakerString = player && dialog.isMimicking(player) ? `someone` : `someone with ${dialog.speakerVoiceString}`;
 		else

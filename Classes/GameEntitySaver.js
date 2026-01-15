@@ -1,4 +1,4 @@
-import demodata from "../Configs/demodata.json" with { type: 'json' };
+import demodata from "../Defaults/default_demodata.json" with { type: 'json' };
 import { batchUpdateSheetValues } from "../Modules/sheets.js";
 
 /** @typedef {import("../Data/Game.js").default} Game */
@@ -18,7 +18,7 @@ export default class GameEntitySaver {
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		this.game = game;

@@ -1,5 +1,5 @@
-﻿import playerdefaults from '../Configs/playerdefaults.json' with { type: 'json' };
-import { updateSheetValues } from '../Modules/sheets.js';
+﻿import { updateSheetValues } from '../Modules/sheets.js';
+import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -19,8 +19,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}startgame 24h\n`
@@ -28,10 +28,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     if (args.length === 0) return game.communicationHandler.reply(message, "Remember to specify how long players have to join!");
@@ -78,6 +78,7 @@ export async function execute(game, message, command, args) {
             return 0;
         });
 
+        const [playerdefaults] = loadPlayerDefaults();
         const playerCells = [];
         const inventoryCells = [];
         let i = 0;

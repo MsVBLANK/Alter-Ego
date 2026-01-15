@@ -1,5 +1,6 @@
 ﻿import { createRequire } from 'node:module';
 import { google } from 'googleapis';
+import {loadCredentials} from "./credentialsLoader.ts";
 const sheets = google.sheets({ version: 'v4' });
 
 /**
@@ -91,7 +92,7 @@ export function updateSheetValues (sheetRange, data, spreadsheetId) {
 
 /**
  * Updates the values of the spreadsheet for multiple sheetRanges.
- * @param {ValueRange[]} data - The ranges to update and the values to replace them with. 
+ * @param {ValueRange[]} data - The ranges to update and the values to replace them with.
  * @param {string} spreadsheetId - The ID of the spreadsheet to update.
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate#response-body}
  */
@@ -116,7 +117,7 @@ export function batchUpdateSheetValues (data, spreadsheetId) {
 }
 
 /**
- * 
+ *
  * @param {object[]} requests - An array of {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/request#Request|Requests}.
  * @param {string} spreadsheetId - The ID of the spreadsheet to update.
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/batchUpdate#response-body}
@@ -174,19 +175,7 @@ export function appendRowsToSheet (sheetRange, data, spreadsheetId) {
 }
 
 function authorize() {
-    const require = createRequire(import.meta.url);
-    let credentials;
-    try {
-        credentials = require('../Configs/credentials.json');
-    } 
-    catch(err) {
-        console.error('Could not load Configs/credentials.json:', err);
-        return null;
-    }
-    if (!credentials || !credentials.google) {
-        console.error('Invalid credentials format in Configs/credentials.json');
-        return null;
-    }
+    let credentials = loadCredentials();
     return new google.auth.JWT({
         email: credentials.google.client_email,
         key: credentials.google.private_key,

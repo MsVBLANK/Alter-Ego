@@ -235,7 +235,7 @@ describe('messageHandler test', () => {
                 asuka.inflict(mute);
                 const message = discord.createPlayerMessage(asuka, "Hi.");
                 const deleteMessageSpy = vi.spyOn(message, 'delete');
-                await messageHandler.processIncomingMessage(game, message);
+                messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
                 expect(asuka.notificationChannel.messages.cache.size).toBe(1);
                 expect(asuka.notificationChannel.messages.cache.first().content).toBe(`You are **${mute.id}**, so you cannot speak.`);
@@ -259,7 +259,7 @@ describe('messageHandler test', () => {
             test('announcement message by living player', async () => {
                 const message = discord.createPlayerMessage(kyra, "Good morning, everyone.", game.guildContext.announcementChannel);
                 const announceActionSpy = vi.spyOn(AnnounceAction.prototype, 'performAnnounce');
-                await messageHandler.processIncomingMessage(game, message);
+                messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
                 expect(dialogConstructorSpy).toHaveBeenCalledTimes(1);
                 expect(announceActionSpy).toHaveBeenCalledTimes(1);
@@ -278,7 +278,7 @@ describe('messageHandler test', () => {
                 const evad = game.entityFinder.getDeadPlayer("Evad");
                 const message = discord.createPlayerMessage(evad, "Good morning, y'all.", game.guildContext.announcementChannel);
                 const announceActionSpy = vi.spyOn(AnnounceAction.prototype, 'performAnnounce');
-                await messageHandler.processIncomingMessage(game, message);
+                messageHandler.processIncomingMessage(game, message);
                 expect(dialogConstructorSpy).not.toHaveBeenCalled();
                 expect(announceActionSpy).not.toHaveBeenCalled();
                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
@@ -293,7 +293,7 @@ describe('messageHandler test', () => {
                     channel: game.guildContext.announcementChannel
                 });
                 const announceActionSpy = vi.spyOn(AnnounceAction.prototype, 'performAnnounce');
-                await messageHandler.processIncomingMessage(game, message);
+                messageHandler.processIncomingMessage(game, message);
                 expect(dialogConstructorSpy).not.toHaveBeenCalled();
                 expect(announceActionSpy).not.toHaveBeenCalled();
                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
@@ -344,7 +344,7 @@ describe('messageHandler test', () => {
              */
             const sendPlayerMessage = async (player, messageText, channel) => {
                 message = discord.createPlayerMessage(player, messageText, channel);
-                await messageHandler.processIncomingMessage(game, message);
+                messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
                 kyraSpectateMessage = kyra.spectateChannel.messages.cache.first();
                 vivianSpectateMessage = vivian.spectateChannel.messages.cache.first();

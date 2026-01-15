@@ -51,6 +51,7 @@ export default class NarrateAction extends Action {
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
 	#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName = narration.narratorDisplayName, narratorDisplayIcon = narration.narratorDisplayIcon, narrationText = narration.content) {
+		narrationText = narration.getWhisperPrefixStringForWebhook() + narrationText;
 		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 	}
 

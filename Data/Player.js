@@ -1533,9 +1533,9 @@ export default class Player extends ItemContainer {
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
      * @param {NarrationType} [notificationType] - The type of notification to send. Defaults to DIALOG, or plain text.
      */
-    async notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG) {
+    notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG) {
         if (this.isConscious() && !this.isNPC)
-            await this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate, notificationType);
+            this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate, notificationType);
     }
 
     /**

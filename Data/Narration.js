@@ -142,6 +142,17 @@ export default class Narration extends GameConstruct {
     }
 
     /**
+     * Returns the prefix string to append before the rest of the message text in webhook messages. If the narration didn't occur in a whisper, returns an empty string.
+     */
+    getWhisperPrefixStringForWebhook() {
+        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
+        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
+        return this.whisper
+            ? `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
+            : "";
+    }
+
+    /**
      * Send the narration. This should always be called when instantiating a narration.
      * @deprecated
      */

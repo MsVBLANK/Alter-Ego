@@ -3,6 +3,7 @@ import { NarrationType } from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, Collection, TextChannel } from "discord.js";
 
 /** @typedef {import("../Data/Dialog.js").default} Dialog */
@@ -214,15 +215,15 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player whose spectate channel this dialog will be mirrored in.
 	 * @param {Action} action - The action associated with the dialog.
 	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {string} [messageTextPrefix] - The text to insert before the contents of the rest of the message. Optional.
-	 * @param {string} [webhookUsername] - A custom username to use for the webhook that will send the spectate message. Optional.
-	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
+	 * @param {string} [webhookUsername] - The username to use for the mirrored webhook message. Defaults to the dialog speaker's display name.
+	 * @param {string} [webhookAvatarURL] - The avatar URL to use for the mirrored webhook message. Defaults to the dialog speaker's display icon.
+	 * @param {string} [messageText] - The text of the message to send. Defaults to the content of the dialog.
 	 * @param {string} [notification] - A custom notification that will be sent to the player afterwards. Optional. This notification will not be mirrored in the spectate channel.
 	 */
-	async mirrorDialogInSpectateChannel(player, action, dialog, messageTextPrefix, webhookUsername, webhookAvatarURL, notification) {
+	async mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, messageText = dialog.content, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			await messageHandler.sendDialogSpectateMessage(player, dialog, messageTextPrefix, webhookUsername, webhookAvatarURL);
+			await messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
 			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
 		}
 	}
@@ -239,7 +240,7 @@ export default class GameCommunicationHandler {
 	async mirrorNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			await messageHandler.sendNarrationSpectateMessage(player, narration, webhookUsername, webhookAvatarURL, narrationText);
+			await messageHandler.sendWebhookSpectateMessage(player, narration.message, narrationText, webhookUsername, webhookAvatarURL, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url));
 		}
 	}
 

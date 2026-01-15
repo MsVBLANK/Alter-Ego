@@ -32,7 +32,6 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
     alertNarrationAccentColor: "FF0E0E",
     showOnlinePlayerCount: true,
     autoLoad: false,
-    autoStart: false,
     onlineActivity: {
         name: "Future Foundation HQ",
         type: BotContext.getActivityType("LISTENING")

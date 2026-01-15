@@ -51,6 +51,7 @@ export default class NarrateAction extends Action {
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
 	#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName = narration.narratorDisplayName, narratorDisplayIcon = narration.narratorDisplayIcon, narrationText = narration.content) {
+		narrationText = narration.getWhisperPrefixStringForWebhook() + narrationText;
 		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 	}
 
@@ -67,7 +68,7 @@ export default class NarrateAction extends Action {
 			if (narration.player.name === player.name) continue;
 			if (this.#playerCannotReceiveCommunications(player)) continue;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, false);
+				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.type, false);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 		}
 	}

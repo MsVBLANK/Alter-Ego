@@ -142,6 +142,17 @@ export default class Narration extends GameConstruct {
     }
 
     /**
+     * Returns the prefix string to append before the rest of the message text in webhook messages. If the narration didn't occur in a whisper, returns an empty string.
+     */
+    getWhisperPrefixStringForWebhook() {
+        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
+        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
+        return this.whisper
+            ? `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
+            : "";
+    }
+
+    /**
      * Send the narration. This should always be called when instantiating a narration.
      * @deprecated
      */
@@ -151,7 +162,7 @@ export default class Narration extends GameConstruct {
                 // Players with the see room attribute should receive all narrations besides their own via DM.
                 if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
                     if (!this.player || occupant.name !== this.player.name)
-                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                 }
             }
             this.getGame().communicationHandler.narrateInRoom(this);
@@ -164,7 +175,7 @@ export default class Narration extends GameConstruct {
                     if (room.id !== this.location.id) {
                         for (let occupant of room.occupants) {
                             if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
-                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                             }
                         }
                         this.getGame().communicationHandler.narrateInRoom(this);
@@ -191,7 +202,7 @@ export default class Narration extends GameConstruct {
                     if (occupant.canSee() && !occupant.isNPC
                         && (occupant.hasBehaviorAttribute("see room") || !occupant.member.permissionsIn(whisper.channel).has("ViewChannel"))) {
                         if (!this.player || occupant.name !== this.player.name)
-                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, false);
+                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                     }
                 }
                 this.getGame().communicationHandler.narrateInWhisper(whisper, this.action, this.content, this.type);

@@ -35,11 +35,11 @@ export function processIncomingMessage(game, message) {
         player.setOnline();
         const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
         if (playerNoSpeechStatusEffects.length > 0) {
-            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false);
+            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, NarrationType.ALERT);
             message.delete().catch();
             return;
         }
-        const location = isInAnnouncementChannel ? player.location : room;
+        const location = isInAnnouncementChannel || isInWhisperChannel ? player.location : room;
         const dialog = new Dialog(game, message, player, location, message.cleanContent, isInAnnouncementChannel, whisper);
         if (dialog.isAnnouncement) {
             const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
@@ -181,14 +181,23 @@ export function sendNarrationToWhisper(whisper, messageText, narrationType, addS
  * Sends a notification message to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
+ * @param {NarrationType} notificationType - The type of notification to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export function sendNotification(player, messageText, addSpectate = true) {
+export function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
+    const components = discordUtils.createNarrateComponents(notificationType, player.getGame(), messageText, player);
+    const files = attachments.map((attachment) => attachment.url);
+
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.notificationChannel.send(messageText);
+                    await player.notificationChannel.send({
+                        components: components,
+                        flags: MessageFlags.IsComponentsV2,
+                        files: files
+                    });
                 },
             },
             "tell"
@@ -198,7 +207,11 @@ export function sendNotification(player, messageText, addSpectate = true) {
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.spectateChannel.send(messageText);
+                    await player.spectateChannel.send({
+                        components: components,
+                        flags: MessageFlags.IsComponentsV2,
+                        files: files
+                    });
                 },
             },
             "spectator"
@@ -207,25 +220,24 @@ export function sendNotification(player, messageText, addSpectate = true) {
 }
 
 /**
- * Sends a notification message with attached files to a player.
+ * Sends a notification message to a player as plain text.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
- * @param {Collection<string, Attachment>} attachments - The attachments to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export function sendNotificationWithAttachments(player, messageText, attachments, addSpectate = true) {
+export function sendPlainTextNotification(player, messageText, addSpectate = true, attachments = new Collection()) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
-                fire: async () =>
-                    {
-                        await player.notificationChannel.send({
-                            content: messageText,
-                            files: files,
-                        });
-                    },
+                fire: async () => {
+                    await player.notificationChannel.send({
+                        content: messageText,
+                        files: files
+                    });
+                },
             },
             "tell"
         );
@@ -236,7 +248,7 @@ export function sendNotificationWithAttachments(player, messageText, attachments
                 fire: async () => {
                     await player.spectateChannel.send({
                         content: messageText,
-                        files: files,
+                        files: files
                     });
                 },
             },
@@ -417,54 +429,17 @@ export function addSpectatedPlayerMessage(player, speaker, message, whisper = nu
 }
 
 /**
- * Mirrors a dialog message in a spectate channel.
+ * Mirrors a message in a spectate channel.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
- * @param {Dialog} dialog - The dialog to mirror.
- * @param {string} [webhookUsername] - The username to use for the mirrored webhook message. If none is specified, the speaker's current displayName will be used.
- * @param {string} [webhookAvatarURL] - The avatar URL to use for the mirrored webhook message. If none is specified, the speaker's current displayIcon will be used.
- */
-export function sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL) {
-    if (player.spectateChannel !== null) {
-        const messageText =
-            dialog.whisper && dialog.whisper.playersCollection.size > 1
-                ? `*(Whispered to ${dialog.whisper.generatePlayerListStringExcluding(dialog.speaker)}):*\n${dialog.content || ""}`
-                : dialog.whisper
-                    ? `*(Whispered):*\n${dialog.content || ""}`
-                    : dialog.content || "";
-
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    const webhook = await getOrCreateWebhook(player.spectateChannel);
-                    const webhookMessage = await sendWebhookMessage(
-                        webhook,
-                        messageText,
-                        webhookUsername ? webhookUsername : capitalizeFirstLetter(dialog.speakerDisplayName),
-                        webhookAvatarURL ? webhookAvatarURL : dialog.speakerDisplayIcon,
-                        dialog.embeds,
-                        dialog.attachments.map((attachment) => attachment.url)
-                    );
-                    player.getGame().communicationHandler.cacheSpectateMirrorForDialog(dialog.message, webhookMessage.id, webhook.id);
-                },
-            },
-            "spectator"
-        );
-    }
-}
-
-/**
- * Mirrors a dialog message in a spectate channel.
- * @param {Player} player - The player whose spectate channel this message is being sent to.
- * @param {Narration} narration - The narration to mirror.
+ * @param {UserMessage} message - The message being mirrored.
+ * @param {string} messageText - The text of the message to send.
  * @param {string} webhookUsername - The username to use for the mirrored webhook message.
  * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
- * @param {string} [messageText] - The custom text of the narration to send. Optional.
+ * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+ * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
  */
-export function sendNarrationSpectateMessage(player, narration, webhookUsername, webhookAvatarURL, messageText = narration.content) {
+export function sendWebhookSpectateMessage(player, message, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = []) {
     if (player.spectateChannel !== null) {
-        const hidingSpot = narration.whisper?.getGame().entityFinder.getFixture(narration.whisper.hidingSpotName, player.location.id);
-        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
-        if (narration.whisper) messageText = `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${narration.whisper.generatePlayerListString()}):*\n${messageText}`;
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
@@ -474,10 +449,10 @@ export function sendNarrationSpectateMessage(player, narration, webhookUsername,
                         messageText,
                         webhookUsername,
                         webhookAvatarURL,
-                        narration.message.embeds,
-                        narration.message.attachments.map((attachment) => attachment.url)
+                        embeds,
+                        files
                     );
-                    player.getGame().communicationHandler.cacheSpectateMirrorForDialog(narration.message, webhookMessage.id, webhook.id);
+                    player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
                 },
             },
             "spectator"

@@ -1,12 +1,10 @@
 'use strict';
 
-import settings from './Configs/settings.json' with { type: 'json' };
 import credentials from './Configs/credentials.json' with { type: 'json' };
 import serverconfig from './Configs/serverconfig.json' with { type: 'json' };
 
 import BotContext from './Classes/BotContext.js';
 import GuildContext from './Classes/GuildContext.js';
-import GameSettings from './Classes/GameSettings.js';
 import Game from './Data/Game.js';
 
 import BotCommand from './Classes/BotCommand.js';
@@ -14,13 +12,16 @@ import ModeratorCommand from './Classes/ModeratorCommand.js';
 import PlayerCommand from './Classes/PlayerCommand.js';
 import EligibleCommand from './Classes/EligibleCommand.js';
 
-import { validateServerConfig } from './Modules/serverManager.js';
+import {createServerConfigFileIfNotExists, loadServerConfig, validateServerConfig} from './Modules/serverManager.ts';
 import { default as autoUpdate } from './Modules/updateHandler.js';
 import { editSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.js';
 
-import { Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
-import { readdir, readFileSync } from 'fs';
+import {Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role} from 'discord.js';
+import fs, {readdir, readFileSync} from 'fs';
+import {loadEnvFile} from 'node:process';
+import {loadGameSettings, loadPlayerDefaults} from "./Modules/settingsLoader.ts";
+import GameSettings from "./Classes/GameSettings.js";
 
 const client = new Client({
     partials: [
@@ -47,8 +48,6 @@ const client = new Client({
 let botContext;
 /** @type {GuildContext} */
 let guildContext;
-/** @type {GameSettings} */
-let gameSettings;
 /** @type {Game} */
 let game;
 
@@ -60,6 +59,7 @@ let moderatorCommands = new Collection();
 let playerCommands = new Collection();
 /** @type {Collection<string, EligibleCommand>} */
 let eligibleCommands = new Collection();
+
 async function loadCommands() {
     const commandsDir = `./Commands/`;
     readdir(commandsDir, async (error, files) => {
@@ -95,12 +95,14 @@ async function loadCommands() {
 async function createGuildContext() {
     if (client.guilds.cache.size === 1) {
         const guild = client.guilds.cache.first();
-        let firstBootMessage = await validateServerConfig(guild);
-        const commandChannel = guild.channels.resolve(serverconfig.commandChannel);
-        const logChannel = guild.channels.resolve(serverconfig.logChannel);
-        const announcementChannel = guild.channels.resolve(serverconfig.announcementChannel);
-        const testingChannel = guild.channels.resolve(serverconfig.testingChannel);
-        const generalChannel = guild.channels.resolve(serverconfig.generalChannel);
+        await createServerConfigFileIfNotExists();
+        let serverConfig = await loadServerConfig();
+        let firstBootMessage = await validateServerConfig(guild, serverConfig);
+        const commandChannel = guild.channels.resolve(serverConfig.commandChannel);
+        const logChannel = guild.channels.resolve(serverConfig.logChannel);
+        const announcementChannel = guild.channels.resolve(serverConfig.announcementChannel);
+        const testingChannel = guild.channels.resolve(serverConfig.testingChannel);
+        const generalChannel = guild.channels.resolve(serverConfig.generalChannel);
         let errors = [];
         if (!(commandChannel instanceof TextChannel))
             errors.push("Error: commandChannel in serverconfig is not a TextChannel.");
@@ -117,13 +119,13 @@ async function createGuildContext() {
             return process.exit(3);
         }
         errors = [];
-        const testerRole = guild.roles.resolve(serverconfig.testerRole);
-        const eligibleRole = guild.roles.resolve(serverconfig.eligibleRole);
-        const playerRole = guild.roles.resolve(serverconfig.playerRole);
-        const freeMovementRole = guild.roles.resolve(serverconfig.headmasterRole);
-        const moderatorRole = guild.roles.resolve(serverconfig.moderatorRole);
-        const deadRole = guild.roles.resolve(serverconfig.deadRole);
-        const spectatorRole = guild.roles.resolve(serverconfig.spectatorRole);
+        const testerRole = guild.roles.resolve(serverConfig.testerRole);
+        const eligibleRole = guild.roles.resolve(serverConfig.eligibleRole);
+        const playerRole = guild.roles.resolve(serverConfig.playerRole);
+        const freeMovementRole = guild.roles.resolve(serverConfig.headmasterRole);
+        const moderatorRole = guild.roles.resolve(serverConfig.moderatorRole);
+        const deadRole = guild.roles.resolve(serverConfig.deadRole);
+        const spectatorRole = guild.roles.resolve(serverConfig.spectatorRole);
         if (!(testerRole instanceof Role))
             errors.push("Error: testerRole in serverconfig is not a Role.");
         if (!(eligibleRole instanceof Role))
@@ -149,9 +151,9 @@ async function createGuildContext() {
             announcementChannel,
             testingChannel,
             generalChannel,
-            serverconfig.roomCategories.split(','),
-            serverconfig.whisperCategory,
-            serverconfig.spectateCategory,
+            serverConfig.roomCategories.split(','),
+            serverConfig.whisperCategory,
+            serverConfig.spectateCategory,
             testerRole,
             eligibleRole,
             playerRole,
@@ -169,75 +171,36 @@ async function createGuildContext() {
     }
 }
 
-function loadGameSettings() {
+/**
+ * Loads game settings and player defaults.
+ *
+ * @returns {GameSettings} The loaded game settings.
+ */
+function loadSettings() {
+    /** @type string[] */
     let errors = [];
-    const staminaUseRate = settings.staminaUseRate;
-    if (staminaUseRate > 0)
-        errors.push("Error: staminaUseRate setting is not a negative number.");
-    const diceMin = settings.diceMin;
-    const diceMax = settings.diceMax;
-    if (diceMin >= diceMax)
-        errors.push("Error: diceMin setting must be less than diceMax.");
-    const colorRegex = /^[\dA-F]{6}$/i;
-    const embedAccentColor = settings.embedAccentColor;
-    if (!colorRegex.test(embedAccentColor))
-        errors.push("Error: embedAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
-    const standardNarrationAccentColor = settings.standardNarrationAccentColor;
-    if (!colorRegex.test(standardNarrationAccentColor))
-        errors.push("Error: standardNarrationAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
-    const alertNarrationAccentColor = settings.alertNarrationAccentColor;
-    if (!colorRegex.test(alertNarrationAccentColor))
-        errors.push("Error: alertNarrationAccentColor setting is not a valid hex color code. If it contains a # character, remove it.");
-    /** @type {Activity} */
-    const onlineActivity = {
-        name: settings.onlineActivity.string,
-        type: BotContext.getActivityType(settings.onlineActivity.type)
-    };
-    /** @type {Activity} */
-    const debugModeActivity = {
-        name: settings.debugModeActivity.string,
-        type: BotContext.getActivityType(settings.debugModeActivity.type)
-    };
-    /** @type {Activity} */
-    const gameInProgressActivity = {
-        name: settings.gameInProgressActivity.string,
-        type: BotContext.getActivityType(settings.gameInProgressActivity.type),
-        url: settings.gameInProgressActivity.url
-    };
+
+    let [gs, gsErr] = loadGameSettings();
+    errors.push(...gsErr);
+
+    let [, pdErr] = loadPlayerDefaults();
+    errors.push(...pdErr);
+
     if (errors.length > 0) {
-        console.log(errors.join('\n'));
-        return process.exit(4);
+        throw new Error(errors.join('\n'));
     }
 
-    gameSettings = new GameSettings(
-        settings.commandPrefix,
-        settings.debug,
-        settings.spreadsheetID,
-        settings.pixelsPerMeter,
-        staminaUseRate,
-        settings.heatedSlowdownRate,
-        settings.autoSaveInterval,
-        settings.diceMin,
-        settings.diceMax,
-        settings.defaultDropObject,
-        settings.defaultRoomIconURL,
-        settings.defaultConcealedIconURL,
-        settings.hiddenIconURL,
-        settings.autoDeleteWhisperChannels,
-        embedAccentColor,
-        standardNarrationAccentColor,
-        alertNarrationAccentColor,
-        settings.showOnlinePlayerCount,
-        settings.autoLoad,
-        onlineActivity,
-        debugModeActivity,
-        gameInProgressActivity
-    );
+    return gs;
 }
 
-async function sendFirstBootMessage() {
+/**
+ *
+ * @param {GameSettings} settings
+ * @returns {Promise<void>}
+ */
+async function sendFirstBootMessage(settings) {
     let moderatorRole = guildContext.guild.roles.resolve(serverconfig.moderatorRole);
-    guildContext.commandChannel.send(
+    await guildContext.commandChannel.send(
         `Alter Ego is now ready for use. To get started, give yourself the ${moderatorRole.name} role and use the `
         + `${settings.commandPrefix}help command to learn what you can do. You can issue commands in this channel.\n\n`
         + `If this is your first time using Alter Ego, use the ${settings.commandPrefix}setupdemo command to generate `
@@ -257,18 +220,46 @@ async function checkVersion() {
         guildContext.commandChannel.send(`This version of Alter Ego is out of date. Please update using Docker or download the latest version from https://github.com/MolSnoo/Alter-Ego at your earliest convenience.`);
 }
 
+function loadDotEnv() {
+    /** @type string */
+    const dotenvPath = process.env.DOTENV_PATH ?? './.env';
+
+    // Load .env file if it exists.
+    if (fs.existsSync(dotenvPath)) {
+        try {
+            loadEnvFile(dotenvPath);
+        } catch (e) {
+            console.error(`Error: Cannot load .env file: ${e.toString()}`);
+        }
+    } else {
+        console.warn(`Warning: .env file not found at ${dotenvPath}. Environment variables will not be loaded.`);
+    }
+}
+
+function sendStartupLog() {
+    let imageTag = process.env.IMAGE_TAG;
+    let imageCommit = process.env.IMAGE_COMMIT;
+    if (imageTag && imageCommit) {
+        console.log(`Alter Ego ${imageTag.split(":")[1]} (${imageCommit})`);
+    } else if (imageTag) {
+        console.log(`Alter Ego Dev (commit ${imageCommit})`);
+    } else {
+        console.log(`Alter Ego ${JSON.parse(readFileSync("./package.json").toString()).version}`);
+    }
+    console.log("Starting Alter Ego...");
+}
+
 client.on('clientReady', async () => {
     console.log(`${client.user.username} is online on ${client.guilds.cache.size} server${client.guilds.cache.size !== 1 ? 's' : ''}.`);
     const doSendFirstBootMessage = await createGuildContext();
     await loadCommands();
     await checkVersion();
-    loadGameSettings();
     await autoUpdate(gameSettings);
     game = new Game(guildContext, gameSettings);
     botContext = new BotContext(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
     game.setBotContext();
     botContext.updatePresence();
-    if (doSendFirstBootMessage) sendFirstBootMessage();
+    if (doSendFirstBootMessage) await sendFirstBootMessage(gameSettings);
     if (game.settings.autoLoad) {
         // Commands seem to need time to "settle". The snippet below breaks if run synchronously.
         setTimeout(() => {
@@ -311,4 +302,7 @@ process.on('unhandledRejection', error => {
     console.error('Unhandled promise rejection:', error);
 });
 
+loadDotEnv();
+sendStartupLog();
+let gameSettings = loadSettings();
 client.login(credentials.discord.token);

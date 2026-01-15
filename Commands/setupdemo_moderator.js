@@ -1,4 +1,4 @@
-import { registerRoomCategory, createCategory } from '../Modules/serverManager.js';
+import { registerRoomCategory, createCategory } from '../Modules/serverManager.ts';
 import { ChannelType } from 'discord.js';
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
@@ -24,18 +24,18 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}setupdemo`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     if (game.inProgress) return game.communicationHandler.reply(message, `You can't use this command while a game is in progress.`);

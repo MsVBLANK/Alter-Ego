@@ -6,7 +6,7 @@
         "outDir": "./dist",
         // Environment Settings
         // See also https://aka.ms/tsconfig/module
-        "module": "node20",
+        "module": "nodenext",
         "esModuleInterop": true,
         "target": "esnext",
         "types": [
@@ -44,7 +44,8 @@
         "isolatedModules": true,
         "noUncheckedSideEffectImports": false,
         "moduleDetection": "auto",
-        "skipLibCheck": false
+        "skipLibCheck": false,
+        "rewriteRelativeImportExtensions": true
     },
     "include": [
         "**/*"

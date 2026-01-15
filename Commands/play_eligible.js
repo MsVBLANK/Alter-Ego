@@ -32,9 +32,9 @@ export function usage(settings) {
 export async function execute(game, message, command, args) {
     for (const player of game.playersCollection.values()) {
         if (message.author.id === player.id)
-            return message.reply("You are already playing.");
+            return game.communicationHandler.reply(message, "You are already playing.");
     }
-    if (!game.canJoin) return message.reply("You were too late to join the game. Contact a moderator to be added before the game starts.");
+    if (!game.canJoin) return game.communicationHandler.reply(message, "You were too late to join the game. Contact a moderator to be added before the game starts.");
 
     const member = await game.guildContext.guild.members.fetch(message.author.id);
 

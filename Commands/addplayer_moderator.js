@@ -46,7 +46,7 @@ export async function execute(game, message, command, args) {
 
     for (const player of game.playersCollection.values()) {
         if (member.id === player.id)
-            return message.reply("That user is already playing.");
+            return game.communicationHandler.reply(message, "That user is already playing.");
     }
 
     const player = new Player(

@@ -1,5 +1,5 @@
-FROM node:lts-slim
-ENV NODE_ENV production
+FROM node:24
+ENV NODE_ENV=production
 
 ARG image_commit
 ARG image_tag

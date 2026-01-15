@@ -42,7 +42,7 @@ export default class SayAction extends Action {
 	 */
 	async #mirrorPlayersOwnDialog(dialog) {
 		const webhookUsername = dialog.speaker.displayName !== dialog.speaker.name ? `${capitalizeFirstLetter(dialog.speaker.displayName)} (${dialog.speaker.name})` : undefined;
-		await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(dialog.speaker, this, dialog, webhookUsername);
+		await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(dialog.speaker, this, dialog, dialog.getWhisperPrefixStringForWebhook(true), webhookUsername);
 	}
 
 	/**
@@ -136,6 +136,7 @@ export default class SayAction extends Action {
 			}
 			if (this.#playerCannotReceiveCommunications(player)) continue;
 			const playerCanSeeSpeaker = player.canSee() && player.member.permissionsIn(dialog.whisper.channel).has('ViewChannel');
+			const webhookContentPrefix = dialog.getWhisperPrefixStringForWebhook(playerCanSeeSpeaker);
 			const webhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker);
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
@@ -144,8 +145,8 @@ export default class SayAction extends Action {
 				continue;
 			}
 			if (webhookUsername)
-				await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, notification);
-			else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog);
+				await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
+			else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix);
 		}
 	}
 
@@ -162,6 +163,7 @@ export default class SayAction extends Action {
 			if (this.#playerCannotReceiveCommunications(player)) continue;
 			const playerAndSpeakerAreHidingTogether = dialog.speaker.isHidden() && player.isHidden() && dialog.speaker.hidingSpot === player.hidingSpot;
 			const playerCanSeeSpeaker = player.canSee() && (!dialog.speaker.isHidden() || playerAndSpeakerAreHidingTogether);
+			const webhookContentPrefix = dialog.getWhisperPrefixStringForWebhook(playerCanSeeSpeaker);
 			const webhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker);
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			// Players with the acute hearing attribute should overhear other whispers.
@@ -172,7 +174,7 @@ export default class SayAction extends Action {
 						await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 						continue;
 					}
-					await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, notification);
+					await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
 				}
 				continue;
 			}
@@ -184,7 +186,7 @@ export default class SayAction extends Action {
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";
 			if (webhookUsername || notification)
-				await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookUsername, webhookAvatarURL, notification);
+				await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
 			else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog);
 		}
 	}
@@ -234,6 +236,7 @@ export default class SayAction extends Action {
 			for (const player of audioMonitoringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				const playerCanSeeSpeaker = player.canSee() && audioMonitoringRoom.tags.has("video monitoring") && dialog.locationIsVideoSurveilled && !dialog.speaker.isHidden();
+				const webhookContentPrefix = dialog.getWhisperPrefixStringForWebhook(playerCanSeeSpeaker);
 				const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player);
 				if (!playerCanSeeSpeaker || this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 					await this.getGame().communicationHandler.notifyPlayer(player, this, notification);
@@ -242,8 +245,8 @@ export default class SayAction extends Action {
 				const customWebhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker, `[${roomDisplayName}]`);
 				const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 				if (customWebhookUsername || this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker))
-					await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, customWebhookUsername, webhookAvatarURL, notification);
-				else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, dialog.getDisplayNameForWebhook(playerCanSeeSpeaker), webhookAvatarURL);
+					await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix, customWebhookUsername, webhookAvatarURL, notification);
+				else await this.getGame().communicationHandler.mirrorDialogInSpectateChannel(player, this, dialog, webhookContentPrefix, dialog.getDisplayNameForWebhook(playerCanSeeSpeaker), webhookAvatarURL);
 			}
 			await this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog));
 		}

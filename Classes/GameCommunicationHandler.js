@@ -214,14 +214,15 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player whose spectate channel this dialog will be mirrored in.
 	 * @param {Action} action - The action associated with the dialog.
 	 * @param {Dialog} dialog - The dialog that was spoken.
+	 * @param {string} [messageTextPrefix] - The text to insert before the contents of the rest of the message. Optional.
 	 * @param {string} [webhookUsername] - A custom username to use for the webhook that will send the spectate message. Optional.
 	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
 	 * @param {string} [notification] - A custom notification that will be sent to the player afterwards. Optional. This notification will not be mirrored in the spectate channel.
 	 */
-	async mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername, webhookAvatarURL, notification) {
+	async mirrorDialogInSpectateChannel(player, action, dialog, messageTextPrefix, webhookUsername, webhookAvatarURL, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			await messageHandler.sendDialogSpectateMessage(player, dialog, webhookUsername, webhookAvatarURL);
+			await messageHandler.sendDialogSpectateMessage(player, dialog, messageTextPrefix, webhookUsername, webhookAvatarURL);
 			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
 		}
 	}

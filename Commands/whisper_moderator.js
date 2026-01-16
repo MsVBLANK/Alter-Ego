@@ -50,7 +50,8 @@ export async function execute(game, message, command, args) {
      */
     const recipients = new Array();
     let npc = null;
-    for (let i = 0; i < args.length; i++) {
+    let i;
+    for (i = 0; i < args.length; i++) {
         let playerExists = false;
         const player = game.entityFinder.getLivingPlayer(args[i]);
         if (player) {
@@ -67,29 +68,28 @@ export async function execute(game, message, command, args) {
                 if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[1].id}**.`);
                 status = player.getBehaviorAttributeStatusEffects("unconscious");
                 if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[1].id}**.`);
-                // If there are no attributes that prevent whispering, add them to the array.
-                playerExists = true;
-                if (player.isNPC) npc = player;
-                recipients.push(player);
-                break;
             }
+            // If there are no attributes that prevent whispering, add them to the array.
+            playerExists = true;
+            if (player.isNPC) npc = player;
+            recipients.push(player);
         }
         if (!playerExists) {
             if (npc !== null) {
-                args.splice(0, i);
                 break;
             }
             else return game.communicationHandler.reply(message, `Couldn't find player "${args[i]}". Make sure you spelled it right.`);
         }
     }
     if (recipients.length < 2) return game.communicationHandler.reply(message, `Can't start a whisper with fewer than 2 players.`);
+    if (npc !== null) args.splice(0, i);
 
-    const string = args.join(' ');
+    const communication = args.join(' ');
 
     // Check if whisper already exists.
     let whisper = game.entityFinder.getWhisper(recipients);
     if (whisper && npc !== null) {
-        await sendMessageToWhisper(game, message, string, npc, whisper);
+        await sendMessageToWhisper(game, message, communication, npc, whisper);
         return;
     }
     else if (whisper) return game.communicationHandler.reply(message, "Whisper group already exists.");
@@ -98,7 +98,7 @@ export async function execute(game, message, command, args) {
     const action = new WhisperAction(game, message, recipients[0], recipients[0].location, true);
     whisper = await action.performWhisper(recipients);
     if (npc !== null)
-        await sendMessageToWhisper(game, message, string, npc, whisper);
+        await sendMessageToWhisper(game, message, communication, npc, whisper);
 }
 
 /**

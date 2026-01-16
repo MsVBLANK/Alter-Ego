@@ -41,7 +41,7 @@ export async function execute(game, message, command, args, player) {
         return game.communicationHandler.reply(message, `You need to choose at least one player. Usage:\n${usage(game.settings)}`);
 
     const status = player.getBehaviorAttributeStatusEffects("disable whisper");
-    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[1].id}**.`);
+    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
     // Get all players mentioned.
     const recipients = new Array();

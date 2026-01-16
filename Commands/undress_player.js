@@ -41,6 +41,9 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable undress");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
+    const equippedItems = player.inventoryCollection.filter(equipmentSlot => equipmentSlot.equippedItem !== null);
+    if (equippedItems.size === 0) return game.communicationHandler.reply(message, `You cannot undress because you are not wearing anything.`);
+
     const input = args.join(' ');
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
 

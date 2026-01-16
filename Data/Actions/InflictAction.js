@@ -65,8 +65,8 @@ export default class InflictAction extends Action {
 		}
 		if (status.behaviorAttributes.has("concealed")) {
 			const maskName = item ? item.singleContainingPhrase : "a MASK";
-			this.displayName = `An individual wearing ${maskName}`;
-			this.displayIcon = this.getGame().settings.defaultConcealedIconURL;
+			this.player.displayName = `an individual wearing ${maskName}`;
+			this.player.displayIcon = this.getGame().settings.defaultConcealedIconURL;
 			this.player.setPronouns(this.player.pronouns, "neutral");
 			this.location.setOccupantsString();
 		}

@@ -65,7 +65,7 @@ export default class NarrateAction extends Action {
 	 */
 	#communicateNarrationToPlayers(narration, players, narratorDisplayName, narratorDisplayIcon, narrationText) {
 		for (const player of players) {
-			if (narration.player.name === player.name) continue;
+			if (narration.player && narration.player.name === player.name) continue;
 			if (this.#playerCannotReceiveCommunications(player)) continue;
 			if (this.#playerShouldReceiveNotification(narration, player))
 				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.type, false);

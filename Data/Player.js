@@ -548,9 +548,11 @@ export default class Player extends ItemContainer {
                 clearInterval(player.moveTimer);
                 player.stamina = 0;
                 const wearyStatus = player.getGame().entityFinder.getStatusEffect("weary");
-                const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
-                wearyAction.performInflict(wearyStatus, false, true, true);
-                player.getGame().narrationHandler.narrateWeary(wearyAction, player);
+                if (wearyStatus) {
+                    const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
+                    wearyAction.performInflict(wearyStatus, false, true, true);
+                    player.getGame().narrationHandler.narrateWeary(wearyAction, player);
+                }
             }
             if (player.remainingTime <= 0 && player.stamina !== 0) {
                 clearInterval(player.moveTimer);

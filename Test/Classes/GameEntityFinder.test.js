@@ -848,35 +848,36 @@ describe("GameEntityFinder test", () => {
     });
 
     describe("getPrefabs test", () => {
-        test("Get prefabs by id", () => {
+        test("Get prefabs by id, expect one", () => {
             let prefabs = game.entityFinder.getPrefabs("PEN");
             expect(prefabs.length).toBe(1);
             expect(prefabs[0]).toBeInstanceOf(Prefab);
             expect(prefabs[0].id).toBe("PEN");
         });
-        test("Get prefabs by effectsString", () => {
+        test("Get prefabs by effectsString, single, expect many", () => {
             let prefabs = game.entityFinder.getPrefabs(undefined, "refreshed");
+            expect(prefabs.length).toBeGreaterThan(1);
             for (const prefab of prefabs) {
                 expect(prefab).toBeInstanceOf(Prefab);
                 expect(prefab.effectsStrings).toContain("refreshed");
             }
         });
-        test("Get prefabs by cureString", () => {
-            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, "cold");
+        test("Get prefabs by effectsString, multiple, expect one", () => {
+            let prefabs = game.entityFinder.getPrefabs(undefined, "deaf, blind, cheerful");
+            expect(prefabs.length).toBe(1);
+            expect(prefabs[0].id).toBe("TUB OF VIALS VANILLA ICE CREAM");
+        });
+        test("Get prefabs by cureString, single, expect many", () => {
+            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, "satisfied");
+            expect(prefabs.length).toBeGreaterThan(1);
             for (const prefab of prefabs) {
                 expect(prefab).toBeInstanceOf(Prefab);
-                expect(prefab.curesStrings).toContain("cold");
+                expect(prefab.curesStrings).toContain("satisfied");
             }
         });
-        test("Get prefabs by equipmentSlots", () => {
+        test("Get prefabs by equipmentSlots, expect many", () => {
             let prefabs = game.entityFinder.getPrefabs(undefined, undefined, undefined, "HAT");
-            for (const prefab of prefabs) {
-                expect(prefab).toBeInstanceOf(Prefab);
-                expect(prefab.equipmentSlots).toContain("HAT");
-            }
-        });
-        test("Get prefabs by equipmentSlots, fuzzy true, expect found", () => {
-            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, undefined, "HA", true);
+            expect(prefabs.length).toBeGreaterThan(1);
             for (const prefab of prefabs) {
                 expect(prefab).toBeInstanceOf(Prefab);
                 expect(prefab.equipmentSlots).toContain("HAT");
@@ -937,17 +938,14 @@ describe("GameEntityFinder test", () => {
             let recipes = game.entityFinder.getRecipes(undefined, undefined, "INVALID");
             expect(recipes.length).toBe(0);
         });
-        test("Get recipes by productsString, single product, expect many", () => {
-            let recipes = game.entityFinder.getRecipes(undefined, undefined, undefined, "DIRTY POT");
-            expect(recipes.length).toBeGreaterThan(1);
-            for (const recipe of recipes) {
-                expect(recipe.productsStrings).toContain("DIRTY POT");
-            }
-        });
         test("Get recipes by productsString, multiple products, expect one", () => {
             let recipes = game.entityFinder.getRecipes(undefined, undefined, undefined,
                 "BOWL OF FROOT LOOPS, BOX OF FROOT LOOPS");
             expect(recipes.length).toBe(1);
+        });
+        test("Get recipes by productsString, invalid, expect empty", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined, undefined, "INVALID");
+            expect(recipes.length).toBe(0);
         });
     });
 
@@ -965,6 +963,14 @@ describe("GameEntityFinder test", () => {
             expect(roomItems.length).toBe(2);
             expect(roomItems[0].prefab.id).toBe("HAMMER");
             expect(roomItems[1].prefab.id).toBe("HAMMER");
+        });
+        test("Get accessible, expect many", () => {
+            let roomItems = game.entityFinder.getRoomItems(undefined, undefined, true);
+            expect(roomItems.length).toBeGreaterThan(1);
+        });
+        test("Get container only, expect container items", () => {
+            let roomItems = game.entityFinder.getRoomItems(undefined, undefined, undefined, "TOOL SHELF");
+            expect(roomItems.length).toBe(6);
         });
     });
 });

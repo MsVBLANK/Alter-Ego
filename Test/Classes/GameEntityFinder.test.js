@@ -957,7 +957,7 @@ describe("GameEntityFinder test", () => {
             expect(roomItems.length).toBe(75);
         });
         test("If only room and container specified, should return all items in container", () => {
-            let roomItems = game.entityFinder.getRoomItems(undefined, "storage", undefined, "TOOL SHELF");
+            let roomItems = game.entityFinder.getRoomItems(undefined, "storage", undefined, "Fixture", "TOOL SHELF");
             expect(roomItems.length).toBe(6);
         });
         test("If only identifier is defined, should return all items with that identifier in game", () => {

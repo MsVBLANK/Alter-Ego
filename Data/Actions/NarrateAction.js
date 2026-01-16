@@ -51,7 +51,7 @@ export default class NarrateAction extends Action {
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
 	#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName = narration.narratorDisplayName, narratorDisplayIcon = narration.narratorDisplayIcon, narrationText = narration.content) {
-		narrationText = narration.getWhisperPrefixStringForWebhook() + narrationText;
+		narrationText = narration.getWhisperPrefixString() + narrationText;
 		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 	}
 
@@ -78,7 +78,7 @@ export default class NarrateAction extends Action {
 	 * @param {Narration} narration - The narration to be communicated.
 	 */
 	#communicateNarrationToLocation(narration) {
-		if (narration.player && narration.player.isHidden() && !(narration.action instanceof UnhideAction)) return;
+		if (narration.player && narration.player.isHidden() && narration.whisper && !(narration.action instanceof UnhideAction)) return;
 		this.#communicateNarrationToPlayers(narration, narration.location.occupants);
 		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInRoom(narration);
 	}
@@ -90,7 +90,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToWhisper(narration) {
 		if (!narration.whisper) return;
 		this.#communicateNarrationToPlayers(narration, narration.whisper.playersCollection.map(player => player));
-		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInWhisper(narration.whisper, narration.action, narration.content, narration.type);
+		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInWhisper(narration);
 	}
 
 	/**

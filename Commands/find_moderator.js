@@ -162,7 +162,7 @@ export async function execute(game, message, command, args) {
 					input = input.substring(0, input.indexOf(containerMatch[1])).trim();
 				}
 				if (input !== '') id = input;
-				results = game.entityFinder.getRoomItems(id, location, undefined, containerName, slot, true);
+				results = game.entityFinder.getRoomItems(id, location, undefined, undefined, containerName, slot, true);
 				fields = { row: 'Row', id: 'ID' };
 				// If the user specified a location and a containerName, don't include the location.
 				// That way, they're more likely to see the entire containerName, which is searched, not an exact match.

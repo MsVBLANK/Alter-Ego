@@ -258,7 +258,7 @@ export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = 
 export const recipeProductsMatches = (recipe, productsString, normalize = false) => {
 	let products = productsString.split(',');
 	if (normalize) products.forEach((product, i) => products[i] = Game.generateValidEntityName(product));
-	return products.every(product => recipe.ingredientsStrings.includes(product));
+	return products.every(product => recipe.productsStrings.includes(product));
 };
 
 /**
@@ -306,6 +306,23 @@ export const itemIdentifierOrNameContains = (item, identifier, normalize = false
 		|| item.prefab && item.prefab.id.includes(identifier)
 		|| item.name.includes(identifier)
 		|| item.pluralName !== "" && item.pluralName.includes(identifier);
+};
+
+/**
+ * Returns true if the item's container's type matches the given type. 
+ * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the type against.
+ * @param {string} type - The type to match.
+ * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
+export const itemContainerTypeMatches = (item, type, normalize = false) => {
+	if (normalize) {
+		type = Game.generateValidEntityName(type);
+		if (type === "FIXTURE" || type === "OBJECT") type = "Fixture";
+		else if (type === "ROOMITEM" || type === "ITEM") type = "RoomItem";
+		else if (type === "PUZZLE") type = "Puzzle";
+		else if (type === "INVENTORYITEM") type = "InventoryItem";
+	}
+	return item.containerType === type;
 };
 
 /**

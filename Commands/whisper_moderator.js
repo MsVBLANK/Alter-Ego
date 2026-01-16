@@ -88,7 +88,7 @@ export async function execute(game, message, command, args) {
 
     // Check if whisper already exists.
     let whisper = game.entityFinder.getWhisper(recipients);
-    if (whisper && npc !== null) {
+    if (whisper && npc !== null && communication) {
         await sendMessageToWhisper(game, message, communication, npc, whisper);
         return;
     }
@@ -97,7 +97,7 @@ export async function execute(game, message, command, args) {
     // Whisper does not exist, so create it.
     const action = new WhisperAction(game, message, recipients[0], recipients[0].location, true);
     whisper = await action.performWhisper(recipients);
-    if (npc !== null)
+    if (npc !== null && communication)
         await sendMessageToWhisper(game, message, communication, npc, whisper);
 }
 

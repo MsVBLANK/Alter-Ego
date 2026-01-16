@@ -98,10 +98,11 @@ export function sendNarrationToRoom(room, messageText, narrationType, addSpectat
  * Narrates a message to a whisper.
  * @param {Whisper} whisper - The whisper to send the message to. 
  * @param {string} messageText - The message to send. 
+ * @param {string} messageTextWithSpectatePrefix - The message to send with a prefix for spectate channels indicating which whisper the narration occurred in.
  * @param {NarrationType} narrationType - The type of narration to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export function sendNarrationToWhisper(whisper, messageText, narrationType, addSpectate = true) {
+export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpectatePrefix, narrationType, addSpectate = true) {
     if (messageText !== "") {
         whisper.getGame().messageQueue.enqueue(
             {
@@ -113,14 +114,11 @@ export function sendNarrationToWhisper(whisper, messageText, narrationType, addS
         );
         if (addSpectate) {
             whisper.playersCollection.forEach((player) => {
-                const hidingSpot = whisper.getGame().entityFinder.getFixture(whisper.hidingSpotName, player.location.id);
-                const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
-                let spectateMessageText = `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${whisper.generatePlayerListString()}):*\n${messageText}`;
                 if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
                     whisper.getGame().messageQueue.enqueue(
                         {
                             fire: async () => {
-                                await player.spectateChannel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), spectateMessageText));
+                                await player.spectateChannel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageTextWithSpectatePrefix));
                             },
                         },
                         "spectator"

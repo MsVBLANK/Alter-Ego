@@ -1510,10 +1510,9 @@ export default class Player extends ItemContainer {
      * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
      */
     removeFromWhispers(narration, action) {
-        const narrationType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
         for (const whisper of this.getGame().whispersCollection.values()) {
             if (whisper.playersCollection.has(this.name))
-                whisper.removePlayer(this, narration, action, narrationType);
+                whisper.removePlayer(this, narration, action);
         }
     }
 

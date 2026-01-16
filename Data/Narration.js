@@ -142,13 +142,13 @@ export default class Narration extends GameConstruct {
     }
 
     /**
-     * Returns the prefix string to append before the rest of the message text in webhook messages. If the narration didn't occur in a whisper, returns an empty string.
+     * Returns the prefix string to append before the rest of the message text in spectate messages. If the narration didn't occur in a whisper, returns an empty string.
      */
-    getWhisperPrefixStringForWebhook() {
+    getWhisperPrefixString() {
         const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
         const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
         return this.whisper
-            ? `*(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
+            ? `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
             : "";
     }
 
@@ -205,7 +205,7 @@ export default class Narration extends GameConstruct {
                             this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
                     }
                 }
-                this.getGame().communicationHandler.narrateInWhisper(whisper, this.action, this.content, this.type);
+                this.getGame().communicationHandler.narrateInWhisper(this);
             }
         }
     }

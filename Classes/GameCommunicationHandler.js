@@ -256,15 +256,13 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Sends a narration to a whisper channel and mirrors it in the spectate channels of all the whisper's players.
-	 * @param {Whisper} whisper - The whisper to send the narration to.
-	 * @param {Action} action - The action that initiated this narration.
-	 * @param {string} narrationText - The text of the narration to send.
-	 * @param {NarrationType} narrationType - The type of the narration to send.
+	 * @param {Narration} narration - The narration to send.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
-	narrateInWhisper(whisper, action, narrationText, narrationType) {
-		if (!this.#actionHasBeenCommunicatedInChannel(whisper.channel, action)) {
-			this.#cacheChannelFor(action, whisper.channel.id);
-			messageHandler.sendNarrationToWhisper(whisper, narrationText, narrationType);
+	narrateInWhisper(narration, narrationText = narration.content) {
+		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.whisper.channel, narration.action)) {
+			if (narration.action) this.#cacheChannelFor(narration.action, narration.whisper.channel.id);
+			messageHandler.sendNarrationToWhisper(narration.whisper, narrationText, narration.getWhisperPrefixString(), narration.type);
 		}
 	}
 

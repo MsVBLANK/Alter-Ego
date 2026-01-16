@@ -185,7 +185,8 @@ describe("GameEntityFinder test", () => {
             expect(foundItem3).toBeUndefined();
             let foundItem4 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "narnia");
             expect(foundItem4).toBeUndefined();
-            let foundItem5 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "narnia", "BAG OF MEATBALLS 1/BAG");
+            let foundItem5 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "narnia",
+                "BAG OF MEATBALLS 1/BAG");
             expect(foundItem5).toBeUndefined();
         });
         test("Get empty item", () => {
@@ -324,7 +325,7 @@ describe("GameEntityFinder test", () => {
             let player = game.entityFinder.getPlayer("???");
             expect(player).toBeInstanceOf(Player);
             expect(player.name).toBe("???");
-        })
+        });
         test("Get invalid player by name", () => {
             let player = game.entityFinder.getPlayer("INVALID");
             expect(player).toBeUndefined();
@@ -387,7 +388,7 @@ describe("GameEntityFinder test", () => {
             for (const hand of hands) {
                 expect(hand.id).toBeOneOf(["RIGHT HAND", "LEFT HAND"]);
                 if (hand.id === "LEFT HAND") foundLeft = true;
-                else if (hand.id === "RIGHT HAND") foundRight = true; 
+                else if (hand.id === "RIGHT HAND") foundRight = true;
             }
             expect(foundRight).toBeTruthy();
             expect(foundLeft).toBeTruthy();
@@ -399,13 +400,13 @@ describe("GameEntityFinder test", () => {
             let player = game.entityFinder.getLivingPlayer("Vivian");
             let hand = game.entityFinder.getPlayerFreeHand(player);
             expect(hand).toBeInstanceOf(EquipmentSlot);
-            expect(hand.id).toBe("RIGHT HAND")
+            expect(hand.id).toBe("RIGHT HAND");
         });
         test("Get player with free LEFT hand", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
             let hand = game.entityFinder.getPlayerFreeHand(player);
             expect(hand).toBeInstanceOf(EquipmentSlot);
-            expect(hand.id).toBe("LEFT HAND")
+            expect(hand.id).toBe("LEFT HAND");
         });
     });
 
@@ -454,7 +455,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get valid item by slot and id", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "VIVIANS BOW", "HAT", "moderator");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "VIVIANS BOW", "HAT",
+                "moderator");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.id).toBe("HAT");
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
@@ -462,7 +464,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get valid item by identifier", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "FUTURE FOUNDATION JACKET 1");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player,
+                "FUTURE FOUNDATION JACKET 1");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.id).toBe("JACKET");
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
@@ -471,7 +474,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get valid item by slot and identifier", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "FUTURE FOUNDATION TROUSERS 1", "PANTS", "combined");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player,
+                "FUTURE FOUNDATION TROUSERS 1", "PANTS", "combined");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.id).toBe("PANTS");
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
@@ -480,7 +484,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get valid item by name", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "FLATS", undefined, "player");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "FLATS", undefined,
+                "player");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.id).toBe("SHOES");
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
@@ -489,7 +494,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get valid item by slot and name", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "WHITE SOCKS", "SOCKS", "combined");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "WHITE SOCKS",
+                "SOCKS", "combined");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.id).toBe("SOCKS");
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
@@ -498,12 +504,14 @@ describe("GameEntityFinder test", () => {
         });
         test("Get invalid item by bad id", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "INVALID", undefined, "combined");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "INVALID", undefined,
+                "combined");
             expect(equipmentSlot).toBeUndefined();
         });
         test("Get invalid item by bad slot", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "FUTURE FOUNDATION SHOES", "GLASSES");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player,
+                "FUTURE FOUNDATION SHOES", "GLASSES");
             expect(equipmentSlot).toBeUndefined();
         });
         test("Get invalid item by bad player", () => {
@@ -518,7 +526,8 @@ describe("GameEntityFinder test", () => {
         });
         test("Get invalid item by bad id on name lookup", () => {
             const player = game.entityFinder.getPlayer("Vivian");
-            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "VIVIANS GLASSES", null, "player");
+            const equipmentSlot = game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(player, "VIVIANS GLASSES",
+                null, "player");
             expect(equipmentSlot).toBeUndefined();
         });
     });
@@ -728,7 +737,7 @@ describe("GameEntityFinder test", () => {
             let room = game.entityFinder.getRoom("lobby");
             let exits = game.entityFinder.getExits(room, "Revolving Door 2");
             expect(exits.length).toBe(1);
-            expect(exits[0].name).toBe("REVOLVING DOOR 2")
+            expect(exits[0].name).toBe("REVOLVING DOOR 2");
         });
         test("Get all exits with destination", () => {
             let room = game.entityFinder.getRoom("lobby");
@@ -757,7 +766,8 @@ describe("GameEntityFinder test", () => {
             let exits = game.entityFinder.getExits(room, null, null, false);
             expect(exits.length).toBe(6);
             for (const exit of exits) {
-                expect(exit.name).toBeOneOf(["HALL 2", "HALL 4", "REVOLVING DOOR 1", "REVOLVING DOOR 2", "KITCHEN", "FITNESS ROOM"]);
+                expect(exit.name).
+                    toBeOneOf(["HALL 2", "HALL 4", "REVOLVING DOOR 1", "REVOLVING DOOR 2", "KITCHEN", "FITNESS ROOM"]);
             }
         });
         test("Get all exits by imprecise name", () => {
@@ -767,8 +777,8 @@ describe("GameEntityFinder test", () => {
             for (const exit of exits) {
                 expect(exit.name).toBeOneOf(["REVOLVING DOOR 1", "REVOLVING DOOR 2"]);
             }
-        })
-    })
+        });
+    });
 
     describe("getFixtures test", () => {
         test("Get fixtures by name", () => {
@@ -792,7 +802,7 @@ describe("GameEntityFinder test", () => {
                 undefined,
                 undefined,
                 undefined,
-                true
+                true,
             );
             expect(fixtures.length).toBe(2);
             expect(fixtures[0].name).toBe("HAND WASH STATION 1");
@@ -802,7 +812,7 @@ describe("GameEntityFinder test", () => {
             let fixtures = game.entityFinder.getFixtures(
                 undefined,
                 "library",
-                false
+                false,
             );
             expect(fixtures.length).toBe(6);
             for (const fixture of fixtures) {
@@ -815,7 +825,7 @@ describe("GameEntityFinder test", () => {
                 undefined,
                 undefined,
                 undefined,
-                "stovetop"
+                "stovetop",
             );
             expect(fixtures.length).toBe(6);
             for (const fixture of fixtures) {
@@ -850,6 +860,111 @@ describe("GameEntityFinder test", () => {
                 expect(prefab).toBeInstanceOf(Prefab);
                 expect(prefab.effectsStrings).toContain("refreshed");
             }
+        });
+        test("Get prefabs by cureString", () => {
+            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, "cold");
+            for (const prefab of prefabs) {
+                expect(prefab).toBeInstanceOf(Prefab);
+                expect(prefab.curesStrings).toContain("cold");
+            }
+        });
+        test("Get prefabs by equipmentSlots", () => {
+            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, undefined, "HAT");
+            for (const prefab of prefabs) {
+                expect(prefab).toBeInstanceOf(Prefab);
+                expect(prefab.equipmentSlots).toContain("HAT");
+            }
+        });
+        test("Get prefabs by equipmentSlots, fuzzy true, expect found", () => {
+            let prefabs = game.entityFinder.getPrefabs(undefined, undefined, undefined, "HA", true);
+            for (const prefab of prefabs) {
+                expect(prefab).toBeInstanceOf(Prefab);
+                expect(prefab.equipmentSlots).toContain("HAT");
+            }
+        });
+    });
+
+    describe("getRecipes tests", () => {
+        test("Get recipes by type, processing", () => {
+            let recipes = game.entityFinder.getRecipes("processing");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.fixtureTag).not.toBe("");
+            }
+        });
+        test("Get recipes by type, crafting", () => {
+            let recipes = game.entityFinder.getRecipes("crafting");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.fixtureTag).toBe("");
+            }
+        });
+        test("Get recipes by type, uncraftable", () => {
+            let recipes = game.entityFinder.getRecipes("uncraftable");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.uncraftable).toBe(true);
+            }
+        });
+        test("Get recipes by type, invalid, expect empty", () => {
+            let recipes = game.entityFinder.getRecipes("INVALID");
+            expect(recipes.length).toBe(0);
+        });
+        test("Get recipes by fixtureTag, expect many", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, "stovetop");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.fixtureTag).toBe("stovetop");
+            }
+        });
+        test("Get recipes by fixtureTag, invalid, expect empty", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, "INVALID");
+            expect(recipes.length).toBe(0);
+        });
+        test("Get recipes by ingredients, single ingredient, expect many", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined, "CLEAN BOWL");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.ingredients).toContain(game.entityFinder.getPrefab("CLEAN BOWL"));
+            }
+        });
+        test("Get recipes by ingredients, multiple ingredients, expect one", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined,
+                "POT OF RICE, DICED ONIONS, COLD SERVING OF BROCCOLI, SHREDDED CHEESE, FROZEN CHICKEN BREAST, CHICKEN BROTH, WHIPPED CREAM, BREAD CRUMBS, PAN");
+            expect(recipes.length).toBe(1);
+        });
+        test("Get recipes by ingredients, invalid, expect empty", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined, "INVALID");
+            expect(recipes.length).toBe(0);
+        });
+        test("Get recipes by productsString, single product, expect many", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined, undefined, "DIRTY POT");
+            expect(recipes.length).toBeGreaterThan(1);
+            for (const recipe of recipes) {
+                expect(recipe.productsStrings).toContain("DIRTY POT");
+            }
+        });
+        test("Get recipes by productsString, multiple products, expect one", () => {
+            let recipes = game.entityFinder.getRecipes(undefined, undefined, undefined,
+                "BOWL OF FROOT LOOPS, BOX OF FROOT LOOPS");
+            expect(recipes.length).toBe(1);
+        });
+    });
+
+    describe("getRoomItems tests", () => {
+        test("If identifier is undefined, should return all items in room", () => {
+            let roomItems = game.entityFinder.getRoomItems(undefined, "storage");
+            expect(roomItems.length).toBe(75);
+        });
+        test("If only room and container specified, should return all items in container", () => {
+            let roomItems = game.entityFinder.getRoomItems(undefined, "storage", undefined, "TOOL SHELF");
+            expect(roomItems.length).toBe(6);
+        });
+        test("If only identifier is defined, should return all items with that identifier in game", () => {
+            let roomItems = game.entityFinder.getRoomItems("HAMMER");
+            expect(roomItems.length).toBe(2);
+            expect(roomItems[0].prefab.id).toBe("HAMMER");
+            expect(roomItems[1].prefab.id).toBe("HAMMER");
         });
     });
 });

@@ -238,7 +238,7 @@ describe('messageHandler test', () => {
                 const deleteMessageSpy = vi.spyOn(message, 'delete');
                 messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
-                expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                 expect(asuka.notificationChannel.messages.cache.first().content).toBe(`You are **${mute.id}**, so you cannot speak.`);
                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                 expect(deleteMessageSpy).toHaveBeenCalledTimes(1);
@@ -251,7 +251,7 @@ describe('messageHandler test', () => {
                 const deleteMessageSpy = vi.spyOn(message, 'delete');
                 messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
-                expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                 expect(asuka.notificationChannel.messages.cache.first().content).toBe(`You are **${mute.id}**, so you cannot speak.`);
                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                 expect(deleteMessageSpy).toHaveBeenCalledTimes(1);
@@ -279,12 +279,10 @@ describe('messageHandler test', () => {
                 expect(announceActionSpy).toHaveBeenCalledTimes(1);
                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(players.length);
                 for (const player of players) {
-                    expect(player.spectateChannel.messages.cache.size).toBe(1);
+                    expect(player.spectateChannel.messages.cache).toHaveSize(1);
                     const spectateMessage = player.spectateChannel.messages.cache.first();
-                    expect(spectateMessage.webhookId).toBeTypeOf("string");
-                    expect(spectateMessage.author.username).toBe("Kyra");
-                    expect(spectateMessage.author.avatarURL()).toBe(kyra.member.avatarURL());
-                    expect(spectateMessage.content).toBe("Good morning, everyone.");
+                    expect(spectateMessage).toBeWebhookMessage();
+                    expect(spectateMessage).toBeMessageWith("Kyra", kyra.member.avatarURL(), "Good morning, everyone.");
                 }
             });
 
@@ -430,13 +428,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
                         for (const occupant of luna.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(1);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
                             const spectateMessage = occupant.spectateChannel.messages.cache.first();
-                            expect(spectateMessage.webhookId).toBeTypeOf("string");
-                            expect(spectateMessage.author.username).toBe("Luna");
-                            expect(spectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(spectateMessage.content).toBe("Oh, hello!");
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
                         }
                     });
 
@@ -448,19 +444,15 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "Oh, hello!");
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                        expect(asukaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(asukaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                        expect(asukaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(asukaSpectateMessage).toBeWebhookMessage();
+                        expect(asukaSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "Oh, hello!");
 
                         luna.displayName = luna.name;
                         luna.displayIcon = null;
@@ -477,20 +469,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                         expect(asukaNotificationMessage.content).toBe(`Luna says "Oh, hello!"`);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                        expect(asukaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(asukaSpectateMessage.author.username).toBe("Luna");
-                        expect(asukaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(asukaSpectateMessage).toBeWebhookMessage();
+                        expect(asukaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
                         hidingSpot.removePlayer(luna);
                         hidingSpot.removePlayer(asuka);
@@ -511,20 +499,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "Oh, hello!");
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                         expect(asukaNotificationMessage.content).toBe(`An individual wearing a MASK says "Oh, hello!"`);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                        expect(asukaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(asukaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                        expect(asukaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(asukaSpectateMessage).toBeWebhookMessage();
+                        expect(asukaSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "Oh, hello!");
 
                         hidingSpot.removePlayer(luna);
                         hidingSpot.removePlayer(asuka);
@@ -541,15 +525,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         asuka.cure(deaf);
                     });
@@ -561,15 +543,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         asuka.cure(asleep);
                     });
@@ -582,16 +562,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                            expect(asukaSpectateMessage.webhookId).toBeUndefined();
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(asukaSpectateMessage).not.toBeWebhookMessage();
                             expect(asukaSpectateMessage.content).toBe(`Luna says "Oh, hello!" in your voice!`);
 
                             luna.voiceString = luna.originalVoiceString;
@@ -604,16 +582,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                            expect(asukaSpectateMessage.webhookId).toBeUndefined();
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(asukaSpectateMessage).not.toBeWebhookMessage();
                             expect(asukaSpectateMessage.content).toBe(`Someone in the room with a gentle voice says "Oh, hello!"`);
 
                             asuka.cure(blind);
@@ -627,16 +603,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                            expect(asukaSpectateMessage.webhookId).toBeUndefined();
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(asukaSpectateMessage).not.toBeWebhookMessage();
                             expect(asukaSpectateMessage.content).toBe(`Someone in the room says "Oh, hello!" in your voice!`);
 
                             asuka.cure(blind);
@@ -652,20 +626,16 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Luna says "Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                            expect(asukaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(asukaSpectateMessage.author.username).toBe("Luna");
-                            expect(asukaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(asukaSpectateMessage).toBeWebhookMessage();
+                            expect(asukaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
                             asuka.cure(concealed);
                         });
@@ -678,20 +648,16 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Oh, hello!");
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Someone in the room with a gentle voice says "Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(1);
-                            expect(asukaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(asukaSpectateMessage.author.username).toBe("Someone in the room with a gentle voice");
-                            expect(asukaSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(asukaSpectateMessage.content).toBe("Oh, hello!");
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(asukaSpectateMessage).toBeWebhookMessage();
+                            expect(asukaSpectateMessage).toBeMessageWith("Someone in the room with a gentle voice", game.settings.hiddenIconURL, "Oh, hello!");
 
                             luna.cure(hidden);
                             asuka.cure(concealed);
@@ -705,8 +671,8 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of luna.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(0);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
                         }
                     });
 
@@ -718,11 +684,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         luna.displayName = luna.name;
                         luna.displayIcon = null;
@@ -739,12 +705,12 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                         expect(asukaNotificationMessage.content).toBe(`Luna says "( Oh, hello!"`);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(luna);
                         hidingSpot.removePlayer(asuka);
@@ -765,12 +731,12 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                         expect(asukaNotificationMessage.content).toBe(`An individual wearing a MASK says "( Oh, hello!"`);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(luna);
                         hidingSpot.removePlayer(asuka);
@@ -787,11 +753,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         asuka.cure(deaf);
                     });
@@ -803,11 +769,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                        expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                         asuka.cure(asleep);
                     });
@@ -820,11 +786,11 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(0);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                             luna.voiceString = luna.originalVoiceString;
                         });
@@ -836,12 +802,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Someone in the room with a gentle voice says "( Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                             asuka.cure(blind);
                         });
@@ -854,12 +820,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Someone in the room says "( Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                             asuka.cure(blind);
                             luna.voiceString = luna.originalVoiceString;
@@ -874,12 +840,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Luna says "( Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                             asuka.cure(concealed);
                         });
@@ -892,12 +858,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(asuka.notificationChannel.messages.cache.size).toBe(1);
+                            expect(asuka.notificationChannel.messages.cache).toHaveSize(1);
                             expect(asukaNotificationMessage.content).toBe(`Someone in the room with a gentle voice says "( Oh, hello!"`);
-                            expect(asuka.spectateChannel.messages.cache.size).toBe(0);
+                            expect(asuka.spectateChannel.messages.cache).toHaveSize(0);
 
                             luna.cure(hidden);
                             asuka.cure(concealed);
@@ -928,13 +894,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
                         for (const occupant of kiara.location.occupants) {;
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(1);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
                             const spectateMessage = occupant.spectateChannel.messages.cache.first();
-                            expect(spectateMessage.webhookId).toBeTypeOf("string");
-                            expect(spectateMessage.author.username).toBe("Kiara");
-                            expect(spectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(spectateMessage.content).toBe("Bonjour!");
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
                         }
                     });
 
@@ -946,20 +910,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                        expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(kiaraSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                        expect(kiaraSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).toBeWebhookMessage();
+                        expect(kiaraSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "Bonjour!");
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                         expect(astridNotificationMessage.content).toBe(`An individual wearing a MASK, with a pretty voice you recognize as Kiara's, says "Bonjour!"`);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                        expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(astridSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                        expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(astridSpectateMessage.content).toBe("Bonjour!");
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(astridSpectateMessage).toBeWebhookMessage();
+                        expect(astridSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "Bonjour!");
 
                         kiara.displayName = kiara.name;
                         kiara.displayIcon = null;
@@ -976,20 +936,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                        expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                        expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                        expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).toBeWebhookMessage();
+                        expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                         expect(astridNotificationMessage.content).toBe(`Kiara says "Bonjour!"`);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                        expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(astridSpectateMessage.author.username).toBe("Kiara");
-                        expect(astridSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                        expect(astridSpectateMessage.content).toBe("Bonjour!");
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(astridSpectateMessage).toBeWebhookMessage();
+                        expect(astridSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
                         hidingSpot.removePlayer(kiara);
                         hidingSpot.removePlayer(astrid);
@@ -1010,20 +966,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                        expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(kiaraSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                        expect(kiaraSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).toBeWebhookMessage();
+                        expect(kiaraSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "Bonjour!");
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                         expect(astridNotificationMessage.content).toBe(`An individual wearing a MASK, with a pretty voice you recognize as Kiara's, says "Bonjour!"`);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                        expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(astridSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                        expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(astridSpectateMessage.content).toBe("Bonjour!");
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(astridSpectateMessage).toBeWebhookMessage();
+                        expect(astridSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "Bonjour!");
 
                         hidingSpot.removePlayer(kiara);
                         hidingSpot.removePlayer(astrid);
@@ -1040,15 +992,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                        expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                        expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                        expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).toBeWebhookMessage();
+                        expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         astrid.cure(deaf);
                     });
@@ -1060,15 +1010,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                        expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                        expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                        expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).toBeWebhookMessage();
+                        expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         astrid.cure(asleep);
                     });
@@ -1081,16 +1029,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeUndefined();
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).not.toBeWebhookMessage();
                             expect(astridSpectateMessage.content).toBe(`Kiara says "Bonjour!" in your voice!`);
 
                             kiara.voiceString = kiara.originalVoiceString;
@@ -1103,16 +1049,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeUndefined();
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).not.toBeWebhookMessage();
                             expect(astridSpectateMessage.content).toBe(`Kiara says "Bonjour!"`);
 
                             astrid.cure(blind);
@@ -1126,16 +1070,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeUndefined();
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).not.toBeWebhookMessage();
                             expect(astridSpectateMessage.content).toBe(`Someone in the room says "Bonjour!" in your voice!`);
 
                             astrid.cure(blind);
@@ -1151,20 +1093,16 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(astridSpectateMessage.content).toBe("Bonjour!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
                             astrid.cure(concealed);
                         });
@@ -1177,20 +1115,16 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("Bonjour!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "Bonjour!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(astridSpectateMessage.content).toBe("Bonjour!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", game.settings.hiddenIconURL, "Bonjour!");
 
                             kiara.cure(hidden);
                             astrid.cure(concealed);
@@ -1221,8 +1155,8 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of kiara.location.occupants) {;
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(0);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
                         }
                     });
 
@@ -1234,11 +1168,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         kiara.displayName = kiara.name;
                         kiara.displayIcon = null;
@@ -1255,12 +1189,12 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                         expect(astridNotificationMessage.content).toBe(`Kiara says "( Bonjour!"`);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(kiara);
                         hidingSpot.removePlayer(astrid);
@@ -1281,12 +1215,12 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                         expect(astridNotificationMessage.content).toBe(`An individual wearing a MASK says "( Bonjour!"`);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(kiara);
                         hidingSpot.removePlayer(astrid);
@@ -1303,11 +1237,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         astrid.cure(deaf);
                     });
@@ -1319,11 +1253,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                        expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                        expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                        expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                         astrid.cure(asleep);
                     });
@@ -1336,11 +1270,11 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             kiara.voiceString = kiara.originalVoiceString;
                         });
@@ -1352,12 +1286,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);                            
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);                            
 
                             astrid.cure(blind);
                         });
@@ -1370,12 +1304,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Someone in the room says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);                            
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);                            
 
                             astrid.cure(blind);
                             kiara.voiceString = kiara.originalVoiceString;
@@ -1390,12 +1324,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(concealed);
                         });
@@ -1408,12 +1342,12 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             kiara.cure(hidden);
                             astrid.cure(concealed);
@@ -1453,27 +1387,21 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Luna whisper "Hello!" to Kiara.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Luna");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
                         });
 
                         test('OOC whisper is not communicated to spectate channels or notification channel', async () => {
@@ -1481,14 +1409,14 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
                         });
 
                         test('display name of speaker does not match her name', async () => {
@@ -1499,27 +1427,21 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear an individual wearing a MASK whisper "Hello!" to Kiara.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "-# *(Whispered to Kiara):*\nHello!");
 
                             luna.displayName = luna.name;
                             luna.displayIcon = null;
@@ -1535,27 +1457,21 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(luna, "Hello!", hidingSpot.whisper.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara in the SHED):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara in the SHED):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara in the SHED):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara in the SHED):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear someone in the room with a gentle voice whisper "Hello!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Someone in the room with a gentle voice");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Someone in the room with a gentle voice", game.settings.hiddenIconURL, "-# *(Whispered):*\nHello!");
 
                             hidingSpot.removePlayer(luna);
                             hidingSpot.removePlayer(kiara);
@@ -1573,23 +1489,19 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(luna, "Hello!", hidingSpot.whisper.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered in the SHED):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered in the SHED):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(0);
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear someone in the room with a gentle voice whisper "Hello!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Someone in the room with a gentle voice");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Someone in the room with a gentle voice", game.settings.hiddenIconURL, "-# *(Whispered):*\nHello!");
 
                             hidingSpot.removePlayer(luna);
                             luna.cure(hidden);
@@ -1603,22 +1515,18 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(deaf);
                         });
@@ -1629,22 +1537,18 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(asleep);
                         });
@@ -1655,27 +1559,21 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Luna");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Luna whisper "Hello!" to Kiara.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Luna");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
                             kiara.cure(acuteHearing);
                         });
@@ -1687,24 +1585,20 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(1);
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(kiaraNotificationMessage.content).toBe(`Luna, with a peppy voice you recognize as Astrid's, whispers "Hello!"`);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Luna (Astrid)");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Luna (Astrid)", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear Luna whisper "Hello!" to Kiara in your voice!`);
 
                                 luna.voiceString = luna.originalVoiceString;
@@ -1716,23 +1610,19 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Luna");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear someone in the room with a gentle voice whisper "Hello!"`);
 
                                 astrid.cure(blind);
@@ -1745,24 +1635,20 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(luna, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(1);
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(kiaraNotificationMessage.content).toBe(`Luna, with a peppy voice you recognize as Astrid's, whispers "Hello!"`);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Luna (Astrid)");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Kiara):*\nHello!");
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Luna (Astrid)", luna.member.avatarURL(), "-# *(Whispered to Kiara):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear someone in the room whisper "Hello!" in your voice!`);
 
                                 astrid.cure(blind);
@@ -1777,27 +1663,21 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Kiara whisper "Hello!" to Luna.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
                         });
 
                         test('display name of speaker does not match her name', async () => {
@@ -1808,27 +1688,21 @@ describe('messageHandler test', () => {
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
 
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear an individual wearing a MASK, with a pretty voice you recognize as Kiara's, whisper "Hello!" to Luna.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("An individual wearing a MASK (Kiara)");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("An individual wearing a MASK (Kiara)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna):*\nHello!");
 
                             kiara.displayName = kiara.name;
                             kiara.displayIcon = null;
@@ -1844,27 +1718,21 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(kiara, "Hello!", hidingSpot.whisper.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna in the SHED):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna in the SHED):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna in the SHED):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna in the SHED):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Kiara whisper "Hello!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", game.settings.hiddenIconURL, "-# *(Whispered):*\nHello!");
 
                             hidingSpot.removePlayer(luna);
                             hidingSpot.removePlayer(kiara);
@@ -1882,23 +1750,19 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(kiara, "Hello!", hidingSpot.whisper.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered in the SHED):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered in the SHED):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Kiara whisper "Hello!"`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(game.settings.hiddenIconURL);
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", game.settings.hiddenIconURL, "-# *(Whispered):*\nHello!");
 
                             hidingSpot.removePlayer(kiara);
                             kiara.cure(hidden);
@@ -1912,22 +1776,18 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(deaf);
                         });
@@ -1938,22 +1798,18 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(0);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(0);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(asleep);
                         });
@@ -1964,27 +1820,21 @@ describe('messageHandler test', () => {
                             await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(3);
-                            expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                            expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                            expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                            expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(lunaSpectateMessage).toBeWebhookMessage();
+                            expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                            expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                            expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                            expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(kiaraSpectateMessage).toBeWebhookMessage();
+                            expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                            expect(astrid.notificationChannel.messages.cache.size).toBe(1);
+                            expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`You overhear Kiara whisper "Hello!" to Luna.`);
-                            expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                            expect(astridSpectateMessage.webhookId).toBeTypeOf("string");
-                            expect(astridSpectateMessage.author.username).toBe("Kiara");
-                            expect(astridSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                            expect(astridSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                            expect(astridSpectateMessage).toBeWebhookMessage();
+                            expect(astridSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
                             luna.cure(acuteHearing);
                         });
@@ -1996,23 +1846,19 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear Kiara whisper "Hello!" to Luna in your voice!`);
 
                                 kiara.voiceString = kiara.originalVoiceString;
@@ -2024,23 +1870,19 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear Kiara whisper "Hello!"`);
 
                                 astrid.cure(blind);
@@ -2053,23 +1895,19 @@ describe('messageHandler test', () => {
                                 await sendPlayerMessage(kiara, "Hello!", whisperLunaKiara.channel);
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Kiara");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(kiara.notificationChannel.messages.cache.size).toBe(0);
-                                expect(kiara.spectateChannel.messages.cache.size).toBe(1);
-                                expect(kiaraSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(kiaraSpectateMessage.author.username).toBe("Kiara");
-                                expect(kiaraSpectateMessage.author.avatarURL()).toBe(kiara.member.avatarURL());
-                                expect(kiaraSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello!");
+                                expect(kiara.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(kiaraSpectateMessage).toBeWebhookMessage();
+                                expect(kiaraSpectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "-# *(Whispered to Luna):*\nHello!");
 
-                                expect(astrid.notificationChannel.messages.cache.size).toBe(1);
-                                expect(astrid.spectateChannel.messages.cache.size).toBe(1);
-                                expect(astridSpectateMessage.webhookId).toBeUndefined();
+                                expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(astrid.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(astridSpectateMessage).not.toBeWebhookMessage();
                                 expect(astridSpectateMessage.content).toBe(`You overhear someone in the room whisper "Hello!" in your voice!`);
 
                                 astrid.cure(blind);
@@ -2104,13 +1942,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
                         for (const occupant of amadeus.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(1);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
                             const spectateMessage = occupant.spectateChannel.messages.cache.first();
-                            expect(spectateMessage.webhookId).toBeTypeOf("string");
-                            expect(spectateMessage.author.username).toBe("Amadeus");
-                            expect(spectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                            expect(spectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
                         }
                     });
 
@@ -2122,19 +1958,15 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("An individual wearing a MASK (Amadeus)");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("An individual wearing a MASK (Amadeus)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna):*\nHello.");
 
                         amadeus.displayName = amadeus.name;
                         amadeus.displayIcon = null;
@@ -2151,19 +1983,15 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Amadeus");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
                         hidingSpot.removePlayer(amadeus);
                         hidingSpot.removePlayer(luna);
@@ -2182,15 +2010,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered in the RECEPTION DESK):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered in the RECEPTION DESK):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(amadeus);
                         amadeus.cure(hidden);
@@ -2211,19 +2037,15 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("An individual wearing a MASK (Amadeus)");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("An individual wearing a MASK (Amadeus)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK", game.settings.defaultConcealedIconURL, "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
                         hidingSpot.removePlayer(amadeus);
                         hidingSpot.removePlayer(luna);
@@ -2242,15 +2064,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                         luna.cure(deaf);
                     });
@@ -2262,15 +2082,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                         luna.cure(asleep);
                     });
@@ -2284,16 +2102,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Amadeus whispers "Hello." in your voice!`);
 
                                 amadeus.voiceString = amadeus.originalVoiceString;
@@ -2306,16 +2122,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Someone with a neutral voice whispers "Hello."`);
 
                                 luna.cure(blind);
@@ -2329,16 +2143,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Someone whispers "Hello." in your voice!`);
 
                                 luna.cure(blind);
@@ -2374,16 +2186,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Amadeus whispers "Hello." in the RECEPTION DESK in your voice!`);
 
                                 amadeus.voiceString = amadeus.originalVoiceString;
@@ -2396,16 +2206,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Someone in the RECEPTION DESK with a neutral voice whispers "Hello."`);
 
                                 luna.cure(blind);
@@ -2419,16 +2227,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(amadeusSpectateMessage.author.username).toBe("Amadeus");
-                                expect(amadeusSpectateMessage.author.avatarURL()).toBe(amadeus.member.avatarURL());
-                                expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).toBeWebhookMessage();
+                                expect(amadeusSpectateMessage).toBeMessageWith("Amadeus", amadeus.member.avatarURL(), "-# *(Whispered to Luna in the RECEPTION DESK):*\nHello.");
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeUndefined();
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).not.toBeWebhookMessage();
                                 expect(lunaSpectateMessage.content).toBe(`Someone in the RECEPTION DESK whispers "Hello." in your voice!`);
 
                                 luna.cure(blind);
@@ -2444,8 +2250,8 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of amadeus.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(0);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
                         }
                     });
                     
@@ -2458,11 +2264,11 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.voiceString = amadeus.originalVoiceString;
                             });
@@ -2474,12 +2280,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(lunaNotificationMessage.content).toBe(`Someone with a neutral voice whispers "( Hello."`);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.cure(blind);
                             });
@@ -2492,12 +2298,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(lunaNotificationMessage.content).toBe(`Someone whispers "( Hello."`);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.cure(blind);
                                 amadeus.voiceString = amadeus.originalVoiceString;
@@ -2532,11 +2338,11 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.voiceString = amadeus.originalVoiceString;
                             });
@@ -2548,12 +2354,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(lunaNotificationMessage.content).toBe(`Someone in the RECEPTION DESK with a neutral voice whispers "( Hello."`);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.cure(blind);
                             });
@@ -2566,12 +2372,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(1);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(lunaNotificationMessage.content).toBe(`Someone in the RECEPTION DESK whispers "( Hello."`);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.cure(blind);
                                 amadeus.voiceString = amadeus.originalVoiceString;
@@ -2586,13 +2392,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
                         for (const occupant of amadeus.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(1);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
                             const spectateMessage = occupant.spectateChannel.messages.cache.first();
-                            expect(spectateMessage.webhookId).toBeTypeOf("string");
-                            expect(spectateMessage.author.username).toBe("Luna");
-                            expect(spectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                            expect(spectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
                         }
                     });
 
@@ -2604,20 +2408,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                         expect(amadeusNotificationMessage.content).toBe(`An individual wearing a MASK, with a gentle voice you recognize as Luna's, whispers "Oh, hello!"`);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Amadeus):*\nOh, hello!");
 
                         luna.displayName = luna.name;
                         luna.displayIcon = null;
@@ -2634,19 +2434,15 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("Luna");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
                         hidingSpot.removePlayer(amadeus);
                         hidingSpot.removePlayer(luna);
@@ -2665,15 +2461,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered in the RECEPTION DESK):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered in the RECEPTION DESK):*\nOh, hello!");
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(luna);
                         luna.cure(hidden);
@@ -2694,20 +2488,16 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                         expect(amadeusNotificationMessage.content).toBe(`An individual wearing a MASK, with a gentle voice you recognize as Luna's, whispers "Oh, hello!" in the RECEPTION DESK.`);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                        expect(amadeusSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(amadeusSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(amadeusSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(amadeusSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).toBeWebhookMessage();
+                        expect(amadeusSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("An individual wearing a MASK (Luna)");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(game.settings.defaultConcealedIconURL);
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("An individual wearing a MASK (Luna)", game.settings.defaultConcealedIconURL, "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
                         hidingSpot.removePlayer(amadeus);
                         hidingSpot.removePlayer(luna);
@@ -2726,15 +2516,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                         amadeus.cure(deaf);
                     });
@@ -2746,15 +2534,13 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                        expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                        expect(lunaSpectateMessage.author.username).toBe("Luna");
-                        expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                        expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(lunaSpectateMessage).toBeWebhookMessage();
+                        expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                         amadeus.cure(asleep);
                     });
@@ -2768,16 +2554,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Luna whispers "Oh, hello!" in your voice!`);
 
                                 luna.voiceString = luna.originalVoiceString;
@@ -2790,16 +2574,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Luna whispers "Oh, hello!"`);
 
                                 amadeus.cure(blind);
@@ -2813,16 +2595,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Someone whispers "Oh, hello!" in your voice!`);
 
                                 amadeus.cure(blind);
@@ -2858,16 +2638,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Luna whispers "Oh, hello!" in the RECEPTION DESK in your voice!`);
 
                                 luna.voiceString = luna.originalVoiceString;
@@ -2880,16 +2658,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Luna whispers "Oh, hello!" in the RECEPTION DESK.`);
 
                                 amadeus.cure(blind);
@@ -2903,16 +2679,14 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(1);
-                                expect(lunaSpectateMessage.webhookId).toBeTypeOf("string");
-                                expect(lunaSpectateMessage.author.username).toBe("Luna");
-                                expect(lunaSpectateMessage.author.avatarURL()).toBe(luna.member.avatarURL());
-                                expect(lunaSpectateMessage.content).toBe("-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(lunaSpectateMessage).toBeWebhookMessage();
+                                expect(lunaSpectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "-# *(Whispered to Amadeus in the RECEPTION DESK):*\nOh, hello!");
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(1);
-                                expect(amadeusSpectateMessage.webhookId).toBeUndefined();
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(amadeusSpectateMessage).not.toBeWebhookMessage();
                                 expect(amadeusSpectateMessage.content).toBe(`Someone in the RECEPTION DESK whispers "Oh, hello!" in your voice!`);
 
                                 amadeus.cure(blind);
@@ -2928,8 +2702,8 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of amadeus.location.occupants) {
-                            expect(occupant.notificationChannel.messages.cache.size).toBe(0);
-                            expect(occupant.spectateChannel.messages.cache.size).toBe(0);
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
                         }
                     });
 
@@ -2941,11 +2715,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                         luna.displayName = luna.name;
                         luna.displayIcon = null;
@@ -2964,11 +2738,11 @@ describe('messageHandler test', () => {
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                        expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                        expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
-                        expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                        expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
                         hidingSpot.removePlayer(amadeus);
                         hidingSpot.removePlayer(luna);
@@ -2989,11 +2763,11 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.voiceString = luna.originalVoiceString;
                             });
@@ -3005,12 +2779,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(amadeusNotificationMessage.content).toBe(`Luna whispers "( Oh, hello!"`);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.cure(blind);
                             });
@@ -3023,12 +2797,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(amadeusNotificationMessage.content).toBe(`Someone whispers "( Oh, hello!"`);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.cure(blind);
                                 luna.voiceString = luna.originalVoiceString;
@@ -3063,11 +2837,11 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(0);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 luna.voiceString = luna.originalVoiceString;
                             });
@@ -3079,12 +2853,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(amadeusNotificationMessage.content).toBe(`Luna whispers "( Oh, hello!" in the RECEPTION DESK.`);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.cure(blind);
                             });
@@ -3097,12 +2871,12 @@ describe('messageHandler test', () => {
                                 expect(performSaySpy).toHaveBeenCalledTimes(1);
                                 expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
-                                expect(luna.notificationChannel.messages.cache.size).toBe(0);
-                                expect(luna.spectateChannel.messages.cache.size).toBe(0);
+                                expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(luna.spectateChannel.messages.cache).toHaveSize(0);
 
-                                expect(amadeus.notificationChannel.messages.cache.size).toBe(1);
+                                expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(amadeusNotificationMessage.content).toBe(`Someone in the RECEPTION DESK whispers "( Oh, hello!"`);
-                                expect(amadeus.spectateChannel.messages.cache.size).toBe(0);                                
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);                                
 
                                 amadeus.cure(blind);
                                 luna.voiceString = luna.originalVoiceString;

@@ -969,7 +969,7 @@ describe("GameEntityFinder test", () => {
             expect(roomItems.length).toBeGreaterThan(1);
         });
         test("Get container only, expect container items", () => {
-            let roomItems = game.entityFinder.getRoomItems(undefined, undefined, undefined, "TOOL SHELF");
+            let roomItems = game.entityFinder.getRoomItems(undefined, undefined, undefined, "Fixture", "TOOL SHELF");
             expect(roomItems.length).toBe(6);
         });
     });

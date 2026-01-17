@@ -7,6 +7,10 @@ declare global {
 
 interface CustomMatchers<R = unknown> {
     toBeInvokedWith: (...args: any) => R;
+    toHaveSize: (size: number) => R;
+    toBeWithinRange: (floor: number, ceiling: number) => R;
+    toBeWebhookMessage: () => R;
+    toBeMessageWith: (username: string, avatarURL: string, content: string) => R;
 }
 
 declare module "vitest" {

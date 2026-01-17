@@ -559,10 +559,10 @@ export default class GameNarrationHandler {
 	narrateUnequip(action, item, player, notify = true) {
 		const messageType = NarrationType.STANDARD;
 		if (notify) {
-			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.singleContainingPhrase);
+			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
 			this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		}
-		const narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.singleContainingPhrase);
+		const narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 

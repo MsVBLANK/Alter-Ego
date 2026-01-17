@@ -32,7 +32,7 @@ export function usage(settings) {
  */
 export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable sleep");
-    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[1].id}**.`);
+    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
     const sleepStatus = game.entityFinder.getStatusEffect("asleep");
     const action = new InflictAction(game, message, player, player.location, false);

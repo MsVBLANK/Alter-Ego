@@ -44,7 +44,7 @@ export async function execute(game, message, command, args, player) {
         return game.communicationHandler.reply(message, `You need to specify a container with items. Usage:\n${usage(game.settings)}`);
 
     const status = player.getBehaviorAttributeStatusEffects("disable dress");
-    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[1].id}**.`);
+    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
     // First, check if the player has a free hand.
     let hand = game.entityFinder.getPlayerFreeHand(player);
@@ -119,13 +119,13 @@ export async function execute(game, message, command, args, player) {
      */
     let containerItems = [];
     if (container instanceof Fixture)
-        containerItems = items.filter(item => item.containerName === `Object: ${container.name}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'Fixture' && item.containerName === container.name && item.prefab.equippable);
     else if (container instanceof Puzzle)
-        containerItems = items.filter(item => item.containerName === `Puzzle: ${container.name}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'Puzzle' && item.containerName === container.name && item.prefab.equippable);
     else if (container instanceof RoomItem && inventorySlot)
-        containerItems = items.filter(item => item.containerName === `Item: ${container.identifier}/${inventorySlot.id}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'RoomItem' && item.containerName === `${container.identifier}/${inventorySlot.id}` && item.prefab.equippable);
     else if (container instanceof RoomItem && !inventorySlot)
-        containerItems = items.filter(item => item.containerName.startsWith(`Item: ${container.identifier}/`) && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'RoomItem' && item.containerName.startsWith(`${container.identifier}/`) && item.prefab.equippable);
     if (containerItems.length === 0)
         return game.communicationHandler.reply(message, `${container.name} has no equippable items.`);
     

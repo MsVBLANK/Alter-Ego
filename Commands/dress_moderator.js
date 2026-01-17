@@ -110,13 +110,13 @@ export async function execute(game, message, command, args) {
      */
     let containerItems = [];
     if (container instanceof Fixture)
-        containerItems = items.filter(item => item.containerName === `Object: ${container.name}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'Fixture' && item.containerName === container.name && item.prefab.equippable);
     else if (container instanceof Puzzle)
-        containerItems = items.filter(item => item.containerName === `Puzzle: ${container.name}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'Puzzle' && item.containerName === container.name && item.prefab.equippable);
     else if (container instanceof RoomItem && inventorySlot)
-        containerItems = items.filter(item => item.containerName === `Item: ${container.identifier}/${inventorySlot.id}` && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'RoomItem' && item.containerName === `${container.identifier}/${inventorySlot.id}` && item.prefab.equippable);
     else if (container instanceof RoomItem && !inventorySlot)
-        containerItems = items.filter(item => item.containerName.startsWith(`Item: ${container.identifier}/`) && item.prefab.equippable);
+        containerItems = items.filter(item => item.containerType === 'RoomItem' && item.containerName.startsWith(`${container.identifier}/`) && item.prefab.equippable);
     if (containerItems.length === 0)
         return game.communicationHandler.reply(message, `${container.name} has no equippable items.`);
 

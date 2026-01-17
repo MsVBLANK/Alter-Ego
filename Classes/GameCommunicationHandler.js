@@ -221,7 +221,7 @@ export default class GameCommunicationHandler {
 	mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, messageText = dialog.content, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
+			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
 			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
 		}
 	}
@@ -236,6 +236,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
 	mirrorNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
+		if (narration.isOOCMessage) return;
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			messageHandler.sendWebhookSpectateMessage(player, narration.message, narrationText, webhookUsername, webhookAvatarURL, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url));

@@ -246,11 +246,10 @@ export default class Dialog extends GameConstruct {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
 	getWhisperPrefixStringForWebhook(playerCanSeeSpeaker) {
-		return this.whisper && this.whisper.playersCollection.size > 1 && playerCanSeeSpeaker
-			? `*(Whispered to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}):*\n`
-			: this.whisper
-				? `*(Whispered):*\n`
-				: "";
+		const recipientPhrase = this.whisper?.playersCollection.size > 1 && playerCanSeeSpeaker ? ` to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}` : ``;
+		const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
+		const hidingSpotPhrase = hidingSpot && playerCanSeeSpeaker ? ` in ${hidingSpot.getContainingPhrase()}` : ``;
+		return this.whisper ? `-# *(Whispered${recipientPhrase}${hidingSpotPhrase}):*\n` : "";
 	}
 
 	/**

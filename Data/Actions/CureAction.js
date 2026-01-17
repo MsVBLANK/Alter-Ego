@@ -22,9 +22,10 @@ export default class CureAction extends Action {
 	performCure(status, notify = true, doCuredCondition = true, narrate = true, item) {
 		if (this.performed) return false;
 		super.perform();
+		let sendFollowupMessage = true;
 		const playerStatusIds = this.player.statusCollection.map(statusEffect => statusEffect.id);
 		if (!playerStatusIds.includes(status.id)) {
-			if (this.message) this.message.reply(`Specified player doesn't have that status effect.`);
+			if (this.message && this.forced) this.message.reply(`Specified player doesn't have that status effect.`);
 			return false;
 		}
 		if (status.behaviorAttributes.has("no channel") && this.player.getBehaviorAttributeStatusEffects("no channel").length - 1 === 0)
@@ -40,8 +41,8 @@ export default class CureAction extends Action {
 		if (status.curedCondition && doCuredCondition) {
 			const curedConditionAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, true);
 			curedConditionAction.performInflict(status.curedCondition, false, false, true);
-			if (this.message) this.message.reply(`Successfully removed status effect. Player is now ${status.curedCondition.id}.`);
-			return false;
+			if (this.message && this.forced) this.message.reply(`Successfully removed status effect. Player is now ${status.curedCondition.id}.`);
+			sendFollowupMessage = false;
 		}
 		if (notify) {
 			this.player.sendDescription(status.curedDescription, status);
@@ -55,6 +56,6 @@ export default class CureAction extends Action {
 			const heatedPlayers = this.getGame().entityFinder.getLivingPlayers(undefined, undefined, undefined, undefined, "heated");
 			if (heatedPlayers.length === 0) this.getGame().heated = false;
 		}
-		return true;
+		return sendFollowupMessage;
 	}
 }

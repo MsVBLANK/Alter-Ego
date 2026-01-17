@@ -57,9 +57,8 @@ function isMock(obj) {
 }
 
 /**
- * @template {any} A
  * @param {unknown} obj
- * @returns {obj is {asymmetricMatch: (A) => boolean}}
+ * @returns {obj is {asymmetricMatch: (actual: any) => boolean}}
  */
 function isAsymmetric(obj) {
     // @ts-ignore

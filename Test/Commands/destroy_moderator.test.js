@@ -76,6 +76,7 @@ describe('destroy_moderator command', () => {
         test('given player item in container slot', async () => {
             const player = game.entityFinder.getPlayer("Kyra");
             const item = game.entityFinder.getInventoryItem("master key", "Kyra");
+            const quantity = item.quantity;
             /** @type {DestroyAction} */
             let context;
             const original = DestroyAction.prototype.performDestroyInventoryItem;
@@ -86,7 +87,7 @@ describe('destroy_moderator command', () => {
             });
             // @ts-ignore
             await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
-            expect(spy).toBeInvokedWith(item, item.quantity, true);
+            expect(spy).toBeInvokedWith(item, quantity, true);
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
         });

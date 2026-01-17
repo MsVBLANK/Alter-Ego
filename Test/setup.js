@@ -8,6 +8,7 @@ import settings from './__mocks__/configs/settings.js';
 
 import toBeWithinRange from './__extenders__/toBeWithinRange.js';
 import toHaveSize from './__extenders__/toHaveSize.js';
+import toBeInvokedWith from './__extenders__/toBeInvokedWith.js';
 
 import * as sheetsMock from './__mocks__/libs/sheets.js';
 vi.mock('../Modules/sheets.js', () => sheetsMock);
@@ -120,5 +121,6 @@ afterEach(() => {
 
 expect.extend({
     toBeWithinRange,
-    toHaveSize
+    toHaveSize,
+    toBeInvokedWith
 });

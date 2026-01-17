@@ -75,7 +75,7 @@ describe('destroy_moderator command', () => {
         });
         test('given player item in container slot', async () => {
             const player = game.entityFinder.getPlayer("Kyra");
-            const item = game.entityFinder.getInventoryItem("mug of coffee", "Kyra");
+            const item = game.entityFinder.getInventoryItem("master key", "Kyra");
             /** @type {DestroyAction} */
             let context;
             const original = DestroyAction.prototype.performDestroyInventoryItem;

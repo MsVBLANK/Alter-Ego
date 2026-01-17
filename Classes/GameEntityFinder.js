@@ -579,10 +579,10 @@ export default class GameEntityFinder {
 		}
 		if (player) selectedFilters.set(Game.generateValidEntityName(player), matchers.inventoryItemPlayerNameMatches);
 		if (containerName) {
-			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameContains);
-			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerNameMatches);
-			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameMatches);
-			else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
+			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameContains);
+			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNameMatches);
+			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameMatches);
+			else selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierMatches);
 		}
 		if (slotId) selectedFilters.set(Game.generateValidEntityName(slotId), matchers.itemSlotMatches);
 		if (equipmentSlotId) selectedFilters.set(Game.generateValidEntityName(equipmentSlotId), matchers.inventoryItemEquipmentSlotMatches);

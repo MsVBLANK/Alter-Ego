@@ -1,5 +1,6 @@
 import Action from "../Action.js";
 import SolveAction from "./SolveAction.js";
+import { NarrationType } from "../Narration.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.js";
 
 /** @typedef {import("../Dialog.js").default} Dialog */
@@ -30,6 +31,8 @@ export default class SayAction extends Action {
 		this.#voicePuzzles = this.getGame().entityFinder.getPuzzles(undefined, undefined, "voice");
 		if (dialog.whisper) this.#communicateWhisperedDialog(dialog);
 		this.#communicateDialogToRoomOccupants(dialog);
+		// If the dialog is an OOC message or took place in a whisper, the rest of the functions don't need to be called.
+		if (dialog.isOOCMessage || dialog.whisper) return;
 		this.#solveVoicePuzzles(dialog.location, dialog);
 		this.#communicateDialogToNeighboringRooms(dialog);
 		this.#communicateDialogToAudioMonitoringRooms(dialog);
@@ -74,7 +77,7 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
 	#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker) {
-		return dialog.isMimicking(player) || !player.canSee()/* || player.hasBehaviorAttribute("hear room") && !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker*/;
+		return !player.canSee() || !dialog.isOOCMessage && dialog.isMimicking(player)/* || player.hasBehaviorAttribute("hear room") && !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker*/;
 	}
 
 	/**
@@ -84,7 +87,7 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
 	#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) {
-		return dialog.isMimicking(player) || player.hasBehaviorAttribute("hear room") || player.knows(dialog.speakerRecognitionName) && (!playerCanSeeSpeaker || dialog.speakerDisplayNameIsDifferent);
+		return player.hasBehaviorAttribute("hear room") || !dialog.isOOCMessage && (dialog.isMimicking(player) || player.knows(dialog.speakerRecognitionName) && (!playerCanSeeSpeaker || dialog.speakerDisplayNameIsDifferent));
 	}
 
 	/**
@@ -131,6 +134,7 @@ export default class SayAction extends Action {
 	 * @param {string} narrationText - The text to narrate.
 	 */
 	#narrateDialogAndSolveVoicePuzzles(location, dialog, narrationText) {
+		if (dialog.isOOCMessage) return;
 		if (location.tags.has("audio monitoring") && location.tags.has("video monitoring") && dialog.locationIsAudioSurveilled && dialog.locationIsVideoSurveilled)
 			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
 		else
@@ -155,10 +159,10 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
 				continue;
 			}
-			if (webhookUsername)
+			if (!dialog.isOOCMessage && webhookUsername)
 				this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
 			else this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix);
 		}
@@ -182,7 +186,7 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			// Players with the acute hearing attribute should overhear other whispers.
 			if (dialog.whisper) {
-				if (player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
+				if (!dialog.isOOCMessage && player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
 					const notification = this.getGame().notificationGenerator.generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player);
 					if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
@@ -195,7 +199,7 @@ export default class SayAction extends Action {
 
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
 				continue;
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";

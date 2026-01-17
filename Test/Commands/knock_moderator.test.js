@@ -31,7 +31,7 @@ describe('knock_moderator command', () => {
         // @ts-ignore
         await knock_moderator.execute(game, createMockMessage(), "knock", ["kyra", "door"]);
         expect(context.player.name).toBe(player.name);
-        expect(spy).toHaveBeenCalledWith(exit);
+        expect(spy).toBeInvokedWith(exit);
     });
     test('with invalid exit', async () => {
         /** @type {KnockAction} */
@@ -49,6 +49,6 @@ describe('knock_moderator command', () => {
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(context).toBeUndefined();
-        expect(author.send).toHaveBeenCalledWith(`Couldn't find exit "INVALID" in the room.`);
+        expect(author.send).toBeInvokedWith(`Couldn't find exit "INVALID" in the room.`);
     });
 });

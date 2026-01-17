@@ -36,21 +36,21 @@ describe('uncraft_player command', () => {
             const args = ['pen'];
             player.getAttributeStatusEffects.mockReturnValue([{ name: 'asleep' }]);
             await uncraft_player.run(bot, game, message, 'uncraft', args, player);
-            expect(game.messageHandler.addReply).toHaveBeenCalledWith(message, 'You cannot do that because you are **asleep**.');
+            expect(game.messageHandler.addReply).toBeInvokedWith(message, 'You cannot do that because you are **asleep**.');
             expect(player.uncraft).not.toHaveBeenCalled();
         });
 
         test('item not in player\'s hand', async () => {
             const args = ['pen'];
             await uncraft_player.run(bot, game, message, 'uncraft', args, player);
-            expect(game.messageHandler.addReply).toHaveBeenCalledWith(message, `Couldn't find item "PEN" in either of your hands.`);
+            expect(game.messageHandler.addReply).toBeInvokedWith(message, `Couldn't find item "PEN" in either of your hands.`);
             expect(player.uncraft).not.toHaveBeenCalled();
         });
 
         test('item not uncraftable', async () => {
             const args = ['pen cap'];
             await uncraft_player.run(bot, game, message, 'uncraft', args, player);
-            expect(game.messageHandler.addReply).toHaveBeenCalledWith(message, `Couldn't find an uncraftable recipe that produces a PEN CAP. Contact a moderator if you think there should be one.`);
+            expect(game.messageHandler.addReply).toBeInvokedWith(message, `Couldn't find an uncraftable recipe that produces a PEN CAP. Contact a moderator if you think there should be one.`);
             expect(player.uncraft).not.toHaveBeenCalled();
         });
     });
@@ -71,7 +71,7 @@ describe('uncraft_player command', () => {
         test('both hands contain uncraftable item', async () => {
             const args = ['pen'];
             await uncraft_player.run(bot, game, message, 'uncraft', args, player);
-            expect(game.messageHandler.addReply).toHaveBeenCalledWith(message, `You do not have an empty hand to uncraft a PEN. Either drop the item in your other hand or stash it in one of your equipped items.`);
+            expect(game.messageHandler.addReply).toBeInvokedWith(message, `You do not have an empty hand to uncraft a PEN. Either drop the item in your other hand or stash it in one of your equipped items.`);
             expect(player.uncraft).not.toHaveBeenCalled();
         });
     });*/

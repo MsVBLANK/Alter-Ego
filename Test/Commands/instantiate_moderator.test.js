@@ -31,7 +31,7 @@ describe('instantiate_moderator command', () => {
         });
         // @ts-ignore
         await instantiate_moderator.execute(game, createMockMessage(), "create", ["mug", "of", "coffee", "in", "kyra's", "left", "hand"])
-        expect(spy).toHaveBeenCalledWith(prefab, "LEFT HAND", null, "", 1, expect.any(Map));
+        expect(spy).toBeInvokedWith(prefab, "LEFT HAND", null, "", 1, expect.any(Map));
         expect(context).not.toBeUndefined();
         expect(context.player.name).toBe(player.name);
     });

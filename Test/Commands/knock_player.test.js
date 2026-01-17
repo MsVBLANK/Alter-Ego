@@ -23,7 +23,7 @@ describe('knock_player command', () => {
         const spy = vi.spyOn(KnockAction.prototype, "performKnock");
         // @ts-ignore
         await knock_player.execute(game, createMockMessage(), "knock", ["door"], player);
-        expect(spy).toHaveBeenCalledWith(exit);
+        expect(spy).toBeInvokedWith(exit);
     });
     test('with invalid exit', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -34,6 +34,6 @@ describe('knock_player command', () => {
         await knock_player.execute(game, message, "knock", ["invalid"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`Couldn't find exit "INVALID" in the room.`);
+        expect(author.send).toBeInvokedWith(`Couldn't find exit "INVALID" in the room.`);
     });
 });

@@ -25,7 +25,7 @@ describe("unstash_moderator command", () => {
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
         await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "hamburger", "bun", "from", "pack", "of", "toilet", "paper", "2"]);
-        expect(spy).toHaveBeenCalledWith(item, expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), container, slot);
+        expect(spy).toBeInvokedWith(item, expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), container, slot);
     });
     test("valid item without specified container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
@@ -35,7 +35,7 @@ describe("unstash_moderator command", () => {
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
         await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"]);
-        expect(spy).toHaveBeenCalledWith(expect.toBeOneOf(items), expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), expect.toBeOneOf(containers), expect.toBeOneOf(slots));
+        expect(spy).toBeInvokedWith(expect.toBeOneOf(items), expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), expect.toBeOneOf(containers), expect.toBeOneOf(slots));
     });
     test("valid item with item of same name in hand", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
@@ -55,7 +55,7 @@ describe("unstash_moderator command", () => {
         await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "from", "pack", "of", "toilet", "paper"]);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith("Couldn't find \"PACK OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER\".");
+        expect(author.send).toBeInvokedWith("Couldn't find \"PACK OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER\".");
     });
     test("valid item from invalid container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
@@ -66,7 +66,7 @@ describe("unstash_moderator command", () => {
         await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "bun", "from", "bag", "of", "toilet", "paper"]);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith("Couldn't find \"BAG OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER BUN\".");
+        expect(author.send).toBeInvokedWith("Couldn't find \"BAG OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER BUN\".");
     });
     test("no free hand", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
@@ -81,7 +81,7 @@ describe("unstash_moderator command", () => {
         await unstash_moderator.execute(game, message, "retrieve", ["vivian", "pack", "of", "toilet", "paper", "from", "white", "jeans"]);
         await sendQueuedMessages(game);
         expect(spy).toHaveBeenCalledTimes(2);
-        expect(author.send).toHaveBeenCalledWith("Vivian does not have a free hand to retrieve an item.");
+        expect(author.send).toBeInvokedWith("Vivian does not have a free hand to retrieve an item.");
     });
     test("valid item without container", async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -92,6 +92,6 @@ describe("unstash_moderator command", () => {
         await unstash_moderator.execute(game, message, "retrieve", ["kyra", "mug", "of", "coffee"]);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith("MUG OF COFFEE is not contained in another item and cannot be unstashed.");
+        expect(author.send).toBeInvokedWith("MUG OF COFFEE is not contained in another item and cannot be unstashed.");
     });
 });

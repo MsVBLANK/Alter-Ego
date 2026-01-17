@@ -26,7 +26,7 @@ describe("use_player command", () => {
         // @ts-ignore
         await use_player.execute(game, message, "use", ["invalid", "item"], player);
         await sendQueuedMessages(game);
-        expect(user.send).toHaveBeenCalledWith("Couldn't find \"invalid item\" to use. Try using a different command?");
+        expect(user.send).toBeInvokedWith("Couldn't find \"invalid item\" to use. Try using a different command?");
     });
 
     describe("on inventory item", () => {
@@ -40,7 +40,7 @@ describe("use_player command", () => {
             const spy = vi.spyOn(UseAction.prototype, "performUse");
             // @ts-ignore
             await use_player.execute(game, createMockMessage(), "drink", ["coffee"], player);
-            expect(spy).toHaveBeenCalledWith(item);
+            expect(spy).toBeInvokedWith(item);
         });
 
         test("UseAction on no programmed use", async () => {
@@ -54,7 +54,7 @@ describe("use_player command", () => {
             await use_player.execute(game, message, "use", ["dirty", "mug"], player);
             await sendQueuedMessages(game);
             expect(spy).toHaveBeenCalledOnce();
-            expect(user.send).toHaveBeenCalledWith(
+            expect(user.send).toBeInvokedWith(
                 "That item has no programmed use on its own, but you may be able to use it some other way."
             );
         });
@@ -71,7 +71,7 @@ describe("use_player command", () => {
             await use_player.execute(game, message, "drink", ["coffee"], player);
             await sendQueuedMessages(game);
             expect(spy).toHaveBeenCalledOnce();
-            expect(user.send).toHaveBeenCalledWith(
+            expect(user.send).toBeInvokedWith(
                 "COFFEE currently has no effect on you."
             );
         });
@@ -109,7 +109,7 @@ describe("use_player command", () => {
             const spy = vi.spyOn(AttemptAction.prototype, "performAttempt");
             // @ts-ignore
             await use_player.execute(game, createMockMessage(), "use", ["USERNAME", "root"], player);
-            expect(spy).toHaveBeenCalledWith(puzzle, null, "root", "use", "root", undefined);
+            expect(spy).toBeInvokedWith(puzzle, null, "root", "use", "root", undefined);
         });
     });
 
@@ -127,8 +127,8 @@ describe("use_player command", () => {
             const attempt_spy = vi.spyOn(AttemptAction.prototype, "performAttempt");
             // @ts-ignore
             await use_player.execute(game, createMockMessage(), "use", ["shower"], player);
-            expect(activate_spy).toHaveBeenCalledWith(fixture, false);
-            expect(attempt_spy).toHaveBeenCalledWith(puzzle, null, "", "use", "", player);
+            expect(activate_spy).toBeInvokedWith(fixture, false);
+            expect(attempt_spy).toBeInvokedWith(puzzle, null, "", "use", "", player);
         });
     });
 });

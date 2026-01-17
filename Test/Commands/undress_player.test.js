@@ -24,6 +24,6 @@ describe('undress_player command', () => {
         const spy = vi.spyOn(UndressAction.prototype, "performUndress");
         // @ts-ignore
         await undress_player.execute(game, createMockMessage(), "undress", ["floor"], player);
-        expect(spy).toHaveBeenCalledWith(fixture, null);
+        expect(spy).toBeInvokedWith(fixture, null);
     });
 });

@@ -25,7 +25,7 @@ describe('unequip_player command', () => {
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore
         await unequip_player.execute(game, createMockMessage(), "unequip", ["glasses"], player);
-        expect(spy).toHaveBeenCalledWith(item, slot, hand);
+        expect(spy).toBeInvokedWith(item, slot, hand);
     });
     test('given valid item from valid slot', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -35,7 +35,7 @@ describe('unequip_player command', () => {
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore
         await unequip_player.execute(game, createMockMessage(), "unequip", ["glasses", "from", "glasses"], player);
-        expect(spy).toHaveBeenCalledWith(item, slot, hand);
+        expect(spy).toBeInvokedWith(item, slot, hand);
     });
     test('given invalid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -46,7 +46,7 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["invalid"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`Couldn't find equipped item "INVALID".`);
+        expect(author.send).toBeInvokedWith(`Couldn't find equipped item "INVALID".`);
     });
     test('given valid item from invalid (unrelated) slot', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -57,7 +57,7 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["glasses", "from", "jacket"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`Couldn't find "GLASSES" equipped to JACKET.`);
+        expect(author.send).toBeInvokedWith(`Couldn't find "GLASSES" equipped to JACKET.`);
     });
     test('given valid item from invalid (nonexistent) slot', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -68,7 +68,7 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["glasses", "from", "invalid"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`Couldn't find equipment slot "INVALID".`);
+        expect(author.send).toBeInvokedWith(`Couldn't find equipment slot "INVALID".`);
     });
     test('given anything from invalid (empty) slot', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -79,7 +79,7 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["invalid", "from", "hat"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`Nothing is equipped to "HAT".`);
+        expect(author.send).toBeInvokedWith(`Nothing is equipped to "HAT".`);
     });
     test('given invalid item (held in hand)', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -90,7 +90,7 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["coffee"], player);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
-        expect(author.send).toHaveBeenCalledWith(`You cannot unequip items from your hands. To get rid of this item, use the drop command.`);
+        expect(author.send).toBeInvokedWith(`You cannot unequip items from your hands. To get rid of this item, use the drop command.`);
     });
     test('without free hand', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -102,6 +102,6 @@ describe('unequip_player command', () => {
         await unequip_player.execute(game, message, "unequip", ["tie"], player);
         await sendQueuedMessages(game);
         expect(spy).toHaveBeenCalledTimes(1);
-        expect(author.send).toHaveBeenCalledWith(`You do not have a free hand to unequip an item. Either drop an item you're currently holding or stash it in one of your equipped items.`);
+        expect(author.send).toBeInvokedWith(`You do not have a free hand to unequip an item. Either drop an item you're currently holding or stash it in one of your equipped items.`);
     });
 });

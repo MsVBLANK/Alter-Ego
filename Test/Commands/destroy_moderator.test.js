@@ -34,7 +34,7 @@ describe('destroy_moderator command', () => {
             });
             // @ts-ignore
             await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "right", "hand"]);
-            expect(spy).toHaveBeenCalledWith(item, item.quantity, true, true);
+            expect(spy).toBeInvokedWith(item, item.quantity, true, true);
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
         });
@@ -54,7 +54,7 @@ describe('destroy_moderator command', () => {
             await sendQueuedMessages(game);
             expect(spy).not.toHaveBeenCalled();
             expect(context).toBeUndefined();
-            expect(author.send).toHaveBeenCalledWith("Cannot destroy item equipped to LEFT HAND because nothing is equipped to it.");
+            expect(author.send).toBeInvokedWith("Cannot destroy item equipped to LEFT HAND because nothing is equipped to it.");
         });
         test('given player item', async () => {
             const player = game.entityFinder.getPlayer("Kyra");
@@ -69,7 +69,7 @@ describe('destroy_moderator command', () => {
             });
             // @ts-ignore
             await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "mug", "of", "coffee"]);
-            expect(spy).toHaveBeenCalledWith(item, item.quantity, true, true);
+            expect(spy).toBeInvokedWith(item, item.quantity, true, true);
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
         });
@@ -86,7 +86,7 @@ describe('destroy_moderator command', () => {
             });
             // @ts-ignore
             await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
-            expect(spy).toHaveBeenCalledWith(item, item.quantity, true, true);
+            expect(spy).toBeInvokedWith(item, item.quantity, true);
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
         });

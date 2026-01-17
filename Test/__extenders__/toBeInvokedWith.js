@@ -57,30 +57,47 @@ function isMock(obj) {
 }
 
 /**
- * @param {unknown} a
- * @param {unknown} b
+ * @template {any} A
+ * @param {unknown} obj
+ * @returns {obj is {asymmetricMatch: (A) => boolean}}
+ */
+function isAsymmetric(obj) {
+    // @ts-ignore
+    return obj && typeof obj === "object" && typeof obj?.asymmetricMatch === "function";
+}
+
+/**
+ * @param {unknown} actual
+ * @param {unknown} expected
  * @returns {boolean}
  */
-function deepEqual(a, b) {
-    try {
-        assert.deepEqual(a, b);
-    } catch {
-        return false;
-    }
+function deepEqual(actual, expected) {
+    if (isAsymmetric(expected)) {
+        try {
+            return expected.asymmetricMatch(actual);
+        } catch {
+            return false;
+        }
+    } else
+        try {
+            assert.deepEqual(actual, expected);
+        } catch {
+            return false;
+        }
     return true;
 }
 
 /**
- * @param {unknown[]} a
- * @param {unknown[]} b
+ * @param {unknown[]} actual
+ * @param {unknown[]} expected
  * @returns {number}
  */
-function getFirstMismatchIndex(a, b) {
-    if (a.length !== b.length) {
+function getFirstMismatchIndex(actual, expected) {
+    if (actual.length !== expected.length) {
         return -1;
     }
-    for (let i = 0; i < a.length; i++) {
-        if (!deepEqual(a[i], b[i])) {
+    for (let i = 0; i < actual.length; i++) {
+        if (!deepEqual(actual[i], expected[i])) {
             return i;
         }
     }

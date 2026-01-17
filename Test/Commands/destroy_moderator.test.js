@@ -75,6 +75,24 @@ describe('destroy_moderator command', () => {
                         expect(context.player.name).toBe(player.name);
                     }
                 });
+                test('given player all in container slot', async () => {
+                    const player = game.entityFinder.getPlayer("Kyra");
+                    const items = game.entityFinder.getInventoryItems(null, "Kyra", "kyras pants", "right pocket");
+                    /** @type {DestroyAction[]} */
+                    let contexts = [];
+                    const original = DestroyAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    spy.mockImplementation(function (...args) {
+                        contexts.push(this);
+                        return original.apply(this, args);
+                    });
+                    // @ts-ignore
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
+                    expect(spy).toHaveBeenCalledTimes(items.length);
+                    for (const context of contexts) {
+                        expect(context.player.name).toBe(player.name);
+                    }
+                });
                 test('given player item in container', async () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const item = game.entityFinder.getInventoryItem("master key", "Kyra");

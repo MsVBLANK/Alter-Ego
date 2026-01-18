@@ -43,6 +43,17 @@ export default class NarrateAction extends Action {
 	}
 
 	/**
+	 * Sends the narration to the player's spectate channel.
+	 * @param {Player} player - The player whose spectate channel the narration is to be mirrored in.
+	 * @param {Narration} narration - The narration to send.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 */
+	#mirrorNarrationInSpectateChannel(player, narration, narrationText = narration.content) {
+		narrationText = narration.getWhisperPrefixString() + narrationText;
+		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration.type, narrationText);
+	}
+
+	/**
 	 * Sends the narration to the player's spectate channel as a webhook.
 	 * @param {Player} player - The player whose spectate channel the narration is to be mirrored in.
 	 * @param {Narration} narration - The narration to send.
@@ -52,7 +63,7 @@ export default class NarrateAction extends Action {
 	 */
 	#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName = narration.narratorDisplayName, narratorDisplayIcon = narration.narratorDisplayIcon, narrationText = narration.content) {
 		narrationText = narration.getWhisperPrefixString() + narrationText;
-		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
+		this.getGame().communicationHandler.mirrorMessageNarrationInSpectateChannel(player, narration.action, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 	}
 
 	/**
@@ -67,9 +78,11 @@ export default class NarrateAction extends Action {
 		for (const player of players) {
 			if (narration.player && narration.player.name === player.name) continue;
 			if (this.#playerCannotReceiveCommunications(player)) continue;
+			const mirrorNotificationInSpectateChannel = narration.narrator === undefined;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.type, false);
+				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? NarrationType.STANDARD : narration.type, mirrorNotificationInSpectateChannel);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
+			else this.#mirrorNarrationInSpectateChannel(player, narration, narrationText);
 		}
 	}
 
@@ -80,7 +93,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToLocation(narration) {
 		if (narration.player && narration.player.isHidden() && narration.whisper && !(narration.action instanceof UnhideAction)) return;
 		this.#communicateNarrationToPlayers(narration, narration.location.occupants);
-		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInRoom(narration);
+		if (!narration.narrator) this.getGame().communicationHandler.narrateInRoom(narration, narration.content, false);
 	}
 
 	/**
@@ -90,7 +103,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToWhisper(narration) {
 		if (!narration.whisper) return;
 		this.#communicateNarrationToPlayers(narration, narration.whisper.playersCollection.map(player => player));
-		if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInWhisper(narration);
+		if (!narration.narrator) this.getGame().communicationHandler.narrateInWhisper(narration, narration.content, false);
 	}
 
 	/**
@@ -104,7 +117,7 @@ export default class NarrateAction extends Action {
 		const narrationText = `\`${prefix}${narration.content}\``;
 		for (const videoMonitoringRoom of narration.videoMonitoringRooms) {
 			this.#communicateNarrationToPlayers(narration, videoMonitoringRoom.occupants, `[${roomDisplayName}] ${narration.narratorDisplayName}`, narration.narratorDisplayIcon, narrationText);
-			if (narration.type !== NarrationType.DIALOG) this.getGame().communicationHandler.narrateInRoom(narration, narrationText);
+			if (!narration.narrator) this.getGame().communicationHandler.narrateInRoom(narration, narrationText);
 		}
 	}
 }

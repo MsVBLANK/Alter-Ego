@@ -1,4 +1,4 @@
-import { endsWithPunctuation } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
 
 /** @typedef {import("../Data/Dialog.js").default} Dialog */
 /** @typedef {import("../Data/Fixture.js").default} Fixture */
@@ -117,7 +117,7 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = player && dialog.isMimicking(player) ? `someone in a nearby room` : `someone in a nearby room with ${dialog.speakerVoiceString}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : locator === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
 		return `${speakerString} ${verb} "${dialog.content}"${locator}${punctuation}`;
 	}
 
@@ -128,7 +128,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} [player] - The player referred to in this notification. Optional.
 	 */
 	generateHearAudioSurveilledNeighboringRoomDialogNotification(roomDisplayName, dialog, player) {
-		return `\`[${roomDisplayName}]\` ${this.generateHearNeighboringRoomDialogNotification(dialog, player)}`;
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearNeighboringRoomDialogNotification(dialog, player))}`;
 	}
 
 	/**

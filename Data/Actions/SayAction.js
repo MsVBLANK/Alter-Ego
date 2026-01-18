@@ -214,8 +214,24 @@ export default class SayAction extends Action {
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
 	#communicateDialogToNeighboringRooms(dialog) {
+		if (dialog.isShouted) {
+			// If any neighboring rooms have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
+			for (const neighboringAudioSurveilledRoom of dialog.neighboringAudioSurveilledRooms.values()) {
+				const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName();
+				for (const audioMonitoringRoom of dialog.audioMonitoringRooms.values()) {
+					for (const player of audioMonitoringRoom.occupants) {
+						if (this.#playerCannotReceiveCommunications(player)) continue;
+						if (this.#playerShouldReceiveNotification(dialog, player, false)) {
+							const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
+							this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						}
+					}
+					this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
+				}
+			}
+		}
 		// Communicate dialog to neighboring rooms.
-		for (const neighboringRoom of dialog.neighboringRooms) {
+		for (const neighboringRoom of dialog.neighboringRooms.values()) {
 			for (const player of neighboringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player, false)) {
@@ -226,21 +242,6 @@ export default class SayAction extends Action {
 			if (dialog.isShouted)
 				this.#narrateDialogAndSolveVoicePuzzles(neighboringRoom, dialog, this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog));
 		}
-		if (!dialog.isShouted) return;
-		// If any neighboring rooms have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
-		for (const neighboringAudioSurveilledRoom of dialog.neighboringAudioSurveilledRooms) {
-			const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName();
-			for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
-				for (const player of audioMonitoringRoom.occupants) {
-					if (this.#playerCannotReceiveCommunications(player)) continue;
-					if (this.#playerShouldReceiveNotification(dialog, player, false)) {
-						const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
-						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
-					}
-				}
-				this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
-			}
-		}
 	}
 
 	/**
@@ -250,7 +251,7 @@ export default class SayAction extends Action {
 	#communicateDialogToAudioMonitoringRooms(dialog) {
 		if (!dialog.locationIsAudioSurveilled) return;
 		const roomDisplayName = dialog.location.getSurveilledDisplayName();
-		for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
+		for (const audioMonitoringRoom of dialog.audioMonitoringRooms.values()) {
 			for (const player of audioMonitoringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				const playerCanSeeSpeaker = player.canSee() && audioMonitoringRoom.tags.has("video monitoring") && dialog.locationIsVideoSurveilled && !dialog.speaker.isHidden();

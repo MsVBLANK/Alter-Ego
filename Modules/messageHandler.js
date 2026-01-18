@@ -80,14 +80,7 @@ export function sendNarrationToRoom(room, messageText, narrationType, addSpectat
         if (addSpectate) {
             room.occupants.forEach((occupant) => {
                 if (doMirrorInSpectateChannel(occupant, player)) {
-                    room.getGame().messageQueue.enqueue(
-                        {
-                            fire: async () => {
-                                await occupant.spectateChannel.send(messageCreateOptions);
-                            },
-                        },
-                        "spectator"
-                    );
+                    sendNarrationSpectateMessage(occupant, messageText, narrationType, [], messageCreateOptions);
                 }
             });
         }
@@ -115,14 +108,7 @@ export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpec
         if (addSpectate) {
             whisper.playersCollection.forEach((player) => {
                 if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
-                    whisper.getGame().messageQueue.enqueue(
-                        {
-                            fire: async () => {
-                                await player.spectateChannel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageTextWithSpectatePrefix));
-                            },
-                        },
-                        "spectator"
-                    );
+                    sendNarrationSpectateMessage(player, messageText, narrationType, [], discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageTextWithSpectatePrefix));
                 }
             });
         }
@@ -152,14 +138,7 @@ export function sendNotification(player, messageText, notificationType, addSpect
         );
     }
     if (addSpectate && player.spectateChannel !== null) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    await player.spectateChannel.send(messageCreateOptions);
-                },
-            },
-            "spectator"
-        );
+        sendNarrationSpectateMessage(player, messageText, notificationType, files, messageCreateOptions);
     }
 }
 
@@ -335,7 +314,26 @@ export function addSpectatedPlayerMessage(player, speaker, message, whisper = nu
 }
 
 /**
- * Mirrors a message in a spectate channel.
+ * Mirrors a narration in a spectate channel.
+ * @param {Player} player - The player whose spectate channel this message is being sent to.
+ * @param {string} messageText - The text of the message to send.
+ * @param {NarrationType} messageType - The type of message to send.
+ * @param {string[]} [files] - A collection of attachments to send, if any.
+ * @param {object} [messageCreateOptions] - The message create options to send. Optional.
+ */
+export function sendNarrationSpectateMessage(player, messageText, messageType, files = [], messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(messageType, player.getGame(), messageText, player, files)) {
+    player.getGame().messageQueue.enqueue(
+        {
+            fire: async () => {
+                await player.spectateChannel.send(messageCreateOptions);
+            },
+        },
+        "spectator"
+    );
+}
+
+/**
+ * Mirrors a message in a spectate channel as a webhook.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {UserMessage} message - The message being mirrored.
  * @param {string} messageText - The text of the message to send.

@@ -1,5 +1,6 @@
 import Action from "../Action.js";
 import { default as Narration, NarrationType } from "../Narration.js";
+import SayAction from "./SayAction.js";
 import UnhideAction from "./UnhideAction.js";
 import { ChannelType } from "discord.js";
 
@@ -26,10 +27,11 @@ export default class NarrateAction extends Action {
 
 	/**
 	 * Returns true if the given player is unable to receive communications.
-	 * @param {Player} player
+	 * @param {Narration} narration - The narration to send.
+	 * @param {Player} player - The player to check.
 	 */
-	#playerCannotReceiveCommunications(player) {
-		return player.isNPC || !player.canSee() || !player.isConscious();
+	#playerCannotReceiveCommunications(narration, player) {
+		return player.isNPC || narration.action instanceof SayAction && !player.canHear() || !player.canSee() || !player.isConscious();
 	}
 
 	/**
@@ -77,7 +79,7 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToPlayers(narration, players, narratorDisplayName, narratorDisplayIcon, narrationText) {
 		for (const player of players) {
 			if (narration.player && narration.player.name === player.name) continue;
-			if (this.#playerCannotReceiveCommunications(player)) continue;
+			if (this.#playerCannotReceiveCommunications(narration, player)) continue;
 			const mirrorNotificationInSpectateChannel = narration.narrator === undefined;
 			if (this.#playerShouldReceiveNotification(narration, player))
 				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? NarrationType.STANDARD : narration.type, mirrorNotificationInSpectateChannel);

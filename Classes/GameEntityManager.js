@@ -381,7 +381,7 @@ export default class GameEntityManager {
 					const noChannel = player.isNPC
 						|| player.isHidden() && player.getBehaviorAttributeStatusEffects("no channel").length > 1
 						|| !player.isHidden() && player.hasBehaviorAttribute("no channel")
-						|| player.hasBehaviorAttribute("no hearing");
+						|| !player.canHear();
 					if (!noChannel) {
 						channel.permissionOverwrites.create(player.id, {
 							ViewChannel: true,

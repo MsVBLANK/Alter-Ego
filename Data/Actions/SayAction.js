@@ -67,7 +67,7 @@ export default class SayAction extends Action {
 	 * @param {Player} player 
 	 */
 	#playerCannotReceiveCommunications(player) {
-		return player.isNPC || player.hasBehaviorAttribute("no hearing") || !player.isConscious();
+		return player.isNPC || !player.canHear() || !player.isConscious();
 	}
 
 	/**

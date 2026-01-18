@@ -39,6 +39,7 @@
     "table": "^6.9.0"
   },
   "devDependencies": {
+    "@tsconfig/node24": "^24.0.4",
     "@types/luxon": "^3.7.1",
     "@types/node": "24.10.1",
     "@vitest/coverage-v8": "4.0.17",

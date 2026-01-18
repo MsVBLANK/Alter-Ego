@@ -1,7 +1,6 @@
 {
-    // Visit https://aka.ms/tsconfig to read more about this file
+    "extends": "@tsconfig/node24/tsconfig.json",
     "compilerOptions": {
-        // File Layout
         "rootDir": "./",
         "outDir": "./dist",
         // Environment Settings
@@ -19,35 +18,17 @@
             "dom"
         ],
         "noEmit": true,
+        "skipLibCheck": false,
+        // JS support
         "allowJs": true,
         "checkJs": true,
+        // Interop
         "resolveJsonModule": true,
-        // Other Outputs
-        "sourceMap": true,
-        "declaration": true,
-        "declarationMap": true,
-        "emitDeclarationOnly": true,
-        // Stricter Typechecking Options
-        "noUncheckedIndexedAccess": false,
-        //"exactOptionalPropertyTypes": true,
-        // Style Options
-        // "noImplicitReturns": true,
-        // "noImplicitOverride": true,
-        // "noUnusedLocals": true,
-        // "noUnusedParameters": true,
-        // "noFallthroughCasesInSwitch": true,
-        // "noPropertyAccessFromIndexSignature": true,
-
-        // Recommended Options
-        // "strict": true,
-        "jsx": "react-jsx",
         "verbatimModuleSyntax": true,
-        "isolatedModules": true,
-        "noUncheckedSideEffectImports": false,
-        "moduleDetection": "auto",
-        "skipLibCheck": false,
         "rewriteRelativeImportExtensions": true,
         "erasableSyntaxOnly": true,
+        // Type checking
+        "strict": false
     },
     "include": [
         "**/*"

@@ -58,6 +58,8 @@ let playerCommands = new Collection();
 /** @type {Collection<string, EligibleCommand>} */
 let eligibleCommands = new Collection();
 
+let initialized = false;
+
 async function loadCommands() {
     const commandsDir = `./Commands/`;
     readdir(commandsDir, async (error, files) => {
@@ -266,9 +268,11 @@ client.on('clientReady', async () => {
                 loadCommand.execute(game, undefined, "lar", []);
         }, 0);
     }
+    initialized = true;
 });
 
 client.on('messageCreate', async message => {
+    if (!initialized) return;
     // Prevent bot from responding to its own messages.
     if (message.author === client.user) return;
     if (game.settings.debug && message.channel.type === ChannelType.DM) console.log(message.author.username + ': "' + message.content + '"');
@@ -286,6 +290,7 @@ client.on('messageCreate', async message => {
 });
 
 client.on('messageUpdate', async (messageOld, messageNew) => {
+    if (!initialized) return;
     if (messageOld.partial || messageNew.partial || messageOld.author.bot || messageOld.content === messageNew.content) return;
 
     if (messageOld.channel.type !== ChannelType.DM && game.inProgress

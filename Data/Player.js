@@ -874,6 +874,13 @@ export default class Player extends ItemContainer {
     canSee() {
         return !this.hasBehaviorAttribute("no sight");
     }
+
+    /**
+     * Returns true if the player doesn't have the `no hearing` behavior attribute.
+     */
+    canHear() {
+        return !this.hasBehaviorAttribute("no hearing");
+    }
     
     /**
      * Returns true if the player has the `knows ${playerName}` behavior attribute.

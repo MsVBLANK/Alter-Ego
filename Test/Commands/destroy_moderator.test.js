@@ -141,6 +141,16 @@ describe('destroy_moderator command', () => {
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("The \"all\" argument cannot be used when the container is an equipment slot.")
                 });
+                test('given player all when ???', async () => {
+                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const message = createMockMessage();
+                    const author = message.author;
+                    // @ts-ignore
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "mug", "of", "coffee"]);
+                    await sendQueuedMessages(game);
+                    expect(spy).not.toHaveBeenCalled();
+                    expect(author.send).toBeInvokedWith("The \"all\" argument cannot be used when the container is an equipped item.")
+                });
                 test('given player hand without item', async () => {
                     const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();

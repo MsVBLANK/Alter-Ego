@@ -63,11 +63,16 @@ export async function execute(game, message, command, args) {
                     return game.communicationHandler.reply(message, `The selected players aren't all in the same room.`);
                 // Check attributes that would prohibit the player from whispering to someone in the room.
                 let status = player.getBehaviorAttributeStatusEffects("disable whisper");
-                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[1].id}**.`);
+                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
                 status = player.getBehaviorAttributeStatusEffects("no hearing");
-                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[1].id}**.`);
+                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
                 status = player.getBehaviorAttributeStatusEffects("unconscious");
-                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[1].id}**.`);
+                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
+                // If there are no attributes that prevent whispering, add them to the array.
+                playerExists = true;
+                if (player.isNPC) npc = player;
+                recipients.push(player);
+                break;
             }
             // If there are no attributes that prevent whispering, add them to the array.
             playerExists = true;

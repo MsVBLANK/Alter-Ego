@@ -1,12 +1,32 @@
 import { NarrationType } from '../Data/Narration.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize } from 'discord.js';
+import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags } from 'discord.js';
 
 /**
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
+ * @typedef {import('discord.js').BitFieldResolvable<"SuppressEmbeds" | "SuppressNotifications" | "IsComponentsV2", MessageFlags.SuppressEmbeds | MessageFlags.SuppressNotifications | MessageFlags.IsComponentsV2>} Flags
  */
+
+/**
+ * Generates the message create options for a narration or notification.
+ * @param {NarrationType} narrationType - The type of message to send.
+ * @param {Game} game - The game the message is for.
+ * @param {string} messageText - The text content of the message. 
+ * @param {Player} [player] - The player the message is about. Optional.
+ * @param {string[]} [files] - An array of file URLs to send. Optional.
+ */
+export function generateNarrationMessageCreateOptions(narrationType, game, messageText, player, files = []) {
+    /** @type {Flags} */
+    let flags;
+    return {
+        content: narrationType === NarrationType.DIALOG ? messageText : '',
+        components: narrationType === NarrationType.DIALOG ? [] : createNarrateComponents(narrationType, game, messageText, player),
+        flags: narrationType === NarrationType.DIALOG ? flags : MessageFlags.IsComponentsV2,
+        files: files
+    };
+}
 
 /**
  * Creates an array of components for a narration.
@@ -15,7 +35,7 @@ import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, Con
  * @param {string} messageText - The text content of the narration.
  * @param {Player} [player] - The player the narration is about. Optional.
  */
-export function createNarrateComponents(narrationType, game, messageText, player) {
+function createNarrateComponents(narrationType, game, messageText, player) {
     switch (narrationType) {
 		case NarrationType.STANDARD:
 			return createStandardNarrationComponents(game, messageText);

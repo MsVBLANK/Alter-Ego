@@ -415,12 +415,13 @@ export default class GameEntityFinder {
 	 * @param {string} [identifier] - Filter the room items to only those whose identifier or prefab ID matches the given identifier in moderator contexts, or its name or plural name in player contexts.
 	 * @param {string} [location] - Filter the room items to only those whose location ID matches the given location ID.
 	 * @param {boolean} [accessible] - Filter the room items to only those who are accessible or not.
+	 * @param {string} [containerType] - Filter the room items to only those with the given container type.
 	 * @param {string} [containerName] - Filter the room items to only those with the given container name. Does not include slot.
 	 * @param {string} [slotId] - Filter the room items to only those in the inventory slot with the given ID.
 	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose ID only contains the given ID. If this is true, automatically makes the result context `combined`. Defaults to false.
 	 * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 */
-	getRoomItems(identifier, location, accessible, containerName, slotId, fuzzySearch = false, resultContext = 'moderator') {
+	getRoomItems(identifier, location, accessible, containerType, containerName, slotId, fuzzySearch = false, resultContext = 'moderator') {
 		/** @type {Collection<string|boolean, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (identifier) {
@@ -431,11 +432,19 @@ export default class GameEntityFinder {
 		}
 		if (location) selectedFilters.set(Room.generateValidId(location), matchers.entityLocationIdMatches);
 		if (accessible !== undefined && accessible !== null) selectedFilters.set(accessible, matchers.entityAccessibleMatches);
+		if (containerType !== undefined) {
+			containerType = Game.generateValidEntityName(containerType);
+			if (containerType === "FIXTURE" || containerType === "OBJECT") containerType = "Fixture";
+			else if (containerType === "ROOMITEM" || containerType === "ITEM") containerType = "RoomItem";
+			else if (containerType === "PUZZLE") containerType = "Puzzle";
+			else if (containerType === "INVENTORYITEM") containerType = "InventoryItem";
+			selectedFilters.set(containerType, matchers.itemContainerTypeMatches);
+		}
 		if (containerName) {
-			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameContains);
-			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerNameMatches);
-			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameMatches);
-			else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
+			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameContains);
+			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNameMatches);
+			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameMatches);
+			else selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierMatches);
 		}
 		if (slotId) selectedFilters.set(Game.generateValidEntityName(slotId), matchers.itemSlotMatches);
 		return this.game.roomItems.filter(roomItem => roomItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(roomItem, key)));
@@ -570,14 +579,14 @@ export default class GameEntityFinder {
 		}
 		if (player) selectedFilters.set(Game.generateValidEntityName(player), matchers.inventoryItemPlayerNameMatches);
 		if (containerName) {
-			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameContains);
-			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerNameMatches);
-			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemContainerIdentifierOrNameMatches);
-			else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
+			if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameContains);
+			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNameMatches);
+			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierOrNameMatches);
+			else selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierMatches);
 		}
 		if (slotId) selectedFilters.set(Game.generateValidEntityName(slotId), matchers.itemSlotMatches);
 		if (equipmentSlotId) selectedFilters.set(Game.generateValidEntityName(equipmentSlotId), matchers.inventoryItemEquipmentSlotMatches);
-		return this.game.roomItems.filter(inventoryItem => inventoryItem.prefab !== null && inventoryItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(inventoryItem, key)));
+		return this.game.inventoryItems.filter(inventoryItem => inventoryItem.prefab !== null && inventoryItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(inventoryItem, key)));
 	}
 
 	/**

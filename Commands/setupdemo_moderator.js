@@ -65,7 +65,7 @@ export async function execute(game, message, command, args) {
                     await game.guildContext.guild.channels.create({
                         name: roomValues[i][0],
                         type: ChannelType.GuildText,
-                        parent: roomCategory
+                        parent: roomCategory.id
                     });
                 }
             }

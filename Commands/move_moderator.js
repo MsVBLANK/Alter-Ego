@@ -73,7 +73,7 @@ export async function execute(game, message, command, args) {
     let isExit = false;
     let exit = null;
     let entrance = null;
-    if (desiredRoom === null) {
+    if (!desiredRoom) {
         const currentRoom = players[0].location;
         for (let i = 1; i < players.length; i++) {
             if (players[i].location !== currentRoom) return game.communicationHandler.reply(message, "All listed players must be in the same room to use an exit name.");
@@ -100,7 +100,7 @@ export async function execute(game, message, command, args) {
         }
     }
     if (args.length > 0) {
-        if (desiredRoom === null && exit === null) {
+        if (!desiredRoom && !exit) {
             const roomName = args.join(" ");
             return game.communicationHandler.reply(message, `Couldn't find room or exit "${roomName}".`);
         }

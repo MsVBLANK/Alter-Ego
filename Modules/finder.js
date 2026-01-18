@@ -209,11 +209,12 @@ export function findRecipes(container, type, fixtureTag, ingredientsString, prod
  * @param {string} [identifier] - Filter the room items to only those whose identifier or prefab ID matches the given identifier in moderator contexts, or its name or plural name in player contexts.
  * @param {string} [location] - Filter the room items to only those whose location ID matches the given location ID.
  * @param {boolean} [accessible] - Filter the room items to only those who are accessible or not.
+ * @param {string} [containerType] - Filter the room items to only those with the given container type.
  * @param {string} [containerName] - Filter the room items to only those with the given container name. Does not include slot.
  * @param {string} [slotId] - Filter the room items to only those in the inventory slot with the given ID.
  */
-export function findRoomItems(container, identifier, location, accessible, containerName, slotId) {
-    return container.getGame().entityFinder.getRoomItems(identifier, location, accessible, containerName, slotId);
+export function findRoomItems(container, identifier, location, accessible, containerType, containerName, slotId) {
+    return container.getGame().entityFinder.getRoomItems(identifier, location, accessible, containerType, containerName, slotId);
 }
 
 /**

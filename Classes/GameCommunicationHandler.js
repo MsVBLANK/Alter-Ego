@@ -154,9 +154,7 @@ export default class GameCommunicationHandler {
 	 * @param {NarrationType} [messageType] - The type of message to send. Defaults to DIALOG, or plain text.
 	 */
 	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = NarrationType.DIALOG) {
-		if (messageType === NarrationType.DIALOG)
-			messageHandler.sendPlainTextNotification(player, messageText, mirrorInSpectateChannel);
-		else messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
+		messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
 	}
 
 	/**
@@ -191,7 +189,7 @@ export default class GameCommunicationHandler {
 	notifyPlayer(player, action, notification, notificationType = NarrationType.DIALOG, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			player.notify(notification, mirrorInSpectateChannel, notificationType);
+			player.notify(notification, mirrorInSpectateChannel, notificationType, action);
 		}
 	}
 
@@ -206,7 +204,7 @@ export default class GameCommunicationHandler {
 	notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			messageHandler.sendPlainTextNotification(player, notification, mirrorInSpectateChannel, attachments);
+			messageHandler.sendNotification(player, notification, NarrationType.DIALOG, mirrorInSpectateChannel, attachments);
 		}
 	}
 
@@ -223,8 +221,22 @@ export default class GameCommunicationHandler {
 	mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, messageText = dialog.content, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
+			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
 			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
+		}
+	}
+
+	/**
+	 * Mirrors a narration in a player's spectate channel.
+	 * @param {Player} player - The player whose spectate channel this narration will be mirrored in.
+	 * @param {Action} action - The action associated with the narration.
+	 * @param {NarrationType} narrationType - The narration that was written.
+	 * @param {string} narrationText - The text of the narration to send.
+	 */
+	mirrorNarrationInSpectateChannel(player, action, narrationType, narrationText) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
+			this.#cacheChannelFor(action, player.spectateChannel.id);
+			messageHandler.sendNarrationSpectateMessage(player, narrationText, narrationType);
 		}
 	}
 
@@ -237,7 +249,8 @@ export default class GameCommunicationHandler {
 	 * @param {string} webhookAvatarURL - A custom avatar URL to use for the webhook that will send the spectate message.
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 */
-	mirrorNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
+	mirrorMessageNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
+		if (narration.isOOCMessage) return;
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			messageHandler.sendWebhookSpectateMessage(player, narration.message, narrationText, webhookUsername, webhookAvatarURL, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url));
@@ -248,27 +261,25 @@ export default class GameCommunicationHandler {
 	 * Sends a narration to a room channel and mirrors it in the spectate channels of all of the room's occupants.
 	 * @param {Narration} narration - The narration to send.
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in spectate channels. Defaults to true.
 	 */
-	narrateInRoom(narration, narrationText = narration.content) {
+	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.location.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.location.channel.id);
-			if (narration.type === NarrationType.DIALOG)
-				messageHandler.sendPlainTextNarrationToRoom(narration.location, narrationText, true, narration.player);
-			else messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, true, narration.player);
+			messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, mirrorInSpectateChannel, narration.player);
 		}
 	}
 
 	/**
 	 * Sends a narration to a whisper channel and mirrors it in the spectate channels of all the whisper's players.
-	 * @param {Whisper} whisper - The whisper to send the narration to.
-	 * @param {Action} action - The action that initiated this narration.
-	 * @param {string} narrationText - The text of the narration to send.
-	 * @param {NarrationType} narrationType - The type of the narration to send.
+	 * @param {Narration} narration - The narration to send.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in spectate channels. Defaults to true.
 	 */
-	narrateInWhisper(whisper, action, narrationText, narrationType) {
-		if (!this.#actionHasBeenCommunicatedInChannel(whisper.channel, action)) {
-			this.#cacheChannelFor(action, whisper.channel.id);
-			messageHandler.sendNarrationToWhisper(whisper, narrationText, narrationType);
+	narrateInWhisper(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
+		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.whisper.channel, narration.action)) {
+			if (narration.action) this.#cacheChannelFor(narration.action, narration.whisper.channel.id);
+			messageHandler.sendNarrationToWhisper(narration.whisper, narrationText, narration.getWhisperPrefixString(), narration.type, mirrorInSpectateChannel);
 		}
 	}
 

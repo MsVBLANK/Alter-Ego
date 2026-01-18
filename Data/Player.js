@@ -548,9 +548,11 @@ export default class Player extends ItemContainer {
                 clearInterval(player.moveTimer);
                 player.stamina = 0;
                 const wearyStatus = player.getGame().entityFinder.getStatusEffect("weary");
-                const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
-                wearyAction.performInflict(wearyStatus, false, true, true);
-                player.getGame().narrationHandler.narrateWeary(wearyAction, player);
+                if (wearyStatus) {
+                    const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
+                    wearyAction.performInflict(wearyStatus, false, true, true);
+                    player.getGame().narrationHandler.narrateWeary(wearyAction, player);
+                }
             }
             if (player.remainingTime <= 0 && player.stamina !== 0) {
                 clearInterval(player.moveTimer);
@@ -1510,10 +1512,9 @@ export default class Player extends ItemContainer {
      * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
      */
     removeFromWhispers(narration, action) {
-        const narrationType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
         for (const whisper of this.getGame().whispersCollection.values()) {
             if (whisper.playersCollection.has(this.name))
-                whisper.removePlayer(this, narration, action, narrationType);
+                whisper.removePlayer(this, narration, action);
         }
     }
 
@@ -1532,10 +1533,14 @@ export default class Player extends ItemContainer {
      * @param {string} messageText - The content of the message to send.
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
      * @param {NarrationType} [notificationType] - The type of notification to send. Defaults to DIALOG, or plain text.
+     * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
      */
-    notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG) {
-        if (this.isConscious() && !this.isNPC)
-            this.getGame().communicationHandler.sendMessageToPlayer(this, capitalizeFirstLetter(messageText), addSpectate, notificationType);
+    notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG, action) {
+        if (this.isConscious() && !this.isNPC) {
+            messageText = capitalizeFirstLetter(messageText);
+            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, notificationType);
+            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, notificationType, messageText);
+        }
     }
 
     /**

@@ -118,7 +118,7 @@ export async function execute(game, command, args, player, callee) {
         if (isFixture) {
             if (doItems) {
                 // Update all of the items contained in this fixture.
-                let items = game.entityFinder.getRoomItems(null, fixture.location.id, null, `Object: ${fixture.name}`);
+                let items = game.entityFinder.getRoomItems(null, fixture.location.id, null, `Fixture`, fixture.name);
                 const childItems = [];
                 for (let i = 0; i < items.length; i++)
                     getChildItems(childItems, items[i]);
@@ -132,7 +132,7 @@ export async function execute(game, command, args, player, callee) {
         else if (isPuzzle) {
             if (doItems) {
                 // Update all of the items contained in this puzzle.
-                let items = game.entityFinder.getRoomItems(null, puzzle.location.id, null, `Puzzle: ${puzzle.name}`);
+                let items = game.entityFinder.getRoomItems(null, puzzle.location.id, null, `Puzzle`, puzzle.name);
                 const childItems = [];
                 for (let i = 0; i < items.length; i++)
                     getChildItems(childItems, items[i]);
@@ -148,7 +148,7 @@ export async function execute(game, command, args, player, callee) {
         if (isFixture) {
             if (doItems) {
                 // Update all of the items contained in this fixture.
-                let items = game.entityFinder.getRoomItems(null, fixture.location.id, null, `Object: ${fixture.name}`);
+                let items = game.entityFinder.getRoomItems(null, fixture.location.id, null, `Fixture`, fixture.name);
                 const childItems = [];
                 for (let i = 0; i < items.length; i++)
                     getChildItems(childItems, items[i]);
@@ -162,7 +162,7 @@ export async function execute(game, command, args, player, callee) {
         else if (isPuzzle) {
             if (doItems) {
                 // Update all of the items contained in this puzzle.
-                let items = game.entityFinder.getRoomItems(null, puzzle.location.id, null, `Puzzle: ${puzzle.name}`);
+                let items = game.entityFinder.getRoomItems(null, puzzle.location.id, null, `Puzzle`, puzzle.name);
                 const childItems = [];
                 for (let i = 0; i < items.length; i++)
                     getChildItems(childItems, items[i]);

@@ -1,5 +1,6 @@
 import Action from "../Action.js";
 import SolveAction from "./SolveAction.js";
+import { NarrationType } from "../Narration.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.js";
 
 /** @typedef {import("../Dialog.js").default} Dialog */
@@ -30,6 +31,8 @@ export default class SayAction extends Action {
 		this.#voicePuzzles = this.getGame().entityFinder.getPuzzles(undefined, undefined, "voice");
 		if (dialog.whisper) this.#communicateWhisperedDialog(dialog);
 		this.#communicateDialogToRoomOccupants(dialog);
+		// If the dialog is an OOC message or took place in a whisper, the rest of the functions don't need to be called.
+		if (dialog.isOOCMessage || dialog.whisper) return;
 		this.#solveVoicePuzzles(dialog.location, dialog);
 		this.#communicateDialogToNeighboringRooms(dialog);
 		this.#communicateDialogToAudioMonitoringRooms(dialog);
@@ -74,7 +77,7 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
 	#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker) {
-		return dialog.isMimicking(player) || !player.canSee()/* || player.hasBehaviorAttribute("hear room") && !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker*/;
+		return !player.canSee() || !dialog.isOOCMessage && dialog.isMimicking(player)/* || player.hasBehaviorAttribute("hear room") && !player.knows(dialog.speakerRecognitionName) && !playerCanSeeSpeaker*/;
 	}
 
 	/**
@@ -84,7 +87,7 @@ export default class SayAction extends Action {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the player can see the speaker.
 	 */
 	#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) {
-		return dialog.isMimicking(player) || player.hasBehaviorAttribute("hear room") || player.knows(dialog.speakerRecognitionName) && (!playerCanSeeSpeaker || dialog.speakerDisplayNameIsDifferent);
+		return player.hasBehaviorAttribute("hear room") || !dialog.isOOCMessage && (dialog.isMimicking(player) || player.knows(dialog.speakerRecognitionName) && (!playerCanSeeSpeaker || dialog.speakerDisplayNameIsDifferent));
 	}
 
 	/**
@@ -131,6 +134,7 @@ export default class SayAction extends Action {
 	 * @param {string} narrationText - The text to narrate.
 	 */
 	#narrateDialogAndSolveVoicePuzzles(location, dialog, narrationText) {
+		if (dialog.isOOCMessage) return;
 		if (location.tags.has("audio monitoring") && location.tags.has("video monitoring") && dialog.locationIsAudioSurveilled && dialog.locationIsVideoSurveilled)
 			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
 		else
@@ -155,10 +159,10 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
 				continue;
 			}
-			if (webhookUsername)
+			if (!dialog.isOOCMessage && webhookUsername)
 				this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
 			else this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix);
 		}
@@ -182,7 +186,7 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			// Players with the acute hearing attribute should overhear other whispers.
 			if (dialog.whisper) {
-				if (player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
+				if (!dialog.isOOCMessage && player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
 					const notification = this.getGame().notificationGenerator.generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player);
 					if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
@@ -195,7 +199,7 @@ export default class SayAction extends Action {
 
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
 				continue;
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";
@@ -210,8 +214,24 @@ export default class SayAction extends Action {
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 */
 	#communicateDialogToNeighboringRooms(dialog) {
+		if (dialog.isShouted) {
+			// If any neighboring rooms have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
+			for (const neighboringAudioSurveilledRoom of dialog.neighboringAudioSurveilledRooms.values()) {
+				const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName();
+				for (const audioMonitoringRoom of dialog.audioMonitoringRooms.values()) {
+					for (const player of audioMonitoringRoom.occupants) {
+						if (this.#playerCannotReceiveCommunications(player)) continue;
+						if (this.#playerShouldReceiveNotification(dialog, player, false)) {
+							const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
+							this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						}
+					}
+					this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
+				}
+			}
+		}
 		// Communicate dialog to neighboring rooms.
-		for (const neighboringRoom of dialog.neighboringRooms) {
+		for (const neighboringRoom of dialog.neighboringRooms.values()) {
 			for (const player of neighboringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player, false)) {
@@ -222,21 +242,6 @@ export default class SayAction extends Action {
 			if (dialog.isShouted)
 				this.#narrateDialogAndSolveVoicePuzzles(neighboringRoom, dialog, this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog));
 		}
-		if (!dialog.isShouted) return;
-		// If any neighboring rooms have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
-		for (const neighboringAudioSurveilledRoom of dialog.neighboringAudioSurveilledRooms) {
-			const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName();
-			for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
-				for (const player of audioMonitoringRoom.occupants) {
-					if (this.#playerCannotReceiveCommunications(player)) continue;
-					if (this.#playerShouldReceiveNotification(dialog, player, false)) {
-						const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
-						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
-					}
-				}
-				this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog));
-			}
-		}
 	}
 
 	/**
@@ -246,7 +251,7 @@ export default class SayAction extends Action {
 	#communicateDialogToAudioMonitoringRooms(dialog) {
 		if (!dialog.locationIsAudioSurveilled) return;
 		const roomDisplayName = dialog.location.getSurveilledDisplayName();
-		for (const audioMonitoringRoom of dialog.audioMonitoringRooms) {
+		for (const audioMonitoringRoom of dialog.audioMonitoringRooms.values()) {
 			for (const player of audioMonitoringRoom.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				const playerCanSeeSpeaker = player.canSee() && audioMonitoringRoom.tags.has("video monitoring") && dialog.locationIsVideoSurveilled && !dialog.speaker.isHidden();

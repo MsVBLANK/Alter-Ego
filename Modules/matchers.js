@@ -258,7 +258,7 @@ export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = 
 export const recipeProductsMatches = (recipe, productsString, normalize = false) => {
 	let products = productsString.split(',');
 	if (normalize) products.forEach((product, i) => products[i] = Game.generateValidEntityName(product));
-	return products.every(product => recipe.ingredientsStrings.includes(product));
+	return products.every(product => recipe.productsStrings.includes(product));
 };
 
 /**
@@ -309,6 +309,23 @@ export const itemIdentifierOrNameContains = (item, identifier, normalize = false
 };
 
 /**
+ * Returns true if the item's container's type matches the given type. 
+ * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the type against.
+ * @param {string} type - The type to match.
+ * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
+export const itemContainerTypeMatches = (item, type, normalize = false) => {
+	if (normalize) {
+		type = Game.generateValidEntityName(type);
+		if (type === "FIXTURE" || type === "OBJECT") type = "Fixture";
+		else if (type === "ROOMITEM" || type === "ITEM") type = "RoomItem";
+		else if (type === "PUZZLE") type = "Puzzle";
+		else if (type === "INVENTORYITEM") type = "InventoryItem";
+	}
+	return item.containerType === type;
+};
+
+/**
  * Returns true if the item's container's name matches the given name.
  * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the name against.
  * @param {string} name - The name to match.
@@ -316,6 +333,7 @@ export const itemIdentifierOrNameContains = (item, identifier, normalize = false
  */
 export const itemContainerNameMatches = (item, name, normalize = false) => {
 	if (normalize) name = Game.generateValidEntityName(name);
+	if (!item.container) return false;
 	if (item.container instanceof ItemInstance) return item.container.name === name || item.container.pluralName === name;
 	return item.container.name === name;
 };
@@ -328,6 +346,7 @@ export const itemContainerNameMatches = (item, name, normalize = false) => {
  */
 export const itemContainerIdentifierMatches = (item, identifier, normalize = false) => {
 	if (normalize) identifier = Game.generateValidEntityName(identifier);
+	if (!item.container) return false;
 	if (item.container instanceof ItemInstance) return item.container.identifier !== "" && item.container.identifier === identifier || item.container.prefab && item.container.prefab.id === identifier;
 	return itemContainerNameMatches(item, identifier);
 };
@@ -340,6 +359,7 @@ export const itemContainerIdentifierMatches = (item, identifier, normalize = fal
  */
 export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize = false) => {
 	if (normalize) identifier = Game.generateValidEntityName(identifier);
+	if (!item.container) return false;
 	if (item.container instanceof ItemInstance) return itemContainerIdentifierMatches(item, identifier) || itemContainerNameMatches(item, identifier);
 	return itemContainerNameMatches(item, identifier);
 };
@@ -352,6 +372,7 @@ export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize
  */
 export const itemContainerIdentifierOrNameContains = (item, identifier, normalize = false) => {
 	if (normalize) identifier = Game.generateValidEntityName(identifier);
+	if (!item.container) return false;
 	if (item.container instanceof ItemInstance) return itemIdentifierOrNameContains(item.container, identifier);
 	return entityNameContains(item.container, identifier);
 };

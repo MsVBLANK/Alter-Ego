@@ -1,4 +1,4 @@
-import { endsWithPunctuation } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
 
 /** @typedef {import("../Data/Dialog.js").default} Dialog */
 /** @typedef {import("../Data/Fixture.js").default} Fixture */
@@ -48,14 +48,16 @@ export default class GameNotificationGenerator {
 		const playerCanSeeSpeaker = player.canSee() && (!dialog.speaker.isHidden() || playerAndSpeakerAreHidingTogether);
 		
 		let speakerString = "";
-		if (player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
+		if (!dialog.isOOCMessage && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
 			speakerString = dialog.speakerDisplayNameIsDifferent && playerCanSeeSpeaker ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
+		else if (player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player) && !dialog.speakerDisplayNameIsDifferent && !playerCanSeeSpeaker)
+			speakerString = `${dialog.speakerRecognitionName}`;
 		else if (!playerCanSeeSpeaker)
 			speakerString = dialog.isMimicking(player) ? `someone in the room` : `someone in the room with ${dialog.speakerVoiceString}`;
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
 		return `${speakerString} ${verb} "${dialog.content}"${punctuation}`;
 	}
 
@@ -65,14 +67,19 @@ export default class GameNotificationGenerator {
 	 * @param {Player} player - The player referred to in this notification.
 	 */
 	generateHearWhisperNotification(dialog, player) {
+		const hidingSpot = dialog.getGame().entityFinder.getFixture(dialog.whisper?.hidingSpotName, dialog.location.id);
+		const hidingSpotPhrase = hidingSpot ? ` in ${hidingSpot.getContainingPhrase()}` : ``;
 		let speakerString = "";
-		if (player.knows(dialog.speakerRecognitionName))
+		if (!dialog.isOOCMessage && player.knows(dialog.speakerRecognitionName))
 			speakerString = player.canSee() ? `${dialog.speaker.displayName}, with ${dialog.speakerVoiceString} you recognize as ${dialog.speakerRecognitionName}'s,` : `${dialog.speakerRecognitionName}`;
+		else if (player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player) && !dialog.speakerDisplayNameIsDifferent && !player.canSee())
+			speakerString = `${dialog.speakerRecognitionName}`;
 		else if (!player.canSee())
-			speakerString = dialog.isMimicking(player) ? `someone` : `someone with ${dialog.speakerVoiceString}`;
+			speakerString = dialog.isMimicking(player) ? `someone${hidingSpotPhrase}` : `someone${hidingSpotPhrase} with ${dialog.speakerVoiceString}`;
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
-		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const contentAffix = hidingSpotPhrase !== `` && !speakerString.includes(hidingSpotPhrase) ? `${hidingSpotPhrase}` : ``;
+		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? `${contentAffix} in your voice!` : contentAffix === `` && endsWithPunctuation(dialog.content) ? `` : `${contentAffix}.`;
 		return `${speakerString} whispers "${dialog.content}"${punctuation}`;
 	}
 
@@ -110,7 +117,7 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = player && dialog.isMimicking(player) ? `someone in a nearby room` : `someone in a nearby room with ${dialog.speakerVoiceString}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : locator === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
 		return `${speakerString} ${verb} "${dialog.content}"${locator}${punctuation}`;
 	}
 
@@ -121,7 +128,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} [player] - The player referred to in this notification. Optional.
 	 */
 	generateHearAudioSurveilledNeighboringRoomDialogNotification(roomDisplayName, dialog, player) {
-		return `\`[${roomDisplayName}]\` ${this.generateHearNeighboringRoomDialogNotification(dialog, player)}`;
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearNeighboringRoomDialogNotification(dialog, player))}`;
 	}
 
 	/**

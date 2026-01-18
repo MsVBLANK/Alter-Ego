@@ -99,18 +99,11 @@ export default class Dialog extends GameConstruct {
 	 */
 	isShouted;
 	/**
-	 * A list of adjacent rooms. Excludes any rooms with the `soundproof` tag and any unoccupied rooms.
+	 * A collection of adjacent rooms. Excludes any rooms with the `soundproof` tag and any unoccupied rooms (unless they have the `audio monitoring` tag).
 	 * If the location itself has the `soundproof` tag, or this is an OOC message, this is empty.
-	 * @type {Room[]}
+	 * @type {Collection<string, Room>}
 	 */
 	neighboringRooms;
-	/**
-	 * A list of rooms in which any occupants have the `acute hearing` behavior attribute.
-	 * If this is a whisper, it contains only the dialog's location. Otherwise, it contains all adjacent rooms that don't have the `soundproof` tag.
-	 * If this is an OOC message, this is empty.
-	 * @type {Room[]}
-	 */
-	acuteHearingContext;
 	/**
 	 * Whether or not the location has the `audio surveilled` tag.
 	 * If this is an OOC message, this is false.
@@ -124,16 +117,16 @@ export default class Dialog extends GameConstruct {
 	 */
 	locationIsVideoSurveilled;
 	/**
-	 * A list of rooms adjacent to the location with the `audio surveilled` tag.
+	 * A collection of rooms adjacent to the location with the `audio surveilled` tag.
 	 * Any rooms with the `soundproof` tag are excluded.
 	 * If this is an OOC message, this is empty.
-	 * @type {Room[]}
+	 * @type {Collection<string, Room>}
 	 */
 	neighboringAudioSurveilledRooms;
 	/**
-	 * A list of occupied rooms with the `audio monitoring` tag.
+	 * A collection of occupied rooms with the `audio monitoring` tag.
 	 * If the location or its neighboring rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
-	 * @type {Room[]}
+	 * @type {Collection<string, Room>}
 	 */
 	audioMonitoringRooms;
 	/**
@@ -187,38 +180,34 @@ export default class Dialog extends GameConstruct {
 		}
 		this.isOOCMessage = message.cleanContent.startsWith('(');
 		this.isShouted = false;
-		this.neighboringRooms = [];
-		this.acuteHearingContext = [];
+		this.neighboringRooms = new Collection();
 		this.locationIsAudioSurveilled = false;
 		this.locationIsVideoSurveilled = false;
-		this.neighboringAudioSurveilledRooms = [];
-		this.audioMonitoringRooms = [];
+		this.neighboringAudioSurveilledRooms = new Collection();
+		this.audioMonitoringRooms = new Collection();
 		this.receivers = new Collection();
 		this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
 		// The remaining properties only need to be initialized if the dialog isn't an out-of-character message.
 		if (!this.isOOCMessage) {
 			const contentWithoutEmotes = message.cleanContent.replace(/<?:.*?:\d*>?/g, '');
 			this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
-			this.neighboringRooms = [];
+			this.neighboringRooms = new Collection();
 			if (!this.location.tags.has("soundproof")) {
 				for (const exit of this.location.exitCollection.values()) {
 					const neighboringRoom = exit.dest;
 					// Prevent duplication when two rooms are connected by multiple exits.
-					if (this.neighboringRooms.includes(neighboringRoom)) continue;
-					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.occupants.length > 0 && neighboringRoom.id !== this.location.id) {
-						this.neighboringRooms.push(neighboringRoom);
+					if (this.neighboringRooms.has(neighboringRoom.id)) continue;
+					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.tags.has("audio surveilled"))) {
+						this.neighboringRooms.set(neighboringRoom.id, neighboringRoom);
 						if (neighboringRoom.tags.has("audio surveilled"))
-							this.neighboringAudioSurveilledRooms.push(neighboringRoom);
-						if (!this.whisper)
-							this.acuteHearingContext.push(neighboringRoom);
+							this.neighboringAudioSurveilledRooms.set(neighboringRoom.id, neighboringRoom);
 					}
 				}
 			}
-			if (this.whisper) this.acuteHearingContext.push(this.location);
 			this.locationIsAudioSurveilled = this.location.tags.has("audio surveilled");
 			this.locationIsVideoSurveilled = this.location.tags.has("video surveilled");
-			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.length > 0)
-				this.audioMonitoringRooms = game.entityFinder.getRooms(undefined, "audio monitoring", true).filter(room => room.id !== this.location.id);
+			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0)
+				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.tags.has("audio monitoring") && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id));
 			if (this.speaker.hasBehaviorAttribute("sender")) {
 				for (const livingPlayer of game.livingPlayersCollection.values()) {
 					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name) {
@@ -246,11 +235,10 @@ export default class Dialog extends GameConstruct {
 	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
 	getWhisperPrefixStringForWebhook(playerCanSeeSpeaker) {
-		return this.whisper && this.whisper.playersCollection.size > 1 && playerCanSeeSpeaker
-			? `*(Whispered to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}):*\n`
-			: this.whisper
-				? `*(Whispered):*\n`
-				: "";
+		const recipientPhrase = this.whisper?.playersCollection.size > 1 && playerCanSeeSpeaker ? ` to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}` : ``;
+		const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
+		const hidingSpotPhrase = hidingSpot && playerCanSeeSpeaker ? ` in ${hidingSpot.getContainingPhrase()}` : ``;
+		return this.whisper ? `-# *(Whispered${recipientPhrase}${hidingSpotPhrase}):*\n` : "";
 	}
 
 	/**

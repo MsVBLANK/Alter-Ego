@@ -66,8 +66,8 @@ export async function execute(game, command, args, player, callee) {
 
     // Now that the room has been found, find the exit and its corresponding entrance.
     const exit = game.entityFinder.getExit(room, parsedInput);
-    const entrance = game.entityFinder.getExit(exit.dest, exit.link);
     if (exit === undefined) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find exit "${input}" in ${room.id}.`);
+    const entrance = game.entityFinder.getExit(exit.dest, exit.link);
     if (entrance === undefined) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Found exit ${exit.name} in ${room.id}, but it doesn't have a corresponding entrance in ${exit.dest.id}.`);
     if (command === "unlock" && exit.unlocked && entrance.unlocked) return;
     if (command === "lock" && !exit.unlocked && !entrance.unlocked) return;

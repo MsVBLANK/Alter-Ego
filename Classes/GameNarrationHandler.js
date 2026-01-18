@@ -3,6 +3,7 @@ import InventoryItem from "../Data/InventoryItem.js";
 import { default as Narration, NarrationType } from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
+import DieAction from "../Data/Actions/DieAction.js";
 import NarrateAction from "../Data/Actions/NarrateAction.js";
 import { parseDescription } from "../Modules/parser.js";
 import { generateListString } from "../Modules/helpers.js";
@@ -62,10 +63,11 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player whose action is being narrated.
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Room} [location] - The location in which the narration is occurring. Defaults to the player's location.
+	 * @param {Whisper} [whisper] - The whisper in which the narration is occurring, if applicable.
 	 */
-	#sendNarration(type, action, player, narrationText, location = player.location) {
-		const narration = new Narration(this.#game, type, action, player, location, narrationText);
-		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, action.whisper);
+	#sendNarration(type, action, player, narrationText, location = player.location, whisper) {
+		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper);
+		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);
 	}
 
@@ -557,10 +559,10 @@ export default class GameNarrationHandler {
 	narrateUnequip(action, item, player, notify = true) {
 		const messageType = NarrationType.STANDARD;
 		if (notify) {
-			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.singleContainingPhrase);
+			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
 			this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		}
-		const narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.singleContainingPhrase);
+		const narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -789,6 +791,18 @@ export default class GameNarrationHandler {
 				this.#sendNarration(messageType, action, player, narration);
 			}
 		}
+	}
+
+	/**
+	 * Narrates a player leaving a whisper.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Player} player - The player performing the action. 
+	 * @param {Whisper} whisper - The whisper the player is leaving.
+	 * @param {string} customNarration - The custom text of the narration.
+	 */
+	narrateLeaveWhisper(action, player, whisper, customNarration) {
+		const messageType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
+		this.#sendNarration(messageType, action, player, customNarration, whisper.location, whisper);
 	}
 
 	/**

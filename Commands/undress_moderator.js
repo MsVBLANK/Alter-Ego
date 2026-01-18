@@ -43,6 +43,9 @@ export async function execute(game, message, command, args) {
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
     args.splice(0, 1);
 
+    const equippedItems = player.inventoryCollection.filter(equipmentSlot => equipmentSlot.equippedItem !== null);
+    if (equippedItems.size === 0) return game.communicationHandler.reply(message, `${player.name} cannot undress because ${player.originalPronouns.sbj} does not have anything equipped.`);
+
     const input = args.join(' ');
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
 

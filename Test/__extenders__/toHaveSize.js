@@ -7,12 +7,12 @@ export default (actual, size) => {
 	const pass = actual.size === size;
 	if (pass) {
 		return {
-			message: () => `expected ${actual} not to have size ${size}`,
+			message: () => `expected object not to have size ${size}, but received ${actual.size}`,
 			pass: true,
 		};
 	} else {
 		return {
-			message: () => `expected ${actual} to have size ${size}`,
+			message: () => `expected object to have size ${size}, but received ${actual.size}`,
 			pass: false,
 		};
 	}

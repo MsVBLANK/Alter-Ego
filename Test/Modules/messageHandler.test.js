@@ -2,6 +2,7 @@ import discord from "../__mocks__/libs/discord.js";
 import * as DialogClass from "../../Data/Dialog.js";
 import AnnounceAction from "../../Data/Actions/AnnounceAction.js";
 import SayAction from "../../Data/Actions/SayAction.js";
+import SolveAction from "../../Data/Actions/SolveAction.js";
 import * as messageHandler from "../../Modules/messageHandler.js";
 import { instantiateInventoryItem } from "../../Modules/itemManager.js";
 
@@ -43,7 +44,7 @@ describe('messageHandler test', () => {
      */
     let astrid;
     /** 
-     * Location: courtyard
+     * Location: break-room
      * 
      * Behavior Attributes: sender, receiver
      * 
@@ -103,7 +104,7 @@ describe('messageHandler test', () => {
      * 
      * Video Monitored By: lobby, command-center
      * 
-     * Occupants: 
+     * Occupants: nero
      * @type {Room}
      */
     let breakRoom;
@@ -191,6 +192,9 @@ describe('messageHandler test', () => {
     let mute;
     /** @type {Status} */
     let acuteHearing;
+    /** @type {Status} */
+    let receiver;
+
     beforeAll(async () => {
         await game.entityLoader.loadAll();
         kyra = game.entityFinder.getLivingPlayer("Kyra");
@@ -218,6 +222,7 @@ describe('messageHandler test', () => {
         hidden = game.entityFinder.getStatusEffect("hidden");
         mute = game.entityFinder.getStatusEffect("mute");
         acuteHearing = game.entityFinder.getStatusEffect("hearing");
+        receiver = game.entityFinder.getStatusEffect("walkie talkie");
     });
 
     describe('processIncomingMessage tests', () => {
@@ -419,6 +424,101 @@ describe('messageHandler test', () => {
 
             afterEach(() => {
                 performSaySpy.mockRestore();
+            });
+
+            describe('OOC messages are not communicated to other rooms', () => {
+                test('OOC message does not solve voice puzzle', async () => {
+                    const performSolveSpy = vi.spyOn(SolveAction.prototype, 'performSolve');
+                    await sendPlayerMessage(vivian, "( unlock the door");
+                    expect(performSolveSpy).not.toHaveBeenCalled();
+                    performSolveSpy.mockRestore();
+                });
+
+                test('OOC message is not communicated to neighboring rooms', async () => {
+                    astrid.inflict(acuteHearing);
+                    await sendPlayerMessage(kiara, "( HELLO?");
+                    for (const exit of kiara.location.exitCollection.values()) {
+                        expect(exit.dest.channel.messages.cache).toHaveSize(0);
+                        for (const occupant of exit.dest.occupants) {
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
+                        }
+                    }
+                    astrid.cure(acuteHearing);
+                });
+
+                test('OOC message is not communicated to audio monitoring rooms', async () => {
+                    const audioMonitoringRooms = [lobby, breakRoom, commandCenter];
+                    await sendPlayerMessage(kiara, "( HELLO?");
+                    for (const audioMonitoringRoom of audioMonitoringRooms) {
+                        expect(audioMonitoringRoom.channel.messages.cache).toHaveSize(0);
+                        for (const occupant of audioMonitoringRoom.occupants) {
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
+                        }
+                    }
+                });
+
+                test('OOC message is not communicated to receivers', async () => {
+                    const receivers = [nero, qm];
+                    await sendPlayerMessage(nero, "( HELLO?");
+                    for (const receiver of receivers) {
+                        expect(receiver.location.channel.messages.cache).toHaveSize(0);
+                        for (const occupant of receiver.location.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
+                        }
+                    }
+                });
+            });
+
+            describe('dialog is not communicated to or from neighboring room if conditions are not met', () => {
+                beforeAll(() => {
+                    nero.cure(receiver);
+                    vivian.inflict(acuteHearing);
+                });
+
+                afterAll(() => {
+                    nero.inflict(receiver);
+                    vivian.cure(acuteHearing);
+                });
+
+                test('dialog is not communicated to neighboring room with `soundproof` tag', async () => {
+                    expect(nero.location.id).toBe(breakRoom.id);
+                    await sendPlayerMessage(nero, "HELLO?");
+                    expect(gmOffice.channel.messages.cache).toHaveSize(0);
+                    for (const occupant of gmOffice.occupants) {
+                        if (occupant.isNPC) continue;
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
+                    }
+                });
+
+                test('dialog is not communicated from room with `soundproof` tag to neighboring rooms', async () => {
+                    expect(vivian.location.id).toBe(gmOffice.id);
+                    await sendPlayerMessage(vivian, "HELLO?");
+                    expect(breakRoom.channel.messages.cache).toHaveSize(0);
+                    for (const occupant of breakRoom.occupants) {
+                        if (occupant.isNPC) continue;
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
+                    }
+                });
+
+                test('dialog is not communicated to neighboring room with no occupants', async () => {
+                    courtyard.removePlayer(asuka);
+                    courtyard.removePlayer(luna);
+                    expect(courtyard.occupants).toHaveLength(0);
+                    nero.location.removePlayer(nero);
+                    lobby.addPlayer(nero);
+                    await sendPlayerMessage(nero, "HELLO OUT THERE!");
+                    expect(courtyard.channel.messages.cache).toHaveSize(0);
+                    nero.location.removePlayer(nero);
+                    breakRoom.addPlayer(nero);
+                    courtyard.addPlayer(asuka);
+                    courtyard.addPlayer(luna);
+                });
             });
 
             describe('dialog is communicated to room occupants', () => {
@@ -2882,6 +2982,78 @@ describe('messageHandler test', () => {
                                 luna.voiceString = luna.originalVoiceString;
                             });
                         });
+                    });
+                });
+            });
+
+            describe('dialog is communicated to neighboring rooms', () => {
+                /** @type {Room[]} */
+                let neighboringRooms;
+                /** @type {Room[]} */
+                let neighboringAudioSurveilledRooms;
+                /** @type {Room[]} */
+                let excludedAudioMonitoringRooms;
+                /** @type {Room[]} */
+                let audioMonitoringRooms;
+                /** @type {Player[]} */
+                let excludedPlayers;
+
+                beforeAll(() => {
+                    neighboringRooms = [f1h1, breakRoom];
+                    neighboringAudioSurveilledRooms = [f1h1, breakRoom];
+                    excludedAudioMonitoringRooms = [lobby, breakRoom]
+                    audioMonitoringRooms = [commandCenter];
+                    excludedPlayers = [vivian, asuka, luna];
+                    lobby.removePlayer(asuka);
+                    lobby.removePlayer(luna);
+                });
+
+                afterAll(() => {
+                    lobby.addPlayer(asuka);
+                    lobby.addPlayer(luna);
+                });
+
+                describe('shouted dialog is communicated to neighboring rooms', () => {
+                    test('standard shouted dialog is narrated to neighboring rooms', async () => {
+                        expect(lobby.occupants).toHaveLength(0);
+                        await sendPlayerMessage(astrid, "HELLO?");
+                        expect(performSaySpy).toHaveBeenCalledTimes(1);
+                        expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                        for (const neighboringRoom of neighboringRooms) {
+                            expect(neighboringRoom.channel.messages.cache).toHaveSize(1);
+                            expect(neighboringRoom.channel.messages.cache.first().content).toBe(`Someone in a nearby room with a peppy voice shouts "HELLO?"`);
+                        }
+                        for (const excludedAudioMonitoringRoom of excludedAudioMonitoringRooms) {
+                            if (excludedAudioMonitoringRoom.channel.messages.cache.size !== 0) {
+                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
+                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[break-room]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
+                            }
+                            else expect(excludedAudioMonitoringRoom.channel.messages.cache).toHaveSize(0);
+                        }
+                        for (const audioMonitoringRoom of audioMonitoringRooms) {
+                            expect(audioMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                            expect(audioMonitoringRoom.channel.messages.cache.first().content).toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
+                        }
+
+                        expect(kiara.notificationChannel.messages.cache).toHaveSize(1);
+                        expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kiaraSpectateMessage).not.toBeWebhookMessage();
+                        expect(kiaraSpectateMessage.content).toBe(`Astrid shouts "HELLO?" in a nearby room.`);
+
+                        expect(nero.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(nero.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(neroSpectateMessage).not.toBeWebhookMessage();
+                        expect(neroSpectateMessage.content).toBe(`Someone in a nearby room with a peppy voice shouts "HELLO?"`);
+
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
+                        expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(amadeusSpectateMessage).not.toBeWebhookMessage();
+                        expect(amadeusSpectateMessage.content).toBe('`[floor-1-hall-1]` Astrid shouts "HELLO?" in a nearby room.');
+
+                        expect(kyra.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kyra.spectateChannel.messages.cache).toHaveSize(1);
+                        expect(kyraSpectateMessage).not.toBeWebhookMessage();
+                        expect(kyraSpectateMessage.content).toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
                     });
                 });
             });

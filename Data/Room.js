@@ -197,47 +197,21 @@ export default class Room extends GameEntity {
     }
 
     /**
-     * Unlocks an exit in the room. Deprecated. Use unlockExit instead.
+     * Unlocks an exit in the room. Deprecated. Use an UnlockAction instead.
      * @deprecated
      * @param {number} index - The exit's index within the room's array of exits.
      */
     unlock(index) {
         this.exit[index].unlock();
-        if (this.occupants.length > 0) this.getGame().narrationHandler.narrateUnlock(this, this.exit[index]);
-        this.getGame().logHandler.logUnlock(this, this.exit[index]);
     }
 
     /**
-     * Unlocks an exit in the room.
-     * @param {string} name - The exit's name key within the room's collection of exits.
-     */
-    unlockExit(name) {
-        let exit = this.getGame().entityFinder.getExit(this, name);
-        exit.unlock();
-        if (this.occupants.length > 0) this.getGame().narrationHandler.narrateUnlock(this, exit);
-        this.getGame().logHandler.logUnlock(this, exit);
-    }
-
-    /**
-     * Locks an exit in the room. Deprecated. Use lockExit instead.
+     * Locks an exit in the room. Deprecated. Use a LockAction instead.
      * @deprecated
      * @param {number} index - The exit's index within the room's array of exits.
      */
     lock(index) {
         this.exit[index].lock();
-        if (this.occupants.length > 0) this.getGame().narrationHandler.narrateLock(this, this.exit[index]);
-        this.getGame().logHandler.logLock(this, this.exit[index]);
-    }
-
-    /**
-     * Locks an exit in the room.
-     * @param {string} name - The exit's name key within the room's collection of exits.
-     */
-    lockExit(name) {
-        let exit = this.getGame().entityFinder.getExit(this, name);
-        exit.lock();
-        if (this.occupants.length > 0) this.getGame().narrationHandler.narrateLock(this, exit);
-        this.getGame().logHandler.logLock(this, exit);
     }
 
     /**

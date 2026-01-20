@@ -1,3 +1,5 @@
+import EndAction from '../Data/Actions/EndAction.js';
+
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
 
@@ -35,6 +37,7 @@ export async function execute(game, message, command, args) {
     if (event === null) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
     if (!event.ongoing) return game.communicationHandler.reply(message, `${event.id} is not currently ongoing.`);
 
-    await event.end(true);
+    const action = new EndAction(game, message, undefined, undefined, true);
+    await action.performEnd(event);
     game.communicationHandler.sendToCommandChannel(`Successfully ended ${event.id}.`);
 }

@@ -81,7 +81,7 @@ export async function execute(game, message, command, args, player) {
                     }
                     const ingredients = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
                     const products = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration.as('milliseconds')), uncraftable: false });
+                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
                     break;
                 }
             }
@@ -89,7 +89,7 @@ export async function execute(game, message, command, args, player) {
                 // This recipe contains the given item as the sole product and is uncraftable.
                 const ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
                 const products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration.as('milliseconds')), uncraftable: true });
+                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
             }
         }
         if (recipes.length === 0) return game.communicationHandler.reply(message, `There are no recipes that can be carried out with ${item.singleContainingPhrase}.`);
@@ -151,27 +151,27 @@ export async function execute(game, message, command, args, player) {
                 }
                 ingredients = ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
                 products = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration.as('milliseconds')), uncraftable: false });
+                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
             }
 
             if (game.recipes[i].products.length === 1 && game.recipes[i].uncraftable) {
                 products = [];
                 for (let j = 0; j < inventoryItems.length; j++) {
                     if (inventoryItems[j].prefab.id == game.recipes[i].products[0].id) {
-                        products.push(inventoryItems[j]);
+                        products.push(inventoryItems[j].singleContainingPhrase);
                         break;
                     }
                 }
-            }
-            if (products.length !== 0) {
-                products.sort(function (a, b) {
-                    if (a.prefab.id < b.prefab.id) return -1;
-                    if (a.prefab.id > b.prefab.id) return 1;
-                    return 0;
-                });
-                ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration.as('milliseconds')), uncraftable: true });
+                if (products.length !== 0) {
+                    products.sort(function (a, b) {
+                        if (a < b) return -1;
+                        if (a > b) return 1;
+                        return 0;
+                    });
+                    ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
+                    products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
+                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
+                }
             }
         }
         if (recipes.length === 0) return game.communicationHandler.reply(message, `There are no recipes you can carry out with the items currently in your inventory and the items in this room.`);

@@ -33,7 +33,6 @@ export function loadCredentials(): Credentials {
         file = readFileSync(CREDENTIALS_FILE_PATH, "utf8");
         parseFile = true;
     } catch (err) {
-        console.log(`Cannot read credentials file. Attempting to read from environment variables. If you intended to use a credentials file, Please check that the file exists and is readable.`);
         parseFile = false;
     }
 

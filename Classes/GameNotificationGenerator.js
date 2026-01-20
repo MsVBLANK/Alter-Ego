@@ -717,7 +717,7 @@ export default class GameNotificationGenerator {
 		let verb = secondPerson ? `discard` : `discards`;
 		if (containerPhrase) verb = secondPerson ? `put` : `puts`;
 		const containerAppendString = containerPhrase ? ` ${preposition} ${containerPhrase}` : ``;
-		return `${subject} ${verb} ${itemPhrase} ${preposition} ${containerPhrase}.`;
+		return `${subject} ${verb} ${itemPhrase}${containerAppendString}.`;
 	}
 
 	/**

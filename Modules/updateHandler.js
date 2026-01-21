@@ -1,6 +1,6 @@
 import GameConstants from '../Classes/GameConstants.js';
 import GameSettings from '../Classes/GameSettings.js';
-import { batchUpdateSheet, getSheetWithProperties } from './sheets.js';
+import { batchUpdateSheet, batchUpdateSheetValues, getSheetWithProperties } from './sheets.js';
 import { generateListString } from './helpers.js';
 
 import fs from 'fs';
@@ -9,7 +9,7 @@ import fs from 'fs';
  * Automatically updates config files and the sheet.
  * @param {GameSettings} settings 
  */
-export default async function autoUpdate (settings) {
+export default async function autoUpdate(settings) {
     const constants = new GameConstants();
     await v1_9Update(settings, constants);
     await v1_10Update(settings, constants);
@@ -22,9 +22,9 @@ export default async function autoUpdate (settings) {
  */
 async function v2_0Update(settings, constants) {
     // TODO: Update files.
-    // TODO: Rename columns on multiple spreadsheets.
 
-    const requests = [];
+    // Update sheets and formatting.
+    const batchUpdateRequests = [];
     // Rename Objects sheet to Fixtures.
     let objectsSheetId;
     try {
@@ -32,7 +32,7 @@ async function v2_0Update(settings, constants) {
         objectsSheetId = objectsResponse?.data?.sheets[0]?.properties?.sheetId;
     } catch (err) {}
     if (objectsSheetId) {
-        requests.push({
+        batchUpdateRequests.push({
             updateSheetProperties: {
                 properties: {
                     sheetId: objectsSheetId,
@@ -49,7 +49,7 @@ async function v2_0Update(settings, constants) {
         itemsSheetId = itemsResponse?.data?.sheets[0]?.properties?.sheetId;
     } catch (err) {}
     if (itemsSheetId) {
-        requests.push({
+        batchUpdateRequests.push({
             updateSheetProperties: {
                 properties: {
                     sheetId: itemsSheetId,
@@ -71,7 +71,7 @@ async function v2_0Update(settings, constants) {
     }
     if (createFlagsSheet) {
         flagsSheetId = 571378405;
-        requests.push({
+        batchUpdateRequests.push({
             addSheet: {
                 properties: {
                     sheetId: flagsSheetId,
@@ -88,7 +88,7 @@ async function v2_0Update(settings, constants) {
         const cellFormatting = {
             userEnteredFormat: {
                 textFormat: {
-                    bold: true,
+                    bold: false,
                     fontSize: 11
                 }
             }
@@ -102,7 +102,7 @@ async function v2_0Update(settings, constants) {
                 values: columns
             });
         }
-        requests.push({
+        batchUpdateRequests.push({
             updateCells: {
                 rows: rows,
                 fields: "*",
@@ -113,7 +113,7 @@ async function v2_0Update(settings, constants) {
                 }
             }
         });
-        requests.push({
+        batchUpdateRequests.push({
             updateCells: {
                 rows: [{
                     values: [
@@ -171,7 +171,7 @@ async function v2_0Update(settings, constants) {
                 }
             }
         });
-        requests.push({
+        batchUpdateRequests.push({
             updateDimensionProperties: {
                 properties: {
                     pixelSize: 50
@@ -185,7 +185,7 @@ async function v2_0Update(settings, constants) {
                 }
             }
         });
-        requests.push({
+        batchUpdateRequests.push({
             updateDimensionProperties: {
                 properties: {
                     pixelSize: 100
@@ -198,7 +198,7 @@ async function v2_0Update(settings, constants) {
                 }
             }
         });
-        requests.push({
+        batchUpdateRequests.push({
             updateDimensionProperties: {
                 properties: {
                     pixelSize: 200
@@ -212,7 +212,7 @@ async function v2_0Update(settings, constants) {
                 }
             }
         });
-        requests.push({
+        batchUpdateRequests.push({
             updateDimensionProperties: {
                 properties: {
                     pixelSize: 300
@@ -226,8 +226,9 @@ async function v2_0Update(settings, constants) {
             }
         });
     }
-    if (requests.length > 0) {
-        batchUpdateSheet(requests, settings.spreadsheetID).then(() => {
+    if (batchUpdateRequests.length > 0) {
+        console.log(`Updating spreadsheet https://docs.google.com/spreadsheets/d/${settings.spreadsheetID} ...`);
+        await batchUpdateSheet(batchUpdateRequests, settings.spreadsheetID).then(() => {
             /** @type {string[]} */
             const changedSheets = [];
             if (objectsSheetId) changedSheets.push("Objects sheet to Fixtures");
@@ -236,6 +237,83 @@ async function v2_0Update(settings, constants) {
             if (createFlagsSheet) console.log(`Created Flags sheet.`);
         }).catch(err => console.error(err));
     }
+    // The remaining changes don't affect anything significant.
+    // If none of the above were changed, stop here.
+    if (!objectsSheetId && !itemsSheetId && !createFlagsSheet) return;
+    // Update sheet headers.
+    /** @type {ValueRange[]} */
+    const batchUpdateValuesRequests = [];
+    // Rename Rooms headers.
+    batchUpdateValuesRequests.push({ range: "Rooms!A1", values: [["Room Display Name"]] });
+    // Rename Fixtures headers.
+    batchUpdateValuesRequests.push({ range: "Fixtures!A1", values: [["Fixture Name"]] });
+    // Rename Recipes headers.
+    batchUpdateValuesRequests.push({ range: "Recipes!C1:H1", values: [[
+        "Processed by Fixture With Tag",
+        "Process Duration",
+        "Produces Prefab(s)",
+        "Description When Initiated",
+        "Description When Completed",
+        "Description When Uncrafted"
+    ]]});
+    // Rename Puzzles headers.
+    batchUpdateValuesRequests.push({ range: "Puzzles!F1:Q1", values: [[
+        "Parent Fixture",
+        "Type",
+        "Accessible?",
+        "Requires",
+        "Solution(s)",
+        "Remaining Attempts",
+        "When Solved / Unsolved",
+        "Description When Solved",
+        "Description When Already Solved",
+        "Description When Incorrect Answer Given",
+        "Description When No Attempts Remain",
+        "Description When Requirements Not Met"
+    ]]});
+    batchUpdateValuesRequests.push({ range: "Events!A1:I1", values: [[
+        "Event ID",
+        "Ongoing?",
+        "Duration",
+        "Time Remaining",
+        "Triggers At",
+        "In Rooms with Tag",
+        "When Triggered / Ended",
+        "Inflicts Status Effect(s)",
+        "Refreshes Status Effect(s)"
+    ]]});
+    // Rename Status Effects headers.
+    batchUpdateValuesRequests.push({ range: "Status Effects!A1:N1", values: [[
+        "Status Effect ID",
+        "Duration",
+        "Fatal?",
+        "Don't Inflict If Player Is",
+        "Cures",
+        "Develops Into",
+        "When Duplicated",
+        "When Cured",
+        "Stat Modifiers",
+        "Behavior Attributes",
+        "Effect",
+        "Description When Inflicted",
+        "Description When Cured"
+    ]]});
+    // Rename Players headers.
+    batchUpdateValuesRequests.push({ range: "Players!C1:G2", values: [
+        [ 'Title or "NPC"', "Pronouns", "Speaks With", "Stats" ],
+        [ "", "", "", "Str", "Per" ]
+    ]});
+    // Rename Gestures headers.
+    batchUpdateValuesRequests.push({ range: "Gestures!A1:E1", values: [[
+        "Gesture ID",
+        "Requires Target",
+        "Don't Allow If Player Is",
+        "Description In List",
+        "Narration When Performed"
+    ]]});
+    await batchUpdateSheetValues(batchUpdateValuesRequests, settings.spreadsheetID).then(() => {
+        console.log(`Updated sheet headers.`);
+    }).catch(err => console.error(err));
 }
 
 /**

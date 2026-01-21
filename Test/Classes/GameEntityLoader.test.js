@@ -303,6 +303,10 @@ describe('GameEntityLoader test', () => {
                     }
                     expect(roomItem.inventoryCollection.size).toEqual(roomItem.prefab.inventoryCollection.size);
                 }
+                const cornDogBoxes = game.entityFinder.getRoomItems("BOX OF CORN DOGS", "freezer", undefined, "Fixture", "SHELF 1");
+                for (const cornDogBox of cornDogBoxes) {
+                    expect(cornDogBox.weight).toBe(22);
+                }
             });
         });
     });
@@ -408,6 +412,7 @@ describe('GameEntityLoader test', () => {
                     expect(vivianBag.items).toHaveLength(6);
                     expect(vivianBag.equippedItem).not.toBe(null);
                     expect(vivianBag.equippedItem.identifier).toBe("VIVIANS QUIVER");
+                    expect(vivianBag.equippedItem.weight).toBe(20);
                     expect(vivianBag.equippedItem.inventoryCollection.size).toBe(1);
                     const vivianQuiver = vivianBag.equippedItem.inventoryCollection.get("QUIVER");
                     expect(vivianQuiver.takenSpace).toBe(5);
@@ -415,6 +420,7 @@ describe('GameEntityLoader test', () => {
                     expect(vivianQuiver.items).toHaveLength(1);
                     expect(vivianQuiver.items[0].identifier).toBe("WHITE JEANS 2");
                     const whiteJeans = vivianQuiver.items[0];
+                    expect(whiteJeans.weight).toBe(19);
                     expect(whiteJeans.inventoryCollection.size).toBe(4);
                     const whiteJeansRightPocket = whiteJeans.inventoryCollection.get("RIGHT POCKET");
                     const whiteJeansLeftPocket = whiteJeans.inventoryCollection.get("LEFT POCKET");
@@ -428,6 +434,8 @@ describe('GameEntityLoader test', () => {
                     expect(whiteJeansLeftPocket.takenSpace).toBe(2);
                     expect(whiteJeansRightPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 2");
                     expect(whiteJeansLeftPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 3");
+                    expect(whiteJeansRightPocket.items[0].weight).toBe(12);
+                    expect(whiteJeansLeftPocket.items[0].weight).toBe(6);
                     expect(whiteJeansRightPocket.items[0].inventoryCollection.size).toBe(1);
                     expect(whiteJeansLeftPocket.items[0].inventoryCollection.size).toBe(1);
                     const tpPack2 = whiteJeansRightPocket.items[0].inventoryCollection.get("PACK");

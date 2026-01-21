@@ -204,9 +204,6 @@ export default class Event extends GameEntity {
         // Mark it as ongoing.
         this.ongoing = true;
 
-        this.getGame().narrationHandler.narrateTrigger(this);
-        this.getGame().logHandler.logTrigger(this);
-
         // Execute triggered commands.
         if (doTriggeredCommands)
             await parseAndExecuteBotCommands(this.triggeredCommands, this.getGame(), this);
@@ -237,9 +234,6 @@ export default class Event extends GameEntity {
             this.effectsTimer.stop();
             this.effectsTimer = null;
         }
-
-        this.getGame().narrationHandler.narrateEnd(this);
-        this.getGame().logHandler.logEnd(this);
 
         // Execute ended commands.
         if (doEndedCommands)

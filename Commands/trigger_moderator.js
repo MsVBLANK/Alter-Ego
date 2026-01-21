@@ -1,3 +1,5 @@
+import TriggerAction from '../Data/Actions/TriggerAction.js';
+
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
 
@@ -35,6 +37,7 @@ export async function execute(game, message, command, args) {
     if (event === undefined) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
     if (event.ongoing) return game.communicationHandler.reply(message, `${event.id} is already ongoing.`);
 
-    await event.trigger(true);
+    const action = new TriggerAction(game, message, undefined, undefined, true);
+    await action.performTrigger(event);
     game.communicationHandler.sendToCommandChannel(`Successfully triggered ${event.id}.`);
 }

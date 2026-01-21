@@ -19,6 +19,6 @@ export default class EnterAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		destinationRoom.addPlayer(this.player, entrance);
-		this.getGame().narrationHandler.narrateEnter(this, destinationRoom, entrance, this.player);
+		this.getGame().narrationHandler.narrateEnter(this, this.player, destinationRoom, entrance);
 	}
 }

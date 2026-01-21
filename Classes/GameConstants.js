@@ -13,8 +13,8 @@ export default class GameConstants {
     objectSheetDataCells = "Objects!A2:K";
     /** @deprecated */
     objectSheetDescriptionColumn = "Objects!K";
-    fixtureSheetDataCells = "Objects!A2:K";
-    fixtureSheetDescriptionColumn = "Objects!K";
+    fixtureSheetDataCells = "Fixtures!A2:K";
+    fixtureSheetDescriptionColumn = "Fixtures!K";
     prefabSheetDataCells = "Prefabs!A2:S";
     prefabSheetDescriptionColumn = "Prefabs!S";
     recipeSheetDataCells = "Recipes!A2:H";
@@ -25,8 +25,8 @@ export default class GameConstants {
     itemSheetDataCells = "Items!A2:H";
     /** @deprecated */
     itemSheetDescriptionColumn = "Items!H";
-    roomItemSheetDataCells = "Items!A2:H";
-    roomItemSheetDescriptionColumn = "Items!H";
+    roomItemSheetDataCells = "Room Items!A2:H";
+    roomItemSheetDescriptionColumn = "Room Items!H";
     puzzleSheetDataCells = "Puzzles!A2:Q";
     puzzleSheetCorrectColumn = "Puzzles!M";
     puzzleSheetAlreadySolvedColumn = "Puzzles!N";

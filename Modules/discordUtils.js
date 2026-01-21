@@ -20,10 +20,12 @@ import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, Con
 export function generateNarrationMessageCreateOptions(narrationType, game, messageText, player, files = []) {
     /** @type {Flags} */
     let flags;
+    if (narrationType === NarrationType.MINOR) flags = MessageFlags.IsComponentsV2 | MessageFlags.SuppressNotifications;
+    else if (narrationType !== NarrationType.DIALOG) flags = MessageFlags.IsComponentsV2; 
     return {
         content: narrationType === NarrationType.DIALOG ? messageText : '',
         components: narrationType === NarrationType.DIALOG ? [] : createNarrateComponents(narrationType, game, messageText, player),
-        flags: narrationType === NarrationType.DIALOG ? flags : MessageFlags.IsComponentsV2,
+        flags: flags,
         files: files
     };
 }

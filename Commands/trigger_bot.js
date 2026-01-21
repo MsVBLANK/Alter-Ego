@@ -1,4 +1,4 @@
-import Event from "../Data/Event.js";
+import TriggerAction from "../Data/Actions/TriggerAction.js";
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -44,8 +44,6 @@ export async function execute(game, command, args, player, callee) {
     if (event === undefined) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find event "${input}".`);
     if (event.ongoing) return;
 
-    let doTriggeredCommands = false;
-    if (callee && !(callee instanceof Event)) doTriggeredCommands = true;
-
-    await event.trigger(doTriggeredCommands);
+    const action = new TriggerAction(game, undefined, player, player?.location, true);
+    await action.performTrigger(event, callee);
 }

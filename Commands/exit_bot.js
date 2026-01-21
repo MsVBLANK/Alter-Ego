@@ -1,4 +1,7 @@
-﻿/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
+﻿import LockAction from '../Data/Actions/LockAction.js';
+import UnlockAction from '../Data/Actions/UnlockAction.js';
+
+/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
 /** @typedef {import('../Data/Player.js').default} Player */
 
@@ -74,11 +77,15 @@ export async function execute(game, command, args, player, callee) {
 
     // Now lock or unlock the exit.
     if (command === "lock") {
-        room.lockExit(exit.name);
-        exit.dest.lockExit(entrance.name);
+        const roomLockAction = new LockAction(game, undefined, player, room, true);
+        const destinationLockAction = new LockAction(game, undefined, player, exit.dest, true);
+        roomLockAction.performLock(exit);
+        destinationLockAction.performLock(entrance);
     }
     else if (command === "unlock") {
-        room.unlockExit(exit.name);
-        exit.dest.unlockExit(entrance.name);
+        const roomUnlockAction = new UnlockAction(game, undefined, undefined, room, true);
+        const destinationUnlockAction = new UnlockAction(game, undefined, undefined, exit.dest, true);
+        roomUnlockAction.performUnlock(exit);
+        destinationUnlockAction.performUnlock(entrance);
     }
 }

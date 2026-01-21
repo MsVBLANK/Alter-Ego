@@ -9,6 +9,7 @@ import GameNarrationHandler from '../Classes/GameNarrationHandler.js';
 import GameNotificationGenerator from '../Classes/GameNotificationGenerator.js';
 import PriorityQueue from '../Classes/PriorityQueue.js';
 import Event from './Event.js';
+import TriggerAction from './Actions/TriggerAction.js';
 import { sendQueuedMessages } from '../Modules/messageHandler.js';
 import { Collection } from 'discord.js';
 import { DateTime } from 'luxon';
@@ -370,7 +371,8 @@ export default class Game {
 								&& now.weekday === time.datetime.weekday
 								&& now.hour === time.datetime.hour
 								&& now.minute === time.datetime.minute) {
-								event.trigger(true);
+								const triggerAction = new TriggerAction(this, undefined, undefined, undefined, false);
+								triggerAction.performTrigger(event);
 								break;
 							}
 						}

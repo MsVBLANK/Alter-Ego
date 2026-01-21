@@ -153,18 +153,18 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a player exiting a room.
 	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Player} player - The player performing the move action.
 	 * @param {Room} currentRoom - The room the player is currently in.
 	 * @param {Exit} exit - The exit the player will leave their current room through.
-	 * @param {Player} player - The player performing the move action.
 	 */
-	narrateExit(action, currentRoom, exit, player) {
+	narrateExit(action, player, currentRoom, exit) {
 		const messageType = NarrationType.STANDARD;
 		const appendString = player.createMoveAppendString();
 		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
 		const notification = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, true, currentRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateExitNotification(player, true, exit.name, appendString);
+			: this.#game.notificationGenerator.generateExitNotification(player, true, exit?.name, appendString);
 		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateExitNotification(player, false, exit.name, appendString);
+			: this.#game.notificationGenerator.generateExitNotification(player, false, exit?.name, appendString);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		this.#sendNarration(messageType, action, player, narration, currentRoom);
 	}
@@ -172,16 +172,16 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a player entering a room.
 	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Player} player - The player performing the move action.
 	 * @param {Room} destinationRoom  The room the player is moving to.
 	 * @param {Exit} entrance - The exit the player will enter the destination room from.
-	 * @param {Player} player - The player performing the move action.
 	 */
-	narrateEnter(action, destinationRoom, entrance, player) {
+	narrateEnter(action, player, destinationRoom, entrance) {
 		const messageType = NarrationType.STANDARD;
 		const appendString = player.createMoveAppendString();
 		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
 		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenEnterNotification(player, false, destinationRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateEnterNotification(player, false, entrance.name, appendString);
+			: this.#game.notificationGenerator.generateEnterNotification(player, false, entrance?.name, appendString);
 		this.#sendNarration(messageType, action, player, narration, destinationRoom);
 		if (!player.canSee()) {
 			const notification = this.#game.notificationGenerator.generateNoSightEnterNotification();
@@ -794,6 +794,58 @@ export default class GameNarrationHandler {
 	}
 
 	/**
+	 * Narrates an unlock event.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Room} room - The room the exit is in.
+	 * @param {Exit} exit - The exit being unlocked.
+	 */
+	narrateUnlock(action, room, exit) {
+		const narration = this.#game.notificationGenerator.generateUnlockNotification(exit);
+		this.#sendNarration(NarrationType.ALERT, action, undefined, narration, room);
+	}
+
+	/**
+	 * Narrates a lock event.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Room} room - The room the exit is in.
+	 * @param {Exit} exit - The exit being locked.
+	 */
+	narrateLock(action, room, exit) {
+		const narration = this.#game.notificationGenerator.generateLockNotification(exit);
+		this.#sendNarration(NarrationType.ALERT, action, undefined, narration, room);
+	}
+
+	/**
+	 * Narrates a trigger action.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Event} event - The event being triggered.
+	 */
+	narrateTrigger(action, event) {
+		// Send the triggered narration to all rooms with occupants.
+		if (event.triggeredNarration !== "") {
+			const narrationText = parseDescription(event.triggeredNarration, event, undefined);
+			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
+			for (let room of rooms)
+				this.#sendNarration(NarrationType.STANDARD, action, undefined, narrationText, room);
+		}
+	}
+
+	/**
+	 * Narrates an event being ended.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {Event} event - The event being ended.
+	 */
+	narrateEnd(action, event) {
+		// Send the ended narration to all rooms with occupants.
+		if (event.endedNarration !== "") {
+			const narrationText = parseDescription(event.endedNarration, event, undefined);
+			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
+			for (let room of rooms)
+				this.#sendNarration(NarrationType.STANDARD, action, undefined, narrationText, room);
+		}
+	}
+
+	/**
 	 * Narrates a player leaving a whisper.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Player} player - The player performing the action. 
@@ -803,53 +855,5 @@ export default class GameNarrationHandler {
 	narrateLeaveWhisper(action, player, whisper, customNarration) {
 		const messageType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
 		this.#sendNarration(messageType, action, player, customNarration, whisper.location, whisper);
-	}
-
-	/**
-	 * Narrates an exit being unlocked.
-	 * @param {Room} room - The room the exit is in.
-	 * @param {Exit} exit - The exit being unlocked.
-	 */
-	narrateUnlock(room, exit) {
-		const narration = this.#game.notificationGenerator.generateUnlockNotification(exit);
-		this.#sendNarration(NarrationType.ALERT, undefined, undefined, narration, room);
-	}
-
-	/**
-	 * Narrates an exit being locked.
-	 * @param {Room} room - The room the exit is in.
-	 * @param {Exit} exit - The exit being locked.
-	 */
-	narrateLock(room, exit) {
-		const narration = this.#game.notificationGenerator.generateLockNotification(exit);
-		this.#sendNarration(NarrationType.ALERT, undefined, undefined, narration, room);
-	}
-
-	/**
-	 * Narrates an event being triggered.
-	 * @param {Event} event - The event being triggered.
-	 */
-	narrateTrigger(event) {
-		// Send the triggered narration to all rooms with occupants.
-		if (event.triggeredNarration !== "") {
-			const narrationText = parseDescription(event.triggeredNarration, event, undefined);
-			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
-			for (let room of rooms)
-				this.#sendNarration(NarrationType.ALERT, undefined, undefined, narrationText, room);
-		}
-	}
-
-	/**
-	 * Narrates an event being ended.
-	 * @param {Event} event - The event being ended.
-	 */
-	narrateEnd(event) {
-		// Send the ended narration to all rooms with occupants.
-		if (event.endedNarration !== "") {
-			const narrationText = parseDescription(event.endedNarration, event, undefined);
-			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
-			for (let room of rooms)
-				this.#sendNarration(NarrationType.ALERT, undefined, undefined, narrationText, room);
-		}
 	}
 }

@@ -247,20 +247,8 @@ export default class Event extends GameEntity {
         this.timer = new Timer(1000, { start: true, loop: true }, async function () {
             event.remaining = event.remaining.minus(1000);
 
-            const days = Math.floor(event.remaining.as('days'));
-            const hours = event.remaining.hours;
-            const minutes = event.remaining.minutes;
-            const seconds = event.remaining.seconds;
-
-            let displayString = "";
-            if (days !== 0) displayString += `${days} `;
-            if (hours >= 0 && hours < 10) displayString += '0';
-            displayString += `${hours}:`;
-            if (minutes >= 0 && minutes < 10) displayString += '0';
-            displayString += `${minutes}:`;
-            if (seconds >= 0 && seconds < 10) displayString += '0';
-            displayString += `${seconds}`;
-            event.remainingString = displayString;
+            const format = Math.floor(event.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+            event.remainingString = event.remaining.toFormat(format);
 
             if (event.remaining.as('milliseconds') <= 0)
                 await event.end(true);

@@ -206,7 +206,7 @@ export default class Fixture extends ItemContainer {
                 fixture.process.duration = fixture.process.duration.minus(1000);
 
                 if (fixture.process.duration.as('milliseconds') <= 0)
-                    process(fixture, player);
+                    fixture.#processRecipe(player);
             }
         });
     }
@@ -264,10 +264,100 @@ export default class Fixture extends ItemContainer {
                         fixture.process.duration = fixture.process.duration.minus(1000);
 
                         if (fixture.process.duration.as('milliseconds') <= 0)
-                            process(fixture);
+                            fixture.#processRecipe();
                     }
                 });
             }
+        }
+    }
+
+    /**
+     * Processes a recipe.
+     * @param {Player} [player] - The player who initiated the recipe, if any.
+     */
+    #processRecipe(player) {
+        /** @type {RemainingIngredient[]} */
+        let remainingIngredients = [];
+        // Make sure all the ingredients are still there.
+        let stillThere = true;
+        for (let i = 0; i < this.process.ingredients.length; i++) {
+            const ingredient = this.process.ingredients[i];
+            if (ingredient.quantity === 0) {
+                stillThere = false;
+                break;
+            }
+            for (let j = 0; j < this.process.recipe.products.length; j++) {
+                const product = this.process.recipe.products[j];
+                if (product.id === ingredient.prefab.id) {
+                    let decreaseUses = false;
+                    let nextStage = false;
+                    if (ingredient.uses - 1 === 0 && ingredient.prefab.nextStage !== null)
+                        nextStage = true;
+                    else if (!isNaN(ingredient.uses))
+                        decreaseUses = true;
+                    remainingIngredients.push({ ingredientIndex: i, productIndex: j, decreaseUses: decreaseUses, nextStage: nextStage });
+                    break;
+                }
+            }
+        }
+        if (stillThere) {
+            // If there is only one ingredient in this, remember its quantity.
+            const quantity = this.process.ingredients.length === 1 ? this.process.ingredients[0].quantity : 1;
+            // Destroy the ingredients.
+            for (let i = 0; i < this.process.ingredients.length; i++) {
+                let destroy = true;
+                for (let j = 0; j < remainingIngredients.length; j++) {
+                    if (remainingIngredients[j].ingredientIndex === i && !remainingIngredients[j].nextStage) {
+                        destroy = false;
+                        break;
+                    }
+                }
+                if (destroy && this.process.ingredients[i].quantity > 0) {
+                    const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
+                    destroyAction.performDestroyRoomItem(this.process.ingredients[i], quantity, true);
+                }
+            }
+            // Instantiate the products.
+            for (let i = 0; i < this.process.recipe.products.length; i++) {
+                let instantiate = true;
+                let product = this.process.recipe.products[i];
+                for (let j = 0; j < remainingIngredients.length; j++) {
+                    const ingredient = this.process.ingredients[remainingIngredients[j].ingredientIndex];
+                    if (remainingIngredients[j].productIndex === i && remainingIngredients[j].decreaseUses) {
+                        instantiate = false;
+                        ingredient.uses--;
+                        if (ingredient.uses === 0) {
+                            const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
+                            destroyAction.performDestroyRoomItem(ingredient, ingredient.quantity, true);
+                        }
+                        break;
+                    }
+                    else if (remainingIngredients[j].productIndex === i && remainingIngredients[j].nextStage) {
+                        product = ingredient.prefab.nextStage;
+                        break;
+                    }
+                    else if (remainingIngredients[j].productIndex === i && isNaN(ingredient.uses)) {
+                        instantiate = false;
+                        break;
+                    }
+                }
+                if (instantiate) {
+                    const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
+                    instantiateAction.performInstantiateRoomItem(product, this, "", quantity, new Map());
+                }
+            }
+            if (player && player.alive && player.location.id === this.location.id) player.sendDescription(this.process.recipe.completedDescription, this);
+        }
+
+        if (this.autoDeactivate) {
+            const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
+            deactivateAction.performDeactivate(this, true);
+        }
+        else {
+            this.process.timer.stop();
+            this.process.duration = null;
+            this.process.recipe = null;
+            this.process.ingredients.length = 0;
         }
     }
 
@@ -278,7 +368,7 @@ export default class Fixture extends ItemContainer {
      */
     findRecipe() {
         // Get all the items contained within this fixture.
-        let items = this.getGame().roomItems.filter(item => item.containerName.startsWith("Object: ") && item.container instanceof Fixture && item.container.row === this.row && item.quantity > 0);
+        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
         items.sort(function (a, b) {
@@ -294,7 +384,7 @@ export default class Fixture extends ItemContainer {
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {
-            if (ingredientsMatch(items, recipes[i].ingredients)) {
+            if (this.#ingredientsMatch(items, recipes[i].ingredients)) {
                 recipe = recipes[i];
                 ingredients = items;
                 break;
@@ -335,6 +425,19 @@ export default class Fixture extends ItemContainer {
     }
 
     /**
+     * Checks if items match ingredients.
+     * @param {RoomItem[]} items
+     * @param {Prefab[]} ingredients
+     * @returns {boolean}
+     */
+    #ingredientsMatch(items, ingredients) {
+        if (items.length !== ingredients.length) return false;
+        for (let i = 0; i < items.length; i++)
+            if (items[i].prefab.id !== ingredients[i].id) return false;
+        return true;
+    }
+
+    /**
      * Gets the fixture's name preceded by "the".
      */
     getContainingPhrase() {
@@ -351,109 +454,5 @@ export default class Fixture extends ItemContainer {
     /** @returns {string} */
     descriptionCell() {
         return this.getGame().constants.fixtureSheetDescriptionColumn + this.row;
-    }
-}
-
-/**
- * Checks if items match ingredients.
- * @param {RoomItem[]} items
- * @param {Prefab[]} ingredients
- * @returns {boolean}
- */
-function ingredientsMatch(items, ingredients) {
-    if (items.length !== ingredients.length) return false;
-    for (let i = 0; i < items.length; i++)
-        if (items[i].prefab.id !== ingredients[i].id) return false;
-    return true;
-}
-
-/**
- * Processes a recipe.
- * @param {Fixture} fixture
- * @param {Player} [player]
- */
-function process(fixture, player) {
-    /** @type {RemainingIngredient[]} */
-    let remainingIngredients = [];
-    // Make sure all the ingredients are still there.
-    let stillThere = true;
-    for (let i = 0; i < fixture.process.ingredients.length; i++) {
-        const ingredient = fixture.process.ingredients[i];
-        if (ingredient.quantity === 0) {
-            stillThere = false;
-            break;
-        }
-        for (let j = 0; j < fixture.process.recipe.products.length; j++) {
-            const product = fixture.process.recipe.products[j];
-            if (product.id === ingredient.prefab.id) {
-                let decreaseUses = false;
-                let nextStage = false;
-                if (ingredient.uses - 1 === 0 && ingredient.prefab.nextStage !== null)
-                    nextStage = true;
-                else if (!isNaN(ingredient.uses))
-                    decreaseUses = true;
-                remainingIngredients.push({ ingredientIndex: i, productIndex: j, decreaseUses: decreaseUses, nextStage: nextStage });
-                break;
-            }
-        }
-    }
-    if (stillThere) {
-        // If there is only one ingredient in this, remember its quantity.
-        const quantity = fixture.process.ingredients.length === 1 ? fixture.process.ingredients[0].quantity : 1;
-        // Destroy the ingredients.
-        for (let i = 0; i < fixture.process.ingredients.length; i++) {
-            let destroy = true;
-            for (let j = 0; j < remainingIngredients.length; j++) {
-                if (remainingIngredients[j].ingredientIndex === i && !remainingIngredients[j].nextStage) {
-                    destroy = false;
-                    break;
-                }
-            }
-            if (destroy && fixture.process.ingredients[i].quantity > 0) {
-                const destroyAction = new DestroyAction(fixture.getGame(), undefined, player, fixture.location, true);
-                destroyAction.performDestroyRoomItem(fixture.process.ingredients[i], quantity, true);
-            }
-        }
-        // Instantiate the products.
-        for (let i = 0; i < fixture.process.recipe.products.length; i++) {
-            let instantiate = true;
-            let product = fixture.process.recipe.products[i];
-            for (let j = 0; j < remainingIngredients.length; j++) {
-                const ingredient = fixture.process.ingredients[remainingIngredients[j].ingredientIndex];
-                if (remainingIngredients[j].productIndex === i && remainingIngredients[j].decreaseUses) {
-                    instantiate = false;
-                    ingredient.uses--;
-                    if (ingredient.uses === 0) {
-                        const destroyAction = new DestroyAction(fixture.getGame(), undefined, player, fixture.location, true);
-                        destroyAction.performDestroyRoomItem(ingredient, ingredient.quantity, true);
-                    }
-                    break;
-                }
-                else if (remainingIngredients[j].productIndex === i && remainingIngredients[j].nextStage) {
-                    product = ingredient.prefab.nextStage;
-                    break;
-                }
-                else if (remainingIngredients[j].productIndex === i && isNaN(ingredient.uses)) {
-                    instantiate = false;
-                    break;
-                }
-            }
-            if (instantiate) {
-                const instantiateAction = new InstantiateAction(fixture.getGame(), undefined, undefined, fixture.location, true);
-                instantiateAction.performInstantiateRoomItem(product, fixture, "", quantity, new Map());
-            }
-        }
-        if (player && player.alive && player.location.id === fixture.location.id) player.sendDescription(fixture.process.recipe.completedDescription, fixture);
-    }
-
-    if (fixture.autoDeactivate) {
-        const deactivateAction = new DeactivateAction(fixture.getGame(), undefined, player, fixture.location, true);
-        deactivateAction.performDeactivate(fixture, true);
-    }
-    else {
-        fixture.process.timer.stop();
-        fixture.process.duration = null;
-        fixture.process.recipe = null;
-        fixture.process.ingredients.length = 0;
     }
 }

@@ -29,11 +29,6 @@ export default class InventoryItem extends ItemInstance {
      */
     equipmentSlot;
     /**
-     * Whether the equipment slot was found.
-     * @type {boolean}
-     */
-    foundEquipmentSlot;
-    /**
      * The inventory item's actual container.
      * @type {InventoryItem}
      */
@@ -70,7 +65,6 @@ export default class InventoryItem extends ItemInstance {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.playerName = playerName;
         this.equipmentSlot = equipmentSlot;
-        this.foundEquipmentSlot = false;
         this.inventory = [];
         this.inventoryCollection = new Collection();
     }
@@ -137,6 +131,7 @@ export default class InventoryItem extends ItemInstance {
         if (item.quantity !== 0) {
             const inventorySlot = this.inventoryCollection.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
+            if (!isNaN(item.quantity)) this.addWeight(item.weight * item.quantity);
         }
     }
 
@@ -149,6 +144,7 @@ export default class InventoryItem extends ItemInstance {
     removeItem(item, slotId, removedQuantity) {
         const inventorySlot = this.inventoryCollection.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
+        if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
     }
 
     /**

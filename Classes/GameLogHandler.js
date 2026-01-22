@@ -478,21 +478,23 @@ export default class GameLogHandler {
 	/**
 	 * Logs a solve action or an attempt action that solves the puzzle.
 	 * @param {Puzzle} puzzle - The puzzle being solved.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param {Player} [player] - The player who performed the action, if applicable.
+	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
 	 */
 	logSolve(puzzle, player, forced) {
-		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}solved ${puzzle.name} in ${player.location.channel}`);
+		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}solved ${puzzle.name}` : `${puzzle.name} was solved`;
+		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${puzzle.location.channel}`);
 	}
 
 	/**
 	 * Logs an unsolve action or an attempt action that unsolves the puzzle.
 	 * @param {Puzzle} puzzle - The puzzle being unsolved.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param {Player} [player] - The player who performed the action, if applicable.
+	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
 	 */
 	logUnsolve(puzzle, player, forced) {
-		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}unsolved ${puzzle.name} in ${player.location.channel}`);
+		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}unsolved ${puzzle.name}` : `${puzzle.name} was unsolved`;
+		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${puzzle.location.channel}`);
 	}
 
 	/**

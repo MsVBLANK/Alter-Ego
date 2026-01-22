@@ -5,15 +5,34 @@ import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import Status from "../Data/Status.js";
 
-/** @typedef {import("../Data/Event.js").default} Event */
-/** @typedef {import("../Data/Exit.js").default} Exit */
-/** @typedef {import("../Data/Fixture.js").default} Fixture */
-/** @typedef {import("../Data/Flag.js").default} Flag */
-/** @typedef {import("../Data/InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../Data/Prefab.js").default} Prefab */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Recipe.js").default} Recipe */
-/** @typedef {import("../Data/RoomItem.js").default} RoomItem */
+/** @import Event from "../Data/Event.js" */
+/** @import Exit from "../Data/Exit.js" */
+/** @import Fixture from "../Data/Fixture.js" */
+/** @import Flag from "../Data/Flag.js" */
+/** @import GameEntity from "../Data/GameEntity.js" */
+/** @import InventoryItem from "../Data/InventoryItem.js" */
+/** @import Prefab from "../Data/Prefab.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Recipe from "../Data/Recipe.js" */
+/** @import RoomItem from "../Data/RoomItem.js" */
+
+/**
+ * Returns true if the entity's row number matches the given row number.
+ * @param {GameEntity} entity - The game entity to match the row against.
+ * @param {number} row - The row number to match.
+ */
+export const entityRowMatches = (entity, row) => {
+	return entity.row === row;
+};
+
+/**
+ * Returns true if the entity's row number is different from the given row number.
+ * @param {GameEntity} entity - The game entity to match the row against.
+ * @param {number} row - The row number to match.
+ */
+export const entityRowDiffers = (entity, row) => {
+	return entity.row !== row;
+};
 
 /**
  * Returns true if the room's ID matches the given ID.

@@ -12,7 +12,7 @@ export const config = {
         + "You can specify which equipment slot you want the item to be unequipped from. Any item can be unequipped, whether it's equippable "
         + "or not. People in the room will see the player unequip an item, regardless of its size.",
     usableBy: "Moderator",
-    aliases: ["unequip", "u"],
+    aliases: ["unequip", "remove", "u"],
     requiresGame: true
 };
 

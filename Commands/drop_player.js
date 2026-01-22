@@ -19,7 +19,7 @@ export const config = {
         + "inventory slots (such as pockets), you can specify which slot to put it in. If you don't specify an object or item, you will simply leave it on the floor. "
         + "If you drop a very large item (a sword, for example), people in the room with you will see you discard it.",
     usableBy: "Player",
-    aliases: ["drop", "discard", "d"],
+    aliases: ["drop", "discard", "put", "d"],
     requiresGame: true
 };
 

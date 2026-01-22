@@ -42,6 +42,9 @@ export default class DressAction extends Action {
 		}
 		this.getGame().narrationHandler.narrateDress(this, equippedItems, container, this.player);
 		this.getGame().logHandler.logDress(equippedItems, this.player, container, inventorySlot, this.forced);
+		// Execute equipped commands.
+		for (const equippedItem of equippedItems)
+			equippedItem.executeEquippedCommands();
 		// Container is a weight puzzle.
 		if (container instanceof Puzzle && container.type === "weight") {
 			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);

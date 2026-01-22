@@ -23,5 +23,6 @@ export default class EquipAction extends Action {
 		this.getGame().narrationHandler.narrateEquip(this, item, this.player, notify);
 		this.getGame().logHandler.logEquip(item, this.player, equipmentSlot, this.forced);
 		this.player.equip(item, equipmentSlot, handEquipmentSlot);
+		equipmentSlot.equippedItem.executeEquippedCommands();
 	}
 }

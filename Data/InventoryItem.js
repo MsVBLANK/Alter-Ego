@@ -1,6 +1,7 @@
 ﻿import InventorySlot from './InventorySlot.js';
 import ItemInstance from './ItemInstance.js';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
+import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
 /** @typedef {import("./Game.js").default} Game */
@@ -145,6 +146,20 @@ export default class InventoryItem extends ItemInstance {
         const inventorySlot = this.inventoryCollection.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
+    }
+
+    /**
+     * Executes the inventory item's equipped commands.
+     */
+    executeEquippedCommands() {
+        parseAndExecuteBotCommands(this.prefab.equippedCommands, this.getGame(), this, this.player);
+    }
+
+    /**
+     * Executes the inventory item's unequipped commands.
+     */
+    executeUnequippedCommands() {
+        parseAndExecuteBotCommands(this.prefab.unequippedCommands, this.getGame(), this, this.player);
     }
 
     /**

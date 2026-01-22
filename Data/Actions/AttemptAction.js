@@ -325,9 +325,10 @@ export default class AttemptAction extends Action {
 	 * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by the puzzle's solved commands, if any.
 	 */
 	#solvePuzzle(puzzle, outcome, requiredItems, item, targetPlayer) {
-		puzzle.solve(this.player, outcome, requiredItems, targetPlayer);
+		puzzle.solve(this.player, outcome, requiredItems);
 		this.getGame().narrationHandler.narrateSolve(this, puzzle, outcome, this.player, item);
 		this.getGame().logHandler.logSolve(puzzle, this.player, this.forced);
+		puzzle.executeSolvedCommands(targetPlayer ? targetPlayer : this.player);
 	}
 
 	/**
@@ -337,7 +338,8 @@ export default class AttemptAction extends Action {
 	#unsolvePuzzle(puzzle) {
 		this.getGame().narrationHandler.narrateUnsolve(this, puzzle, this.player);
 		this.getGame().logHandler.logUnsolve(puzzle, this.player, this.forced);
-		puzzle.unsolve(this.player);
+		puzzle.unsolve();
+		puzzle.executeUnsolvedCommands(this.player);
 	}
 
 	/**

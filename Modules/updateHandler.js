@@ -287,6 +287,7 @@ async function v2_0Update(settings, constants) {
         "Status Effect ID",
         "Duration",
         "Fatal?",
+        "Visible?",
         "Don't Inflict If Player Is",
         "Cures",
         "Develops Into",

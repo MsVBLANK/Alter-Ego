@@ -24,7 +24,8 @@ export default class TriggerAction extends Action {
 		super.perform();
 		this.getGame().narrationHandler.narrateTrigger(this, event);
 		this.getGame().logHandler.logTrigger(event);
-		const doTriggeredCommands = !callee || !(callee instanceof Event);
-		await event.trigger(doTriggeredCommands);
+		event.trigger();
+		const executeTriggeredCommands = !callee || !(callee instanceof Event);
+		if (executeTriggeredCommands) event.executeTriggeredCommands();
 	}
 }

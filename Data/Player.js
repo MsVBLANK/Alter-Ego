@@ -18,7 +18,6 @@ import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
 import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
 /** @typedef {import('./Action.js').default} Action */
@@ -1209,9 +1208,6 @@ export default class Player extends ItemContainer {
         if (!item.prefab.discreet)
             this.removeItemFromDescription(item, "hands");
         this.#coverEquippedItems(createdItem);
-
-        // Execute equipped commands.
-        parseAndExecuteBotCommands(createdItem.prefab.equippedCommands, this.getGame(), createdItem, this);
     }
 
     /**
@@ -1228,8 +1224,7 @@ export default class Player extends ItemContainer {
             this.addItemToDescription(item, "hands");
         else {
             this.#coverEquippedItems(item);
-            // Execute equipped commands.
-            parseAndExecuteBotCommands(item.prefab.equippedCommands, this.getGame(), item, this);
+            item.executeEquippedCommands();
         }
     }
 
@@ -1283,9 +1278,6 @@ export default class Player extends ItemContainer {
         if (!createdItem.prefab.discreet)
             this.addItemToDescription(createdItem, "hands");
         this.#uncoverEquippedItems(createdItem);
-
-        // Execute unequipped commands.
-        parseAndExecuteBotCommands(createdItem.prefab.unequippedCommands, this.getGame(), createdItem, this);
     }
 
     /**
@@ -1301,8 +1293,7 @@ export default class Player extends ItemContainer {
             this.removeItemFromDescription(item, "hands");
         else {
             this.#uncoverEquippedItems(item);
-            // Execute unequipped commands.
-            parseAndExecuteBotCommands(item.prefab.unequippedCommands, this.getGame(), item, this);
+            item.executeUnequippedCommands();
         }
     }
 

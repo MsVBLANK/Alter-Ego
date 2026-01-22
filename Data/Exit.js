@@ -82,6 +82,17 @@ export default class Exit extends GameEntity {
     }
 
     /**
+     * Sets the exit's destination.
+     * @param {Room} room - The room this exit should lead to.
+     * @param {Exit} exit - The exit in the destination room this exit should lead to.
+     */
+    setDest(room, exit) {
+        this.dest = room;
+        this.destDisplayName = room.displayName;
+        this.link = exit.name;
+    }
+
+    /**
      * Gets a phrase to refer to the exit in narrations.
      */
     getNamePhrase() {

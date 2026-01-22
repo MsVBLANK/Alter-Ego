@@ -86,7 +86,10 @@ export async function execute(game, message, command, args, player) {
         }
 
         if ((parsedInput.endsWith(` ${fixtures[i].preposition.toUpperCase()} ${fixtures[i].name}`) || parsedInput.endsWith(` IN ${fixtures[i].name}`)) && fixtures[i].preposition !== "") {
-            const fixtureItems = items.filter(item => item.containerName === `Object: ${fixtures[i].name}` || fixtures[i].childPuzzle !== null && item.containerName === `Puzzle: ${fixtures[i].childPuzzle.name}`);
+            const fixtureItems = items.filter(item =>
+                item.containerType === `Fixture` && item.containerName === fixtures[i].name
+                || fixtures[i].childPuzzle !== null && item.containerType === `Puzzle` && item.containerName === fixtures[i].childPuzzle.name
+            );
             for (let j = 0; j < fixtureItems.length; j++) {
                 if (
                     parsedInput === `${fixtureItems[j].name} ${fixtures[i].preposition.toUpperCase()} ${fixtures[i].name}` ||

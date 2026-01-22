@@ -1,5 +1,7 @@
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Exit from '../Data/Exit.js' */
+/** @import Room from '../Data/Room.js' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -49,6 +51,7 @@ export async function execute(game, message, command, args) {
         return game.communicationHandler.reply(message, `You need to specify a room, an exit, another room, and another exit. Usage:\n${usage(game.settings)}`);
 
     // First, find the room.
+    /** @type {Room} */
     let room;
     for (let i = args.length - 1; i >= 0; i--) {
         const searchString = args.slice(0, i).join(" ");
@@ -62,6 +65,7 @@ export async function execute(game, message, command, args) {
     else if (args.length === 0) return game.communicationHandler.reply(message, `You need to specify an exit in ${room.id}, another room, and another exit.`);
 
     // Now that the room has been found, find the exit.
+    /** @type {Exit} */
     let exit;
     for (let i = args.length - 1; i >= 0; i--) {
         const searchString = args.slice(0, i).join(" ");
@@ -75,6 +79,7 @@ export async function execute(game, message, command, args) {
     else if (args.length === 0) return game.communicationHandler.reply(message, `You need to specify another room and another exit for ${exit.name} of ${room.id} to lead to.`);
 
     // Now find the destination room.
+    /** @type {Room} */
     let destRoom;
     for (let i = args.length - 1; i >= 0; i--) {
         const searchString = args.slice(0, i).join(" ");
@@ -88,20 +93,12 @@ export async function execute(game, message, command, args) {
     else if (args.length === 0) return game.communicationHandler.reply(message, `You need to specify an exit in ${destRoom.id} for ${exit.name} of ${room.id} to lead to.`);
 
     // Now that the destination room has been found, find the destination exit.
-    let destExit;
-    for (let i = args.length - 1; i >= 0; i--) {
-        const searchString = args.slice(0, i).join(" ");
-        destExit = game.entityFinder.getExit(destRoom, searchString);
-        if (destExit) {
-            break;
-        }
-    }
+    /** @type {Exit} */
+    let destExit = game.entityFinder.getExit(destRoom, args.join(" "));
     if (destExit === undefined) return game.communicationHandler.reply(message, `Couldn't find exit "${args.join(" ")}" in ${destRoom.id}.`);
 
-    exit.dest = destRoom;
-    exit.link = destExit.name;
-    destExit.dest = room;
-    destExit.link = exit.name;
+    exit.setDest(destRoom, destExit);
+    destExit.setDest(room, exit);
 
     game.communicationHandler.sendToCommandChannel(`Successfully updated destination of ${exit.name} in ${room.id}.`);
 }

@@ -80,7 +80,10 @@ export async function execute(game, message, command, args) {
         }
 
         if ((parsedInput.endsWith(` ${fixtures[i].preposition.toUpperCase()} ${fixtures[i].name}`) || parsedInput.endsWith(` IN ${fixtures[i].name}`)) && fixtures[i].preposition !== "") {
-            const fixtureItems = items.filter(item => item.containerName === `Object: ${fixtures[i].name}` || fixtures[i].childPuzzle !== null && item.containerName === `Puzzle: ${fixtures[i].childPuzzle.name}`);
+            const fixtureItems = items.filter(item =>
+                item.containerType === `Fixture` && item.containerName === fixtures[i].name
+                || fixtures[i].childPuzzle !== null && item.containerType === `Puzzle` && item.containerName === fixtures[i].childPuzzle.name
+            );
             for (let j = 0; j < fixtureItems.length; j++) {
                 if (
                     fixtureItems[j].identifier !== "" && parsedInput === `${fixtureItems[j].identifier} ${fixtures[i].preposition.toUpperCase()} ${fixtures[i].name}` ||
@@ -169,7 +172,8 @@ export async function execute(game, message, command, args) {
 
     if (item !== null) {
         action.performInspect(item);
-        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${item.getIdentifier()} ${item.getContainerPreposition()} ${item.getContainerPhrase()} for ${player.name}.`);
+        const containerPhrase = item.container instanceof RoomItem ? item.container.getIdentifier() : item.container.name;
+        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${item.getIdentifier()} ${item.getContainerPreposition()} ${containerPhrase} for ${player.name}.`);
         return;
     }
 

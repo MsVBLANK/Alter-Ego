@@ -1,5 +1,5 @@
 import Action from "../Data/Action.js";
-import { NarrationType } from "../Data/Narration.js";
+import { MessageDisplayType } from "../Modules/enums.js";
 import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
@@ -151,9 +151,9 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player to send the message to.
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
-	 * @param {NarrationType} [messageType] - The type of message to send. Defaults to DIALOG, or plain text.
+	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
 	 */
-	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = NarrationType.DIALOG) {
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT) {
 		messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
 	}
 
@@ -175,7 +175,7 @@ export default class GameCommunicationHandler {
 			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
-			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, NarrationType.DIALOG);
+			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, MessageDisplayType.PLAIN_TEXT);
 	}
 
 	/**
@@ -183,13 +183,13 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player to send the notification to.
 	 * @param {Action} action - The action that triggered the notification.
 	 * @param {string} notification - The text of the notification to send.
-	 * @param {NarrationType} notificationType - The type of notification to send. Defaults to DIALOG, or plain text.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 */
-	notifyPlayer(player, action, notification, notificationType = NarrationType.DIALOG, mirrorInSpectateChannel = true) {
+	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			player.notify(notification, mirrorInSpectateChannel, notificationType, action);
+			player.notify(notification, mirrorInSpectateChannel, messageDisplayType, action);
 		}
 	}
 
@@ -204,7 +204,7 @@ export default class GameCommunicationHandler {
 	notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			messageHandler.sendNotification(player, notification, NarrationType.DIALOG, mirrorInSpectateChannel, attachments);
+			messageHandler.sendNotification(player, notification, MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel, attachments);
 		}
 	}
 
@@ -222,7 +222,7 @@ export default class GameCommunicationHandler {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, dialog.message, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url));
-			if (notification) this.notifyPlayer(player, action, notification, NarrationType.DIALOG, false);
+			if (notification) this.notifyPlayer(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
 		}
 	}
 
@@ -230,13 +230,13 @@ export default class GameCommunicationHandler {
 	 * Mirrors a narration in a player's spectate channel.
 	 * @param {Player} player - The player whose spectate channel this narration will be mirrored in.
 	 * @param {Action} action - The action associated with the narration.
-	 * @param {NarrationType} narrationType - The narration that was written.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
 	 * @param {string} narrationText - The text of the narration to send.
 	 */
-	mirrorNarrationInSpectateChannel(player, action, narrationType, narrationText) {
+	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendNarrationSpectateMessage(player, narrationText, narrationType);
+			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType);
 		}
 	}
 
@@ -266,7 +266,7 @@ export default class GameCommunicationHandler {
 	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.location.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.location.channel.id);
-			messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.type, mirrorInSpectateChannel, narration.player);
+			messageHandler.sendNarrationToRoom(narration.location, narrationText, narration.messageDisplayType, mirrorInSpectateChannel, narration.player);
 		}
 	}
 
@@ -279,7 +279,7 @@ export default class GameCommunicationHandler {
 	narrateInWhisper(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.whisper.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.whisper.channel.id);
-			messageHandler.sendNarrationToWhisper(narration.whisper, narrationText, narration.getWhisperPrefixString(), narration.type, mirrorInSpectateChannel);
+			messageHandler.sendNarrationToWhisper(narration.whisper, narrationText, narration.getWhisperPrefixString(), narration.messageDisplayType, mirrorInSpectateChannel);
 		}
 	}
 

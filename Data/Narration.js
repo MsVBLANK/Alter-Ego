@@ -2,6 +2,7 @@
 import Player from "./Player.js";
 import UnhideAction from "./Actions/UnhideAction.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { MessageDisplayType } from "../Modules/enums.js";
 
 /** @typedef {import("./Action.js").default} Action */
 /** @typedef {import("./Game.js").default} Game */
@@ -18,11 +19,11 @@ import { capitalizeFirstLetter } from "../Modules/helpers.js";
  */
 export default class Narration extends GameConstruct {
     /**
-     * The type of narration. This determines how it will be displayed.
+     * The display type of the message to send for this narration.
      * @readonly
-     * @type {NarrationType}
+     * @type {MessageDisplayType}
      */
-    type;
+    messageDisplayType;
     /**
      * The action being narrated.
      * @readonly
@@ -97,7 +98,7 @@ export default class Narration extends GameConstruct {
     /**
      * @constructor
      * @param {Game} game - The game this is for.
-     * @param {NarrationType} type - The type of narration.
+     * @param {MessageDisplayType} messageDisplayType - The display type of the message to send for this narration.
      * @param {Action} action - The action being narrated.
      * @param {Player} player - The player whose action is being narrated.
      * @param {Room} location - The room the narration is intended for.
@@ -106,9 +107,9 @@ export default class Narration extends GameConstruct {
      * @param {UserMessage} [message] - The message that the narration originated with. Defaults to null.
      * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Defaults to null.
      */
-    constructor(game, type, action, player, location, content, whisper = null, message = null, narrator = null) {
+    constructor(game, messageDisplayType, action, player, location, content, whisper = null, message = null, narrator = null) {
         super(game);
-        this.type = type;
+        this.messageDisplayType = messageDisplayType;
         this.action = action;
         this.player = player;
         this.location = location;
@@ -162,7 +163,7 @@ export default class Narration extends GameConstruct {
                 // Players with the see room attribute should receive all narrations besides their own via DM.
                 if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
                     if (!this.player || occupant.name !== this.player.name)
-                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
+                        this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.messageDisplayType, false);
                 }
             }
             this.getGame().communicationHandler.narrateInRoom(this);
@@ -175,7 +176,7 @@ export default class Narration extends GameConstruct {
                     if (room.id !== this.location.id) {
                         for (let occupant of room.occupants) {
                             if (occupant.hasBehaviorAttribute("see room") && occupant.canSee() && !occupant.isHidden()) {
-                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
+                                this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.messageDisplayType, false);
                             }
                         }
                         this.getGame().communicationHandler.narrateInRoom(this);
@@ -202,7 +203,7 @@ export default class Narration extends GameConstruct {
                     if (occupant.canSee() && !occupant.isNPC
                         && (occupant.hasBehaviorAttribute("see room") || !occupant.member.permissionsIn(whisper.channel).has("ViewChannel"))) {
                         if (!this.player || occupant.name !== this.player.name)
-                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.type, false);
+                            this.getGame().communicationHandler.notifyPlayer(occupant, this.action, this.content, this.messageDisplayType, false);
                     }
                 }
                 this.getGame().communicationHandler.narrateInWhisper(this);
@@ -210,12 +211,3 @@ export default class Narration extends GameConstruct {
         }
     }
 }
-
-/** @enum {number} */
-export const NarrationType = {
-    STANDARD: 0,
-    ALERT: 1,
-    MINOR: 2,
-    PLAYER: 3,
-    DIALOG: 4
-};

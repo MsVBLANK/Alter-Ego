@@ -117,7 +117,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the start move action. 
 	 */
 	narrateStartMove(action, isRunning, exit, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = NarrationType.MINOR;
 		const notification = this.#game.notificationGenerator.generateStartMoveNotification(player, true, isRunning, exit.name);
 		const narration = this.#game.notificationGenerator.generateStartMoveNotification(player, false, isRunning, exit.name);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
@@ -130,10 +130,10 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player who has depleted half of their stamina.
 	 */
 	narrateReachedHalfStamina(action, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = NarrationType.MINOR;
 		const notification = this.#game.notificationGenerator.generateHalfStaminaNotification(player, true);
 		const narration = this.#game.notificationGenerator.generateHalfStaminaNotification(player, false);
-		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, NarrationType.STANDARD);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -165,7 +165,7 @@ export default class GameNarrationHandler {
 			: this.#game.notificationGenerator.generateExitNotification(player, true, exit?.name, appendString);
 		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateExitNotification(player, false, exit?.name, appendString);
-		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, NarrationType.MINOR);
 		this.#sendNarration(messageType, action, player, narration, currentRoom);
 	}
 
@@ -201,7 +201,7 @@ export default class GameNarrationHandler {
 	 * @param {Exit} [exit] - The exit the player tried to move to, if applicable.
 	 */
 	narrateStop(action, player, exitLocked, exit) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = NarrationType.MINOR;
 		const notification = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, true, exit.getNamePhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, true);
 		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getNamePhrase())

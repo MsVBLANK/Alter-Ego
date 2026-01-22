@@ -13,7 +13,7 @@ export const config = {
         + "You can specify which equipment slot you want to unequip the item from, if you want. People in the room will see you unequip an item, "
         + "regardless of its size.",
     usableBy: "Player",
-    aliases: ["unequip", "u"],
+    aliases: ["unequip", "remove", "u"],
     requiresGame: true
 };
 

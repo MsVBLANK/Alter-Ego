@@ -43,7 +43,7 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
     gameInProgressActivity: {
         name: "Neo World Program",
         type: BotContext.getActivityType("STREAMING"),
-        url: ""
+        url: "https://www.twitch.tv/twitch"
     }
 }
 

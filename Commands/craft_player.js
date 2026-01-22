@@ -1,4 +1,5 @@
 import CraftAction from '../Data/Actions/CraftAction.js';
+import { itemNameMatches } from '../Modules/matchers.js';
 
 /** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
 /** @typedef {import('../Data/Game.js').default} Game */
@@ -47,32 +48,27 @@ export async function execute(game, message, command, args, player) {
     if (!parsedInput.includes(" WITH ") && !parsedInput.includes(" AND "))
         return game.communicationHandler.reply(message, `You need to specify two items separated by "with" or "and". Usage:\n${usage(game.settings)}`);
 
+    const itemNames = parsedInput.includes(" WITH ") ? parsedInput.split(" WITH ") : parsedInput.split(" AND ");
     // Now find the item in the player's inventory.
+    /** @type {Map<number, InventoryItem>} */
+    const itemsMap = new Map();
     /** @type {InventoryItem[]} */
     const items = [];
-    for (let i = 0; i < args.length; i++) {
-        const handEquipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, args.slice(i).join(" "), "player");
-        if (handEquipmentSlot) {
-            items.push(handEquipmentSlot.equippedItem);
-            args = args.slice(0, i);
-            break;
-        }
-    }
-    for (let i = args.length; i > 0; i--) {
-        const handEquipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, args.slice(0, i).join(" "), "player");
-        if (handEquipmentSlot) {
-            items.push(handEquipmentSlot.equippedItem);
-            args = args.slice(i);
-            break;
+    const hands = game.entityFinder.getPlayerHands(player);
+    for (const hand of hands) {
+        for (const itemName of itemNames) {
+            if (hand.equippedItem !== null && !itemsMap.has(hand.row) && itemNameMatches(hand.equippedItem, itemName, true)) {
+                itemsMap.set(hand.row, hand.equippedItem);
+                items.push(hand.equippedItem);
+                break;
+            }
         }
     }
 
     if (items.length !== 2) {
         if (items.length === 0) {
-            let itemNames = parsedInput.includes(" WITH ") ? parsedInput.split(" WITH ") : parsedInput.split(" AND ");
             return game.communicationHandler.reply(message, `Couldn't find items "${itemNames[0]}" and "${itemNames[1]}" in either of your hands.`);
         } else {
-            let itemNames = parsedInput.includes(" WITH ") ? parsedInput.split(" WITH ") : parsedInput.split(" AND ");
             if (items[0].name === itemNames[0]) return game.communicationHandler.reply(message, `Couldn't find item "${itemNames[1]}" in either of your hands.`);
             else return game.communicationHandler.reply(message, `Couldn't find item "${itemNames[0]} in either of your hands.`);
         }

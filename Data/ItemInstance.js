@@ -148,6 +148,36 @@ export default class ItemInstance extends ItemContainer {
 	}
 
 	/**
+	 * Adds the given amount of weight to the item's weight.
+	 * Also updates the weights of all items in its container chain.
+	 * @protected
+	 * @param {number} weight - The amount of weight to add.
+	 */
+	addWeight(weight) {
+		/** @type {ItemContainer} */
+		let container = this;
+		while (container instanceof ItemInstance) {
+			container.weight += weight;
+			container = container.container;
+		}
+	}
+
+	/**
+	 * Subtracts the given amount of weight from the item's weight.
+	 * Also updates the weights of all items in its container chain.
+	 * @protected
+	 * @param {number} weight - The amount of weight to subtract.
+	 */
+	subtractWeight(weight) {
+		/** @type {ItemContainer} */
+		let container = this;
+		while (container instanceof ItemInstance) {
+			container.weight -= weight;
+			container = container.container;
+		}
+	}
+
+	/**
 	 * Gets the item's single containing phrase.
 	 */
 	getContainingPhrase() {

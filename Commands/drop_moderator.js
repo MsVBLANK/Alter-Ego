@@ -18,7 +18,7 @@ export const config = {
     + `If no object or item is specified, they will drop it on the floor. This can be changed in the settings file. `
     + "Only objects and item in the same room as the player can be specified.",
     usableBy: "Moderator",
-    aliases: ["drop", "discard", "d"],
+    aliases: ["drop", "discard", "put", "d"],
     requiresGame: true
 };
 

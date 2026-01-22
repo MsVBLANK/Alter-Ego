@@ -138,6 +138,7 @@ export default class RoomItem extends ItemInstance {
         if (item.quantity !== 0) {
             const inventorySlot = this.inventoryCollection.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
+            if (!isNaN(item.quantity)) this.addWeight(item.weight * item.quantity);
         }
     }
 
@@ -150,6 +151,7 @@ export default class RoomItem extends ItemInstance {
     removeItem(item, slotId, removedQuantity) {
         const inventorySlot = this.inventoryCollection.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
+        if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
     }
 
     /**

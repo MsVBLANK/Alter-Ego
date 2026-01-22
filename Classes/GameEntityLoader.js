@@ -1091,7 +1091,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load room item on row ${item.row}. "${item.containerType}" is not a valid container type.`);
 		if (item.containerType === "Fixture" && !(item.container instanceof Fixture))
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a fixture.`);
-		if (item.containerType === "RoomItem" && !(item.container instanceof RoomItem))
+		if (item.quantity !== 0 && item.containerType === "RoomItem" && !(item.container instanceof RoomItem))
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a room item.`);
 		if (item.containerType === "Puzzle" && !(item.container instanceof Puzzle))
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a puzzle.`);
@@ -1104,6 +1104,15 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container prefab on row ${item.container.prefab.row} has no inventory slot "${item.slot}".`);
 			if (inventorySlot.takenSpace > inventorySlot.capacity)
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container is over capacity.`);
+			/** @type {Set<number>} */
+			const containerChain = new Set();
+			/** @type {RoomItem|Puzzle|Fixture} */
+			let container = item;
+			while (container instanceof RoomItem) {
+				if (containerChain.has(container.row)) return new Error(`Couldn't load room item on row ${item.row}. The item's container chain contains itself, resulting in an infinite loop.`);
+				containerChain.add(container.row);
+				container = container.container;
+			}
 		}
 	}
 
@@ -2004,9 +2013,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					player.setInventory(playerEquipmentSlots);
 					// Calculate the player's carry weight.
 					player.carryWeight = player.inventoryCollection.reduce((weight, equipmentSlot) => {
-						let itemWeight = equipmentSlot.items.reduce((inventoryItemWeight, inventoryItem) => {
-							return inventoryItem.prefab !== null ? inventoryItemWeight + inventoryItem.weight * inventoryItem.quantity : inventoryItemWeight;
-						}, 0);
+						const itemWeight = equipmentSlot.equippedItem !== null ? equipmentSlot.equippedItem.weight : 0;
 						return weight + itemWeight;
 					}, 0);
 				}
@@ -2053,7 +2060,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load inventory item on row ${item.row}. Quantity is higher than 1, but its prefab on row ${item.prefab.row} has no plural containing phrase.`);
 			if (!item.player.inventoryCollection.get(item.equipmentSlot))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find equipment slot "${item.equipmentSlot}".`);
-			if (item.equipmentSlot !== "RIGHT HAND" && item.equipmentSlot !== "LEFT HAND" && item.containerName !== "" && (item.container === null || item.container === undefined))
+			if (item.quantity !== 0 && item.equipmentSlot !== "RIGHT HAND" && item.equipmentSlot !== "LEFT HAND" && item.containerName !== "" && (item.container === null || item.container === undefined))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find container "${item.containerName}".`);
 			if (item.container instanceof InventoryItem && item.container.inventoryCollection.size === 0)
 				return new Error(`Couldn't load inventory item on row ${item.row}. The item's container is an inventory item, but the item container's prefab on row ${item.container.prefab.row} has no inventory slots.`);
@@ -2064,6 +2071,15 @@ export default class GameEntityLoader extends GameEntityManager {
 					return new Error(`Couldn't load inventory item on row ${item.row}. The item's container prefab on row ${item.container.prefab.row} has no inventory slot "${item.slot}".`);
 				if (inventorySlot.takenSpace > inventorySlot.capacity)
 					return new Error(`Couldn't load inventory item on row ${item.row}. The item's container is over capacity.`);
+				/** @type {Set<number>} */
+				const containerChain = new Set();
+				/** @type {InventoryItem} */
+				let container = item;
+				while (container instanceof InventoryItem) {
+					if (containerChain.has(container.row)) return new Error(`Couldn't load room item on row ${item.row}. The item's container chain contains itself, resulting in an infinite loop.`);
+					containerChain.add(container.row);
+					container = container.container;
+				}
 			}
 		}
 	}

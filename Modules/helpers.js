@@ -101,18 +101,25 @@ export function parseDuration(durationString) {
 		switch (durationUnit) {
 			case 'y':
 				durationInput.years = durationInt;
+				break;
 			case 'M':
 				durationInput.months = durationInt;
+				break;
 			case 'w':
 				durationInput.weeks = durationInt;
+				break;
 			case 'd':
 				durationInput.days = durationInt;
+				break;
 			case 'h':
 				durationInput.hours = durationInt;
+				break;
 			case 'm':
 				durationInput.minutes = durationInt;
+				break;
 			case 's':
 				durationInput.seconds = durationInt;
+				break;
 		}
 	}
 	return Duration.fromObject(durationInput);

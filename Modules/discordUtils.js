@@ -1,4 +1,4 @@
-import { NarrationType } from '../Data/Narration.js';
+import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
 import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags } from 'discord.js';
 
@@ -11,20 +11,20 @@ import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, Con
 
 /**
  * Generates the message create options for a narration or notification.
- * @param {NarrationType} narrationType - The type of message to send.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {Game} game - The game the message is for.
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
  */
-export function generateNarrationMessageCreateOptions(narrationType, game, messageText, player, files = []) {
+export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = []) {
     /** @type {Flags} */
     let flags;
-    if (narrationType === NarrationType.MINOR) flags = MessageFlags.IsComponentsV2 | MessageFlags.SuppressNotifications;
-    else if (narrationType !== NarrationType.DIALOG) flags = MessageFlags.IsComponentsV2; 
+    if (messageDisplayType === MessageDisplayType.MINOR) flags = MessageFlags.IsComponentsV2 | MessageFlags.SuppressNotifications;
+    else if (messageDisplayType !== MessageDisplayType.PLAIN_TEXT) flags = MessageFlags.IsComponentsV2; 
     return {
-        content: narrationType === NarrationType.DIALOG ? messageText : '',
-        components: narrationType === NarrationType.DIALOG ? [] : createNarrateComponents(narrationType, game, messageText, player),
+        content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
         flags: flags,
         files: files
     };
@@ -32,20 +32,22 @@ export function generateNarrationMessageCreateOptions(narrationType, game, messa
 
 /**
  * Creates an array of components for a narration.
- * @param {NarrationType} narrationType - The type of the narration.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {Game} game - The game the narration is for.
  * @param {string} messageText - The text content of the narration.
  * @param {Player} [player] - The player the narration is about. Optional.
  */
-function createNarrateComponents(narrationType, game, messageText, player) {
-    switch (narrationType) {
-		case NarrationType.STANDARD:
+function createNarrateComponents(messageDisplayType, game, messageText, player) {
+    switch (messageDisplayType) {
+		case MessageDisplayType.STANDARD:
 			return createStandardNarrationComponents(game, messageText);
-		case NarrationType.ALERT:
+        case MessageDisplayType.WARNING:
+            return createWarningNarrationComponents(game, messageText);
+		case MessageDisplayType.ALERT:
 			return createAlertNarrationComponents(game, messageText);
-		case NarrationType.MINOR:
+		case MessageDisplayType.MINOR:
 			return createMinorNarrationComponents(game, messageText);
-		case NarrationType.PLAYER:
+		case MessageDisplayType.PLAYER:
 			return createPlayerNarrationComponents(game, messageText, player);
 		default:
 			return createStandardNarrationComponents(game, messageText);
@@ -60,7 +62,22 @@ function createNarrateComponents(narrationType, game, messageText, player) {
 function createStandardNarrationComponents(game, messageText) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.standardNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(messageText),
+        )
+	];
+}
+
+/**
+ * Creates the components for a warning narration.
+ * @param {Game} game - The game the narration is for.
+ * @param {string} messageText - The text content of the narration.
+ */
+function createWarningNarrationComponents(game, messageText) {
+	return [
+		new ContainerBuilder()
+            .setAccentColor(Number(`0x${game.settings.warningMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
@@ -75,7 +92,7 @@ function createStandardNarrationComponents(game, messageText) {
 function createAlertNarrationComponents(game, messageText) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.alertNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.alertMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
@@ -102,7 +119,7 @@ function createMinorNarrationComponents(game, messageText) {
 function createPlayerNarrationComponents(game, messageText, player) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.standardNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )

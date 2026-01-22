@@ -7,7 +7,6 @@ import ItemContainer from './ItemContainer.js';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.js';
 import Status from './Status.js';
-import { NarrationType } from './Narration.js';
 import CureAction from './Actions/CureAction.js';
 import DieAction from './Actions/DieAction.js';
 import InflictAction from './Actions/InflictAction.js';
@@ -16,6 +15,7 @@ import MoveAction from './Actions/MoveAction.js';
 import QueueMoveAction from './Actions/QueueMoveAction.js';
 import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
+import { MessageDisplayType } from '../Modules/enums.js';
 import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { Collection } from 'discord.js';
@@ -1530,14 +1530,14 @@ export default class Player extends ItemContainer {
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
      * @param {string} messageText - The content of the message to send.
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
-     * @param {NarrationType} [notificationType] - The type of notification to send. Defaults to DIALOG, or plain text.
+     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
      * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
      */
-    notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG, action) {
+    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action) {
         if (this.isConscious() && !this.isNPC) {
             messageText = capitalizeFirstLetter(messageText);
-            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, notificationType);
-            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, notificationType, messageText);
+            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
+            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText);
         }
     }
 

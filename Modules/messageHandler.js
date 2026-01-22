@@ -1,10 +1,10 @@
 import Dialog from '../Data/Dialog.js';
-import { NarrationType } from '../Data/Narration.js';
 import Player from '../Data/Player.js';
 import AnnounceAction from '../Data/Actions/AnnounceAction.js';
 import NarrateAction from '../Data/Actions/NarrateAction.js';
 import SayAction from '../Data/Actions/SayAction.js';
 import * as discordUtils from './discordUtils.js';
+import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
 import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
@@ -35,7 +35,7 @@ export function processIncomingMessage(game, message) {
         player.setOnline();
         const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
         if (playerNoSpeechStatusEffects.length > 0) {
-            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, NarrationType.ALERT);
+            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
             message.delete().catch();
             return;
         }
@@ -61,13 +61,13 @@ export function processIncomingMessage(game, message) {
  * Narrates a message to a room.
  * @param {Room} room - The room to send the message to.
  * @param {string} messageText - The message to send.
- * @param {NarrationType} narrationType - The type of narration to send.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export function sendNarrationToRoom(room, messageText, narrationType, addSpectate = true, player = null) {
+export function sendNarrationToRoom(room, messageText, messageDisplayType, addSpectate = true, player = null) {
     if (messageText !== "") {
-        const messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(narrationType, room.getGame(), messageText, player);
+        const messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(
             {
@@ -80,7 +80,7 @@ export function sendNarrationToRoom(room, messageText, narrationType, addSpectat
         if (addSpectate) {
             room.occupants.forEach((occupant) => {
                 if (doMirrorInSpectateChannel(occupant, player)) {
-                    sendNarrationSpectateMessage(occupant, messageText, narrationType, [], messageCreateOptions);
+                    sendNarrationSpectateMessage(occupant, messageText, messageDisplayType, [], messageCreateOptions);
                 }
             });
         }
@@ -92,15 +92,15 @@ export function sendNarrationToRoom(room, messageText, narrationType, addSpectat
  * @param {Whisper} whisper - The whisper to send the message to. 
  * @param {string} messageText - The message to send. 
  * @param {string} messageTextWithSpectatePrefix - The message to send with a prefix for spectate channels indicating which whisper the narration occurred in.
- * @param {NarrationType} narrationType - The type of narration to send.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
-export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpectatePrefix, narrationType, addSpectate = true) {
+export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpectatePrefix, messageDisplayType, addSpectate = true) {
     if (messageText !== "") {
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await whisper.channel.send(discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageText));
+                    await whisper.channel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText));
                 },
             },
             "tell"
@@ -108,7 +108,7 @@ export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpec
         if (addSpectate) {
             whisper.playersCollection.forEach((player) => {
                 if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
-                    sendNarrationSpectateMessage(player, messageText, narrationType, [], discordUtils.generateNarrationMessageCreateOptions(narrationType, whisper.getGame(), messageTextWithSpectatePrefix));
+                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, [], discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix));
                 }
             });
         }
@@ -119,13 +119,13 @@ export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpec
  * Sends a notification message to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
- * @param {NarrationType} notificationType - The type of notification to send.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
  */
-export function sendNotification(player, messageText, notificationType, addSpectate = true, attachments = new Collection()) {
+export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection()) {
     const files = attachments.map((attachment) => attachment.url);
-    const messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(notificationType, player.getGame(), messageText, player, files);
+    const messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
@@ -138,7 +138,7 @@ export function sendNotification(player, messageText, notificationType, addSpect
         );
     }
     if (addSpectate && player.spectateChannel !== null) {
-        sendNarrationSpectateMessage(player, messageText, notificationType, files, messageCreateOptions);
+        sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, messageCreateOptions);
     }
 }
 
@@ -317,11 +317,11 @@ export function addSpectatedPlayerMessage(player, speaker, message, whisper = nu
  * Mirrors a narration in a spectate channel.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {string} messageText - The text of the message to send.
- * @param {NarrationType} messageType - The type of message to send.
+ * @param {MessageDisplayType} messageType - The type of message to send.
  * @param {string[]} [files] - A collection of attachments to send, if any.
  * @param {object} [messageCreateOptions] - The message create options to send. Optional.
  */
-export function sendNarrationSpectateMessage(player, messageText, messageType, files = [], messageCreateOptions = discordUtils.generateNarrationMessageCreateOptions(messageType, player.getGame(), messageText, player, files)) {
+export function sendNarrationSpectateMessage(player, messageText, messageType, files = [], messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageType, player.getGame(), messageText, player, files)) {
     player.getGame().messageQueue.enqueue(
         {
             fire: async () => {

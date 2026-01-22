@@ -1,7 +1,8 @@
 import Action from "../Action.js";
-import { default as Narration, NarrationType } from "../Narration.js";
+import Narration from "../Narration.js";
 import SayAction from "./SayAction.js";
 import UnhideAction from "./UnhideAction.js";
+import { MessageDisplayType } from "../../Modules/enums.js";
 import { ChannelType } from "discord.js";
 
 /** @typedef {import("../Player.js").default} Player */
@@ -52,7 +53,7 @@ export default class NarrateAction extends Action {
 	 */
 	#mirrorNarrationInSpectateChannel(player, narration, narrationText = narration.content) {
 		narrationText = narration.getWhisperPrefixString() + narrationText;
-		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration.type, narrationText);
+		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration.messageDisplayType, narrationText);
 	}
 
 	/**
@@ -82,7 +83,7 @@ export default class NarrateAction extends Action {
 			if (this.#playerCannotReceiveCommunications(narration, player)) continue;
 			const mirrorNotificationInSpectateChannel = narration.narrator === undefined;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? NarrationType.STANDARD : narration.type, mirrorNotificationInSpectateChannel);
+				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? MessageDisplayType.STANDARD : narration.messageDisplayType, mirrorNotificationInSpectateChannel);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 			else this.#mirrorNarrationInSpectateChannel(player, narration, narrationText);
 		}

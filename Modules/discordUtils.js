@@ -41,6 +41,8 @@ function createNarrateComponents(messageDisplayType, game, messageText, player) 
     switch (messageDisplayType) {
 		case MessageDisplayType.STANDARD:
 			return createStandardNarrationComponents(game, messageText);
+        case MessageDisplayType.WARNING:
+            return createWarningNarrationComponents(game, messageText);
 		case MessageDisplayType.ALERT:
 			return createAlertNarrationComponents(game, messageText);
 		case MessageDisplayType.MINOR:
@@ -60,7 +62,22 @@ function createNarrateComponents(messageDisplayType, game, messageText, player) 
 function createStandardNarrationComponents(game, messageText) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.standardNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(messageText),
+        )
+	];
+}
+
+/**
+ * Creates the components for a warning narration.
+ * @param {Game} game - The game the narration is for.
+ * @param {string} messageText - The text content of the narration.
+ */
+function createWarningNarrationComponents(game, messageText) {
+	return [
+		new ContainerBuilder()
+            .setAccentColor(Number(`0x${game.settings.warningMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
@@ -75,7 +92,7 @@ function createStandardNarrationComponents(game, messageText) {
 function createAlertNarrationComponents(game, messageText) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.alertNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.alertMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
@@ -102,7 +119,7 @@ function createMinorNarrationComponents(game, messageText) {
 function createPlayerNarrationComponents(game, messageText, player) {
 	return [
 		new ContainerBuilder()
-            .setAccentColor(Number(`0x${game.settings.standardNarrationAccentColor}`))
+            .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )

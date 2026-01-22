@@ -85,15 +85,20 @@ export default class GameSettings {
 	 */
 	embedAccentColor;
 	/**
-	 * The accent color that will be used in standard-type Narration Components.
+	 * The accent color that will be used in standard-type message displays.
 	 * @type {string}
 	 */
-	standardNarrationAccentColor;
+	standardMessageDisplayAccentColor;
 	/**
-	 * The accent color that will be used in alert-type Narration Components.
+	 * The accent color that will be used in warning-type message displays.
 	 * @type {string}
 	 */
-	alertNarrationAccentColor;
+	warningMessageDisplayAccentColor;
+	/**
+	 * The accent color that will be used in alert-type message displays.
+	 * @type {string}
+	 */
+	alertMessageDisplayAccentColor;
 	/**
 	 * Whether or not to show the online player count in the bot's Discord status.
 	 * @type {boolean}
@@ -137,8 +142,9 @@ export default class GameSettings {
 	 * @param {string} hiddenIconURL - The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
 	 * @param {boolean} autoDeleteWhisperChannels - Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
 	 * @param {string} embedAccentColor - The accent color that will be used in Discord Embeds.
-	 * @param {string} standardNarrationAccentColor - The accent color that will be used in standard-type Narration Components.
-	 * @param {string} alertNarrationAccentColor - The accent color that will be used in alert-type Narration Components.
+	 * @param {string} standardMessageDisplayAccentColor - The accent color that will be used in standard-type message displays.
+	 * @param {string} warningMessageDisplayAccentColor - The accent color that will be used in warning-type message displays.
+	 * @param {string} alertMessageDisplayAccentColor - The accent color that will be used in alert-type message displays.
 	 * @param {boolean} showOnlinePlayerCount - Whether or not to show the online player count in the bot's Discord status.
 	 * @param {boolean} autoLoad - Whether or not the bot should automatically execute a command identical to `load all resume` upon startup.
 	 * @param {Activity} onlineActivity - The activity the bot will set for itself while it is online with no game in progress.
@@ -161,8 +167,9 @@ export default class GameSettings {
 		hiddenIconURL,
 		autoDeleteWhisperChannels,
 		embedAccentColor,
-		standardNarrationAccentColor,
-		alertNarrationAccentColor,
+		standardMessageDisplayAccentColor,
+		warningMessageDisplayAccentColor,
+		alertMessageDisplayAccentColor,
 		showOnlinePlayerCount,
 		autoLoad,
 		onlineActivity,
@@ -184,8 +191,9 @@ export default class GameSettings {
 		this.hiddenIconURL = hiddenIconURL;
 		this.autoDeleteWhisperChannels = autoDeleteWhisperChannels;
 		this.embedAccentColor = embedAccentColor;
-		this.standardNarrationAccentColor = standardNarrationAccentColor;
-		this.alertNarrationAccentColor = alertNarrationAccentColor;
+		this.standardMessageDisplayAccentColor = standardMessageDisplayAccentColor;
+		this.warningMessageDisplayAccentColor = warningMessageDisplayAccentColor;
+		this.alertMessageDisplayAccentColor = alertMessageDisplayAccentColor;
 		this.showOnlinePlayerCount = showOnlinePlayerCount;
 		this.autoLoad = autoLoad;
 		this.onlineActivity = onlineActivity;

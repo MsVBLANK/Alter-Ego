@@ -1,8 +1,9 @@
 /** @enum {number} */
 export const MessageDisplayType = {
     STANDARD: 0,
-    ALERT: 1,
-    MINOR: 2,
-    PLAYER: 3,
-    PLAIN_TEXT: 4
+	WARNING: 1,
+    ALERT: 2,
+    MINOR: 3,
+    PLAYER: 4,
+    PLAIN_TEXT: 5
 };

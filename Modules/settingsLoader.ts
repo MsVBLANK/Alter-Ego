@@ -28,8 +28,9 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
     hiddenIconURL: "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
     autoDeleteWhisperChannels: true,
     embedAccentColor: "1F8B4C",
-    standardNarrationAccentColor: "1F8B4C",
-    alertNarrationAccentColor: "FF0E0E",
+    standardMessageDisplayAccentColor: "1F8B4C",
+    warningMessageDisplayAccentColor: "FFC107",
+    alertMessageDisplayAccentColor: "FF0E0E",
     showOnlinePlayerCount: true,
     autoLoad: false,
     onlineActivity: {
@@ -123,15 +124,20 @@ export function loadGameSettings(): [GameSettings, string[]] {
         errors.push("Error: EMBED_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
         embedAccentColor = DEFAULT_GAME_SETTINGS.embedAccentColor;
     }
-    let standardNarrationAccentColor = process.env.STANDARD_NARRATION_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.standardNarrationAccentColor;
-    if (!colorRegex.test(standardNarrationAccentColor)) {
-        errors.push("Error: STANDARD_NARRATION_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
-        standardNarrationAccentColor = DEFAULT_GAME_SETTINGS.standardNarrationAccentColor;
+    let standardMessageDisplayAccentColor = process.env.STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.standardMessageDisplayAccentColor;
+    if (!colorRegex.test(standardMessageDisplayAccentColor)) {
+        errors.push("Error: STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
+        standardMessageDisplayAccentColor = DEFAULT_GAME_SETTINGS.standardMessageDisplayAccentColor;
     }
-    let alertNarrationAccentColor = process.env.ALERT_NARRATION_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.alertNarrationAccentColor;
-    if (!colorRegex.test(alertNarrationAccentColor)) {
-        errors.push("Error: ALERT_NARRATION_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
-        alertNarrationAccentColor = DEFAULT_GAME_SETTINGS.alertNarrationAccentColor;
+    let warningMessageDisplayAccentColor = process.env.WARNING_MESSAGE_DISPLAY_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.warningMessageDisplayAccentColor;
+    if (!colorRegex.test(warningMessageDisplayAccentColor)) {
+        errors.push("Error: WARNING_MESSAGE_DISPLAY_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
+        warningMessageDisplayAccentColor = DEFAULT_GAME_SETTINGS.warningMessageDisplayAccentColor;
+    }
+    let alertMessageDisplayAccentColor = process.env.ALERT_MESSAGE_DISPLAY_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.alertMessageDisplayAccentColor;
+    if (!colorRegex.test(alertMessageDisplayAccentColor)) {
+        errors.push("Error: ALERT_MESSAGE_DISPLAY_ACCENT_COLOR is not a valid hex color code. If it contains a # character, remove it.");
+        alertMessageDisplayAccentColor = DEFAULT_GAME_SETTINGS.alertMessageDisplayAccentColor;
     }
 
     const showOnlinePlayerCount = pushErrors(stringToBoolOrDefault(process.env.SHOW_ONLINE_PLAYER_COUNT, DEFAULT_GAME_SETTINGS.showOnlinePlayerCount), errors);
@@ -185,8 +191,9 @@ export function loadGameSettings(): [GameSettings, string[]] {
         hiddenIconUrl,
         autoDeleteWhisperChannels,
         embedAccentColor,
-        standardNarrationAccentColor,
-        alertNarrationAccentColor,
+        standardMessageDisplayAccentColor,
+        warningMessageDisplayAccentColor,
+        alertMessageDisplayAccentColor,
         showOnlinePlayerCount,
         autoLoad,
         onlineActivity,

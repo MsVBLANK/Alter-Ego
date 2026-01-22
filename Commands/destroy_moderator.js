@@ -249,7 +249,7 @@ export async function execute(game, message, command, args) {
                             break;
                         }
                     }
-                    if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.identifier ? containerItem.identifier : containerItem.name}.`);
+                    if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${parsedInput.substring(parsedInput.lastIndexOf(" IN ") + 4)}" of ${containerItem.identifier ? containerItem.identifier : containerItem.name}.`);
                 }
                 if (parsedInput.endsWith(containerItem.prefab.preposition.toUpperCase()))
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(containerItem.prefab.preposition.toUpperCase())).trimEnd();

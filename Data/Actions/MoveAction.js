@@ -20,8 +20,9 @@ export default class MoveAction extends Action {
 	 * @param {Room} destinationRoom - The room the player will be moved to.
 	 * @param {Exit} exit - The exit the player will leave their current room through.
 	 * @param {Exit} entrance - The exit the player will enter the destination room from.
+	 * @param {boolean} [isMovingFreely] - Whether or not the player is performing free movement. False by default.
 	 */
-	performMove(isRunning, currentRoom, destinationRoom, exit, entrance) {
+	performMove(isRunning, currentRoom, destinationRoom, exit, entrance, isMovingFreely = false) {
 		if (this.performed) return;
 		super.perform();
 
@@ -36,10 +37,10 @@ export default class MoveAction extends Action {
 
 		// Exit the current room.
 		const exitAction = new ExitAction(this.getGame(), this.message, this.player, this.location, this.forced, this.whisper);
-		exitAction.performExit(currentRoom, exit);
+		exitAction.performExit(currentRoom, exit, isMovingFreely);
 		// Enter the destination room.
 		const enterAction = new EnterAction(this.getGame(), this.message, this.player, this.location, this.forced, this.whisper);
-		enterAction.performEnter(destinationRoom, entrance);
+		enterAction.performEnter(destinationRoom, entrance, isMovingFreely);
 		// Send log message.
 		this.getGame().logHandler.logMove(isRunning, destinationRoom, this.player, this.forced);
 	}

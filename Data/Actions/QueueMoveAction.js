@@ -28,13 +28,15 @@ export default class QueueMoveAction extends Action {
 		let destinationRoom = null;
 		/** @type {Exit} */
 		let entrance = null;
+		let isMovingFreely = false;
 
 		exit = currentRoom.exitCollection.get(Game.generateValidEntityName(destinationString));
 		if (!exit) {
-			if (this.player.member.roles.cache.has(this.getGame().guildContext.freeMovementRole.id))
+			if (this.player.member.roles.cache.has(this.getGame().guildContext.freeMovementRole.id)) {
 				// If the player has the free movement role, they can move to any room they please.
 				destinationRoom = this.getGame().entityFinder.getRoom(destinationString);
-			else {
+				isMovingFreely = true;
+			} else {
 				// Otherwise, check that the desired room is adjacent to the current room.
 				const destRoomId = Room.generateValidId(destinationString);
 				for (const targetExit of currentRoom.exitCollection.values()) {
@@ -60,7 +62,7 @@ export default class QueueMoveAction extends Action {
 		}
 		else {
 			const moveAction = new MoveAction(this.getGame(), this.message, this.player, this.player.location, this.forced);
-			moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
+			moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance, isMovingFreely);
 		}
 	}
 }

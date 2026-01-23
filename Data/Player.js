@@ -691,6 +691,7 @@ export default class Player extends ItemContainer {
      */
     inflict(status, duration = null) {
         const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription, status.curedDescription, status.row, this.getGame());
+        Status.postProcess(statusInstance);
 
         // Apply the duration, if applicable.
         if (statusInstance.duration) {
@@ -706,8 +707,6 @@ export default class Player extends ItemContainer {
 
                 if (statusInstance.remaining.as('milliseconds') <= 0) {
                     if (statusInstance.nextStage) {
-                        const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                        cureAction.performCure(statusInstance.nextStage, false, false, true);
                         let inflictNextStage = true;
                         const playerStatusIds = player.statusCollection.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
@@ -718,6 +717,10 @@ export default class Player extends ItemContainer {
                             }
                         }
                         if (inflictNextStage) {
+                            const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+                            cureNextAction.performCure(statusInstance.nextStage, false, false, true);
+                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+                            cureAction.performCure(statusInstance, true, true, true);
                             const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
                             nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
                         }

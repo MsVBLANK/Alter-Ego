@@ -57,7 +57,7 @@ export async function execute(game, message, command, args) {
         const location = whisper ? whisper.location : room;
         if (room !== null) {
             const narrateAction = new NarrateAction(game, message, undefined, location, true, whisper);
-            game.narrationHandler.sendDialogTypeNarration(narrateAction, content);
+            game.narrationHandler.sendPlainTextTypeNarration(narrateAction, content);
         }
     }
     else if (channel.type === ChannelType.GuildText)

@@ -53,26 +53,35 @@ export function processIncomingMessage(game, message) {
     else if (isModerator && (room || whisper)) {
         const location = whisper ? whisper.location : room;
         const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
-        game.narrationHandler.sendDialogTypeNarration(narrateAction, message.content, message.member);
+        game.narrationHandler.sendPlainTextTypeNarration(narrateAction, message.content, message.member);
     }
 }
 
 /**
  * Narrates a message to a room.
  * @param {Room} room - The room to send the message to.
+ * @param {Narration} narration - The narration being sent.
  * @param {string} messageText - The message to send.
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export function sendNarrationToRoom(room, messageText, messageDisplayType, addSpectate = true, player = null) {
+export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null) {
     if (messageText !== "") {
-        const messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
+        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+        let messageCreateOptions;
+        if (sendWebhookMessage)
+            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
+        else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await room.channel.send(messageCreateOptions);
+                    if (sendWebhookMessage) {
+                        const webhook = await getOrCreateWebhook(room.channel);
+                        webhook.send(messageCreateOptions);
+                    }
+                    else await room.channel.send(messageCreateOptions);
                 },
             },
             "tell"
@@ -90,17 +99,30 @@ export function sendNarrationToRoom(room, messageText, messageDisplayType, addSp
 /**
  * Narrates a message to a whisper.
  * @param {Whisper} whisper - The whisper to send the message to. 
+ * @param {Narration} narration - The narration being sent.
  * @param {string} messageText - The message to send. 
  * @param {string} messageTextWithSpectatePrefix - The message to send with a prefix for spectate channels indicating which whisper the narration occurred in.
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
-export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpectatePrefix, messageDisplayType, addSpectate = true) {
+export function sendNarrationToWhisper(whisper, narration, messageText, messageTextWithSpectatePrefix, messageDisplayType, addSpectate = true, player = null) {
     if (messageText !== "") {
+        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await whisper.channel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText));
+                    let messageCreateOptions;
+                    if (sendWebhookMessage) {
+                        messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
+                        const webhook = await getOrCreateWebhook(whisper.channel);
+                        webhook.send(messageCreateOptions);
+                    }
+                    else {
+                        messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, player);
+                        await whisper.channel.send(messageCreateOptions);
+                    }
                 },
             },
             "tell"
@@ -108,7 +130,10 @@ export function sendNarrationToWhisper(whisper, messageText, messageTextWithSpec
         if (addSpectate) {
             whisper.playersCollection.forEach((player) => {
                 if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
-                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, [], discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix));
+                    let messageCreateOptions;
+                    if (sendWebhookMessage) messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
+                    else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix);
+                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, [], messageCreateOptions);
                 }
             });
         }
@@ -317,15 +342,20 @@ export function addSpectatedPlayerMessage(player, speaker, message, whisper = nu
  * Mirrors a narration in a spectate channel.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {string} messageText - The text of the message to send.
- * @param {MessageDisplayType} messageType - The type of message to send.
+ * @param {MessageDisplayType} messageDisplayType - The type of message to send.
  * @param {string[]} [files] - A collection of attachments to send, if any.
  * @param {object} [messageCreateOptions] - The message create options to send. Optional.
  */
-export function sendNarrationSpectateMessage(player, messageText, messageType, files = [], messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageType, player.getGame(), messageText, player, files)) {
+export function sendNarrationSpectateMessage(player, messageText, messageDisplayType, files = [], messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files)) {
     player.getGame().messageQueue.enqueue(
         {
             fire: async () => {
-                await player.spectateChannel.send(messageCreateOptions);
+                const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+                if (sendWebhookMessage) {
+                    const webhook = await getOrCreateWebhook(player.spectateChannel);
+                    await webhook.send(messageCreateOptions);
+                }
+                else await player.spectateChannel.send(messageCreateOptions);
             },
         },
         "spectator"
@@ -335,14 +365,16 @@ export function sendNarrationSpectateMessage(player, messageText, messageType, f
 /**
  * Mirrors a message in a spectate channel as a webhook.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
- * @param {UserMessage} message - The message being mirrored.
  * @param {string} messageText - The text of the message to send.
  * @param {string} webhookUsername - The username to use for the mirrored webhook message.
  * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
  * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
  * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
+ * @param {UserMessage} [message] - The message being mirrored. Optional.
+ * @param {MessageDisplayType} [messageDisplayType] - The type of message to send. Defaults to PLAIN_TEXT.
+ * @param {Player} [speaker] - The player who initiated the webhook message. Optional.
  */
-export function sendWebhookSpectateMessage(player, message, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = []) {
+export function sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = [], message, messageDisplayType = MessageDisplayType.PLAIN_TEXT, speaker) {
     if (player.spectateChannel !== null) {
         player.getGame().messageQueue.enqueue(
             {
@@ -354,9 +386,12 @@ export function sendWebhookSpectateMessage(player, message, messageText, webhook
                         webhookUsername,
                         webhookAvatarURL,
                         embeds,
-                        files
+                        files,
+                        player.getGame(),
+                        messageDisplayType,
+                        speaker
                     );
-                    player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
+                    if (message) player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
                 },
             },
             "spectator"
@@ -405,17 +440,14 @@ export async function getOrCreateWebhook(channel) {
  * @param {string} content - The content of the message to send. 
  * @param {string} username - The username of the webhook message. 
  * @param {string} avatarURL - The URL of the icon to use for the webhook message. 
- * @param {Embed[]} embeds - An array of embeds to send in the message. Optional. 
- * @param {string[]} files - An array of URLs to send as attachments. Optional.
+ * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+ * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
+ * @param {Game} [game] - The game the message is for. Optional.
+ * @param {MessageDisplayType} [messageDisplayType] - The type of message to send. Defaults to PLAIN_TEXT.
+ * @param {Player} [player] - The player who initiated the webhook message. Optional.
  */
-export async function sendWebhookMessage(webhook, content, username, avatarURL, embeds = [], files = []) {
-    const createdMessage = await webhook.send({
-        content: content,
-        username: username,
-        avatarURL: avatarURL,
-        embeds: embeds,
-        files: files
-    });
+export async function sendWebhookMessage(webhook, content, username, avatarURL, embeds = [], files = [], game, messageDisplayType = MessageDisplayType.PLAIN_TEXT, player) {
+    const createdMessage = await webhook.send(discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, game, content, username, avatarURL, embeds, files, player));
     return createdMessage;
 }
 

@@ -52,7 +52,7 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration.
 	 */
-	sendDialogTypeNarration(narrateAction, narrationText, narrator) {
+	sendPlainTextTypeNarration(narrateAction, narrationText, narrator) {
 		const narration = new Narration(this.#game, MessageDisplayType.PLAIN_TEXT, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
 		narrateAction.performNarrate(narration);
 	}
@@ -65,9 +65,10 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Room} [location] - The location in which the narration is occurring. Defaults to the player's location.
 	 * @param {Whisper} [whisper] - The whisper in which the narration is occurring, if applicable.
+	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Optional.
 	 */
-	#sendNarration(type, action, player, narrationText, location = player.location, whisper) {
-		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper);
+	#sendNarration(type, action, player, narrationText, location = player.location, whisper, narrator) {
+		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper, action.message, narrator);
 		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);
 	}
@@ -107,7 +108,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateGesture(action, gesture, player) {
 		const narration = parseDescription(gesture.narration, gesture, player);
-		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration);
+		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration, player.location, undefined, player);
 	}
 
 	/**

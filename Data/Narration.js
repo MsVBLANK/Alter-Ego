@@ -127,7 +127,7 @@ export default class Narration extends GameConstruct {
         this.isOOCMessage = false;
         this.narrator = narrator;
         if (this.narrator) {
-            this.narratorDisplayName = this.narrator.displayName;
+            this.narratorDisplayName = capitalizeFirstLetter(this.narrator.displayName);
             if (this.narrator instanceof Player)
                 this.narratorDisplayIcon = this.narrator.displayIcon ? this.narrator.displayIcon : this.narrator.member.displayAvatarURL();
             else this.narratorDisplayIcon = this.narrator.displayAvatarURL();

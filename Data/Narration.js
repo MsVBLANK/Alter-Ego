@@ -8,8 +8,7 @@ import { MessageDisplayType } from "../Modules/enums.js";
 /** @import Game from "./Game.js" */
 /** @import Room from "./Room.js" */
 /** @import Whisper from "./Whisper.js" */
-/** @import GameSettings from "../Classes/GameSettings.js" */
-/** @typedef {import("discord.js").GuildMember} GuildMember */
+/** @import { GuildMember } from "discord.js" */
 
 /**
  * @class Narration

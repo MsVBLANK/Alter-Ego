@@ -24,7 +24,7 @@ import { generateListString } from "../Modules/helpers.js";
 /** @import ItemInstance from "../Data/ItemInstance.js" */
 /** @import Status from "../Data/Status.js" */
 /** @import Whisper from "../Data/Whisper.js" */
-/** @typedef {import("discord.js").GuildMember} GuildMember */
+/** @import { GuildMember } from "discord.js" */
 
 /**
  * @class GameNarrationHandler

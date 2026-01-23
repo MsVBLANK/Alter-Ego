@@ -8,8 +8,8 @@ import { capitalizeFirstLetter } from "../Modules/helpers.js";
 /** @import Room from "./Room.js" */
 /** @import Whisper from "./Whisper.js" */
 
-/** @typedef {import("discord.js").Attachment} Attachment */
-/** @typedef {import("discord.js").Embed} Embed */
+/** @import { Attachment } from "discord.js" */
+/** @import { Embed } from "discord.js" */
 
 /**
  * @class Dialog

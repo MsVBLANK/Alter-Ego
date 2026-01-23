@@ -7,7 +7,7 @@ import { parse } from 'date-fns';
 
 /** @import Game from './Game.js' */
 /** @import Status from './Status.js' */
-/** @typedef {import('luxon').Duration} Duration */
+/** @import { Duration } from 'luxon' */
 
 /**
  * @class Event

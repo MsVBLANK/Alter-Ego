@@ -25,8 +25,8 @@ import { Collection } from 'discord.js';
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
-/** @typedef {import('discord.js').GuildMember} GuildMember */
-/** @typedef {import('discord.js').TextChannel} TextChannel */
+/** @import { GuildMember } from 'discord.js' */
+/** @import { TextChannel } from 'discord.js' */
 
 /**
  * @class Player

@@ -6,7 +6,7 @@ import { Collection } from 'discord.js';
 /** @import Action from './Action.js' */
 /** @import Game from './Game.js' */
 /** @import Player from './Player.js' */
-/** @typedef {import('discord.js').TextChannel} TextChannel */
+/** @import { TextChannel } from 'discord.js' */
 
 /**
  * @class Whisper

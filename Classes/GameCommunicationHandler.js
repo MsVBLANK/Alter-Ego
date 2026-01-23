@@ -11,8 +11,7 @@ import { Attachment, Collection, TextChannel } from "discord.js";
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
 /** @import Player from "../Data/Player.js" */
-/** @import Whisper from "../Data/Whisper.js" */
-/** @typedef {import("discord.js").Snowflake} Snowflake */
+/** @import { Snowflake } from "discord.js" */
 
 /**
  * @class GameCommunicationHandler

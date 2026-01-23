@@ -5,7 +5,7 @@ import { Collection } from 'discord.js';
 /** @import Exit from './Exit.js' */
 /** @import Game from './Game.js' */
 /** @import Player from './Player.js' */
-/** @typedef {import('discord.js').TextChannel} TextChannel */
+/** @import { TextChannel } from 'discord.js' */
 
 /**
  * @class Room

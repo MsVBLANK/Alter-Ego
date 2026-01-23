@@ -146,11 +146,32 @@ export default class Narration extends GameConstruct {
      * Returns the prefix string to append before the rest of the message text in spectate messages. If the narration didn't occur in a whisper, returns an empty string.
      */
     getWhisperPrefixString() {
-        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
-        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
-        return this.whisper
-            ? `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
-            : "";
+        if (!this.whisper || this.action instanceof UnhideAction) return "";
+        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper.hidingSpotName, this.location.id);
+        const playerList = this.player ? this.whisper.generatePlayerListStringExcluding(this.player) : this.whisper.generatePlayerListString();
+        const playerListPhrase = playerList !== `` ? ` with ${playerList}` : ``;
+        return `-# *(In ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`}${playerListPhrase}):*\n`;
+    }
+
+    /** 
+     * Returns true if the narration's message display type is PLAYER.
+     */
+    isPlayerMessageType() {
+        return this.messageDisplayType === MessageDisplayType.PLAYER;
+    }
+
+    /**
+     * Returns true if the narration was sent by a moderator.
+     */
+    isModeratorNarration() {
+        return this.narrator && !this.isPlayerMessageType();
+    }
+
+    /**
+     * Returns true if the narration is only intended to be narrated in a hiding spot.
+     */
+    isInHidingSpot() {
+        return (this.player && this.player.isHidden() || this.isModeratorNarration()) && this.whisper && !(this.action instanceof UnhideAction);
     }
 
     /**

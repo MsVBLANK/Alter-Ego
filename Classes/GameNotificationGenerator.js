@@ -221,7 +221,7 @@ export default class GameNotificationGenerator {
 	generateHalfStaminaNotification(player, secondPerson) {
 		const subject = secondPerson ? `Your breathing` : `${player.displayName}'s breathing`;
 		const sentence2 = secondPerson ? `You might want to stop moving and rest soon.` : `It seems like ${player.pronouns.sbj}${player.pronouns.plural ? `'re` : `'s`} starting to get tired.`;
-		return `${subject} is starting to get heavy. ${sentence2}`;
+		return `${subject} is getting heavy. ${sentence2}`;
 	}
 
 	/**
@@ -395,16 +395,29 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
-	 * Generates a notification indicating the player inspected an inventory item that belongs to them.
+	 * Generates a notification indicating the player inspected an inventory item that they have stashed.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectPlayersOwnInventoryItemNotification(player, secondPerson, itemPhrase) {
+	generateInspectPlayersOwnStashedInventoryItemNotification(player, secondPerson, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb1} ${itemPhrase} and ${verb2} it.`;
+	}
+
+	/**
+	 * Generates a notification indicating the player inspected an inventory item that they have equipped.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param {string} itemName - The name of the item.
+	 */
+	generateInspectPlayersOwnEquippedInventoryItemNotification(player, secondPerson, itemName) {
+		const subject = secondPerson ? `You` : player.displayName;
+		const verb = secondPerson ? `inspect` : `begins inspecting`;
+		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
+		return `${subject} ${verb} ${dpos} ${itemName}.`;
 	}
 
 	/**

@@ -238,10 +238,8 @@ export default class Puzzle extends ItemContainer {
      * @param {Player} player - The player who solved the puzzle.
      * @param {string} outcome - The solution the puzzle was solved with.
      * @param {ItemInstance[]} [requiredItems] - The actual item instances that were required for this puzzle to be solved.
-     * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's solved commands, if applicable.
-     * @param {boolean} [doSolvedCommands] - Whether or not to execute the puzzle's solved commands. Defaults to true.
      */
-    solve(player, outcome, requiredItems = [], targetPlayer = null, doSolvedCommands = true) {
+    solve(player, outcome, requiredItems = []) {
         // Mark it as solved.
         this.solved = true;
         // Set the outcome.
@@ -255,64 +253,69 @@ export default class Puzzle extends ItemContainer {
             if (!isNaN(requiredItem.uses))
                 requiredItem.decreaseUses(player);
         }
+    }
 
-        if (doSolvedCommands === true) {
-            // Find commandSet.
-            /** @type {string[]} */
-            let commandSet = [];
-            if (this.solutions.length > 1) {
-                for (let i = 0; i < this.commandSets.length; i++) {
-                    let foundCommandSet = false;
-                    for (let j = 0; j < this.commandSets[i].outcomes.length; j++) {
-                        if (this.commandSets[i].outcomes[j] === this.outcome) {
-                            commandSet = this.commandSets[i].solvedCommands;
-                            foundCommandSet = true;
-                            break;
-                        }
+    /**
+     * Executes the puzzle's solved commands.
+     * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's solved commands, if applicable.
+     */
+    executeSolvedCommands(targetPlayer = null) {
+        // Find commandSet.
+        /** @type {string[]} */
+        let commandSet = [];
+        if (this.solutions.length > 1) {
+            for (let i = 0; i < this.commandSets.length; i++) {
+                let foundCommandSet = false;
+                for (let j = 0; j < this.commandSets[i].outcomes.length; j++) {
+                    if (this.commandSets[i].outcomes[j] === this.outcome) {
+                        commandSet = this.commandSets[i].solvedCommands;
+                        foundCommandSet = true;
+                        break;
                     }
-                    if (foundCommandSet) break;
                 }
+                if (foundCommandSet) break;
             }
-            else commandSet = this.commandSets[0].solvedCommands;
-            // Execute the command set's solved commands.
-            parseAndExecuteBotCommands(commandSet, this.getGame(), this, targetPlayer ? targetPlayer : player);
         }
+        else commandSet = this.commandSets[0].solvedCommands;
+        // Execute the command set's solved commands.
+        parseAndExecuteBotCommands(commandSet, this.getGame(), this, targetPlayer);
     }
 
     /**
      * Sets the puzzle as unsolved.
-     * @param {Player} player - The player who unsolved the puzzle.
-     * @param {boolean} doUnsolvedCommands - Whether or not to execute the puzzle's unsolved commands. Defaults to true.
      */
-    unsolve(player, doUnsolvedCommands = true) {
-        // Now mark it as unsolved.
+    unsolve() {
+        // Mark it as unsolved.
         this.solved = false;
-
-        if (doUnsolvedCommands === true) {
-            // Find commandSet.
-            /** @type {string[]} */
-            let commandSet = [];
-            if (this.solutions.length > 1) {
-                for (let i = 0; i < this.commandSets.length; i++) {
-                    let foundCommandSet = false;
-                    for (let j = 0; j < this.commandSets[i].outcomes.length; j++) {
-                        if (this.commandSets[i].outcomes[j] === this.outcome) {
-                            commandSet = this.commandSets[i].unsolvedCommands;
-                            foundCommandSet = true;
-                            break;
-                        }
-                    }
-                    if (foundCommandSet) break;
-                }
-            }
-            else commandSet = this.commandSets[0].unsolvedCommands;
-            // Execute the command set's unsolved commands.
-            parseAndExecuteBotCommands(commandSet, this.getGame(), this, player);
-        }
-
         // Clear the outcome.
         if (this.solutions.length > 1 && this.type !== "channels")
             this.outcome = "";
+    }
+
+    /**
+     * Executes the puzzle's unsolved commands.
+     * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's unsolved commands, if applicable.
+     */
+    executeUnsolvedCommands(targetPlayer = null) {
+        // Find commandSet.
+        /** @type {string[]} */
+        let commandSet = [];
+        if (this.solutions.length > 1) {
+            for (let i = 0; i < this.commandSets.length; i++) {
+                let foundCommandSet = false;
+                for (let j = 0; j < this.commandSets[i].outcomes.length; j++) {
+                    if (this.commandSets[i].outcomes[j] === this.outcome) {
+                        commandSet = this.commandSets[i].unsolvedCommands;
+                        foundCommandSet = true;
+                        break;
+                    }
+                }
+                if (foundCommandSet) break;
+            }
+        }
+        else commandSet = this.commandSets[0].unsolvedCommands;
+        // Execute the command set's unsolved commands.
+        parseAndExecuteBotCommands(commandSet, this.getGame(), this, targetPlayer);
     }
 
     /**

@@ -1,6 +1,7 @@
 ﻿import InventorySlot from './InventorySlot.js';
 import ItemInstance from './ItemInstance.js';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
+import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
 /** @typedef {import("./Game.js").default} Game */
@@ -148,6 +149,20 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Executes the inventory item's equipped commands.
+     */
+    executeEquippedCommands() {
+        parseAndExecuteBotCommands(this.prefab.equippedCommands, this.getGame(), this, this.player);
+    }
+
+    /**
+     * Executes the inventory item's unequipped commands.
+     */
+    executeUnequippedCommands() {
+        parseAndExecuteBotCommands(this.prefab.unequippedCommands, this.getGame(), this, this.player);
+    }
+
+    /**
      * Returns true if the item is usable on the given player.
      * @param {Player} player 
      */
@@ -163,6 +178,18 @@ export default class InventoryItem extends ItemInstance {
 		}
         if (!canEffect && !canCure) return false;
         return true;
+    }
+
+    /**
+     * Returns true if the item is covered by an equipped inventory item. Also returns true if it's stashed.
+     */
+    isCoveredByEquippedItem() {
+        if (this.container) return true;
+        for (const equipmentSlot of this.player.inventoryCollection.values()) {
+            if (equipmentSlot.equippedItem === null || equipmentSlot.id === "RIGHT HAND" || equipmentSlot.id === "LEFT HAND") continue;
+            if (equipmentSlot.equippedItem.prefab.coveredEquipmentSlots.includes(this.equipmentSlot)) return true;
+        }
+        return false;
     }
 
     /**

@@ -46,6 +46,9 @@ export default class UndressAction extends Action {
 		}
 		this.getGame().narrationHandler.narrateUndress(this, droppedItems, container, this.player);
 		this.getGame().logHandler.logUndress(droppedItems, this.player, container, inventorySlot, this.forced);
+		// Execute unequipped commands.
+		for (const droppedItem of droppedItems)
+			droppedItem.executeUnequippedCommands();
 		// Container is a weight puzzle.
 		if (container instanceof Puzzle && container.type === "weight") {
 			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);

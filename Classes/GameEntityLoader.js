@@ -112,10 +112,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				if (error instanceof Error) errors.push(error);
 			}
 			if (errors.length > 0) {
-				if (errors.length > 15) {
-					errors = errors.slice(0, 15);
-					errors.push(new Error("Too many errors."));
-				}
+				errors = this.#trimErrors(errors);
 				resolve(errors.join('\n'));
 			}
 			else {

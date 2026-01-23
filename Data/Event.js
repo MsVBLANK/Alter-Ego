@@ -198,16 +198,10 @@ export default class Event extends GameEntity {
 
     /**
      * Trigger the event.
-     * @param {boolean} doTriggeredCommands - Whether or not to execute the event's triggeredCommands.
      */
-    async trigger(doTriggeredCommands) {
+    trigger() {
         // Mark it as ongoing.
         this.ongoing = true;
-
-        // Execute triggered commands.
-        if (doTriggeredCommands)
-            await parseAndExecuteBotCommands(this.triggeredCommands, this.getGame(), this);
-
         // Begin the timer, if applicable.
         if (this.duration)
             this.startTimer();
@@ -216,13 +210,18 @@ export default class Event extends GameEntity {
     }
 
     /**
-     * End the event.
-     * @param {boolean} doEndedCommands - Whether or not to execute the event's endedCommands.
+     * Executes the event's triggered commands.
      */
-    async end(doEndedCommands) {
+    executeTriggeredCommands() {
+        parseAndExecuteBotCommands(this.triggeredCommands, this.getGame(), this);
+    }
+
+    /**
+     * End the event.
+     */
+    end() {
         // Unmark it as ongoing.
         this.ongoing = false;
-
         // Stop the timer.
         if (this.timer !== null) {
             this.timer.stop();
@@ -234,36 +233,29 @@ export default class Event extends GameEntity {
             this.effectsTimer.stop();
             this.effectsTimer = null;
         }
-
-        // Execute ended commands.
-        if (doEndedCommands)
-            await parseAndExecuteBotCommands(this.endedCommands, this.getGame(), this);
     }
 
-    async startTimer() {
+    /**
+     * Executes the event's ended commands.
+     */
+    executeEndedCommands() {
+        parseAndExecuteBotCommands(this.endedCommands, this.getGame(), this);
+    }
+
+    startTimer() {
         if (this.remaining === null)
             this.remaining = this.duration;
         let event = this;
-        this.timer = new Timer(1000, { start: true, loop: true }, async function () {
+        this.timer = new Timer(1000, { start: true, loop: true }, function () {
             event.remaining = event.remaining.minus(1000);
 
-            const days = Math.floor(event.remaining.as('days'));
-            const hours = event.remaining.hours;
-            const minutes = event.remaining.minutes;
-            const seconds = event.remaining.seconds;
+            const format = Math.floor(event.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+            event.remainingString = event.remaining.toFormat(format);
 
-            let displayString = "";
-            if (days !== 0) displayString += `${days} `;
-            if (hours >= 0 && hours < 10) displayString += '0';
-            displayString += `${hours}:`;
-            if (minutes >= 0 && minutes < 10) displayString += '0';
-            displayString += `${minutes}:`;
-            if (seconds >= 0 && seconds < 10) displayString += '0';
-            displayString += `${seconds}`;
-            event.remainingString = displayString;
-
-            if (event.remaining.as('milliseconds') <= 0)
-                await event.end(true);
+            if (event.remaining.as('milliseconds') <= 0) {
+                event.end();
+                event.executeEndedCommands();
+            }
         });
     }
 

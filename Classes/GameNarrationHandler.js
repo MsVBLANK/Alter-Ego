@@ -1,10 +1,11 @@
 import Fixture from "../Data/Fixture.js";
 import InventoryItem from "../Data/InventoryItem.js";
-import { default as Narration, NarrationType } from "../Data/Narration.js";
+import Narration from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
 import DieAction from "../Data/Actions/DieAction.js";
 import NarrateAction from "../Data/Actions/NarrateAction.js";
+import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { generateListString } from "../Modules/helpers.js";
 
@@ -51,22 +52,23 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration.
 	 */
-	sendDialogTypeNarration(narrateAction, narrationText, narrator) {
-		const narration = new Narration(this.#game, NarrationType.DIALOG, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
+	sendPlainTextTypeNarration(narrateAction, narrationText, narrator) {
+		const narration = new Narration(this.#game, MessageDisplayType.PLAIN_TEXT, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
 		narrateAction.performNarrate(narration);
 	}
 
 	/**
 	 * Sends the narration. Available only to methods of GameNarrationHandler. Assigns the original action to the narration instead of a narrate action.
-	 * @param {NarrationType} type - The type of narration to send.
+	 * @param {MessageDisplayType} type - The type of narration to send.
 	 * @param {Action} action - The action being narrated.
 	 * @param {Player} player - The player whose action is being narrated.
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Room} [location] - The location in which the narration is occurring. Defaults to the player's location.
 	 * @param {Whisper} [whisper] - The whisper in which the narration is occurring, if applicable.
+	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Optional.
 	 */
-	#sendNarration(type, action, player, narrationText, location = player.location, whisper) {
-		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper);
+	#sendNarration(type, action, player, narrationText, location = player.location, whisper, narrator) {
+		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper, action.message, narrator);
 		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);
 	}
@@ -80,7 +82,7 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration to send.
 	 */
 	narrateSay(action, dialog, location, narrationText) {
-		this.#sendNarration(NarrationType.DIALOG, action, dialog.speaker, narrationText, location);
+		this.#sendNarration(MessageDisplayType.PLAIN_TEXT, action, dialog.speaker, narrationText, location);
 	}
 
 	/**
@@ -90,7 +92,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the whisper action.
 	 */
 	narrateWhisper(action, whisper, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.MINOR;
 		const playerListString = whisper.generatePlayerListStringExcluding(player);
 		const notification = this.#game.notificationGenerator.generateWhisperNotification(player, true, playerListString);
 		const narration = this.#game.notificationGenerator.generateWhisperNotification(player, false, playerListString);
@@ -106,7 +108,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateGesture(action, gesture, player) {
 		const narration = parseDescription(gesture.narration, gesture, player);
-		this.#sendNarration(NarrationType.PLAYER, action, player, narration);
+		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration, player.location, undefined, player);
 	}
 
 	/**
@@ -117,7 +119,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the start move action. 
 	 */
 	narrateStartMove(action, isRunning, exit, player) {
-		const messageType = NarrationType.MINOR;
+		const messageType = MessageDisplayType.MINOR;
 		const notification = this.#game.notificationGenerator.generateStartMoveNotification(player, true, isRunning, exit.name);
 		const narration = this.#game.notificationGenerator.generateStartMoveNotification(player, false, isRunning, exit.name);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
@@ -130,10 +132,10 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player who has depleted half of their stamina.
 	 */
 	narrateReachedHalfStamina(action, player) {
-		const messageType = NarrationType.MINOR;
+		const messageType = MessageDisplayType.MINOR;
 		const notification = this.#game.notificationGenerator.generateHalfStaminaNotification(player, true);
 		const narration = this.#game.notificationGenerator.generateHalfStaminaNotification(player, false);
-		this.#game.communicationHandler.notifyPlayer(player, action, notification, NarrationType.STANDARD);
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, MessageDisplayType.WARNING);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -143,7 +145,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player who became weary.
 	 */
 	narrateWeary(action, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.MINOR;
 		const wearyStatus = this.#game.entityFinder.getStatusEffect("weary");
 		const narration = this.#game.notificationGenerator.generateWearyNotification(player);
 		player.sendDescription(wearyStatus.inflictedDescription, wearyStatus);
@@ -158,14 +160,14 @@ export default class GameNarrationHandler {
 	 * @param {Exit} exit - The exit the player will leave their current room through.
 	 */
 	narrateExit(action, player, currentRoom, exit) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const appendString = player.createMoveAppendString();
 		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
 		const notification = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, true, currentRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateExitNotification(player, true, exit?.name, appendString);
 		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateExitNotification(player, false, exit?.name, appendString);
-		this.#game.communicationHandler.notifyPlayer(player, action, notification, NarrationType.MINOR);
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, MessageDisplayType.MINOR);
 		this.#sendNarration(messageType, action, player, narration, currentRoom);
 	}
 
@@ -177,7 +179,7 @@ export default class GameNarrationHandler {
 	 * @param {Exit} entrance - The exit the player will enter the destination room from.
 	 */
 	narrateEnter(action, player, destinationRoom, entrance) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const appendString = player.createMoveAppendString();
 		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
 		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenEnterNotification(player, false, destinationRoom.displayName, appendString)
@@ -201,7 +203,7 @@ export default class GameNarrationHandler {
 	 * @param {Exit} [exit] - The exit the player tried to move to, if applicable.
 	 */
 	narrateStop(action, player, exitLocked, exit) {
-		const messageType = NarrationType.MINOR;
+		const messageType = MessageDisplayType.MINOR;
 		const notification = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, true, exit.getNamePhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, true);
 		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getNamePhrase())
@@ -219,7 +221,7 @@ export default class GameNarrationHandler {
 	narrateInspect(action, target, player) {
 		let notification = "";
 		let narration = "";
-		let messageType = NarrationType.MINOR;
+		let messageType = MessageDisplayType.MINOR;
 		if (target instanceof Room) {
 			notification = this.#game.notificationGenerator.generateInspectRoomNotification(player, true);
 			narration = this.#game.notificationGenerator.generateInspectRoomNotification(player, false);
@@ -234,7 +236,7 @@ export default class GameNarrationHandler {
 			&&  (target.childPuzzle === null || !target.childPuzzle.type.endsWith("lock") || target.childPuzzle.solved)) {
 				for (const occupant of target.hidingSpot.occupants) {
 					const notification = this.#game.notificationGenerator.generateHiddenPlayerFoundNotification(occupant.canSee() ? player.displayName : "someone");
-					this.#game.communicationHandler.notifyPlayer(occupant, action, notification, NarrationType.ALERT);
+					this.#game.communicationHandler.notifyPlayer(occupant, action, notification, MessageDisplayType.WARNING);
 				}
 				const hiddenPlayersList = target.hidingSpot.generateOccupantsString(!player.canSee());
 				if (hiddenPlayersList)
@@ -247,19 +249,28 @@ export default class GameNarrationHandler {
 			notification = this.#game.notificationGenerator.generateInspectRoomItemNotification(player, true, target.singleContainingPhrase, preposition, containerPhrase);
 			if (!target.prefab.discreet) {
 				narration = this.#game.notificationGenerator.generateInspectRoomItemNotification(player, false, target.singleContainingPhrase, preposition, containerPhrase);
-				messageType = NarrationType.STANDARD;
+				messageType = MessageDisplayType.STANDARD;
 			}
 		}
 		else if (target instanceof InventoryItem && target.player.name === player.name) {
-			notification = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, true, target.singleContainingPhrase);
-			if (!target.prefab.discreet) {
-				narration = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, false, target.singleContainingPhrase);
-				messageType = NarrationType.STANDARD;
+			if (target.container === null) {
+				// The inventory item is equipped.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, true, target.name);
+				if (!target.isCoveredByEquippedItem())
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, false, target.name);
 			}
+			else {
+				// The inventory item is stashed.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, true, target.singleContainingPhrase);
+				if (!target.prefab.discreet)
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, false, target.singleContainingPhrase);
+			}
+			if (!target.prefab.discreet)
+				messageType = MessageDisplayType.STANDARD;
 		}
 		else if (target instanceof InventoryItem && target.player.name !== player.name)
 			notification = this.#game.notificationGenerator.generateInspectOtherPlayersInventoryItemNotification(player, true, target.player, target.name);
-		if (notification !== "") this.#game.communicationHandler.notifyPlayer(player, action, notification, NarrationType.MINOR);
+		if (notification !== "") this.#game.communicationHandler.notifyPlayer(player, action, notification, MessageDisplayType.MINOR);
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -270,7 +281,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the knock action.
 	 */
 	narrateKnock(action, exit, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const exitPhrase = exit.getNamePhrase();
 		const notification = this.#game.notificationGenerator.generateKnockNotification(player, true, exitPhrase);
 		const roomNarration = this.#game.notificationGenerator.generateKnockNotification(player, false, exitPhrase);
@@ -296,7 +307,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the hide action.
 	 */
 	narrateHide(action, hidingSpot, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const hidingSpotPhrase = hidingSpot.getContainingPhrase();
 		let playerNotification = "";
 		const narration = this.#game.notificationGenerator.generateHideNotification(player, false, hidingSpotPhrase);
@@ -323,7 +334,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the unhide action.
 	 */
 	narrateUnhide(action, hidingSpot, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const hidingSpotPhrase = hidingSpot ? hidingSpot.getContainingPhrase() : "hiding";
 		const notification = this.#game.notificationGenerator.generateUnhideNotification(player, true, hidingSpotPhrase);
 		const narration = this.#game.notificationGenerator.generateUnhideNotification(player, false, hidingSpotPhrase);
@@ -339,15 +350,15 @@ export default class GameNarrationHandler {
 	 */
 	narrateInflict(action, status, player) {
 		let narration = "";
-		let messageType = NarrationType.STANDARD;
+		let messageType = MessageDisplayType.STANDARD;
 		if (status.id === "asleep") narration = this.#game.notificationGenerator.generateFallAsleepNotification(player.displayName);
 		else if (status.id === "blacked out") {
 			narration = this.#game.notificationGenerator.generateBlackOutNotification(player.displayName);
-			messageType = NarrationType.ALERT;
+			messageType = MessageDisplayType.ALERT;
 		}
 		else if (status.behaviorAttributes.has("unconscious")) {
 			narration = this.#game.notificationGenerator.generateUnconsciousNotification(player.displayName);
-			messageType = NarrationType.ALERT;
+			messageType = MessageDisplayType.ALERT;
 		}
 		if (narration) this.#sendNarration(messageType, action, player, narration);
 	}
@@ -361,17 +372,17 @@ export default class GameNarrationHandler {
 	 */
 	narrateCure(action, status, player, item) {
 		let narration = "";
-		let messageType = NarrationType.STANDARD;
+		let messageType = MessageDisplayType.STANDARD;
 		if (status.behaviorAttributes.has("concealed")) {
 			const maskName = item ? item.name : "MASK";
 			narration = this.#game.notificationGenerator.generateConcealedCuredNotification(maskName, player.displayName);
-			messageType = NarrationType.ALERT;
+			messageType = MessageDisplayType.WARNING;
 		}
 		else if (status.behaviorAttributes.has("unconscious")) {
 			if (status.id === "asleep" || status.id === "blacked out") narration = this.#game.notificationGenerator.generateWakeUpNotification(player.displayName);
 			else {
 				narration = this.#game.notificationGenerator.generateRegainConsciousnessNotification(player.displayName);
-				messageType = NarrationType.ALERT;
+				messageType = MessageDisplayType.WARNING;
 			}
 		}
 		if (narration) this.#sendNarration(messageType, action, player, narration);
@@ -387,11 +398,11 @@ export default class GameNarrationHandler {
 	 */
 	narrateUse(action, item, player, target, customNarration) {
 		if (customNarration)
-			this.#sendNarration(NarrationType.ALERT, action, player, customNarration);
+			this.#sendNarration(MessageDisplayType.WARNING, action, player, customNarration);
 		else {
 			const verb = item.prefab.verb ? item.prefab.verb : `uses`;
 			const targetPhrase = target.name !== player.name ? ` on ${target.displayName}` : ``;
-			this.#sendNarration(NarrationType.STANDARD, action, player, `${player.displayName} ${verb} ${item.singleContainingPhrase}${targetPhrase}.`);
+			this.#sendNarration(MessageDisplayType.STANDARD, action, player, `${player.displayName} ${verb} ${item.singleContainingPhrase}${targetPhrase}.`);
 		}
 	}
 
@@ -403,7 +414,7 @@ export default class GameNarrationHandler {
 	 * @param {boolean} [notify] - Whether or not to notify the player that they took the item. Defaults to true.
 	 */
 	narrateTake(action, item, player, notify = true) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const containerPhrase = item.getContainerPhrase();
 		let notification = this.#game.notificationGenerator.generateTakeNotification(player, true, item.singleContainingPhrase, containerPhrase);
 		let narration = this.#game.notificationGenerator.generateTakeNotification(player, false, item.singleContainingPhrase, containerPhrase);
@@ -431,7 +442,7 @@ export default class GameNarrationHandler {
 	 * @param {boolean} notifyVictim - Whether or not to notify the victim who was stolen from.
 	 */
 	narrateSteal(action, item, thief, victim, container, inventorySlot, notifyVictim) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const thiefNotification = this.#game.notificationGenerator.generateSuccessfulStealNotification(thief, true, item.singleContainingPhrase, slotPhrase, container.name, victim, notifyVictim);
 		this.#game.communicationHandler.notifyPlayer(thief, action, thiefNotification, messageType);
@@ -441,7 +452,7 @@ export default class GameNarrationHandler {
 		}
 		if (!item.prefab.discreet) {
 			const narration = this.#game.notificationGenerator.generateSuccessfulStealNotification(thief, false, item.singleContainingPhrase, slotPhrase, container.name, victim, notifyVictim);
-			this.#sendNarration(NarrationType.ALERT, action, thief, narration);
+			this.#sendNarration(MessageDisplayType.ALERT, action, thief, narration);
 		}
 	}
 
@@ -454,7 +465,7 @@ export default class GameNarrationHandler {
 	 * @param {boolean} [notify] - Whether or not to notify the player that they dropped the item. Defaults to true.
 	 */
 	narrateDrop(action, item, container, player, notify = true) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const containerPhrase = container.getContainingPhrase();
 		const notification = this.#game.notificationGenerator.generateDropNotification(player, true, item.singleContainingPhrase, preposition, containerPhrase);
@@ -473,7 +484,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} recipient - The player receiving the item.
 	 */
 	narrateGive(action, item, player, recipient) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		let playerNotification = this.#game.notificationGenerator.generateGiveNotification(player, true, item.singleContainingPhrase, recipient.displayName);
 		let recipientNotification = this.#game.notificationGenerator.generateReceiveNotification(item.singleContainingPhrase, player.displayName);
 		let narration = this.#game.notificationGenerator.generateGiveNotification(player, false, item.singleContainingPhrase, recipient.displayName);
@@ -502,7 +513,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the stash action.
 	 */
 	narrateStash(action, item, container, inventorySlot, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const notification = this.#game.notificationGenerator.generateStashNotification(player, true, item.singleContainingPhrase, preposition, slotPhrase, container.name);
@@ -522,7 +533,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the unstash action.
 	 */
 	narrateUnstash(action, item, container, inventorySlot, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const notification = this.#game.notificationGenerator.generateUnstashNotification(player, true, item.singleContainingPhrase, slotPhrase, container.name);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
@@ -540,7 +551,7 @@ export default class GameNarrationHandler {
 	 * @param {boolean} [notify] - Whether or not to notify the player that they equipped the item. Defaults to true.
 	 */
 	narrateEquip(action, item, player, notify = true) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		if (notify) {
 			const notification = this.#game.notificationGenerator.generateEquipNotification(player, true, item.singleContainingPhrase);
 			this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
@@ -557,7 +568,7 @@ export default class GameNarrationHandler {
 	 * @param {boolean} [notify] - Whether or not to notify the player that they unequipped the item. Defaults to true.
 	 */
 	narrateUnequip(action, item, player, notify = true) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		if (notify) {
 			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
 			this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
@@ -574,7 +585,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the dress action.
 	 */
 	narrateDress(action, items, container, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const itemPhrases = items.map(item => item.singleContainingPhrase);
 		const itemList = generateListString(itemPhrases);
 		const notification = this.#game.notificationGenerator.generateDressNotification(player, true, container.name, itemList);
@@ -591,7 +602,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the undress action.
 	 */
 	narrateUndress(action, items, container, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const containerPhrase = container.getContainingPhrase();
 		const itemPhrases = items.map(item => item.singleContainingPhrase);
@@ -609,7 +620,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player the inventory item is being equipped to.
 	 */
 	narrateInstantiateEquippedInventoryItem(action, item, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		let notification = "";
 		let narration = "";
 		if (item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") {
@@ -631,7 +642,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player the inventory item belongs to.
 	 */
 	narrateDestroyEquippedInventoryItem(action, item, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		let notification = "";
 		let narration = "";
 		if (item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") {
@@ -653,7 +664,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the craft action.
 	 */
 	narrateCraft(action, craftingResult, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		if (craftingResult.product1 && !craftingResult.product1.prefab.discreet || craftingResult.product2 && !craftingResult.product2.prefab.discreet) {
 			const narration = this.#game.notificationGenerator.generateCraftNotification(player, false, craftingResult);
 			this.#sendNarration(messageType, action, player, narration);
@@ -670,7 +681,7 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the uncraft action.
 	 */
 	narrateUncraft(action, recipe, originalItemPrefab, item, uncraftingResult, player) {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		if (!originalItemPrefab.discreet || !recipe.ingredients[0].discreet || !recipe.ingredients[1].discreet) {
 			const originalItemPhrase = originalItemPrefab.singleContainingPhrase;
 			const itemPhrase = item.singleContainingPhrase;
@@ -687,7 +698,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateActivate(action, fixture, player, customNarration = "") {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
 		let narration = customNarration;
@@ -708,7 +719,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateDeactivate(action, fixture, player, customNarration = "") {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
 		let narration = customNarration;
@@ -734,7 +745,7 @@ export default class GameNarrationHandler {
 			if (description.includes("<desc>")) player.sendDescription(description, puzzle);
 			else this.#game.communicationHandler.notifyPlayer(player, action, description);
 		}
-		if (narration  !== "") this.#sendNarration(NarrationType.MINOR, action, player, narration);
+		if (narration  !== "") this.#sendNarration(MessageDisplayType.MINOR, action, player, narration);
 	}
 
 	/**
@@ -747,7 +758,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateSolve(action, puzzle, outcome, player, item, customNarration = "") {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		let narration = customNarration;
 		if (player && !customNarration)
 			narration = this.#game.notificationGenerator.generateSolvePuzzleNotification(player, false, puzzle, outcome, item);
@@ -763,7 +774,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateUnsolve(action, puzzle, player, customNarration = "") {
-		const messageType = NarrationType.STANDARD;
+		const messageType = MessageDisplayType.STANDARD;
 		let narration = customNarration;
 		let notification = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, true, puzzle);
 		if (player && !customNarration)
@@ -782,7 +793,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateDie(action, player, customNarration) {
-		const messageType = NarrationType.ALERT;
+		const messageType = MessageDisplayType.ALERT;
 		this.#game.communicationHandler.notifyPlayer(player, action, this.#game.notificationGenerator.generateDieNotification(player, true), messageType);
 		if (!player.isHidden()) {
 			if (customNarration) this.#sendNarration(messageType, action, player, customNarration);
@@ -801,7 +812,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateUnlock(action, room, exit) {
 		const narration = this.#game.notificationGenerator.generateUnlockNotification(exit);
-		this.#sendNarration(NarrationType.ALERT, action, undefined, narration, room);
+		this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narration, room);
 	}
 
 	/**
@@ -812,7 +823,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateLock(action, room, exit) {
 		const narration = this.#game.notificationGenerator.generateLockNotification(exit);
-		this.#sendNarration(NarrationType.ALERT, action, undefined, narration, room);
+		this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narration, room);
 	}
 
 	/**
@@ -826,7 +837,7 @@ export default class GameNarrationHandler {
 			const narrationText = parseDescription(event.triggeredNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)
-				this.#sendNarration(NarrationType.STANDARD, action, undefined, narrationText, room);
+				this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narrationText, room);
 		}
 	}
 
@@ -841,7 +852,7 @@ export default class GameNarrationHandler {
 			const narrationText = parseDescription(event.endedNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)
-				this.#sendNarration(NarrationType.STANDARD, action, undefined, narrationText, room);
+				this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narrationText, room);
 		}
 	}
 
@@ -853,7 +864,7 @@ export default class GameNarrationHandler {
 	 * @param {string} customNarration - The custom text of the narration.
 	 */
 	narrateLeaveWhisper(action, player, whisper, customNarration) {
-		const messageType = action instanceof DieAction ? NarrationType.ALERT : NarrationType.STANDARD;
+		const messageType = action instanceof DieAction ? MessageDisplayType.ALERT : MessageDisplayType.STANDARD;
 		this.#sendNarration(messageType, action, player, customNarration, whisper.location, whisper);
 	}
 }

@@ -1,6 +1,6 @@
 import Action from "../Action.js";
 import SolveAction from "./SolveAction.js";
-import { NarrationType } from "../Narration.js";
+import { MessageDisplayType } from "../../Modules/enums.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.js";
 
 /** @typedef {import("../Dialog.js").default} Dialog */
@@ -159,7 +159,7 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
 				continue;
 			}
 			if (!dialog.isOOCMessage && webhookUsername)
@@ -199,7 +199,7 @@ export default class SayAction extends Action {
 
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification, NarrationType.DIALOG, !dialog.isOOCMessage);
+				this.getGame().communicationHandler.notifyPlayer(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
 				continue;
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";

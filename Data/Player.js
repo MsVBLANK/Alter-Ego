@@ -7,7 +7,6 @@ import ItemContainer from './ItemContainer.js';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.js';
 import Status from './Status.js';
-import { NarrationType } from './Narration.js';
 import CureAction from './Actions/CureAction.js';
 import DieAction from './Actions/DieAction.js';
 import InflictAction from './Actions/InflictAction.js';
@@ -16,9 +15,9 @@ import MoveAction from './Actions/MoveAction.js';
 import QueueMoveAction from './Actions/QueueMoveAction.js';
 import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
+import { MessageDisplayType } from '../Modules/enums.js';
 import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
 /** @typedef {import('./Action.js').default} Action */
@@ -1209,9 +1208,6 @@ export default class Player extends ItemContainer {
         if (!item.prefab.discreet)
             this.removeItemFromDescription(item, "hands");
         this.#coverEquippedItems(createdItem);
-
-        // Execute equipped commands.
-        parseAndExecuteBotCommands(createdItem.prefab.equippedCommands, this.getGame(), createdItem, this);
     }
 
     /**
@@ -1228,8 +1224,7 @@ export default class Player extends ItemContainer {
             this.addItemToDescription(item, "hands");
         else {
             this.#coverEquippedItems(item);
-            // Execute equipped commands.
-            parseAndExecuteBotCommands(item.prefab.equippedCommands, this.getGame(), item, this);
+            item.executeEquippedCommands();
         }
     }
 
@@ -1283,9 +1278,6 @@ export default class Player extends ItemContainer {
         if (!createdItem.prefab.discreet)
             this.addItemToDescription(createdItem, "hands");
         this.#uncoverEquippedItems(createdItem);
-
-        // Execute unequipped commands.
-        parseAndExecuteBotCommands(createdItem.prefab.unequippedCommands, this.getGame(), createdItem, this);
     }
 
     /**
@@ -1301,8 +1293,7 @@ export default class Player extends ItemContainer {
             this.removeItemFromDescription(item, "hands");
         else {
             this.#uncoverEquippedItems(item);
-            // Execute unequipped commands.
-            parseAndExecuteBotCommands(item.prefab.unequippedCommands, this.getGame(), item, this);
+            item.executeUnequippedCommands();
         }
     }
 
@@ -1539,14 +1530,14 @@ export default class Player extends ItemContainer {
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
      * @param {string} messageText - The content of the message to send.
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
-     * @param {NarrationType} [notificationType] - The type of notification to send. Defaults to DIALOG, or plain text.
+     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
      * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
      */
-    notify(messageText, addSpectate = true, notificationType = NarrationType.DIALOG, action) {
+    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action) {
         if (this.isConscious() && !this.isNPC) {
             messageText = capitalizeFirstLetter(messageText);
-            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, notificationType);
-            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, notificationType, messageText);
+            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
+            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText);
         }
     }
 

@@ -76,5 +76,5 @@ export async function execute(game, message, command, args) {
 
     const action = new UnequipAction(game, message, player, player.location, true);
     action.performUnequip(item, slot, hand);
-    game.communicationHandler.sendToCommandChannel(`Successfully unequipped ${item.getIdentifier()} from ${player.name}'s ${slot}.`);
+    game.communicationHandler.sendToCommandChannel(`Successfully unequipped ${item.getIdentifier()} from ${player.name}'s ${slot.id}.`);
 }

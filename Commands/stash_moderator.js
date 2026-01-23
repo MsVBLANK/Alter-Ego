@@ -47,7 +47,7 @@ export async function execute(game, message, command, args) {
     let newArgs = parsedInput.split(' ');
 
     // Look for the container item.
-    const items = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
+    const items = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null && item.quantity !== 0);
     let containerItem = null;
     let containerItemSlot = null;
     for (let i = 0; i < items.length; i++) {
@@ -94,11 +94,18 @@ export async function execute(game, message, command, args) {
     else if (containerItem.inventoryCollection.size === 0) return game.communicationHandler.reply(message, `${containerItem.prefab.id} cannot hold items.`);
 
     // Now find the item in the player's inventory.
-    const hand = game.entityFinder.getPlayerHandHoldingItem(player, parsedInput, "moderator");
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, parsedInput, containerItem.row);
+    // Make sure item and containerItem aren't the same item.
+    if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, parsedInput))
+        return game.communicationHandler.reply(message, `Can't stash ${containerItem.getIdentifier()} ${containerItem.prefab.preposition} itself.`);
     const item = hand ? hand.equippedItem : undefined;
     if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in either of ${player.name}'s hands.`);
-    // Make sure item and containerItem aren't the same item.
-    if (item.row === containerItem.row) return game.communicationHandler.reply(message, `Can't stash ${item.getIdentifier()} ${item.prefab.preposition} itself.`);
+    // Ensure an inventory item can't be stashed inside an inventory item that it contains.
+    let container = containerItem.container;
+    while (container !== null) {
+        if (container.row === item.row) return game.communicationHandler.reply(message, `Can't stash an item inside an item that it contains.`);
+        container = container.container;
+    }
 
     if (containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
     if (item.prefab.size > containerItemSlot.capacity && containerItem.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItemSlot.id} of ${containerItem.identifier} because it is too large.`);

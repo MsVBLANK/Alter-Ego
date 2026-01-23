@@ -23,5 +23,6 @@ export default class UnequipAction extends Action {
 		this.getGame().narrationHandler.narrateUnequip(this, item, this.player, notify);
 		this.getGame().logHandler.logUnequip(item, this.player, equipmentSlot, this.forced);
 		this.player.unequip(item, equipmentSlot, handEquipmentSlot);
+		handEquipmentSlot.equippedItem.executeUnequippedCommands();
 	}
 }

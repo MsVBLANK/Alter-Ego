@@ -24,7 +24,7 @@ export default class EndAction extends Action {
 		super.perform();
 		this.getGame().narrationHandler.narrateEnd(this, event);
 		this.getGame().logHandler.logEnd(event);
-		const doEndedCommands = !callee || !(callee instanceof Event);
-		await event.end(doEndedCommands);
+		const executeEndedCommands = !callee || !(callee instanceof Event);
+		if (executeEndedCommands) event.executeEndedCommands();
 	}
 }

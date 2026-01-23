@@ -193,16 +193,18 @@ export default class GameEntityFinder {
 	/** Gets a player's hand equipment slot whose equipped item has the given identifier.
 	 * @param {Player} player - The player.
 	 * @param {string} identifier - The item identifier or prefab ID in moderator contexts, or its name or plural name in player contexts.
+	 * @param {number} [excludedItemRow] - The row number of an inventory item to exclude from the search. Optional.
 	 * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 * @returns The hand equipment slot holding the specified item. Returns undefined if no such equipment slot exists.
 	 */
-	getPlayerHandHoldingItem(player, identifier, resultContext = 'moderator') {
+	getPlayerHandHoldingItem(player, identifier, excludedItemRow, resultContext = 'moderator') {
 		if (!player || !identifier) return;
-		/** @type {Collection<string, GameEntityMatcher>} */
+		/** @type {Collection<string|number, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemNameMatches);
 		else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierOrNameMatches);
 		else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
+		if (excludedItemRow !== undefined) selectedFilters.set(excludedItemRow, matchers.entityRowDiffers);
 		return this.getPlayerHands(player).find(equipmentSlot => equipmentSlot.equippedItem ? selectedFilters.every((filterFunction, key) => filterFunction(equipmentSlot.equippedItem, key)) : false);
 	}
 

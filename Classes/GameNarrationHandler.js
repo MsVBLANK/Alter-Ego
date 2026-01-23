@@ -9,21 +9,21 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { generateListString } from "../Modules/helpers.js";
 
-/** @typedef {import("../Data/Action.js").default} Action */
-/** @typedef {import("../Data/Dialog.js").default} Dialog */
-/** @typedef {import("../Data/Exit.js").default} Exit */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Gesture.js").default} Gesture */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Prefab.js").default} Prefab */
-/** @typedef {import("../Data/Recipe.js").default} Recipe */
-/** @typedef {import("../Data/Event.js").default} Event */
-/** @typedef {import("../Data/HidingSpot.js").default} HidingSpot */
-/** @typedef {import("../Data/InventorySlot.js").default} InventorySlot */
-/** @typedef {import("../Data/ItemInstance.js").default} ItemInstance */
-/** @typedef {import("../Data/Status.js").default} Status */
-/** @typedef {import("../Data/Whisper.js").default} Whisper */
+/** @import Action from "../Data/Action.js" */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Exit from "../Data/Exit.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Gesture from "../Data/Gesture.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Prefab from "../Data/Prefab.js" */
+/** @import Recipe from "../Data/Recipe.js" */
+/** @import Event from "../Data/Event.js" */
+/** @import HidingSpot from "../Data/HidingSpot.js" */
+/** @import InventorySlot from "../Data/InventorySlot.js" */
+/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import Status from "../Data/Status.js" */
+/** @import Whisper from "../Data/Whisper.js" */
 /** @typedef {import("discord.js").GuildMember} GuildMember */
 
 /**

@@ -1,4 +1,4 @@
-/** @typedef {import("../Data/GameEntity.js").default} GameEntity */
+/** @import GameEntity from "../Data/GameEntity.js" */
 
 /** 
  * Wrapper function for the limited scope of  the scriptParser module.

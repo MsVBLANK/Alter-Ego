@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 import InflictAction from "./InflictAction.js";
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../Status.js").default} Status */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import Status from "../Status.js" */
 
 /**
  * @class CureAction

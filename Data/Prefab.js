@@ -1,9 +1,9 @@
 ﻿import GameEntity from './GameEntity.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./InventorySlot.js').default} InventorySlot */
-/** @typedef {import('./Status.js').default} Status */
+/** @import Game from './Game.js' */
+/** @import InventorySlot from './InventorySlot.js' */
+/** @import Status from './Status.js' */
 
 /**
  * @class Prefab

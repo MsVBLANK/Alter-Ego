@@ -1,6 +1,6 @@
-/** @typedef {import("./InventoryItem.js").default} InventoryItem */
-/** @typedef {import("./RoomItem.js").default} RoomItem */
-/** @typedef {import("./ItemInstance.js").default} ItemInstance */
+/** @import InventoryItem from "./InventoryItem.js" */
+/** @import RoomItem from "./RoomItem.js" */
+/** @import ItemInstance from "./ItemInstance.js" */
 
 /**
  * @class InventorySlot

@@ -1,10 +1,10 @@
 ﻿import { ChannelType } from 'discord.js';
 import { addNarration, addSpectatedPlayerMessage } from './messageHandler.js';
 
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
-/** @typedef {import('../Data/Room.js').default} Room */
-/** @typedef {import('../Data/Whisper.js').default} Whisper */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
+/** @import Room from '../Data/Room.js' */
+/** @import Whisper from '../Data/Whisper.js' */
 
 /**
  * Interprets a dialog message and executes behavior caused by it.

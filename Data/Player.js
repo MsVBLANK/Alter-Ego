@@ -20,11 +20,11 @@ import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Action.js').default} Action */
-/** @typedef {import('./Exit.js').default} Exit */
-/** @typedef {import('./Recipe.js').default} Recipe */
-/** @typedef {import('./EquipmentSlot.js').default} EquipmentSlot */
-/** @typedef {import('./InventoryItem.js').default} InventoryItem */
+/** @import Action from './Action.js' */
+/** @import Exit from './Exit.js' */
+/** @import Recipe from './Recipe.js' */
+/** @import EquipmentSlot from './EquipmentSlot.js' */
+/** @import InventoryItem from './InventoryItem.js' */
 /** @typedef {import('discord.js').GuildMember} GuildMember */
 /** @typedef {import('discord.js').TextChannel} TextChannel */
 

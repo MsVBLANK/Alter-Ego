@@ -2,8 +2,8 @@ import Action from "../Action.js";
 import { destroyRoomItem, destroyInventoryItem } from "../../Modules/itemManager.js";
 import ItemInstance from "../ItemInstance.js";
 
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../RoomItem.js").default} RoomItem */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class DestroyAction

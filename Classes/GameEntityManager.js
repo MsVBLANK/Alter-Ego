@@ -2,14 +2,14 @@ import Room from "../Data/Room.js";
 import Whisper from "../Data/Whisper.js";
 import { ChannelType, TextChannel } from "discord.js";
 
-/** @typedef {import("../Data/Event.js").default} Event */
-/** @typedef {import("../Data/Fixture.js").default} Fixture */
-/** @typedef {import("../Data/Flag.js").default} Flag */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Prefab.js").default} Prefab */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Status.js").default} Status */
+/** @import Event from "../Data/Event.js" */
+/** @import Fixture from "../Data/Fixture.js" */
+/** @import Flag from "../Data/Flag.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Prefab from "../Data/Prefab.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Status from "../Data/Status.js" */
 
 /**
  * @class GameEntityManager

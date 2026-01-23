@@ -3,10 +3,10 @@ import SolveAction from "./SolveAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.js";
 
-/** @typedef {import("../Dialog.js").default} Dialog */
-/** @typedef {import("../Player.js").default} Player */
-/** @typedef {import("../Puzzle.js").default} Puzzle */
-/** @typedef {import("../Room.js").default} Room */
+/** @import Dialog from "../Dialog.js" */
+/** @import Player from "../Player.js" */
+/** @import Puzzle from "../Puzzle.js" */
+/** @import Room from "../Room.js" */
 
 /**
  * @class SayAction

@@ -2,8 +2,8 @@ import Action from "../Action.js";
 import Die from "../Die.js";
 import Player from "../Player.js";
 
-/** @typedef {import("../ItemInstance.js").default} ItemInstance */
-/** @typedef {import("../Puzzle.js").default} Puzzle */
+/** @import ItemInstance from "../ItemInstance.js" */
+/** @import Puzzle from "../Puzzle.js" */
 
 /**
  * @class AttemptAction

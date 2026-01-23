@@ -2,9 +2,9 @@ import GameEntity from './GameEntity.js';
 import { generatePlayerListString } from '../Modules/helpers.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Exit.js').default} Exit */
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Player.js').default} Player */
+/** @import Exit from './Exit.js' */
+/** @import Game from './Game.js' */
+/** @import Player from './Player.js' */
 /** @typedef {import('discord.js').TextChannel} TextChannel */
 
 /**

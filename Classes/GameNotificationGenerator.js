@@ -1,14 +1,14 @@
 import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
 
-/** @typedef {import("../Data/Dialog.js").default} Dialog */
-/** @typedef {import("../Data/Fixture.js").default} Fixture */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Exit.js").default} Exit */
-/** @typedef {import("../Data/ItemInstance.js").default} ItemInstance */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Recipe.js").default} Recipe */
-/** @typedef {import("../Data/Room.js").default} Room */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Fixture from "../Data/Fixture.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Exit from "../Data/Exit.js" */
+/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Recipe from "../Data/Recipe.js" */
+/** @import Room from "../Data/Room.js" */
 
 /**
  * @class GameNotificationGenerator

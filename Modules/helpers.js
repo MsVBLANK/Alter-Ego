@@ -1,9 +1,9 @@
 import { EmbedBuilder } from "discord.js";
 import { Duration } from 'luxon';
 
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/RoomItem.js").default} RoomItem */
+/** @import Game from "../Data/Game.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import RoomItem from "../Data/RoomItem.js" */
 /** @typedef {import("luxon").DurationObjectUnits} DurationObjectUnits */
 
 /**

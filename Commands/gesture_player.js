@@ -4,9 +4,9 @@ import ItemInstance from '../Data/ItemInstance.js';
 import Puzzle from '../Data/Puzzle.js';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
 
 /** @type {CommandConfig} */
 export const config = {

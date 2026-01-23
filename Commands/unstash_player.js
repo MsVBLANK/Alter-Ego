@@ -1,9 +1,9 @@
 import UnstashAction from '../Data/Actions/UnstashAction.js';
 import InventoryItem from '../Data/InventoryItem.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
 /** @typedef {import('../Data/InventorySlot.js').default} InventorySlot*/
 
 /** @type {CommandConfig} */

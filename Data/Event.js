@@ -5,8 +5,8 @@ import Timer from '../Classes/Timer.js';
 import { DateTime } from 'luxon';
 import { parse } from 'date-fns';
 
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Status.js').default} Status */
+/** @import Game from './Game.js' */
+/** @import Status from './Status.js' */
 /** @typedef {import('luxon').Duration} Duration */
 
 /**

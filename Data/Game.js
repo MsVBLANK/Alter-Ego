@@ -14,20 +14,20 @@ import { sendQueuedMessages } from '../Modules/messageHandler.js';
 import { Collection } from 'discord.js';
 import { DateTime } from 'luxon';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Classes/GuildContext.js').default} GuildContext */
-/** @typedef {import('./Room.js').default} Room */
-/** @typedef {import('./Fixture.js').default} Fixture */
-/** @typedef {import('./Prefab.js').default} Prefab */
-/** @typedef {import('./Recipe.js').default} Recipe */
-/** @typedef {import('./RoomItem.js').default} RoomItem */
-/** @typedef {import('./Puzzle.js').default} Puzzle */
-/** @typedef {import('./Status.js').default} Status */
-/** @typedef {import('./Player.js').default} Player */
-/** @typedef {import('./InventoryItem.js').default} InventoryItem */
-/** @typedef {import('./Gesture.js').default} Gesture */
-/** @typedef {import('./Flag.js').default} Flag */
-/** @typedef {import('./Whisper.js').default} Whisper */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import GuildContext from '../Classes/GuildContext.js' */
+/** @import Room from './Room.js' */
+/** @import Fixture from './Fixture.js' */
+/** @import Prefab from './Prefab.js' */
+/** @import Recipe from './Recipe.js' */
+/** @import RoomItem from './RoomItem.js' */
+/** @import Puzzle from './Puzzle.js' */
+/** @import Status from './Status.js' */
+/** @import Player from './Player.js' */
+/** @import InventoryItem from './InventoryItem.js' */
+/** @import Gesture from './Gesture.js' */
+/** @import Flag from './Flag.js' */
+/** @import Whisper from './Whisper.js' */
 
 /**
  * @class Game

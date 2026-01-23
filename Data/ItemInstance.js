@@ -2,9 +2,9 @@ import InventorySlot from "./InventorySlot.js";
 import ItemContainer from "./ItemContainer.js";
 import { Collection } from "discord.js";
 
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./Prefab.js").default} Prefab */
-/** @typedef {import("./Player.js").default} Player */
+/** @import Game from "./Game.js" */
+/** @import Prefab from "./Prefab.js" */
+/** @import Player from "./Player.js" */
 
 /**
  * @class ItemInstance

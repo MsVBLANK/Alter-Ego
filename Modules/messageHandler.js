@@ -8,10 +8,10 @@ import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
 import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Narration.js').default} Narration */
-/** @typedef {import('../Data/Room.js').default} Room */
-/** @typedef {import('../Data/Whisper.js').default} Whisper */
+/** @import Game from '../Data/Game.js' */
+/** @import Narration from '../Data/Narration.js' */
+/** @import Room from '../Data/Room.js' */
+/** @import Whisper from '../Data/Whisper.js' */
 
 /**
  * Processes a message sent in a guild during a game and directs it to the relevant handlers.

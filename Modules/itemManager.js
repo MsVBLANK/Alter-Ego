@@ -6,10 +6,10 @@ import RoomItem from '../Data/RoomItem.js';
 import ItemInstance from '../Data/ItemInstance.js';
 import { generateProceduralOutput } from '../Modules/parser.js';
 
-/** @typedef {import('../Data/EquipmentSlot.js').default} EquipmentSlot */
-/** @typedef {import('../Data/Prefab.js').default} Prefab */
-/** @typedef {import('../Data/Room.js').default} Room */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
+/** @import Prefab from '../Data/Prefab.js' */
+/** @import Room from '../Data/Room.js' */
+/** @import Player from '../Data/Player.js' */
 
 /**
  * Instantiates a new room item in the specified location and container.

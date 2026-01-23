@@ -4,8 +4,8 @@ import InventoryItem from "../InventoryItem.js";
 import InventorySlot from "../InventorySlot.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 
-/** @typedef {import("../EquipmentSlot.js").default} EquipmentSlot */
-/** @typedef {import("../Player.js").default} Player */
+/** @import EquipmentSlot from "../EquipmentSlot.js" */
+/** @import Player from "../Player.js" */
 
 /**
  * @class StealAction

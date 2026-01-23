@@ -6,12 +6,12 @@ import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, Collection, TextChannel } from "discord.js";
 
-/** @typedef {import("../Data/Dialog.js").default} Dialog */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/GameEntity.js").default} GameEntity */
-/** @typedef {import("../Data/Narration.js").default} Narration */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Whisper.js").default} Whisper */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import GameEntity from "../Data/GameEntity.js" */
+/** @import Narration from "../Data/Narration.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Whisper from "../Data/Whisper.js" */
 /** @typedef {import("discord.js").Snowflake} Snowflake */
 
 /**

@@ -1,6 +1,6 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../Dialog.js").default} Dialog */
+/** @import Dialog from "../Dialog.js" */
 
 /**
  * @class AnnounceAction

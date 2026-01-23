@@ -1,8 +1,8 @@
 import UnequipAction from '../Data/Actions/UnequipAction.js';
 import Game from '../Data/Game.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {

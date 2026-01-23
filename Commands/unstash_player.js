@@ -4,7 +4,6 @@ import InventoryItem from '../Data/InventoryItem.js';
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import Player from '../Data/Player.js' */
-/** @typedef {import('../Data/InventorySlot.js').default} InventorySlot*/
 
 /** @type {CommandConfig} */
 export const config = {

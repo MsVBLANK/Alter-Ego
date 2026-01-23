@@ -6,7 +6,7 @@ import PrettyPrinter from "./PrettyPrinter.js";
 /** @import ModeratorCommand from "./ModeratorCommand.js" */
 /** @import PlayerCommand from "./PlayerCommand.js" */
 /** @import EligibleCommand from "./EligibleCommand.js" */
-/** @typedef {(import("discord.js").Client)} Client */
+/** @import { Client } from "discord.js" */
 
 /**
  * @class BotContext

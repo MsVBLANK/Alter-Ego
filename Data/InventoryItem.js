@@ -181,6 +181,18 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Returns true if the item is covered by an equipped inventory item. Also returns true if it's stashed.
+     */
+    isCoveredByEquippedItem() {
+        if (this.container) return true;
+        for (const equipmentSlot of this.player.inventoryCollection.values()) {
+            if (equipmentSlot.equippedItem === null || equipmentSlot.id === "RIGHT HAND" || equipmentSlot.id === "LEFT HAND") continue;
+            if (equipmentSlot.equippedItem.prefab.coveredEquipmentSlots.includes(this.equipmentSlot)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Sets the description.
      * @param {string} description - The description to set.
      */

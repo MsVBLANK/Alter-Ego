@@ -253,11 +253,20 @@ export default class GameNarrationHandler {
 			}
 		}
 		else if (target instanceof InventoryItem && target.player.name === player.name) {
-			notification = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, true, target.singleContainingPhrase);
-			if (!target.prefab.discreet) {
-				narration = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, false, target.singleContainingPhrase);
-				messageType = MessageDisplayType.STANDARD;
+			if (target.container === null) {
+				// The inventory item is equipped.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, true, target.name);
+				if (!target.isCoveredByEquippedItem())
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, false, target.name);
 			}
+			else {
+				// The inventory item is stashed.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, true, target.singleContainingPhrase);
+				if (!target.prefab.discreet)
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, false, target.singleContainingPhrase);
+			}
+			if (!target.prefab.discreet)
+				messageType = MessageDisplayType.STANDARD;
 		}
 		else if (target instanceof InventoryItem && target.player.name !== player.name)
 			notification = this.#game.notificationGenerator.generateInspectOtherPlayersInventoryItemNotification(player, true, target.player, target.name);

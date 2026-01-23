@@ -36,8 +36,8 @@ describe("settingsLoader tests", () => {
             expect(gs.hiddenIconURL).toBe(DEFAULT_GAME_SETTINGS.hiddenIconURL);
             expect(gs.autoDeleteWhisperChannels).toBe(DEFAULT_GAME_SETTINGS.autoDeleteWhisperChannels);
             expect(gs.embedAccentColor).toBe(DEFAULT_GAME_SETTINGS.embedAccentColor);
-            expect(gs.standardNarrationAccentColor).toBe(DEFAULT_GAME_SETTINGS.standardNarrationAccentColor);
-            expect(gs.alertNarrationAccentColor).toBe(DEFAULT_GAME_SETTINGS.alertNarrationAccentColor);
+            expect(gs.standardMessageDisplayAccentColor).toBe(DEFAULT_GAME_SETTINGS.standardMessageDisplayAccentColor);
+            expect(gs.alertMessageDisplayAccentColor).toBe(DEFAULT_GAME_SETTINGS.alertMessageDisplayAccentColor);
             expect(gs.showOnlinePlayerCount).toBe(DEFAULT_GAME_SETTINGS.showOnlinePlayerCount);
             expect(gs.autoLoad).toBe(DEFAULT_GAME_SETTINGS.autoLoad);
             expect(gs.onlineActivity).toStrictEqual(DEFAULT_GAME_SETTINGS.onlineActivity);
@@ -65,8 +65,8 @@ describe("settingsLoader tests", () => {
             expect(gs.hiddenIconURL).toBe("test");
             expect(gs.autoDeleteWhisperChannels).toBe(false);
             expect(gs.embedAccentColor).toBe("FFFFFF");
-            expect(gs.standardNarrationAccentColor).toBe("FFFFFF");
-            expect(gs.alertNarrationAccentColor).toBe("FFFFFF");
+            expect(gs.standardMessageDisplayAccentColor).toBe("FFFFFF");
+            expect(gs.alertMessageDisplayAccentColor).toBe("FFFFFF");
             expect(gs.showOnlinePlayerCount).toBe(false);
             expect(gs.autoLoad).toBe(true);
             expect(gs.onlineActivity.name).toBe("test");
@@ -124,14 +124,16 @@ describe("settingsLoader tests", () => {
         test("When invalid color code set, return default value with error", () => {
             stubEmptyGameSettingsEnvs();
             vi.stubEnv("EMBED_ACCENT_COLOR", "#FFFFFF");
-            vi.stubEnv("STANDARD_NARRATION_ACCENT_COLOR", "#FFFFFF");
-            vi.stubEnv("ALERT_NARRATION_ACCENT_COLOR", "#FFFFFF");
+            vi.stubEnv("STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR", "#FFFFFF");
+            vi.stubEnv("WARNING_MESSAGE_DISPLAY_ACCENT_COLOR", "#FFFFFF");
+            vi.stubEnv("ALERT_MESSAGE_DISPLAY_ACCENT_COLOR", "#FFFFFF");
             let [gs, errs] = loadGameSettings();
 
-            expect(errs.length).toBe(3);
+            expect(errs.length).toBe(4);
             expect(gs.embedAccentColor).toBe(DEFAULT_GAME_SETTINGS.embedAccentColor);
-            expect(gs.standardNarrationAccentColor).toBe(DEFAULT_GAME_SETTINGS.standardNarrationAccentColor);
-            expect(gs.alertNarrationAccentColor).toBe(DEFAULT_GAME_SETTINGS.alertNarrationAccentColor);
+            expect(gs.standardMessageDisplayAccentColor).toBe(DEFAULT_GAME_SETTINGS.standardMessageDisplayAccentColor);
+            expect(gs.warningMessageDisplayAccentColor).toBe(DEFAULT_GAME_SETTINGS.warningMessageDisplayAccentColor);
+            expect(gs.alertMessageDisplayAccentColor).toBe(DEFAULT_GAME_SETTINGS.alertMessageDisplayAccentColor);
         });
     });
 
@@ -208,8 +210,8 @@ describe("settingsLoader tests", () => {
         vi.stubEnv("HIDDEN_ICON_URL", "test");
         vi.stubEnv("AUTO_DELETE_WHISPER_CHANNELS", "false");
         vi.stubEnv("EMBED_ACCENT_COLOR", "FFFFFF");
-        vi.stubEnv("STANDARD_NARRATION_ACCENT_COLOR", "FFFFFF");
-        vi.stubEnv("ALERT_NARRATION_ACCENT_COLOR", "FFFFFF");
+        vi.stubEnv("STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR", "FFFFFF");
+        vi.stubEnv("ALERT_MESSAGE_DISPLAY_ACCENT_COLOR", "FFFFFF");
         vi.stubEnv("SHOW_ONLINE_PLAYER_COUNT", "false");
         vi.stubEnv("AUTO_LOAD", "true");
         vi.stubEnv("ONLINE_ACTIVITY_STRING", "test");
@@ -237,8 +239,8 @@ describe("settingsLoader tests", () => {
         vi.stubEnv("HIDDEN_ICON_URL", undefined);
         vi.stubEnv("AUTO_DELETE_WHISPER_CHANNELS", undefined);
         vi.stubEnv("EMBED_ACCENT_COLOR", undefined);
-        vi.stubEnv("STANDARD_NARRATION_ACCENT_COLOR", undefined);
-        vi.stubEnv("ALERT_NARRATION_ACCENT_COLOR", undefined);
+        vi.stubEnv("STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR", undefined);
+        vi.stubEnv("ALERT_MESSAGE_DISPLAY_ACCENT_COLOR", undefined);
         vi.stubEnv("SHOW_ONLINE_PLAYER_COUNT", undefined);
         vi.stubEnv("AUTO_LOAD", undefined);
         vi.stubEnv("ONLINE_ACTIVITY_STRING", undefined);

@@ -1,7 +1,7 @@
 ﻿import GameEntity from "./GameEntity.js";
 import InventoryItem from "./InventoryItem.js";
 
-/** @typedef {import("./Game.js").default} Game */
+/** @import Game from "./Game.js" */
 
 /**
  * @class EquipmentSlot

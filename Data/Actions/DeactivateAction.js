@@ -1,6 +1,6 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../Fixture.js").default} Fixture */
+/** @import Fixture from "../Fixture.js" */
 
 /**
  * @class DeactivateAction

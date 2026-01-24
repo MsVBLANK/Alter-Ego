@@ -4,7 +4,7 @@ import SayAction from "./SayAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { ChannelType } from "discord.js";
 
-/** @typedef {import("../Player.js").default} Player */
+/** @import Player from "../Player.js" */
 
 /**
  * @class NarrateAction

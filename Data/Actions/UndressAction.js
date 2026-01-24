@@ -5,9 +5,9 @@ import Puzzle from "../Puzzle.js";
 import DropAction from "./DropAction.js";
 import { getSortedItemsString } from "../../Modules/helpers.js";
 
-/** @typedef {import("../Fixture.js").default} Fixture */
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../RoomItem.js").default} RoomItem */
+/** @import Fixture from "../Fixture.js" */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class UndressAction

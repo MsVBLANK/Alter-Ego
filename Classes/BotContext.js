@@ -1,12 +1,12 @@
 import { ActivityType, Collection } from "discord.js";
 import PrettyPrinter from "./PrettyPrinter.js";
 
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("./BotCommand.js").default} BotCommand */
-/** @typedef {import("./ModeratorCommand.js").default} ModeratorCommand */
-/** @typedef {import("./PlayerCommand.js").default} PlayerCommand */
-/** @typedef {import("./EligibleCommand.js").default} EligibleCommand */
-/** @typedef {(import("discord.js").Client)} Client */
+/** @import Game from "../Data/Game.js" */
+/** @import BotCommand from "./BotCommand.js" */
+/** @import ModeratorCommand from "./ModeratorCommand.js" */
+/** @import PlayerCommand from "./PlayerCommand.js" */
+/** @import EligibleCommand from "./EligibleCommand.js" */
+/** @import { Client } from "discord.js" */
 
 /**
  * @class BotContext

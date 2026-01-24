@@ -4,8 +4,8 @@ import { replaceInventoryItem } from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./Player.js").default} Player */
+/** @import Game from "./Game.js" */
+/** @import Player from "./Player.js" */
 
 /**
  * @class InventoryItem

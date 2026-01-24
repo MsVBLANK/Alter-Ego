@@ -5,9 +5,9 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 
 export * as default from './parser.js';
 
-/** @typedef {import('../Data/GameEntity.js').default} GameEntity */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
-/** @typedef {import('../Data/RoomItem.js').default} RoomItem */
+/** @import GameEntity from '../Data/GameEntity.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import RoomItem from '../Data/RoomItem.js' */
 
 class Clause {
     /**

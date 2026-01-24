@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../Player.js").default} Player */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import Player from "../Player.js" */
 
 /**
  * @class UseAction

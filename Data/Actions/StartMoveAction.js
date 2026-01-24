@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../Exit.js").default} Exit */
-/** @typedef {import("../Room.js").default} Room */
+/** @import Exit from "../Exit.js" */
+/** @import Room from "../Room.js" */
 
 /**
  * @class StartMoveAction

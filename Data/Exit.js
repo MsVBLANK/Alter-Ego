@@ -1,7 +1,7 @@
 import GameEntity from './GameEntity.js';
 
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Room.js').default} Room */
+/** @import Game from './Game.js' */
+/** @import Room from './Room.js' */
 
 /**
  * @class Exit

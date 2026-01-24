@@ -1,10 +1,10 @@
 import CraftAction from '../Data/Actions/CraftAction.js';
 import { itemNameMatches } from '../Modules/matchers.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {

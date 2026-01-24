@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 import CureAction from "./CureAction.js";
 
-/** @typedef {import("../HidingSpot.js").default} HidingSpot */
+/** @import HidingSpot from "../HidingSpot.js" */
 
 /**
  * @class UnhideAction

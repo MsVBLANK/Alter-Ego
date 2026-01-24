@@ -2,8 +2,8 @@ import GameEntity from './GameEntity.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { default as evaluateScript } from '../Modules/scriptParser.js';
 
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Player.js').default} Player */
+/** @import Game from './Game.js' */
+/** @import Player from './Player.js' */
 
 /**
  * @class Flag

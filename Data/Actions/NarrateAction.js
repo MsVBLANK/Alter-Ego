@@ -1,7 +1,6 @@
 import Action from "../Action.js";
 import Narration from "../Narration.js";
 import SayAction from "./SayAction.js";
-import UnhideAction from "./UnhideAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { ChannelType } from "discord.js";
 
@@ -126,8 +125,8 @@ export default class NarrateAction extends Action {
 	 * @param {Narration} narration - The narration to be communicated.
 	 */
 	#communicateNarrationToVideoMonitoringRooms(narration) {
-		if (!narration.locationIsVideoSurveilled || narration.isInHidingSpot()) return;
-		const roomDisplayName = narration.location.getSurveilledDisplayName();
+		if (!narration.locationIsVideoSurveilled || narration.isInHidingSpot() || narration.action instanceof SayAction) return;
+		const roomDisplayName = narration.location.getSurveilledDisplayName(true);
 		const prefix = narration.narrator ? `` : `[${roomDisplayName}] `;
 		const narrationText = `\`${prefix}${narration.content}\``;
 		for (const videoMonitoringRoom of narration.videoMonitoringRooms) {

@@ -197,17 +197,17 @@ export default class Dialog extends GameConstruct {
 					const neighboringRoom = exit.dest;
 					// Prevent duplication when two rooms are connected by multiple exits.
 					if (this.neighboringRooms.has(neighboringRoom.id)) continue;
-					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.tags.has("audio surveilled"))) {
+					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.isAudioSurveilled())) {
 						this.neighboringRooms.set(neighboringRoom.id, neighboringRoom);
-						if (neighboringRoom.tags.has("audio surveilled"))
+						if (neighboringRoom.isAudioSurveilled())
 							this.neighboringAudioSurveilledRooms.set(neighboringRoom.id, neighboringRoom);
 					}
 				}
 			}
-			this.locationIsAudioSurveilled = this.location.tags.has("audio surveilled");
-			this.locationIsVideoSurveilled = this.location.tags.has("video surveilled");
+			this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
+			this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
 			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0)
-				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.tags.has("audio monitoring") && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id));
+				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id));
 			if (this.speaker.hasBehaviorAttribute("sender")) {
 				for (const livingPlayer of game.livingPlayersCollection.values()) {
 					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name) {

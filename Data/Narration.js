@@ -136,7 +136,7 @@ export default class Narration extends GameConstruct {
         this.locationIsVideoSurveilled = false;
         this.videoMonitoringRooms = [];
         if (!this.isOOCMessage) {
-            this.locationIsVideoSurveilled = this.location.tags.has("video surveilled");
+            this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
             if (this.locationIsVideoSurveilled)
                 this.videoMonitoringRooms = game.entityFinder.getRooms(undefined, "video monitoring", true);
         }
@@ -189,7 +189,7 @@ export default class Narration extends GameConstruct {
             }
             this.getGame().communicationHandler.narrateInRoom(this);
 
-            if (this.location.tags.has("video surveilled")) {
+            if (this.location.isVideoSurveilled()) {
                 let roomDisplayName = this.location.tags.has("secret") ? "Surveillance feed" : this.location.id;
                 this.content = `\`[${roomDisplayName}] ${this.content}\``;
                 const rooms = this.getGame().entityFinder.getRooms(null, "video monitoring", true);

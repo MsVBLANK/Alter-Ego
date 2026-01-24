@@ -329,18 +329,6 @@ describe('GameEntityLoader test', () => {
 
             test('invalid recipes', async () => {
                 sheets.__setMock(game.constants.recipeSheetDataCells, [
-                    /**
-                     * [
-                     *  "Ingredient Prefab(s)",
-                     *  "Uncraftable?",
-                     *  "Processed by Fixture With Tag",
-                     *  "Process Duration",
-                     *  "Produces Prefab(s)",
-                     *  "Description When Initiated",
-                     *  "Description When Completed",
-                     *  "Description When Uncrafted"
-                     * ]
-                     */
                     ["INVALID", "", "", "", "", "", "", ""],
                     ["ORANGE, PINEAPPLE, POT", "", "", "", "", "", "", ""],
                     ["ORANGE, PINEAPPLE", "", "", "", "ORANGE, PINEAPPLE, POT", "", "", ""],

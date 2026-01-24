@@ -224,4 +224,25 @@ export default class Status extends GameEntity {
     static generateValidId(id) {
         return id.toLowerCase().trim();
     }
+
+    /**
+     * Perform post-initialization processing on a status effect.
+     * @param {Status} status
+     */
+    static postProcess(status) {
+        status.overridersStrings.forEach((overriderString, i) => {
+            const overrider = status.getGame().entityFinder.getStatusEffect(overriderString);
+            if (overrider) status.overriders[i] = overrider;
+        });
+        status.curesStrings.forEach((curesString, i) => {
+            const cure = status.getGame().entityFinder.getStatusEffect(curesString);
+            if (cure) status.cures[i] = cure;
+        });
+        const nextStage = status.getGame().entityFinder.getStatusEffect(status.nextStageId);
+        if (nextStage) status.setNextStage(nextStage);
+        const duplicatedStatus = status.getGame().entityFinder.getStatusEffect(status.duplicatedStatusId);
+        if (duplicatedStatus) status.setDuplicatedStatus(duplicatedStatus);
+        const curedCondition = status.getGame().entityFinder.getStatusEffect(status.curedConditionId);
+        if (curedCondition) status.setCuredCondition(curedCondition);
+    }
 }

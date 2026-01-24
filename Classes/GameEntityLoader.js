@@ -1573,20 +1573,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				this.updateStatusEffectReferences(status);
 			}
 			this.game.statusEffectsCollection.forEach(status => {
-				status.overridersStrings.forEach((overriderString, i) => {
-					const overrider = this.game.entityFinder.getStatusEffect(overriderString);
-					if (overrider) status.overriders[i] = overrider;
-				});
-				status.curesStrings.forEach((curesString, i) => {
-					const cure = this.game.entityFinder.getStatusEffect(curesString);
-					if (cure) status.cures[i] = cure;
-				});
-				const nextStage = this.game.entityFinder.getStatusEffect(status.nextStageId);
-				if (nextStage) status.setNextStage(nextStage);
-				const duplicatedStatus = this.game.entityFinder.getStatusEffect(status.duplicatedStatusId);
-				if (duplicatedStatus) status.setDuplicatedStatus(duplicatedStatus);
-				const curedCondition = this.game.entityFinder.getStatusEffect(status.curedConditionId);
-				if (curedCondition) status.setCuredCondition(curedCondition);
+				Status.postProcess(status);
 				if (doErrorChecking) {
 					const error = this.checkStatusEffect(status);
 					if (error instanceof Error) errors.push(error);

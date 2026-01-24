@@ -138,7 +138,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} [player] - The player referred to in this notification. Optional.
 	 */
 	generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player) {
-		const roomIsVisible = player && player.location.tags.has("video monitoring") && dialog.locationIsVideoSurveilled;
+		const roomIsVisible = player && player.location.isVideoMonitoring() && dialog.locationIsVideoSurveilled;
 		const playerCanSeeSpeaker = player && player.canSee() && roomIsVisible && !dialog.speaker.isHidden();
 		let speakerString = "";
 		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
@@ -149,7 +149,7 @@ export default class GameNotificationGenerator {
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
 		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `\`[${roomDisplayName}]\` ${speakerString} ${verb} "${dialog.content}"${punctuation}`;
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${punctuation}`;
 	}
 
 	/**

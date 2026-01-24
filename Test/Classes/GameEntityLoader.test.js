@@ -250,7 +250,7 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadPrefabs test', () => {
-        describe('erroneous flag response', () => {
+        describe('erroneous prefab response', () => {
             test('incomplete prefabs', async () => {
                 sheets.__setMock(game.constants.prefabSheetDataCells, [
                     [""],
@@ -309,6 +309,65 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadRecipes test', () => {
+        describe('erroneous recipe response', () => {
+            beforeEach(async () => {
+                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+            });
+
+            test('incomplete recipes', async () => {
+                sheets.__setMock(game.constants.recipeSheetDataCells, [
+                    [""],
+                ]);
+                const recipeCount = await game.entityLoader.loadRecipes(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                expect(errors).not.toEqual([]);
+                expect(recipeCount).toBe(0);
+                expect(errorStrings).toHaveLength(1);
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 2. No ingredients were given.");
+            });
+
+            test('invalid recipes', async () => {
+                sheets.__setMock(game.constants.recipeSheetDataCells, [
+                    /**
+                     * [
+                     *  "Ingredient Prefab(s)",
+                     *  "Uncraftable?",
+                     *  "Processed by Fixture With Tag",
+                     *  "Process Duration",
+                     *  "Produces Prefab(s)",
+                     *  "Description When Initiated",
+                     *  "Description When Completed",
+                     *  "Description When Uncrafted"
+                     * ]
+                     */
+                    ["INVALID", "", "", "", "", "", "", ""],
+                    ["ORANGE, PINEAPPLE, POT", "", "", "", "", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "", "", "", "ORANGE, PINEAPPLE, POT", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "", "", "1x", "ORANGE, PINEAPPLE", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "", "dummy", "1x", "ORANGE, PINEAPPLE", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "", "", "", "INVALID", "", "", ""],
+                    ["ORANGE", "TRUE", "dummy", "", "ORANGE", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "TRUE", "", "", "ORANGE, PINEAPPLE", "", "", ""],
+                ]);
+                const recipeCount = await game.entityLoader.loadRecipes(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                console.log(errorStrings);
+                console.log(game.recipes);
+                expect(errors).not.toEqual([]);
+                expect(recipeCount).toBe(0);
+                expect(errorStrings).toHaveLength(8);
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 2. \"INVALID\" in ingredients is not a prefab.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 3. Recipes with more than 2 ingredients must require a fixture tag.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 4. Recipes with more than 2 products must require a fixture tag.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 5. Recipes without a fixture tag cannot have a duration.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 6. An invalid duration was given.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 7. \"INVALID\" in products is not a prefab.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 8. Recipes with a fixture tag cannot be uncraftable.");
+                expect(errorStrings).toContain("Error: Couldn't load recipe on row 9. Recipes with more than one product cannot be uncraftable.");
+            });
+        });
+
         describe('standard recipe response', () => {
             test('errorChecking true', async () => {
                 if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);

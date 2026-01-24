@@ -3,10 +3,10 @@ import Fixture from "../Data/Fixture.js";
 import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/EquipmentSlot.js').default} EquipmentSlot */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {

@@ -2,11 +2,11 @@ import InventoryItem from '../Data/InventoryItem.js';
 import humanize from 'humanize-duration';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
-/** @typedef {import('../Data/Prefab.js').default} Prefab */
-/** @typedef {import('../Data/ItemInstance.js').default} ItemInstance */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
+/** @import Prefab from '../Data/Prefab.js' */
+/** @import ItemInstance from '../Data/ItemInstance.js' */
 
 /** @type {CommandConfig} */
 export const config = {

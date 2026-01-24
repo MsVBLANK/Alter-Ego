@@ -1,6 +1,6 @@
 import GameConstruct from "./GameConstruct.js";
 
-/** @typedef {import("./Game.js").default} Game */
+/** @import Game from "./Game.js" */
 
 /**
  * @class GameEntity

@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 import InflictAction from "./InflictAction.js";
 
-/** @typedef {import("../HidingSpot.js").default} HidingSpot */
+/** @import HidingSpot from "../HidingSpot.js" */
 
 /**
  * @class HideAction

@@ -4,12 +4,11 @@ import UnhideAction from "./Actions/UnhideAction.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 
-/** @typedef {import("./Action.js").default} Action */
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./Room.js").default} Room */
-/** @typedef {import("./Whisper.js").default} Whisper */
-/** @typedef {import("../Classes/GameSettings.js").default} GameSettings */
-/** @typedef {import("discord.js").GuildMember} GuildMember */
+/** @import Action from "./Action.js" */
+/** @import Game from "./Game.js" */
+/** @import Room from "./Room.js" */
+/** @import Whisper from "./Whisper.js" */
+/** @import { GuildMember } from "discord.js" */
 
 /**
  * @class Narration

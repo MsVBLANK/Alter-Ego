@@ -9,15 +9,15 @@ import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
 import { generateListString } from "../Modules/helpers.js";
 
-/** @typedef {import("../Data/EquipmentSlot.js").default} EquipmentSlot */
-/** @typedef {import("../Data/Flag.js").default} Flag */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Gesture.js").default} Gesture */
-/** @typedef {import("../Data/Event.js").default} Event */
-/** @typedef {import("../Data/HidingSpot.js").default} HidingSpot */
-/** @typedef {import("../Data/ItemContainer.js").default} ItemContainer */
-/** @typedef {import("../Data/Status.js").default} Status */
-/** @typedef {import("../Data/Whisper.js").default} Whisper */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.js" */
+/** @import Flag from "../Data/Flag.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Gesture from "../Data/Gesture.js" */
+/** @import Event from "../Data/Event.js" */
+/** @import HidingSpot from "../Data/HidingSpot.js" */
+/** @import ItemContainer from "../Data/ItemContainer.js" */
+/** @import Status from "../Data/Status.js" */
+/** @import Whisper from "../Data/Whisper.js" */
 
 /**
  * @class GameLogHandler

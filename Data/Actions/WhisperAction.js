@@ -1,6 +1,6 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../Player.js").default} Player */
+/** @import Player from "../Player.js" */
 
 /**
  * @class WhisperAction

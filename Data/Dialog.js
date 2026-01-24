@@ -2,14 +2,14 @@ import { Collection } from "discord.js";
 import GameConstruct from "./GameConstruct.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./InventoryItem.js").default} InventoryItem */
-/** @typedef {import("./Player.js").default} Player */
-/** @typedef {import("./Room.js").default} Room */
-/** @typedef {import("./Whisper.js").default} Whisper */
+/** @import Game from "./Game.js" */
+/** @import InventoryItem from "./InventoryItem.js" */
+/** @import Player from "./Player.js" */
+/** @import Room from "./Room.js" */
+/** @import Whisper from "./Whisper.js" */
 
-/** @typedef {import("discord.js").Attachment} Attachment */
-/** @typedef {import("discord.js").Embed} Embed */
+/** @import { Attachment } from "discord.js" */
+/** @import { Embed } from "discord.js" */
 
 /**
  * @class Dialog

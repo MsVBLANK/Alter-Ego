@@ -1,10 +1,9 @@
 import { EmbedBuilder } from "discord.js";
 import { Duration } from 'luxon';
 
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/RoomItem.js").default} RoomItem */
-/** @typedef {import("luxon").DurationObjectUnits} DurationObjectUnits */
+/** @import Player from "../Data/Player.js" */
+/** @import RoomItem from "../Data/RoomItem.js" */
+/** @import { DurationObjectUnits } from "luxon" */
 
 /**
  * Gets a random string out of an array of possibilities.

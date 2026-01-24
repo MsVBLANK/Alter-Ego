@@ -1,7 +1,7 @@
 import Flag from '../Data/Flag.js';
 import Game from '../Data/Game.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
+/** @import GameSettings from '../Classes/GameSettings.js' */
 
 /** @type {CommandConfig} */
 export const config = {

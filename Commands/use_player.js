@@ -3,9 +3,9 @@ import AttemptAction from '../Data/Actions/AttemptAction.js';
 import DeactivateAction from '../Data/Actions/DeactivateAction.js';
 import UseAction from '../Data/Actions/UseAction.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
 
 /** @type {CommandConfig} */
 export const config = {

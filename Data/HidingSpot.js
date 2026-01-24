@@ -2,10 +2,10 @@ import GameEntity from "./GameEntity.js";
 import Whisper from "./Whisper.js";
 import { generatePlayerListString } from "../Modules/helpers.js";
 
-/** @typedef {import("./Action.js").default} Action */
-/** @typedef {import("./Fixture.js").default} Fixture */
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./Player.js").default} Player */
+/** @import Action from "./Action.js" */
+/** @import Fixture from "./Fixture.js" */
+/** @import Game from "./Game.js" */
+/** @import Player from "./Player.js" */
 
 export default class HidingSpot extends GameEntity {
 	/**

@@ -4,9 +4,9 @@ import InventorySlot from "../InventorySlot.js";
 import Puzzle from "../Puzzle.js";
 import { getSortedItemsString } from "../../Modules/helpers.js";
 
-/** @typedef {import("../EquipmentSlot.js").default} EquipmentSlot */
-/** @typedef {import("../Fixture.js").default} Fixture */
-/** @typedef {import("../RoomItem.js").default} RoomItem */
+/** @import EquipmentSlot from "../EquipmentSlot.js" */
+/** @import Fixture from "../Fixture.js" */
+/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class TakeAction

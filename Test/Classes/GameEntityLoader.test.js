@@ -250,6 +250,52 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadPrefabs test', () => {
+        describe('erroneous flag response', () => {
+            test('incomplete prefabs', async () => {
+                sheets.__setMock(game.constants.prefabSheetDataCells, [
+                    [""],
+                    ["aaa", ""],
+                    ["aaa", ""],
+                    ["bbb", "aaa", "", "", "123", "456"],
+                    ["ccc", "aaa", "aaa", "", "aaa", "456"],
+                    ["ddd", "aaa", "aaa", "", "123", "aaa"],
+                ]);
+                const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                expect(errors).not.toEqual([]);
+                expect(prefabCount).toBe(0);
+                expect(errorStrings).toHaveLength(6);
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 2. No prefab ID was given.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 3. No prefab name was given.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 4. Another prefab with this ID already exists.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 5. No single containing phrase was given.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 6. The size given is not a number.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 7. The weight given is not a number.");
+            });
+
+            test('invalid prefabs', async () => {
+                sheets.__setMock(game.constants.prefabSheetDataCells, [
+                    ["aaa", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "DUMMY SLOT: 10", "", ""],
+                    ["bbb", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "000", "FALSE", "", "", "", "", "", ""],
+                    ["ccc", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", ": 10", "", ""],
+                    ["ddd", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "DUMMY SLOT: ", "", ""],
+                    ["eee", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "INVALID", "", "", "FALSE", "", "", "", "", "", ""],
+                    ["fff", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "INVALID", "", "FALSE", "", "", "", "", "", ""],
+                ]);
+                const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                expect(errors).not.toEqual([]);
+                expect(prefabCount).toBe(0);
+                expect(errorStrings).toHaveLength(6);
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 2. AAA has inventory slots, but no preposition was given.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 3. \"000\" in turns into is not a prefab.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 4. No name was given for inventory slot 1.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 5. The capacity given for inventory slot \"DUMMY SLOT\" is not a number.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 6. \"invalid\" in effects is not a status effect.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 7. \"invalid\" in cures is not a status effect.");
+            });
+        });
+
         describe('standard prefab response', () => {
             test('errorChecking true', async () => {
                 if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);

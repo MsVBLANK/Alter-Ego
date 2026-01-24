@@ -281,18 +281,20 @@ describe('GameEntityLoader test', () => {
                     ["ddd", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "DUMMY SLOT: ", "", ""],
                     ["eee", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "INVALID", "", "", "FALSE", "", "", "", "", "", ""],
                     ["fff", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "INVALID", "", "FALSE", "", "", "", "", "", ""],
+                    ["ggg", "aaa", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "DUMMY SLOT: 10, DUMMY SLOT: 10", "in", ""],
                 ]);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 expect(errors).not.toEqual([]);
                 expect(prefabCount).toBe(0);
-                expect(errorStrings).toHaveLength(6);
+                expect(errorStrings).toHaveLength(7);
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 2. AAA has inventory slots, but no preposition was given.");
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 3. \"000\" in turns into is not a prefab.");
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 4. No name was given for inventory slot 1.");
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 5. The capacity given for inventory slot \"DUMMY SLOT\" is not a number.");
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 6. \"invalid\" in effects is not a status effect.");
                 expect(errorStrings).toContain("Error: Couldn't load prefab on row 7. \"invalid\" in cures is not a status effect.");
+                expect(errorStrings).toContain("Error: Couldn't load prefab on row 8. The prefab already has an inventory slot with the ID \"DUMMY SLOT\".");
             });
         });
 

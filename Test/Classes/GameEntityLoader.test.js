@@ -344,7 +344,7 @@ describe('GameEntityLoader test', () => {
                     ["INVALID", "", "", "", "", "", "", ""],
                     ["ORANGE, PINEAPPLE, POT", "", "", "", "", "", "", ""],
                     ["ORANGE, PINEAPPLE", "", "", "", "ORANGE, PINEAPPLE, POT", "", "", ""],
-                    ["ORANGE, PINEAPPLE", "", "", "1x", "ORANGE, PINEAPPLE", "", "", ""],
+                    ["ORANGE, PINEAPPLE", "", "", "1s", "ORANGE, PINEAPPLE", "", "", ""],
                     ["ORANGE, PINEAPPLE", "", "dummy", "1x", "ORANGE, PINEAPPLE", "", "", ""],
                     ["ORANGE, PINEAPPLE", "", "", "", "INVALID", "", "", ""],
                     ["ORANGE", "TRUE", "dummy", "", "ORANGE", "", "", ""],
@@ -352,8 +352,6 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
-                console.log(errorStrings);
-                console.log(game.recipes);
                 expect(errors).not.toEqual([]);
                 expect(recipeCount).toBe(0);
                 expect(errorStrings).toHaveLength(8);

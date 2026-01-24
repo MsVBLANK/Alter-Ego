@@ -1,6 +1,6 @@
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags } from 'discord.js';
+import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
 
 /**
  * @import Game from "../Data/Game.js"
@@ -167,30 +167,44 @@ function createPlayerNarrationComponents(game, messageText, player) {
  * @param {string} color - The color as a hex code.
  */
 export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
-    return [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${color}`))
-            .addSectionComponents(
-                new SectionBuilder()
-                    .setThumbnailAccessory(
-                        new ThumbnailBuilder()
-                            .setURL(location.getIconURL())
-                    )
-                    .addTextDisplayComponents(
-                        new TextDisplayBuilder().setContent("_ _"),
-                        new TextDisplayBuilder().setContent(`**${location.displayName}**`),
-                        new TextDisplayBuilder().setContent("_ _")
-                    )
-            ),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent(descriptionText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent("**Occupants**"),
-        new TextDisplayBuilder().setContent(occupantsString),
-        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`),
-        new TextDisplayBuilder().setContent(defaultDropFixtureText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
-    ];
+    const mediaGalleryBuilder = new MediaGalleryBuilder();
+    const imageURLRegex = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(?:\?[^#\s]*)?/g;
+    let match;
+    const originalDescriptionText = descriptionText;
+    while (match = imageURLRegex.exec(originalDescriptionText)) {
+        if (mediaGalleryBuilder.items.length <= 3) {
+            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(match[0]));
+            descriptionText = descriptionText.replace(match[0], '');
+        }
+    }
+
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder)[]} */
+    const components = [];
+    components.push(new ContainerBuilder()
+        .setAccentColor(Number(`0x${color}`))
+        .addSectionComponents(
+            new SectionBuilder()
+                .setThumbnailAccessory(
+                    new ThumbnailBuilder()
+                        .setURL(location.getIconURL())
+                )
+                .addTextDisplayComponents(
+                    new TextDisplayBuilder().setContent("_ _"),
+                    new TextDisplayBuilder().setContent(`**${location.displayName}**`),
+                    new TextDisplayBuilder().setContent("_ _")
+                )
+        )
+    );
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false));
+    components.push(new TextDisplayBuilder().setContent(descriptionText));
+    if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false));
+    components.push(new TextDisplayBuilder().setContent("**Occupants**"));
+    components.push(new TextDisplayBuilder().setContent(occupantsString));
+    components.push(new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`));
+    components.push(new TextDisplayBuilder().setContent(defaultDropFixtureText));
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
+    return components;
 }
 
 /**

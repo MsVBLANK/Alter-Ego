@@ -89,7 +89,7 @@ export function endsWithPunctuation(string) {
 /**
  * Parses a duration string and returns a duration object.
  * @param {string} durationString - An integer and a unit. Acceptable units: y, M, w, d, h, m, s.
- * @returns A duration object, or null.
+ * @returns A duration object.
  */
 export function parseDuration(durationString) {
 	let durationInt = parseInt(durationString.substring(0, durationString.length - 1));
@@ -119,8 +119,11 @@ export function parseDuration(durationString) {
 			case 's':
 				durationInput.seconds = durationInt;
 				break;
+			default:
+				return Duration.invalid("created with duration string using invalid unit", `"${durationUnit}" is an invalid unit`);
 		}
-	}
+	} else return Duration.invalid("created with duration string using invalid duration string", `"${durationString}" is not a valid duration string`);
+	if (!isFinite(durationInt)) return Duration.invalid("created with duration string using invalid period", `"${durationInt}" is not a valid duration period`);
 	return Duration.fromObject(durationInput);
 }
 

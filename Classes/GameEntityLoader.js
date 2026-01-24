@@ -932,7 +932,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 products must require a fixture tag.`);
-		if (recipe.duration !== null && !Duration.isDuration(recipe.duration))
+		if (recipe.duration !== null && (Duration.isDuration(recipe.duration) && !recipe.duration.isValid))
 			return new Error(`Couldn't load recipe on row ${recipe.row}. An invalid duration was given.`);
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);

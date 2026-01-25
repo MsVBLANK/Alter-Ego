@@ -155,23 +155,40 @@ export default class GameNotificationGenerator {
 	/**
 	 * Generates a notification indicating that a player heard dialog through a player with the `receiver` behavior attribute. 
 	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} [receiverName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
+	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} [player] - The player referred to in this notification.
+	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person. Defaults to false.
+	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
 	 */
-	generateHearReceiverDialogNotification(dialog, player, secondPerson, receiverName = "receiver") {
-		const receiverOwnerName = secondPerson ? `your` : `${player.displayName}'s`;
+	generateHearReceiverDialogNotification(dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+		const receiverOwnerName = secondPerson ? `your` : playerCanSeeReceiver ? `${receiver.displayName}'s` : `a`;
+		if (!secondPerson && !playerCanSeeReceiver) receiverItemName = "receiver";
 		let speakerString = "";
 		let receiverString = "";
-		if (secondPerson && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player)) {
+		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player)) {
 			speakerString = `${dialog.speakerRecognitionName}`;
-			receiverString = ` through ${receiverOwnerName} ${receiverName}`;
+			receiverString = ` through ${receiverOwnerName} ${receiverItemName}`;
 		}
 		else
-			speakerString = secondPerson && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverName}`;
+			speakerString = player && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverItemName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverItemName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = secondPerson && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : receiverString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
 		return `${speakerString} ${verb} "\`${dialog.content}\`"${receiverString}${punctuation}`;
+	}
+
+	/**
+	 * Generates a notification indicating that a player heard dialog from a room with the `audio surveilled` tag that was transmitted to one of its occupants with the `receiver` behavior attribute.
+	 * @param {string} roomDisplayName - The displayed name of the audio surveilled room with a `receiver` player.
+	 * @param {Dialog} dialog - The dialog that was spoken.
+	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
+	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} [player] - The player referred to in this notification.
+	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person.
+	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
+	 */
+	generateHearAudioSurveilledReceiverDialogNotification(roomDisplayName, dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearReceiverDialogNotification(dialog, receiver, receiverItemName, player, secondPerson, playerCanSeeReceiver))}`;
 	}
 
 	/**

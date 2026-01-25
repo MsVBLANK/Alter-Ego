@@ -296,14 +296,34 @@ export default class SayAction extends Action {
 	#communicateDialogToReceivers(dialog) {
 		for (const [receiverPlayerName, receiverItem] of dialog.receivers) {
 			const receiverPlayer = this.getGame().entityFinder.getLivingPlayer(receiverPlayerName);
+			// If any rooms with a receiver have the `audio surveilled` tag, the audible dialog needs to be communicated to any `audio monitoring` rooms.
+			for (const receiverAudioSurveilledRoom of dialog.receiverAudioSurveilledRooms.values()) {
+				for (const audioMonitoringRoom of dialog.audioMonitoringRooms.values()) {
+					for (const player of audioMonitoringRoom.occupants) {
+						if (this.#playerCannotReceiveCommunications(player)) continue;
+						if (this.#playerShouldReceiveNotification(dialog, player, false)) {
+							const receiverRoomDisplayName = receiverAudioSurveilledRoom.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring() && player.canSee());
+							const monitoringRoomCanSeeSurveilledRoom = audioMonitoringRoom.isVideoMonitoring() && receiverAudioSurveilledRoom.isVideoSurveilled();
+							const playerCanSeeReceiver = player.canSee() && monitoringRoomCanSeeSurveilledRoom && !receiverPlayer.isHidden();
+							const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledReceiverDialogNotification(receiverRoomDisplayName, dialog, receiverPlayer, receiverItem.name, player, receiverPlayer.name === player.name, playerCanSeeReceiver);
+							this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						}
+					}
+					const receiverRoomDisplayName = receiverAudioSurveilledRoom.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring());
+					this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledReceiverDialogNotification(receiverRoomDisplayName, dialog, receiverPlayer, receiverItem.name));
+				}
+			}
+			// Now the dialog needs to be communicated to players with the `receiver` behavior attribute.
 			for (const player of receiverPlayer.location.occupants) {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (this.#playerShouldReceiveNotification(dialog, player, false)) {
-					const notification = this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, player, receiverItem.player.name === player.name, receiverItem.name);
+					const playerAndReceiverAreHidingTogether = receiverPlayer.isHidden() && player.isHidden() && receiverPlayer.hidingSpot === player.hidingSpot;
+					const playerCanSeeReceiver = player.canSee() && (!receiverPlayer.isHidden() || playerAndReceiverAreHidingTogether);
+					const notification = this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, receiverItem.name, player, receiverPlayer.name === player.name, playerCanSeeReceiver);
 					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
 				}
 			}
-			this.#narrateDialogAndSolveVoicePuzzles(receiverPlayer.location, dialog, this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, false, receiverItem.name));
+			this.#narrateDialogAndSolveVoicePuzzles(receiverPlayer.location, dialog, this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, receiverItem.name));
 		}
 	}
 }

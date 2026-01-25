@@ -392,6 +392,6 @@ export default class Game {
 	 * @returns {string} 
 	 */
 	static generateValidEntityName(name) {
-		return name.toUpperCase().replace(/[\'"“”`]/g, '').trim();
+		return name?.toUpperCase().replace(/[\'"“”`]/g, '').trim();
 	}
 }

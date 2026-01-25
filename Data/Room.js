@@ -272,6 +272,6 @@ export default class Room extends GameEntity {
      * @param {string} name - A string, preferably the name of a room.
      */
     static generateValidId(name) {
-        return name.toLowerCase().replace(/[+=/<>\[\]!@#$%^&*()'":;,?`~\\|{}]/g, '').trim().replace(/ /g, '-');
+        return name?.toLowerCase().replace(/[+=/<>\[\]!@#$%^&*()'":;,?`~\\|{}]/g, '').trim().replace(/ /g, '-');
     }
 }

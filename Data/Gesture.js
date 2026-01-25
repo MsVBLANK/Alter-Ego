@@ -98,6 +98,6 @@ export default class Gesture extends GameEntity {
      * @param {string} id 
      */
     static generateValidId(id) {
-        return id.toLowerCase().trim();
+        return id?.toLowerCase().trim();
     }
 }

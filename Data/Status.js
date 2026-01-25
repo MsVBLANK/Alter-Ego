@@ -222,7 +222,7 @@ export default class Status extends GameEntity {
      * @param {string} id 
      */
     static generateValidId(id) {
-        return id.toLowerCase().trim();
+        return id?.toLowerCase().trim();
     }
 
     /**

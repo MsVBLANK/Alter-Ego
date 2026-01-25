@@ -373,29 +373,68 @@ describe('GameEntityLoader test', () => {
                 if (game.puzzles.length === 0) await game.entityLoader.loadPuzzles(false);
                 if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
                 if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.inventoryItems.length === 0) await game.entityLoader.loadInventoryItems(false);
             });
 
             test('incomplete room items', async () => {
                 sheets.__setMock(game.constants.roomItemSheetDataCells, [
                     [""],
+                    ["ORANGE"],
+                    ["ORANGE","","lobby"],
                 ]);
-                const recipeCount = await game.entityLoader.loadRoomItems(true, errors);
+                const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
-                console.log(errorStrings)
                 expect(errors).not.toEqual([]);
-                expect(recipeCount).toBe(0);
-                expect(errorStrings).toHaveLength(1);
+                expect(roomItemCount).toBe(0);
+                expect(errorStrings).toHaveLength(3);
+                expect(errorStrings).toContain("Error: Couldn't load room item on row 2. \"\" is not a prefab.");
+                expect(errorStrings).toContain("Error: Couldn't load room item on row 3. \"\" is not a room.");
+                expect(errorStrings).toContain("Error: Couldn't load room item on row 4. The container type wasn't specified.")
             });
 
-            /*test('invalid room items', async () => {
+            test('invalid room items', async () => {
                 sheets.__setMock(game.constants.roomItemSheetDataCells, [
+                    ["VINYL GLOVE BOX","","lobby","","Fixture: COFFEE TABLE"],
+                    ["VINYL GLOVE BOX","VINYL GLOVE BOX 1","lobby","","Fixture: COFFEE TABLE"],
+                    ["VINYL GLOVE BOX","VINYL GLOVE BOX 1","lobby","","Fixture: COFFEE TABLE"],
+                    ["KYRAS LAB COAT","KYRAS LAB COAT 1","kitchen","","Fixture: HAND WASH STATION 1","1"],
+                    ["SIGN IN SHEET","","lobby","","Fixture: COFFEE TABLE", "2"],
+                    ["ORANGE","","lobby","","Invalid: THE BACKROOMS"],
+                    ["ORANGE","","lobby","","Fixture: INVALID"],
+                    ["ORANGE","","lobby","","Item: INVALID"],
+                    ["ORANGE","","lobby","","Puzzle: INVALID"],
+                    ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/VINYL GLOVE BOX","65536"],
+                    ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/INVALID SLOT","1"],
+                    ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/","1"],
+                    /*["ORANGE","ORANGE 1","lobby","","Fixture: COFFEE TABLE","1"],
+                    ["ORANGE","ORANGE","lobby","","Item: ORANGE 1/ORANGE DIMENSION"],*/ //cannot find ORANGE 1 non-existent container
+                    /*["POT","POT 1","lobby","","Item: POT 2/POT","1"],
+                    ["POT","POT 2","lobby","","Item: POT 1/POT","1"],*/ //infinite loop
                 ]);
-                const recipeCount = await game.entityLoader.loadRoomItems(true, errors);
+                const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load room item on row 2. This item is capable of containing items, but no container identifier was given.",
+                    "Error: Couldn't load room item on row 3. Items capable of containing items must have a quantity of 1.",
+                    "Error: Couldn't load room item on row 4. Another room item with this container identifier already exists.",
+                    "Error: Couldn't load room item on row 5. Another item or inventory item with this container identifier already exists.",
+                    "Error: Couldn't load room item on row 6. Quantity is higher than 1, but its prefab on row 2 has no plural containing phrase.",
+                    "Error: Couldn't load room item on row 7. \"Invalid\" is not a valid container type.",
+                    "Error: Couldn't load room item on row 8. The container given is not a fixture.",
+                    "Error: Couldn't load room item on row 9. The container given is not a room item.",
+                    "Error: Couldn't load room item on row 10. The container given is not a puzzle.",
+                    "Error: Couldn't load room item on row 11. The item's container is over capacity.",
+                    "Error: Couldn't load room item on row 12. The item's container prefab on row 5 has no inventory slot \"INVALID SLOT\".",
+                    "Error: Couldn't load room item on row 13. The item's container is a room item, but a prefab inventory slot ID was not given.",
+                ];
+                console.log(errorStrings)
                 expect(errors).not.toEqual([]);
-                expect(recipeCount).toBe(0);
-                expect(errorStrings).toHaveLength(0);
-            });*/
+                expect(roomItemCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
         });
 
         describe('standard room item response', () => {

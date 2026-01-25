@@ -132,12 +132,17 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load room on row 2. No room display name was given.",
+                    "Error: Couldn't load room on row 3. The room ID exceeds 100 characters in length.",
+                    "Error: Couldn't load room on row 4. The icon URL must have a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.",
+                    "Error: Couldn't load room on row 5. Another room with the same ID already exists.",
+                ];
                 expect(roomCount).toBe(0);
-                expect(errorStrings).toHaveLength(4);
-                expect(errorStrings).toContain("Error: Couldn't load room on row 2. No room display name was given.");
-                expect(errorStrings).toContain("Error: Couldn't load room on row 3. The room ID exceeds 100 characters in length.");
-                expect(errorStrings).toContain("Error: Couldn't load room on row 4. The icon URL must have a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.");
-                expect(errorStrings).toContain("Error: Couldn't load room on row 5. Another room with the same ID already exists.");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
 
             test('exit error messages', async () => {
@@ -155,17 +160,22 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load exit on row 2. No exit name was given.",
+                    "Error: Couldn't load exit on row 3. The X-coordinate given is not an integer.",
+                    "Error: Couldn't load exit on row 4. The Y-coordinate given is not an integer.",
+                    "Error: Couldn't load exit on row 5. The Z-coordinate given is not an integer.",
+                    "Error: Couldn't load exit on row 6. No destination was given.",
+                    "Error: Couldn't load exit on row 7. The destination given is not a room.",
+                    "Error: Couldn't load exit on row 8. No linked exit was given.",
+                    "Error: Couldn't load exit on row 9. Room \"Room 9\" does not have an exit that links back to it.",
+                    "Error: Couldn't load exit on row 11. The room already has an exit named \"DOOR Z\".",
+                ];
                 expect(roomCount).toBe(0);
-                expect(errorStrings).toHaveLength(9);
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 2. No exit name was given.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 3. The X-coordinate given is not an integer.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 4. The Y-coordinate given is not an integer.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 5. The Z-coordinate given is not an integer.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 6. No destination was given.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 7. The destination given is not a room.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 8. No linked exit was given.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 9. Room \"Room 9\" does not have an exit that links back to it.");
-                expect(errorStrings).toContain("Error: Couldn't load exit on row 11. The room already has an exit named \"DOOR Z\".");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
         });
 
@@ -227,14 +237,19 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load fixture on row 2. No fixture name was given.",
+                    "Error: Couldn't load fixture on row 3. The location given is not a room.",
+                    "Error: Couldn't load fixture on row 5. The child puzzle given is not a puzzle.",
+                    "Error: Couldn't load fixture on row 6. The child puzzle on row 8 has no parent fixture.",
+                    "Error: Couldn't load fixture on row 7. The child puzzle on row 9 has a different parent fixture.",
+                    "Error: Couldn't load fixture on row 8. The hiding spot capacity given is not a number.",
+                ];
                 expect(fixtureCount).toBe(0);
-                expect(errorStrings).toHaveLength(6);
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 2. No fixture name was given.");
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 3. The location given is not a room.");
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 5. The child puzzle given is not a puzzle.");
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 6. The child puzzle on row 8 has no parent fixture.");
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 7. The child puzzle on row 9 has a different parent fixture.");
-                expect(errorStrings).toContain("Error: Couldn't load fixture on row 8. The hiding spot capacity given is not a number.");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             }, 10000);
         });
 
@@ -262,15 +277,20 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load prefab on row 2. No prefab ID was given.",
+                    "Error: Couldn't load prefab on row 3. No prefab name was given.",
+                    "Error: Couldn't load prefab on row 4. Another prefab with this ID already exists.",
+                    "Error: Couldn't load prefab on row 5. No single containing phrase was given.",
+                    "Error: Couldn't load prefab on row 6. The size given is not a number.",
+                    "Error: Couldn't load prefab on row 7. The weight given is not a number.",
+                ];
                 expect(errors).not.toEqual([]);
                 expect(prefabCount).toBe(0);
-                expect(errorStrings).toHaveLength(6);
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 2. No prefab ID was given.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 3. No prefab name was given.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 4. Another prefab with this ID already exists.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 5. No single containing phrase was given.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 6. The size given is not a number.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 7. The weight given is not a number.");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
 
             test('invalid prefabs', async () => {
@@ -285,16 +305,21 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load prefab on row 2. AAA has inventory slots, but no preposition was given.",
+                    "Error: Couldn't load prefab on row 3. \"000\" in turns into is not a prefab.",
+                    "Error: Couldn't load prefab on row 4. No name was given for inventory slot 1.",
+                    "Error: Couldn't load prefab on row 5. The capacity given for inventory slot \"DUMMY SLOT\" is not a number.",
+                    "Error: Couldn't load prefab on row 6. \"invalid\" in effects is not a status effect.",
+                    "Error: Couldn't load prefab on row 7. \"invalid\" in cures is not a status effect.",
+                    "Error: Couldn't load prefab on row 8. The prefab already has an inventory slot with the ID \"DUMMY SLOT\".",
+                ];
                 expect(errors).not.toEqual([]);
                 expect(prefabCount).toBe(0);
-                expect(errorStrings).toHaveLength(7);
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 2. AAA has inventory slots, but no preposition was given.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 3. \"000\" in turns into is not a prefab.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 4. No name was given for inventory slot 1.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 5. The capacity given for inventory slot \"DUMMY SLOT\" is not a number.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 6. \"invalid\" in effects is not a status effect.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 7. \"invalid\" in cures is not a status effect.");
-                expect(errorStrings).toContain("Error: Couldn't load prefab on row 8. The prefab already has an inventory slot with the ID \"DUMMY SLOT\".");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
         });
 
@@ -321,10 +346,13 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = ["Error: Couldn't load recipe on row 2. No ingredients were given."];
                 expect(errors).not.toEqual([]);
                 expect(recipeCount).toBe(0);
-                expect(errorStrings).toHaveLength(1);
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 2. No ingredients were given.");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
 
             test('invalid recipes', async () => {
@@ -340,17 +368,22 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load recipe on row 2. \"INVALID\" in ingredients is not a prefab.",
+                    "Error: Couldn't load recipe on row 3. Recipes with more than 2 ingredients must require a fixture tag.",
+                    "Error: Couldn't load recipe on row 4. Recipes with more than 2 products must require a fixture tag.",
+                    "Error: Couldn't load recipe on row 5. Recipes without a fixture tag cannot have a duration.",
+                    "Error: Couldn't load recipe on row 6. An invalid duration was given.",
+                    "Error: Couldn't load recipe on row 7. \"INVALID\" in products is not a prefab.",
+                    "Error: Couldn't load recipe on row 8. Recipes with a fixture tag cannot be uncraftable.",
+                    "Error: Couldn't load recipe on row 9. Recipes with more than one product cannot be uncraftable.",
+                ];
                 expect(errors).not.toEqual([]);
                 expect(recipeCount).toBe(0);
-                expect(errorStrings).toHaveLength(8);
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 2. \"INVALID\" in ingredients is not a prefab.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 3. Recipes with more than 2 ingredients must require a fixture tag.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 4. Recipes with more than 2 products must require a fixture tag.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 5. Recipes without a fixture tag cannot have a duration.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 6. An invalid duration was given.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 7. \"INVALID\" in products is not a prefab.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 8. Recipes with a fixture tag cannot be uncraftable.");
-                expect(errorStrings).toContain("Error: Couldn't load recipe on row 9. Recipes with more than one product cannot be uncraftable.");
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
         });
 
@@ -384,12 +417,17 @@ describe('GameEntityLoader test', () => {
                 ]);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load room item on row 2. \"\" is not a prefab.",
+                    "Error: Couldn't load room item on row 3. \"\" is not a room.",
+                    "Error: Couldn't load room item on row 4. The container type wasn't specified.",
+                ];
                 expect(errors).not.toEqual([]);
                 expect(roomItemCount).toBe(0);
-                expect(errorStrings).toHaveLength(3);
-                expect(errorStrings).toContain("Error: Couldn't load room item on row 2. \"\" is not a prefab.");
-                expect(errorStrings).toContain("Error: Couldn't load room item on row 3. \"\" is not a room.");
-                expect(errorStrings).toContain("Error: Couldn't load room item on row 4. The container type wasn't specified.")
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
             });
 
             test('invalid room items', async () => {
@@ -427,7 +465,6 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load room item on row 12. The item's container prefab on row 5 has no inventory slot \"INVALID SLOT\".",
                     "Error: Couldn't load room item on row 13. The item's container is a room item, but a prefab inventory slot ID was not given.",
                 ];
-                console.log(errorStrings)
                 expect(errors).not.toEqual([]);
                 expect(roomItemCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);

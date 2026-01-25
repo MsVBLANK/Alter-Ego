@@ -105,6 +105,12 @@ export default class Dialog extends GameConstruct {
 	 */
 	neighboringRooms;
 	/**
+	 * A collection of rooms with at least one player that has the `receiver` behavior attribute. The key of each entry is the room's ID.
+	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
+	 * @type {Collection<string, Room>}
+	 */
+	receiverRooms;
+	/**
 	 * Whether or not the location has the `audio surveilled` tag.
 	 * If this is an OOC message, this is false.
 	 * @type {boolean}
@@ -124,8 +130,14 @@ export default class Dialog extends GameConstruct {
 	 */
 	neighboringAudioSurveilledRooms;
 	/**
+	 * A collection of rooms with the `audio surveilled` tag that also have at least one player that has the `receiver` behavior attribute.
+	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
+	 * @type {Collection<string, Room>}
+	 */
+	receiverAudioSurveilledRooms;
+	/**
 	 * A collection of occupied rooms with the `audio monitoring` tag.
-	 * If the location or its neighboring rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
+	 * If the location, its neighboring rooms, or the receiver rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
 	 * @type {Collection<string, Room>}
 	 */
 	audioMonitoringRooms;
@@ -181,9 +193,11 @@ export default class Dialog extends GameConstruct {
 		this.isOOCMessage = message.cleanContent.startsWith('(');
 		this.isShouted = false;
 		this.neighboringRooms = new Collection();
+		this.receiverRooms = new Collection();
 		this.locationIsAudioSurveilled = false;
 		this.locationIsVideoSurveilled = false;
 		this.neighboringAudioSurveilledRooms = new Collection();
+		this.receiverAudioSurveilledRooms = new Collection();
 		this.audioMonitoringRooms = new Collection();
 		this.receivers = new Collection();
 		this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
@@ -204,21 +218,27 @@ export default class Dialog extends GameConstruct {
 					}
 				}
 			}
-			this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
-			this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
-			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0)
-				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id));
 			if (this.speaker.hasBehaviorAttribute("sender")) {
 				for (const livingPlayer of game.livingPlayersCollection.values()) {
-					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name) {
+					const receiverStatusEffects = livingPlayer.getBehaviorAttributeStatusEffects("receiver").map(status => status.id);
+					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name && !this.receiverRooms.has(livingPlayer.location.id)) {
 						for (const equipmentSlot of livingPlayer.inventoryCollection.values()) {
-							if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippedCommands.join(',').toLowerCase().includes('receiver')) {
-								this.receivers.set(livingPlayer.name, equipmentSlot.equippedItem);
+							for (const receiverStatusEffect of receiverStatusEffects) {
+								if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippedCommands.join(',').toLowerCase().includes(`inflict player ${receiverStatusEffect}`)) {
+									this.receivers.set(livingPlayer.name, equipmentSlot.equippedItem);
+									this.receiverRooms.set(livingPlayer.location.id, livingPlayer.location);
+									if (livingPlayer.location.isAudioSurveilled()) this.receiverAudioSurveilledRooms.set(livingPlayer.location.id, livingPlayer.location);
+									break;
+								}
 							}
 						}
 					}
 				}
 			}
+			this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
+			this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
+			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0)
+				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
 		}
 	}
 

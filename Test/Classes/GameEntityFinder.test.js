@@ -151,13 +151,13 @@ describe("GameEntityFinder test", () => {
 
     describe("getRoomItem test", () => {
         test("Get valid item", () => {
-            let foundItem1 = game.entityFinder.getRoomItem("PEN", "lobby", "RECEPTION DESK");
+            let foundItem1 = game.entityFinder.getRoomItem("PEN", "lobby", "Fixture", "RECEPTION DESK");
             expect(foundItem1).toBeInstanceOf(RoomItem);
             expect(foundItem1.prefab.id).toBe("PEN");
             expect(foundItem1.identifier).toBe("");
             expect(foundItem1.location.id).toBe("lobby");
             expect(foundItem1.containerName).toBe("RECEPTION DESK");
-            let foundItem2 = game.entityFinder.getRoomItem("ANZUS BREECHES", "suite-12", "CLOSET");
+            let foundItem2 = game.entityFinder.getRoomItem("ANZUS BREECHES", "suite-12", "Fixture", "CLOSET");
             expect(foundItem2).toBeInstanceOf(RoomItem);
             expect(foundItem2.prefab.id).toBe("ANZUS BREECHES");
             expect(foundItem2.identifier).toBe("ANZUS BREECHES 2");
@@ -181,7 +181,7 @@ describe("GameEntityFinder test", () => {
             expect(foundItem1).toBeUndefined();
             let foundItem2 = game.entityFinder.getRoomItem("INVALID");
             expect(foundItem2).toBeUndefined();
-            let foundItem3 = game.entityFinder.getRoomItem("INVALID", "lobby", "RECEPTION DESK");
+            let foundItem3 = game.entityFinder.getRoomItem("INVALID", "lobby", "Fixture", "RECEPTION DESK");
             expect(foundItem3).toBeUndefined();
             let foundItem4 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "narnia");
             expect(foundItem4).toBeUndefined();
@@ -201,7 +201,7 @@ describe("GameEntityFinder test", () => {
             let foundItem1 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "");
             expect(foundItem1).toBeInstanceOf(RoomItem);
             expect(foundItem1.prefab.id).toBe("COLD SERVING OF MEATBALLS");
-            let foundItem2 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "", "");
+            let foundItem2 = game.entityFinder.getRoomItem("COLD SERVING OF MEATBALLS", "", "", "");
             expect(foundItem2).toBeInstanceOf(RoomItem);
             expect(foundItem2.prefab.id).toBe("COLD SERVING OF MEATBALLS");
         });

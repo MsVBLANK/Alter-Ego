@@ -366,6 +366,38 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadRoomItems test', () => {
+        describe('erroneous room item response', () => {
+            beforeEach(async () => {
+                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
+                if (game.puzzles.length === 0) await game.entityLoader.loadPuzzles(false);
+                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+            });
+
+            test('incomplete room items', async () => {
+                sheets.__setMock(game.constants.roomItemSheetDataCells, [
+                    [""],
+                ]);
+                const recipeCount = await game.entityLoader.loadRoomItems(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                console.log(errorStrings)
+                expect(errors).not.toEqual([]);
+                expect(recipeCount).toBe(0);
+                expect(errorStrings).toHaveLength(1);
+            });
+
+            /*test('invalid room items', async () => {
+                sheets.__setMock(game.constants.roomItemSheetDataCells, [
+                ]);
+                const recipeCount = await game.entityLoader.loadRoomItems(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                expect(errors).not.toEqual([]);
+                expect(recipeCount).toBe(0);
+                expect(errorStrings).toHaveLength(0);
+            });*/
+        });
+
         describe('standard room item response', () => {
             test('errorChecking true', async () => {
                 if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);

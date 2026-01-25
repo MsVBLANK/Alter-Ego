@@ -241,7 +241,7 @@ export function createPlayerMessage(player, content, channel = player.location.c
 	return createMockMessage({
 		content: content,
 		member: player.member,
-		author: player.member.user,
+		author: player.member?.user,
 		channel: channel
 	});
 }

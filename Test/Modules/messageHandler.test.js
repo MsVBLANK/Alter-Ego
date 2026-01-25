@@ -4,7 +4,7 @@ import AnnounceAction from "../../Data/Actions/AnnounceAction.js";
 import SayAction from "../../Data/Actions/SayAction.js";
 import SolveAction from "../../Data/Actions/SolveAction.js";
 import * as messageHandler from "../../Modules/messageHandler.js";
-import { instantiateInventoryItem } from "../../Modules/itemManager.js";
+import { instantiateInventoryItem, destroyInventoryItem } from "../../Modules/itemManager.js";
 
 /**
  * @import HidingSpot from "../../Data/HidingSpot.js"
@@ -98,7 +98,7 @@ describe('messageHandler test', () => {
      */
     let qm;
     /**
-     * Tags: video surveilled, audio surveilled, audio monitoring
+     * Tags: audio surveilled, audio monitoring
      * 
      * Audio Monitored By: lobby, command-center
      * 
@@ -4103,6 +4103,363 @@ describe('messageHandler test', () => {
 
                             nero.voiceString = nero.originalVoiceString;
                         });
+                    });
+                });
+            });
+
+            describe('dialog is communicated to receivers', () => {
+                /** @type {Room[]} */
+                let receiverRooms;
+                /** @type {Room[]} */
+                let audioVideoMonitoringRooms;
+                /** @type {Room[]} */
+                let onlyAudioMonitoringRooms;
+                /** @type {HidingSpot} */
+                let desk;
+
+                beforeAll(() => {
+                    lobby.tags.delete('video monitoring');
+                    receiverRooms = [breakRoom, gmOffice];
+                    audioVideoMonitoringRooms = [commandCenter];
+                    onlyAudioMonitoringRooms = [lobby, breakRoom];
+                    desk = game.entityFinder.getFixture("DESK", "general-managers-office").hidingSpot;
+                    desk.removePlayer(qm);
+                    qm.cure(hidden);
+                    luna.location.removePlayer(luna);
+                    gmOffice.addPlayer(luna);
+                });
+
+                afterAll(() => {
+                    lobby.tags.add('video monitoring');
+                    desk.addPlayer(qm);
+                    qm.inflict(hidden);
+                    gmOffice.removePlayer(luna);
+                    lobby.addPlayer(luna);
+                });
+
+                test('dialog is narrated in rooms with receivers and communicated to spectate channels', async () => {
+                    await sendPlayerMessage(nero, "Hello.");
+                    expect(performSaySpy).toHaveBeenCalledTimes(1);
+                    expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                    for (const occupant of nero.location.occupants) {
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                        const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                        expect(spectateMessage).toBeWebhookMessage();
+                        expect(spectateMessage).toBeMessageWith("Nero", nero.member.avatarURL(), "Hello.");
+                    }
+                    for (const receiverRoom of receiverRooms) {
+                        if (receiverRoom.id === nero.location.id) continue;
+                        expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of receiverRoom.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Nero")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                                expect(spectateMessage.content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(spectateMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                            }
+                        }
+                    }
+                    for (const audioVideoMonitoringRoom of audioVideoMonitoringRooms) {
+                        expect(audioVideoMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = audioVideoMonitoringRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('`[break-room]` Someone with a confident voice says "Hello."');
+                        for (const occupant of audioVideoMonitoringRoom.occupants) {
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            if (occupant.knows("Nero")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('`[break-room]` Nero says "Hello."');
+                                expect(spectateMessage.content).toBe('`[break-room]` Nero says "Hello."');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                expect(spectateMessage.content).toBe('`[break-room]` Someone with a confident voice says "Hello."');
+                            }
+                        }
+                    }
+                });
+
+                test('transmitted dialog is narrated in audio/video monitoring rooms and communicated to spectate channels', async () => {
+                    const walkieTalkie = game.entityFinder.getPrefab("WALKIE TALKIE");
+                    const receiverItem = instantiateInventoryItem(walkieTalkie, luna, "FACE", null, "", 1, new Map());
+                    luna.inflict(receiver);
+
+                    await sendPlayerMessage(luna, "Hello.");
+                    expect(performSaySpy).toHaveBeenCalledTimes(1);
+                    expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(2);
+                    for (const occupant of luna.location.occupants) {
+                        if (occupant.isNPC) continue;
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                        const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                        expect(spectateMessage).toBeWebhookMessage();
+                        expect(spectateMessage).toBeMessageWith("Luna", luna.member.avatarURL(), "Hello.");
+                    }
+                    for (const receiverRoom of receiverRooms) {
+                        if (receiverRoom.id === luna.location.id) continue;
+                        expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('A gentle voice coming from Nero\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of receiverRoom.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Luna")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('Luna says "`Hello.`" through your WALKIE TALKIE.');
+                                expect(spectateMessage.content).toBe('Luna says "`Hello.`" through your WALKIE TALKIE.');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(spectateMessage.content).toBe('A gentle voice coming from Nero\'s WALKIE TALKIE says "`Hello.`"');
+                            }
+                        }
+                    }
+                    for (const audioVideoMonitoringRoom of audioVideoMonitoringRooms) {
+                        expect(audioVideoMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = audioVideoMonitoringRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('`[break-room]` A gentle voice coming from Nero\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of audioVideoMonitoringRoom.occupants) {
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Luna") || occupant.hasBehaviorAttribute("hear room"))
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                            else expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            if (occupant.knows("Luna")) {
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('`[break-room]` Luna says "`Hello.`" through a receiver.');
+                                expect(spectateMessage.content).toBe('`[break-room]` Luna says "`Hello.`" through a receiver.');
+                            }
+                            else
+                                expect(spectateMessage.content).toBe('`[break-room]` A gentle voice coming from a receiver says "`Hello.`"');
+                        }
+                    }
+                    
+                    destroyInventoryItem(receiverItem, 1, true);
+                    luna.cure(receiver);
+                });
+
+                test('dialog is only narrated in room once when occupants include multiple receivers', async () => {
+                    const walkieTalkie = game.entityFinder.getPrefab("WALKIE TALKIE");
+                    const receiverItem = instantiateInventoryItem(walkieTalkie, vivian, "FACE", null, "", 1, new Map());
+                    vivian.inflict(receiver);
+
+                    await sendPlayerMessage(nero, "Hello.");
+                    expect(performSaySpy).toHaveBeenCalledTimes(1);
+                    expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                    for (const occupant of nero.location.occupants) {
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                        const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                        expect(spectateMessage).toBeWebhookMessage();
+                        expect(spectateMessage).toBeMessageWith("Nero", nero.member.avatarURL(), "Hello.");
+                    }
+                    for (const receiverRoom of receiverRooms) {
+                        if (receiverRoom.id === nero.location.id) continue;
+                        expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('A confident voice coming from Vivian\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of receiverRoom.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Nero")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('Nero says "`Hello.`" through your WALKIE TALKIE.');
+                                expect(spectateMessage.content).toBe('Nero says "`Hello.`" through your WALKIE TALKIE.');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(spectateMessage.content).toBe('A confident voice coming from Vivian\'s WALKIE TALKIE says "`Hello.`"');
+                            }
+                        }
+                    }
+
+                    destroyInventoryItem(receiverItem, 1, true);
+                    vivian.cure(receiver);
+                });
+
+                test('display name of speaker does not match his name', async () => {
+                    nero.displayName = 'an individual wearing a GAS MASK';
+
+                    await sendPlayerMessage(nero, "Hello.");
+                    expect(performSaySpy).toHaveBeenCalledTimes(1);
+                    expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                    for (const occupant of nero.location.occupants) {
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                        const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                        expect(spectateMessage).toBeWebhookMessage();
+                        expect(spectateMessage).toBeMessageWith("An individual wearing a GAS MASK (Nero)", nero.member.avatarURL(), "Hello.");
+                    }
+                    for (const receiverRoom of receiverRooms) {
+                        if (receiverRoom.id === nero.location.id) continue;
+                        expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of receiverRoom.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Nero")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                                expect(spectateMessage.content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(spectateMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                            }
+                        }
+                    }
+
+                    nero.displayName = 'Nero';
+                });
+
+                test('speaker is hidden', async () => {
+                    const hidingSpot = game.entityFinder.getFixture("LUNCH TABLES", "break-room").hidingSpot;
+                    hidingSpot.addPlayer(nero);
+                    nero.inflict(hidden);
+
+                    await sendPlayerMessage(nero, "Hello.");
+                    expect(performSaySpy).toHaveBeenCalledTimes(1);
+                    expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                    for (const occupant of nero.location.occupants) {
+                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                        const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                        expect(spectateMessage).toBeWebhookMessage();
+                        expect(spectateMessage).toBeMessageWith("Nero", nero.member.avatarURL(), "Hello.");
+                    }
+                    for (const receiverRoom of receiverRooms) {
+                        if (receiverRoom.id === nero.location.id) continue;
+                        expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                        const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                        expect(roomNarrationMessage).not.toBeWebhookMessage();
+                        expect(roomNarrationMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                        for (const occupant of receiverRoom.occupants) {
+                            if (occupant.isNPC) continue;
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).not.toBeWebhookMessage();
+                            if (occupant.knows("Nero")) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                expect(occupant.notificationChannel.messages.cache.first().content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                                expect(spectateMessage.content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                            }
+                            else {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(spectateMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                            }
+                        }
+                    }
+
+                    hidingSpot.removePlayer(nero);
+                    nero.cure(hidden);
+                });
+                
+                describe('player receives notification', async () => {
+                    test('nero is mimicking vivian', async () => {
+                        nero.voiceString = "vivian";
+
+                        await sendPlayerMessage(nero, "Hello.");
+                        expect(performSaySpy).toHaveBeenCalledTimes(1);
+                        expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                        for (const occupant of nero.location.occupants) {
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Nero", nero.member.avatarURL(), "Hello.");
+                        }
+                        for (const receiverRoom of receiverRooms) {
+                            if (receiverRoom.id === nero.location.id) continue;
+                            expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                            const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                            expect(roomNarrationMessage).not.toBeWebhookMessage();
+                            expect(roomNarrationMessage.content).toBe('A bitter voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                            for (const occupant of receiverRoom.occupants) {
+                                if (occupant.isNPC) continue;
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                                expect(spectateMessage).not.toBeWebhookMessage();
+                                if (occupant.name === "Vivian") {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                    expect(occupant.notificationChannel.messages.cache.first().content).toBe('Someone speaking through ???\'s WALKIE TALKIE says "`Hello.`" in your voice!');
+                                    expect(spectateMessage.content).toBe('Someone speaking through ???\'s WALKIE TALKIE says "`Hello.`" in your voice!');
+                                }
+                                else {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                    expect(spectateMessage.content).toBe('A bitter voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                                }
+                            }
+                        }
+
+                        nero.voiceString = nero.originalVoiceString;
+                    });
+
+                    test('luna has `hear room` behavior attribute', async () => {
+                        luna.inflict(concealed);
+
+                        await sendPlayerMessage(nero, "Hello.");
+                        expect(performSaySpy).toHaveBeenCalledTimes(1);
+                        expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                        for (const occupant of nero.location.occupants) {
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Nero", nero.member.avatarURL(), "Hello.");
+                        }
+                        for (const receiverRoom of receiverRooms) {
+                            if (receiverRoom.id === nero.location.id) continue;
+                            expect(receiverRoom.channel.messages.cache).toHaveSize(1);
+                            const roomNarrationMessage = receiverRoom.channel.messages.cache.first();
+                            expect(roomNarrationMessage).not.toBeWebhookMessage();
+                            expect(roomNarrationMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                            for (const occupant of receiverRoom.occupants) {
+                                if (occupant.isNPC) continue;
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                                expect(spectateMessage).not.toBeWebhookMessage();
+                                if (occupant.name === "Luna") {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                    expect(occupant.notificationChannel.messages.cache.first().content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                                    expect(spectateMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                                }
+                                else if (occupant.knows("Nero")) {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                    expect(occupant.notificationChannel.messages.cache.first().content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                                    expect(spectateMessage.content).toBe('Nero says "`Hello.`" through ???\'s WALKIE TALKIE.');
+                                }
+                                else {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                    expect(spectateMessage.content).toBe('A confident voice coming from ???\'s WALKIE TALKIE says "`Hello.`"');
+                                }
+                            }
+                        }
+
+                        luna.cure(concealed);
                     });
                 });
             });

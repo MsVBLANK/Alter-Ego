@@ -7,11 +7,9 @@ import { addItem as addItemToList, removeItem as removeItemFromList } from "../M
 
 /** @import Fixture from './Fixture.js' */
 /** @import Game from './Game.js' */
-/** @import InventoryItem from './InventoryItem.js' */
 /** @import ItemInstance from './ItemInstance.js' */
 /** @import Player from './Player.js' */
 /** @import Room from './Room.js' */
-/** @import RoomItem from './RoomItem.js' */
 
 /**
  * @class Puzzle
@@ -231,6 +229,14 @@ export default class Puzzle extends ItemContainer {
      */
     setInaccessible() {
         this.accessible = false;
+    }
+
+    /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
     }
 
     /**

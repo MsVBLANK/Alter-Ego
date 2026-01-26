@@ -170,6 +170,14 @@ export default class Fixture extends ItemContainer {
     }
 
     /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Fixture', this.name);
+    }
+
+    /**
      * Makes the fixture start processing recipes.
      * @param {Player} [player] - The player who activated the fixture, if applicable.
      */

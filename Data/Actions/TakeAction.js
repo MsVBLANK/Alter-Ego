@@ -33,14 +33,13 @@ export default class TakeAction extends Action {
 		this.player.take(item, handEquipmentSlot, container, inventorySlot);
 		// Container is a weight puzzle.
 		if (container instanceof Puzzle && container.type === "weight") {
-			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);
-			const weight = containerItems.reduce((total, item) => total + item.quantity * item.weight, 0);
+			const weight = container.getContainedItemsWeight();
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, String(weight), "take", "");
 		}
 		// Container is a container puzzle.
 		else if (container instanceof Puzzle && container.type === "container") {
-			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);
+			const containerItems = container.getContainedItems().filter(item => !isNaN(item.quantity));
 			const containerItemsString = getSortedItemsString(containerItems);
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "take", "");

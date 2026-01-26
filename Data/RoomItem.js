@@ -186,6 +186,14 @@ export default class RoomItem extends ItemInstance {
         this.accessible = false;
     }
 
+    /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'RoomItem', this.identifier);
+    }
+
     /** @returns {string} */
     descriptionCell() {
         return this.getGame().constants.roomItemSheetDescriptionColumn + this.row;

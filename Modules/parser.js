@@ -131,7 +131,7 @@ export function parseDescriptionWithErrors(description, container, player) {
                         errors.push('"' + varAttribute.replace(/container/g, "this") + '" is undefined.');
                     variableStrings.push({ element: variables[i], attribute: String(variableText) });
                     if (typeof variableStrings[variableStrings.length - 1].attribute === 'string' && variableStrings[variableStrings.length - 1].attribute.includes('<desc>'))
-                        variableStrings[variableStrings.length - 1].attribute = this.parseDescription(variableStrings[variableStrings.length - 1].attribute, this, player);
+                        variableStrings[variableStrings.length - 1].attribute = parseDescription(variableStrings[variableStrings.length - 1].attribute, this, player);
                 } catch (err) {
                     errors.push(err.toString());
                 }

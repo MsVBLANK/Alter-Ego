@@ -154,10 +154,14 @@ export default class ItemInstance extends ItemContainer {
 	 * @param {number} weight - The amount of weight to add.
 	 */
 	addWeight(weight) {
+		/** @type {Set<number>} */
+		const containerChain = new Set();
 		/** @type {ItemContainer} */
 		let container = this;
 		while (container instanceof ItemInstance) {
+			if (containerChain.has(container.row)) break;
 			container.weight += weight;
+			containerChain.add(container.row);
 			container = container.container;
 		}
 	}
@@ -169,10 +173,14 @@ export default class ItemInstance extends ItemContainer {
 	 * @param {number} weight - The amount of weight to subtract.
 	 */
 	subtractWeight(weight) {
+		/** @type {Set<number>} */
+		const containerChain = new Set();
 		/** @type {ItemContainer} */
 		let container = this;
 		while (container instanceof ItemInstance) {
+			if (containerChain.has(container.row)) break;
 			container.weight -= weight;
+			containerChain.add(container.row);
 			container = container.container;
 		}
 	}

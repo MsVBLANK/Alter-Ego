@@ -42,7 +42,7 @@ export async function execute(game, message, command, args) {
     }
     if (room === undefined) return game.communicationHandler.reply(message, `Couldn't find room "${input}".`);
 
-    const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|webp|avif))(?:\?[^#\s]*)?$/;
+    const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(?:\?[^#\s]*)?$/;
     input = input.replace(iconURLSyntax, '$1');
     if (input.length === 0) {
         if (message.attachments.size !== 0)

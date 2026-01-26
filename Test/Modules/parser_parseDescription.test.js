@@ -453,4 +453,160 @@ describe('test parseDescription', () => {
 			expect(result).not.toBe(expected);
 		});
 	});
+
+	describe('item lists are generated automatically', () => {
+		test('empty item list', () => {
+			const container = game.entityFinder.getFixture('FLOOR', 'lobby');
+			const expected = `The floor is covered in beautifully polished white linoleum tiles.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('only a fixture', () => {
+			const container = game.entityFinder.getFixture('COUCH', 'break-room');
+			const expected = `It's a large, black and white couch that can hold up to five people, if they all cram in there. It's nice and comfy, and you sink right into it. Underneath the cushions, you find a CRYPTEX LOCK.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item quantity 1', () => {
+			const container = game.entityFinder.getFixture('DRAWER 2', 'kitchen');
+			const expected = `You ruffle through the stainless steel drawer. In it, you find a CUTLERY TRAY.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item quantity 30', () => {
+			const container = game.entityFinder.getFixture('BEEF PALLET', 'freezer');
+			const expected = `On the pallet is a number of boxes of various types of raw beef. Only the boxes on top are open. In them, you find 30 frozen STEAKS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item infinite quantity', () => {
+			const container = game.entityFinder.getFixture('PANTRY', 'canteen');
+			const expected = `It's a wide wooden pantry. You open it up and look inside. In it, you find lots of CANS OF TOMATO SOUP.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item and flavor text', () => {
+			const container = game.entityFinder.getFixture('COFFEE TABLE', 'lobby');
+			const expected = `It's a wooden coffee table with a glass panel on its surface. On it is a MAGAZINE and a small potted flower.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+		
+		test('one item and a fixture', () => {
+			const container = game.entityFinder.getFixture('NIGHTSTAND', 'suite-1');
+			const expected = `It's a black nightstand made of a sturdy wood. Feels like teak, or perhaps mahogany. It has a TOP DRAWER and a BOTTOM DRAWER. On top of it is a PHONE and a small, dim lamp that would really only be useful for reading a book at night.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item and two fixtures', () => {
+			const container = game.entityFinder.getFixture('DESK', 'warehouse-office');
+			const expected = `It's a sturdy wooden desk which is fairly large and has two segments that form a corner. On it, you find a RADIO, a TYPEWRITER, and a TELEPHONE. The desk has several DRAWERS underneath its surface. Behind the desk is an OFFICE CHAIR.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('two items single quantity', () => {
+			const container = game.entityFinder.getFixture('TABLE 1', 'dining-hall');
+			const expected = `This table is near the corner to the left of the PIANO. It's a small, circular table covered with a white table cloth that reaches the floor. It's surrounded by 4 chairs. On it, you find a SALT SHAKER and a PEPPER SHAKER.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('two items quantity 6', () => {
+			const container = game.entityFinder.getFixture('CUPBOARDS', 'break-room');
+			const expected = `The cupboards are made of white wood that doesn't really match the counter below. Ruffling through them, you find 6 MUGS and 6 K CUPS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('two items and a fixture', () => {
+			const container = game.entityFinder.getFixture('COFFEE TABLE', 'green-room');
+			const expected = `It's a brown, oval-shaped table in front of the SOFA. On top of it are a SCRIPT, a CLOWN NOSE JAR, and a TELEVISION.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('finite and infinite quantities', () => {
+			const container = game.entityFinder.getFixture('DRAWERS', 'warehouse-office');
+			const expected = `You look through the drawers. They mostly contain a bunch of files in Russian, which you can't read. However, the top drawer contains a MEDIUM KEY, a DOCUMENT, 7 PENS, and a stack of PAPER.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('multiple items with infinite quantities', () => {
+			const container = game.entityFinder.getFixture('FRUIT BASKET', 'kitchen');
+			const expected = `You examine the fruit basket. It's filled with an abundance of fresh fruit. Looking through it, you find APPLES, BANANAS, ORANGES, MANGOES, PINEAPPLES, and STRAWBERRIES.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('three items with conditional', () => {
+			const container = game.entityFinder.getFixture('BED', 'suite-14');
+			const expected = `It's a queen bed with perfectly white sheets and a thick, black comforter tucked neatly under the mattress. On it, you find a BILLIARD BALL, 2 PILLOWS, and a COMFORTER.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('three items with mixed singleContainingPhrases and pluralContainingPhrase', () => {
+			const container = game.entityFinder.getFixture('PROP TABLE', 'backstage');
+			const expected = `It's a long, wooden table designed to hold props for the actors to grab before their scenes. On it, you find a PROP PISTOL, 3 SQUIBS, and an AIRHORN.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('four items', () => {
+			const container = game.entityFinder.getFixture('PREP TABLE', 'canteen');
+			const expected = `You examine the prep table. It's just a stainless steel table for preparing dishes. It's mostly clear, but you do find a POT, a COOKIE SHEET, a FRYING PAN, and a BUTCHERS KNIFE on it.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('multiple empty item lists', () => {
+			const container = game.entityFinder.getRoomItem('KYRAS PANTS 2', 'suite-9');
+			const expected = `It's a pair of straight-leg, black dress pants. They have a button, but no zipper. It has two pockets on the front.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('one item in description with multiple item lists', () => {
+			const container = game.entityFinder.getRoomItem('RILEY SHORTS', 'dressing-room');
+			const expected = `It's a pair of beige, knee-length cargo shorts. It has six pockets altogether. In the right pocket, you find a RAT PLUSHIE.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('some filled item lists', () => {
+			const container = game.entityFinder.getRoomItem('KNIFE BLOCK', 'kitchen');
+			const expected = `It's a wooden knife block with several slots. It has one large slot, two medium slots, three small slots, and even a scissor slot. In the large slot is a LARGE KNIFE. In the scissor slot is a pair of SCISSORS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('all filled item lists', () => {
+			const container = game.entityFinder.getRoomItem('CLEANING CART', 'storage');
+			const expected = `It's a gray cleaning cart with three shelves, some racks, a trash can, and an extra shelf in the front. The wheels make it really easy to push around. On the bottom shelf are 2 rolls of TOILET PAPER. On the middle shelf are a roll of PAPER TOWELS and a bottle of BLEACH. On the top shelf are a BUCKET, a SPRAY BOTTLE, and a pair of VINYL GLOVES. Hanging from the racks are a BROOM and a DUSTPAN. On the front of the cart is a MOP BUCKET.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('player with one filled item list', () => {
+			const container = vivian;
+			const expected = `You examine Vivian. She's somewhat short, with a light skin tone. She has long, dark purple hair with straight bangs and an ahoge. Her hair is tied up in a ponytail. Her eyes are light purple. She has a seemingly permanent scowl, making her look a little intimidating, but her size makes her appear relatively harmless. She has a scrawny frame. She wears a BLUE BOW, a pair of GLASSES, a WHITE DRESS SHIRT, a BLACK SUIT JACKET, a BLACK TIE, a QUIVER, a pair of BLACK TROUSERS, and a pair of FLATS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('player with multiple filled item lists', () => {
+			const container = kyra;
+			const expected = `You examine Kyra. She's somewhat short with a pale skin tone. She has red eyes and long, brown hair tied back in an extremely long, low ponytail, with bangs swept to the right and two thick, wavy fringes on the sides that reach down to her chest. Her expression is relatively neutral, making it hard to read what's on her mind. She has a thin build. She wears a pair of GLASSES, a BLACK DRESS SHIRT, a RED TIE, a LAB COAT, a pair of BLACK DRESS PANTS, a pair of WHITE SOCKS, and a pair of FLATS. You see her carrying a mug of COFFEE.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+	});
 });

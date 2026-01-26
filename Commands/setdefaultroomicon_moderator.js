@@ -30,7 +30,7 @@ export function usage(settings) {
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
-    const iconURLSyntax = /(http(s?):\/\/.*?\\.(jpg|jpeg|png|gif|webp|avif))(\\?.*)?$/;
+    const iconURLSyntax = /(http(s?):\/\/.*?\\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
     let input = args.join(" ");
     if (input.length === 0) {
         if (message.attachments.size !== 0)

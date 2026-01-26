@@ -526,7 +526,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load room on row ${room.row}. The room ID exceeds 100 characters in length.`);
 		if (room.channel === null || room.channel === undefined)
 			return new Error(`Couldn't load room "${room.id}" on row ${room.row}. There is no corresponding channel on the server, and a channel to accommodate the room could not be automatically created.`);
-		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(?:\?[^#\s]*)?$/;
+		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
 		if (room.iconURL !== "" && !iconURLSyntax.test(room.iconURL))
 			return new Error(`Couldn't load room on row ${room.row}. The icon URL must have a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 		for (const exit of room.exitCollection.values()) {

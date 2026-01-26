@@ -259,7 +259,7 @@ function replaceFinderCallArguments(node) {
 	if (!node || typeof node !== 'object') return;
 	if (node.type === 'CallExpression') {
 		const args = node.arguments ? node.arguments : [];
-		const finderRegex = /find(Room(Item)s??|Fixtures?|Objects?|Prefabs?|Items?|Puzzles?|Events?|StatusEffects?|Player|LivingPlayers?|DeadPlayers?|InventoryItems?|Gestures?|Flags?)/;
+		const finderRegex = /find(Room(Item)?s?|Fixtures?|Objects?|Prefabs?|Recipes|Items?|Puzzles?|Events?|StatusEffects?|Player|LivingPlayers?|DeadPlayers?|InventoryItems?|Gestures?|Flags?)/;
 		if (finderRegex.test(node.callee.name)) {
 			if (!args || args.length === 0 || !(args[0].type === 'Identifier' && args[0].name === 'container')) {
 				node.arguments.splice(0, 0, { type: 'Identifier', name: 'container' });

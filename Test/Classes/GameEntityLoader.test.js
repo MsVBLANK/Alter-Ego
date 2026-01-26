@@ -444,10 +444,10 @@ describe('GameEntityLoader test', () => {
                     ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/VINYL GLOVE BOX","65536"],
                     ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/INVALID SLOT","1"],
                     ["ORANGE","","lobby","","Item: VINYL GLOVE BOX 1/","1"],
-                    /*["ORANGE","ORANGE 1","lobby","","Fixture: COFFEE TABLE","1"],
-                    ["ORANGE","ORANGE","lobby","","Item: ORANGE 1/ORANGE DIMENSION"],*/ //cannot find ORANGE 1 non-existent container
-                    /*["POT","POT 1","lobby","","Item: POT 2/POT","1"],
-                    ["POT","POT 2","lobby","","Item: POT 1/POT","1"],*/ //infinite loop
+                    ["ORANGE","ORANGE 1","lobby","","Fixture: COFFEE TABLE","1"],
+                    ["ORANGE","ORANGE","lobby","","Item: ORANGE 1/ORANGE DIMENSION"],
+                    ["POT","POT 1","lobby","","Item: POT 2/POT","1"],
+                    ["POT","POT 2","lobby","","Item: POT 1/POT","1"],
                 ]);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
@@ -464,6 +464,9 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load room item on row 11. The item's container is over capacity.",
                     "Error: Couldn't load room item on row 12. The item's container prefab on row 5 has no inventory slot \"INVALID SLOT\".",
                     "Error: Couldn't load room item on row 13. The item's container is a room item, but a prefab inventory slot ID was not given.",
+                    "Error: Couldn't load room item on row 15. The item's container is a room item, but the item container's prefab on row 292 has no inventory slots.",
+                    "Error: Couldn't load room item on row 16. The item's container chain contains itself, resulting in an infinite loop.",
+                    "Error: Couldn't load room item on row 17. The item's container chain contains itself, resulting in an infinite loop."
                 ];
                 expect(errors).not.toEqual([]);
                 expect(roomItemCount).toBe(0);

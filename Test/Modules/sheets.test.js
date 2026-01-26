@@ -83,7 +83,7 @@ describe('sheets module', () => {
             const response = await sheets.getSheetValues(game.constants.flagSheetDataCells, game.settings.spreadsheetID);
             expect(response.range).toBe(game.constants.flagSheetDataCells);
             expect(response.majorDimension).toBe('ROWS');
-            expect(response.values[0][0]).toBe('DAYTIME');
+            expect(response.values[0][0]).toBe('CHAPTER');
         });
     });
 });

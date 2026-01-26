@@ -73,15 +73,24 @@ export default class GameEntityFinder {
 	 * Gets a room item.
 	 * @param {string} identifier - The room item's identifier or prefab ID.
 	 * @param {string} [location] - The ID or displayName of the room the item is in. 
+	 * @param {string} [containerType] - The room item's container type.
 	 * @param {string} [containerName] - The room item's container name.
 	 * @returns The room item with the specified identifier, and location and container name if applicable. If no such item exists, returns undefined.
 	 */
-	getRoomItem(identifier, location, containerName) {
+	getRoomItem(identifier, location, containerType, containerName) {
 		if (!identifier) return;
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
 		if (identifier && location) selectedFilters.set(Room.generateValidId(location), matchers.entityLocationIdMatches);
+		if (identifier && containerType) {
+			containerType = Game.generateValidEntityName(containerType);
+			if (containerType === "FIXTURE" || containerType === "OBJECT") containerType = "Fixture";
+			else if (containerType === "ROOMITEM" || containerType === "ITEM") containerType = "RoomItem";
+			else if (containerType === "PUZZLE") containerType = "Puzzle";
+			else if (containerType === "INVENTORYITEM") containerType = "InventoryItem";
+			selectedFilters.set(containerType, matchers.itemContainerTypeMatches);
+		}
 		if (identifier && containerName) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNamePropertyMatches);
 		return this.game.roomItems.find(roomItem => roomItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(roomItem, key)));
 	}

@@ -215,6 +215,14 @@ export default class Room extends GameEntity {
     }
 
     /**
+     * Gets the exit with the given name.
+     * @param {string} name - The name of the exit to get.
+     */
+    getExit(name) {
+        return this.getGame().entityFinder.getExit(this, name);
+    }
+
+    /**
      * Returns the URL to use for the room in the room description display component.
      */
     getIconURL() {

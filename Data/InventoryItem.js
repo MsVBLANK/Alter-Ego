@@ -149,6 +149,14 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier);
+    }
+
+    /**
      * Executes the inventory item's equipped commands.
      */
     executeEquippedCommands() {

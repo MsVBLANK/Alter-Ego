@@ -104,4 +104,25 @@ export default class InventorySlot {
 			}
 		}
 	}
+
+	/**
+     * Gets all of the items this inventory slot contains.
+     */
+    getContainedItems() {
+        return this.items;
+    }
+
+	/**
+	 * Returns true if this inventory slot contains no items.
+	 */
+	containsNoItems() {
+		return this.getContainedItems().length === 0;
+	}
+
+	/**
+     * Gets the combined weight of all the items this inventory slot contains.
+     */
+    getContainedItemsWeight() {
+        return this.weight;
+    }
 }

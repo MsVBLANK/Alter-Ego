@@ -521,7 +521,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
                 const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
                 expect(errors).toEqual([]);
-                expect(puzzleCount).toBe(381);
+                expect(puzzleCount).toBe(398);
             });
         });
     });
@@ -670,7 +670,7 @@ describe('GameEntityLoader test', () => {
             test('errorChecking true', async () => {
                 const flagCount = await game.entityLoader.loadFlags(true, errors);
                 expect(errors).toEqual([]);
-                expect(flagCount).toBe(5);
+                expect(flagCount).toBe(16);
             });
         });
     });

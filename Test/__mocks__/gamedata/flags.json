@@ -1,7 +1,18 @@
 [
+  [ "CHAPTER", "5", "", "[0: trigger PROLOGUE], [1: trigger CHAPTER 1], [2: trigger CHAPTER 2], [3: trigger CHAPTER 3], [4: trigger CHAPTER 4], [5: trigger CHAPTER 5], [6: trigger CHAPTER 6], [7: trigger EPILOGUE]" ],
   [ "DAYTIME", "FALSE", "findEvent('SUNRISE').ongoing === true || findEvent('SUNSHINE').ongoing === true || findEvent('SUNSET').ongoing === true" ],
   [ "PRECIPITATION", "FALSE", "findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true" ],
   [ "COLD SEASON FLAG", "FALSE", "findEvent('RAIN').ongoing === true" ],
   [ "HOT SEASON FLAG", "FALSE" ],
-  [ "DAILY ANIMAL", "bear", "getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])" ]
+  [ "DAILY ANIMAL", "bear", "getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])" ],
+  [ "LEFT LIGHT", "OFF", "findPuzzle('LEFT STAGE LIGHT SWITCH').outcome" ],
+  [ "RIGHT LIGHT", "OFF", "findPuzzle('RIGHT STAGE LIGHT SWITCH').outcome" ],
+  [ "STAGE LIGHTS", "OO", "findFlag('LEFT LIGHT').substring(0, 1) + findFlag('RIGHT LIGHT').substring(0, 1)" ],
+  [ "TREADMILL 1 PANEL SPEED", "0", "parseFloat(findPuzzle('TREADMILL 1 PANEL', 'fitness-room').outcome)" ],
+  [ "TREADMILL 2 PANEL SPEED", "0", "parseFloat(findPuzzle('TREADMILL 2 PANEL', 'fitness-room').outcome)" ],
+  [ "TREADMILL 3 PANEL SPEED", "0", "parseFloat(findPuzzle('TREADMILL 3 PANEL', 'fitness-room').outcome)" ],
+  [ "BLAST DOOR 1 OPEN", "TRUE", "findPuzzle('BLAST DOOR 1').outcome === 'OPEN'" ],
+  [ "BLAST DOOR 2 OPEN", "TRUE", "findPuzzle('BLAST DOOR 2').outcome === 'OPEN'" ],
+  [ "EXPLOSION DONE", "FALSE" ],
+  [ "MINECART LOCATION", "mineshaft-1" ]
 ]

@@ -708,13 +708,17 @@ export default class Player extends ItemContainer {
 
             let player = this;
             statusInstance.timer = new Timer(1000, { start: true, loop: true }, function () {
-                let subtractedTime = 1000;
-                if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
-                statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
-                player.statusDisplays = player.#generateStatusDisplays(true, true);
+                if (player.getGame().inProgress && !player.getGame().editMode) {
+                    let subtractedTime = 1000;
+                    if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
+                    statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
+                    player.statusDisplays = player.#generateStatusDisplays(true, true);
+                }
 
                 if (statusInstance.remaining.as('milliseconds') <= 0) {
                     if (statusInstance.nextStage) {
+                        const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+                        cureNextAction.performCure(statusInstance.nextStage, false, false, true);
                         let inflictNextStage = true;
                         const playerStatusIds = player.statusCollection.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
@@ -725,10 +729,8 @@ export default class Player extends ItemContainer {
                             }
                         }
                         if (inflictNextStage) {
-                            const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                            cureNextAction.performCure(statusInstance.nextStage, false, false, true);
                             const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                            cureAction.performCure(statusInstance, true, true, true);
+                            cureAction.performCure(statusInstance, false, false, false);
                             const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
                             nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
                         }

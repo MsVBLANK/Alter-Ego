@@ -32,6 +32,6 @@ export async function execute(game, message, command, args) {
     const player = game.entityFinder.getLivingPlayer(args[0]);
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
 
-    const inventoryString = player.viewInventory(`${player.name}'s`, true);
+    const inventoryString = player.viewInventory(true);
     game.communicationHandler.sendToCommandChannel(inventoryString);
 }

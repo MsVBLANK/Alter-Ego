@@ -1799,7 +1799,7 @@ export default class GameEntityLoader extends GameEntityManager {
 	async checkPlayer(player) {
 		if (!player.isNPC && (player.id === "" || player.id === null || player.id === undefined))
 			return new Error(`Couldn't load player on row ${player.row}. No Discord ID was given.`);
-		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|webp|avif))(?:\?[^#\s]*)?$/;
+		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
 		if (player.isNPC && (player.id === "" || player.id === null || player.id === undefined || !iconURLSyntax.test(player.id)))
 			return new Error(`Couldn't load player on row ${player.row}. The Discord ID for an NPC must be a URL with a .jpg, .jpeg, .png, .webp, or .avif extension.`);
 		if (!player.isNPC && (player.member === null || player.member === undefined))

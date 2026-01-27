@@ -9,22 +9,22 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { generateListString } from "../Modules/helpers.js";
 
-/** @typedef {import("../Data/Action.js").default} Action */
-/** @typedef {import("../Data/Dialog.js").default} Dialog */
-/** @typedef {import("../Data/Exit.js").default} Exit */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Gesture.js").default} Gesture */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Prefab.js").default} Prefab */
-/** @typedef {import("../Data/Recipe.js").default} Recipe */
-/** @typedef {import("../Data/Event.js").default} Event */
-/** @typedef {import("../Data/HidingSpot.js").default} HidingSpot */
-/** @typedef {import("../Data/InventorySlot.js").default} InventorySlot */
-/** @typedef {import("../Data/ItemInstance.js").default} ItemInstance */
-/** @typedef {import("../Data/Status.js").default} Status */
-/** @typedef {import("../Data/Whisper.js").default} Whisper */
-/** @typedef {import("discord.js").GuildMember} GuildMember */
+/** @import Action from "../Data/Action.js" */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Exit from "../Data/Exit.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Gesture from "../Data/Gesture.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Prefab from "../Data/Prefab.js" */
+/** @import Recipe from "../Data/Recipe.js" */
+/** @import Event from "../Data/Event.js" */
+/** @import HidingSpot from "../Data/HidingSpot.js" */
+/** @import InventorySlot from "../Data/InventorySlot.js" */
+/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import Status from "../Data/Status.js" */
+/** @import Whisper from "../Data/Whisper.js" */
+/** @import { GuildMember } from "discord.js" */
 
 /**
  * @class GameNarrationHandler
@@ -52,7 +52,7 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration.
 	 */
-	sendDialogTypeNarration(narrateAction, narrationText, narrator) {
+	sendPlainTextTypeNarration(narrateAction, narrationText, narrator) {
 		const narration = new Narration(this.#game, MessageDisplayType.PLAIN_TEXT, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
 		narrateAction.performNarrate(narration);
 	}
@@ -65,9 +65,10 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Room} [location] - The location in which the narration is occurring. Defaults to the player's location.
 	 * @param {Whisper} [whisper] - The whisper in which the narration is occurring, if applicable.
+	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Optional.
 	 */
-	#sendNarration(type, action, player, narrationText, location = player.location, whisper) {
-		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper);
+	#sendNarration(type, action, player, narrationText, location = player.location, whisper, narrator) {
+		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper, action.message, narrator);
 		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);
 	}
@@ -107,7 +108,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateGesture(action, gesture, player) {
 		const narration = parseDescription(gesture.narration, gesture, player);
-		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration);
+		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration, player.location, undefined, player);
 	}
 
 	/**
@@ -252,11 +253,20 @@ export default class GameNarrationHandler {
 			}
 		}
 		else if (target instanceof InventoryItem && target.player.name === player.name) {
-			notification = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, true, target.singleContainingPhrase);
-			if (!target.prefab.discreet) {
-				narration = this.#game.notificationGenerator.generateInspectPlayersOwnInventoryItemNotification(player, false, target.singleContainingPhrase);
-				messageType = MessageDisplayType.STANDARD;
+			if (target.container === null) {
+				// The inventory item is equipped.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, true, target.name);
+				if (!target.isCoveredByEquippedItem())
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, false, target.name);
 			}
+			else {
+				// The inventory item is stashed.
+				notification = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, true, target.singleContainingPhrase);
+				if (!target.prefab.discreet)
+					narration = this.#game.notificationGenerator.generateInspectPlayersOwnStashedInventoryItemNotification(player, false, target.singleContainingPhrase);
+			}
+			if (!target.prefab.discreet)
+				messageType = MessageDisplayType.STANDARD;
 		}
 		else if (target instanceof InventoryItem && target.player.name !== player.name)
 			notification = this.#game.notificationGenerator.generateInspectOtherPlayersInventoryItemNotification(player, true, target.player, target.name);

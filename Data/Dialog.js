@@ -2,14 +2,14 @@ import { Collection } from "discord.js";
 import GameConstruct from "./GameConstruct.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./InventoryItem.js").default} InventoryItem */
-/** @typedef {import("./Player.js").default} Player */
-/** @typedef {import("./Room.js").default} Room */
-/** @typedef {import("./Whisper.js").default} Whisper */
+/** @import Game from "./Game.js" */
+/** @import InventoryItem from "./InventoryItem.js" */
+/** @import Player from "./Player.js" */
+/** @import Room from "./Room.js" */
+/** @import Whisper from "./Whisper.js" */
 
-/** @typedef {import("discord.js").Attachment} Attachment */
-/** @typedef {import("discord.js").Embed} Embed */
+/** @import { Attachment } from "discord.js" */
+/** @import { Embed } from "discord.js" */
 
 /**
  * @class Dialog
@@ -105,6 +105,12 @@ export default class Dialog extends GameConstruct {
 	 */
 	neighboringRooms;
 	/**
+	 * A collection of rooms with at least one player that has the `receiver` behavior attribute. The key of each entry is the room's ID.
+	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
+	 * @type {Collection<string, Room>}
+	 */
+	receiverRooms;
+	/**
 	 * Whether or not the location has the `audio surveilled` tag.
 	 * If this is an OOC message, this is false.
 	 * @type {boolean}
@@ -124,8 +130,14 @@ export default class Dialog extends GameConstruct {
 	 */
 	neighboringAudioSurveilledRooms;
 	/**
+	 * A collection of rooms with the `audio surveilled` tag that also have at least one player that has the `receiver` behavior attribute.
+	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
+	 * @type {Collection<string, Room>}
+	 */
+	receiverAudioSurveilledRooms;
+	/**
 	 * A collection of occupied rooms with the `audio monitoring` tag.
-	 * If the location or its neighboring rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
+	 * If the location, its neighboring rooms, or the receiver rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
 	 * @type {Collection<string, Room>}
 	 */
 	audioMonitoringRooms;
@@ -181,9 +193,11 @@ export default class Dialog extends GameConstruct {
 		this.isOOCMessage = message.cleanContent.startsWith('(');
 		this.isShouted = false;
 		this.neighboringRooms = new Collection();
+		this.receiverRooms = new Collection();
 		this.locationIsAudioSurveilled = false;
 		this.locationIsVideoSurveilled = false;
 		this.neighboringAudioSurveilledRooms = new Collection();
+		this.receiverAudioSurveilledRooms = new Collection();
 		this.audioMonitoringRooms = new Collection();
 		this.receivers = new Collection();
 		this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
@@ -197,28 +211,34 @@ export default class Dialog extends GameConstruct {
 					const neighboringRoom = exit.dest;
 					// Prevent duplication when two rooms are connected by multiple exits.
 					if (this.neighboringRooms.has(neighboringRoom.id)) continue;
-					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.tags.has("audio surveilled"))) {
+					if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.isAudioSurveilled())) {
 						this.neighboringRooms.set(neighboringRoom.id, neighboringRoom);
-						if (neighboringRoom.tags.has("audio surveilled"))
+						if (neighboringRoom.isAudioSurveilled())
 							this.neighboringAudioSurveilledRooms.set(neighboringRoom.id, neighboringRoom);
 					}
 				}
 			}
-			this.locationIsAudioSurveilled = this.location.tags.has("audio surveilled");
-			this.locationIsVideoSurveilled = this.location.tags.has("video surveilled");
-			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0)
-				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.tags.has("audio monitoring") && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id));
 			if (this.speaker.hasBehaviorAttribute("sender")) {
 				for (const livingPlayer of game.livingPlayersCollection.values()) {
-					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name) {
+					const receiverStatusEffects = livingPlayer.getBehaviorAttributeStatusEffects("receiver").map(status => status.id);
+					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name && !this.receiverRooms.has(livingPlayer.location.id)) {
 						for (const equipmentSlot of livingPlayer.inventoryCollection.values()) {
-							if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippedCommands.join(',').toLowerCase().includes('receiver')) {
-								this.receivers.set(livingPlayer.name, equipmentSlot.equippedItem);
+							for (const receiverStatusEffect of receiverStatusEffects) {
+								if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippedCommands.join(',').toLowerCase().includes(`inflict player ${receiverStatusEffect}`)) {
+									this.receivers.set(livingPlayer.name, equipmentSlot.equippedItem);
+									this.receiverRooms.set(livingPlayer.location.id, livingPlayer.location);
+									if (livingPlayer.location.isAudioSurveilled()) this.receiverAudioSurveilledRooms.set(livingPlayer.location.id, livingPlayer.location);
+									break;
+								}
 							}
 						}
 					}
 				}
 			}
+			this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
+			this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
+			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0)
+				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
 		}
 	}
 

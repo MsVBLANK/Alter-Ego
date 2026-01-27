@@ -1,6 +1,6 @@
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags } from 'discord.js';
+import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
 
 /**
  * @import Game from "../Data/Game.js"
@@ -18,16 +18,48 @@ import { EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, Con
  * @param {string[]} [files] - An array of file URLs to send. Optional.
  */
 export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = []) {
+    return {
+        content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
+        flags: generateFlags(messageDisplayType),
+        files: files
+    };
+}
+
+/**
+ * Generates the message create options for a narration or notification.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
+ * @param {Game} game - The game the message is for.
+ * @param {string} messageText - The text content of the message. 
+ * @param {string} username - The username of the webhook message. 
+ * @param {string} avatarURL - The URL of the icon to use for the webhook message.
+ * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+ * @param {string[]} [files] - An array of file URLs to send. Optional. 
+ * @param {Player} [player] - The player the message is about. Optional.
+ * 
+ */
+export function generateWebhookMessageDisplayCreateOptions(messageDisplayType, game, messageText, username, avatarURL, embeds = [], files = [], player) {
+    return {
+        content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
+        username: username,
+        avatarURL: avatarURL,
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
+        flags: generateFlags(messageDisplayType),
+        embeds: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? embeds : [],
+        files: files
+    };
+}
+
+/**
+ * Creates a flag bit field for a message based on its display type.
+ * @param {MessageDisplayType} messageDisplayType 
+ */
+function generateFlags(messageDisplayType) {
     /** @type {Flags} */
     let flags;
     if (messageDisplayType === MessageDisplayType.MINOR) flags = MessageFlags.IsComponentsV2 | MessageFlags.SuppressNotifications;
     else if (messageDisplayType !== MessageDisplayType.PLAIN_TEXT) flags = MessageFlags.IsComponentsV2; 
-    return {
-        content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
-        flags: flags,
-        files: files
-    };
+    return flags;
 }
 
 /**
@@ -135,30 +167,44 @@ function createPlayerNarrationComponents(game, messageText, player) {
  * @param {string} color - The color as a hex code.
  */
 export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
-    return [
-        new ContainerBuilder()
-            .setAccentColor(Number(`0x${color}`))
-            .addSectionComponents(
-                new SectionBuilder()
-                    .setThumbnailAccessory(
-                        new ThumbnailBuilder()
-                            .setURL(location.getIconURL())
-                    )
-                    .addTextDisplayComponents(
-                        new TextDisplayBuilder().setContent("_ _"),
-                        new TextDisplayBuilder().setContent(`**${location.displayName}**`),
-                        new TextDisplayBuilder().setContent("_ _")
-                    )
-            ),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent(descriptionText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false),
-        new TextDisplayBuilder().setContent("**Occupants**"),
-        new TextDisplayBuilder().setContent(occupantsString),
-        new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`),
-        new TextDisplayBuilder().setContent(defaultDropFixtureText),
-        new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true)
-    ];
+    const mediaGalleryBuilder = new MediaGalleryBuilder();
+    const imageURLRegex = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(?:\?[^#\s]*)?/g;
+    let match;
+    const originalDescriptionText = descriptionText;
+    while (match = imageURLRegex.exec(originalDescriptionText)) {
+        if (mediaGalleryBuilder.items.length <= 3) {
+            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(match[0]));
+            descriptionText = descriptionText.replace(match[0], '');
+        }
+    }
+
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder)[]} */
+    const components = [];
+    components.push(new ContainerBuilder()
+        .setAccentColor(Number(`0x${color}`))
+        .addSectionComponents(
+            new SectionBuilder()
+                .setThumbnailAccessory(
+                    new ThumbnailBuilder()
+                        .setURL(location.getIconURL())
+                )
+                .addTextDisplayComponents(
+                    new TextDisplayBuilder().setContent("_ _"),
+                    new TextDisplayBuilder().setContent(`**${location.displayName}**`),
+                    new TextDisplayBuilder().setContent("_ _")
+                )
+        )
+    );
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false));
+    components.push(new TextDisplayBuilder().setContent(descriptionText));
+    if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(false));
+    components.push(new TextDisplayBuilder().setContent("**Occupants**"));
+    components.push(new TextDisplayBuilder().setContent(occupantsString));
+    components.push(new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`));
+    components.push(new TextDisplayBuilder().setContent(defaultDropFixtureText));
+    components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
+    return components;
 }
 
 /**

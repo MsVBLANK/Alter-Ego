@@ -5,13 +5,11 @@ import ItemContainer from './ItemContainer.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { addItem as addItemToList, removeItem as removeItemFromList } from "../Modules/parser.js";
 
-/** @typedef {import('./Fixture.js').default} Fixture */
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./InventoryItem.js').default} InventoryItem */
-/** @typedef {import('./ItemInstance.js').default} ItemInstance */
-/** @typedef {import('./Player.js').default} Player */
-/** @typedef {import('./Room.js').default} Room */
-/** @typedef {import('./RoomItem.js').default} RoomItem */
+/** @import Fixture from './Fixture.js' */
+/** @import Game from './Game.js' */
+/** @import ItemInstance from './ItemInstance.js' */
+/** @import Player from './Player.js' */
+/** @import Room from './Room.js' */
 
 /**
  * @class Puzzle
@@ -231,6 +229,14 @@ export default class Puzzle extends ItemContainer {
      */
     setInaccessible() {
         this.accessible = false;
+    }
+
+    /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
     }
 
     /**

@@ -1,5 +1,5 @@
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("./GameSettings.js").default} GameSettings */
+/** @import Game from "../Data/Game.js" */
+/** @import GameSettings from "./GameSettings.js" */
 
 /**
  * @class EligibleCommand

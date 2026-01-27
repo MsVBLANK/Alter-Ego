@@ -1,8 +1,8 @@
 import GameEntity from "./GameEntity.js";
 import { addItem as addItemToList, removeItem as removeItemFromList } from "../Modules/parser.js";
 
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./ItemInstance.js").default} ItemInstance */
+/** @import Game from "./Game.js" */
+/** @import ItemInstance from "./ItemInstance.js" */
 
 /**
  * @class ItemContainer
@@ -62,4 +62,29 @@ export default class ItemContainer extends GameEntity {
 	removeItemFromDescription(item, list, quantity) {
 		this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
 	}
+
+	/**
+     * Gets all of the items this entity contains.
+	 * Implementation differs for each type of ItemContainer.
+	 * @abstract
+	 * @returns {ItemInstance[]}
+     */
+    getContainedItems() {
+        return [];
+    }
+
+	/**
+	 * Returns true if this entity contains no items.
+	 */
+	containsNoItems() {
+		return this.getContainedItems().length === 0;
+	}
+
+	/**
+     * Gets the combined weight of all the items this entity contains.
+     */
+    getContainedItemsWeight() {
+        const containedItems = this.getContainedItems();
+        return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
+    }
 }

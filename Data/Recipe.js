@@ -1,7 +1,7 @@
 import GameEntity from './GameEntity.js';
 
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Prefab.js').default} Prefab */
+/** @import Game from './Game.js' */
+/** @import Prefab from './Prefab.js' */
 
 /**
  * @class Recipe

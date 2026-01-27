@@ -2,10 +2,10 @@ import CureAction from "../Data/Actions/CureAction.js";
 import InflictAction from '../Data/Actions/InflictAction.js';
 import InventoryItem from "../Data/InventoryItem.js";
 
-/** @typedef {import("../Data/Status.js").default} Status */
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import Status from "../Data/Status.js" */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
 
 /** @type {CommandConfig} */
 export const config = {

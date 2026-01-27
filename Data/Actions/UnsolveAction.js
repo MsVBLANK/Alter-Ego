@@ -1,9 +1,9 @@
 import Action from "../Action.js";
 import Puzzle from "../Puzzle.js";
 
-/** @typedef {import("../Event.js").default} Event */
-/** @typedef {import("../Flag.js").default} Flag */
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
+/** @import Event from "../Event.js" */
+/** @import Flag from "../Flag.js" */
+/** @import InventoryItem from "../InventoryItem.js" */
 
 /**
  * @class UnsolveAction

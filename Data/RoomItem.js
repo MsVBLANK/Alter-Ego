@@ -4,11 +4,11 @@ import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Fixture.js').default} Fixture */
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Player.js').default} Player */
-/** @typedef {import('./Puzzle.js').default} Puzzle */
-/** @typedef {import('./Room.js').default} Room */
+/** @import Fixture from './Fixture.js' */
+/** @import Game from './Game.js' */
+/** @import Player from './Player.js' */
+/** @import Puzzle from './Puzzle.js' */
+/** @import Room from './Room.js' */
 
 /**
  * @class RoomItem
@@ -184,6 +184,14 @@ export default class RoomItem extends ItemInstance {
      */
     setInaccessible() {
         this.accessible = false;
+    }
+
+    /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'RoomItem', this.identifier);
     }
 
     /** @returns {string} */

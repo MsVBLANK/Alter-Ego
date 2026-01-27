@@ -4,12 +4,11 @@ import UnhideAction from "./Actions/UnhideAction.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 
-/** @typedef {import("./Action.js").default} Action */
-/** @typedef {import("./Game.js").default} Game */
-/** @typedef {import("./Room.js").default} Room */
-/** @typedef {import("./Whisper.js").default} Whisper */
-/** @typedef {import("../Classes/GameSettings.js").default} GameSettings */
-/** @typedef {import("discord.js").GuildMember} GuildMember */
+/** @import Action from "./Action.js" */
+/** @import Game from "./Game.js" */
+/** @import Room from "./Room.js" */
+/** @import Whisper from "./Whisper.js" */
+/** @import { GuildMember } from "discord.js" */
 
 /**
  * @class Narration
@@ -127,7 +126,7 @@ export default class Narration extends GameConstruct {
         this.isOOCMessage = false;
         this.narrator = narrator;
         if (this.narrator) {
-            this.narratorDisplayName = this.narrator.displayName;
+            this.narratorDisplayName = capitalizeFirstLetter(this.narrator.displayName);
             if (this.narrator instanceof Player)
                 this.narratorDisplayIcon = this.narrator.displayIcon ? this.narrator.displayIcon : this.narrator.member.displayAvatarURL();
             else this.narratorDisplayIcon = this.narrator.displayAvatarURL();
@@ -136,7 +135,7 @@ export default class Narration extends GameConstruct {
         this.locationIsVideoSurveilled = false;
         this.videoMonitoringRooms = [];
         if (!this.isOOCMessage) {
-            this.locationIsVideoSurveilled = this.location.tags.has("video surveilled");
+            this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
             if (this.locationIsVideoSurveilled)
                 this.videoMonitoringRooms = game.entityFinder.getRooms(undefined, "video monitoring", true);
         }
@@ -146,11 +145,32 @@ export default class Narration extends GameConstruct {
      * Returns the prefix string to append before the rest of the message text in spectate messages. If the narration didn't occur in a whisper, returns an empty string.
      */
     getWhisperPrefixString() {
-        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
-        const preposition = hidingSpot ? capitalizeFirstLetter(hidingSpot.getPreposition()) : "In";
-        return this.whisper
-            ? `-# *(${preposition} ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`} with ${this.whisper.generatePlayerListString()}):*\n`
-            : "";
+        if (!this.whisper || this.action instanceof UnhideAction) return "";
+        const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper.hidingSpotName, this.location.id);
+        const playerList = this.player ? this.whisper.generatePlayerListStringExcluding(this.player) : this.whisper.generatePlayerListString();
+        const playerListPhrase = playerList !== `` ? ` with ${playerList}` : ``;
+        return `-# *(In ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`}${playerListPhrase}):*\n`;
+    }
+
+    /** 
+     * Returns true if the narration's message display type is PLAYER.
+     */
+    isPlayerMessageType() {
+        return this.messageDisplayType === MessageDisplayType.PLAYER;
+    }
+
+    /**
+     * Returns true if the narration was sent by a moderator.
+     */
+    isModeratorNarration() {
+        return this.narrator && !this.isPlayerMessageType();
+    }
+
+    /**
+     * Returns true if the narration is only intended to be narrated in a hiding spot.
+     */
+    isInHidingSpot() {
+        return (this.player && this.player.isHidden() || this.isModeratorNarration()) && this.whisper && !(this.action instanceof UnhideAction);
     }
 
     /**
@@ -168,7 +188,7 @@ export default class Narration extends GameConstruct {
             }
             this.getGame().communicationHandler.narrateInRoom(this);
 
-            if (this.location.tags.has("video surveilled")) {
+            if (this.location.isVideoSurveilled()) {
                 let roomDisplayName = this.location.tags.has("secret") ? "Surveillance feed" : this.location.id;
                 this.content = `\`[${roomDisplayName}] ${this.content}\``;
                 const rooms = this.getGame().entityFinder.getRooms(null, "video monitoring", true);

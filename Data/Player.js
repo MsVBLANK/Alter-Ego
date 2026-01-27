@@ -20,13 +20,13 @@ import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Action.js').default} Action */
-/** @typedef {import('./Exit.js').default} Exit */
-/** @typedef {import('./Recipe.js').default} Recipe */
-/** @typedef {import('./EquipmentSlot.js').default} EquipmentSlot */
-/** @typedef {import('./InventoryItem.js').default} InventoryItem */
-/** @typedef {import('discord.js').GuildMember} GuildMember */
-/** @typedef {import('discord.js').TextChannel} TextChannel */
+/** @import Action from './Action.js' */
+/** @import Exit from './Exit.js' */
+/** @import Recipe from './Recipe.js' */
+/** @import EquipmentSlot from './EquipmentSlot.js' */
+/** @import InventoryItem from './InventoryItem.js' */
+/** @import { GuildMember } from 'discord.js' */
+/** @import { TextChannel } from 'discord.js' */
 
 /**
  * @class Player
@@ -581,14 +581,10 @@ export default class Player extends ItemContainer {
     }
 
     /**
-     * Calculates the time it takes to move the player to the desired exit.
-     * @param {Exit} exit
-     * @param {boolean} isRunning
-     * @returns {number} The number of milliseconds it will take to move to the desired exit.
+     * Calculates the player's movement rate in meters per second, irrespective of distance or slope.
+     * @param {boolean} isRunning - Whether the player is running or not. Defaults to false.
      */
-    calculateMoveTime(exit, isRunning) {
-        let distance = Math.sqrt(Math.pow(exit.pos.x - this.pos.x, 2) + Math.pow(exit.pos.z - this.pos.z, 2));
-        distance = distance / this.getGame().settings.pixelsPerMeter;
+    calculateMoveRate(isRunning = false) {
         // The formula to calculate the rate is a quadratic function.
         // The equation is Rate = 0.0183x^2 + 0.005x + 0.916, where x is the player's speed stat multiplied by 2 or 1, depending on if the player is running or not.
         const speedMultiplier = isRunning ? 2 : 1;
@@ -596,7 +592,19 @@ export default class Player extends ItemContainer {
         // Slow down the player relative to how much weight they're carrying.
         // The equation is Slowdown = 15/x, where x is the number of kilograms a player is carrying, and 1/4 <= Slowdown <= 1.
         const slowdown = Math.min(Math.max(15.0 / this.carryWeight, 0.25), 1.0);
-        rate = rate * slowdown;
+        return rate * slowdown;
+    }
+
+    /**
+     * Calculates the time it takes to move the player to the desired exit.
+     * @param {Exit} exit
+     * @param {boolean} isRunning
+     * @returns {number} The number of milliseconds it will take to move to the desired exit.
+     */
+    calculateMoveTime(exit, isRunning) {
+        let rate = this.calculateMoveRate(isRunning);
+        let distance = Math.sqrt(Math.pow(exit.pos.x - this.pos.x, 2) + Math.pow(exit.pos.z - this.pos.z, 2));
+        distance = distance / this.getGame().settings.pixelsPerMeter;
         // Slope should affect the rate.
         const rise = (exit.pos.y - this.pos.y) / this.getGame().settings.pixelsPerMeter;
         let time = 0;
@@ -691,6 +699,7 @@ export default class Player extends ItemContainer {
      */
     inflict(status, duration = null) {
         const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription, status.curedDescription, status.row, this.getGame());
+        Status.postProcess(statusInstance);
 
         // Apply the duration, if applicable.
         if (statusInstance.duration) {
@@ -699,15 +708,17 @@ export default class Player extends ItemContainer {
 
             let player = this;
             statusInstance.timer = new Timer(1000, { start: true, loop: true }, function () {
-                let subtractedTime = 1000;
-                if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
-                statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
-                player.statusDisplays = player.#generateStatusDisplays(true, true);
+                if (player.getGame().inProgress && !player.getGame().editMode) {
+                    let subtractedTime = 1000;
+                    if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
+                    statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
+                    player.statusDisplays = player.#generateStatusDisplays(true, true);
+                }
 
                 if (statusInstance.remaining.as('milliseconds') <= 0) {
                     if (statusInstance.nextStage) {
-                        const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                        cureAction.performCure(statusInstance.nextStage, false, false, true);
+                        const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+                        cureNextAction.performCure(statusInstance.nextStage, false, false, true);
                         let inflictNextStage = true;
                         const playerStatusIds = player.statusCollection.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
@@ -718,6 +729,8 @@ export default class Player extends ItemContainer {
                             }
                         }
                         if (inflictNextStage) {
+                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+                            cureAction.performCure(statusInstance, false, false, false);
                             const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
                             nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
                         }
@@ -993,6 +1006,14 @@ export default class Player extends ItemContainer {
      */
     getMaxCarryWeight() {
         return Math.floor(1.783 * Math.pow(this.strength, 2) - 2 * this.strength + 22);
+    }
+
+    /**
+     * Gets all of the items this entity contains.
+     * @override
+     */
+    getContainedItems() {
+        return this.getGame().entityFinder.getInventoryItems(undefined, this.name);
     }
 
     /**

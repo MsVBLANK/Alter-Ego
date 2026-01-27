@@ -1,4 +1,4 @@
-/** @typedef {import("../Data/GameEntity.js").default} GameEntity */
+/** @import GameEntity from "../Data/GameEntity.js" */
 
 /** 
  * Wrapper function for the limited scope of  the scriptParser module.
@@ -40,11 +40,12 @@ export function findPrefab(container, id) {
  * @param {GameEntity} container - The container in context.
  * @param {string} identifier - The room item's identifier or prefab ID.
  * @param {string} [location] - The ID or displayName of the room the item is in. 
+ * @param {string} [containerType] - The room item's container type.
  * @param {string} [containerName] - The room item's container name.
  * @returns The room item with the specified identifier, and location and container name if applicable. If no such item exists, returns undefined.
  */
-export function findRoomItem(container, identifier, location, containerName) {
-    return container.getGame().entityFinder.getRoomItem(identifier, location, containerName);
+export function findRoomItem(container, identifier, location, containerType, containerName) {
+    return container.getGame().entityFinder.getRoomItem(identifier, location, containerType, containerName);
 }
 
 /**

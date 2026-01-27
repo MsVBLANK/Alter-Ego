@@ -3,8 +3,8 @@ import * as helpers from './helpers.js';
 
 import { parse as parseScript } from 'acorn';
 
-/** @typedef {import('../Data/GameEntity.js').default} GameEntity */
-/** @typedef {import('../Data/Player.js').default} Player */
+/** @import GameEntity from '../Data/GameEntity.js' */
+/** @import Player from '../Data/Player.js' */
 
 /** @type {import('acorn').Options} */
 const PARSER_OPTIONS = {
@@ -53,7 +53,9 @@ const SCRIPT_SCOPE_OPTIONS = {
 		findInventoryItems: finder.findInventoryItems,
 		findGestures: finder.findGestures,
 		findFlags: finder.findFlags,
-		getRandomString: helpers.getRandomString
+		getRandomString: helpers.getRandomString,
+		doWithChance: helpers.doWithChance,
+		doWithChanceModifiedByPlayerStatus: helpers.doWithChanceModifiedByPlayerStatus
 	},
 	allowedConstructors: {
 		Date
@@ -257,7 +259,7 @@ function replaceFinderCallArguments(node) {
 	if (!node || typeof node !== 'object') return;
 	if (node.type === 'CallExpression') {
 		const args = node.arguments ? node.arguments : [];
-		const finderRegex = /find(Room(Item)s??|Fixtures?|Objects?|Prefabs?|Items?|Puzzles?|Events?|StatusEffects?|Player|LivingPlayers?|DeadPlayers?|InventoryItems?|Gestures?|Flags?)/;
+		const finderRegex = /find(Room(Item)?s?|Fixtures?|Objects?|Prefabs?|Recipes|Items?|Puzzles?|Events?|StatusEffects?|Player|LivingPlayers?|DeadPlayers?|InventoryItems?|Gestures?|Flags?)/;
 		if (finderRegex.test(node.callee.name)) {
 			if (!args || args.length === 0 || !(args[0].type === 'Identifier' && args[0].name === 'container')) {
 				node.arguments.splice(0, 0, { type: 'Identifier', name: 'container' });

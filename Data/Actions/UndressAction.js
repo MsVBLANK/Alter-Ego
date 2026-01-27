@@ -5,9 +5,9 @@ import Puzzle from "../Puzzle.js";
 import DropAction from "./DropAction.js";
 import { getSortedItemsString } from "../../Modules/helpers.js";
 
-/** @typedef {import("../Fixture.js").default} Fixture */
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../RoomItem.js").default} RoomItem */
+/** @import Fixture from "../Fixture.js" */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class UndressAction
@@ -51,14 +51,13 @@ export default class UndressAction extends Action {
 			droppedItem.executeUnequippedCommands();
 		// Container is a weight puzzle.
 		if (container instanceof Puzzle && container.type === "weight") {
-			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);
-			const weight = containerItems.reduce((total, item) => total + item.quantity * item.weight, 0);
+			const weight = container.getContainedItemsWeight();
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, String(weight), "drop", "");
 		}
 		// Container is a container puzzle.
 		else if (container instanceof Puzzle && container.type === "container") {
-			const containerItems = this.getGame().roomItems.filter(item => item.location.id === container.location.id && item.containerName === `Puzzle: ${container.name}` && !isNaN(item.quantity) && item.quantity > 0);
+			const containerItems = container.getContainedItems().filter(item => !isNaN(item.quantity));
 			const containerItemsString = getSortedItemsString(containerItems);
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "drop", "");

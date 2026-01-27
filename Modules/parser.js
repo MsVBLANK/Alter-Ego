@@ -5,9 +5,9 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 
 export * as default from './parser.js';
 
-/** @typedef {import('../Data/GameEntity.js').default} GameEntity */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
-/** @typedef {import('../Data/RoomItem.js').default} RoomItem */
+/** @import GameEntity from '../Data/GameEntity.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import RoomItem from '../Data/RoomItem.js' */
 
 class Clause {
     /**
@@ -131,7 +131,7 @@ export function parseDescriptionWithErrors(description, container, player) {
                         errors.push('"' + varAttribute.replace(/container/g, "this") + '" is undefined.');
                     variableStrings.push({ element: variables[i], attribute: String(variableText) });
                     if (typeof variableStrings[variableStrings.length - 1].attribute === 'string' && variableStrings[variableStrings.length - 1].attribute.includes('<desc>'))
-                        variableStrings[variableStrings.length - 1].attribute = this.parseDescription(variableStrings[variableStrings.length - 1].attribute, this, player);
+                        variableStrings[variableStrings.length - 1].attribute = parseDescription(variableStrings[variableStrings.length - 1].attribute, this, player);
                 } catch (err) {
                     errors.push(err.toString());
                 }

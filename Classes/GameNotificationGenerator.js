@@ -1,14 +1,14 @@
 import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
 
-/** @typedef {import("../Data/Dialog.js").default} Dialog */
-/** @typedef {import("../Data/Fixture.js").default} Fixture */
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/Exit.js").default} Exit */
-/** @typedef {import("../Data/ItemInstance.js").default} ItemInstance */
-/** @typedef {import("../Data/Puzzle.js").default} Puzzle */
-/** @typedef {import("../Data/Recipe.js").default} Recipe */
-/** @typedef {import("../Data/Room.js").default} Room */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Fixture from "../Data/Fixture.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import Exit from "../Data/Exit.js" */
+/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import Recipe from "../Data/Recipe.js" */
+/** @import Room from "../Data/Room.js" */
 
 /**
  * @class GameNotificationGenerator
@@ -138,7 +138,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} [player] - The player referred to in this notification. Optional.
 	 */
 	generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player) {
-		const roomIsVisible = player && player.location.tags.has("video monitoring") && dialog.locationIsVideoSurveilled;
+		const roomIsVisible = player && player.location.isVideoMonitoring() && dialog.locationIsVideoSurveilled;
 		const playerCanSeeSpeaker = player && player.canSee() && roomIsVisible && !dialog.speaker.isHidden();
 		let speakerString = "";
 		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
@@ -149,29 +149,46 @@ export default class GameNotificationGenerator {
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
 		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `\`[${roomDisplayName}]\` ${speakerString} ${verb} "${dialog.content}"${punctuation}`;
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${punctuation}`;
 	}
 
 	/**
 	 * Generates a notification indicating that a player heard dialog through a player with the `receiver` behavior attribute. 
 	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} [receiverName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
+	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} [player] - The player referred to in this notification.
+	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person. Defaults to false.
+	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
 	 */
-	generateHearReceiverDialogNotification(dialog, player, secondPerson, receiverName = "receiver") {
-		const receiverOwnerName = secondPerson ? `your` : `${player.displayName}'s`;
+	generateHearReceiverDialogNotification(dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+		const receiverOwnerName = secondPerson ? `your` : playerCanSeeReceiver ? `${receiver.displayName}'s` : `a`;
+		if (!secondPerson && !playerCanSeeReceiver) receiverItemName = "receiver";
 		let speakerString = "";
 		let receiverString = "";
-		if (secondPerson && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player)) {
+		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player)) {
 			speakerString = `${dialog.speakerRecognitionName}`;
-			receiverString = ` through ${receiverOwnerName} ${receiverName}`;
+			receiverString = ` through ${receiverOwnerName} ${receiverItemName}`;
 		}
 		else
-			speakerString = secondPerson && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverName}`;
+			speakerString = player && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverItemName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverItemName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = secondPerson && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : receiverString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
 		return `${speakerString} ${verb} "\`${dialog.content}\`"${receiverString}${punctuation}`;
+	}
+
+	/**
+	 * Generates a notification indicating that a player heard dialog from a room with the `audio surveilled` tag that was transmitted to one of its occupants with the `receiver` behavior attribute.
+	 * @param {string} roomDisplayName - The displayed name of the audio surveilled room with a `receiver` player.
+	 * @param {Dialog} dialog - The dialog that was spoken.
+	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
+	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param {Player} [player] - The player referred to in this notification.
+	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person.
+	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
+	 */
+	generateHearAudioSurveilledReceiverDialogNotification(roomDisplayName, dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearReceiverDialogNotification(dialog, receiver, receiverItemName, player, secondPerson, playerCanSeeReceiver))}`;
 	}
 
 	/**
@@ -221,7 +238,7 @@ export default class GameNotificationGenerator {
 	generateHalfStaminaNotification(player, secondPerson) {
 		const subject = secondPerson ? `Your breathing` : `${player.displayName}'s breathing`;
 		const sentence2 = secondPerson ? `You might want to stop moving and rest soon.` : `It seems like ${player.pronouns.sbj}${player.pronouns.plural ? `'re` : `'s`} starting to get tired.`;
-		return `${subject} is starting to get heavy. ${sentence2}`;
+		return `${subject} is getting heavy. ${sentence2}`;
 	}
 
 	/**
@@ -395,16 +412,29 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
-	 * Generates a notification indicating the player inspected an inventory item that belongs to them.
+	 * Generates a notification indicating the player inspected an inventory item that they have stashed.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectPlayersOwnInventoryItemNotification(player, secondPerson, itemPhrase) {
+	generateInspectPlayersOwnStashedInventoryItemNotification(player, secondPerson, itemPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb1} ${itemPhrase} and ${verb2} it.`;
+	}
+
+	/**
+	 * Generates a notification indicating the player inspected an inventory item that they have equipped.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param {string} itemName - The name of the item.
+	 */
+	generateInspectPlayersOwnEquippedInventoryItemNotification(player, secondPerson, itemName) {
+		const subject = secondPerson ? `You` : player.displayName;
+		const verb = secondPerson ? `inspect` : `begins inspecting`;
+		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
+		return `${subject} ${verb} ${dpos} ${itemName}.`;
 	}
 
 	/**

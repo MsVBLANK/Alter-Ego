@@ -2,10 +2,10 @@ import GameEntity from './GameEntity.js';
 import { generatePlayerListString } from '../Modules/helpers.js';
 import { Collection } from 'discord.js';
 
-/** @typedef {import('./Exit.js').default} Exit */
-/** @typedef {import('./Game.js').default} Game */
-/** @typedef {import('./Player.js').default} Player */
-/** @typedef {import('discord.js').TextChannel} TextChannel */
+/** @import Exit from './Exit.js' */
+/** @import Game from './Game.js' */
+/** @import Player from './Player.js' */
+/** @import { TextChannel } from 'discord.js' */
 
 /**
  * @class Room
@@ -215,6 +215,14 @@ export default class Room extends GameEntity {
     }
 
     /**
+     * Gets the exit with the given name.
+     * @param {string} name - The name of the exit to get.
+     */
+    getExit(name) {
+        return this.getGame().entityFinder.getExit(this, name);
+    }
+
+    /**
      * Returns the URL to use for the room in the room description display component.
      */
     getIconURL() {
@@ -224,11 +232,40 @@ export default class Room extends GameEntity {
     }
 
     /**
-     * Returns the display name to use for the room in rooms with the `audio monitoring` or `video monitoring` tag.
+     * Returns true if the room has the `audio surveilled` tag.
      */
-    getSurveilledDisplayName() {
+    isAudioSurveilled() {
+        return this.tags.has("audio surveilled");
+    }
+
+    /**
+     * Returns false if the room has the `video surveilled` tag.
+     */
+    isVideoSurveilled() {
+        return this.tags.has("video surveilled");
+    }
+
+    /**
+     * Returns true if the room has the `audio monitoring` tag.
+     */
+    isAudioMonitoring() {
+        return this.tags.has("audio monitoring");
+    }
+
+    /**
+     * Returns false if the room has the `video monitoring` tag.
+     */
+    isVideoMonitoring() {
+        return this.tags.has("video monitoring");
+    }
+
+    /**
+     * Returns the display name to use for the room in rooms with the `audio monitoring` or `video monitoring` tag.
+     * @param {boolean} monitoringRoomCanBeSeen - Whether or not the room that's monitoring this one can be seen.
+     */
+    getSurveilledDisplayName(monitoringRoomCanBeSeen) {
         return this.tags.has("secret")
-            ? this.tags.has("video surveilled")
+            ? this.isVideoSurveilled() && monitoringRoomCanBeSeen
                 ? "Surveillance feed" : "Intercom"
             : this.displayName;
     }
@@ -243,6 +280,6 @@ export default class Room extends GameEntity {
      * @param {string} name - A string, preferably the name of a room.
      */
     static generateValidId(name) {
-        return name.toLowerCase().replace(/[+=/<>\[\]!@#$%^&*()'":;,?`~\\|{}]/g, '').trim().replace(/ /g, '-');
+        return name?.toLowerCase().replace(/[+=/<>\[\]!@#$%^&*()'":;,?`~\\|{}]/g, '').trim().replace(/ /g, '-');
     }
 }

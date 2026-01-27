@@ -2,11 +2,11 @@ import Action from "../Action.js";
 import { instantiateRoomItem, instantiateInventoryItem } from "../../Modules/itemManager.js";
 import ItemInstance from "../ItemInstance.js";
 
-/** @typedef {import("../Fixture.js").default} Fixture */
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../Prefab.js").default} Prefab */
-/** @typedef {import("../Puzzle.js").default} Puzzle */
-/** @typedef {import("../RoomItem.js").default} RoomItem */
+/** @import Fixture from "../Fixture.js" */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import Prefab from "../Prefab.js" */
+/** @import Puzzle from "../Puzzle.js" */
+/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class InstantiateAction

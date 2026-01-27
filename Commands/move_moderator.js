@@ -1,7 +1,7 @@
 import MoveAction from '../Data/Actions/MoveAction.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Game.js').default} Game */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
 
 /** @type {CommandConfig} */
 export const config = {

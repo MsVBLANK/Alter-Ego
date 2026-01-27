@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../InventoryItem.js").default} InventoryItem */
-/** @typedef {import("../Recipe.js").default} Recipe */
+/** @import InventoryItem from "../InventoryItem.js" */
+/** @import Recipe from "../Recipe.js" */
 
 /**
  * @class CraftAction

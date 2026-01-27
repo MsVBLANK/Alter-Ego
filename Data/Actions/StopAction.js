@@ -1,6 +1,6 @@
 import Action from "../Action.js";
 
-/** @typedef {import("../Exit.js").default} Exit */
+/** @import Exit from "../Exit.js" */
 
 /**
  * @class StopAction

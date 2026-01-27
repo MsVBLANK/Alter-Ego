@@ -1,8 +1,8 @@
 import UnequipAction from '../Data/Actions/UnequipAction.js';
 import Game from '../Data/Game.js';
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -76,5 +76,5 @@ export async function execute(game, message, command, args) {
 
     const action = new UnequipAction(game, message, player, player.location, true);
     action.performUnequip(item, slot, hand);
-    game.communicationHandler.sendToCommandChannel(`Successfully unequipped ${item.getIdentifier()} from ${player.name}'s ${slot}.`);
+    game.communicationHandler.sendToCommandChannel(`Successfully unequipped ${item.getIdentifier()} from ${player.name}'s ${slot.id}.`);
 }

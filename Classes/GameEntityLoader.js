@@ -1088,12 +1088,15 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load room item on row ${item.row}. "${item.containerType}" is not a valid container type.`);
 		if (item.containerType === "Fixture" && !(item.container instanceof Fixture))
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a fixture.`);
-		if (item.quantity !== 0 && item.containerType === "RoomItem" && !(item.container instanceof RoomItem))
+		if (item.quantity !== 0 && item.containerType === "RoomItem" && !(item.container instanceof RoomItem)) {
+			const containerName = item.containerName.split('/');
+			const container = item.getGame().entityFinder.getRoomItem(containerName[0], item.location.id);
+			if (container && container.inventoryCollection.size === 0)
+				return new Error(`Couldn't load room item on row ${item.row}. The item's container is a room item, but the item container's prefab on row ${container.prefab.row} has no inventory slots.`);
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a room item.`);
+		}
 		if (item.containerType === "Puzzle" && !(item.container instanceof Puzzle))
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a puzzle.`);
-		if (item.container instanceof RoomItem && item.container.inventoryCollection.size === 0)
-			return new Error(`Couldn't load room item on row ${item.row}. The item's container is a room item, but the item container's prefab on row ${item.container.prefab.row} has no inventory slots.`);
 		if (item.container instanceof RoomItem) {
 			if (item.slot === "") return new Error(`Couldn't load room item on row ${item.row}. The item's container is a room item, but a prefab inventory slot ID was not given.`);
 			const inventorySlot = item.container.inventoryCollection.get(item.slot);
@@ -1573,20 +1576,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				this.updateStatusEffectReferences(status);
 			}
 			this.game.statusEffectsCollection.forEach(status => {
-				status.overridersStrings.forEach((overriderString, i) => {
-					const overrider = this.game.entityFinder.getStatusEffect(overriderString);
-					if (overrider) status.overriders[i] = overrider;
-				});
-				status.curesStrings.forEach((curesString, i) => {
-					const cure = this.game.entityFinder.getStatusEffect(curesString);
-					if (cure) status.cures[i] = cure;
-				});
-				const nextStage = this.game.entityFinder.getStatusEffect(status.nextStageId);
-				if (nextStage) status.setNextStage(nextStage);
-				const duplicatedStatus = this.game.entityFinder.getStatusEffect(status.duplicatedStatusId);
-				if (duplicatedStatus) status.setDuplicatedStatus(duplicatedStatus);
-				const curedCondition = this.game.entityFinder.getStatusEffect(status.curedConditionId);
-				if (curedCondition) status.setCuredCondition(curedCondition);
+				Status.postProcess(status);
 				if (doErrorChecking) {
 					const error = this.checkStatusEffect(status);
 					if (error instanceof Error) errors.push(error);

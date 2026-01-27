@@ -1,10 +1,8 @@
-import { EmbedBuilder } from "discord.js";
 import { Duration } from 'luxon';
 
-/** @typedef {import("../Data/Game.js").default} Game */
-/** @typedef {import("../Data/Player.js").default} Player */
-/** @typedef {import("../Data/RoomItem.js").default} RoomItem */
-/** @typedef {import("luxon").DurationObjectUnits} DurationObjectUnits */
+/** @import Player from "../Data/Player.js" */
+/** @import RoomItem from "../Data/RoomItem.js" */
+/** @import { DurationObjectUnits } from "luxon" */
 
 /**
  * Gets a random string out of an array of possibilities.
@@ -13,6 +11,31 @@ import { Duration } from 'luxon';
  */
 export function getRandomString(possibilities = []) {
 	return possibilities[Math.floor(Math.random() * possibilities.length)];
+}
+
+/**
+ * Returns true only 1/x of the time.
+ * @param {number} chance - The denominator of the probability. Defaults to 100. If this is 100, returns true 1/100th of the time.
+ */
+export function doWithChance(chance = 100) {
+	if (typeof chance !== 'number' || chance <= 0) return false;
+	if (chance <= 1) return true;
+	return Math.floor(Math.random() * chance) === 0;
+}
+
+/**
+ * Returns true the given percent of the time, but the percent is multiplied by a given number if the given player has the given status effect.
+ * @param {number} baseChance - The denominator of the probability. Defaults to 100. If this is 100, returns true 1/100th of the time.
+ * @param {Player} player - The player whose status we want to check.
+ * @param {string} statusId - The ID of the status to look for on the player.
+ * @param {number} statusDivisor - The number that the base chance will be divided by if the player has the given status effect. For example, if the base chance is 100, and this is 5, the new chance will be 1/20.
+ */
+export function doWithChanceModifiedByPlayerStatus(baseChance = 100, player, statusId, statusDivisor) {
+	if (typeof baseChance !== 'number' || baseChance <= 0) return false;
+	if (!player || !statusId || typeof statusDivisor !== 'number') return false;
+	let chance = baseChance;
+	if (player.hasStatus(statusId)) chance /= statusDivisor;
+	return doWithChance(chance);
 }
 
 /**

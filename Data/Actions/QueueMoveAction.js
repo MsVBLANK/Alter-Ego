@@ -4,7 +4,7 @@ import Room from "../Room.js";
 import MoveAction from "./MoveAction.js";
 import StartMoveAction from "./StartMoveAction.js";
 
-/** @typedef {import("../Exit.js").default} Exit */
+/** @import Exit from "../Exit.js" */
 
 /**
  * @class QueueMoveAction

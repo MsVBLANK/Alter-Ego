@@ -5,10 +5,10 @@ import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";
 import { itemIdentifierMatches } from "../Modules/matchers.js";
 
-/** @typedef {import('../Classes/GameSettings.js').default} GameSettings */
-/** @typedef {import('../Data/Player.js').default} Player */
-/** @typedef {import('../Data/InventoryItem.js').default} InventoryItem */
-/** @typedef {import('../Data/InventorySlot.js').default} InventorySlot */
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Player from '../Data/Player.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import InventorySlot from '../Data/InventorySlot.js' */
 
 /** @type {CommandConfig} */
 export const config = {

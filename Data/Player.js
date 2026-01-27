@@ -1346,18 +1346,25 @@ export default class Player extends ItemContainer {
 
     /**
      * Displays the player's inventory.
-     * @param {string} possessive - A string indicating whose inventory this is. Either "Your" or `${player.name}'s`.
-     * @param {boolean} useID - Whether or not to use the identifier or prefab IDs of the player's inventory items. If this is false, the inventory item's name will be used instead.
+     * @param {boolean} moderatorView - Whether or not to use the identifier or prefab IDs of the player's inventory items. If this is false, the inventory item's name will be used instead.
      * @returns {string} A string representation of the player's inventory.
      */
-    viewInventory(possessive, useID) {
+    viewInventory(moderatorView) {
+        const equipmentSlotOpener = `[ `;
+        const equipmentSlotCloser = ` ]`;
+        const inventorySlotOpener = `(`;
+        const inventorySlotCloser = `)`;
+        const indent = "  ";
+
+        const possessive = moderatorView ? `${this.name}'s` : `Your`;
         let itemString = `__${possessive} inventory:__\n`;
         this.inventoryCollection.forEach(equipmentSlot => {
-            itemString += `${equipmentSlot.id}: `;
+            itemString += `- \`${equipmentSlot.id}\`: `;
             const equippedItem = equipmentSlot.equippedItem;
-            if (equippedItem === null) itemString += `[ ]\n`;
+            if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
             else {
-                itemString += `[${useID ? equippedItem.getIdentifier() : equippedItem.name}]\n`;
+                itemString += `${equipmentSlotOpener}${moderatorView ? equippedItem.getIdentifier() : equippedItem.name}${equipmentSlotCloser}\n`;
+                let descendantsCount = 1;
                 /** 
                  * Generates a display of an inventory item's children.
                  * @param {string} itemString - A string representation of the inventory item's name.
@@ -1368,22 +1375,30 @@ export default class Player extends ItemContainer {
                     item.inventoryCollection.forEach(inventorySlot => {
                         /** @type {number[]} */
                         let parentItemIndexes = [];
-                        itemString += `    ${inventorySlot.id}: `;
-                        if (inventorySlot.items.length === 0) itemString += `[ ]`;
+                        for (let i = 0; i < descendantsCount; i++)
+                            itemString += indent;
+                        itemString += `- \`${inventorySlot.id}\`: `;
+                        if (inventorySlot.items.length === 0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
                         else {
+                            itemString += inventorySlotOpener;
+                            /** @type {string[]} */
+                            let inventorySlotItemNames = [];
                             inventorySlot.items.forEach((inventoryItem, i) => {
                                 const childItem = inventoryItem;
-                                if (childItem.quantity === 1) itemString += `[${useID ? childItem.getIdentifier() : childItem.name}] `;
-                                else if (useID) itemString += `[${childItem.quantity} ${childItem.getIdentifier()}] `;
-                                else {
-                                    if (childItem.pluralName) itemString += `[${childItem.quantity} ${childItem.pluralName}] `;
-                                    else itemString += `[${childItem.quantity} ${childItem.name}] `;
-                                }
+                                const quantityString = childItem.quantity === 1 ? `` : `${childItem.quantity} `;
+                                const childName = moderatorView ? childItem.getIdentifier()
+                                    : childItem.quantity > 1 && childItem.pluralName ? childItem.pluralName
+                                        : childItem.name;
+                                inventorySlotItemNames.push(`${quantityString}${childName}`);
                                 if (childItem.inventoryCollection.size !== 0) parentItemIndexes.push(i);
                             });
+                            itemString += inventorySlotItemNames.join(') (');
+                            itemString += inventorySlotCloser;
                             for (let i = 0; i < parentItemIndexes.length; i++) {
                                 itemString += `\n`;
+                                descendantsCount++;
                                 itemString = listChildItems(itemString, inventorySlot.items[parentItemIndexes[i]]);
+                                descendantsCount--;
                             }
                         }
                         if (itemString[itemString.length - 1] !== '\n') itemString += '\n';

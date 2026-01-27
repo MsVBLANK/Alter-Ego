@@ -31,6 +31,6 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable inventory");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    const inventoryString = player.viewInventory("Your", false);
+    const inventoryString = player.viewInventory(false);
     player.notify(inventoryString);
 }

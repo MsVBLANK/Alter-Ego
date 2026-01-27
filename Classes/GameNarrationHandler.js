@@ -158,14 +158,14 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the move action.
 	 * @param {Room} currentRoom - The room the player is currently in.
 	 * @param {Exit} exit - The exit the player will leave their current room through.
+	 * @param {boolean} isMovingFreely - Whether or not the player is performing free movement.
 	 */
-	narrateExit(action, player, currentRoom, exit) {
+	narrateExit(action, player, currentRoom, exit, isMovingFreely) {
 		const messageType = MessageDisplayType.STANDARD;
 		const appendString = player.createMoveAppendString();
-		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
-		const notification = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, true, currentRoom.displayName, appendString)
+		const notification = isMovingFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, true, currentRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateExitNotification(player, true, exit?.name, appendString);
-		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
+		const narration = isMovingFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateExitNotification(player, false, exit?.name, appendString);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, MessageDisplayType.MINOR);
 		this.#sendNarration(messageType, action, player, narration, currentRoom);
@@ -177,12 +177,12 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the move action.
 	 * @param {Room} destinationRoom  The room the player is moving to.
 	 * @param {Exit} entrance - The exit the player will enter the destination room from.
+	 * @param {boolean} isMovingFreely - Whether or not the player is performing free movement.
 	 */
-	narrateEnter(action, player, destinationRoom, entrance) {
+	narrateEnter(action, player, destinationRoom, entrance, isMovingFreely) {
 		const messageType = MessageDisplayType.STANDARD;
 		const appendString = player.createMoveAppendString();
-		const playerCanMoveFreely = !player.isNPC && !!player.member.roles.cache.has(this.#game.guildContext.freeMovementRole.id);
-		const narration = playerCanMoveFreely ? this.#game.notificationGenerator.generateSuddenEnterNotification(player, false, destinationRoom.displayName, appendString)
+		const narration = isMovingFreely ? this.#game.notificationGenerator.generateSuddenEnterNotification(player, false, destinationRoom.displayName, appendString)
 			: this.#game.notificationGenerator.generateEnterNotification(player, false, entrance?.name, appendString);
 		this.#sendNarration(messageType, action, player, narration, destinationRoom);
 		if (!player.canSee()) {

@@ -16,27 +16,29 @@ export default class QueueMoveAction extends Action {
 	/**
 	 * Performs a queue move action.
 	 * @param {boolean} isRunning - Whether the player is running.
-     * @param {string} destinationString - The destination the user supplied.
+	 * @param {string} destinationString - The destination the user supplied.
 	 */
 	performQueueMove(isRunning, destinationString) {
 		if (this.performed) return;
 		super.perform();
 		const currentRoom = this.player.location;
-        /** @type {Exit} */
-        let exit = null;
-        /** @type {Room} */
-        let destinationRoom = null;
-        /** @type {Exit} */
-        let entrance = null;
+		/** @type {Exit} */
+		let exit = null;
+		/** @type {Room} */
+		let destinationRoom = null;
+		/** @type {Exit} */
+		let entrance = null;
+		let isMovingFreely = false;
 
-		// If the player has the free movement role, they can move to any room they please.
-        if (this.player.member.roles.cache.has(this.getGame().guildContext.freeMovementRole.id))
-            destinationRoom = this.getGame().entityFinder.getRoom(destinationString);
-		// Otherwise, check that the desired room is adjacent to the current room.
-		else {
-			const exitName = Game.generateValidEntityName(destinationString);
-			exit = currentRoom.exitCollection.get(exitName);
-			if (!exit) {
+		exit = currentRoom.getExit(destinationString);
+		if (!exit) {
+			if (this.player.member.roles.cache.has(this.getGame().guildContext.freeMovementRole.id)) {
+				// If the player has the free movement role, they can move to any room they please.
+				destinationRoom = this.getGame().entityFinder.getRoom(destinationString);
+				isMovingFreely = true;
+			}
+			else {
+				// Otherwise, check that the desired room is adjacent to the current room.
 				const destRoomId = Room.generateValidId(destinationString);
 				for (const targetExit of currentRoom.exitCollection.values()) {
 					if (targetExit.dest.id === destRoomId) {
@@ -45,10 +47,10 @@ export default class QueueMoveAction extends Action {
 					}
 				}
 			}
-			if (exit) {
-				destinationRoom = exit.dest;
-				entrance = destinationRoom.exitCollection.get(exit.link);
-			}
+		}
+		if (exit) {
+			destinationRoom = exit.dest;
+			entrance = destinationRoom.getExit(exit.link);
 		}
 		if (!destinationRoom) {
 			this.player.moveQueue.length = 0;
@@ -61,7 +63,8 @@ export default class QueueMoveAction extends Action {
 		}
 		else {
 			const moveAction = new MoveAction(this.getGame(), this.message, this.player, this.player.location, this.forced);
-			moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
+			moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance, isMovingFreely);
+			this.player.moveQueue.length = 0;
 		}
 	}
 }

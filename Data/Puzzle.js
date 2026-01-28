@@ -1,9 +1,9 @@
+import Description from './Description.js';
 import Event from './Event.js';
 import Flag from './Flag.js';
 import Prefab from './Prefab.js';
 import ItemContainer from './ItemContainer.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-import { addItem as addItemToList, removeItem as removeItemFromList } from "../Modules/parser.js";
 
 /** @import Fixture from './Fixture.js' */
 /** @import Game from './Game.js' */
@@ -124,30 +124,31 @@ export default class Puzzle extends ItemContainer {
     /**
      * The description of the puzzle when it is solved by a player. 
      * @readonly
-     * @type {string} 
+     * @type {Description} 
      */
     correctDescription;
     /**
      * The description of the puzzle when it is already solved. Can contain an item list. 
-     * @type {string} 
+     * @readonly
+     * @type {Description} 
      */
     alreadySolvedDescription;
     /**
      * The description of the puzzle when the incorrect answer is given. 
      * @readonly
-     * @type {string} 
+     * @type {Description} 
      */
     incorrectDescription;
     /**
      * The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0. 
      * @readonly
-     * @type {string} 
+     * @type {Description} 
      */
     noMoreAttemptsDescription;
     /**
      * The description of the puzzle when a player attempts to solve it while all of the requirements are not met. 
      * @readonly
-     * @type {string} 
+     * @type {Description} 
      */
     requirementsNotMetDescription;
 
@@ -194,11 +195,11 @@ export default class Puzzle extends ItemContainer {
         this.remainingAttempts = remainingAttempts;
         this.commandSetsString = commandSetsString;
         this.commandSets = commandSets;
-        this.correctDescription = correctDescription;
-        this.alreadySolvedDescription = alreadySolvedDescription;
-        this.incorrectDescription = incorrectDescription;
-        this.noMoreAttemptsDescription = noMoreAttemptsDescription;
-        this.requirementsNotMetDescription = requirementsNotMetDescription;
+        this.correctDescription = new Description(correctDescription, this, game);
+        this.alreadySolvedDescription = new Description(alreadySolvedDescription, this, game);
+        this.incorrectDescription = new Description(incorrectDescription, this, game);
+        this.noMoreAttemptsDescription = new Description(noMoreAttemptsDescription, this, game);
+        this.requirementsNotMetDescription = new Description(requirementsNotMetDescription, this, game);
     }
 
     /**
@@ -335,7 +336,7 @@ export default class Puzzle extends ItemContainer {
     /**
      * Gets the alreadySolvedDescription.
      * @override
-     * @returns {string}
+     * @returns {Description}
      */
     getDescription() {
         return this.alreadySolvedDescription;
@@ -343,32 +344,35 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Sets the alreadySolvedDescription.
+     * @deprecated
      * @param {string} description 
      */
     #setDescription(description) {
-        this.alreadySolvedDescription = description;
+        //this.alreadySolvedDescription = description;
     }
 
     /**
      * Adds an item to the specified item list in the puzzle's already solved description.
+     * @deprecated
      * @override
      * @param {ItemInstance} item - The item to add.
      * @param {string} [list] - The item list to add the item to.
      * @param {number} [quantity] - The quantity of the item to add. If none is provided, defaults to 1.
      */
     addItemToDescription(item, list, quantity) {
-        this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
+        //this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
     }
 
     /**
      * Removes an item from the specified item list in the puzzle's already solved description.
+     * @deprecated
      * @override
      * @param {ItemInstance} item - The item to remove.
      * @param {string} list - The item list to remove the item from.
      * @param {number} [quantity] - The quantity of the item to remove. If none is provided, defaults to 1.
      */
     removeItemFromDescription(item, list, quantity) {
-        this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
+        //this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
     }
 
     /**

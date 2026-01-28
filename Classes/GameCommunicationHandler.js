@@ -6,6 +6,7 @@ import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, Collection, TextChannel } from "discord.js";
 
+/** @import Description from '../Data/Description.js' */
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import GameEntity from "../Data/GameEntity.js" */
@@ -159,7 +160,7 @@ export default class GameCommunicationHandler {
 	/**
 	 * Sends a description to a player without any checks.
 	 * @param {Player} player - The player to send the notification to.
-	 * @param {string} description - The description to parse and send.
+	 * @param {Description} description - The description to parse and send.
 	 * @param {GameEntity} container - The game entity the description belongs to.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
 	 */

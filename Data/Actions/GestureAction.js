@@ -23,7 +23,7 @@ export default class GestureAction extends Action {
 	performGesture(gesture, targetType, target) {
 		if (this.performed) return;
 		super.perform();
-		let newGesture = new Gesture(gesture.id, [...gesture.requires], [...gesture.disabledStatusesStrings], gesture.description, gesture.narration, gesture.row, this.getGame());
+		let newGesture = new Gesture(gesture.id, [...gesture.requires], [...gesture.disabledStatusesStrings], gesture.description, gesture.narration.text, gesture.row, this.getGame());
 		newGesture.targetType = targetType;
 		newGesture.target = target;
 		this.getGame().narrationHandler.narrateGesture(this, newGesture, this.player);

@@ -1,5 +1,5 @@
+import Description from './Description.js';
 import GameEntity from "./GameEntity.js";
-import { addItem as addItemToList, removeItem as removeItemFromList } from "../Modules/parser.js";
 
 /** @import Game from "./Game.js" */
 /** @import ItemInstance from "./ItemInstance.js" */
@@ -12,7 +12,7 @@ import { addItem as addItemToList, removeItem as removeItemFromList } from "../M
 export default class ItemContainer extends GameEntity {
 	/**
 	 * A description which can contain at least one item list.
-	 * @type {string}
+	 * @type {Description}
 	 */
 	description;
 
@@ -24,12 +24,12 @@ export default class ItemContainer extends GameEntity {
 	 */
 	constructor(game, row, description) {
 		super(game, row);
-		this.description = description;
+		this.description = new Description(description, this, game);
 	}
 
 	/**
 	 * Gets this entity's description which can contain an item list.
-	 * @return {string}
+	 * @return {Description}
 	 */
 	getDescription() {
 		return this.description;
@@ -37,30 +37,33 @@ export default class ItemContainer extends GameEntity {
 
 	/**
 	 * Sets the entity's description which can contain an item list.
+	 * @deprecated
 	 * @param {string} description - The new description.
 	 */
 	#setDescription(description) {
-		this.description = description;
+		//this.description = description;
 	}
 
 	/**
 	 * Adds an item to the specified item list in the container's description.
+	 * @deprecated
 	 * @param {ItemInstance} item - The item to add.
 	 * @param {string} [list] - The item list to add the item to.
 	 * @param {number} [quantity] - The quantity of the item to add. If none is provided, defaults to 1.
 	 */
 	addItemToDescription(item, list, quantity) {
-		this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
+		//this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
 	}
 
 	/**
 	 * Removes an item from the specified item list in the container's description.
+	 * @deprecated
 	 * @param {ItemInstance} item - The item to remove.
 	 * @param {string} [list] - The item list to remove the item from.
 	 * @param {number} [quantity] - The quantity of the item to remove. If none is provided, defaults to 1.
 	 */
 	removeItemFromDescription(item, list, quantity) {
-		this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
+		//this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
 	}
 
 	/**

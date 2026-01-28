@@ -1,4 +1,5 @@
-﻿import InventorySlot from './InventorySlot.js';
+﻿import Description from './Description.js';
+import InventorySlot from './InventorySlot.js';
 import ItemInstance from './ItemInstance.js';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
@@ -202,10 +203,10 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Sets the description.
-     * @param {string} description - The description to set.
+     * @param {Description} description - The description to set.
      */
     setDescription(description) {
-        this.description = description;
+        this.description = new Description(description.text, this, this.getGame());
     }
 
     /** @returns {string} */

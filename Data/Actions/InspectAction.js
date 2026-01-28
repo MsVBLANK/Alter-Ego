@@ -1,4 +1,5 @@
 import Action from "../Action.js";
+import Description from "../Description.js";
 import Fixture from "../Fixture.js";
 import InventoryItem from "../InventoryItem.js";
 
@@ -24,7 +25,7 @@ export default class InspectAction extends Action {
 		let description = target.description;
 		// If the player is inspecting an inventory item that belongs to another player, remove the contents of all il tags before parsing it.
 		if (target instanceof InventoryItem && target.player.name !== this.player.name)
-			description = description.replace(/(<(il)(\s[^>]+?)*>)[\s\S]+?(<\/\2>)/g, "$1$4");
+			description = new Description(description.text.replace(/(<(il)(\s[^>]+?)*>)[\s\S]+?(<\/\2>)/g, "$1$4"), target, this.getGame());
 		this.player.sendDescription(description, target);
 		this.getGame().logHandler.logInspect(target, this.player, this.forced);
 	}

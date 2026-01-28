@@ -98,7 +98,7 @@ export async function execute(game, message, command, args) {
                 player.locationDisplayName,
                 player.hidingSpot,
                 playerdefaults.defaultStatusEffects,
-                player.description
+                player.description.text
             ];
             playerCells.push(playerData);
 

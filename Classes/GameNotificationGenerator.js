@@ -1076,14 +1076,14 @@ export default class GameNotificationGenerator {
 		const subject = secondPerson ? `You` : player.displayName;
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
-		if (puzzle.type === "toggle" && puzzle.alreadySolvedDescription !== "")
+		if (puzzle.type === "toggle" && secondPerson && puzzle.alreadySolvedDescription.text !== "")
 			return puzzle.alreadySolvedDescription;
 		else if (puzzle.type === "combination lock" || puzzle.type === "key lock")
 			verb = secondPerson ? `lock` : `locks`;
 		else if (puzzle.type === "option")
 			verb = secondPerson ? `clear the selection for` : `resets`;
 		else if (puzzle.type === "media") {
-			if (puzzle.alreadySolvedDescription !== "") return puzzle.alreadySolvedDescription;
+			if (secondPerson && puzzle.alreadySolvedDescription.text !== "") return puzzle.alreadySolvedDescription;
 			verb = secondPerson ? `press eject on` : `presses eject on`;
 		}
 		else if (puzzle.type === "channels")

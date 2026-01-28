@@ -1,3 +1,4 @@
+import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 import { generatePlayerListString } from '../Modules/helpers.js';
 import { Collection } from 'discord.js';
@@ -63,7 +64,8 @@ export default class Room extends GameEntity {
     exitCollection;
     /**
      * The default description of the room for when a player enters from the first listed exit or inspects the room.
-     * @type {string}
+     * @readonly
+     * @type {Description}
      */
     description;
     /**
@@ -100,7 +102,7 @@ export default class Room extends GameEntity {
         this.iconURL = iconURL;
         this.exit = [];
         this.exitCollection = exits;
-        this.description = description;
+        this.description = new Description(description, this, game);
 
         /** @type {Player[]} */
         this.occupants = [];

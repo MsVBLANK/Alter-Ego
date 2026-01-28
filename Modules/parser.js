@@ -1,3 +1,4 @@
+import Description from '../Data/Description.js';
 import Player from '../Data/Player.js';
 import { default as evaluateScript } from './scriptParser.js';
 
@@ -61,108 +62,109 @@ class Sentence {
 }
 
 /**
+ * Converts a description from plain-text to a document, with warnings and errors.
+ * @param {string} descriptionText - The text of the description.
+ */
+export function createDocument(descriptionText) {
+    const description = createDescriptionDocumentFromString(descriptionText);
+    return description;
+}
+
+/**
  * Parses the XML of a description and evaluates it into a result object with no XML tags. Includes warnings and errors.
- * @param {string} description - The description to parse.
+ * @param {Description} description - The description to parse.
  * @param {GameEntity} container - The in-game entity this description belongs to.
  * @param {Player|PseudoPlayer} player - The Player currently reading the description.
  * @returns {{text: string, warnings: string[], errors: string[]}}
  */
 export function parseDescriptionWithErrors(description, container, player) {
-    // First, split the description into a DOMParser document.
-    let document = createDocument(description);
-    // Check for any warnings and errors. If they exist, store them.
-    let warnings = [];
-    let errors = [];
-    if (document.warnings.length !== 0) warnings = document.warnings;
-    if (document.errors.length !== 0) errors = document.errors;
-    // Now we just need the document.
-    let documentElement = document.document;
+    const descriptionCopy = new Description(description.text, container, description.getGame());
+    let documentElement = descriptionCopy.document;
+    // Find any conditionals.
+    let conditionals = documentElement.getElementsByTagName('if');
+    /** @type {Array<Element>} */
+    let conditionalsToRemove = [];
+    for (let i = 0; i < conditionals.length; i++) {
+        let conditional = conditionals[i].getAttribute('cond');
+        if (conditional !== null && conditional !== undefined) {
+            try {
+                if (evaluateScript(conditional, container, player) === false)
+                    conditionalsToRemove.push(conditionals[i]);
+            }
+            catch (err) {
+                description.getErrors().push(err.toString());
+            }
+        }
+    }
+    for (let conditionalToRemove of conditionalsToRemove) {
+        const childNode = conditionalToRemove.firstChild;
+        if ('tagName' in childNode && childNode.tagName === 'item') {
+            let itemElement = childNode.firstChild;
+            /** @type {PseudoItem} */
+            let item = { name: '', pluralName: '', quantity: 0, singleContainingPhrase: itemElement.textContent, pluralContainingPhrase: itemElement.textContent };
+            documentElement = removeItemWithDocument(description.text, item, '', NaN, documentElement);
+        }
+        else if (conditionalToRemove.parentNode) conditionalToRemove.parentNode.removeChild(conditionalToRemove);
+        else documentElement.removeChild(conditionalToRemove);
+    }
 
-    if (documentElement) {
-        // Find any conditionals.
-        let conditionals = documentElement.getElementsByTagName('if');
-        /** @type {Array<Element>} */
-        let conditionalsToRemove = [];
-        for (let i = 0; i < conditionals.length; i++) {
-            let conditional = conditionals[i].getAttribute('cond');
-            if (conditional !== null && conditional !== undefined) {
-                try {
-                    if (evaluateScript(conditional, container, player) === false)
-                        conditionalsToRemove.push(conditionals[i]);
+    // Check if there's an item list in the document.
+    const itemListSentences = getItemListSentences(documentElement);
+    for (const sentence of itemListSentences) {
+        const itemList = sentence.getElementsByTagName('il').item(0);
+        // If the item list is empty, remove the sentence from the documentElement.
+        const childNode = itemList.childNodes.item(0);
+        if (itemList.childNodes.length === 0 || itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') {
+            if (sentence.parentNode) sentence.parentNode.removeChild(sentence);
+            else documentElement.removeChild(sentence);
+        }
+    }
+
+    // Replace any var tags.
+    const variables = documentElement.getElementsByTagName('var');
+    let variableStrings = [];
+    for (let i = 0; i < variables.length; i++) {
+        const varAttribute = variables[i].getAttribute('v');
+        if (varAttribute !== null && varAttribute !== undefined) {
+            try {
+                const variableText = evaluateScript(varAttribute, container, player);
+                if (variableText === undefined || variableText === "undefined")
+                    description.getErrors().push('"' + varAttribute.replace(/container/g, "this") + '" is undefined.');
+                variableStrings.push({ element: variables[i], attribute: String(variableText) });
+                if (typeof variableStrings[variableStrings.length - 1].attribute === 'string' && variableStrings[variableStrings.length - 1].attribute.includes('<desc>')) {
+                    const subDescription = new Description(variableStrings[variableStrings.length - 1].attribute, container, container?.getGame());
+                    variableStrings[variableStrings.length - 1].attribute = parseDescription(subDescription, container, player);
                 }
-                catch (err) {
-                    errors.push(err.toString());
-                }
+            } catch (err) {
+                description.getErrors().push(err.toString());
             }
         }
-        for (let conditionalToRemove of conditionalsToRemove) {
-            const childNode = conditionalToRemove.firstChild;
-            if ('tagName' in childNode && childNode.tagName === 'item') {
-                let itemElement = childNode.firstChild;
-                /** @type {PseudoItem} */
-                let item = { name: '', pluralName: '', quantity: 0, singleContainingPhrase: itemElement.textContent, pluralContainingPhrase: itemElement.textContent };
-                documentElement = removeItemWithDocument(description, item, '', NaN, documentElement);
-            }
-            else if (conditionalToRemove.parentNode) conditionalToRemove.parentNode.removeChild(conditionalToRemove);
-            else documentElement.removeChild(conditionalToRemove);
-        }
+    }
+    for (let i = 0; i < variableStrings.length; i++) {
+        const newNode = documentElement.createTextNode(variableStrings[i].attribute);
+        variableStrings[i].element.parentNode.replaceChild(newNode, variableStrings[i].element);
+    }
 
-        // Check if there's an item list in the document.
-        const itemListSentences = getItemListSentences(documentElement);
-        for (const sentence of itemListSentences) {
-            const itemList = sentence.getElementsByTagName('il').item(0);
-            // If the item list is empty, remove the sentence from the documentElement.
-            const childNode = itemList.childNodes.item(0);
-            if (itemList.childNodes.length === 0 || itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') {
-                if (sentence.parentNode) sentence.parentNode.removeChild(sentence);
-                else documentElement.removeChild(sentence);
-            }
-        }
-
-        // Replace any var tags.
-        const variables = documentElement.getElementsByTagName('var');
-        let variableStrings = [];
-        for (let i = 0; i < variables.length; i++) {
-            const varAttribute = variables[i].getAttribute('v');
-            if (varAttribute !== null && varAttribute !== undefined) {
-                try {
-                    const variableText = evaluateScript(varAttribute, container, player);
-                    if (variableText === undefined || variableText === "undefined")
-                        errors.push('"' + varAttribute.replace(/container/g, "this") + '" is undefined.');
-                    variableStrings.push({ element: variables[i], attribute: String(variableText) });
-                    if (typeof variableStrings[variableStrings.length - 1].attribute === 'string' && variableStrings[variableStrings.length - 1].attribute.includes('<desc>'))
-                        variableStrings[variableStrings.length - 1].attribute = parseDescription(variableStrings[variableStrings.length - 1].attribute, this, player);
-                } catch (err) {
-                    errors.push(err.toString());
-                }
-            }
-        }
-        for (let i = 0; i < variableStrings.length; i++) {
-            const newNode = documentElement.createTextNode(variableStrings[i].attribute);
-            variableStrings[i].element.parentNode.replaceChild(newNode, variableStrings[i].element);
-        }
-
-        // Replace any br tags.
-        const breakTags = documentElement.getElementsByTagName('br');
-        let breaks = [];
-        for (let i = 0; i < breakTags.length; i++)
-            breaks.push(breakTags[i]);
-        for (let i = 0; i < breaks.length; i++) {
-            let newNode = documentElement.createTextNode('\n');
-            breaks[i].parentNode.replaceChild(newNode, breaks[i]);
-        }
+    // Replace any br tags.
+    const breakTags = documentElement.getElementsByTagName('br');
+    let breaks = [];
+    for (let i = 0; i < breakTags.length; i++)
+        breaks.push(breakTags[i]);
+    for (let i = 0; i < breaks.length; i++) {
+        let newNode = documentElement.createTextNode('\n');
+        breaks[i].parentNode.replaceChild(newNode, breaks[i]);
     }
 
     // Convert the document to a string.
     let newDescription = stringify(documentElement);
     // Strip XML tags from the string, as well as all duplicate spaces.
     newDescription = newDescription.replace(/<\/?\w+((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
-    return { text: newDescription, warnings: warnings, errors: errors };
+    return { text: newDescription, warnings: description.getWarnings(), errors: description.getErrors() };
 }
 
 /**
  * Parses the XML of a description and evaluates it into a result with no XML tags. Returns only the resulting text.
- * @param {string} description - The description to parse.
+ * @param {Description} description - The description to parse.
  * @param {GameEntity} container - The in-game entity this description belongs to.
  * @param {Player|PseudoPlayer} player - The Player currently reading the description.
  * @returns {string}
@@ -182,7 +184,7 @@ export function parseDescription(description, container, player) {
  */
 export function addItem(description, item, slot, addedQuantity = 1) {
     // First, split the description into a DOMParser document.
-    let documentElement = createDocument(description).document;
+    let documentElement = createDescriptionDocumentFromString(description).document;
 
     if (documentElement) {
         // Parse all of the sentences.
@@ -254,6 +256,22 @@ export function addItem(description, item, slot, addedQuantity = 1) {
     }
 
     return stringify(documentElement).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
+/**
+ * Removes all items from an item list.
+ * @param {Document} document - The document containing sentences with item lists.
+ * @param {Sentence} sentence - The sentence containing an item list.
+ * @param {Element} itemList - The item list element to remove items from.
+ */
+export function removeAllItemsFromItemList(document, sentence, itemList) {
+    const childNode = itemList.childNodes.item(0);
+    if (itemList.childNodes.length === 0 || itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') return document;
+    for (let i = sentence.clause.length - 1; i >= 0; i--) {
+        if (!sentence.clause[i].isItem) continue;
+        removeClause(sentence, i);
+    }
+    return document;
 }
 
 /**
@@ -339,94 +357,92 @@ function removeItemWithDocument(description, item, slot, removedQuantity = 1, do
  * @returns {string}
  */
 export function removeItem(description, item, slot, removedQuantity = 1) {
-    let document = createDocument(description).document;
+    let document = createDescriptionDocumentFromString(description).document;
     document = removeItemWithDocument(description, item, slot, removedQuantity, document);
     return stringify(document).replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
 /**
  * Evaluates all of the procedural and poss tags in a description and randomly selects which ones to keep.
- * @param {string} description - The description with procedurals.
+ * @param {Description} description - The description with procedurals.
  * @param {Map<string, string>} proceduralSelections - A Map of manually selected names of poss tags to keep.
  * @param {Player|PseudoPlayer} [player] - The player who caused these procedurals to be evaluated, if applicable.
  * @returns {string}
  */
 export function generateProceduralOutput(description, proceduralSelections, player) {
-    let document = createDocument(description).document;
-
-    if (document) {
-        // Find all procedurals.
-        let procedurals = document.getElementsByTagName('procedural');
-        /** @type {Array<Node>} */
-        let proceduralsToRemove = [];
-        for (let i = 0; i < procedurals.length; i++) {
-            const proceduralName = procedurals[i].getAttribute('name').toLowerCase().trim();
-            let proceduralAssigned = false;
-            if (proceduralName !== '' && proceduralSelections.has(proceduralName))
-                proceduralAssigned = true;
-            else {
-                let parentProcedural = procedurals[i].parentNode;
-                // If this procedural is nested, find its parent procedural.
-                while (!parentProcedural.hasOwnProperty("documentElement") && 'tagName' in parentProcedural && parentProcedural.tagName !== "procedural")
-                    parentProcedural = parentProcedural.parentNode;
-                let proceduralChance = parseFloat(procedurals[i].getAttribute('chance'));
-                // If a procedural chance was not provided or it is invalid, assume the chance is 100%.
-                if (isNaN(proceduralChance) || proceduralChance < 0 || proceduralChance > 100)
-                    proceduralChance = 100;
-                // Roll to determine if this procedural will be kept. If the probability check fails, remove the tag entirely and skip to the next one.
-                if (!keepProcedural(proceduralChance) || proceduralsToRemove.includes(parentProcedural)) {
-                    proceduralsToRemove.push(procedurals[i]);
-                    continue;
-                }
+    const descriptionCopy = new Description(description.text, description.getContainer(), description.getGame());
+    let document = descriptionCopy.document;
+    // Find all procedurals.
+    let procedurals = document.getElementsByTagName('procedural');
+    /** @type {Array<Node>} */
+    let proceduralsToRemove = [];
+    for (let i = 0; i < procedurals.length; i++) {
+        const proceduralName = procedurals[i].getAttribute('name').toLowerCase().trim();
+        let proceduralAssigned = false;
+        if (proceduralName !== '' && proceduralSelections.has(proceduralName))
+            proceduralAssigned = true;
+        else {
+            let parentProcedural = procedurals[i].parentNode;
+            // If this procedural is nested, find its parent procedural.
+            while (!parentProcedural.hasOwnProperty("documentElement") && 'tagName' in parentProcedural && parentProcedural.tagName !== "procedural")
+                parentProcedural = parentProcedural.parentNode;
+            let proceduralChance = parseFloat(procedurals[i].getAttribute('chance'));
+            // If a procedural chance was not provided or it is invalid, assume the chance is 100%.
+            if (isNaN(proceduralChance) || proceduralChance < 0 || proceduralChance > 100)
+                proceduralChance = 100;
+            // Roll to determine if this procedural will be kept. If the probability check fails, remove the tag entirely and skip to the next one.
+            if (!keepProcedural(proceduralChance) || proceduralsToRemove.includes(parentProcedural)) {
+                proceduralsToRemove.push(procedurals[i]);
+                continue;
             }
+        }
 
-            // Determine which poss tag within this procedural to keep.
-            let possibilities = procedurals[i].getElementsByTagName('poss');
-            /** @type {Array<Possibility>} */
-            let possibilityArr = [];
-            /** @type {Array<Element>} */
-            let possibilitiesToRemove = [];
+        // Determine which poss tag within this procedural to keep.
+        let possibilities = procedurals[i].getElementsByTagName('poss');
+        /** @type {Array<Possibility>} */
+        let possibilityArr = [];
+        /** @type {Array<Element>} */
+        let possibilitiesToRemove = [];
+        /** @type {number} */
+        let winningPossibilityIndex;
+        for (let j = 0; j < possibilities.length; j++) {
+            // Skip possibilities that belong to nested procedurals.
+            if (possibilities[j].parentNode !== procedurals[i]) continue;
+            const possibilityName = possibilities[j].getAttribute('name').toLowerCase();
+            if (proceduralAssigned && proceduralSelections.get(proceduralName) === possibilityName)
+                winningPossibilityIndex = j;
+            let possibilityChance = parseFloat(possibilities[j].getAttribute('chance'));
+            // This will be handled in the rolling function, if a possibility chance was not provided or invalid, set it to null.
+            if (isNaN(possibilityChance) || possibilityChance < 0 || possibilityChance > 100)
+                possibilityChance = null;
+            possibilityArr.push({ index: j, chance: possibilityChance });
+        }
+        if (!winningPossibilityIndex) {
             /** @type {number} */
-            let winningPossibilityIndex;
-            for (let j = 0; j < possibilities.length; j++) {
-                // Skip possibilities that belong to nested procedurals.
-                if (possibilities[j].parentNode !== procedurals[i]) continue;
-                const possibilityName = possibilities[j].getAttribute('name').toLowerCase();
-                if (proceduralAssigned && proceduralSelections.get(proceduralName) === possibilityName)
-                    winningPossibilityIndex = j;
-                let possibilityChance = parseFloat(possibilities[j].getAttribute('chance'));
-                // This will be handled in the rolling function, if a possibility chance was not provided or invalid, set it to null.
-                if (isNaN(possibilityChance) || possibilityChance < 0 || possibilityChance > 100)
-                    possibilityChance = null;
-                possibilityArr.push({ index: j, chance: possibilityChance });
+            let statValue;
+            const proceduralStat = Player.abbreviateStatName(procedurals[i].getAttribute('stat'));
+            if (proceduralStat !== '' && player) {
+                if (proceduralStat === "str") statValue = player.strength;
+                else if (proceduralStat === "per") statValue = player.perception;
+                else if (proceduralStat === "dex") statValue = player.dexterity;
+                else if (proceduralStat === "spd") statValue = player.speed;
+                else if (proceduralStat === "sta") statValue = player.stamina;
             }
-            if (!winningPossibilityIndex) {
-                /** @type {number} */
-                let statValue;
-                const proceduralStat = Player.abbreviateStatName(procedurals[i].getAttribute('stat'));
-                if (proceduralStat !== '' && player) {
-                    if (proceduralStat === "str") statValue = player.strength;
-                    else if (proceduralStat === "per") statValue = player.perception;
-                    else if (proceduralStat === "dex") statValue = player.dexterity;
-                    else if (proceduralStat === "spd") statValue = player.speed;
-                    else if (proceduralStat === "sta") statValue = player.stamina;
-                }
-                possibilityArr = calculateModifiedPossibilityArr(possibilityArr, statValue);
-                winningPossibilityIndex = choosePossibilityIndex(possibilityArr);
-            }
-            for (let possibility of possibilityArr) {
-                if (possibility.index !== winningPossibilityIndex)
-                    possibilitiesToRemove.push(possibilities[possibility.index]);
-            }
-            // Remove poss tags that failed the roll.
-            for (let j = 0; j < possibilitiesToRemove.length; j++)
-                procedurals[i].removeChild(possibilitiesToRemove[j]);
+            possibilityArr = calculateModifiedPossibilityArr(possibilityArr, statValue);
+            winningPossibilityIndex = choosePossibilityIndex(possibilityArr);
         }
-        // Remove procedurals that failed the roll.
-        for (let i = 0; i < proceduralsToRemove.length; i++) {
-            if (proceduralsToRemove[i].parentNode) proceduralsToRemove[i].parentNode.removeChild(proceduralsToRemove[i]);
-            else document.removeChild(proceduralsToRemove[i]);
+        for (let possibility of possibilityArr) {
+            if (possibility.index !== winningPossibilityIndex)
+                possibilitiesToRemove.push(possibilities[possibility.index]);
         }
+        // Remove poss tags that failed the roll.
+        for (let j = 0; j < possibilitiesToRemove.length; j++)
+            procedurals[i].removeChild(possibilitiesToRemove[j]);
+    }
+    // Remove procedurals that failed the roll.
+    for (let i = 0; i < proceduralsToRemove.length; i++) {
+        if (proceduralsToRemove[i].parentNode) proceduralsToRemove[i].parentNode.removeChild(proceduralsToRemove[i]);
+        else document.removeChild(proceduralsToRemove[i]);
     }
 
     return stringify(document).replace(/<\/?procedural\s?[^>]*>/g, '').replace(/<\/?poss\s?[^>]*>/g, '').replace(/<s>\s*<\/s>/g, '').replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
@@ -493,7 +509,7 @@ function choosePossibilityIndex(possibilityArr) {
  * @param {string} description 
  * @returns {{document: Document, warnings: string[], errors: string[]}}
  */
-function createDocument(description) {
+function createDescriptionDocumentFromString(description) {
     description = description.replace(/<il><\/il>/g, "<il><null /></il>");
 
     let warnings = [];

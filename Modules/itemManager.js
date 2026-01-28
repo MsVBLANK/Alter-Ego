@@ -207,7 +207,7 @@ export function convertRoomItem(item, player, equipmentSlotId, quantity) {
         item.container instanceof ItemInstance ? item.container.identifier + '/' + item.slot : "",
         quantity,
         item.uses,
-        item.description,
+        item.description.text,
         0,
         item.getGame()
     );
@@ -281,7 +281,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
         containerName,
         quantity,
         item.uses,
-        item.description,
+        item.description.text,
         0,
         item.getGame()
     );

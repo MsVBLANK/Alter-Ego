@@ -296,7 +296,7 @@ export default class AttemptAction extends Action {
 	 * @param {Puzzle} puzzle - The puzzle to check.
 	 */
 	#checkInaccessiblePuzzleHasDescription(puzzle) {
-		return puzzle.requirementsNotMetDescription !== "";
+		return puzzle.requirementsNotMetDescription.text !== "";
 	}
 
 	/**

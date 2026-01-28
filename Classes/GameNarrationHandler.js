@@ -1,3 +1,4 @@
+import Description from "../Data/Description.js";
 import Fixture from "../Data/Fixture.js";
 import InventoryItem from "../Data/InventoryItem.js";
 import Narration from "../Data/Narration.js";
@@ -737,14 +738,11 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Puzzle} puzzle - The puzzle being attempted.
 	 * @param {Player} player - The player performing the action.
-	 * @param {string} description - The description to send to the player.
+	 * @param {Description} description - The description to send to the player.
 	 * @param {string} [narration] - The narration to send. If none is supplied, uses the default puzzle interact notification.
 	 */
 	narrateAttempt(action, puzzle, player, description, narration = this.#game.notificationGenerator.generateAttemptPuzzleDefaultNotification(player.displayName, puzzle.getContainingPhrase())) {
-		if (description !== "") {
-			if (description.includes("<desc>")) player.sendDescription(description, puzzle);
-			else this.#game.communicationHandler.notifyPlayer(player, action, description);
-		}
+		if (description.text !== "" && description.text.includes("<desc>")) player.sendDescription(description, puzzle);
 		if (narration  !== "") this.#sendNarration(MessageDisplayType.MINOR, action, player, narration);
 	}
 
@@ -777,12 +775,14 @@ export default class GameNarrationHandler {
 		const messageType = MessageDisplayType.STANDARD;
 		let narration = customNarration;
 		let notification = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, true, puzzle);
-		if (player && !customNarration)
-			narration = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, false, puzzle);
-		if (player && notification !== "") {
-			if (notification.includes("<desc>")) player.sendDescription(notification, puzzle);
-			else this.#game.communicationHandler.notifyPlayer(player, action, notification);
+		if (player && !customNarration) {
+			const narrationResult = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, false, puzzle);
+			if (typeof narrationResult === 'string') narration = narrationResult;
 		}
+		if (player && typeof notification === 'string' && notification !== "")
+			this.#game.communicationHandler.notifyPlayer(player, action, notification);
+		else if (player && notification instanceof Description && notification.text !== "")
+			player.sendDescription(notification, puzzle);
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);
 	}
 
@@ -833,7 +833,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateTrigger(action, event) {
 		// Send the triggered narration to all rooms with occupants.
-		if (event.triggeredNarration !== "") {
+		if (event.triggeredNarration.text !== "") {
 			const narrationText = parseDescription(event.triggeredNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)
@@ -848,7 +848,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateEnd(action, event) {
 		// Send the ended narration to all rooms with occupants.
-		if (event.endedNarration !== "") {
+		if (event.endedNarration.text !== "") {
 			const narrationText = parseDescription(event.endedNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)

@@ -1,4 +1,5 @@
-﻿import GameEntity from './GameEntity.js';
+﻿import Description from './Description.js';
+import GameEntity from './GameEntity.js';
 import { Collection } from 'discord.js';
 
 /** @import Game from './Game.js' */
@@ -169,7 +170,7 @@ export default class Prefab extends GameEntity {
     /**
      * The description of the prefab. Can contain multiple item lists named after its inventory slots.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     description;
 
@@ -229,7 +230,7 @@ export default class Prefab extends GameEntity {
         this.inventory = [];
         this.inventoryCollection = inventory;
         this.preposition = preposition;
-        this.description = description;
+        this.description = new Description(description, this, game);
     }
 
     /**

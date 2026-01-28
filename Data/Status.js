@@ -1,4 +1,5 @@
-﻿import GameEntity from './GameEntity.js';
+﻿import Description from './Description.js';
+import GameEntity from './GameEntity.js';
 
 /** @import Game from './Game.js' */
 /** @import Timer from '../Classes/Timer.js' */
@@ -125,13 +126,13 @@ export default class Status extends GameEntity {
     /**
      * The description of the status when a player is inflicted with it.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     inflictedDescription;
     /**
      * The description of the status when a player is cured of it.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     curedDescription;
     /** 
@@ -179,8 +180,8 @@ export default class Status extends GameEntity {
         this.statModifiers = statModifiers;
         this.behaviorAttributes = behaviorAttributes;
         this.attributes = Array.from(behaviorAttributes);
-        this.inflictedDescription = inflictedDescription;
-        this.curedDescription = curedDescription;
+        this.inflictedDescription = new Description(inflictedDescription, this, game);
+        this.curedDescription = new Description(curedDescription, this, game);
 
         this.timer = null;
     }

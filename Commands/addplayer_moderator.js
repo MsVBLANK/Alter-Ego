@@ -94,7 +94,7 @@ export async function execute(game, message, command, args) {
         player.locationDisplayName,
         player.hidingSpot,
         playerdefaults.defaultStatusEffects,
-        player.description
+        player.description.text
     ]);
 
     for (let i = 0; i < playerdefaults.defaultInventory.length; i++) {

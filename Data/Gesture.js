@@ -1,3 +1,4 @@
+import Description from './Description.js';
 import GameEntity from "./GameEntity.js";
 
 /** @import Exit from "./Exit.js" */
@@ -54,7 +55,7 @@ export default class Gesture extends GameEntity {
     /**
      * Narration that will be parsed and sent to the player's room when the gesture is performed.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     narration;
     /**
@@ -87,7 +88,7 @@ export default class Gesture extends GameEntity {
         this.disabledStatusesStrings = disabledStatusesStrings;
         this.disabledStatuses = new Array(this.disabledStatusesStrings.length);
         this.description = description;
-        this.narration = narration;
+        this.narration = new Description(narration, this, game);
 
         this.targetType = "";
         this.target = null;

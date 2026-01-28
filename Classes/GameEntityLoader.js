@@ -2162,7 +2162,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		}
 		if (gesture.description === "")
 			return new Error(`Couldn't load gesture on row ${gesture.row}. No description was given.`);
-		if (gesture.narration === "")
+		if (gesture.narration.text === "")
 			return new Error(`Couldn't load gesture on row ${gesture.row}. No narration was given.`);
 	}
 

@@ -21,6 +21,7 @@ import * as itemManager from '../Modules/itemManager.js';
 import { Collection } from 'discord.js';
 
 /** @import Action from './Action.js' */
+/** @import Description from './Description.js' */
 /** @import Exit from './Exit.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
@@ -377,7 +378,6 @@ export default class Player extends ItemContainer {
         this.statusDisplays = statusDisplays;
         this.status = [];
         this.statusString = "";
-        this.description = description;
         this.inventory = [];
         this.inventoryCollection = inventory;
         this.notificationChannel = notificationChannel;
@@ -698,7 +698,7 @@ export default class Player extends ItemContainer {
      * @param {import('luxon').Duration} [duration] - A custom duration that overrides the status's default duration.
      */
     inflict(status, duration = null) {
-        const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription, status.curedDescription, status.row, this.getGame());
+        const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text, status.curedDescription.text, status.row, this.getGame());
         Status.postProcess(statusInstance);
 
         // Apply the duration, if applicable.
@@ -1554,10 +1554,10 @@ export default class Player extends ItemContainer {
 
     /**
      * Parses a description and sends it to the player.
-     * @param {string} description - The description to parse and send.
-     * @param {GameEntity} container - The game entity the description belongs to.
+     * @param {Description} description - The description to parse and send.
+     * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
      */
-    sendDescription(description, container) {
+    sendDescription(description, container = description.getContainer()) {
         if (description && !this.isNPC && (this.isConscious() || container instanceof Status))
             this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container);
     }

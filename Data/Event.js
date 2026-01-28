@@ -1,3 +1,4 @@
+import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 import InflictAction from './Actions/InflictAction.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
@@ -115,13 +116,13 @@ export default class Event extends GameEntity {
     /**
      * The narration to be sent to affected rooms when the event is triggered.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     triggeredNarration;
     /**
      * The narration to be sent to affected rooms when the event is ended.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     endedNarration;
     /** 
@@ -173,8 +174,8 @@ export default class Event extends GameEntity {
         this.effects = new Array(this.effectsStrings.length);
         this.refreshesStrings = refreshesStrings;
         this.refreshes = new Array(this.refreshesStrings.length);
-        this.triggeredNarration = triggeredNarration;
-        this.endedNarration = endedNarration;
+        this.triggeredNarration = new Description(triggeredNarration, this, game);
+        this.endedNarration = new Description(endedNarration, this, game);
 
         this.timer = null;
         this.effectsTimer = null;

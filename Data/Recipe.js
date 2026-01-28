@@ -1,3 +1,4 @@
+import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
 /** @import Game from './Game.js' */
@@ -60,19 +61,19 @@ export default class Recipe extends GameEntity {
     /**
      * The description that indicates when a recipe has begun being processed.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     initiatedDescription;
     /**
      * The description that indicates when a recipe has finished being processed or crafted.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     completedDescription;
     /**
      * The description that indicates when a recipe has been uncrafted.
      * @readonly
-     * @type {string}
+     * @type {Description}
      */
     uncraftedDescription;
 
@@ -99,9 +100,9 @@ export default class Recipe extends GameEntity {
         this.duration = duration;
         this.productsStrings = productsStrings;
         this.products = new Array(this.productsStrings.length);
-        this.initiatedDescription = initiatedDescription;
-        this.completedDescription = completedDescription;
-        this.uncraftedDescription = uncraftedDescription;
+        this.initiatedDescription = new Description(initiatedDescription, this, game);
+        this.completedDescription = new Description(completedDescription, this, game);
+        this.uncraftedDescription = new Description(uncraftedDescription, this, game);
     }
 
     /**

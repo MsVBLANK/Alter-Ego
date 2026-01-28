@@ -51,7 +51,7 @@ export default class GameEntitySaver {
 						exit.unlocked ? "TRUE" : "FALSE",
 						exit.dest.displayName,
 						exit.link,
-						exit.description
+						exit.description.text
 					]);
 				});
 			});
@@ -71,7 +71,7 @@ export default class GameEntitySaver {
 					fixture.autoDeactivate ? "TRUE" : "FALSE",
 					String(fixture.hidingSpotCapacity),
 					fixture.preposition,
-					fixture.description
+					fixture.description.text
 				]);
 			});
 			data.push({ range: this.game.constants.fixtureSheetDataCells, values: fixtureValues });
@@ -87,7 +87,7 @@ export default class GameEntitySaver {
 					`${roomItem.containerType}: ${roomItem.containerName}`,
 					!isNaN(roomItem.quantity) ? String(roomItem.quantity) : "",
 					!isNaN(roomItem.uses) ? String(roomItem.uses) : "",
-					roomItem.description
+					roomItem.description.text
 				]);
 				// If any items were deleted, row numbers may be incorrect. Fix them now.
 				if (deletedItemsCount > 0) {
@@ -130,11 +130,11 @@ export default class GameEntitySaver {
 					puzzle.solutions.join(", "),
 					!isNaN(puzzle.remainingAttempts) ? String(puzzle.remainingAttempts) : "",
 					puzzle.commandSetsString,
-					puzzle.correctDescription,
-					puzzle.alreadySolvedDescription,
-					puzzle.incorrectDescription,
-					puzzle.noMoreAttemptsDescription,
-					puzzle.requirementsNotMetDescription
+					puzzle.correctDescription.text,
+					puzzle.alreadySolvedDescription.text,
+					puzzle.incorrectDescription.text,
+					puzzle.noMoreAttemptsDescription.text,
+					puzzle.requirementsNotMetDescription.text
 				]);
 			});
 			data.push({ range: this.game.constants.puzzleSheetDataCells, values: puzzleValues });
@@ -152,8 +152,8 @@ export default class GameEntitySaver {
 					event.commandsString,
 					event.effectsStrings.join(", "),
 					event.refreshesStrings.join(", "),
-					event.triggeredNarration,
-					event.endedNarration
+					event.triggeredNarration.text,
+					event.endedNarration.text
 				]);
 			});
 			data.push({ range: this.game.constants.eventSheetDataCells, values: eventValues });
@@ -176,7 +176,7 @@ export default class GameEntitySaver {
 					player.location ? player.location.displayName : "",
 					player.hidingSpot ? player.hidingSpot : "",
 					player.getStatusList(true, true),
-					player.description
+					player.description.text
 				]);
 			});
 			data.push({ range: this.game.constants.playerSheetDataCells, values: playerValues });
@@ -192,7 +192,7 @@ export default class GameEntitySaver {
 					inventoryItem.containerName,
 					!isNaN(inventoryItem.quantity) && inventoryItem.quantity !== null ? String(inventoryItem.quantity) : "",
 					!isNaN(inventoryItem.uses) && inventoryItem.uses !== null ? String(inventoryItem.uses) : "",
-					inventoryItem.description
+					inventoryItem.description.text
 				]);
 				// If any inventory items were deleted, row numbers may be incorrect. Fix them now.
 				if (deletedInventoryItemsCount > 0) {

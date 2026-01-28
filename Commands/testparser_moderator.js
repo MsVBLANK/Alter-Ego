@@ -249,7 +249,7 @@ async function testparse (game, fileName, player) {
 
             const taggedFixture = game.fixtures.find(fixture => fixture.recipeTag === recipe.fixtureTag);
             // First, do the initiated text.
-            if (recipe.initiatedDescription !== "") {
+            if (recipe.initiatedDescription.text !== "") {
                 text += "      MESSAGE WHEN INITIATED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(recipe.initiatedDescription, taggedFixture ? taggedFixture : recipe, player);
@@ -264,7 +264,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Next, do the completed text.
-            if (recipe.completedDescription !== "") {
+            if (recipe.completedDescription.text !== "") {
                 text += "      MESSAGE WHEN COMPLETED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(recipe.completedDescription, taggedFixture ? taggedFixture : recipe, player);
@@ -279,7 +279,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Finally, do the uncrafted text.
-            if (recipe.uncraftedDescription !== "") {
+            if (recipe.uncraftedDescription.text !== "") {
                 text += "      MESSAGE WHEN UNCRAFTED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(recipe.uncraftedDescription, recipe, player);
@@ -326,7 +326,7 @@ async function testparse (game, fileName, player) {
             text += puzzle.name + EOL;
 
             // First, do the correct description.
-            if (puzzle.correctDescription !== "") {
+            if (puzzle.correctDescription.text !== "") {
                 text += "      CORRECT ANSWER:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(puzzle.correctDescription, puzzle, player);
@@ -341,7 +341,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Next, do the already solved description.
-            if (puzzle.alreadySolvedDescription !== "") {
+            if (puzzle.alreadySolvedDescription.text !== "") {
                 text += "      ALREADY SOLVED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(puzzle.alreadySolvedDescription, puzzle, player);
@@ -356,7 +356,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Next, do the incorrect description.
-            if (puzzle.incorrectDescription !== "") {
+            if (puzzle.incorrectDescription.text !== "") {
                 text += "      INCORRECT ANSWER:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(puzzle.incorrectDescription, puzzle, player);
@@ -371,7 +371,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Next, do the no more attempts description.
-            if (puzzle.noMoreAttemptsDescription !== "") {
+            if (puzzle.noMoreAttemptsDescription.text !== "") {
                 text += "      NO MORE ATTEMPTS:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(puzzle.noMoreAttemptsDescription, puzzle, player);
@@ -386,7 +386,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Finally, do the requirements not met description.
-            if (puzzle.requirementsNotMetDescription !== "") {
+            if (puzzle.requirementsNotMetDescription.text !== "") {
                 text += "      REQUIREMENTS NOT MET:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(puzzle.requirementsNotMetDescription, puzzle, player);
@@ -414,7 +414,7 @@ async function testparse (game, fileName, player) {
             text += event.id + EOL;
 
             // First, do the triggered text.
-            if (event.triggeredNarration !== "") {
+            if (event.triggeredNarration.text !== "") {
                 text += "      MESSAGE WHEN TRIGGERED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(event.triggeredNarration, event, null);
@@ -429,7 +429,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Finally, do the ended text.
-            if (event.endedNarration !== "") {
+            if (event.endedNarration.text !== "") {
                 text += "      MESSAGE WHEN ENDED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(event.endedNarration, event, null);
@@ -457,7 +457,7 @@ async function testparse (game, fileName, player) {
             text += statusEffect.id + EOL;
 
             // First, do the inflicted text.
-            if (statusEffect.inflictedDescription !== "") {
+            if (statusEffect.inflictedDescription.text !== "") {
                 text += "      MESSAGE WHEN INFLICTED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(statusEffect.inflictedDescription, statusEffect, player);
@@ -472,7 +472,7 @@ async function testparse (game, fileName, player) {
             }
 
             // Finally, do the cured text.
-            if (statusEffect.curedDescription !== "") {
+            if (statusEffect.curedDescription.text !== "") {
                 text += "      MESSAGE WHEN CURED:" + EOL;
 
                 const parsedDescription = parseDescriptionWithErrors(statusEffect.curedDescription, statusEffect, player);
@@ -541,6 +541,7 @@ async function testparse (game, fileName, player) {
 /**
  * Tests the parser module's addItem function on all in-game descriptions with il tags.
  * Adds 4 instances of random prefabs to each description. Writes the final results to a file.
+ * @deprecated
  * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  * @param {boolean} formatted - Whether or not to write the resulting text with its XML tags.
@@ -550,7 +551,7 @@ async function testadd (game, fileName, formatted, player) {
     // Skip over rooms because you can't add items to them.
 
     // Get fixtures first.
-    {
+    /*{
         await appendFile(fileName, "FIXTURES:");
         let text = "";
         for (const fixture of game.fixtures) {
@@ -561,7 +562,7 @@ async function testadd (game, fileName, formatted, player) {
                 text += "      ";
                 text += (formatted ? fixture.description : parseDescription(fixture.description, fixture, player)) + EOL;
 
-                /** @type {RoomItem[]} */
+                /** @type {RoomItem[]} *
                 const items = new Array();
                 let itemNames = "";
                 const prefabArray = [... game.prefabsCollection.values()];
@@ -608,7 +609,7 @@ async function testadd (game, fileName, formatted, player) {
                 text += "      ";
                 text += (formatted ? item.description : parseDescription(item.description, item, player)) + EOL;
 
-                /** @type {RoomItem[]} */
+                /** @type {RoomItem[]} *
                 const items = new Array();
                 let itemNames = "";
                 const prefabArray = [... game.prefabsCollection.values()];
@@ -656,7 +657,7 @@ async function testadd (game, fileName, formatted, player) {
                 text += "      ";
                 text += (formatted ? puzzle.alreadySolvedDescription : parseDescription(puzzle.alreadySolvedDescription, puzzle, player)) + EOL;
 
-                /** @type {RoomItem[]} */
+                /** @type {RoomItem[]} *
                 const items = new Array();
                 let itemNames = "";
                 const prefabArray = [... game.prefabsCollection.values()];
@@ -701,7 +702,7 @@ async function testadd (game, fileName, formatted, player) {
                 text += "      ";
                 text += (formatted ? currentPlayer.description : parseDescription(currentPlayer.description, currentPlayer, player)) + EOL;
 
-                /** @type {(RoomItem|InventoryItem)[]} */
+                /** @type {(RoomItem|InventoryItem)[]} *
                 const items = new Array();
                 let itemNames = "";
                 const prefabArray = [... game.prefabsCollection.values()];
@@ -748,7 +749,7 @@ async function testadd (game, fileName, formatted, player) {
                 text += "      ";
                 text += (formatted ? inventoryItem.description : parseDescription(inventoryItem.description, inventoryItem, player)) + EOL;
 
-                /** @type {InventoryItem[]} */
+                /** @type {InventoryItem[]} *
                 const items = new Array();
                 let itemNames = "";
                 const prefabArray = [... game.prefabsCollection.values()];
@@ -781,13 +782,14 @@ async function testadd (game, fileName, formatted, player) {
             }
         }
         await appendFile(fileName, text);
-    }
+    }*/
 }
 
 /**
  * Tests the parser module's removeItem function on all in-game descriptions with item tags.
  * Tries to remove every item from each description. Issues a warning for every description where it can't remove all items.
  * Writes the final results to a file.
+ * @deprecated
  * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  * @param {boolean} formatted - Whether or not to write the resulting text with its XML tags. If this is true, also tries to remove items in every possible order.
@@ -797,7 +799,7 @@ async function testadd (game, fileName, formatted, player) {
 async function testremove (game, fileName, formatted, player) {
     const warnings = [];
     // Get rooms first.
-    {
+    /*{
         await appendFile(fileName, "ROOMS:");
         let text = "";
         for (const room of game.roomsCollection.values()) {
@@ -1200,7 +1202,7 @@ async function testremove (game, fileName, formatted, player) {
             }
         }
         await appendFile(fileName, text);
-    }
+    }*/
 
     return warnings;
 }

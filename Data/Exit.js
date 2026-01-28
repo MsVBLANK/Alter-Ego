@@ -1,3 +1,4 @@
+import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
 /** @import Game from './Game.js' */
@@ -42,7 +43,8 @@ export default class Exit extends GameEntity {
     link;
     /**
      * The description of the room when a player enters from this exit.
-     * @type {string}
+     * @readonly
+     * @type {Description}
      */
     description;
 
@@ -64,7 +66,7 @@ export default class Exit extends GameEntity {
         this.unlocked = unlocked;
         this.destDisplayName = destDisplayName;
         this.link = link;
-        this.description = description;
+        this.description = new Description(description, this, game);
     }
 
     /**

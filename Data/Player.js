@@ -1017,6 +1017,25 @@ export default class Player extends ItemContainer {
     }
 
     /**
+	 * Gets all of the items that should appear in the given item list.
+	 * @override
+	 * @param {'equipment'|'hands'} [itemListName] - The name of the item list. Either "equipment" or "hands".
+	 * @param {Player} [player] - The player the description is being sent to. Unused.
+	 */
+	getContainedItemsForItemList(itemListName, player) {
+        /** @type {EquipmentSlot[]} */
+        let equipmentSlots = [];
+        const playerHands = this.getGame().entityFinder.getPlayerHands(this);
+        if (itemListName === 'equipment') {
+            const playerHandsIDs = playerHands.map(equipmentSlot => equipmentSlot.id);
+            equipmentSlots = this.inventoryCollection.filter(equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
+        }
+        else if (itemListName === 'hands')
+		    equipmentSlots = playerHands.filter(equipmentSlot => equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet);
+        return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
+	}
+
+    /**
      * Uses the player's inventory item.
      * @param {InventoryItem} item - The inventory item to use.
      * @param {Player} [target] - The player the inventory item is to be used on. Defaults to the player using it.

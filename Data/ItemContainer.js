@@ -3,6 +3,7 @@ import GameEntity from "./GameEntity.js";
 
 /** @import Game from "./Game.js" */
 /** @import ItemInstance from "./ItemInstance.js" */
+/** @import Player from "./Player.js" */
 
 /**
  * @class ItemContainer
@@ -75,6 +76,18 @@ export default class ItemContainer extends GameEntity {
     getContainedItems() {
         return [];
     }
+
+	/**
+	 * Gets all of the items that should appear in the given item list.
+	 * Implementation differs for each type of ItemContainer.
+	 * @abstract
+	 * @param {string} [itemListName] - The name of the item list. Only required for ItemContainers which can have multiple item lists.
+	 * @param {Player} [player] - The player the description is being sent to. Optional.
+	 * @returns {ItemInstance[]}
+	 */
+	getContainedItemsForItemList(itemListName, player) {
+		return [];
+	}
 
 	/**
 	 * Returns true if this entity contains no items.

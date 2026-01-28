@@ -158,6 +158,17 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+	 * Gets all of the items that should appear in the given item list.
+	 * @override
+	 * @param {string} [itemListName] - The name of the item list. Only required if there is more than one item list.
+	 * @param {Player} [player] - The player the description is being sent to. Optional.
+	 */
+	getContainedItemsForItemList(itemListName, player) {
+        if (player && player.name !== this.player.name) return [];
+        return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier, itemListName);
+	}
+
+    /**
      * Executes the inventory item's equipped commands.
      */
     executeEquippedCommands() {

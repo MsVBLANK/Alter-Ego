@@ -1,5 +1,5 @@
 import GameConstruct from "./GameConstruct.js";
-import { createDocument } from "../Modules/parser.js";
+import { createDocument, stringify } from "../Modules/parser.js";
 /** @import Game from "./Game.js"; */
 /** @import GameEntity from "./GameEntity.js"; */
 
@@ -51,7 +51,7 @@ export default class Description extends GameConstruct {
 		super(game);
 		this.text = text;
 		this.#container = container;
-		const descriptionDocument = createDocument(text);
+		const descriptionDocument = createDocument(text, container instanceof GameConstruct);
 		this.document = descriptionDocument.document;
 		this.#warnings = descriptionDocument.warnings;
 		this.#errors = descriptionDocument.errors;
@@ -67,5 +67,9 @@ export default class Description extends GameConstruct {
 
 	getErrors() {
 		return this.#errors;
+	}
+
+	toString() {
+		return stringify(this.document);
 	}
 }

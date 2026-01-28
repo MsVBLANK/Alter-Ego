@@ -186,6 +186,18 @@ export default class ItemInstance extends ItemContainer {
 	}
 
 	/**
+	 * Outputs a string to insert into an item list in a description.
+	 * If the item's quantity is 1, returns the item's single containing phrase.
+	 * If its quantity is not 1, returns the item's quantity followed by its plural containing phrase.
+	 * If its quantity is infinite, returns only the item's plural containing phrase.
+	 */
+	toContainingPhrase() {
+		if (isNaN(this.quantity)) return this.pluralContainingPhrase;
+		else if (this.quantity !== 1) return `${this.quantity} ${this.pluralContainingPhrase}`;
+		else return this.singleContainingPhrase;
+	}
+
+	/**
 	 * Gets the item's single containing phrase.
 	 */
 	getContainingPhrase() {

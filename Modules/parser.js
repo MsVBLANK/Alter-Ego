@@ -1,4 +1,5 @@
 import Description from '../Data/Description.js';
+import ItemContainer from '../Data/ItemContainer.js';
 import Player from '../Data/Player.js';
 import { default as evaluateScript } from './scriptParser.js';
 
@@ -59,14 +60,28 @@ class Sentence {
         this.itemList = itemList;
         this.itemListName = itemListName;
     }
+
+    /** @param {number} i */
+    deleteClause(i) {
+        this.clause.splice(i, 1);
+    }
 }
 
 /**
  * Converts a description from plain-text to a document, with warnings and errors.
  * @param {string} descriptionText - The text of the description.
+ * @param {boolean} [removeItems] - Whether or not to remove item tags from the description. Defaults to true.
  */
-export function createDocument(descriptionText) {
+export function createDocument(descriptionText, removeItems = true) {
     const description = createDescriptionDocumentFromString(descriptionText);
+    if (removeItems && description.warnings.length === 0 && description.errors.length === 0) {
+        // Check if there's an item list in the document.
+        const itemListSentences = getItemListSentences(description.document);
+        for (const sentenceElement of itemListSentences) {
+            const sentence = createSentence(sentenceElement);
+            description.document = removeAllItemsFromItemList(description.document, sentence);
+        }
+    }
     return description;
 }
 
@@ -74,12 +89,13 @@ export function createDocument(descriptionText) {
  * Parses the XML of a description and evaluates it into a result object with no XML tags. Includes warnings and errors.
  * @param {Description} description - The description to parse.
  * @param {GameEntity} container - The in-game entity this description belongs to.
- * @param {Player|PseudoPlayer} player - The Player currently reading the description.
+ * @param {Player} player - The Player currently reading the description.
  * @returns {{text: string, warnings: string[], errors: string[]}}
  */
 export function parseDescriptionWithErrors(description, container, player) {
     const descriptionCopy = new Description(description.text, container, description.getGame());
     let documentElement = descriptionCopy.document;
+
     // Find any conditionals.
     let conditionals = documentElement.getElementsByTagName('if');
     /** @type {Array<Element>} */
@@ -110,13 +126,17 @@ export function parseDescriptionWithErrors(description, container, player) {
 
     // Check if there's an item list in the document.
     const itemListSentences = getItemListSentences(documentElement);
-    for (const sentence of itemListSentences) {
-        const itemList = sentence.getElementsByTagName('il').item(0);
+    for (const sentenceElement of itemListSentences) {
+        const itemList = sentenceElement.getElementsByTagName('il').item(0);
+        if (container instanceof ItemContainer) {
+            const sentence = createSentence(sentenceElement);
+            documentElement = addItemsToItemList(documentElement, sentence, container, player);
+        }
         // If the item list is empty, remove the sentence from the documentElement.
         const childNode = itemList.childNodes.item(0);
         if (itemList.childNodes.length === 0 || itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') {
-            if (sentence.parentNode) sentence.parentNode.removeChild(sentence);
-            else documentElement.removeChild(sentence);
+            if (sentenceElement.parentNode) sentenceElement.parentNode.removeChild(sentenceElement);
+            else documentElement.removeChild(sentenceElement);
         }
     }
 
@@ -166,7 +186,7 @@ export function parseDescriptionWithErrors(description, container, player) {
  * Parses the XML of a description and evaluates it into a result with no XML tags. Returns only the resulting text.
  * @param {Description} description - The description to parse.
  * @param {GameEntity} container - The in-game entity this description belongs to.
- * @param {Player|PseudoPlayer} player - The Player currently reading the description.
+ * @param {Player} player - The Player currently reading the description.
  * @returns {string}
  */
 export function parseDescription(description, container, player) {
@@ -176,6 +196,7 @@ export function parseDescription(description, container, player) {
 
 /**
  * Adds an item to an item list in an XML description. If the item already exists, increases its quantity.
+ * @deprecated
  * @param {string} description - The description to add an item to.
  * @param {RoomItem|InventoryItem|PseudoItem} item - The item to add.
  * @param {string} [slot] - The name of the il tag to update.
@@ -259,23 +280,60 @@ export function addItem(description, item, slot, addedQuantity = 1) {
 }
 
 /**
+ * Adds items to an item list.
+ * @param {Document} document - The document containing sentences with item lists.
+ * @param {Sentence} sentence - The sentence containing an item list.
+ * @param {ItemContainer} container - The item container entity this item list belongs to.
+ * @param {Player} player - The Player currently reading the description.
+ */
+function addItemsToItemList(document, sentence, container, player) {
+    const items = container.getContainedItemsForItemList(sentence.itemListName, player).reverse();
+    for (const item of items) {
+        let itemAlreadyExists = false;
+        for (const clause of sentence.clause) {
+            const clauseText = clause.node.data.toLocaleUpperCase();
+            if (isNaN(item.quantity) && (clauseText.includes(item.pluralContainingPhrase.toLocaleUpperCase()) || clauseText.includes(item.pluralName) || clauseText.includes(item.name))) {
+                itemAlreadyExists = true;
+                break;
+            }
+        }
+        if (itemAlreadyExists) continue;
+        addClause(sentence, item.toContainingPhrase());
+        sentence.itemCount++;
+    }
+    return document;
+}
+
+/**
  * Removes all items from an item list.
  * @param {Document} document - The document containing sentences with item lists.
  * @param {Sentence} sentence - The sentence containing an item list.
- * @param {Element} itemList - The item list element to remove items from.
  */
-export function removeAllItemsFromItemList(document, sentence, itemList) {
-    const childNode = itemList.childNodes.item(0);
-    if (itemList.childNodes.length === 0 || itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') return document;
+function removeAllItemsFromItemList(document, sentence) {
+    const childNode = sentence.itemList.childNodes.item(0);
+    if (sentence.itemList.childNodes.length === 0 || sentence.itemList.childNodes.length === 1 && 'tagName' in childNode && childNode.tagName === 'null') return document;
     for (let i = sentence.clause.length - 1; i >= 0; i--) {
         if (!sentence.clause[i].isItem) continue;
         removeClause(sentence, i);
+        // Remove any deleted nodes from the sentence and adjust the current index if needed.
+        for (let j = sentence.clause.length - 1; j >= i; j--) {
+            if (sentence.clause[j].node === null)
+                sentence.deleteClause(j);
+        }
+        for (let j = i - 1; j >= 0; j--) {
+            if (sentence.clause[j].node === null) {
+                sentence.deleteClause(j);
+                i--;
+            }
+        }
+        sentence.itemCount--;
     }
     return document;
 }
 
 /**
  * Removes an item clause from an il tag within a description. If the item's quantity is greater than 1, decreases it. Returns a Document.
+ * @deprecated
  * @param {string} description - The description to remove an item from.
  * @param {RoomItem|InventoryItem|PseudoItem} item - The item to remove.
  * @param {string} [slot] - The name of the il tag to update.
@@ -350,6 +408,7 @@ function removeItemWithDocument(description, item, slot, removedQuantity = 1, do
 
 /**
  * Removes an item clause from an il tag within a description. If the item's quantity is greater than 1, decreases it.
+ * @deprecated
  * @param {string} description - The description to remove an item from.
  * @param {RoomItem|InventoryItem|PseudoItem} item - The item to remove.
  * @param {string} [slot] - The name of the il tag to update.
@@ -605,7 +664,7 @@ function getItemListSentences(document) {
  * @param {Node} document 
  * @returns {string}
  */
-function stringify(document) {
+export function stringify(document) {
     let description = new XMLSerializer().serializeToString(document);
     description = description.replace(/<il\/>/g, "<il></il>").replace(/(<(il)\s[^>]+?)\/>/g, "$1></$2>").replace(/<s\/>/g, "").replace(/<null\/>/g, "").replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/ {2,}/g, " ").trim();
     return description;
@@ -773,7 +832,8 @@ function addClause(sentence, phrase) {
         // INSERT: "BASKETBALL"
         // AFTER:  "<desc><s>Looking under the beds, you find <il><item>a BASKETBALL</item></il>.</s></desc>"
         else if (clause[i + 1].node === sentence.itemList.lastChild) {
-            clause[i + 1].set("");
+            clause[i + 1].delete();
+            sentence.deleteClause(i + 1);
             return 11;
         }
         else return 12;
@@ -809,7 +869,7 @@ function removeClause(sentence, i) {
             // REMOVE: "LAXATIVES"
             // AFTER:  "<desc><s>On these shelves are <il><item>a bottle of PAINKILLERS</item> and <item>3 bottles of ZZZQUIL</item></il>.</s></desc>"
             else if (sentence.itemCount === 3) {
-                clause[i - 3].set(clause[i - 1].text.replace(",", " "));
+                clause[i - 3].set(clause[i - 1].text.replace(/, */, " "));
                 clause[i - 1].delete();
                 return 1;
             }
@@ -817,9 +877,11 @@ function removeClause(sentence, i) {
             // REMOVE: "ZZZQUIL"
             // AFTER:  "<desc><s>On these shelves is <il><item>a bottle of PAINKILLERS</item></il>.</s></desc>"
             else {
-                // If the clause before the item list has "are" and there's only going to be 1 item left with a quantity of 1 and there are no commas after "are", change "are" to "is".
-                if (clause[i - 3].text.includes(" are ") && clause[i - 2].itemQuantity === 1 && clause[i - 3].text.substring(clause[i - 3].text.lastIndexOf(" are ")).split(',').length - 1 === 0)
+                // If the clause before or after the item list has "are" and there's only going to be 1 item left with a quantity of 1 and there are no commas after "are", change "are" to "is".
+                if (i >= 3 && clause[i - 3].text.includes(" are ") && clause[i - 2].itemQuantity === 1 && clause[i - 3].text.substring(clause[i - 3].text.lastIndexOf(" are ")).split(',').length - 1 === 0)
                     clause[i - 3].set(clause[i - 3].text.substring(0, clause[i - 3].text.lastIndexOf(" are ")) + " is " + clause[i - 3].text.substring(clause[i - 3].text.lastIndexOf(" are ") + 5));
+                else if (clause[i + 1] && clause[i + 1].text.startsWith(" are ") && clause[i + 1].itemQuantity === 1)
+                    clause[i + 1].set(" is " + clause[i + 1].text.substring(clause[i + 1].text.indexOf(" are ") + 5));
                 clause[i - 1].delete();
                 return 2;
             }

@@ -186,6 +186,16 @@ describe('GameEntityLoader test', () => {
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 expect(errors).toEqual([]);
                 expect(roomCount).toBe(198);
+                for (const room of game.roomsCollection.values()) {
+                    const roomDescriptionText = room.description.toString();
+                    expect(roomDescriptionText).not.toContain("<item>");
+                    expect(roomDescriptionText).not.toContain("</item>");
+                    for (const exit of room.exitCollection.values()) {
+                        const exitDescriptionText = exit.description.toString();
+                        expect(exitDescriptionText).not.toContain("<item>");
+                        expect(exitDescriptionText).not.toContain("</item>");
+                    }
+                }
             });
         });
     });
@@ -260,6 +270,11 @@ describe('GameEntityLoader test', () => {
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
                 expect(fixtureCount).toBe(1546);
+                for (const fixture of game.fixtures) {
+                    const descriptionText = fixture.description.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
+                }
             });
         });
     });
@@ -329,6 +344,11 @@ describe('GameEntityLoader test', () => {
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
                 expect(prefabCount).toBe(1494);
+                for (const prefab of game.prefabsCollection.values()) {
+                    const descriptionText = prefab.description.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
+                }
             });
         });
     });
@@ -506,6 +526,9 @@ describe('GameEntityLoader test', () => {
                             expect(`${roomItem.container.getIdentifier()}/${roomItem.slot}`).toEqual(Game.generateValidEntityName(roomItem.containerName));
                     }
                     expect(roomItem.inventoryCollection.size).toEqual(roomItem.prefab.inventoryCollection.size);
+                    const descriptionText = roomItem.description.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
                 }
                 const cornDogBoxes = game.entityFinder.getRoomItems("BOX OF CORN DOGS", "freezer", undefined, "Fixture", "SHELF 1");
                 for (const cornDogBox of cornDogBoxes) {
@@ -525,6 +548,11 @@ describe('GameEntityLoader test', () => {
                 const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
                 expect(errors).toEqual([]);
                 expect(puzzleCount).toBe(398);
+                for (const puzzle of game.puzzles) {
+                    const descriptionText = puzzle.alreadySolvedDescription.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
+                }
             });
         });
     });
@@ -559,6 +587,11 @@ describe('GameEntityLoader test', () => {
                 const playerCount = await game.entityLoader.loadPlayers(true, errors);
                 expect(errors).toEqual([]);
                 expect(playerCount).toBe(11);
+                for (const player of game.playersCollection.values()) {
+                    const descriptionText = player.description.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
+                }
             });
         });
     });
@@ -587,72 +620,75 @@ describe('GameEntityLoader test', () => {
                         expect(inventoryItem.containerType).toEqual("InventoryItem");
                         expect(`${inventoryItem.container.getIdentifier()}/${inventoryItem.slot}`).toEqual(Game.generateValidEntityName(inventoryItem.containerName));
                     }
-
-                    const kyra = game.entityFinder.getPlayer("Kyra");
-                    expect(kyra.carryWeight).toBe(5);
-                    const kyraJacket = kyra.inventoryCollection.get("JACKET");
-                    expect(kyraJacket.items).toHaveLength(1);
-                    expect(kyraJacket.equippedItem).not.toBeNull();
-                    expect(kyraJacket.equippedItem.identifier).toBe("KYRAS LAB COAT 1");
-                    expect(kyraJacket.equippedItem.inventoryCollection.size).toBe(2);
-                    for (const inventorySlot of kyraJacket.equippedItem.inventoryCollection.values()) {
-                        expect(inventorySlot.takenSpace).toBe(0);
-                        expect(inventorySlot.weight).toBe(0);
-                    }
-                    const kyraPants = kyra.inventoryCollection.get("PANTS");
-                    expect(kyraPants.items).toHaveLength(2);
-                    expect(kyraPants.equippedItem).not.toBeNull();
-                    expect(kyraPants.equippedItem.inventoryCollection.size).toBe(2);
-                    expect(kyraPants.items[1].prefab.id).toBe("MASTER KEY");
-                    const kyraPantsRightPocket = kyraPants.equippedItem.inventoryCollection.get("RIGHT POCKET");
-                    expect(kyraPantsRightPocket.takenSpace).toBe(1);
-                    expect(kyraPantsRightPocket.weight).toBe(1);
-                    expect(kyraPantsRightPocket.items).toHaveLength(1);
-                    expect(kyraPantsRightPocket.items[0].prefab.id).toBe("MASTER KEY");
-
-                    const vivian = game.entityFinder.getPlayer("Vivian");
-                    expect(vivian.carryWeight).toBe(22);
-                    const vivianBag = vivian.inventoryCollection.get("BAG");
-                    expect(vivianBag.items).toHaveLength(6);
-                    expect(vivianBag.equippedItem).not.toBe(null);
-                    expect(vivianBag.equippedItem.identifier).toBe("VIVIANS QUIVER");
-                    expect(vivianBag.equippedItem.weight).toBe(20);
-                    expect(vivianBag.equippedItem.inventoryCollection.size).toBe(1);
-                    const vivianQuiver = vivianBag.equippedItem.inventoryCollection.get("QUIVER");
-                    expect(vivianQuiver.takenSpace).toBe(5);
-                    expect(vivianQuiver.weight).toBe(1);
-                    expect(vivianQuiver.items).toHaveLength(1);
-                    expect(vivianQuiver.items[0].identifier).toBe("WHITE JEANS 2");
-                    const whiteJeans = vivianQuiver.items[0];
-                    expect(whiteJeans.weight).toBe(19);
-                    expect(whiteJeans.inventoryCollection.size).toBe(4);
-                    const whiteJeansRightPocket = whiteJeans.inventoryCollection.get("RIGHT POCKET");
-                    const whiteJeansLeftPocket = whiteJeans.inventoryCollection.get("LEFT POCKET");
-                    const whiteJeansRightBackPocket = whiteJeans.inventoryCollection.get("RIGHT BACK POCKET");
-                    const whiteJeansLeftBackPocket = whiteJeans.inventoryCollection.get("LEFT BACK POCKET");
-                    expect(whiteJeansRightBackPocket.items).toHaveLength(0);
-                    expect(whiteJeansLeftBackPocket.items).toHaveLength(0);
-                    expect(whiteJeansRightPocket.items).toHaveLength(1);
-                    expect(whiteJeansRightPocket.takenSpace).toBe(2);
-                    expect(whiteJeansLeftPocket.items).toHaveLength(1);
-                    expect(whiteJeansLeftPocket.takenSpace).toBe(2);
-                    expect(whiteJeansRightPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 2");
-                    expect(whiteJeansLeftPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 3");
-                    expect(whiteJeansRightPocket.items[0].weight).toBe(12);
-                    expect(whiteJeansLeftPocket.items[0].weight).toBe(6);
-                    expect(whiteJeansRightPocket.items[0].inventoryCollection.size).toBe(1);
-                    expect(whiteJeansLeftPocket.items[0].inventoryCollection.size).toBe(1);
-                    const tpPack2 = whiteJeansRightPocket.items[0].inventoryCollection.get("PACK");
-                    const tpPack3 = whiteJeansLeftPocket.items[0].inventoryCollection.get("PACK");
-                    expect(tpPack2.items).toHaveLength(1);
-                    expect(tpPack3.items).toHaveLength(1);
-                    expect(tpPack2.takenSpace).toBe(12);
-                    expect(tpPack3.takenSpace).toBe(5);
-                    expect(tpPack2.weight).toBe(12);
-                    expect(tpPack3.weight).toBe(6);
-                    expect(tpPack2.items[0].prefab.id).toBe("HAMBURGER BUN");
-                    expect(tpPack3.items[0].prefab.id).toBe("DETERGENT");
+                    const descriptionText = inventoryItem.description.toString();
+                    expect(descriptionText).not.toContain("<item>");
+                    expect(descriptionText).not.toContain("</item>");
                 }
+
+                const kyra = game.entityFinder.getPlayer("Kyra");
+                expect(kyra.carryWeight).toBe(5);
+                const kyraJacket = kyra.inventoryCollection.get("JACKET");
+                expect(kyraJacket.items).toHaveLength(1);
+                expect(kyraJacket.equippedItem).not.toBeNull();
+                expect(kyraJacket.equippedItem.identifier).toBe("KYRAS LAB COAT 1");
+                expect(kyraJacket.equippedItem.inventoryCollection.size).toBe(2);
+                for (const inventorySlot of kyraJacket.equippedItem.inventoryCollection.values()) {
+                    expect(inventorySlot.takenSpace).toBe(0);
+                    expect(inventorySlot.weight).toBe(0);
+                }
+                const kyraPants = kyra.inventoryCollection.get("PANTS");
+                expect(kyraPants.items).toHaveLength(2);
+                expect(kyraPants.equippedItem).not.toBeNull();
+                expect(kyraPants.equippedItem.inventoryCollection.size).toBe(2);
+                expect(kyraPants.items[1].prefab.id).toBe("MASTER KEY");
+                const kyraPantsRightPocket = kyraPants.equippedItem.inventoryCollection.get("RIGHT POCKET");
+                expect(kyraPantsRightPocket.takenSpace).toBe(1);
+                expect(kyraPantsRightPocket.weight).toBe(1);
+                expect(kyraPantsRightPocket.items).toHaveLength(1);
+                expect(kyraPantsRightPocket.items[0].prefab.id).toBe("MASTER KEY");
+
+                const vivian = game.entityFinder.getPlayer("Vivian");
+                expect(vivian.carryWeight).toBe(22);
+                const vivianBag = vivian.inventoryCollection.get("BAG");
+                expect(vivianBag.items).toHaveLength(6);
+                expect(vivianBag.equippedItem).not.toBe(null);
+                expect(vivianBag.equippedItem.identifier).toBe("VIVIANS QUIVER");
+                expect(vivianBag.equippedItem.weight).toBe(20);
+                expect(vivianBag.equippedItem.inventoryCollection.size).toBe(1);
+                const vivianQuiver = vivianBag.equippedItem.inventoryCollection.get("QUIVER");
+                expect(vivianQuiver.takenSpace).toBe(5);
+                expect(vivianQuiver.weight).toBe(1);
+                expect(vivianQuiver.items).toHaveLength(1);
+                expect(vivianQuiver.items[0].identifier).toBe("WHITE JEANS 2");
+                const whiteJeans = vivianQuiver.items[0];
+                expect(whiteJeans.weight).toBe(19);
+                expect(whiteJeans.inventoryCollection.size).toBe(4);
+                const whiteJeansRightPocket = whiteJeans.inventoryCollection.get("RIGHT POCKET");
+                const whiteJeansLeftPocket = whiteJeans.inventoryCollection.get("LEFT POCKET");
+                const whiteJeansRightBackPocket = whiteJeans.inventoryCollection.get("RIGHT BACK POCKET");
+                const whiteJeansLeftBackPocket = whiteJeans.inventoryCollection.get("LEFT BACK POCKET");
+                expect(whiteJeansRightBackPocket.items).toHaveLength(0);
+                expect(whiteJeansLeftBackPocket.items).toHaveLength(0);
+                expect(whiteJeansRightPocket.items).toHaveLength(1);
+                expect(whiteJeansRightPocket.takenSpace).toBe(2);
+                expect(whiteJeansLeftPocket.items).toHaveLength(1);
+                expect(whiteJeansLeftPocket.takenSpace).toBe(2);
+                expect(whiteJeansRightPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 2");
+                expect(whiteJeansLeftPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 3");
+                expect(whiteJeansRightPocket.items[0].weight).toBe(12);
+                expect(whiteJeansLeftPocket.items[0].weight).toBe(6);
+                expect(whiteJeansRightPocket.items[0].inventoryCollection.size).toBe(1);
+                expect(whiteJeansLeftPocket.items[0].inventoryCollection.size).toBe(1);
+                const tpPack2 = whiteJeansRightPocket.items[0].inventoryCollection.get("PACK");
+                const tpPack3 = whiteJeansLeftPocket.items[0].inventoryCollection.get("PACK");
+                expect(tpPack2.items).toHaveLength(1);
+                expect(tpPack3.items).toHaveLength(1);
+                expect(tpPack2.takenSpace).toBe(12);
+                expect(tpPack3.takenSpace).toBe(5);
+                expect(tpPack2.weight).toBe(12);
+                expect(tpPack3.weight).toBe(6);
+                expect(tpPack2.items[0].prefab.id).toBe("HAMBURGER BUN");
+                expect(tpPack3.items[0].prefab.id).toBe("DETERGENT");
             });
         });
     });

@@ -579,6 +579,7 @@ describe('test parseDescription', () => {
 
 		test('finite and infinite quantities', () => {
 			const container = game.entityFinder.getFixture('DRAWERS', 'warehouse-office');
+			expect(container.description.toString()).toBe(`<desc><s>You look through the drawers.</s> <s>They mostly contain a bunch of files in Russian<if cond="player.hasAttribute('knows russian')">, which are all meaningless documents about warehouse shipments, employees, soldiers, etc</if><if cond="!player.hasAttribute('knows russian')">, which you can't read</if>.</s> <s>However, the top drawer contains <il>a stack of PAPER</il>.</s></desc>`)
 			const expected = `You look through the drawers. They mostly contain a bunch of files in Russian, which you can't read. However, the top drawer contains a MEDIUM KEY, a DOCUMENT, 7 PENS, and a stack of PAPER.`;
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
@@ -593,7 +594,8 @@ describe('test parseDescription', () => {
 
 		test('three items with conditional', () => {
 			const container = game.entityFinder.getFixture('BED', 'suite-14');
-			const expected = `It's a queen bed with perfectly white sheets and a thick, black comforter tucked neatly under the mattress. On it, you find a BILLIARD BALL, 2 PILLOWS, and a COMFORTER.`;
+			expect(container.description.toString()).toBe(`<desc><s>It's a queen bed with perfectly white sheets<if cond="findRoomItem('COMFORTER', this.location.id, 'Fixture', 'BED') !== undefined"> and a thick, black comforter tucked neatly under the mattress</if>.</s> <s>On it, you find <il></il>.</s></desc>`);
+			const expected = `It's a queen bed with perfectly white sheets and a thick, black comforter tucked neatly under the mattress. On it, you find 2 PILLOWS, a COMFORTER, and a BILLIARD BALL.`;
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
@@ -642,14 +644,21 @@ describe('test parseDescription', () => {
 
 		test('player with one filled item list', () => {
 			const container = vivian;
-			const expected = `You examine Vivian. She's somewhat short, with a light skin tone. She has long, dark purple hair with straight bangs and an ahoge. Her hair is tied up in a ponytail. Her eyes are light purple. She has a seemingly permanent scowl, making her look a little intimidating, but her size makes her appear relatively harmless. She has a scrawny frame. She wears a BLUE BOW, a pair of GLASSES, a WHITE DRESS SHIRT, a BLACK SUIT JACKET, a BLACK TIE, a QUIVER, a pair of BLACK TROUSERS, and a pair of FLATS.`;
+			const expected = `You examine Vivian. She's somewhat short, with a light skin tone. She has long, dark purple hair with straight bangs and an ahoge. Her hair is tied up in a ponytail. Her eyes are light purple. She has a seemingly permanent scowl, making her look a little intimidating, but her size makes her appear relatively harmless. She has a scrawny frame. She wears a BLUE BOW, a pair of GLASSES, a BLACK TIE, a WHITE DRESS SHIRT, a BLACK SUIT JACKET, a QUIVER, a pair of BLACK TROUSERS, and a pair of FLATS.`;
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
 
 		test('player with multiple filled item lists', () => {
 			const container = kyra;
-			const expected = `You examine Kyra. She's somewhat short with a pale skin tone. She has red eyes and long, brown hair tied back in an extremely long, low ponytail, with bangs swept to the right and two thick, wavy fringes on the sides that reach down to her chest. Her expression is relatively neutral, making it hard to read what's on her mind. She has a thin build. She wears a pair of GLASSES, a BLACK DRESS SHIRT, a RED TIE, a LAB COAT, a pair of BLACK DRESS PANTS, a pair of WHITE SOCKS, and a pair of FLATS. You see her carrying a mug of COFFEE.`;
+			const expected = `You examine Kyra. She's somewhat short with a pale skin tone. She has red eyes and long, brown hair tied back in an extremely long, low ponytail, with bangs swept to the right and two thick, wavy fringes on the sides that reach down to her chest. Her expression is relatively neutral, making it hard to read what's on her mind. She has a thin build. She wears a pair of GLASSES, a RED TIE, a BLACK DRESS SHIRT, a LAB COAT, a pair of BLACK DRESS PANTS, a pair of WHITE SOCKS, and a pair of FLATS. You see her carrying a mug of COFFEE.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('item in child puzzle', () => {
+			const container = game.entityFinder.getFixture('LOCKER 1', 'locker-room');
+			const expected = `You open the locker. Inside, you find a TOWEL.`;
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});

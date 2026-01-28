@@ -417,7 +417,7 @@
   [ "MOP BUCKET", "MOP BUCKET", "storage", "TRUE", "Item: CLEANING CART/FRONT", "1", "", "<desc><s>It's a yellow mop bucket on wheels.</s> <s>It's half-filled with clean-looking water.</s> <s>In it is <il><item>a MOP</item></il>.</s></desc>" ],
   [ "MOP", "", "storage", "TRUE", "Item: MOP BUCKET/MOP BUCKET", "1", "", "<desc><s>It's a plastic mop.</s> <s>The mop head seems to be made of scraps of fabric.</s> <s>If you spill anything, you can use this to clean it up.</s></desc>" ],
   [ "TOP DRAWER", "TOP DRAWER 0", "storage", "TRUE", "Object: NIGHTSTAND 2", "1", "", "<desc><s>You look inside the top drawer.</s> <s>In it, you find <il></il>.</s></desc>" ],
-  [ "TOWEL", "", "locker-room", "FALSE", "Puzzle: LOCKER 1", "1", "", "<desc><s>The towel is pure white and perfectly clean.</s> <s>It smells fresh, and is incredibly soft to the touch.</s></desc>" ],
+  [ "TOWEL", "", "locker-room", "TRUE", "Puzzle: LOCKER 1", "1", "", "<desc><s>The towel is pure white and perfectly clean.</s> <s>It smells fresh, and is incredibly soft to the touch.</s></desc>" ],
   [ "TOWEL", "", "locker-room", "FALSE", "Puzzle: LOCKER 2", "1", "", "<desc><s>The towel is pure white and perfectly clean.</s> <s>It smells fresh, and is incredibly soft to the touch.</s></desc>" ],
   [ "TOWEL", "", "locker-room", "FALSE", "Puzzle: LOCKER 3", "1", "", "<desc><s>The towel is pure white and perfectly clean.</s> <s>It smells fresh, and is incredibly soft to the touch.</s></desc>" ],
   [ "TOWEL", "", "locker-room", "FALSE", "Puzzle: LOCKER 4", "1", "", "<desc><s>The towel is pure white and perfectly clean.</s> <s>It smells fresh, and is incredibly soft to the touch.</s></desc>" ],

@@ -628,7 +628,6 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load puzzle on row 5. \"INVALID\" in requires is not a puzzle.",
                     "Error: Couldn't load puzzle on row 6. \"Invalid\" is not a valid requirement type."
                 ];
-                console.log(errorStrings);
                 expect(errors).not.toEqual([]);
                 expect(puzzleCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);

@@ -676,6 +676,32 @@ describe('test parseDescription', () => {
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
+		
+		test('first word after item list "is" is changed to "are" when it contains 1 item with a quantity greater than 1', () => {
+			const monokumaMask = game.entityFinder.getRoomItem('MONOKUMA MASK', 'treasure-room');
+			monokumaMask.quantity = 2;
+			const container = game.entityFinder.getFixture('HOOK', 'treasure-room');
+			const expected = `You examine the hook. It's just a small hook on the wall. On it, 2 MONOKUMA MASKS are hung.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+			monokumaMask.quantity = 1;
+		});
+
+		test('first word after item list "are" is changed to "is" when it contains 1 item with a quantity of 1', () => {
+			const smallWeight = game.entityFinder.getRoomItem('SMALL WEIGHT', 'fitness-room');
+			const mediumWeight = game.entityFinder.getRoomItem('MEDIUM WEIGHT', 'fitness-room');
+			const heavyWeight = game.entityFinder.getRoomItem('HEAVY WEIGHT', 'fitness-room');
+			smallWeight.quantity = 0;
+			mediumWeight.quantity = 0;
+			heavyWeight.quantity = 1;
+			const container = game.entityFinder.getFixture('WEIGHT RACK', 'fitness-room');
+			const expected = `It's a very long rack for weights that stretches across most of the room. Despite that, you find there to be a distinct shortage of weights. A HEAVY WEIGHT is all that's on it.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+			smallWeight.quantity = 4;
+			mediumWeight.quantity = 3;
+			heavyWeight.quantity = 2;
+		})
 	});
 
 	describe('test description contains other description', () => {

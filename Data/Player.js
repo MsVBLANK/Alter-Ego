@@ -1577,7 +1577,7 @@ export default class Player extends ItemContainer {
      * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
      */
     sendDescription(description, container = description.getContainer()) {
-        if (description && !this.isNPC && (this.isConscious() || container instanceof Status))
+        if (description.text && !this.isNPC && (this.isConscious() || container instanceof Status))
             this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container);
     }
 

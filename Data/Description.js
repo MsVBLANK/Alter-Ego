@@ -1,7 +1,8 @@
 import GameConstruct from "./GameConstruct.js";
-import { createDocument, stringify } from "../Modules/parser.js";
+import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
 /** @import Game from "./Game.js"; */
 /** @import GameEntity from "./GameEntity.js"; */
+/** @import Player from "./Player.js"; */
 
 /**
  * @class Description
@@ -71,5 +72,13 @@ export default class Description extends GameConstruct {
 
 	toString() {
 		return stringify(this.document);
+	}
+
+	/**
+	 * Parses the description for the given player.
+	 * @param {Player} player 
+	 */
+	parseFor(player) {
+		return parseDescription(this, this.getContainer(), player);
 	}
 }

@@ -539,6 +539,105 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadPuzzles test', () => {
+        describe('erroneous puzzle response', () => {
+            beforeEach(async() => {
+                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
+                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+            });
+
+            test('incomplete puzzles', async () => {
+                sheets.__setMock(game.constants.puzzleSheetDataCells, [
+                    [""]
+                ]);
+                const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load puzzle on row 2. No puzzle name was given."
+                ];
+                expect(errors).not.toEqual([]);
+                expect(puzzleCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid puzzles part 1', async () => {
+                sheets.__setMock(game.constants.puzzleSheetDataCells, [
+                    ["aaa","","","","INVALID"],
+                    ["bbb","","","","lobby","INVALID"],
+                    ["ccc","","","","lobby","FLOOR"],
+                    ["ddd","","","","floor-1-hall-1","CALL BUTTON"],
+                    ["eee","","","","lobby",""],
+                    ["fff","","","","lobby","","probability"],
+                    ["ggg","","","","lobby","","invalid probability","","","1, 2"],
+                    ["hhh","","","","lobby","","weight","","","NaN"],
+                    ["iii","","","","lobby","","media","","","Invalid: LARGE MONKEY"],
+                    ["jjj","","","","lobby","","container","","","Invalid: LARGE MONKEY"],
+                    ["lll","FALSE","","","lobby","","switch","","",""],
+                    ["mmm","TRUE","","","lobby","","switch","","",""],
+                    ["nnn","TRUE","ON","","lobby","","switch","","","OFF"],
+                    ["ooo","TRUE","","","lobby","","media","","","Prefab: STEAK KNIFE"],
+                    ["ppp","TRUE","Invalid: LARGE MONKEY","","lobby","","media","","","Prefab: STEAK KNIFE"],
+                    ["qqq","TRUE","Item: BLUE DANUBE CD","","lobby","","media","","","Item: BLUE DANUBE CD","","[Item: BLUE DANUBE CD: destroy player BLUE DANUBE CD, trigger BLUE DANUBE WALTZ / end BLUE DANUBE WALTZ, instantiate BLUE DANUBE CD on FLOOR at ballroom], [Item: EINE KLEINE NACHTMUSIK CD: destroy player EINE KLEINE NACHTMUSIK CD, trigger EINE KLEINE NACHTMUSIK WALTZ / end EINE KLEINE NACHTMUSIK WALTZ, instantiate EINE KLEINE NACHTMUSIK CD on FLOOR at ballroom]"],
+                ]);
+                const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load puzzle on row 2. \"INVALID\" is not a room.",
+                    "Error: Couldn't load puzzle on row 3. The parent fixture given is not a fixture.",
+                    "Error: Couldn't load puzzle on row 4. The parent fixture on row 2 has no child puzzle.",
+                    "Error: Couldn't load puzzle on row 5. The parent fixture has a different child puzzle.",
+                    "Error: Couldn't load puzzle on row 6. \"\" is not a valid puzzle type.",
+                    "Error: Couldn't load puzzle on row 7. The puzzle is a probability-type puzzle, but no solutions were given.",
+                    "Error: Couldn't load puzzle on row 8. \"invalid probability\" is not a valid stat probability puzzle type.",
+                    "Error: Couldn't load puzzle on row 9. The puzzle is a weight-type puzzle, but the solution \"NaN\" is not an integer.",
+                    "Error: Couldn't load puzzle on row 10. The puzzle is a media-type puzzle, but the solution \"Invalid: LARGE MONKEY\" does not have the \"Item: \" or \"Prefab: \" prefix.",
+                    "Error: Couldn't load puzzle on row 11. The puzzle is a container-type puzzle, but the solution \"Invalid: LARGE MONKEY\" does not have the \"Item: \" or \"Prefab: \" prefix.",
+                    "Error: Couldn't load puzzle on row 12. The puzzle is a switch-type puzzle, but it is not solved.",
+                    "Error: Couldn't load puzzle on row 13. The puzzle is a switch-type puzzle, but no outcome was given.",
+                    "Error: Couldn't load puzzle on row 14. The puzzle is a switch-type puzzle, but its outcome is not among the list of its solutions.",
+                    "Error: Couldn't load puzzle on row 15. The puzzle is a media-type puzzle, but it was solved without an outcome.",
+                    "Error: Couldn't load puzzle on row 16. The puzzle is a media-type puzzle, but its outcome is not among the list of its solutions.",
+                    "Error: Couldn't load puzzle on row 17. \"Item: EINE KLEINE NACHTMUSIK CD\" in command sets is not an outcome in the puzzle's solutions.",
+                ];
+                expect(errors).not.toEqual([]);
+                expect(puzzleCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid puzzles part 2', async () => {
+                sheets.__setMock(game.constants.puzzleSheetDataCells, [
+                    ["rrr","FALSE","","","lobby","","toggle","","Prefab: INVALID","Item: MASTER KEY"],
+                    ["ttt","FALSE","","","lobby","","toggle","","Event: INVALID","Item: MASTER KEY"],
+                    ["uuu","FALSE","","","lobby","","toggle","","Flag: INVALID","Item: MASTER KEY"],
+                    ["vvv","FALSE","","","lobby","","toggle","","Puzzle: INVALID","Item: MASTER KEY"],
+                    ["www","FALSE","","","lobby","","toggle","","Invalid: INVALID","Item: MASTER KEY"],
+                ]);
+                const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load puzzle on row 2. \"INVALID\" in requires is not a prefab.",
+                    "Error: Couldn't load puzzle on row 3. \"INVALID\" in requires is not an event.",
+                    "Error: Couldn't load puzzle on row 4. \"INVALID\" in requires is not a flag.",
+                    "Error: Couldn't load puzzle on row 5. \"INVALID\" in requires is not a puzzle.",
+                    "Error: Couldn't load puzzle on row 6. \"Invalid\" is not a valid requirement type."
+                ];
+                console.log(errorStrings);
+                expect(errors).not.toEqual([]);
+                expect(puzzleCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+        });
+
         describe('standard puzzle response', () => {
             test('errorChecking true', async () => {
                 if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);

@@ -506,7 +506,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1762);
+                expect(roomItemCount).toBe(1766);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

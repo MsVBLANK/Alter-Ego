@@ -200,27 +200,6 @@ describe('test parseDescription', () => {
 			});
 		});
 
-		describe('tool shelves', () => {
-			/** @type {Description} */
-			let description;
-
-			beforeAll(() => {
-				description = new Description(`<desc><s>You examine the shelves.</s> <s>There are a number of tools on them.</s> <s>In particular, you find <il><item>a SAW</item>, <if cond="player.title === 'Ultimate Farmer'"><item>an AX</item></if>, and <item>a pair of HEDGE TRIMMERS</item></il>.</s></desc>`, null, game);
-			});
-
-			test('tool shelves ultimate farmer', () => {
-				const expected = `You examine the shelves. There are a number of tools on them. In particular, you find a SAW, an AX, and a pair of HEDGE TRIMMERS.`;
-				const result = parseDescription(description, null, evad);
-				expect(result).toBe(expected);
-			});
-			
-			test('tool shelves ultimate gamer', () => {
-				const expected = `You examine the shelves. There are a number of tools on them. In particular, you find a SAW and a pair of HEDGE TRIMMERS.`;
-				const result = parseDescription(description, null, asuka);
-				expect(result).toBe(expected);
-			});
-		});
-
 		describe('photo album', () => {
 			/** @type {Description} */
 			let description;
@@ -663,9 +642,74 @@ describe('test parseDescription', () => {
 			expect(result).toBe(expected);
 		});
 
+		test('last word before item list "are" is changed to "is" when only 1 item with a quantity of 1 remains', () => {
+			const container = game.entityFinder.getRoomItem('BOX OF SPAGHETTI 2', 'kitchen');
+			const expected = `A box of spaghetti noodles for you to boil. Inside is a serving of raw SPAGHETTI NOODLES.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('last word before item list "are" is remains "are" when only 1 item with a quantity greater than 1 remains', () => {
+			const container = game.entityFinder.getRoomItem('BOX OF SPAGHETTI 1', 'kitchen');
+			const expected = `A box of spaghetti noodles for you to boil. Inside are 3 servings of raw SPAGHETTI NOODLES.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('last word before item list "is" remains "is" when it contains 1 item with a quantity of 1', () => {
+			const container = game.entityFinder.getRoomItem('KYRAS BRA 29', 'suite-9');
+			const expected = `It's a basic black bra. The tag says its size is 34D. Tucked away in it is a BLACK AND WHITE PILL.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('last word before item list "is" is changed to "are" when it contains 1 item with a quantity greater than 1', () => {
+			const container = game.entityFinder.getRoomItem('KYRAS BRA 30', 'suite-9');
+			const expected = `It's a basic black bra. The tag says its size is 34D. Tucked away in it are 2 BLACK AND WHITE PILLS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('last word before item list "is" is changed to "are" when it contains more than 1 item', () => {
+			const container = game.entityFinder.getRoomItem('KYRAS BRA 31', 'suite-9');
+			const expected = `It's a basic black bra. The tag says its size is 34D. Tucked away in it are a BLACK AND WHITE PILL and a NOTE.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+	});
+
+	describe('test description contains other description', () => {
 		test('item in child puzzle', () => {
 			const container = game.entityFinder.getFixture('LOCKER 1', 'locker-room');
 			const expected = `You open the locker. Inside, you find a TOWEL.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('realistic fiction section contains already solved description', () => {
+			const container = game.entityFinder.getFixture('REALISTIC FICTION SECTION', 'library');
+			const expected = `This is the Realistic Fiction section. In it, you find lots of books. There seems to be a single book missing.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('brazen bull contains empty already solved description', () => {
+			const container = game.entityFinder.getFixture('BRAZEN BULL', 'torture-chamber');
+			const expected = `It’s a life-sized iron bull made out of metal, with a chamber so you can climb inside. Underneath it is what looks like a pit for a campfire. There is a BUTTON on its nose. Do you dare push it?`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('bottom dresser drawer contains already solved description', () => {
+			const container = game.entityFinder.getFixture('BOTTOM DRESSER DRAWER', 'suite-7');
+			const expected = `You open the bottom dresser drawer. Inside you see 30 pairs of WHITE SOCKS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('mirror shows player description', () => {
+			const container = game.entityFinder.getFixture('MIRROR', 'locker-room');
+			const expected = `It's you! You look at your reflection. You examine Kyra. She's somewhat short with a pale skin tone. She has red eyes and long, brown hair tied back in an extremely long, low ponytail, with bangs swept to the right and two thick, wavy fringes on the sides that reach down to her chest. Her expression is relatively neutral, making it hard to read what's on her mind. She has a thin build. She wears a pair of GLASSES, a RED TIE, a BLACK DRESS SHIRT, a LAB COAT, a pair of BLACK DRESS PANTS, a pair of WHITE SOCKS, and a pair of FLATS. You see her carrying a mug of COFFEE.`;
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});

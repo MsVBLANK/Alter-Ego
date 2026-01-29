@@ -5,7 +5,7 @@
   [ "Kyra", "KYRAS GLASSES", "", "GLASSES", "", "1", "", "<desc><s>It's a pair of black glasses with thin, rectangular frames.</s> <if cond=\"player.name === 'Kyra'\"><s>These are your glasses.</s></if></desc>" ],
   [ "Kyra", "NULL", "", "FACE" ],
   [ "Kyra", "KYRAS TIE", "", "NECK", "", "1", "", "<desc><s>It's an average-length, red necktie.</s></desc>" ],
-  [ "Kyra", "KYRAS BRA", "", "CHEST", "", "1", "", "<desc><s>It's a basic black bra.</s> <s>The tag says its size is 34D.</s></desc>" ],
+  [ "Kyra", "KYRAS BRA", "KYRAS BRA 1", "CHEST", "", "1", "", "<desc><s>It's a basic black bra.</s> <s>The tag says its size is 34D.</s></desc>" ],
   [ "Kyra", "KYRAS SHIRT", "", "SHIRT", "", "1", "", "<desc><s>It's a short-sleeved, black dress shirt with a white collar.</s> <s>The buttons are on the left side of the shirt.</s></desc>" ],
   [ "Kyra", "KYRAS LAB COAT", "KYRAS LAB COAT 1", "JACKET", "", "1", "", "<desc><s>This white lab coat reaches just above the knees and is made of a sturdy fabric.</s> <s>It's pristine white, indicating it's either brand new or taken care of very well.</s> <s>It has two pockets on the front.</s> <s>In the right pocket, you find <il name=\"RIGHT POCKET\"></il>.</s> <s>In the left pocket, you find <il name=\"LEFT POCKET\"></il>.</s></desc>" ],
   [ "Kyra", "NULL", "", "BAG" ],

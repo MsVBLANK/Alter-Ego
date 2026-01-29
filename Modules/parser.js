@@ -26,6 +26,34 @@ class Clause {
         this.itemQuantity = itemQuantity !== null && itemQuantity !== undefined ? itemQuantity : 0;
     }
 
+    /** @param {string} word */
+    startsWith(word) {
+        return this.text.includes(` ${word} `) && this.text.substring(0, this.text.indexOf(` ${word} `)).split(',').length - 1 === 0;
+    }
+
+    /** @param {string} word */
+    endsWith(word) {
+        return this.text.includes(` ${word} `) && this.text.substring(this.text.lastIndexOf(` ${word} `)).split(',').length - 1 === 0;
+    }
+
+    /**
+     * Replaces the given first word with a new word.
+     * @param {string} word 
+     * @param {string} newWord 
+     */
+    replaceFirstWord(word, newWord) {
+        this.set(this.text.substring(0, this.text.indexOf(` ${word} `)) + ` ${newWord} ` + this.text.substring(this.text.indexOf(` ${word} `) + ` ${word} `.length));
+    }
+
+    /**
+     * Replaces the given ending word with a new word.
+     * @param {string} word 
+     * @param {string} newWord 
+     */
+    replaceLastWord(word, newWord) {
+        this.set(this.text.substring(0, this.text.lastIndexOf(` ${word} `)) + ` ${newWord} ` + this.text.substring(this.text.lastIndexOf(` ${word} `) + ` ${word} `.length));
+    }
+
     /** @param {string} string */
     set(string) {
         this.node.data = string;
@@ -113,14 +141,7 @@ export function parseDescriptionWithErrors(description, container, player) {
         }
     }
     for (let conditionalToRemove of conditionalsToRemove) {
-        const childNode = conditionalToRemove.firstChild;
-        if ('tagName' in childNode && childNode.tagName === 'item') {
-            let itemElement = childNode.firstChild;
-            /** @type {PseudoItem} */
-            let item = { name: '', pluralName: '', quantity: 0, singleContainingPhrase: itemElement.textContent, pluralContainingPhrase: itemElement.textContent };
-            documentElement = removeItemWithDocument(description.text, item, '', NaN, documentElement);
-        }
-        else if (conditionalToRemove.parentNode) conditionalToRemove.parentNode.removeChild(conditionalToRemove);
+        if (conditionalToRemove.parentNode) conditionalToRemove.parentNode.removeChild(conditionalToRemove);
         else documentElement.removeChild(conditionalToRemove);
     }
 
@@ -151,10 +172,6 @@ export function parseDescriptionWithErrors(description, container, player) {
                 if (variableText === undefined || variableText === "undefined")
                     description.getErrors().push('"' + varAttribute.replace(/container/g, "this") + '" is undefined.');
                 variableStrings.push({ element: variables[i], attribute: String(variableText) });
-                if (typeof variableStrings[variableStrings.length - 1].attribute === 'string' && variableStrings[variableStrings.length - 1].attribute.includes('<desc>')) {
-                    const subDescription = new Description(variableStrings[variableStrings.length - 1].attribute, container, container?.getGame());
-                    variableStrings[variableStrings.length - 1].attribute = parseDescription(subDescription, container, player);
-                }
             } catch (err) {
                 description.getErrors().push(err.toString());
             }
@@ -298,7 +315,7 @@ function addItemsToItemList(document, sentence, container, player) {
             }
         }
         if (itemAlreadyExists) continue;
-        addClause(sentence, prefab.toContainingPhrase(quantity));
+        addClause(sentence, prefab.toContainingPhrase(quantity), quantity);
         sentence.itemCount++;
     }
     return document;
@@ -673,9 +690,10 @@ export function stringify(document) {
 /**
  * @param {Sentence} sentence 
  * @param {string} phrase 
+ * @param {number} itemQuantity
  * @returns {number} i - The index of the new Clause within the Sentence.
  */
-function initializeNewClause(sentence, phrase) {
+function initializeNewClause(sentence, phrase, itemQuantity) {
     let document = sentence.itemList.ownerDocument;
     let firstChild = sentence.itemList.firstChild;
     let tempNode;
@@ -708,7 +726,7 @@ function initializeNewClause(sentence, phrase) {
     let separatorNode = document.createTextNode(" ");
     sentence.itemList.insertBefore(separatorNode, itemNode.nextSibling);
 
-    const itemClause = new Clause(textNode, true, 0, 1);
+    const itemClause = new Clause(textNode, true, 0, itemQuantity);
     sentence.clause.splice(i, 0, itemClause);
 
     const separatorClause = new Clause(separatorNode);
@@ -723,16 +741,17 @@ function initializeNewClause(sentence, phrase) {
 /**
  * @param {Sentence} sentence 
  * @param {string} phrase 
+ * @param {number} [itemQuantity]
  * @returns {number} case - A number to indicate which condition was met for debugging purposes.
  */
-function addClause(sentence, phrase) {
+function addClause(sentence, phrase, itemQuantity = 1) {
     // This function properly edits a sentence after an Item clause has been added.
     // In this function, sentence is the sentence containing an Item list.
     const clause = sentence.clause;
 
     // First, create the new Item clause and get its index in the sentence.
     // Note: clause[i + 1] is the separator clause where a comma, space, "and", etc. will go.
-    const i = initializeNewClause(sentence, phrase);
+    const i = initializeNewClause(sentence, phrase, itemQuantity);
 
     // If this is the beginning of the sentence, capitalize the first letter of the new clause.
     // Then, fix the capitalization of the next clause, if applicable.
@@ -773,10 +792,10 @@ function addClause(sentence, phrase) {
         // AFTER:  "<desc><s>On these shelves are <il><item>a bottle of PAINKILLERS</item> and <item>a bottle of ISOPROPYL ALCOHOL</item></il>.</s></desc>"
         if (clause[i + 2].isItem && clause[i + 2].node.parentNode === sentence.itemList.lastChild) {
             // If the clause before/after the item list has "is" and there are no commas after "is", change "is" to "are".
-            if (clause[i - 1] && clause[i - 1].text.includes(" is ") && clause[i - 1].text.substring(clause[i - 1].text.lastIndexOf(" is ")).split(',').length - 1 === 0)
-                clause[i - 1].set(clause[i - 1].text.substring(0, clause[i - 1].text.lastIndexOf(" is ")) + " are " + clause[i - 1].text.substring(clause[i - 1].text.lastIndexOf(" is ") + 4));
-            else if (clause[i + 3] && clause[i + 3].text.includes(" is ") && clause[i + 3].text.substring(0, clause[i + 3].text.indexOf(" is ")).split(',').length - 1 === 0)
-                clause[i + 3].set(clause[i + 3].text.substring(0, clause[i + 3].text.indexOf(" is ")) + " are " + clause[i + 3].text.substring(clause[i + 3].text.indexOf(" is ") + 4));
+            if (clause[i - 1] && clause[i - 1].endsWith("is"))
+                clause[i - 1].replaceLastWord("is", "are");
+            else if (clause[i + 3] && clause[i + 3].startsWith("is"))
+                clause[i + 3].replaceFirstWord("is", "are");
             clause[i + 1].set(" and ");
             return 4;
         }
@@ -834,6 +853,15 @@ function addClause(sentence, phrase) {
         else if (clause[i + 1].node === sentence.itemList.lastChild) {
             clause[i + 1].delete();
             sentence.deleteClause(i + 1);
+            // If the clause before or after the item list has "are" or "is" and that wouldn't be grammatically correct with the given item quantity, replace it. 
+            if (clause[i - 1] && clause[i - 1].endsWith("are") && clause[i].itemQuantity === 1)
+                clause[i - 1].replaceLastWord("are", "is");
+            else if (clause[i - 1] && clause[i - 1].endsWith("is") && clause[i].itemQuantity !== 1)
+                clause[i - 1].replaceLastWord("is", "are");
+            else if (clause[i + 1] && clause[i + 1].startsWith("are") && clause[i].itemQuantity === 1)
+                clause[i + 1].replaceFirstWord("are", "is");
+            else if (clause[i + 1] && clause[i + 1].startsWith("is") && clause[i].itemQuantity !== 1)
+                clause[i + 1].replaceFirstWord("is", "are");
             return 11;
         }
         else return 12;
@@ -880,7 +908,7 @@ function removeClause(sentence, i) {
                 // If the clause before or after the item list has "are" and there's only going to be 1 item left with a quantity of 1 and there are no commas after "are", change "are" to "is".
                 if (i >= 3 && clause[i - 3].text.includes(" are ") && clause[i - 2].itemQuantity === 1 && clause[i - 3].text.substring(clause[i - 3].text.lastIndexOf(" are ")).split(',').length - 1 === 0)
                     clause[i - 3].set(clause[i - 3].text.substring(0, clause[i - 3].text.lastIndexOf(" are ")) + " is " + clause[i - 3].text.substring(clause[i - 3].text.lastIndexOf(" are ") + 5));
-                else if (clause[i + 1] && clause[i + 1].text.startsWith(" are ") && clause[i + 1].itemQuantity === 1)
+                else if (clause[i + 1] && clause[i + 1].text.startsWith(" are ") && clause[i].itemQuantity === 1)
                     clause[i + 1].set(" is " + clause[i + 1].text.substring(clause[i + 1].text.indexOf(" are ") + 5));
                 clause[i - 1].delete();
                 return 2;

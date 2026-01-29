@@ -1319,7 +1319,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			}
 		}
 		if (puzzle.type === "switch" && puzzle.solved === false)
-			return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a switch-type puzzle, but it not solved.`);
+			return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a switch-type puzzle, but it is not solved.`);
 		if (puzzle.type === "switch" && puzzle.outcome === "")
 			return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a switch-type puzzle, but no outcome was given.`);
 		if (puzzle.type === "switch" && !puzzle.solutions.includes(puzzle.outcome))

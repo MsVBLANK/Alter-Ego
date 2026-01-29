@@ -287,18 +287,18 @@ export function addItem(description, item, slot, addedQuantity = 1) {
  * @param {Player} player - The Player currently reading the description.
  */
 function addItemsToItemList(document, sentence, container, player) {
-    const items = container.getContainedItemsForItemList(sentence.itemListName, player).reverse();
-    for (const item of items) {
+    const items = container.getCollatedContainedItemsInItemList(sentence.itemListName, player);
+    for (const [prefab, quantity] of items) {
         let itemAlreadyExists = false;
         for (const clause of sentence.clause) {
             const clauseText = clause.node.data.toLocaleUpperCase();
-            if (isNaN(item.quantity) && (clauseText.includes(item.pluralContainingPhrase.toLocaleUpperCase()) || clauseText.includes(item.pluralName) || clauseText.includes(item.name))) {
+            if (isNaN(quantity) && (clauseText.includes(prefab.pluralContainingPhrase.toLocaleUpperCase()) || clauseText.includes(prefab.pluralName) || clauseText.includes(prefab.name))) {
                 itemAlreadyExists = true;
                 break;
             }
         }
         if (itemAlreadyExists) continue;
-        addClause(sentence, item.toContainingPhrase());
+        addClause(sentence, prefab.toContainingPhrase(quantity));
         sentence.itemCount++;
     }
     return document;

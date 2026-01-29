@@ -656,6 +656,13 @@ describe('test parseDescription', () => {
 			expect(result).toBe(expected);
 		});
 
+		test('items with the same single and plural containing phrases are combined', () => {
+			const container = game.entityFinder.getFixture('CLOSET', 'suite-9');
+			const expected = `You open the closet. It's big enough that someone could hide in it. Inside is a silver rack from to which to hang clothes. On the rack, you find 30 BLACK DRESS SHIRTS, 30 LAB COATS, and 30 pairs of BLACK DRESS PANTS.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
 		test('item in child puzzle', () => {
 			const container = game.entityFinder.getFixture('LOCKER 1', 'locker-room');
 			const expected = `You open the locker. Inside, you find a TOWEL.`;

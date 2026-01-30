@@ -80,11 +80,11 @@ export async function execute(game, command, args, player, callee) {
 
         // Check if a container item was specified.
         const roomItems = game.entityFinder.getRoomItems(null, room.id);
-        for (let i = 0; i < newArgs.length; i++) {
+        for (let i = args.length - 1; i >= 0; i--) {
             let find = roomItems.find((item) => itemIdentifierMatches(item, newArgs.slice(i).join(" ")));
             if (find) {
                 // If we have a complete slice of newArgs, we've found the item to delete.
-                if (i === 0) {
+                if (i === args.length - 1) {
                     item = find;
                     newArgs = newArgs.slice(0, i);
                     break;

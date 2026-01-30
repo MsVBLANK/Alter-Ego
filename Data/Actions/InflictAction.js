@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 import CureAction from "./CureAction.js";
 /** @import InventoryItem from "../InventoryItem.js" */
@@ -74,7 +75,7 @@ export default class InflictAction extends Action {
 			this.player.stopMoving();
 
 		this.player.inflict(status, duration);
-		if (notify) this.player.sendDescription(status.inflictedDescription, status);
+		if (notify) this.player.sendDescription(status.inflictedDescription, status, status.inflictedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		if (narrate) this.getGame().narrationHandler.narrateInflict(this, status, this.player);
 		this.getGame().logHandler.logInflict(status, this.player);
 		return true;

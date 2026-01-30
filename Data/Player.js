@@ -1575,10 +1575,11 @@ export default class Player extends ItemContainer {
      * Parses a description and sends it to the player.
      * @param {Description} description - The description to parse and send.
      * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
+     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to the description's message display type. Does nothing when sending a room description.
      */
-    sendDescription(description, container = description.getContainer()) {
+    sendDescription(description, container = description.getContainer(), messageDisplayType = description.messageDisplayType) {
         if (description.text && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container);
+            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container, messageDisplayType);
     }
 
     /**

@@ -162,9 +162,10 @@ export default class GameCommunicationHandler {
 	 * @param {Player} player - The player to send the notification to.
 	 * @param {Description} description - The description to parse and send.
 	 * @param {GameEntity} container - The game entity the description belongs to.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT. Does nothing when sending a room description.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
 	 */
-	sendDescriptionToPlayer(player, description, container, mirrorInSpectateChannel = true) {
+	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
 		if (container instanceof Room) {
 			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
@@ -175,7 +176,7 @@ export default class GameCommunicationHandler {
 			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
 		}
 		else
-			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, MessageDisplayType.PLAIN_TEXT);
+			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, messageDisplayType);
 	}
 
 	/**

@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 
 /** @import InventoryItem from "../InventoryItem.js" */
@@ -21,7 +22,7 @@ export default class UncraftAction extends Action {
 		const originalItemPrefab = item.prefab;
 		const itemId = item.getIdentifier();
 		const uncraftingResult = this.player.uncraft(item, recipe);
-		this.player.sendDescription(recipe.uncraftedDescription, recipe);
+		this.player.sendDescription(recipe.uncraftedDescription, recipe, recipe.uncraftedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		this.getGame().narrationHandler.narrateUncraft(this, recipe, originalItemPrefab, item, uncraftingResult, this.player);
 		this.getGame().logHandler.logUncraft(itemId, uncraftingResult, this.player, this.forced);
 	}

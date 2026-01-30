@@ -108,8 +108,9 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the gesture action.
 	 */
 	narrateGesture(action, gesture, player) {
+		const messageType = gesture.narration.messageDisplayType ?? MessageDisplayType.PLAYER;
 		const narration = parseDescription(gesture.narration, gesture, player);
-		this.#sendNarration(MessageDisplayType.PLAYER, action, player, narration, player.location, undefined, player);
+		this.#sendNarration(messageType, action, player, narration, player.location, undefined, player);
 	}
 
 	/**
@@ -150,7 +151,7 @@ export default class GameNarrationHandler {
 		const messageType = MessageDisplayType.MINOR;
 		const wearyStatus = this.#game.entityFinder.getStatusEffect("weary");
 		const narration = this.#game.notificationGenerator.generateWearyNotification(player);
-		player.sendDescription(wearyStatus.inflictedDescription, wearyStatus);
+		player.sendDescription(wearyStatus.inflictedDescription, wearyStatus, wearyStatus.inflictedDescription.messageDisplayType ?? MessageDisplayType.ALERT);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -212,7 +213,7 @@ export default class GameNarrationHandler {
 			: this.#game.notificationGenerator.generateStopNotification(player, true);
 		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getDoorPhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, false);
-		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, exitLocked ? MessageDisplayType.WARNING : messageType);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -831,10 +832,11 @@ export default class GameNarrationHandler {
 	narrateTrigger(action, event) {
 		// Send the triggered narration to all rooms with occupants.
 		if (event.triggeredNarration.text !== "") {
+			const messageType = event.triggeredNarration.messageDisplayType ?? MessageDisplayType.STANDARD;
 			const narrationText = parseDescription(event.triggeredNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)
-				this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narrationText, room);
+				this.#sendNarration(messageType, action, undefined, narrationText, room);
 		}
 	}
 
@@ -846,10 +848,11 @@ export default class GameNarrationHandler {
 	narrateEnd(action, event) {
 		// Send the ended narration to all rooms with occupants.
 		if (event.endedNarration.text !== "") {
+			const messageType = event.endedNarration.messageDisplayType ?? MessageDisplayType.STANDARD;
 			const narrationText = parseDescription(event.endedNarration, event, undefined);
 			const rooms = this.#game.entityFinder.getRooms(null, event.roomTag, false);
 			for (let room of rooms)
-				this.#sendNarration(MessageDisplayType.STANDARD, action, undefined, narrationText, room);
+				this.#sendNarration(messageType, action, undefined, narrationText, room);
 		}
 	}
 

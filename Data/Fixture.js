@@ -6,6 +6,7 @@ import InstantiateAction from './Actions/InstantiateAction.js';
 import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
+import { MessageDisplayType } from '../Modules/enums.js';
 
 /** @import Game from './Game.js' */
 /** @import RoomItem from './RoomItem.js' */
@@ -215,7 +216,7 @@ export default class Fixture extends ItemContainer {
 
         this.process.recipe = result.recipe;
         this.process.ingredients = result.ingredients;
-        if (player) player.sendDescription(this.process.recipe.initiatedDescription, this);
+        if (player) player.sendDescription(this.process.recipe.initiatedDescription, this, this.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
         this.process.duration = this.process.recipe.duration;
 
         let fixture = this;
@@ -364,7 +365,7 @@ export default class Fixture extends ItemContainer {
                     instantiateAction.performInstantiateRoomItem(product, this, "", quantity, new Map());
                 }
             }
-            if (player && player.alive && player.location.id === this.location.id) player.sendDescription(this.process.recipe.completedDescription, this);
+            if (player && player.alive && player.location.id === this.location.id) player.sendDescription(this.process.recipe.completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
         }
 
         if (this.autoDeactivate) {

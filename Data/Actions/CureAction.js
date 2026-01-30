@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 import InflictAction from "./InflictAction.js";
 /** @import InventoryItem from "../InventoryItem.js" */
@@ -45,7 +46,7 @@ export default class CureAction extends Action {
 			sendFollowupMessage = false;
 		}
 		if (notify) {
-			this.player.sendDescription(status.curedDescription, status);
+			this.player.sendDescription(status.curedDescription, status, status.curedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 			// If the player is waking up, send them the description of the room they wake up in.
 			if (status.behaviorAttributes.has("unconscious"))
 				this.player.sendDescription(this.player.location.description, this.player.location);

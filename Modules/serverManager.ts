@@ -47,11 +47,11 @@ export async function validateServerConfig(guild: Guild, serverConfig: ServerCon
         } else missingSettings.push("playerRole");
     }
     if (serverConfig.freeMovementRole === "") {
-        let headmasterRole = guild.roles.cache.find(role => role.name === "Headmaster");
-        if (headmasterRole) {
-            serverConfig.freeMovementRole = headmasterRole.id;
+        let freeMovementRole = guild.roles.cache.find(role => role.name === "Free Movement");
+        if (freeMovementRole) {
+            serverConfig.freeMovementRole = freeMovementRole.id;
             save = true;
-        } else missingSettings.push("headmasterRole");
+        } else missingSettings.push("freeMovementRole");
     }
     if (serverConfig.moderatorRole === "") {
         let moderatorRole = guild.roles.cache.find(role => role.name === "Moderator");

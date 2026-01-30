@@ -45,6 +45,8 @@ export default class GameEntitySaver {
 						firstExit ? Array.from(room.tags).join(", ") : "",
 						firstExit ? room.iconURL : "",
 						exit.name,
+						exit.phrase,
+						Array.from(exit.tags).join(", "),
 						String(exit.pos.x),
 						String(exit.pos.y),
 						String(exit.pos.z),
@@ -132,6 +134,7 @@ export default class GameEntitySaver {
 					puzzle.commandSetsString,
 					puzzle.correctDescription.text,
 					puzzle.alreadySolvedDescription.text,
+					puzzle.unsolvedDescription.text,
 					puzzle.incorrectDescription.text,
 					puzzle.noMoreAttemptsDescription.text,
 					puzzle.requirementsNotMetDescription.text

@@ -17,6 +17,17 @@ export default class Exit extends GameEntity {
      */
     name;
     /**
+     * A phrase used to refer to the exit in narrations.
+     * @type {string}
+     */
+    phrase;
+    /**
+     * The tags associated with the exit.
+     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags
+     * @type {Set<string>}
+     */
+    tags;
+    /**
      * The position of the exit.
      * @type {Pos}
      */
@@ -51,6 +62,8 @@ export default class Exit extends GameEntity {
     /**
      * @constructor
      * @param {string} name - The name of the exit.
+     * @param {string} phrase - A phrase used to refer to the exit in narrations.
+     * @param {Set<string>} tags - The tags associated with the exit. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags}
      * @param {Pos} pos - The position of the exit.
      * @param {boolean} unlocked - Whether or not the exit is unlocked.
      * @param {string} destDisplayName - The display name of the room that the exit leads to.
@@ -59,9 +72,11 @@ export default class Exit extends GameEntity {
      * @param {number} row - The row number of the exit in the sheet.
      * @param {Game} game - The game this belongs to.
      */
-    constructor(name, pos, unlocked, destDisplayName, link, description, row, game) {
+    constructor(name, phrase, tags, pos, unlocked, destDisplayName, link, description, row, game) {
         super(game, row);
         this.name = name;
+        this.phrase = phrase;
+        this.tags = tags;
         this.pos = pos;
         this.unlocked = unlocked;
         this.destDisplayName = destDisplayName;
@@ -98,7 +113,25 @@ export default class Exit extends GameEntity {
      * Gets a phrase to refer to the exit in narrations.
      */
     getNamePhrase() {
-        return this.name.match(/.*\d+$/) ? this.name : this.name.includes("DOOR") ? `the ${this.name}` : `the door to the ${this.name}`;
+        if (this.phrase !== "") return this.phrase;
+        return this.name.match(/.*\d+$/) ? this.name : `the ${this.name}`;
+    }
+
+    /**
+     * Gets a phrase to refer to the door in narrations.
+     */
+    getDoorPhrase() {
+        const namePhrase = this.getNamePhrase();
+        const prefix = namePhrase.match(/.*\d+$/) || namePhrase.toLocaleUpperCase().includes("DOOR") || this.hasTag("not knockable") ? `` : `the door to `;
+        return `${prefix}${namePhrase}`;
+    }
+
+    /**
+     * Returns true if the exit has the given tag.
+     * @param {string} tag 
+     */
+    hasTag(tag) {
+        return this.tags.has(tag);
     }
 
     /** @returns {string} */

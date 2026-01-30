@@ -25,6 +25,53 @@ async function v2_0Update(settings, constants) {
 
     // Update sheets and formatting.
     const batchUpdateRequests = [];
+    
+    // Update Rooms sheet with the "Exit Phrase" and "Exit Tags" column.
+    let insertRoomColumns = false;
+    let roomsSheetId;
+    try {
+        const roomsResponse = await getSheetWithProperties("Rooms!A1:K1", settings.spreadsheetID);
+        const roomsSheetProperties = roomsResponse?.data?.sheets[0]?.properties;
+        if (roomsSheetProperties?.gridProperties?.columnCount === 11)
+            insertRoomColumns = true;
+        roomsSheetId = roomsSheetProperties?.sheetId;
+    } catch (err) {}
+    if (insertRoomColumns && roomsSheetId !== undefined) {
+        batchUpdateRequests.push({
+            insertDimension: {
+                range: {
+                    sheetId: roomsSheetId,
+                    dimension: "COLUMNS",
+                    startIndex: 4,
+                    endIndex: 6
+                },
+                inheritFromBefore: true
+            }
+        });
+    }
+    // Update Puzzles sheet with the "Description When Unsolved" column.
+    let insertUnsolvedDescriptionColumn = false;
+    let puzzlesSheetId;
+    try {
+        const puzzlesResponse = await getSheetWithProperties("Puzzles!A1:Q1", settings.spreadsheetID);
+        const puzzlesSheetProperties = puzzlesResponse?.data?.sheets[0]?.properties;
+        if (puzzlesSheetProperties?.gridProperties?.columnCount === 17)
+            insertUnsolvedDescriptionColumn = true;
+        puzzlesSheetId = puzzlesSheetProperties?.sheetId;
+    } catch (err) {}
+    if (insertUnsolvedDescriptionColumn && puzzlesSheetId !== undefined) {
+        batchUpdateRequests.push({
+            insertDimension: {
+                range: {
+                    sheetId: puzzlesSheetId,
+                    dimension: "COLUMNS",
+                    startIndex: 14,
+                    endIndex: 15
+                },
+                inheritFromBefore: true
+            }
+        });
+    }
     // Rename Objects sheet to Fixtures.
     let objectsSheetId;
     try {
@@ -235,16 +282,32 @@ async function v2_0Update(settings, constants) {
             if (itemsSheetId) changedSheets.push("Items sheet to Room Items");
             if (changedSheets.length > 0) console.log(`Renamed ${generateListString(changedSheets)}.`);
             if (createFlagsSheet) console.log(`Created Flags sheet.`);
+            if (insertRoomColumns) console.log(`Inserted Exit Phrase and Exit Tags columns on Rooms sheet.`);
+            if (insertUnsolvedDescriptionColumn) console.log(`Inserted Description When Unsolved column on Puzzles sheet.`);
         }).catch(err => console.error(err));
     }
     // The remaining changes don't affect anything significant.
     // If none of the above were changed, stop here.
-    if (!objectsSheetId && !itemsSheetId && !createFlagsSheet) return;
+    if (!objectsSheetId && !itemsSheetId && !createFlagsSheet && !insertRoomColumns && !insertUnsolvedDescriptionColumn) return;
     // Update sheet headers.
     /** @type {ValueRange[]} */
     const batchUpdateValuesRequests = [];
     // Rename Rooms headers.
-    batchUpdateValuesRequests.push({ range: "Rooms!A1", values: [["Room Display Name"]] });
+    batchUpdateValuesRequests.push({ range: "Rooms!A1", values: [[
+        "Room Display Name",
+        "Room Tags",
+        "Icon URL",
+        "Exit Name",
+        "Exit Phrase",
+        "Exit Tags",
+        "X",
+        "Y",
+        "Z",
+        "Unlocked?",
+        "Leads To Room",
+        "From Exit",
+        "Description When Entering From This Exit"
+    ]]});
     // Rename Fixtures headers.
     batchUpdateValuesRequests.push({ range: "Fixtures!A1", values: [["Fixture Name"]] });
     // Rename Recipes headers.
@@ -257,7 +320,7 @@ async function v2_0Update(settings, constants) {
         "Description When Uncrafted"
     ]]});
     // Rename Puzzles headers.
-    batchUpdateValuesRequests.push({ range: "Puzzles!F1:Q1", values: [[
+    batchUpdateValuesRequests.push({ range: "Puzzles!F1:R1", values: [[
         "Parent Fixture",
         "Type",
         "Accessible?",
@@ -267,6 +330,7 @@ async function v2_0Update(settings, constants) {
         "When Solved / Unsolved",
         "Description When Solved",
         "Description When Already Solved",
+        "Description When Unsolved",
         "Description When Incorrect Answer Given",
         "Description When No Attempts Remain",
         "Description When Requirements Not Met"

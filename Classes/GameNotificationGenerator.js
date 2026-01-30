@@ -221,13 +221,13 @@ export default class GameNotificationGenerator {
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 * @param {boolean} isRunning - Whether or not the player is running.
-	 * @param {string} exitName - The name of the exit the player is moving toward.
+	 * @param {string} exitPhrase - The phrase of the exit the player is moving toward.
 	 */
-	generateStartMoveNotification(player, secondPerson, isRunning, exitName) {
+	generateStartMoveNotification(player, secondPerson, isRunning, exitPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb = secondPerson ? `start` : `starts`;
 		const action = isRunning ? `running` : `walking`;
-		return `${subject} ${verb} ${action} toward ${exitName}.`;
+		return `${subject} ${verb} ${action} toward ${exitPhrase}.`;
 	}
 
 	/**
@@ -264,26 +264,26 @@ export default class GameNotificationGenerator {
 	 * Generates a notification indicating the player cannot move to an exit because it is locked.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} exitPhrase - The phrase of the locked exit.
+	 * @param {string} doorPhrase - The door phrase of the locked exit.
 	 */
-	generateExitLockedNotification(player, secondPerson, exitPhrase) {
+	generateExitLockedNotification(player, secondPerson, doorPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb = secondPerson ? `try` : `tries`;
-		return `${subject} ${verb} to open ${exitPhrase}, but it seems to be locked.`;
+		return `${subject} ${verb} to open ${doorPhrase}, but it seems to be locked.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player exited a room.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} exitName - The name of the exit the player exited through.
+	 * @param {string} exitPhrase - The phrase of the exit the player exited through.
 	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
-	generateExitNotification(player, secondPerson, exitName, appendString) {
+	generateExitNotification(player, secondPerson, exitPhrase, appendString) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb = secondPerson ? `exit` : `exits`;
-		const exitPhrase = exitName ? ` into ${exitName}` : ``;
-		return `${subject} ${verb}${exitPhrase}${appendString}.`;
+		const destinationPhrase = exitPhrase ? ` into ${exitPhrase}` : ``;
+		return `${subject} ${verb}${destinationPhrase}${appendString}.`;
 	}
 
 	/**
@@ -471,20 +471,20 @@ export default class GameNotificationGenerator {
 	 * Generates a notification indicating the player knocked on an exit.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} exitPhrase - The phrase of the exit.
+	 * @param {string} doorPhrase - The door phrase of the exit.
 	 */
-	generateKnockNotification(player, secondPerson, exitPhrase) {
+	generateKnockNotification(player, secondPerson, doorPhrase) {
 		const subject = secondPerson ? `You` : player.displayName;
 		const verb = secondPerson ? `knock` : `knocks`;
-		return `${subject} ${verb} on ${exitPhrase}.`;
+		return `${subject} ${verb} on ${doorPhrase}.`;
 	}
 
 	/**
 	 * Generates a notification indicating there was a knock originating from the other side of an exit.
-	 * @param {string} exitPhrase - The phrase of the exit.
+	 * @param {string} doorPhrase - The door phrase of the exit.
 	 */
-	generateKnockDestinationNotification(exitPhrase) {
-		return `There's a knock on ${exitPhrase}.`;
+	generateKnockDestinationNotification(doorPhrase) {
+		return `There's a knock on ${doorPhrase}.`;
 	}
 
 	/**
@@ -1076,16 +1076,12 @@ export default class GameNotificationGenerator {
 		const subject = secondPerson ? `You` : player.displayName;
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
-		if (puzzle.type === "toggle" && secondPerson && puzzle.alreadySolvedDescription.text !== "")
-			return puzzle.alreadySolvedDescription;
-		else if (puzzle.type === "combination lock" || puzzle.type === "key lock")
+		if (puzzle.type === "combination lock" || puzzle.type === "key lock")
 			verb = secondPerson ? `lock` : `locks`;
 		else if (puzzle.type === "option")
 			verb = secondPerson ? `clear the selection for` : `resets`;
-		else if (puzzle.type === "media") {
-			if (secondPerson && puzzle.alreadySolvedDescription.text !== "") return puzzle.alreadySolvedDescription;
+		else if (puzzle.type === "media")
 			verb = secondPerson ? `press eject on` : `presses eject on`;
-		}
 		else if (puzzle.type === "channels")
 			verb = secondPerson ? `turn off` : `turns off`;
 		return `${subject} ${verb} ${puzzlePhrase}.`;
@@ -1164,7 +1160,7 @@ export default class GameNotificationGenerator {
 	 * @param {Exit} exit - The exit that was unlocked.
 	 */
 	generateUnlockNotification(exit) {
-		return `${exit.name} unlocks.`;
+		return `${exit.getDoorPhrase()} unlocks.`;
 	}
 
 	/**
@@ -1172,6 +1168,6 @@ export default class GameNotificationGenerator {
 	 * @param {Exit} exit - The exit that was locked.
 	 */
 	generateLockNotification(exit) {
-		return `${exit.name} locks.`;
+		return `${exit.getDoorPhrase()} locks.`;
 	}
 }

@@ -234,31 +234,39 @@ export default class Room extends GameEntity {
     }
 
     /**
+     * Returns true if the room has the given tag.
+     * @param {string} tag 
+     */
+    hasTag(tag) {
+        return this.tags.has(tag);
+    }
+
+    /**
      * Returns true if the room has the `audio surveilled` tag.
      */
     isAudioSurveilled() {
-        return this.tags.has("audio surveilled");
+        return this.hasTag("audio surveilled");
     }
 
     /**
      * Returns false if the room has the `video surveilled` tag.
      */
     isVideoSurveilled() {
-        return this.tags.has("video surveilled");
+        return this.hasTag("video surveilled");
     }
 
     /**
      * Returns true if the room has the `audio monitoring` tag.
      */
     isAudioMonitoring() {
-        return this.tags.has("audio monitoring");
+        return this.hasTag("audio monitoring");
     }
 
     /**
      * Returns false if the room has the `video monitoring` tag.
      */
     isVideoMonitoring() {
-        return this.tags.has("video monitoring");
+        return this.hasTag("video monitoring");
     }
 
     /**
@@ -266,7 +274,7 @@ export default class Room extends GameEntity {
      * @param {boolean} monitoringRoomCanBeSeen - Whether or not the room that's monitoring this one can be seen.
      */
     getSurveilledDisplayName(monitoringRoomCanBeSeen) {
-        return this.tags.has("secret")
+        return this.hasTag("secret")
             ? this.isVideoSurveilled() && monitoringRoomCanBeSeen
                 ? "Surveillance feed" : "Intercom"
             : this.displayName;

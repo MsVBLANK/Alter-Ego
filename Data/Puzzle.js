@@ -134,6 +134,12 @@ export default class Puzzle extends ItemContainer {
      */
     alreadySolvedDescription;
     /**
+     * The description of the puzzle when it is unsolved.
+     * @readonly
+     * @type {Description}
+     */
+    unsolvedDescription;
+    /**
      * The description of the puzzle when the incorrect answer is given. 
      * @readonly
      * @type {Description} 
@@ -169,13 +175,14 @@ export default class Puzzle extends ItemContainer {
      * @param {PuzzleCommandSet[]} commandSets - Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes.
      * @param {string} correctDescription - The description of the puzzle when it is solved by a player.
      * @param {string} alreadySolvedDescription - The description of the puzzle when it is already solved. Can contain an item list.
+     * @param {string} unsolvedDescription - The description of the puzzle when it is unsolved.
      * @param {string} incorrectDescription - The description of the puzzle when the incorrect answer is given.
      * @param {string} noMoreAttemptsDescription - The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0.
      * @param {string} requirementsNotMetDescription - The description of the puzzle when a player attempts to solve it while all of the requirements are not met.
      * @param {number} row - The row number of the puzzle in the sheet.
      * @param {Game} game - The game this belongs to.
      */
-    constructor(name, solved, outcome, requiresMod, locationDisplayName, parentFixtureName, type, accessible, requirementsStrings, solutions, remainingAttempts, commandSetsString, commandSets, correctDescription, alreadySolvedDescription, incorrectDescription, noMoreAttemptsDescription, requirementsNotMetDescription, row, game) {
+    constructor(name, solved, outcome, requiresMod, locationDisplayName, parentFixtureName, type, accessible, requirementsStrings, solutions, remainingAttempts, commandSetsString, commandSets, correctDescription, alreadySolvedDescription, unsolvedDescription, incorrectDescription, noMoreAttemptsDescription, requirementsNotMetDescription, row, game) {
         super(game, row, alreadySolvedDescription);
         this.name = name;
         this.solved = solved;
@@ -197,6 +204,7 @@ export default class Puzzle extends ItemContainer {
         this.commandSets = commandSets;
         this.correctDescription = new Description(correctDescription, this, game);
         this.alreadySolvedDescription = new Description(alreadySolvedDescription, this, game);
+        this.unsolvedDescription = new Description(unsolvedDescription, this, game);
         this.incorrectDescription = new Description(incorrectDescription, this, game);
         this.noMoreAttemptsDescription = new Description(noMoreAttemptsDescription, this, game);
         this.requirementsNotMetDescription = new Description(requirementsNotMetDescription, this, game);
@@ -480,6 +488,11 @@ export default class Puzzle extends ItemContainer {
     /** @returns {string} */
     alreadySolvedCell() {
         return this.getGame().constants.puzzleSheetAlreadySolvedColumn + this.row;
+    }
+
+    /** @returns {string} */
+    unsolvedCell() {
+        return this.getGame().constants.puzzleSheetUnsolvedColumn + this.row;
     }
 
     /** @returns {string} */

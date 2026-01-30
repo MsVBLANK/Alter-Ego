@@ -6,9 +6,9 @@ export default class GameConstants {
 	/** @type {GameConstants} */
 	static instance;
 	
-	roomSheetDataCells = "Rooms!A2:K";
-    roomSheetSaveCells = "Rooms!D2:K";
-    roomSheetDescriptionColumn = "Rooms!K";
+	roomSheetDataCells = "Rooms!A2:M";
+    roomSheetSaveCells = "Rooms!D2:M";
+    roomSheetDescriptionColumn = "Rooms!M";
     /** @deprecated */
     objectSheetDataCells = "Objects!A2:K";
     /** @deprecated */
@@ -27,12 +27,13 @@ export default class GameConstants {
     itemSheetDescriptionColumn = "Items!H";
     roomItemSheetDataCells = "Room Items!A2:H";
     roomItemSheetDescriptionColumn = "Room Items!H";
-    puzzleSheetDataCells = "Puzzles!A2:Q";
+    puzzleSheetDataCells = "Puzzles!A2:R";
     puzzleSheetCorrectColumn = "Puzzles!M";
     puzzleSheetAlreadySolvedColumn = "Puzzles!N";
-    puzzleSheetIncorrectColumn = "Puzzles!O";
-    puzzleSheetNoMoreAttemptsColumn = "Puzzles!P";
-    puzzleSheetRequirementsNotMetColumn = "Puzzles!Q";
+    puzzleSheetUnsolvedColumn = "Puzzles!O";
+    puzzleSheetIncorrectColumn = "Puzzles!P";
+    puzzleSheetNoMoreAttemptsColumn = "Puzzles!Q";
+    puzzleSheetRequirementsNotMetColumn = "Puzzles!R";
     eventSheetDataCells = "Events!A2:K";
     eventSheetTriggeredColumn = "Events!J";
     eventSheetEndedColumn = "Events!K";

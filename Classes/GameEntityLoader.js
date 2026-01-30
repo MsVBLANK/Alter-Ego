@@ -415,13 +415,15 @@ export default class GameEntityLoader extends GameEntityManager {
 			const columnRoomTags = 1;
 			const columnRoomIconUrl = 2;
 			const columnExitName = 3;
-			const columnExitPosX = 4;
-			const columnExitPosY = 5;
-			const columnExitPosZ = 6;
-			const columnExitUnlocked = 7;
-			const columnExitDest = 8;
-			const columnExitLink = 9;
-			const columnExitDescription = 10;
+			const columnExitPhrase = 4;
+			const columnExitTags = 5;
+			const columnExitPosX = 6;
+			const columnExitPosY = 7;
+			const columnExitPosZ = 8;
+			const columnExitUnlocked = 9;
+			const columnExitDest = 10;
+			const columnExitLink = 11;
+			const columnExitDescription = 12;
 
 			this.clearRooms();
 			/** @type {Error[]} */
@@ -430,6 +432,9 @@ export default class GameEntityLoader extends GameEntityManager {
 				/** @type {Collection<string, Exit>} */
 				let exits = new Collection();
 				for (exitRow = 0; roomRow + exitRow < sheet.length && (exitRow === 0 || sheet[roomRow + exitRow][columnRoomDisplayName] === ""); exitRow++) {
+					let tags = sheet[roomRow + exitRow][columnExitTags] ? sheet[roomRow + exitRow][columnExitTags].trim().split(',') : [];
+					for (let i = 0; i < tags.length; i++)
+						tags[i] = tags[i].trim();
 					const pos = {
 						x: parseInt(sheet[roomRow + exitRow][columnExitPosX]),
 						y: parseInt(sheet[roomRow + exitRow][columnExitPosY]),
@@ -438,6 +443,8 @@ export default class GameEntityLoader extends GameEntityManager {
 					const exitName = sheet[roomRow + exitRow][columnExitName] ? Game.generateValidEntityName(sheet[roomRow + exitRow][columnExitName]) : "";
 					const exit = new Exit(
 						exitName,
+						sheet[roomRow + exitRow][columnExitPhrase] ? sheet[roomRow + exitRow][columnExitPhrase].trim() : "",
+						new Set(tags),
 						pos,
 						sheet[roomRow + exitRow][columnExitUnlocked] ? sheet[roomRow + exitRow][columnExitUnlocked].trim() === "TRUE" : false,
 						sheet[roomRow + exitRow][columnExitDest] ? sheet[roomRow + exitRow][columnExitDest].trim() : "",
@@ -1140,9 +1147,10 @@ export default class GameEntityLoader extends GameEntityManager {
 			const columnCommandsString = 11;
 			const columnCorrectDescription = 12;
 			const columnAlreadySolvedDescription = 13;
-			const columnIncorrectDescription = 14;
-			const columnNoMoreAttemptsDescription = 15;
-			const columnRequirementsNotMetDescription = 16;
+			const columnUnsolvedDescription = 14;
+			const columnIncorrectDescription = 15;
+			const columnNoMoreAttemptsDescription = 16;
+			const columnRequirementsNotMetDescription = 17;
 
 			this.clearPuzzles();
 			/** @type {Error[]} */
@@ -1218,6 +1226,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					commandSets,
 					sheet[row][columnCorrectDescription] ? sheet[row][columnCorrectDescription].trim() : "",
 					sheet[row][columnAlreadySolvedDescription] ? sheet[row][columnAlreadySolvedDescription].trim() : "",
+					sheet[row][columnUnsolvedDescription] ? sheet[row][columnUnsolvedDescription].trim() : "",
 					sheet[row][columnIncorrectDescription] ? sheet[row][columnIncorrectDescription].trim() : "",
 					sheet[row][columnNoMoreAttemptsDescription] ? sheet[row][columnNoMoreAttemptsDescription].trim() : "",
 					sheet[row][columnRequirementsNotMetDescription] ? sheet[row][columnRequirementsNotMetDescription].trim() : "",
@@ -1384,7 +1393,15 @@ export default class GameEntityLoader extends GameEntityManager {
 			for (let row = 0; row < sheet.length; row++) {
 				const durationString = sheet[row][columnDurationString] ? String(sheet[row][columnDurationString]) : "";
 				const duration = durationString !== "" ? parseDuration(durationString) : null;
-				const timeRemaining = sheet[row][columnRemainingString] ? Duration.fromObject(convertTimeStringToDurationUnits(sheet[row][columnRemainingString])) : null;
+				const timeRemainingString = sheet[row][columnRemainingString] ? sheet[row][columnRemainingString] : "";
+				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
+				let timeRemaining;
+				if (timeRemainingString !== "") {
+					if (timeRemainingParsed !== undefined)
+						timeRemaining = Duration.fromObject(timeRemainingParsed)
+					else
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`)
+				} else timeRemaining = null;
 				let triggerTimesStrings = sheet[row][columnTriggerTimesStrings] ? sheet[row][columnTriggerTimesStrings].split(',') : [];
 				for (let i = 0; i < triggerTimesStrings.length; i++)
 					triggerTimesStrings[i] = triggerTimesStrings[i].trim();
@@ -1407,7 +1424,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					sheet[row][columnOngoing] ? sheet[row][columnOngoing].trim() === "TRUE" : false,
 					durationString,
 					duration,
-					sheet[row][columnRemainingString] ? sheet[row][columnRemainingString] : "",
+					timeRemainingString,
 					timeRemaining,
 					triggerTimesStrings,
 					sheet[row][columnRoomTag] ? sheet[row][columnRoomTag].trim() : "",
@@ -1459,9 +1476,9 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkEvent(event) {
 		if (event.id === "" || event.id === null || event.id === undefined)
 			return new Error(`Couldn't load event on row ${event.row}. No event ID was given.`);
-		if (event.duration !== null && !Duration.isDuration(event.duration))
+		if (event.duration !== null && (Duration.isDuration(event.duration) && !event.duration.isValid))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.durationString}" is not a valid duration.`);
-		if (event.remaining !== null && !Duration.isDuration(event.remaining))
+		if (event.remaining !== null && (Duration.isDuration(event.remaining) && !event.remaining.isValid))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.remainingString}" is not a valid representation of the time remaining.`);
 		if (!event.ongoing && event.remaining !== null)
 			return new Error(`Couldn't load event on row ${event.row}. The event is not ongoing, but an amount of time remaining was given.`);

@@ -121,8 +121,9 @@ export default class GameNarrationHandler {
 	 */
 	narrateStartMove(action, isRunning, exit, player) {
 		const messageType = MessageDisplayType.MINOR;
-		const notification = this.#game.notificationGenerator.generateStartMoveNotification(player, true, isRunning, exit.name);
-		const narration = this.#game.notificationGenerator.generateStartMoveNotification(player, false, isRunning, exit.name);
+		const exitPhrase = exit.getNamePhrase();
+		const notification = this.#game.notificationGenerator.generateStartMoveNotification(player, true, isRunning, exitPhrase);
+		const narration = this.#game.notificationGenerator.generateStartMoveNotification(player, false, isRunning, exitPhrase);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		this.#sendNarration(messageType, action, player, narration);
 	}
@@ -163,11 +164,12 @@ export default class GameNarrationHandler {
 	 */
 	narrateExit(action, player, currentRoom, exit, isMovingFreely) {
 		const messageType = MessageDisplayType.STANDARD;
+		const exitPhrase = exit?.getNamePhrase();
 		const appendString = player.createMoveAppendString();
 		const notification = isMovingFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, true, currentRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateExitNotification(player, true, exit?.name, appendString);
+			: this.#game.notificationGenerator.generateExitNotification(player, true, exitPhrase, appendString);
 		const narration = isMovingFreely ? this.#game.notificationGenerator.generateSuddenExitNotification(player, false, currentRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateExitNotification(player, false, exit?.name, appendString);
+			: this.#game.notificationGenerator.generateExitNotification(player, false, exitPhrase, appendString);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, MessageDisplayType.MINOR);
 		this.#sendNarration(messageType, action, player, narration, currentRoom);
 	}
@@ -182,9 +184,10 @@ export default class GameNarrationHandler {
 	 */
 	narrateEnter(action, player, destinationRoom, entrance, isMovingFreely) {
 		const messageType = MessageDisplayType.STANDARD;
+		const entrancePhrase = entrance?.getNamePhrase();
 		const appendString = player.createMoveAppendString();
 		const narration = isMovingFreely ? this.#game.notificationGenerator.generateSuddenEnterNotification(player, false, destinationRoom.displayName, appendString)
-			: this.#game.notificationGenerator.generateEnterNotification(player, false, entrance?.name, appendString);
+			: this.#game.notificationGenerator.generateEnterNotification(player, false, entrancePhrase, appendString);
 		this.#sendNarration(messageType, action, player, narration, destinationRoom);
 		if (!player.canSee()) {
 			const notification = this.#game.notificationGenerator.generateNoSightEnterNotification();
@@ -205,9 +208,9 @@ export default class GameNarrationHandler {
 	 */
 	narrateStop(action, player, exitLocked, exit) {
 		const messageType = MessageDisplayType.MINOR;
-		const notification = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, true, exit.getNamePhrase())
+		const notification = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, true, exit.getDoorPhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, true);
-		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getNamePhrase())
+		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getDoorPhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, false);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		this.#sendNarration(messageType, action, player, narration);
@@ -283,15 +286,15 @@ export default class GameNarrationHandler {
 	 */
 	narrateKnock(action, exit, player) {
 		const messageType = MessageDisplayType.STANDARD;
-		const exitPhrase = exit.getNamePhrase();
-		const notification = this.#game.notificationGenerator.generateKnockNotification(player, true, exitPhrase);
-		const roomNarration = this.#game.notificationGenerator.generateKnockNotification(player, false, exitPhrase);
+		const doorPhrase = exit.getDoorPhrase();
+		const notification = this.#game.notificationGenerator.generateKnockNotification(player, true, doorPhrase);
+		const roomNarration = this.#game.notificationGenerator.generateKnockNotification(player, false, doorPhrase);
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		this.#sendNarration(messageType, action, player, roomNarration);
 		const destination = exit.dest;
 		if (destination.id === player.location.id) return;
 		const hearingPlayers = destination.occupants.filter(occupant => occupant.canHear());
-		const destinationNarration = this.#game.notificationGenerator.generateKnockDestinationNotification(destination.exitCollection.get(exit.link).getNamePhrase());
+		const destinationNarration = this.#game.notificationGenerator.generateKnockDestinationNotification(destination.exitCollection.get(exit.link).getDoorPhrase());
 		// If the number of hearing players is the same as the number of occupants in the room, send the message to the room.
 		if (hearingPlayers.length !== 0 && hearingPlayers.length === destination.occupants.length)
 			this.#sendNarration(messageType, action, player, destinationNarration, destination);
@@ -774,15 +777,9 @@ export default class GameNarrationHandler {
 	narrateUnsolve(action, puzzle, player, customNarration = "") {
 		const messageType = MessageDisplayType.STANDARD;
 		let narration = customNarration;
-		let notification = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, true, puzzle);
-		if (player && !customNarration) {
-			const narrationResult = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, false, puzzle);
-			if (typeof narrationResult === 'string') narration = narrationResult;
-		}
-		if (player && typeof notification === 'string' && notification !== "")
-			this.#game.communicationHandler.notifyPlayer(player, action, notification);
-		else if (player && notification instanceof Description && notification.text !== "")
-			player.sendDescription(notification, puzzle);
+		if (player && !customNarration)
+			narration = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, false, puzzle);
+		if (player) player.sendDescription(puzzle.unsolvedDescription, puzzle);
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);
 	}
 

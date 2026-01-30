@@ -1393,7 +1393,15 @@ export default class GameEntityLoader extends GameEntityManager {
 			for (let row = 0; row < sheet.length; row++) {
 				const durationString = sheet[row][columnDurationString] ? String(sheet[row][columnDurationString]) : "";
 				const duration = durationString !== "" ? parseDuration(durationString) : null;
-				const timeRemaining = sheet[row][columnRemainingString] ? Duration.fromObject(convertTimeStringToDurationUnits(sheet[row][columnRemainingString])) : null;
+				const timeRemainingString = sheet[row][columnRemainingString] ? sheet[row][columnRemainingString] : "";
+				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
+				let timeRemaining;
+				if (timeRemainingString !== "") {
+					if (timeRemainingParsed !== undefined)
+						timeRemaining = Duration.fromObject(timeRemainingParsed)
+					else
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`)
+				} else timeRemaining = null;
 				let triggerTimesStrings = sheet[row][columnTriggerTimesStrings] ? sheet[row][columnTriggerTimesStrings].split(',') : [];
 				for (let i = 0; i < triggerTimesStrings.length; i++)
 					triggerTimesStrings[i] = triggerTimesStrings[i].trim();
@@ -1416,7 +1424,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					sheet[row][columnOngoing] ? sheet[row][columnOngoing].trim() === "TRUE" : false,
 					durationString,
 					duration,
-					sheet[row][columnRemainingString] ? sheet[row][columnRemainingString] : "",
+					timeRemainingString,
 					timeRemaining,
 					triggerTimesStrings,
 					sheet[row][columnRoomTag] ? sheet[row][columnRoomTag].trim() : "",
@@ -1468,9 +1476,9 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkEvent(event) {
 		if (event.id === "" || event.id === null || event.id === undefined)
 			return new Error(`Couldn't load event on row ${event.row}. No event ID was given.`);
-		if (event.duration !== null && !Duration.isDuration(event.duration))
+		if (event.duration !== null && (Duration.isDuration(event.duration) && !event.duration.isValid))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.durationString}" is not a valid duration.`);
-		if (event.remaining !== null && !Duration.isDuration(event.remaining))
+		if (event.remaining !== null && (Duration.isDuration(event.remaining) && !event.remaining.isValid))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.remainingString}" is not a valid representation of the time remaining.`);
 		if (!event.ongoing && event.remaining !== null)
 			return new Error(`Couldn't load event on row ${event.row}. The event is not ongoing, but an amount of time remaining was given.`);

@@ -736,16 +736,26 @@ describe('GameEntityLoader test', () => {
 
             test('invalid status effects', async () => {
                 sheets.__setMock(game.constants.statusSheetDataCells, [
-                    ["aaa","365xyz"]
+                    ["aaa","365xyz"],
+                    ["bbb","","","","","","","","","1"],
+                    ["ccc","","","","","","","","","inv+1"],
+                    ["ddd","","","","","","","","","per"],
+                    ["eee","","","","","","","","","per+NaN"],
                 ]);
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
-                    "Error: Couldn't load event on row 2. An invalid duration was given."
+                    //"Error: Couldn't load event on row 2. An invalid duration was given.",
+                    "Error: Couldn't load event on row 3. No stat in stat modifier 1 was given.",
+                    "Error: Couldn't load event on row 4. \"inv\" in stat modifier 1 is not a valid stat.",
+                    "Error: Couldn't load event on row 5. No number was given in stat modifier 1.",
+                    "Error: Couldn't load event on row 6. The value given in stat modifier 1 is not an integer.",
                 ];
                 console.log(errors);
-                console.log(game.statusEffectsCollection);
                 expect(errors).not.toEqual([]);
+                for (const [key, val] of game.statusEffectsCollection) {
+                    console.log(val.statModifiers);
+                }
                 expect(statusEffectCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);
                 for (const errorString of expectedErrorStrings) {

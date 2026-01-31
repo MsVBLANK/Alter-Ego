@@ -1,136 +1,632 @@
 import { Collection, Guild, GuildMember, TextChannel } from "discord.js";
 import { format } from "pretty-format";
-import { Duration } from 'luxon';
-import humanize from 'humanize-duration';
+import { Duration } from "luxon";
+import humanize from "humanize-duration";
 import Timer from "./Timer.js";
 import Status from "../Data/Status.js";
 import Gesture from "../Data/Gesture.js";
 import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import BotContext from "./BotContext.js";
+import Puzzle from "../Data/Puzzle.js";
+import Description from "../Data/Description.js"
+import Prefab from "../Data/Prefab.js";
+import Fixture from "../Data/Fixture.js";
+import InventorySlot from "../Data/InventorySlot.js";
+import ItemInstance from "../Data/ItemInstance.js";
+import RoomItem from "../Data/RoomItem.js";
+import InventoryItem from "../Data/InventoryItem.js";
 
 /** @import { NewPlugin } from 'pretty-format' */
 
 /** @type {NewPlugin} */
-class GameFilterPlugin {
-    /**
-     * List of formatters used by the SimpleFilterPlugin.
-     * @type {FormatterPairs}
-     */
-    formatters;
+export class GuildPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Guild;
+    }
 
     /**
-     * Set of objects currently being processed by the ComplexFilterPlugin to prevent recursion errors.
-     * @type {Set<any>}
+     * @type {NewPlugin["serialize"]}
+     * @param {GuildMember} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<GuildMember "${value.displayName || "unknown"}">`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class GuildMemberPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof GuildMember;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {GuildMember} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<GuildMember "${value.displayName || "unknown"}">`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class TextChannelPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof TextChannel;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {TextChannel} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<TextChannel "${value.name || "unknown"}">`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class DurationPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return Duration.isDuration(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Duration} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<Duration ${humanize(value.as("milliseconds")) || "unknown"}>`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class TimeoutPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value?.constructor?.name === "Timeout";
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {NodeJS.Timeout} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        // @ts-ignore
+        return `<Timeout ${value._idleTimeout}ms>`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class TimerPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Timer;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Timer} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<Timer ${value.timerDuration}ms>`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class GesturePlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Gesture;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Gesture} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<Gesture "${value.id}">`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class BotContextPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof BotContext;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {BotContext} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<BotContext>`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class DescriptionPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Description;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Description} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<Description>${value.text}</Description>`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class StatusPlugin {
+    /**
+     * Set of objects currently being processed by the StatusPlugin to prevent recursion errors.
+     * @type {Set<Status>}
      */
     processing;
 
     /**
-     * List of constructor names accepted by SimpleFilterPlugin.
-     * @type {Set<string>}
+     * Depth after which to truncate objects.
+     * @type {number}
      */
-    constructors;
+    level;
 
-    /** @constructor */
-    constructor() {
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
         this.processing = new Set();
-        this.constructors = new Set([
-            "Guild",
-            "GuildMember",
-            "TextChannel",
-            "Duration",
-            "Timeout",
-            "Timer",
-            "Status",
-            "Gesture",
-            "Room",
-            "Player",
-            "BotContext",
-        ]);
-        this.formatters = [
-            [(value) => value instanceof Guild, (/** @type {Guild} */ value) => `<Guild "${value.name || "unknown"}">`],
-            [
-                (value) => value instanceof GuildMember,
-                (/** @type {GuildMember} */ value) => `<GuildMember "${value.displayName || "unknown"}">`,
-            ],
-            [
-                (value) => value instanceof TextChannel,
-                (/** @type {TextChannel} */ value) => `<TextChannel "${value.name || "unknown"}">`,
-            ],
-            [
-                (value) => Duration.isDuration(value),
-                (/** @type {Duration} */ value) =>
-                    `<Duration ${humanize(value.as('milliseconds')) || "unknown"}>`,
-            ],
-            [
-                // @ts-ignore
-                (value) => value.constructor.name === "Timeout",
-                // @ts-ignore
-                (/** @type {NodeJS.Timeout} */ value) => `<Timeout ${value._idleTimeout}ms>`,
-            ],
-            [(value) => value instanceof Timer, (/** @type {Timer} */ value) => `<Timer ${value.timerDuration}ms>`],
-            [
-                (value) => value instanceof Status,
-                (/** @type {Status} */ value) =>
-                    `<Status "${value.id}" lasting ${humanize(value.remaining?.as('milliseconds')) || "unknown"}>`,
-            ],
-            [(value) => value instanceof Gesture, (/** @type {Gesture} */ value) => `<Gesture "${value.id}">`],
-            [
-                (value) => value instanceof Player,
-                (/** @type {Player} */ value, config, indentation, depth, refs, printer) => {
-                    if (depth > 2) {
-                        return `<Player ${value.name}>`;
-                    } else {
-                        this.processing.add(value);
-                        let serialized = printer(value, config, indentation, depth, refs);
-                        this.processing.delete(value);
-                        return serialized;
-                    }
-                },
-            ],
-            [
-                (value) => value instanceof Room,
-                (/** @type {Room} */ value, config, indentation, depth, refs, printer) => {
-                    if (depth > 2) {
-                        let occupants = value.occupants.length
-                            ? ` occupied by ${value.occupants.map((player) => player.name).join(", ")}`
-                            : "";
-                        return `<Room ${value.id}${occupants}>`;
-                    } else {
-                        this.processing.add(value);
-                        let serialized = printer(value, config, indentation, depth, refs);
-                        this.processing.delete(value);
-                        return serialized;
-                    }
-                },
-            ],
-            [(value) => value instanceof BotContext, (/** @type {BotContext} */ value) => `<BotContext>`],
-        ];
+        this.level = level;
     }
 
     /** @type {NewPlugin["test"]} */
     test(value) {
-        if (value === null || typeof value !== "object") return false;
-        if (this.processing.has(value)) return false;
-        return this.constructors.has(value.constructor?.name);
+        return value instanceof Status && !this.processing.has(value);
     }
 
-    /** @type {NewPlugin["serialize"]} */
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Status} value
+     */
     serialize(value, config, indentation, depth, refs, printer) {
-        for (const [tester, formatter] of this.formatters) {
-            if (tester(value)) return formatter(value, config, indentation, depth, refs, printer);
+        if (depth > this.level || this.processing.size > 1) {
+            if (value.remaining) return `<Status "${value.id}" inflicted with ${humanize(value.remaining.as("milliseconds")) || "???"} remaining>`
+            else if (value.duration) return `<Status "${value.id}" lasting for ${humanize(value.duration.as("milliseconds")) || "???"}>`
+            else return `<Status "${value.id}">`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
         }
+    }
+}
 
-        return `<${value.constructor?.name || "Unknown"}>`;
+/** @type {NewPlugin} */
+export class PuzzlePlugin {
+    /**
+     * Set of objects currently being processed by the PuzzlePlugin to prevent recursion errors.
+     * @type {Set<Puzzle>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Puzzle && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Puzzle} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            return `<Puzzle "${value.name}" in ${value.location.id}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class PrefabPlugin {
+    /**
+     * Set of objects currently being processed by the PrefabPlugin to prevent recursion errors.
+     * @type {Set<Prefab>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Prefab && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Prefab} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            return `<Prefab "${value.id}">`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class FixturePlugin {
+    /**
+     * Set of objects currently being processed by the FixturePlugin to prevent recursion errors.
+     * @type {Set<Fixture>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Fixture && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Fixture} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            return `<Fixture "${value.name}" in room ${value.location.id}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class InventorySlotPlugin {
+    /**
+     * Set of objects currently being processed by the InventorySlotPlugin to prevent recursion errors.
+     * @type {Set<InventorySlot>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 4) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof InventorySlot && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {InventorySlot<ItemInstance>} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            let containing = value.items.length !== 0 ? ` containing ${value.items.map(item => item.prefab.id).join(", ")}` : ""
+            return `<InventorySlot "${value.id}${containing}">`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class RoomItemPlugin {
+    /**
+     * Set of objects currently being processed by the RoomItemPlugin to prevent recursion errors.
+     * @type {Set<RoomItem>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof RoomItem && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {RoomItem} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            let container = "";
+            if (value.container) {
+                if (value.container instanceof RoomItem) {
+                    container = ` inside RoomItem ${value.container.getIdentifier()}`
+                } else if (value.container instanceof Fixture) {
+                    container = ` inside Fixture ${value.container.name}`
+                } else if (value.container instanceof Puzzle) {
+                    container = ` inside Puzzle ${value.container.name}`
+                } else {
+                    container = " inside ???"
+                }
+            }
+            return `<RoomItem of prefab "${value.getIdentifier()}"${container} in room ${value.location.id}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class InventoryItemPlugin {
+    /**
+     * Set of objects currently being processed by the InventoryItemPlugin to prevent recursion errors.
+     * @type {Set<InventoryItem>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof InventoryItem && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {InventoryItem} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            let container = "";
+            if (value.container) {
+                if (value.container instanceof InventoryItem) {
+                    container = ` inside InventoryItem ${value.container.getIdentifier()}`
+                } else {
+                    container = " inside ???"
+                }
+            }
+            return `<InventoryItem of prefab "${value.getIdentifier()}"${container} on player ${value.player.name}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class RoomPlugin {
+    /**
+     * Set of objects currently being processed by the RoomPlugin to prevent recursion errors.
+     * @type {Set<Room>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Room && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Room} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            let occupants = value.occupants.length
+                ? ` occupied by ${value.occupants.map((player) => player.name).join(", ")}`
+                : "";
+            return `<Room ${value.id}${occupants}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class PlayerPlugin {
+    /**
+     * Set of objects currently being processed by the PlayerPlugin to prevent recursion errors.
+     * @type {Set<Player>}
+     */
+    processing;
+
+    /**
+     * Depth after which to truncate objects.
+     * @type {number}
+     */
+    level;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 2) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Player && !this.processing.has(value);
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Player} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (depth > this.level || this.processing.size > 1) {
+            return `<Player ${value.name}>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+/** @type {NewPlugin} */
+export class CollectionPlugin {
+    /**
+     * Set of objects currently being processed by the CollectionPlugin to prevent recursion errors.
+     * @type {Set<Collection>}
+     */
+    processing;
+
+    /** @constructor */
+    constructor() {
+        this.processing = new Set();
+    }
+
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof Collection;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Collection} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        if (this.processing.has(value)) return `[Circular]`;
+        this.processing.add(value);
+        let map = new Map();
+        for (const [key, val] of value) {
+            map.set(key, val);
+        }
+        let serialized = printer(map, config, indentation, depth, refs);
+        this.processing.delete(value);
+        return serialized;
     }
 }
 
 export default class PrettyPrinter {
     /**
-     * Game filtering filter plugin for prettyString
-     * @type {NewPlugin}
+     * Game filtering plugins for prettyString
+     * @type {NewPlugin[]}
      */
-    gameFilterPlugin;
+    gameFilterPlugins;
 
     /**
      * Properties truncated by prettyObject
@@ -139,15 +635,28 @@ export default class PrettyPrinter {
     truncateProperties;
 
     constructor() {
-        this.gameFilterPlugin = new GameFilterPlugin();
-        this.truncateProperties = new Set([
-            "game",
-            "guild",
-            "member",
-            "channel",
-            "spectateChannel",
-            "timer",
-        ]);
+        this.gameFilterPlugins = [
+            new GuildPlugin(),
+            new GuildMemberPlugin(),
+            new TextChannelPlugin(),
+            new DurationPlugin(),
+            new TimeoutPlugin(),
+            new TimerPlugin(),
+            new GesturePlugin(),
+            new BotContextPlugin(),
+            new DescriptionPlugin(),
+            new StatusPlugin(),
+            new PuzzlePlugin(),
+            new PrefabPlugin(),
+            new FixturePlugin(),
+            new InventorySlotPlugin(),
+            new RoomItemPlugin(),
+            new InventoryItemPlugin(),
+            new RoomPlugin(),
+            new PlayerPlugin(),
+            new CollectionPlugin(),
+        ];
+        this.truncateProperties = new Set(["game", "guild", "member", "channel", "spectateChannel", "timer"]);
     }
 
     /**
@@ -156,7 +665,7 @@ export default class PrettyPrinter {
      */
     prettyString(object) {
         return format(object, {
-            plugins: [this.gameFilterPlugin],
+            plugins: [...this.gameFilterPlugins],
             indent: 4,
         });
     }
@@ -164,7 +673,7 @@ export default class PrettyPrinter {
     /**
      * Returns a copy of the object to display in console.log with certain properties excluded.
      * @param {any} object - The object to display.
-     * @param {number} level - Level of recursion, for internel use only.
+     * @param {number} level - Level of recursion, for internal use only.
      */
     prettyObject(object, level = 0) {
         if (level >= 3) return object;
@@ -175,18 +684,18 @@ export default class PrettyPrinter {
             } else {
                 if (object[key] && typeof object[key] === "object") {
                     if (object[key] instanceof Array) {
-                        clone[key] = object[key].map((value) => this.prettyObject(value, level + 1))
+                        clone[key] = object[key].map((value) => this.prettyObject(value, level + 1));
                     } else if (object[key] instanceof Collection) {
                         clone[key] = new Collection();
                         for (const [k, v] of object[key]) {
-                            clone[key].set(k, this.prettyObject(v, level + 1))
+                            clone[key].set(k, this.prettyObject(v, level + 1));
                         }
                     } else if (object[key] instanceof Map) {
                         clone[key] = new Map();
                         for (const [k, v] of object[key]) {
-                            clone[key].set(k, this.prettyObject(v, level + 1))
+                            clone[key].set(k, this.prettyObject(v, level + 1));
                         }
-                    } else clone[key] = this.prettyObject(object[key], level + 1)
+                    } else clone[key] = this.prettyObject(object[key], level + 1);
                 } else clone[key] = object[key];
             }
         }

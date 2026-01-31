@@ -18,7 +18,7 @@ export default class InflictAction extends Action {
      * @param {boolean} [doCures=true] - Whether or not the status's cures should actually be cured. Defaults to true.
      * @param {boolean} [narrate=true] - Whether or not to send any narrations caused by the status being inflicted. Defaults to true.
      * @param {InventoryItem} [item] - The inventory item that caused the status to be inflicted, if applicable.
-	 * @param {import('luxon').Duration} [duration] - A custom duration that overrides the status's default duration.
+	 * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
 	 * @returns Whether or not the bot should send a followup message.
 	 */
 	performInflict(status, notify = true, doCures = true, narrate = true, item, duration = null) {

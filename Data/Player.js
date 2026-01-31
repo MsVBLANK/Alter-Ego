@@ -695,7 +695,7 @@ export default class Player extends ItemContainer {
     /**
      * Inflicts the player with a status effect.
      * @param {Status} status - The status to inflict.
-     * @param {import('luxon').Duration} [duration] - A custom duration that overrides the status's default duration.
+     * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
      */
     inflict(status, duration = null) {
         const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text, status.curedDescription.text, status.row, this.getGame());

@@ -678,17 +678,26 @@ describe('GameEntityLoader test', () => {
                 sheets.__setMock(game.constants.eventSheetDataCells, [
                     ["aaa","","90x"],
                     ["bbb","TRUE","90s","90y"],
+                    ["ccc","FALSE","90s","00:01:30"],
+                    ["ddd","TRUE","90s",""],
+                    ["eee","FALSE","90s","","99:365 XY"],
+                    ["fff","FALSE","90s","","","","","invalid"],
+                    ["ggg","FALSE","90s","","","","","","invalid"],
                 ]);
                 const eventCount = await game.entityLoader.loadEvents(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
                     "Error: Couldn't load event on row 2. \"90x\" is not a valid duration.",
                     "Error: Couldn't load event on row 3. \"90y\" is not a valid representation of the time remaining.",
+                    "Error: Couldn't load event on row 4. The event is not ongoing, but an amount of time remaining was given.",
+                    "Error: Couldn't load event on row 5. The event is ongoing and has a duration, but no amount of time remaining was given.",
+                    "Error: Couldn't load event on row 6. \"99:365 XY\" is not a valid time to trigger at.",
+                    "Error: Couldn't load event on row 7. \"invalid\" in inflicted status effects is not a status effect.",
+                    "Error: Couldn't load event on row 8. \"invalid\" in refreshed status effects is not a status effect.",
                 ];
-                console.log(errorStrings);
                 expect(errors).not.toEqual([]);
                 expect(eventCount).toBe(0);
-                //expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
                 for (const errorString of expectedErrorStrings) {
                     expect(errorStrings).toContain(errorString);
                 }
@@ -706,6 +715,45 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadStatusEffects test', () => {
+        describe('erroneous status effect response', () => {
+            test('incomplete status effects', async () => {
+                sheets.__setMock(game.constants.statusSheetDataCells, [
+                    [""]
+                ]);
+                const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load event on row 2. No status effect ID was given."
+                ];
+                console.log(errors);
+                expect(errors).not.toEqual([]);
+                expect(statusEffectCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid status effects', async () => {
+                sheets.__setMock(game.constants.statusSheetDataCells, [
+                    ["aaa","365xyz"]
+                ]);
+                const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load event on row 2. An invalid duration was given."
+                ];
+                console.log(errors);
+                console.log(game.statusEffectsCollection);
+                expect(errors).not.toEqual([]);
+                expect(statusEffectCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+        });
+
         describe('standard status effect response', () => {
             test('errorChecking true', async () => {
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);

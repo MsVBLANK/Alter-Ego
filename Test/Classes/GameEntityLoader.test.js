@@ -790,12 +790,26 @@ describe('GameEntityLoader test', () => {
                 sheets.__setMock(game.constants.playerSheetDataCells, [
                     ["", "aaa"],
                     ["665168062697177107",""],
+                    ["665168062697177107","bbb","","/////"],
+                    ["665168062697177107","ccc","","a/////"],
+                    ["665168062697177107","ddd","","a/b////"],
+                    ["665168062697177107","eee","","a/b/c///"],
+                    ["665168062697177107","fff","","a/b/c/d//"],
+                    ["665168062697177107","ggg","","a/b/c/d/e/"],
+                    ["665168062697177107","hhh","","neutral",""],
                 ]);
                 const playerCount = await game.entityLoader.loadPlayers(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
                     "Error: Couldn't load player on row 3. No Discord ID was given.",
                     "Error: Couldn't load player on row 4. No player name was given.",
+                    "Error: Couldn't load player on row 5. No subject pronoun was given.",
+                    "Error: Couldn't load player on row 6. No object pronoun was given.",
+                    "Error: Couldn't load player on row 7. No dependent possessive pronoun was given.",
+                    "Error: Couldn't load player on row 8. No independent possessive pronoun was given.",
+                    "Error: Couldn't load player on row 9. No reflexive pronoun was given.",
+                    "Error: Couldn't load player on row 10. Whether the player's pronouns pluralize verbs was not specified.",
+                    "Error: Couldn't load player on row 11. No voice descriptor was given.",
                 ];
                 console.log(errorStrings);
                 expect(errors).not.toEqual([]);

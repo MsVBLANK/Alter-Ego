@@ -1699,7 +1699,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				let member = null;
 				let notificationChannel = null;
 				let spectateChannel = null;
-				if (sheet[row][columnName] && sheet[row][columnTitle] !== "NPC") {
+				if (sheet[row][columnTitle] !== "NPC") {
 					try {
 						member = sheet[row][columnId] ? this.game.guildContext.guild.members.resolve(sheet[row][columnId].trim()) : null;
 						notificationChannel = await member.createDM();

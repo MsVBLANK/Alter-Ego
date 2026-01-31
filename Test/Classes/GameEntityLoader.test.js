@@ -148,15 +148,15 @@ describe('GameEntityLoader test', () => {
             test('exit error messages', async () => {
                 sheets.__setMock(game.constants.roomSheetDataCells, [
                     ["Room 1", "", ""],
-                    ["Room 2", "", "", "DOOR A", "X"],
-                    ["Room 3", "", "", "DOOR B", "0", "Y"],
-                    ["Room 4", "", "", "DOOR C", "0", "0", "Z"],
-                    ["Room 5", "", "", "DOOR D", "0", "0", "0", "TRUE"],
-                    ["Room 6", "", "", "DOOR E", "0", "0", "0", "TRUE", "Room 0"],
-                    ["Room 7", "", "", "DOOR F", "0", "0", "0", "TRUE", "Room 2"],
-                    ["Room 8", "", "", "DOOR G", "0", "0", "0", "TRUE", "Room 9", "DOOR Y"],
-                    ["Room 9", "", "", "DOOR Z", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
-                    ["", "", "", "DOOR Z", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
+                    ["Room 2", "", "", "DOOR A", "", "", "X"],
+                    ["Room 3", "", "", "DOOR B", "", "", "0", "Y"],
+                    ["Room 4", "", "", "DOOR C", "", "", "0", "0", "Z"],
+                    ["Room 5", "", "", "DOOR D", "", "", "0", "0", "0", "TRUE"],
+                    ["Room 6", "", "", "DOOR E", "", "", "0", "0", "0", "TRUE", "Room 0"],
+                    ["Room 7", "", "", "DOOR F", "", "", "0", "0", "0", "TRUE", "Room 2"],
+                    ["Room 8", "", "", "DOOR G", "", "", "0", "0", "0", "TRUE", "Room 9", "DOOR Y"],
+                    ["Room 9", "", "", "DOOR Z","", "",  "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
+                    ["", "", "", "DOOR Z", "", "", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
                 ]);
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 const errorStrings = errors.join('\n').split('\n');

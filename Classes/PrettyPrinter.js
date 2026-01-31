@@ -9,7 +9,7 @@ import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import BotContext from "./BotContext.js";
 import Puzzle from "../Data/Puzzle.js";
-import Description from "../Data/Description.js"
+import Description from "../Data/Description.js";
 import Prefab from "../Data/Prefab.js";
 import Fixture from "../Data/Fixture.js";
 import InventorySlot from "../Data/InventorySlot.js";
@@ -160,7 +160,7 @@ export class DescriptionPlugin {
      * @param {Description} value
      */
     serialize(value, config, indentation, depth, refs, printer) {
-        return `<Description>${value.text}</Description>`;
+        return value.text.length !== 0 ? `<Description>${value.text}</Description>` : "<Description empty/>";
     }
 }
 
@@ -198,8 +198,10 @@ export class StatusPlugin {
      */
     serialize(value, config, indentation, depth, refs, printer) {
         if (depth > this.level || this.processing.size > 1) {
-            if (value.remaining) return `<Status "${value.id}" inflicted with ${humanize(value.remaining.as("milliseconds")) || "???"} remaining>`
-            else if (value.duration) return `<Status "${value.id}" lasting for ${humanize(value.duration.as("milliseconds")) || "???"}>`
+            if (value.remaining)
+                return `<Status "${value.id}" inflicted with ${humanize(value.remaining.as("milliseconds")) || "???"} remaining>`;
+            else if (value.duration)
+                return `<Status "${value.id}" lasting for ${humanize(value.duration.as("milliseconds")) || "???"}>`;
             else return `<Status "${value.id}">`;
         } else {
             this.processing.add(value);
@@ -376,7 +378,7 @@ export class InventorySlotPlugin {
      */
     serialize(value, config, indentation, depth, refs, printer) {
         if (depth > this.level || this.processing.size > 1) {
-            let containing = value.items.length !== 0 ? ` containing ${value.items.map(item => item.prefab.id).join(", ")}` : ""
+            let containing = value.items.length !== 0 ? ` containing ${value.items.map((item) => item.prefab.id).join(", ")}` : "";
             return `<InventorySlot "${value.id}${containing}">`;
         } else {
             this.processing.add(value);
@@ -424,13 +426,13 @@ export class RoomItemPlugin {
             let container = "";
             if (value.container) {
                 if (value.container instanceof RoomItem) {
-                    container = ` inside RoomItem ${value.container.getIdentifier()}`
+                    container = ` inside RoomItem ${value.container.getIdentifier()}`;
                 } else if (value.container instanceof Fixture) {
-                    container = ` inside Fixture ${value.container.name}`
+                    container = ` inside Fixture ${value.container.name}`;
                 } else if (value.container instanceof Puzzle) {
-                    container = ` inside Puzzle ${value.container.name}`
+                    container = ` inside Puzzle ${value.container.name}`;
                 } else {
-                    container = " inside ???"
+                    container = " inside ???";
                 }
             }
             return `<RoomItem of prefab "${value.getIdentifier()}"${container} in room ${value.location.id}>`;
@@ -480,9 +482,9 @@ export class InventoryItemPlugin {
             let container = "";
             if (value.container) {
                 if (value.container instanceof InventoryItem) {
-                    container = ` inside InventoryItem ${value.container.getIdentifier()}`
+                    container = ` inside InventoryItem ${value.container.getIdentifier()}`;
                 } else {
-                    container = " inside ???"
+                    container = " inside ???";
                 }
             }
             return `<InventoryItem of prefab "${value.getIdentifier()}"${container} on player ${value.player.name}>`;

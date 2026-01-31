@@ -723,9 +723,8 @@ describe('GameEntityLoader test', () => {
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
-                    "Error: Couldn't load event on row 2. No status effect ID was given."
+                    "Error: Couldn't load status effect on row 2. No status effect ID was given."
                 ];
-                console.log(errors);
                 expect(errors).not.toEqual([]);
                 expect(statusEffectCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);
@@ -741,21 +740,28 @@ describe('GameEntityLoader test', () => {
                     ["ccc","","","","","","","","","inv+1"],
                     ["ddd","","","","","","","","","per"],
                     ["eee","","","","","","","","","per+NaN"],
+                    ["fff","","","","invalid","","","","",""],
+                    ["ggg","","","","","invalid","","","",""],
+                    ["hhh","","","","","","invalid","","",""],
+                    ["iii","","","","","","","invalid","",""],
+                    ["jjj","","","","","","","","invalid",""],
                 ]);
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
-                    //"Error: Couldn't load event on row 2. An invalid duration was given.",
-                    "Error: Couldn't load event on row 3. No stat in stat modifier 1 was given.",
-                    "Error: Couldn't load event on row 4. \"inv\" in stat modifier 1 is not a valid stat.",
-                    "Error: Couldn't load event on row 5. No number was given in stat modifier 1.",
-                    "Error: Couldn't load event on row 6. The value given in stat modifier 1 is not an integer.",
+                    "Error: Couldn't load status effect on row 2. An invalid duration was given.",
+                    "Error: Couldn't load status effect on row 3. No stat in stat modifier 1 was given.",
+                    "Error: Couldn't load status effect on row 4. \"inv\" in stat modifier 1 is not a valid stat.",
+                    "Error: Couldn't load status effect on row 5. No number was given in stat modifier 1.",
+                    "Error: Couldn't load status effect on row 6. The value given in stat modifier 1 is not an integer.",
+                    "Error: Couldn't load status effect on row 7. \"invalid\" in \"don't inflict if\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 8. \"invalid\" in cures is not a status effect.",
+                    "Error: Couldn't load status effect on row 9. Next stage \"invalid\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 10. Duplicated status \"invalid\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 11. Cured condition \"invalid\" is not a status effect.",
+
                 ];
-                console.log(errors);
                 expect(errors).not.toEqual([]);
-                for (const [key, val] of game.statusEffectsCollection) {
-                    console.log(val.statModifiers);
-                }
                 expect(statusEffectCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);
                 for (const errorString of expectedErrorStrings) {

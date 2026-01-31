@@ -1738,7 +1738,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					row + 3,
 					this.game
 				);
-				if (this.game.entityFinder.getPlayer(player.name)) {
+				if (this.game.playersCollection.has(Game.generateValidEntityName(player.name))) {
 					errors.push(new Error(`Couldn't load player on row ${player.row}. Another player with this name already exists.`));
 					continue;
 				}

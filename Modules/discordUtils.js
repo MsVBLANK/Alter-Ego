@@ -70,20 +70,34 @@ function generateFlags(messageDisplayType) {
  * @param {Player} [player] - The player the narration is about. Optional.
  */
 function createNarrateComponents(messageDisplayType, game, messageText, player) {
+    /** @type {MediaGalleryBuilder} */
+    let mediaGalleryBuilder;
+    [mediaGalleryBuilder, messageText] = getMediaGalleryComponents(messageText);
+
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder)[]} */
+    let components = [];
     switch (messageDisplayType) {
 		case MessageDisplayType.STANDARD:
-			return createStandardNarrationComponents(game, messageText);
+			components = createStandardNarrationComponents(game, messageText);
+            break;
         case MessageDisplayType.WARNING:
-            return createWarningNarrationComponents(game, messageText);
+            components = createWarningNarrationComponents(game, messageText);
+            break;
 		case MessageDisplayType.ALERT:
-			return createAlertNarrationComponents(game, messageText);
+			components = createAlertNarrationComponents(game, messageText);
+            break;
 		case MessageDisplayType.MINOR:
-			return createMinorNarrationComponents(game, messageText);
+			components = createMinorNarrationComponents(game, messageText);
+            break;
 		case MessageDisplayType.PLAYER:
-			return createPlayerNarrationComponents(game, messageText, player);
+			components = createPlayerNarrationComponents(game, messageText, player);
+            break;
 		default:
-			return createStandardNarrationComponents(game, messageText);
-	} 
+			components = createStandardNarrationComponents(game, messageText);
+            break;
+	}
+    if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
+    return components;
 }
 
 /**
@@ -167,16 +181,9 @@ function createPlayerNarrationComponents(game, messageText, player) {
  * @param {string} color - The color as a hex code.
  */
 export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
-    const mediaGalleryBuilder = new MediaGalleryBuilder();
-    const imageURLRegex = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(?:\?[^#\s]*)?/g;
-    let match;
-    const originalDescriptionText = descriptionText;
-    while (match = imageURLRegex.exec(originalDescriptionText)) {
-        if (mediaGalleryBuilder.items.length <= 3) {
-            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(match[0]));
-            descriptionText = descriptionText.replace(match[0], '');
-        }
-    }
+    /** @type {MediaGalleryBuilder} */
+    let mediaGalleryBuilder;
+    [mediaGalleryBuilder, descriptionText] = getMediaGalleryComponents(descriptionText);
 
     /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder)[]} */
     const components = [];
@@ -205,6 +212,25 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
     components.push(new TextDisplayBuilder().setContent(defaultDropFixtureText));
     components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
     return components;
+}
+
+/**
+ * Creates a media gallery builder using linked images and videos in the message. Can only contain up to 3 gallery items.
+ * @param {string} originalMessageText - The original text of the message.
+ * @returns {[MediaGalleryBuilder, string]} - A media gallery builder and the message text after removing links that have been inserted into it.
+ */
+function getMediaGalleryComponents(originalMessageText) {
+    const mediaGalleryBuilder = new MediaGalleryBuilder();
+    const imageURLRegex = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif|mp4|webm))(?:\?[^#\s]*)?/g;
+    let match;
+    let messageText = originalMessageText;
+    while (match = imageURLRegex.exec(originalMessageText)) {
+        if (mediaGalleryBuilder.items.length < 3) {
+            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(match[0]));
+            messageText = messageText.replace(match[0], '');
+        }
+    }
+    return [mediaGalleryBuilder, messageText];
 }
 
 /**

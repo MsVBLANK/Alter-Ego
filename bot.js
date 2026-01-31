@@ -206,7 +206,7 @@ async function sendFirstBootMessage(settings) {
         + `If this is your first time using Alter Ego, use the ${settings.commandPrefix}setupdemo command to generate `
         + `a demo environment on the spreadsheet you supplied in the settings. Then, you can invite another account to `
         + `the server and use the ${settings.commandPrefix}startgame command to add them as a Player so that you can `
-        + `get a feel for Neo World Program gameplay.\n\n`
+        + `get a feel for gameplay.\n\n`
         + `For documentation and tutorials on how to use Alter Ego, check out the official docs:\n`
         + `https://molsnoo.github.io/Alter-Ego/\n\n`
         + `Good luck, and have fun!`

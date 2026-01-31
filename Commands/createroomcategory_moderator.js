@@ -39,13 +39,13 @@ export async function execute(game, message, command, args) {
     const input = args.join(" ");
     let channel = game.guildContext.guild.channels.cache.find(channel => channel.name.toLowerCase() === input.toLowerCase() && channel.parentId === null);
     if (channel) {
-        const response = await registerRoomCategory(channel);
+        const response = await registerRoomCategory(game, channel);
         game.communicationHandler.sendToCommandChannel(response);
     }
     else {
         try {
             channel = await createCategory(game.guildContext.guild, input);
-            const response = await registerRoomCategory(channel);
+            const response = await registerRoomCategory(game, channel);
             game.communicationHandler.sendToCommandChannel(response);
         }
         catch (err) {

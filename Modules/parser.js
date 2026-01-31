@@ -1,6 +1,7 @@
 import Description from '../Data/Description.js';
 import ItemContainer from '../Data/ItemContainer.js';
 import Player from '../Data/Player.js';
+import { MessageDisplayType } from './enums.js';
 import { default as evaluateScript } from './scriptParser.js';
 
 import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
@@ -583,7 +584,7 @@ function choosePossibilityIndex(possibilityArr) {
 
 /**
  * @param {string} description 
- * @returns {{document: Document, warnings: string[], errors: string[]}}
+ * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType}}
  */
 function createDescriptionDocumentFromString(description) {
     description = description.replace(/<il><\/il>/g, "<il><null /></il>");
@@ -600,7 +601,31 @@ function createDescriptionDocumentFromString(description) {
             error: function (err) { errors.push(err); }
         }
     }).parseFromString(description, 'text/xml');
-    return { document: document, warnings: warnings, errors: errors };
+
+    // Get message display type.
+    const messageDisplayTypeString = document?.getElementsByTagName('desc').item(0)?.getAttribute('type')?.toUpperCase();
+    const messageDisplayType = getMessageDisplayType(messageDisplayTypeString);
+    
+    return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType };
+}
+
+/**
+ * Returns a message display type based on the given string.
+ * @param {string} messageDisplayTypeString 
+ */
+function getMessageDisplayType(messageDisplayTypeString) {
+    switch (messageDisplayTypeString) {
+        case 'STANDARD':
+            return MessageDisplayType.STANDARD;
+        case 'WARNING':
+            return MessageDisplayType.WARNING;
+        case 'ALERT':
+            return MessageDisplayType.ALERT;
+        case 'MINOR':
+            return MessageDisplayType.MINOR;
+        case 'PLAIN_TEXT':
+            return MessageDisplayType.PLAIN_TEXT;
+    }
 }
 
 /**

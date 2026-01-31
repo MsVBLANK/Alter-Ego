@@ -1,5 +1,6 @@
 import {ChannelType, type Guild, type GuildBasedChannel} from 'discord.js';
 import {access, constants, readFile, writeFile, mkdir} from "node:fs/promises";
+import type Game from '../Data/Game.js';
 
 const SERVER_CONFIG_PATH = "./Configs/serverconfig.json";
 
@@ -196,12 +197,13 @@ export function createCategory(guild: Guild, name: string): Promise<GuildBasedCh
     });
 }
 
-export async function registerRoomCategory(category: GuildBasedChannel): Promise<string> {
+export async function registerRoomCategory(game: Game, category: GuildBasedChannel): Promise<string> {
     let serverConfig = await loadServerConfig();
     if (!serverConfig.roomCategories.includes(category.id)) {
         if (serverConfig.roomCategories !== "")
             serverConfig.roomCategories += ",";
         serverConfig.roomCategories += category.id;
+        game.guildContext.roomCategories.push(category.id);
 
         await writeServerConfig(serverConfig);
 

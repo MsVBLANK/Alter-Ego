@@ -49,7 +49,7 @@ export async function execute(game, message, command, args) {
         if (roomCategories.length === 0 || roomCategories.length === 1 && roomCategories[0] === "") {
             try {
                 roomCategory = await createCategory(game.guildContext.guild, "Rooms");
-                await registerRoomCategory(roomCategory);
+                await registerRoomCategory(game, roomCategory);
             }
             catch (err) {
                 game.communicationHandler.sendToCommandChannel(err);

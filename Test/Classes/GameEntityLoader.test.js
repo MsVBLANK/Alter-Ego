@@ -759,7 +759,6 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load status effect on row 9. Next stage \"invalid\" is not a status effect.",
                     "Error: Couldn't load status effect on row 10. Duplicated status \"invalid\" is not a status effect.",
                     "Error: Couldn't load status effect on row 11. Cured condition \"invalid\" is not a status effect.",
-
                 ];
                 expect(errors).not.toEqual([]);
                 expect(statusEffectCount).toBe(0);
@@ -780,6 +779,50 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadPlayers test', () => {
+        describe('erroneous player response', () => {
+            beforeEach(async () => {
+                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+            });
+
+            test('incomplete players', async () => {
+                sheets.__setMock(game.constants.playerSheetDataCells, [
+                    ["", "aaa"],
+                    ["665168062697177107",""],
+                ]);
+                const playerCount = await game.entityLoader.loadPlayers(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load player on row 3. No Discord ID was given.",
+                    "Error: Couldn't load player on row 4. No player name was given.",
+                ];
+                console.log(errorStrings);
+                expect(errors).not.toEqual([]);
+                expect(playerCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid players', async () => {
+                sheets.__setMock(game.constants.playerSheetDataCells, [
+                ]);
+                const playerCount = await game.entityLoader.loadPlayers(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                ];
+                console.log(errorStrings)
+                expect(errors).not.toEqual([]);
+                expect(playerCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+        });
+
         describe('standard player response', () => {
             test('errorChecking true', async () => {
                 if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);

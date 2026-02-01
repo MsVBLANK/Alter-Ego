@@ -1618,7 +1618,7 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkStatusEffect(status) {
 		if (status.id === "" || status.id === null || status.id === undefined)
 			return new Error(`Couldn't load status effect on row ${status.row}. No status effect ID was given.`);
-		if (status.duration !== null && !Duration.isDuration(status.duration))
+		if (status.duration !== null && (Duration.isDuration(status.duration) && !status.duration.isValid))
 			return new Error(`Couldn't load status effect on row ${status.row}. An invalid duration was given.`);
 		for (let i = 0; i < status.statModifiers.length; i++) {
 			const statModifier = status.statModifiers[i];

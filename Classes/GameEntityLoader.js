@@ -1767,7 +1767,7 @@ export default class GameEntityLoader extends GameEntityManager {
 										if (timeRemainingParsed !== undefined)
 											timeRemaining = Duration.fromObject(timeRemainingParsed);
 										else {
-											errors.push(new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid duration for status effect "${statusDisplay.id}"`));
+											errors.push(new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid representation of the time remaining for the status "${statusDisplay.id}".`));
 											invalidStatusFound = true;
 											break;
 										}

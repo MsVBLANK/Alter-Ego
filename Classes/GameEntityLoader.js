@@ -1700,7 +1700,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				let member = null;
 				let notificationChannel = null;
 				let spectateChannel = null;
-				if (sheet[row][columnName] && sheet[row][columnTitle] !== "NPC") {
+				if (sheet[row][columnTitle] !== "NPC") {
 					try {
 						member = sheet[row][columnId] ? this.game.guildContext.guild.members.resolve(sheet[row][columnId].trim()) : null;
 						notificationChannel = await member.createDM();
@@ -1739,7 +1739,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					row + 3,
 					this.game
 				);
-				if (this.game.entityFinder.getPlayer(player.name)) {
+				if (this.game.playersCollection.has(Game.generateValidEntityName(player.name))) {
 					errors.push(new Error(`Couldn't load player on row ${player.row}. Another player with this name already exists.`));
 					continue;
 				}

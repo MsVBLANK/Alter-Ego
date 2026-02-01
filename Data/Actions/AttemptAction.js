@@ -227,6 +227,16 @@ export default class AttemptAction extends Action {
 			else
 				this.#failPuzzle(puzzle);
 		}
+		else if (puzzle.type === "player toggle") {
+			if (puzzle.solved && puzzle.outcome === this.player.name && hasRequiredItem)
+				this.#unsolvePuzzle(puzzle);
+			else if (puzzle.solved)
+				this.#narrateAndLogAlreadySolvedPuzzle(puzzle);
+			else if (puzzle.solutions.includes(this.player.name))
+				this.#solvePuzzle(puzzle, this.player.name, requiredItems, item);
+			else
+				this.#failPuzzle(puzzle);
+		}
 		else if (puzzle.type === "room player") {
 			let outcome = "";
 			if (targetPlayer) {

@@ -1299,6 +1299,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			puzzle.type !== "option" &&
 			puzzle.type !== "media" &&
 			puzzle.type !== "player" &&
+			puzzle.type !== "player toggle" &&
 			puzzle.type !== "room player" &&
 			puzzle.type !== "restricted exit" &&
 			puzzle.type !== "matrix")

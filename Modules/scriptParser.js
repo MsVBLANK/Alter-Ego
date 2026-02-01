@@ -53,6 +53,7 @@ const SCRIPT_SCOPE_OPTIONS = {
 		findInventoryItems: finder.findInventoryItems,
 		findGestures: finder.findGestures,
 		findFlags: finder.findFlags,
+		getRandomNumber: helpers.getRandomNumber,
 		getRandomString: helpers.getRandomString,
 		doWithChance: helpers.doWithChance,
 		doWithChanceModifiedByPlayerStatus: helpers.doWithChanceModifiedByPlayerStatus

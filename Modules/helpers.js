@@ -5,6 +5,16 @@ import { Duration } from 'luxon';
 /** @import { DurationObjectUnits } from "luxon" */
 
 /**
+ * Gets a random number between min and max, inclusive.
+ * @param {number} min - The minimum possible number.
+ * @param {number} max - The maximum possible number.
+ * @returns {number} A random number between min and max, inclusive.
+ */
+export function getRandomNumber(min, max) {
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
  * Gets a random string out of an array of possibilities.
  * @param {string[]} possibilities - A list of strings to choose from.
  * @returns A randomly chosen entry from possibilities.

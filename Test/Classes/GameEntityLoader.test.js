@@ -811,7 +811,6 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load player on row 10. Whether the player's pronouns pluralize verbs was not specified.",
                     "Error: Couldn't load player on row 11. No voice descriptor was given.",
                 ];
-                console.log(errorStrings);
                 expect(errors).not.toEqual([]);
                 expect(playerCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);
@@ -822,10 +821,26 @@ describe('GameEntityLoader test', () => {
 
             test('invalid players', async () => {
                 sheets.__setMock(game.constants.playerSheetDataCells, [
+                    ["665168062697177107","aaa","","neutral","a generic voice","NaN"],
+                    ["665168062697177107","bbb","","neutral","a generic voice","1","NaN"],
+                    ["665168062697177107","ccc","","neutral","a generic voice","1","2","NaN"],
+                    ["665168062697177107","ddd","","neutral","a generic voice","1","2","3","NaN"],
+                    ["665168062697177107","eee","","neutral","a generic voice","1","2","3","4","NaN"],
+                    ["665168062697177107","fff","","neutral","a generic voice","1","2","3","4","5","TRUE","invalid"],
+                    ["665168062697177107","ggg","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","invalid"],
+                    ["665168062697177107","hhh","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","feminizing (365)"],
                 ]);
                 const playerCount = await game.entityLoader.loadPlayers(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
+                    "Error: Couldn't load player on row 3. The strength stat given is not an integer.",
+                    "Error: Couldn't load player on row 4. The perception stat given is not an integer.",
+                    "Error: Couldn't load player on row 5. The dexterity stat given is not an integer.",
+                    "Error: Couldn't load player on row 6. The speed stat given is not an integer.",
+                    "Error: Couldn't load player on row 7. The stamina stat given is not an integer.",
+                    "Error: Couldn't load player on row 8. \"invalid\" is not a room.",
+                    "Error: Couldn't load player on row 9. \"invalid\" is not a status effect.",
+                    "Error: Couldn't load player on row 10. \"365xyz\" is not a valid representation of the time remaining for the status \"feminizing\".",
                 ];
                 console.log(errorStrings)
                 expect(errors).not.toEqual([]);

@@ -829,6 +829,7 @@ describe('GameEntityLoader test', () => {
                     ["665168062697177107","fff","","neutral","a generic voice","1","2","3","4","5","TRUE","invalid"],
                     ["665168062697177107","ggg","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","invalid"],
                     ["665168062697177107","hhh","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","feminizing (365)"],
+                    ["665168062697177107","iii","NPC","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","",""],
                 ]);
                 const playerCount = await game.entityLoader.loadPlayers(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
@@ -840,7 +841,8 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load player on row 7. The stamina stat given is not an integer.",
                     "Error: Couldn't load player on row 8. \"invalid\" is not a room.",
                     "Error: Couldn't load player on row 9. \"invalid\" is not a status effect.",
-                    "Error: Couldn't load player on row 10. \"365xyz\" is not a valid representation of the time remaining for the status \"feminizing\".",
+                    "Error: Couldn't load player on row 10. The given representation of the time remaining for the status \"feminizing\" is not valid.",
+                    "Error: Couldn't load player on row 11. The Discord ID for an NPC must be a URL with a .jpg, .jpeg, .png, .webp, or .avif extension.",
                 ];
                 console.log(errorStrings)
                 expect(errors).not.toEqual([]);

@@ -1537,7 +1537,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				for (let i = 0; i < cures.length; i++)
 					cures[i] = Status.generateValidId(cures[i]);
 				const modifierStrings = sheet[row][columnStatModifiersString] ? sheet[row][columnStatModifiersString].split(',') : [];
-				const regex = /(@)?(.*)(\+|-|=)(.*)/gi;
+				const regex = /^(@)?([^0-9+=-]+)?(\+|-|=)?(.+)?$/gi;
 				/** @type {StatModifier[]} */
 				let modifiers = [];
 				for (const modifierString of modifierStrings) {

@@ -1867,7 +1867,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					else
 						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
 				} else timeRemaining = null;
-				if (Duration.isDuration(timeRemaining) && !timeRemaining.isValid) {
+				if (!validateDuration(timeRemaining)) {
 					return new Error(`Couldn't load player on row ${player.row}. The given representation of the time remaining for the status "${statusDisplay.id}" is not valid.`);
 				}
 			}

@@ -844,7 +844,6 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load player on row 10. The given representation of the time remaining for the status \"feminizing\" is not valid.",
                     "Error: Couldn't load player on row 11. The Discord ID for an NPC must be a URL with a .jpg, .jpeg, .png, .webp, or .avif extension.",
                 ];
-                console.log(errorStrings)
                 expect(errors).not.toEqual([]);
                 expect(playerCount).toBe(0);
                 expect(errorStrings).toHaveLength(expectedErrorStrings.length);

@@ -1299,6 +1299,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			puzzle.type !== "option" &&
 			puzzle.type !== "media" &&
 			puzzle.type !== "player" &&
+			puzzle.type !== "player toggle" &&
 			puzzle.type !== "room player" &&
 			puzzle.type !== "restricted exit" &&
 			puzzle.type !== "matrix")
@@ -1398,9 +1399,9 @@ export default class GameEntityLoader extends GameEntityManager {
 				let timeRemaining;
 				if (timeRemainingString !== "") {
 					if (timeRemainingParsed !== undefined)
-						timeRemaining = Duration.fromObject(timeRemainingParsed)
+						timeRemaining = Duration.fromObject(timeRemainingParsed);
 					else
-						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`)
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
 				} else timeRemaining = null;
 				let triggerTimesStrings = sheet[row][columnTriggerTimesStrings] ? sheet[row][columnTriggerTimesStrings].split(',') : [];
 				for (let i = 0; i < triggerTimesStrings.length; i++)
@@ -1536,7 +1537,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				for (let i = 0; i < cures.length; i++)
 					cures[i] = Status.generateValidId(cures[i]);
 				const modifierStrings = sheet[row][columnStatModifiersString] ? sheet[row][columnStatModifiersString].split(',') : [];
-				const regex = /(@)?(.*)(\+|-|=)(.*)/gi;
+				const regex = /^(@)?([^0-9+=-]+)?(\+|-|=)?(.+)?$/gi;
 				/** @type {StatModifier[]} */
 				let modifiers = [];
 				for (const modifierString of modifierStrings) {
@@ -1699,7 +1700,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				let member = null;
 				let notificationChannel = null;
 				let spectateChannel = null;
-				if (sheet[row][columnName] && sheet[row][columnTitle] !== "NPC") {
+				if (sheet[row][columnTitle] !== "NPC") {
 					try {
 						member = sheet[row][columnId] ? this.game.guildContext.guild.members.resolve(sheet[row][columnId].trim()) : null;
 						notificationChannel = await member.createDM();
@@ -1738,7 +1739,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					row + 3,
 					this.game
 				);
-				if (this.game.entityFinder.getPlayer(player.name)) {
+				if (this.game.playersCollection.has(Game.generateValidEntityName(player.name))) {
 					errors.push(new Error(`Couldn't load player on row ${player.row}. Another player with this name already exists.`));
 					continue;
 				}
@@ -1758,9 +1759,16 @@ export default class GameEntityLoader extends GameEntityManager {
 							player.statusDisplays.forEach(statusDisplay => {
 								const status = this.game.entityFinder.getStatusEffect(statusDisplay.id);
 								if (status) {
-									const timeRemainingString = statusDisplay.timeRemaining;
-									const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString)
-									const timeRemaining = timeRemainingParsed ? Duration.fromObject(timeRemainingParsed) : null;
+									const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
+									const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
+									let timeRemaining;
+									if (timeRemainingString !== "") {
+										if (timeRemainingParsed !== undefined)
+											timeRemaining = Duration.fromObject(timeRemainingParsed);
+										else {
+											timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+										}
+									} else timeRemaining = null;
 									const inflictAction = new InflictAction(this.game, undefined, player, player.location, true);
 									inflictAction.performInflict(status, false, false, false, undefined, timeRemaining);
 								}
@@ -1850,11 +1858,18 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (!player.hasStatus(statusDisplay.id))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 			if (statusDisplay.timeRemaining) {
-				const timeRemainingString = statusDisplay.timeRemaining;
+				const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
 				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
-				const timeRemaining = timeRemainingParsed ? Duration.fromObject(timeRemainingParsed) : Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
-				if (!validateDuration(timeRemaining))
-					return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid representation of the time remaining for the status "${statusDisplay.id}".`);
+				let timeRemaining;
+				if (timeRemainingString !== "") {
+					if (timeRemainingParsed !== undefined)
+						timeRemaining = Duration.fromObject(timeRemainingParsed);
+					else
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+				} else timeRemaining = null;
+				if (Duration.isDuration(timeRemaining) && !timeRemaining.isValid) {
+					return new Error(`Couldn't load player on row ${player.row}. The given representation of the time remaining for the status "${statusDisplay.id}" is not valid.`);
+				}
 			}
 		}
 		return;

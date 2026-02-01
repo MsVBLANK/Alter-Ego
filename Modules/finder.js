@@ -1,4 +1,5 @@
 /** @import GameEntity from "../Data/GameEntity.js" */
+/** @import Player from "../Data/Player.js" */
 
 /** 
  * Wrapper function for the limited scope of  the scriptParser module.
@@ -146,10 +147,11 @@ export function findGesture(container, id) {
  * @param {GameEntity} container - The container in context.
  * @param {string} id - The flag's ID. 
  * @param {boolean} [evaluate] - Whether or not to also evaluate the flag's value script and update its value. Does not execute the flag's set commands. Defaults to false.
+ * @param {Player} [player] - The player to evaluate the flag's value script with. Optional.
  * @returns The flag with the specified ID. If no such flag exists, returns undefined.
  */
-export function findFlag(container, id, evaluate = false) {
-    return container.getGame().entityFinder.getFlagValue(id, evaluate);
+export function findFlag(container, id, evaluate = false, player) {
+    return container.getGame().entityFinder.getFlagValue(id, evaluate, player);
 }
 
 /**

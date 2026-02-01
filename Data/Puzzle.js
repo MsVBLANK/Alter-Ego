@@ -413,7 +413,7 @@ export default class Puzzle extends ItemContainer {
                 return false;
             else if (requirement instanceof Flag) {
                 if (requirement.valueScript !== "") {
-                    const value = requirement.evaluate();
+                    const value = requirement.evaluate(requirement.valueScript, player);
                     requirement.setValue(value, true, player);
                 }
                 if (requirement.value !== true) return false;

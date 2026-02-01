@@ -42,7 +42,7 @@ export default class Event extends GameEntity {
     durationString;
     /**
      * The duration object of the event.
-     * @type {Duration}
+     * @type {Duration<true>}
      */
     duration;
     /**
@@ -52,7 +52,7 @@ export default class Event extends GameEntity {
     remainingString;
     /**
      * The remaining time of the event.
-     * @type {Duration}
+     * @type {Duration<true>}
      */
     remaining;
     /**

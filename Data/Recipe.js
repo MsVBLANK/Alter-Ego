@@ -44,7 +44,7 @@ export default class Recipe extends GameEntity {
     /**
      * How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
      * @readonly
-     * @type {import('luxon').Duration}
+     * @type {import('luxon').Duration<true>}
      */
     duration;
     /**

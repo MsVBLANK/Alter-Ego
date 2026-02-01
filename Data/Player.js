@@ -480,7 +480,8 @@ export default class Player extends ItemContainer {
                 pronouns.Ipos = pronouns.ipos.charAt(0).toUpperCase() + pronouns.ipos.substring(1);
                 pronouns.ref = pronounSet[4].trim();
                 pronouns.Ref = pronouns.ref.charAt(0).toUpperCase() + pronouns.ref.substring(1);
-                pronouns.plural = pronounSet[5] === "true";
+                const plural = pronounSet[5].trim().toLowerCase();
+                pronouns.plural = plural === "true" ? true : plural === "false" ? false : null;
             }
         }
     }
@@ -695,7 +696,7 @@ export default class Player extends ItemContainer {
     /**
      * Inflicts the player with a status effect.
      * @param {Status} status - The status to inflict.
-     * @param {import('luxon').Duration} [duration] - A custom duration that overrides the status's default duration.
+     * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
      */
     inflict(status, duration = null) {
         const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text, status.curedDescription.text, status.row, this.getGame());

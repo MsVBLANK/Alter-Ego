@@ -26,5 +26,6 @@ export default class UnsolveAction extends Action {
 		puzzle.unsolve();
 		const executeUnsolvedCommands = !callee || !(callee instanceof Puzzle);
 		if (executeUnsolvedCommands) puzzle.executeUnsolvedCommands(this.player);
+		puzzle.clearOutcome();
 	}
 }

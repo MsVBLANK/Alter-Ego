@@ -1399,9 +1399,9 @@ export default class GameEntityLoader extends GameEntityManager {
 				let timeRemaining;
 				if (timeRemainingString !== "") {
 					if (timeRemainingParsed !== undefined)
-						timeRemaining = Duration.fromObject(timeRemainingParsed)
+						timeRemaining = Duration.fromObject(timeRemainingParsed);
 					else
-						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`)
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
 				} else timeRemaining = null;
 				let triggerTimesStrings = sheet[row][columnTriggerTimesStrings] ? sheet[row][columnTriggerTimesStrings].split(',') : [];
 				for (let i = 0; i < triggerTimesStrings.length; i++)
@@ -1759,7 +1759,16 @@ export default class GameEntityLoader extends GameEntityManager {
 							player.statusDisplays.forEach(statusDisplay => {
 								const status = this.game.entityFinder.getStatusEffect(statusDisplay.id);
 								if (status) {
-									const timeRemaining = statusDisplay.timeRemaining ? Duration.fromObject(convertTimeStringToDurationUnits(statusDisplay.timeRemaining)) : null;
+									const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
+									const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
+									let timeRemaining;
+									if (timeRemainingString !== "") {
+										if (timeRemainingParsed !== undefined)
+											timeRemaining = Duration.fromObject(timeRemainingParsed);
+										else {
+											timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+										}
+									} else timeRemaining = null;
 									const inflictAction = new InflictAction(this.game, undefined, player, player.location, true);
 									inflictAction.performInflict(status, false, false, false, undefined, timeRemaining);
 								}
@@ -1849,9 +1858,18 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (!player.hasStatus(statusDisplay.id))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 			if (statusDisplay.timeRemaining) {
-				const timeRemaining = Duration.fromObject(convertTimeStringToDurationUnits(statusDisplay.timeRemaining));
-				if (!Duration.isDuration(timeRemaining))
-					return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid representation of the time remaining for the status "${statusDisplay.id}".`);
+				const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
+				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
+				let timeRemaining;
+				if (timeRemainingString !== "") {
+					if (timeRemainingParsed !== undefined)
+						timeRemaining = Duration.fromObject(timeRemainingParsed);
+					else
+						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+				} else timeRemaining = null;
+				if (Duration.isDuration(timeRemaining) && !timeRemaining.isValid) {
+					return new Error(`Couldn't load player on row ${player.row}. The given representation of the time remaining for the status "${statusDisplay.id}" is not valid.`);
+				}
 			}
 		}
 		return;

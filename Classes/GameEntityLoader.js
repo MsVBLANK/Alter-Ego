@@ -1755,8 +1755,9 @@ export default class GameEntityLoader extends GameEntityManager {
 					if (player.member !== null || player.isNPC) {
 						if (player.location instanceof Room) {
 							player.location.addPlayer(player);
+							let invalidStatusFound = false;
 							// Parse statuses and inflict the player with them.
-							player.statusDisplays.forEach(statusDisplay => {
+							for (const statusDisplay of player.statusDisplays) {
 								const status = this.game.entityFinder.getStatusEffect(statusDisplay.id);
 								if (status) {
 									const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
@@ -1766,13 +1767,16 @@ export default class GameEntityLoader extends GameEntityManager {
 										if (timeRemainingParsed !== undefined)
 											timeRemaining = Duration.fromObject(timeRemainingParsed);
 										else {
-											timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+											errors.push(new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid duration for status effect "${statusDisplay.id}"`));
+											invalidStatusFound = true;
+											break;
 										}
 									} else timeRemaining = null;
 									const inflictAction = new InflictAction(this.game, undefined, player, player.location, true);
 									inflictAction.performInflict(status, false, false, false, undefined, timeRemaining);
 								}
-							});
+							}
+							if (invalidStatusFound) continue;
 						}
 					}
 					this.game.players_alive.push(player);
@@ -1857,20 +1861,6 @@ export default class GameEntityLoader extends GameEntityManager {
 		for (let statusDisplay of player.statusDisplays) {
 			if (!player.hasStatus(statusDisplay.id))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
-			if (statusDisplay.timeRemaining) {
-				const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
-				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
-				let timeRemaining;
-				if (timeRemainingString !== "") {
-					if (timeRemainingParsed !== undefined)
-						timeRemaining = Duration.fromObject(timeRemainingParsed);
-					else
-						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
-				} else timeRemaining = null;
-				if (!validateDuration(timeRemaining)) {
-					return new Error(`Couldn't load player on row ${player.row}. The given representation of the time remaining for the status "${statusDisplay.id}" is not valid.`);
-				}
-			}
 		}
 		return;
 	}

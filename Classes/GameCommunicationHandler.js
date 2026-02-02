@@ -263,11 +263,13 @@ export default class GameCommunicationHandler {
 	 * @param {Narration} narration - The narration to send.
 	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in spectate channels. Defaults to true.
+	 * @param {Room} [room] - The room to send the narration to. Defaults to the location of the narration.
+	 * @param {string} [webhookUsername] - The username to use for the narrated webhook message, if applicable.
 	 */
-	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
-		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.location.channel, narration.action)) {
-			if (narration.action) this.#cacheChannelFor(narration.action, narration.location.channel.id);
-			messageHandler.sendNarrationToRoom(narration.location, narration, narrationText, narration.messageDisplayType, mirrorInSpectateChannel, narration.player);
+	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true, room = narration.location, webhookUsername) {
+		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(room.channel, narration.action)) {
+			if (narration.action) this.#cacheChannelFor(narration.action, room.channel.id);
+			messageHandler.sendNarrationToRoom(room, narration, narrationText, narration.messageDisplayType, mirrorInSpectateChannel, narration.player, webhookUsername);
 		}
 	}
 

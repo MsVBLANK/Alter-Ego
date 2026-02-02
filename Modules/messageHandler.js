@@ -65,13 +65,14 @@ export function processIncomingMessage(game, message) {
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
+ * @param {string} [webhookUsername] - The username to use for the narrated webhook message, if applicable.
  */
-export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null) {
+export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null, webhookUsername = narration.narratorDisplayName) {
     if (messageText !== "") {
         const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
         let messageCreateOptions;
         if (sendWebhookMessage)
-            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
+            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, [], [], player);
         else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(

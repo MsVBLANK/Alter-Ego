@@ -114,6 +114,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
         whisper.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
+                    if (whisper.deleted) return;
                     let messageCreateOptions;
                     if (sendWebhookMessage) {
                         messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);

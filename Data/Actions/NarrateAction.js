@@ -41,7 +41,8 @@ export default class NarrateAction extends Action {
 	 */
 	#playerShouldReceiveNotification(narration, player) {
 		return player.hasBehaviorAttribute("see room")
-			|| narration.message && narration.message.channel.type === ChannelType.GuildText && !player.member.permissionsIn(narration.message.channel).has('ViewChannel');
+			|| narration.message?.channel?.type === ChannelType.GuildText && !player.member.permissionsIn(narration.message.channel).has('ViewChannel')
+				&& (player.getGame().guildContext.roomCategories.includes(narration.message.channel.parentId) || player.getGame().guildContext.whisperCategoryId === narration.message.channel.parentId);
 	}
 
 	/**

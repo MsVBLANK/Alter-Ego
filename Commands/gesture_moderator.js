@@ -8,11 +8,14 @@ import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 export const config = {
     name: "gesture_moderator",
     description: "Performs a gesture for the given player.",
-    details: `Makes the given player perform one of a set of predefined gestures. Everybody in the room with them will see them do this gesture. `
-        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, an Object, another Player, etc. `
-        + `A gesture can only be performed with one target at a time. Gestures can be made impossible if the given player is inflicted with certain Status Effects. `
-        + `For example, if they are concealed, they cannot smile, frown, etc. as nobody would be able to see it. `
-        + `To see a list of all possible gestures, use "list".`,
+    details: `Makes the given player perform one of a set of pre-defined gestures. Everybody in the room with them will see them do this gesture. `
+        + `This allows them to communicate non-verbally, though some gestures cannot be performed if them have certain status effects. `
+        + `For example, if they have the "concealed" status effect, they may not use gestures like "smile" or "frown", as nobody would be able to see it. `
+        + `To see a list of all of the gestures they can currently perform, send the \`gesture\` command followed by "list" and the name of the player. `
+        + `Omitting the name of a player after "list" will simply list all gestures on the sheet.\n\n`
+        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, a Fixture, another Player, etc. `
+        + `To specify a target, enter the identifier of the target directly after the name of the gesture. For a room item or inventory item, this must be its `
+        + `container identifier or prefab ID. For any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Moderator",
     aliases: ["gesture"],
     requiresGame: true
@@ -24,8 +27,11 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}gesture astrid smile\n`
-        + `${settings.commandPrefix}gesture akira point at door 1\n`
-        + `${settings.commandPrefix}gesture holly wave johnny`;
+        + `${settings.commandPrefix}gesture ezekiel point at door 1\n`
+        + `${settings.commandPrefix}gesture holly wave johnny\n`
+        + `${settings.commandPrefix}gesture dexter sit chair\n`
+        + `${settings.commandPrefix}gesture list\n`
+        + `${settings.commandPrefix}gesture list kyra`;
 }
 
 /**
@@ -35,10 +41,19 @@ export function usage(settings) {
  * @param {string[]} args - A list of arguments passed to the command as individual words. 
  */
 export async function execute(game, message, command, args) {
-    let input = args.join(" ").toLowerCase().replace(/\'/g, "");
+    let showList = false;
+    if (args[0] === "list") {
+        showList = true;
+        args.splice(0, 1);
+    }
+    if (!showList && args.length < 2)
+        return game.communicationHandler.reply(message, `You need to specify a player and a gesture. Usage:\n${usage(game.settings)}`);
+    
+    const playerName = args[0] ?? '';
+    const player = game.entityFinder.getLivingPlayer(playerName);
 
-    if (input === "list") {
-        const fields = game.entityFinder.getGestures().map(gesture => gesture);
+    if (showList) {
+        const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => player === undefined || !player.hasStatus(status.id)));
         const pages = [];
         let page = 0;
 
@@ -54,7 +69,8 @@ export async function execute(game, message, command, args) {
 
         const embedAuthorName = `Gestures List`;
         const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-        const embedDescription = `These are the available gestures.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
+        const playerAppendString = player ? ` ${player.name} can currently perform` : ``;
+        const embedDescription = `These are all of the gestures${playerAppendString}.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
         const fieldName = (entryIndex) => pages[page][entryIndex].id;
         const fieldValue = (entryIndex) => pages[page][entryIndex].description;
         let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
@@ -89,14 +105,10 @@ export async function execute(game, message, command, args) {
         });
     }
     else {
-        if (args.length < 2)
-            return game.communicationHandler.reply(message, `You need to specify a player and a gesture. Usage:\n${usage(game.settings)}`);
-
-        const player = game.entityFinder.getLivingPlayer(args[0]);
-        if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
+        if (player === undefined) return game.communicationHandler.reply(message, `Player "${playerName}" not found.`);
         args.splice(0, 1);
-        input = args.join(" ").toLowerCase().replace(/\'/g, "");
-
+        let input = args.join(" ").toLowerCase().replace(/\'/g, "");
+        
         let gesture;
         let targetType = "";
         let target = null;
@@ -124,9 +136,9 @@ export async function execute(game, message, command, args) {
                     target = game.entityFinder.getFixtures(input2, player.location.id, true)[0];
                     if (target) targetType = "Fixture";
                     else target = null;
-                } else if (requireType === "Room Item" || requireType == "Item") {
+                } else if (requireType === "RoomItem" || requireType == "Item") {
                     target = game.entityFinder.getRoomItems(input2, player.location.id, true)[0];
-                    if (target) targetType = "Room Item";
+                    if (target) targetType = "RoomItem";
                     else target = null;
                 } else if (requireType === "Player") {
                     const hiddenStatus = player.getBehaviorAttributeStatusEffects("hidden");
@@ -143,14 +155,14 @@ export async function execute(game, message, command, args) {
                             break;
                         }
                     }
-                } else if (requireType === "Inventory Item") {
+                } else if (requireType === "InventoryItem") {
                     for (const hand of game.entityFinder.getPlayerHands(player)) {
                         if (
                             hand.equippedItem !== null &&
-                            (hand.equippedItem.prefab.id.toLowerCase() === input2 ||
-                                hand.equippedItem.name.toLowerCase() === input2)
+                            (hand.equippedItem.identifier !== "" && hand.equippedItem.identifier.toLowerCase() === input2 ||
+                                hand.equippedItem.prefab.id.toLowerCase() === input2)
                         ) {
-                            targetType = "Inventory Item";
+                            targetType = "InventoryItem";
                             target = hand.equippedItem;
                             break;
                         }

@@ -12,12 +12,12 @@ import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 export const config = {
     name: "gesture_player",
     description: "Performs a gesture.",
-    details: `Performs one of a set of predefined gestures. Everybody in the room with you will see you do this gesture. `
-        + `This allows you to communicate during times where you are unable to speak for some reason, though you can gesture at any time, with few exceptions. `
-        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, an Object, another Player, etc. `
-        + `A gesture can only be performed with one target at a time. Gestures can be made impossible if you are inflicted with certain Status Effects. `
-        + `For example, if you are concealed, you cannot smile, frown, etc. as nobody would be able to see it. `
-        + `To see a list of all possible gestures, send use "list".`,
+    details: `Performs one of a set of pre-defined gestures. Everybody in the room with you will see you do this gesture. `
+        + `This allows you to communicate non-verbally, though some gestures cannot be performed if you have certain status effects. `
+        + `For example, if your face is concealed with a mask, you cannot use gestures like "smile" or "frown", as nobody would be able to see it. `
+        + `To see a list of all of the gestures you can currently perform, send the \`gesture\` command followed by "list".\n\n`
+        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, a Fixture, another Player, etc. `
+        + `To specify a target, enter the name of the target directly after the name of the gesture. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Player",
     aliases: ["gesture"],
     requiresGame: true
@@ -30,7 +30,9 @@ export const config = {
 export function usage(settings) {
     return `${settings.commandPrefix}gesture smile\n`
         + `${settings.commandPrefix}gesture point at door 1\n`
-        + `${settings.commandPrefix}gesture wave johnny`;
+        + `${settings.commandPrefix}gesture wave johnny\n`
+        + `${settings.commandPrefix}gesture sit chair\n`
+        + `${settings.commandPrefix}gesture list`;
 }
 
 /**
@@ -53,7 +55,7 @@ export async function execute(game, message, command, args, player) {
     let input = args.join(" ").toLowerCase().replace(/\'/g, "");
 
     if (input === "list") {
-        const fields = game.entityFinder.getGestures().map(gesture => gesture);
+        const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => !player.hasStatus(status.id)));
         const pages = [];
         let page = 0;
 
@@ -69,7 +71,7 @@ export async function execute(game, message, command, args, player) {
 
         const embedAuthorName = `Gestures List`;
         const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-        const embedDescription = `These are the available gestures.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
+        const embedDescription = `These are all of the gestures you can currently perform.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
         const fieldName = (entryIndex) => pages[page][entryIndex].id;
         const fieldValue = (entryIndex) => pages[page][entryIndex].description;
         let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
@@ -130,8 +132,8 @@ export async function execute(game, message, command, args, player) {
                             return game.communicationHandler.reply(message, `You cannot do that because you are **${hiddenStatus[0].id}**.`);
                         targetType = "Fixture";
                     } else target = null;
-                } else if (requireType === "Room Item" || requireType == "Item") {
-                    target = game.entityFinder.getRoomItems(input2, player.location.id, true)[0];
+                } else if (requireType === "RoomItem" || requireType == "Item") {
+                    target = game.entityFinder.getRoomItems(input2, player.location.id, true, undefined, undefined, undefined, false, 'player')[0];
                     if (target) {
                         if (hiddenStatus.length > 0) {
                             let topContainer = target.container;
@@ -146,7 +148,7 @@ export async function execute(game, message, command, args, player) {
                             )
                                 return game.communicationHandler.reply(message, `You cannot do that because you are **${hiddenStatus[0].id}**.`);
                         }
-                        targetType = "Room Item";
+                        targetType = "RoomItem";
                     } else target = null;
                 } else if (requireType === "Player") {
                     for (const occupant of player.location.occupants) {
@@ -167,14 +169,14 @@ export async function execute(game, message, command, args, player) {
                         )
                             return game.communicationHandler.reply(message, `You cannot do that because you are **${hiddenStatus[0].id}**.`);
                     }
-                } else if (requireType === "Inventory Item") {
+                } else if (requireType === "InventoryItem") {
                     for (const hand of game.entityFinder.getPlayerHands(player)) {
                         if (
                             hand.equippedItem !== null &&
-                            (hand.equippedItem.prefab.id.toLowerCase() === input2 ||
-                                hand.equippedItem.name.toLowerCase() === input2)
+                            (hand.equippedItem.name.toLowerCase() === input2 ||
+                                hand.equippedItem.pluralName.toLowerCase() === input2)
                         ) {
-                            targetType = "Inventory Item";
+                            targetType = "InventoryItem";
                             target = hand.equippedItem;
                             break;
                         }

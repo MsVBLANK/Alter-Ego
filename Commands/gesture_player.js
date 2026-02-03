@@ -16,7 +16,7 @@ export const config = {
         + `This allows you to communicate non-verbally, though some gestures cannot be performed if you have certain status effects. `
         + `For example, if your face is concealed with a mask, you cannot use gestures like "smile" or "frown", as nobody would be able to see it. `
         + `To see a list of all of the gestures you can currently perform, send the \`gesture\` command followed by "list".\n\n`
-        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, a Fixture, another Player, etc. `
+        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an exit, a fixture, another player, etc. `
         + `To specify a target, enter the name of the target directly after the name of the gesture. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Player",
     aliases: ["gesture"],
@@ -29,9 +29,9 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}gesture smile\n`
-        + `${settings.commandPrefix}gesture point at door 1\n`
-        + `${settings.commandPrefix}gesture wave johnny\n`
-        + `${settings.commandPrefix}gesture sit chair\n`
+        + `${settings.commandPrefix}gesture point at DOOR 1\n`
+        + `${settings.commandPrefix}gesture wave Johnny\n`
+        + `${settings.commandPrefix}gesture sit CHAIR\n`
         + `${settings.commandPrefix}gesture list`;
 }
 

@@ -10,9 +10,11 @@ import { itemNameMatches } from '../Modules/matchers.js';
 export const config = {
     name: "craft_player",
     description: "Crafts two items in your inventory together.",
-    details: 'Creates a new item using the two items in your hand. The names of the items must be separated by "with" or "and". '
-        + "If no recipe for those two items exists, the items cannot be crafted together. "
-        + "Note that this command can also be used to use one item on another item, which may produce something new.",
+    details: `Creates a new item using the two items in your hand. The names of the items must be separated by "with" or "and". `
+        + `If no recipe for those two items exists, the items cannot be crafted together. `
+        + `If any of the resulting items is particularly large, this will be narrated in the room, so other players will see you craft them.\n\n`
+        + `You can view a list of all recipes that you can craft with the items in your inventory using the \`recipes\` command. Some crafting recipes `
+        + `can be reversed once performed using the \`uncraft\` command. For more information on both of these commands, use the \`help\` command.`,
     usableBy: "Player",
     aliases: ["craft", "combine", "mix"],
     requiresGame: true
@@ -23,10 +25,10 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}craft drain cleaner and plastic bottle\n`
-        + `${settings.commandPrefix}combine bread and cheese\n`
-        + `${settings.commandPrefix}mix red vial with blue vial\n`
-        + `${settings.commandPrefix}craft soap with knife`;
+    return `${settings.commandPrefix}craft DRAIN CLEANER and PLASTIC BOTTLE\n`
+        + `${settings.commandPrefix}combine BREAD and CHEESE\n`
+        + `${settings.commandPrefix}mix RED VIAL with BLUE VIAL\n`
+        + `${settings.commandPrefix}craft SOAP with KNIFE`;
 }
 
 /**

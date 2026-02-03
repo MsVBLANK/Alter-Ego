@@ -8,14 +8,16 @@ import UnhideAction from '../Data/Actions/UnhideAction.js';
 /** @type {CommandConfig} */
 export const config = {
     name: "hide_player",
-    description: "Hides you in an object.",
-    details: `Allows you to use an object in a room as a hiding spot. When hidden, you will be removed from that room's channel so that `
-        + `when other players enter the room, they won't see you on the user list. When players speak in the room that you're hiding in, `
-        + `you will hear what they say. Under normal circumstances, a whisper channel will be created for you to speak in. Most players `
-        + `will be unable to hear what you say in this channel. However, if you want to speak so that everyone can hear you (while having `
-        + `your identity remain a secret), use the say command. If someone hides in the same hiding spot as you, ` 
-        + `you will be placed in a whisper channel together. If someone inspects or tries to hide in the object you're hiding in, `
-        + `your position will be revealed. If you wish to come out of hiding on your own, use the unhide command.`,
+    description: "Hides you in a fixture.",
+    details: `Allows you to use a fixture in a room as a hiding spot. When hidden, you will be removed from the room's channel so that when other `
+        + `players enter the room, they won't see you on the user list. They will also not see you listed as an occupant when they enter the room. `
+        + `When players speak in the room that you're hiding in, you will hear what they say. While hidden, many of your actions will be restricted. `
+        + `For example, you will only be able to inspect and take items that are in the fixture you're hiding in.\n\n`
+        + `Under normal circumstances, a whisper channel will be created for you to speak in. Most players will be unable to hear `
+        + `what you say in this channel. However, if you want to speak so that everyone can hear you (while having your identity `
+        + `remain a secret), use the \`say\` command. If someone hides in the same hiding spot as you, you will be placed in a whisper channel together. ` 
+        + `If someone inspects or tries to hide in the fixture that you're hiding in, your position will be revealed.\n\n`
+        + `If you wish to come out of hiding, use the \`unhide\` command.`,
     usableBy: "Player",
     aliases: ["hide", "unhide"],
     requiresGame: true
@@ -26,8 +28,8 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}hide desk\n`
-        + `${settings.commandPrefix}hide cabinet\n`
+    return `${settings.commandPrefix}hide DESK\n`
+        + `${settings.commandPrefix}hide SHOWER 1\n`
         + `${settings.commandPrefix}unhide`;
 }
 

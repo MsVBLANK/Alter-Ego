@@ -12,15 +12,20 @@ import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 export const config = {
     name: "recipes_player",
     description: "Lists all recipes available to you.",
-    details: "Lists all recipes you can carry out with the items in your inventory and items in the room. If you supply the name of an item in your inventory, "
-        + "you will receive a list of all recipes that use that item as an ingredient. There are crafting and processing recipes.\n\n"
-        + `To carry out a crafting recipe, you must have both of the ingredients in your hands and combine them with the craft `
-        + `command. These recipes take no time. If reversible, you can use the uncraft command to get the ingredients again.\n\n`
-        + `To carry out a processing recipe, use the drop command to place all the ingredients in an object, and `
-        + `then activate the object with the use command. These recipes take a set amount of time to complete. `
-        + "If it worked, you'll receive a message indicating that the process has begun, and another message when it finishes. "
-        + "You won't receive a message if the object was already activated when all of the ingredients were put in, but the recipe "
-        + "will still be carried out so long as all of the ingredients are in place.",
+    details: `Lists all recipes you can carry out with the items in your inventory and items in the room. Even if all of the ingredients `
+        + `necessary for a recipe are in the room you're in, if you don't have at least one of them in your inventory, there will be no results. `
+        + `However, if you supply the name of an item in your inventory, you will receive a list of all recipes that use that item as an ingredient, `
+        + `even if the remaining ingredients are not available.\n\n`
+        + `There are two types of recipes: crafting recipes and processing recipes.\n\n`
+        + `To carry out a crafting recipe, you must have both of the ingredients in your hands and combine them with the \`craft\` `
+        + `command. These recipes take no time. Some crafting recipes are reversible. `
+        + `If they are, you can use the \`uncraft\` command to get the ingredients again.\n\n`
+        + `To carry out a processing recipe, use the \`drop\` command to place all the ingredients in a fixture, and `
+        + `then activate the fixture with the \`use\` command. These recipes take a set amount of time to complete. `
+        + `If you did it correctly, you'll receive a message indicating that the process has begun, and then another message when it finishes, `
+        + `as long as you're still in the same room as the fixture you used to process it. If the fixture was already activated when all of the `
+        + `ingredients were put in, you won't receive a message when it's initiated or completed, `
+        + `but the recipe will still be carried out so long as all of the ingredients are in place.`,
     usableBy: "Player",
     aliases: ["recipes"],
     requiresGame: true
@@ -32,8 +37,8 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}recipes\n`
-        + `${settings.commandPrefix}recipes glass\n`
-        + `${settings.commandPrefix}recipes pot of rice`;
+        + `${settings.commandPrefix}recipes GLASS\n`
+        + `${settings.commandPrefix}recipes POT OF RICE`;
 }
 
 var uncraftingRecipesDescription = "";

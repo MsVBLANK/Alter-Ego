@@ -6,7 +6,8 @@
 export const config = {
     name: "status_player",
     description: "Shows your status.",
-    details: "Shows you what status effects you're currently afflicted with.",
+    details: `Shows you what status effects you're currently afflicted with. `
+        + `Note that some status effects may not be visible to you. You will also be unable to see their durations.`,
     usableBy: "Player",
     aliases: ["status"],
     requiresGame: true

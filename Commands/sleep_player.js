@@ -8,8 +8,9 @@ import InflictAction from '../Data/Actions/InflictAction.js';
 export const config = {
     name: "sleep_player",
     description: "Puts you to sleep.",
-    details: "Puts you to sleep by inflicting you with the **asleep** status effect. "
-        + "This should be used at the end of the day before the game pauses to ensure you wake up feeling well-rested.",
+    details: `Puts you to sleep by inflicting you with the **asleep** status effect. In most situations, you will not be able to wake back up again without `
+        + `moderator assistance. This should be used at the end of the day before the game pauses to ensure you wake up feeling well rested.\n\n`
+        + `If you are able to wake back up of your own volition, you can do so with the \`wake\` command.`,
     usableBy: "Player",
     aliases: ["sleep"],
     requiresGame: true

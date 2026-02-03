@@ -10,17 +10,21 @@ import Puzzle from "../Data/Puzzle.js";
 /** @type {CommandConfig} */
 export const config = {
     name: "inspect_player",
-    description: "Learn more about an object, item, or player.",
-    details: 'Tells you about an object, item, or player in the room you\'re in. '
-        + 'An object is something in the room that you can interact with but not take with you. '
-        + 'An item is something that you can both interact with and take with you. If you inspect an object, '
-        + 'everyone in the room will see you inspect it. The same goes for very large items. '
-        + 'If there are multiple items with the same name in the room, you can specify which one you want to inspect using the name of the container it\'s in. '
-        + 'You can also inspect items in your inventory. If you have an item with the same name as an item in the room you\'re currently in, '
-        + 'you can specify that you want to inspect your item by adding "my" before the item name. '
-        + 'You can even inspect visible items in another player\'s inventory by adding "[player name]\'s" before the item name. No one will '
-        + 'see you do this, however you will receive slightly less info when inspecting another player\'s items. '
-        + `You can use "room" to get the description of the room you're currently in.`,
+    description: "Learn more about a fixture, item, or player.",
+    details: `Tells you about a fixture, item, or player in the room you're in. `
+        + `A fixture is something in the room that you can interact with but not take with you. `
+        + `An item is something that you can both interact with and take with you. If you inspect a fixture, `
+        + `everyone in the room will see you inspect it. The same goes for very large items.\n\n`
+        + `If there are multiple items with the same name in the room, you can specify which one you want to inspect using the name of the container it's in. `
+        + `To do this, you must enter the container's preposition before its name. If you don't know its preposition, "in" will always work. `
+        + `If you are inspecting an item contained inside another item that has multiple inventory slots (for example, a backpack with several pockets), you can `
+        + `specify which of the container's slots you want to search in, by entering the name of the slot followed by "of" before the container item's name.\n\n`
+        + `You can also inspect items in your inventory. If you have an item with the same name as an item in the room you're currently in, `
+        + `you can specify that you want to inspect your item by adding "my" before the item name.\n\n`
+        + `To inspect a player, enter their display name as it appears when you enter the room or when they perform an action. You can even inspect `
+        + `visible items in their inventory by adding 's to the end of their name, followed by the name of the item you want to inspect. No one will `
+        + `see you do this, but you will receive slightly less info when inspecting another player's items.\n\n`
+        + `To see the description of the room you're in without having to leave and come back, you can enter "room".`,
     usableBy: "Player",
     aliases: ["inspect", "investigate", "examine", "look", "x"],
     requiresGame: true
@@ -31,15 +35,15 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}inspect desk\n`
-        + `${settings.commandPrefix}examine knife\n`
-        + `${settings.commandPrefix}look knife on desk\n`
-        + `${settings.commandPrefix}x knife in main pouch of red backpack\n`
-        + `${settings.commandPrefix}investigate my knife\n`
-        + `${settings.commandPrefix}look akari\n`
-        + `${settings.commandPrefix}examine an individual wearing a mask\n`
-        + `${settings.commandPrefix}look marielle's glasses\n`
-        + `${settings.commandPrefix}x an individual wearing a bucket's shirt\n`
+    return `${settings.commandPrefix}inspect DESK\n`
+        + `${settings.commandPrefix}examine KNIFE\n`
+        + `${settings.commandPrefix}look JUG OF ORANGE JUICE in REFRIGERATOR\n`
+        + `${settings.commandPrefix}x WOOLEN MITTENS in MAIN POUCH of RED BACKPACK\n`
+        + `${settings.commandPrefix}investigate my PISTOL\n`
+        + `${settings.commandPrefix}look Kiara\n`
+        + `${settings.commandPrefix}examine an individual wearing a PLAGUE DOCTOR MASK\n`
+        + `${settings.commandPrefix}look Marielle's CIRCLE GLASSES\n`
+        + `${settings.commandPrefix}x an individual wearing a PLAGUE DOCTOR MASK's BLACK CLOAK\n`
         + `${settings.commandPrefix}inspect room`;
 }
 

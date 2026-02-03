@@ -8,10 +8,14 @@ import UncraftAction from '../Data/Actions/UncraftAction.js';
 export const config = {
     name: "uncraft_player",
     description: "Separates an item in your inventory into its component parts.",
-    details: "Separates an item in one of your hands into its component parts, assuming they can be separated. "
-        + "This will produce two items, so you will need a free hand in order to use this command. "
-        + "If there is no crafting recipe for its components that allows them to be separated again, the item cannot be uncrafted. "
-        + `If you want to re-assemble them, use the craft command.`,
+    details: `Separates an item in one of your hands into its component parts. This allows you to reverse `
+        + `a crafting recipe, turning a single product into its two ingredients. `
+        + `Because it produces two items, you will need a free hand in order to use this command. `
+        + `If the item being uncrafted or its components are particularly large, this will be narrated `
+        + `in the room, so other players will see you uncraft it.\n\n`
+        + `If there is no crafting recipe that produces the item you want to uncraft `
+        + `that also allows it to be reversed, then the item cannot be uncrafted.\n\n`
+        + `To see all of the items in your inventory that can be uncrafted, use the \`recipes\` command.`,
     usableBy: "Player",
     aliases: ["uncraft", "dismantle", "disassemble"],
     requiresGame: true
@@ -22,9 +26,9 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}uncraft shovel\n`
-        + `${settings.commandPrefix}dismantle crossbow\n`
-        + `${settings.commandPrefix}disassemble pistol`;
+    return `${settings.commandPrefix}uncraft SHOVEL\n`
+        + `${settings.commandPrefix}dismantle CROSSBOW\n`
+        + `${settings.commandPrefix}disassemble PISTOL`;
 }
 
 /**

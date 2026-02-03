@@ -13,7 +13,7 @@ export const config = {
         + `For example, if they have the "concealed" status effect, they may not use gestures like "smile" or "frown", as nobody would be able to see it. `
         + `To see a list of all of the gestures they can currently perform, send the \`gesture\` command followed by "list" and the name of the player. `
         + `Omitting the name of a player after "list" will simply list all gestures on the sheet.\n\n`
-        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an Exit, a Fixture, another Player, etc. `
+        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an exit, a fixture, another player, etc. `
         + `To specify a target, enter the identifier of the target directly after the name of the gesture. For a room item or inventory item, this must be its `
         + `container identifier or prefab ID. For any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Moderator",
@@ -26,12 +26,12 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}gesture astrid smile\n`
-        + `${settings.commandPrefix}gesture ezekiel point at door 1\n`
-        + `${settings.commandPrefix}gesture holly wave johnny\n`
-        + `${settings.commandPrefix}gesture dexter sit chair\n`
+    return `${settings.commandPrefix}gesture Astrid smile\n`
+        + `${settings.commandPrefix}gesture Ezekiel point at DOOR 1\n`
+        + `${settings.commandPrefix}gesture Holly wave Johnny\n`
+        + `${settings.commandPrefix}gesture Dexter sit CHAIR\n`
         + `${settings.commandPrefix}gesture list\n`
-        + `${settings.commandPrefix}gesture list kyra`;
+        + `${settings.commandPrefix}gesture list Kyra`;
 }
 
 /**

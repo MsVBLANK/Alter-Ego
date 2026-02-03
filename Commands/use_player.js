@@ -10,20 +10,22 @@ import UseAction from '../Data/Actions/UseAction.js';
 /** @type {CommandConfig} */
 export const config = {
     name: "use_player",
-    description: "Uses an item in your inventory or an object in a room.",
-    details: "Uses an item from your inventory. Not all items have programmed uses. Those that do will inflict you "
-        + "with or cure you of a status effect of some kind. Status effects can be good, bad, or neutral, but it "
-        + "should be fairly obvious what kind of effect a particular item will have on you.\n\n"
-        + "Some items can be used on objects. For example, using a key on a locker "
-        + "will unlock the locker, using a crowbar on a crate will open the crate, etc.\n\n"
-        + "Some objects are capable of turning items into other items. For example, an oven can turn frozen food "
-        + "into cooked food. In order to use objects like this, drop the items in the object and use it.\n\n"
-        + "You can even use objects in the room without using an item at all. Not all objects are usable. "
-        + "Anything after the name of the object will be treated as a password or combination. "
-        + "Passwords and combinations are case-sensitive. If the object is a lock of some kind, you can relock it using the lock command. "
-        + "Other objects may require a puzzle to be solved before they do anything special.",
+    description: "Uses an item in your inventory or a fixture in a room.",
+    details: `Uses an item from your inventory. Not all items have programmed uses. Those that do will inflict you `
+        + `with or cure you of a status effect of some kind. Status effects can be good, bad, or neutral, but it `
+        + `should be fairly predictable what kind of effect a particular item will have on you.\n\n`
+        + `Some items can be used on fixtures in the room. For example, using a key on a locker `
+        + `will unlock the locker, using a crowbar on a crate will open the crate, etc.\n\n`
+        + `Some fixtures are capable of turning items into other items. This is known as processing a recipe. `
+        + `For example, an oven can turn raw food into cooked food. In order to use fixtures to process recipes, `
+        + `drop the items in the fixture and use it. For more information, see the help details for the \`recipes\` command.\n\n`
+        + `You can even use fixtures in the room without using an item at all. However, not all fixtures are usable in this way. `
+        + `Those that are usable without an item have puzzles attached, which can result in many different outcomes depending on how they're used. `
+        + `When interacting with a puzzle, anything entered after the name of the fixture will be treated as a password, combination, or selection. `
+        + `These inputs are almost always case-sensitive. If the fixture is a lock of some kind, you can re-lock it using the \`lock\` command. `
+        + `Other fixtures may require a puzzle to be solved before they do anything special.`,
     usableBy: "Player",
-    aliases: ["use", "unlock", "lock", "type", "activate", "flip", "push", "press", "ingest", "consume", "swallow", "eat", "drink"],
+    aliases: ["use", "unlock", "lock", "type", "activate", "deactivate", "flip", "push", "press", "ingest", "consume", "swallow", "eat", "drink"],
     requiresGame: true
 };
 
@@ -32,16 +34,18 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}use first aid kit\n`
-        + `${settings.commandPrefix}eat food\n`
-        + `${settings.commandPrefix}use old key chest\n`
-        + `${settings.commandPrefix}use lighter candle\n`
-        + `${settings.commandPrefix}lock locker\n`
-        + `${settings.commandPrefix}type keypad YAMA NI NOBORU\n`
-        + `${settings.commandPrefix}unlock locker 1 12-22-11\n`
-        + `${settings.commandPrefix}press button\n`
-        + `${settings.commandPrefix}flip lever\n`
-        + `${settings.commandPrefix}use blender`;
+    return `${settings.commandPrefix}use FIRST AID KIT\n`
+        + `${settings.commandPrefix}eat CHICKEN FRIED RICE\n`
+        + `${settings.commandPrefix}drink COFFEE\n`
+        + `${settings.commandPrefix}swallow ORANGE CAPSULE\n`
+        + `${settings.commandPrefix}use OLD KEY CHEST\n`
+        + `${settings.commandPrefix}use LIGHTER CANDLE\n`
+        + `${settings.commandPrefix}lock LOCKER 1\n`
+        + `${settings.commandPrefix}type KEYPAD Proboscis Monkey\n`
+        + `${settings.commandPrefix}unlock LOCKER 1 12-22-11\n`
+        + `${settings.commandPrefix}press RED BUTTON\n`
+        + `${settings.commandPrefix}flip LEVER\n`
+        + `${settings.commandPrefix}activate BLENDER`;
 }
 
 /**
@@ -83,9 +87,12 @@ export async function execute(game, message, command, args, player) {
     let targetPlayer = null;
     if (parsedInput !== "" && (command !== "ingest" && command !== "consume" && command !== "swallow" && command !== "eat" && command !== "drink")) {
         let puzzles = game.puzzles.filter(puzzle => puzzle.location.id === player.location.id);
-        if (command === "lock" || command === "unlock") puzzles = puzzles.filter(puzzle => puzzle.type === "combination lock" || puzzle.type === "key lock");
-        else if (command === "type") puzzles = puzzles.filter(puzzle => puzzle.type === "password");
-        else if (command === "push" || command === "press" || command === "activate" || command === "flip") puzzles = puzzles.filter(puzzle => puzzle.type === "interact" || puzzle.type === "toggle");
+        if (command === "lock" || command === "unlock")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "combination lock" || puzzle.type === "key lock");
+        else if (command === "type")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "password" || puzzle.type === "channels");
+        else if (command === "push" || command === "press" || command === "activate" || command === "deactivate" || command === "flip")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "interact" || puzzle.type === "toggle" || puzzle.type === "switch" || puzzle.type === "option");
         for (let i = 0; i < puzzles.length; i++) {
             if (puzzles[i].parentFixture !== null &&
                 (parsedInput.startsWith(puzzles[i].parentFixture.name + ' ') || parsedInput === puzzles[i].parentFixture.name)) {

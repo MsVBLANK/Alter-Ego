@@ -12,11 +12,12 @@ import Puzzle from "../Data/Puzzle.js";
 export const config = {
     name: "dress_player",
     description: "Takes and equips all items from a container.",
-    details: "Takes all items from a container of your choosing and equips them, if possible. You must have a free hand to take an item. "
-        + "Items will be equipped in the order in which they appear in the game's data, which may not be obvious upon inspecting the container. "
-        + "If an item is equippable to an equipment slot, but you already have something equipped to that slot, it will not be equipped, "
-        + "and you will not be notified when this happens. If the container you choose has multiple inventory slots, you can specify which "
-        + "slot to dress from. Otherwise, you will dress from all slots.",
+    details: `Takes all items from a container of your choosing and equips them, if possible. You must have a free hand to take items with. `
+        + `This will be narrated, so any other players in the room will see you dress.\n\n`
+        + `Items will be equipped in the order in which they appear in the game's data, which should be the order they appear in the container's `
+        + `description, but in reverse. If an item is equippable to an equipment slot, but you already have something equipped to that slot, `
+        + `it will not be equipped, and you will not be notified when this happens. If the container you choose has multiple inventory slots `
+        + `(for example, a backpack with several pockets), you can specify which slot to dress from. Otherwise, you will dress from all slots.`,
     usableBy: "Player",
     aliases: ["dress", "redress"],
     requiresGame: true
@@ -27,9 +28,9 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}dress wardrobe\n`
-        + `${settings.commandPrefix}dress laundry basket\n`
-        + `${settings.commandPrefix}redress main pocket of backpack`;
+    return `${settings.commandPrefix}dress WARDROBE\n`
+        + `${settings.commandPrefix}dress LAUNDRY BASKET\n`
+        + `${settings.commandPrefix}redress MAIN POCKET of BLUE BACKPACK`;
 }
 
 /**

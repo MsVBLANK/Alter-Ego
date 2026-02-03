@@ -8,11 +8,14 @@
 export const config = {
     name: "stash_player",
     description: "Stores an inventory item inside another inventory item.",
-    details: "Moves an item from your hand to another item in your inventory. You can specify any item in your inventory "
-        + "that has the capacity to hold items. If the inventory item you choose has multiple slots for items (such as multiple pockets), "
-        + "you can specify which slot you want to store the item in. Note that each slot has a maximum capacity that it can hold, so if it's "
-        + "too full or too small to contain the item you're trying to stash, you won't be able to stash it there. If you attempt to stash a "
-        + "very large item (a sword, for example), people in the room with you will see you doing so.",
+    details: `Moves an item from your hand to another item in your inventory. You can specify any item in your inventory that has the capacity to hold items by `
+        + `entering the container item's preposition followed by its name. If you don't know its preposition, "in" will always work.\n\n`
+        + `If the container has multiple inventory slots (for example, a backpack with several pockets), you can also specify which slot you want to put the item in. `
+        + `To do this, enter the name of the inventory slot followed by "of" before the name of the container. If you don't specify an inventory slot, you will put it `
+        + `in the first slot it has. Note that each slot has a maximum capacity that it can hold, so if it's too full or too small to contain the item `
+        + `you're trying to stash, you won't be able to stash it there.\n\n`
+        + `If you stash a very large item (a sword, for example), this will be narrated in the room, so other players will see you stash it.\n\n`
+        + `To retrieve a stashed item and put it in your hand, use the \`unstash\` command.`,
     usableBy: "Player",
     aliases: ["stash", "store", "s"],
     requiresGame: true
@@ -23,10 +26,10 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}stash laptop in satchel\n`
-        + `${settings.commandPrefix}store sword in sheath\n`
-        + `${settings.commandPrefix}stash old key in right pocket of pants\n`
-        + `${settings.commandPrefix}store water bottle in side pouch of backpack`;
+    return `${settings.commandPrefix}stash LAPTOP in BEIGE SATCHEL\n`
+        + `${settings.commandPrefix}store SWORD in SHEATH\n`
+        + `${settings.commandPrefix}stash OLD KEY in RIGHT POCKET of BLACK DRESS PANTS\n`
+        + `${settings.commandPrefix}s WATER BOTTLE in SIDE POUCH of GREEN BACKPACK`;
 }
 
 /**

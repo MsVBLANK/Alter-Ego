@@ -9,9 +9,14 @@ import Game from '../Data/Game.js';
 export const config = {
     name: "unequip_player",
     description: "Unequips an item.",
-    details: "Unequips an item you currently have equipped. The unequipped item will be placed in your hand, so you must have a free hand. "
-        + "You can specify which equipment slot you want to unequip the item from, if you want. People in the room will see you unequip an item, "
-        + "regardless of its size.",
+    details: `Unequips an item you currently have equipped. The item will be placed in your hand, so you must have a free hand. `
+        + `When you unequip an item, it will be narrated in the room, so other people can see you unequip it, regardless of its size. `
+        + `It will then be removed from your description, and any equipped items that it was covering will become visible. For example, if you `
+        + `unequip something from your PANTS slot, it is likely that whatever is equipped to your UNDERWEAR slot will then appear in your description.\n\n`
+        + `You can specify which equipment slot you want to unequip the item from, if you want. This can be useful if you have multiple items with `
+        + `the same name equipped to different equipment slots. To do this, enter "from" after the name of the item you want to unequip, followed by `
+        + `the name of the equipment slot you want to unequip it from. You can view a list of all of your equipment slots with the \`inventory\` command.\n\n`
+        + `To unequip many items at once, use the \`undress\` command. If you wish to equip an item again, use the \`equip\` command.`,
     usableBy: "Player",
     aliases: ["unequip", "remove", "u"],
     requiresGame: true
@@ -22,8 +27,9 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}unequip sweater\n`
-        + `${settings.commandPrefix}unequip glasses from face`;
+    return `${settings.commandPrefix}unequip PLAGUE DOCTOR MASK\n`
+        + `${settings.commandPrefix}remove WHITE PARKA\n`
+        + `${settings.commandPrefix}u KNIT WOOL SWEATER from SHIRT`;
 }
 
 /**

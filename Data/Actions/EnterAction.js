@@ -1,0 +1,25 @@
+import Action from "../Action.js";
+
+/** @import Exit from "../Exit.js" */
+/** @import Room from "../Room.js" */
+
+/**
+ * @class EnterAction
+ * @classdesc Represents an enter action.
+ * @extends Action
+ * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/enter-action.html
+ */
+export default class EnterAction extends Action {
+	/**
+	 * Performs an enter action.
+	 * @param {Room} destinationRoom - The room the player will be moved to.
+	 * @param {Exit} entrance - The exit the player will enter the destination room from.
+	 * @param {boolean} isMovingFreely - Whether or not the player is performing free movement.
+	 */
+	performEnter(destinationRoom, entrance, isMovingFreely) {
+		if (this.performed) return;
+		super.perform();
+		destinationRoom.addPlayer(this.player, entrance);
+		this.getGame().narrationHandler.narrateEnter(this, this.player, destinationRoom, entrance, isMovingFreely);
+	}
+}

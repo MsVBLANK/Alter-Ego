@@ -1,62 +1,80 @@
-﻿const settings = include('Configs/settings.json');
+import ActivateAction from '../Data/Actions/ActivateAction.js';
+import AttemptAction from '../Data/Actions/AttemptAction.js';
+import DeactivateAction from '../Data/Actions/DeactivateAction.js';
+import UseAction from '../Data/Actions/UseAction.js';
 
-module.exports.config = {
+/** @import GameSettings from '../Classes/GameSettings.js' */
+/** @import Game from '../Data/Game.js' */
+/** @import Player from '../Data/Player.js' */
+
+/** @type {CommandConfig} */
+export const config = {
     name: "use_player",
-    description: "Uses an item in your inventory or an object in a room.",
-    details: "Uses an item from your inventory. Not all items have programmed uses. Those that do will inflict you "
-        + "with or cure you of a status effect of some kind. Status effects can be good, bad, or neutral, but it "
-        + "should be fairly obvious what kind of effect a particular item will have on you.\n\n"
-        + "Some items can be used on objects. For example, using a key on a locker "
-        + "will unlock the locker, using a crowbar on a crate will open the crate, etc.\n\n"
-        + "Some objects are capable of turning items into other items. For example, an oven can turn frozen food "
-        + "into cooked food. In order to use objects like this, drop the items in the object and use it.\n\n"
-        + "You can even use objects in the room without using an item at all. Not all objects are usable. "
-        + "Anything after the name of the object will be treated as a password or combination. "
-        + "Passwords and combinations are case-sensitive. If the object is a lock of some kind, you can relock it using the lock command. "
-        + "Other objects may require a puzzle to be solved before they do anything special.",
-    usage: `${settings.commandPrefix}use first aid kit\n`
-        + `${settings.commandPrefix}eat food\n`
-        + `${settings.commandPrefix}use old key chest\n`
-        + `${settings.commandPrefix}use lighter candle\n`
-        + `${settings.commandPrefix}lock locker\n`
-        + `${settings.commandPrefix}type keypad YAMA NI NOBORU\n`
-        + `${settings.commandPrefix}unlock locker 1 12-22-11\n`
-        + `${settings.commandPrefix}press button\n`
-        + `${settings.commandPrefix}flip lever\n`
-        + `${settings.commandPrefix}use blender`,
+    description: "Uses an item in your inventory or a fixture in a room.",
+    details: `Uses an item from your inventory. Not all items have programmed uses. Those that do will inflict you `
+        + `with or cure you of a status effect of some kind. Status effects can be good, bad, or neutral, but it `
+        + `should be fairly predictable what kind of effect a particular item will have on you.\n\n`
+        + `Some items can be used on fixtures in the room. For example, using a key on a locker `
+        + `will unlock the locker, using a crowbar on a crate will open the crate, etc.\n\n`
+        + `Some fixtures are capable of turning items into other items. This is known as processing a recipe. `
+        + `For example, an oven can turn raw food into cooked food. In order to use fixtures to process recipes, `
+        + `drop the items in the fixture and use it. For more information, see the help details for the \`recipes\` command.\n\n`
+        + `You can even use fixtures in the room without using an item at all. However, not all fixtures are usable in this way. `
+        + `Those that are usable without an item have puzzles attached, which can result in many different outcomes depending on how they're used. `
+        + `When interacting with a puzzle, anything entered after the name of the fixture will be treated as a password, combination, or selection. `
+        + `These inputs are almost always case-sensitive. If the fixture is a lock of some kind, you can re-lock it using the \`lock\` command. `
+        + `Other fixtures may require a puzzle to be solved before they do anything special.`,
     usableBy: "Player",
-    aliases: ["use", "unlock", "lock", "type", "activate", "flip", "push", "press", "ingest", "consume", "swallow", "eat", "drink"]
+    aliases: ["use", "unlock", "lock", "type", "activate", "deactivate", "flip", "push", "press", "ingest", "consume", "swallow", "eat", "drink"],
+    requiresGame: true
 };
 
-module.exports.run = async (bot, game, message, command, args, player) => {
-    if (args.length === 0)
-        return game.messageHandler.addReply(message, `You need to specify an object. Usage:\n${exports.config.usage}`);
+/**
+ * @param {GameSettings} settings 
+ * @returns {string} 
+ */
+export function usage(settings) {
+    return `${settings.commandPrefix}use FIRST AID KIT\n`
+        + `${settings.commandPrefix}eat CHICKEN FRIED RICE\n`
+        + `${settings.commandPrefix}drink COFFEE\n`
+        + `${settings.commandPrefix}swallow ORANGE CAPSULE\n`
+        + `${settings.commandPrefix}use OLD KEY CHEST\n`
+        + `${settings.commandPrefix}use LIGHTER CANDLE\n`
+        + `${settings.commandPrefix}lock LOCKER 1\n`
+        + `${settings.commandPrefix}type KEYPAD Proboscis Monkey\n`
+        + `${settings.commandPrefix}unlock LOCKER 1 12-22-11\n`
+        + `${settings.commandPrefix}press RED BUTTON\n`
+        + `${settings.commandPrefix}flip LEVER\n`
+        + `${settings.commandPrefix}activate BLENDER`;
+}
 
-    const status = player.getAttributeStatusEffects("disable use");
-    if (status.length > 0) return game.messageHandler.addReply(message, `You cannot do that because you are **${status[0].name}**.`);
+/**
+ * @param {Game} game - The game in which the command is being executed. 
+ * @param {UserMessage} message - The message in which the command was issued. 
+ * @param {string} command - The command alias that was used. 
+ * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Player} player - The player who issued the command. 
+ */
+export async function execute(game, message, command, args, player) {
+    if (args.length === 0)
+        return game.communicationHandler.reply(message, `You need to specify a fixture or an inventory item. Usage:\n${usage(game.settings)}`);
+
+    const status = player.getBehaviorAttributeStatusEffects("disable use");
+    if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
     // This will be checked multiple times, so get it now.
-    const hiddenStatus = player.getAttributeStatusEffects("hidden");
+    const hiddenStatus = player.getBehaviorAttributeStatusEffects("hidden");
 
-    var input = args.join(" ");
-    var parsedInput = input.toUpperCase();
+    let input = args.join(" ");
+    let parsedInput = input.toUpperCase();
 
     // First find the item in the player's hand, if applicable.
-    var item = null;
-    for (let slot = 0; slot < player.inventory.length; slot++) {
-        if (player.inventory[slot].equippedItem !== null && (parsedInput.startsWith(player.inventory[slot].equippedItem.name + ' ') || player.inventory[slot].equippedItem.name === parsedInput)) {
-            if (player.inventory[slot].name === "RIGHT HAND" && player.inventory[slot].equippedItem !== null) {
-                item = player.inventory[slot].equippedItem;
-                break;
-            }
-            else if (player.inventory[slot].name === "LEFT HAND" && player.inventory[slot].equippedItem !== null) {
-                item = player.inventory[slot].equippedItem;
-                break;
-            }
-        }
-        // If it's reached the left hand and it doesn't have the desired item, neither hand has it. Stop looking.
-        else if (player.inventory[slot].name === "LEFT HAND")
+    let item = null;
+    for (const hand of game.entityFinder.getPlayerHands(player)) {
+        if (hand.equippedItem !== null && (parsedInput.startsWith(hand.equippedItem.name + ' ') || hand.equippedItem.name === parsedInput)) {
+            item = hand.equippedItem;
             break;
+        }
     }
     if (item !== null) {
         parsedInput = parsedInput.substring(item.name.length).trim();
@@ -64,20 +82,23 @@ module.exports.run = async (bot, game, message, command, args, player) => {
     }
 
     // Now check to see if the player is trying to solve a puzzle.
-    var puzzle = null;
-    var password = "";
-    var targetPlayer = null;
+    let puzzle = null;
+    let password = "";
+    let targetPlayer = null;
     if (parsedInput !== "" && (command !== "ingest" && command !== "consume" && command !== "swallow" && command !== "eat" && command !== "drink")) {
-        var puzzles = game.puzzles.filter(puzzle => puzzle.location.name === player.location.name);
-        if (command === "lock" || command === "unlock") puzzles = puzzles.filter(puzzle => puzzle.type === "combination lock" || puzzle.type === "key lock");
-        else if (command === "type") puzzles = puzzles.filter(puzzle => puzzle.type === "password");
-        else if (command === "push" || command === "press" || command === "activate" || command === "flip") puzzles = puzzles.filter(puzzle => puzzle.type === "interact" || puzzle.type === "toggle");
+        let puzzles = game.puzzles.filter(puzzle => puzzle.location.id === player.location.id);
+        if (command === "lock" || command === "unlock")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "combination lock" || puzzle.type === "key lock");
+        else if (command === "type")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "password" || puzzle.type === "channels");
+        else if (command === "push" || command === "press" || command === "activate" || command === "deactivate" || command === "flip")
+            puzzles = puzzles.filter(puzzle => puzzle.type === "interact" || puzzle.type === "toggle" || puzzle.type === "switch" || puzzle.type === "option");
         for (let i = 0; i < puzzles.length; i++) {
-            if (puzzles[i].parentObject !== null &&
-                (parsedInput.startsWith(puzzles[i].parentObject.name + ' ') || parsedInput === puzzles[i].parentObject.name)) {
+            if (puzzles[i].parentFixture !== null &&
+                (parsedInput.startsWith(puzzles[i].parentFixture.name + ' ') || parsedInput === puzzles[i].parentFixture.name)) {
                 puzzle = puzzles[i];
-                //parsedInput = parsedInput.substring(puzzle.parentObject.name.length).trim();
-                input = input.substring(puzzle.parentObject.name.length).trim();
+                //parsedInput = parsedInput.substring(puzzle.parentFixture.name.length).trim();
+                input = input.substring(puzzle.parentFixture.name.length).trim();
                 break;
             }
             else if (parsedInput.startsWith(puzzles[i].name + ' ') || parsedInput === puzzles[i].name) {
@@ -88,76 +109,55 @@ module.exports.run = async (bot, game, message, command, args, player) => {
             }
         }
         if (puzzle !== null) {
-            // Make sure the player can only solve the puzzle if it's a child puzzle of the object they're hiding in, if they're hidden.
-            if (hiddenStatus.length > 0 && puzzle.parentObject !== null && player.hidingSpot !== puzzle.parentObject.name) return game.messageHandler.addReply(message, `You cannot do that because you are **${hiddenStatus[0].name}**.`);
+            // Make sure the player can only solve the puzzle if it's a child puzzle of the fixture they're hiding in, if they're hidden.
+            if (hiddenStatus.length > 0 && puzzle.parentFixture !== null && player.hidingSpot !== puzzle.parentFixture.name) return game.communicationHandler.reply(message, `You cannot do that because you are **${hiddenStatus[0].id}**.`);
 
             password = input;
             if (password !== "") parsedInput = parsedInput.substring(0, parsedInput.indexOf(password.toUpperCase())).trim();
-            for (let i = 0; i < game.players_alive.length; i++) {
-                if (game.players_alive[i].displayName.toLowerCase() === input.toLowerCase() &&
-                game.players_alive[i].location.name === player.location.name &&
-                (!game.players_alive[i].hasAttribute("hidden") || game.players_alive[i].hidingSpot === player.hidingSpot)) {
-                    targetPlayer = game.players_alive[i];
-                    break;
-                }
-            }
+            targetPlayer = game.entityFinder.getLivingPlayers(input, null, player.location.id, player.hidingSpot)[0];
         }
     }
 
-    // Check if the player specified an object.
-    var object = null;
+    // Check if the player specified a fixture.
+    let fixture = null;
     if (item === null && parsedInput !== "" && (command !== "ingest" && command !== "consume" && command !== "swallow" && command !== "eat" && command !== "drink")) {
-        var objects = game.objects.filter(object => object.location.name === player.location.name);
-        for (let i = 0; i < objects.length; i++) {
-            if (objects[i].name === parsedInput) {
-                object = objects[i];
+        const fixtures = game.fixtures.filter(fixture => fixture.location.id === player.location.id);
+        for (let i = 0; i < fixtures.length; i++) {
+            if (fixtures[i].name === parsedInput) {
+                fixture = fixtures[i];
                 break;
             }
         }
     }
 
-    // If there is an object, do the required behavior.
-    if (object !== null && object.recipeTag !== "" && object.activatable) {
-        // Make sure the player can only activate the object if it's the object they're hiding in, if they're hidden.
-        if (hiddenStatus.length > 0 && player.hidingSpot !== object.name) return game.messageHandler.addReply(message, `You cannot do that because you are **${hiddenStatus[0].name}**.`);
+    // If there is a fixture, do the required behavior.
+    if (fixture !== null && fixture.recipeTag !== "" && fixture.activatable) {
+        // Make sure the player can only activate the fixture if it's the fixture they're hiding in, if they're hidden.
+        if (hiddenStatus.length > 0 && player.hidingSpot !== fixture.name) return game.communicationHandler.reply(message, `You cannot do that because you are **${hiddenStatus[0].id}**.`);
 
         const narrate = puzzle === null ? true : false;
-        const time = new Date().toLocaleTimeString();
-        if (object.activated) {
-            object.deactivate(game, player, narrate);
-            // Post log message.
-            game.messageHandler.addLogMessage(game.logChannel, `${time} - ${player.name} deactivated ${object.name} in ${player.location.channel}`);
+        if (fixture.activated) {
+            const deactivateAction = new DeactivateAction(game, message, player, player.location, false);
+            deactivateAction.performDeactivate(fixture, narrate);
         }
         else {
-            object.activate(game, player, narrate);
-            // Post log message.
-            game.messageHandler.addLogMessage(game.logChannel, `${time} - ${player.name} activated ${object.name} in ${player.location.channel}`);
+            const activateAction = new ActivateAction(game, message, player, player.location, false);
+            activateAction.performActivate(fixture, narrate);
         }
     }
 
     // If there is a puzzle, do the required behavior.
     if (puzzle !== null) {
-        const misc = {
-            command: command,
-            input: args.join(" "),
-            message: message,
-            targetPlayer: targetPlayer
-        };
-        const response = player.attemptPuzzle(bot, game, puzzle, item, password, command, misc);
-        if (response === "" || !response) return;
-        else return game.messageHandler.addReply(message, response);
+        const attemptAction = new AttemptAction(game, message, player, player.location, false);
+        attemptAction.performAttempt(puzzle, item, password, command, input, targetPlayer);
     }
     // Otherwise, the player must be trying to use an item on themselves.
     else if (item !== null && (command === "use" || command === "ingest" || command === "consume" || command === "swallow" || command === "eat" || command === "drink")) {
-        const itemName = item.identifier ? item.identifier : item.prefab.id;
-        const response = player.use(game, item);
-        if (response === "" || !response) {
-            // Post log message.
-            const time = new Date().toLocaleTimeString();
-            game.messageHandler.addLogMessage(game.logChannel, `${time} - ${player.name} used ${itemName} from ${player.originalPronouns.dpos} inventory in ${player.location.channel}`);
-            return;
-        }
-        else return game.messageHandler.addReply(message, response);
+        if (item.uses === 0) return game.communicationHandler.reply(message, "That item has no uses left.");
+        if (!item.prefab.usable) return game.communicationHandler.reply(message, "That item has no programmed use on its own, but you may be able to use it some other way.");
+        if (!item.usableOn(player)) return game.communicationHandler.reply(message, `${item.name} currently has no effect on you.`);
+        const action = new UseAction(game, message, player, player.location, false);
+        action.performUse(item);
     }
-    else if (object === null) return game.messageHandler.addReply(message, `Couldn't find "${input}" to ${command}. Try using a different command?`);
-};
+    else if (fixture === null) return game.communicationHandler.reply(message, `Couldn't find "${input}" to ${command}. Try using a different command?`);
+}

@@ -1,0 +1,330 @@
+import Action from "../Data/Action.js";
+import { MessageDisplayType } from "../Modules/enums.js";
+import Room from "../Data/Room.js";
+import * as messageHandler from "../Modules/messageHandler.js";
+import { parseDescription } from "../Modules/parser.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { Attachment, Collection, TextChannel } from "discord.js";
+
+/** @import Description from '../Data/Description.js' */
+/** @import Dialog from "../Data/Dialog.js" */
+/** @import Game from "../Data/Game.js" */
+/** @import GameEntity from "../Data/GameEntity.js" */
+/** @import Narration from "../Data/Narration.js" */
+/** @import Player from "../Data/Player.js" */
+/** @import { Snowflake } from "discord.js" */
+
+/**
+ * @class GameCommunicationHandler
+ * @classdesc An interface for the message handler. Contains a number of functions that ensure actions won't be communicated multiple times in the same channel.
+ */
+export default class GameCommunicationHandler {
+	/**
+	 * The game this belongs to.
+	 * @readonly
+	 * @type {Game}
+	 */
+	#game;
+	/**
+	 * A cache of recently-performed actions. This is used to ensure that actions are communicated only once in any given channel.
+	 * @type {Collection<string, Action>}
+	 */
+	#actionCache;
+	/**
+	 * The maximum size of the actionCache.
+	 * @readonly
+	 */
+	#actionCacheSizeLimit = 20;
+	/** 
+	 * A collection of mirrored dialog messages to allow edits to dialog messages to be reflected in spectate channels.
+	 * The key is the ID of the original message that's being mirrored.
+	 * @type {Collection<string, DialogSpectateMirror[]>}
+	 */
+	#dialogSpectateMirrorCache;
+	/**
+	 * The maximum size of the dialogSpectateMirrorCache.
+	 * @readonly
+	 */
+	#dialogSpectateMirrorCacheSizeLimit = 50;
+
+	/**
+	 * @constructor
+	 * @param {Game} game - The game this belongs to.
+	 */
+	constructor(game) {
+		this.#game = game;
+		this.#actionCache = new Collection();
+		this.#dialogSpectateMirrorCache = new Collection();
+	}
+
+	/**
+	 * Returns the actionCache.
+	 */
+	getActionCache() {
+		return this.#actionCache;
+	}
+
+	/**
+	 * Adds an action to the cache. If the cache is at maximum capacity, removes the oldest one.
+	 * @param {Action} action - The action to cache. 
+	 */
+	#addActionToCache(action) {
+		if (this.#actionCache.size >= this.#actionCacheSizeLimit)
+			this.#actionCache.delete(this.#actionCache.firstKey());
+		this.#actionCache.set(action.id, action);
+	}
+
+	/**
+	 * Caches a channel for a given action.
+	 * @param {Action} action - The action to cache a channel for. 
+	 * @param {string} channelId - The channel to cache.
+	 */
+	#cacheChannelFor(action, channelId) {
+		if (this.#actionCache.has(action.id))
+			this.#actionCache.get(action.id).addToMirrors(channelId);
+		else {
+			action.addToMirrors(channelId);
+			this.#addActionToCache(action);
+		}
+	}
+
+	/**
+	 * Returns true if the action has already been communicated in the given channel.
+	 * Also returns true if the channel does not exist (e.g. for a player with no spectate channel).
+	 * @param {Messageable} channel - The channel to check for.
+	 * @param {Action} action - The action to check for.
+	 */
+	#actionHasBeenCommunicatedInChannel(channel, action) {
+		if (!channel) return true;
+		return action.hasBeenCommunicatedIn(channel.id);
+	}
+
+	/**
+	 * Adds the message to the dialog cache.
+	 * @param {UserMessage} message - The message that initiated the dialog. 
+	 */
+	cacheDialog(message) {
+		if (this.#dialogSpectateMirrorCache.size >= this.#dialogSpectateMirrorCacheSizeLimit)
+			this.#dialogSpectateMirrorCache.delete(this.#dialogSpectateMirrorCache.firstKey());
+		this.#dialogSpectateMirrorCache.set(message.id, []);
+	}
+
+	/**
+	 * Adds a spectate mirror to the dialog cache for the given message.
+	 * @param {UserMessage} message - The message being mirrored.
+	 * @param {Snowflake} mirrorMessageId - The message ID of the spectate mirror.
+	 * @param {Snowflake} mirrorWebhookId - The ID of the webhook that sent the spectate mirror.
+	 */
+	cacheSpectateMirrorForDialog(message, mirrorMessageId, mirrorWebhookId) {
+		const spectateMirrors = this.getDialogSpectateMirrors(message);
+		if (spectateMirrors) spectateMirrors.push({ messageId: mirrorMessageId, webhookId: mirrorWebhookId });
+	}
+
+	/**
+	 * Returns the list of spectate mirrors for the given dialog message.
+	 * If the given dialog message isn't cached, returns undefined.
+	 * @param {UserMessage|import('discord.js').PartialMessage} message - The message that was mirrored.
+	 */
+	getDialogSpectateMirrors(message) {
+		return this.#dialogSpectateMirrorCache.get(message.id);
+	}
+
+	/**
+	 * Replies to a message. This is usually done when a user has sent a message with an error.
+	 * @param {UserMessage} message - The message to reply to.
+	 * @param {string} messageText - The text of the message to send in response.
+	 */
+	reply(message, messageText) {
+		messageHandler.sendReply(this.#game, message, messageText);
+	}
+
+	/**
+	 * Sends a message to the command channel.
+	 * @param {string} messageText - The text of the message to send.
+	 */
+	sendToCommandChannel(messageText) {
+		messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText);
+	}
+
+	/**
+	 * Sends a message to a player without any checks.
+	 * @param {Player} player - The player to send the message to.
+	 * @param {string} messageText - The text of the message to send.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
+	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
+	 */
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT) {
+		messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
+	}
+
+	/**
+	 * Sends a description to a player without any checks.
+	 * @param {Player} player - The player to send the notification to.
+	 * @param {Description} description - The description to parse and send.
+	 * @param {GameEntity} container - The game entity the description belongs to.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT. Does nothing when sending a room description.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
+	 */
+	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
+		if (container instanceof Room) {
+			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
+			let defaultDropFixtureString = "";
+			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
+			if (defaultDropFixture)
+				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
+			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
+			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
+		}
+		else
+			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, messageDisplayType);
+	}
+
+	/**
+	 * Sends a notification to a player.
+	 * @param {Player} player - The player to send the notification to.
+	 * @param {Action} action - The action that triggered the notification.
+	 * @param {string} notification - The text of the notification to send.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
+	 */
+	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
+			this.#cacheChannelFor(action, player.notificationChannel.id);
+			player.notify(notification, mirrorInSpectateChannel, messageDisplayType, action);
+		}
+	}
+
+	/**
+	 * Sends a notification to a player with attachments.
+	 * @param {Player} player - The player to send the notification to.
+	 * @param {Action} action - The action that triggered the notification.
+	 * @param {string} notification - The text of the notification to send.
+	 * @param {Collection<string, Attachment>} attachments - The attachments to send.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
+	 */
+	notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
+			this.#cacheChannelFor(action, player.notificationChannel.id);
+			messageHandler.sendNotification(player, notification, MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel, attachments);
+		}
+	}
+
+	/**
+	 * Mirrors dialog in a player's spectate channel.
+	 * @param {Player} player - The player whose spectate channel this dialog will be mirrored in.
+	 * @param {Action} action - The action associated with the dialog.
+	 * @param {Dialog} dialog - The dialog that was spoken.
+	 * @param {string} [webhookUsername] - The username to use for the mirrored webhook message. Defaults to the dialog speaker's display name.
+	 * @param {string} [webhookAvatarURL] - The avatar URL to use for the mirrored webhook message. Defaults to the dialog speaker's display icon.
+	 * @param {string} [messageText] - The text of the message to send. Defaults to the content of the dialog.
+	 * @param {string} [notification] - A custom notification that will be sent to the player afterwards. Optional. This notification will not be mirrored in the spectate channel.
+	 */
+	mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, messageText = dialog.content, notification) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
+			this.#cacheChannelFor(action, player.spectateChannel.id);
+			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url), dialog.message);
+			if (notification) this.notifyPlayer(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
+		}
+	}
+
+	/**
+	 * Mirrors a narration in a player's spectate channel.
+	 * @param {Player} player - The player whose spectate channel this narration will be mirrored in.
+	 * @param {Action} action - The action associated with the narration.
+	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
+	 * @param {string} narrationText - The text of the narration to send.
+	 */
+	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
+			this.#cacheChannelFor(action, player.spectateChannel.id);
+			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType);
+		}
+	}
+
+	/**
+	 * Mirrors a narration in a player's spectate channel as a webhook message.
+	 * @param {Player} player - The player whose spectate channel this narration will be mirrored in.
+	 * @param {Action} action - The action associated with the narration.
+	 * @param {Narration} narration - The narration that was written.
+	 * @param {string} webhookUsername - A custom username to use for the webhook that will send the spectate message.
+	 * @param {string} webhookAvatarURL - A custom avatar URL to use for the webhook that will send the spectate message.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 */
+	mirrorWebhookNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
+		if (narration.isOOCMessage) return;
+		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
+			this.#cacheChannelFor(action, player.spectateChannel.id);
+			messageHandler.sendWebhookSpectateMessage(player, narrationText, webhookUsername, webhookAvatarURL, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url), narration.message, narration.messageDisplayType);
+		}
+	}
+
+	/**
+	 * Sends a narration to a room channel and mirrors it in the spectate channels of all of the room's occupants.
+	 * @param {Narration} narration - The narration to send.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in spectate channels. Defaults to true.
+	 * @param {Room} [room] - The room to send the narration to. Defaults to the location of the narration.
+	 * @param {string} [webhookUsername] - The username to use for the narrated webhook message, if applicable.
+	 */
+	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true, room = narration.location, webhookUsername) {
+		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(room.channel, narration.action)) {
+			if (narration.action) this.#cacheChannelFor(narration.action, room.channel.id);
+			messageHandler.sendNarrationToRoom(room, narration, narrationText, narration.messageDisplayType, mirrorInSpectateChannel, narration.player, webhookUsername);
+		}
+	}
+
+	/**
+	 * Sends a narration to a whisper channel and mirrors it in the spectate channels of all the whisper's players.
+	 * @param {Narration} narration - The narration to send.
+	 * @param {string} [narrationText] - The custom text of the narration to send. Optional.
+	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in spectate channels. Defaults to true.
+	 */
+	narrateInWhisper(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
+		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.whisper.channel, narration.action)) {
+			if (narration.action) this.#cacheChannelFor(narration.action, narration.whisper.channel.id);
+			messageHandler.sendNarrationToWhisper(narration.whisper, narration, narrationText, narration.getWhisperPrefixString(), narration.messageDisplayType, mirrorInSpectateChannel);
+		}
+	}
+
+	/**
+	 * Sends the help menu for a command.
+	 * @param {UserMessage} message - The message that sent the help command.
+	 * @param {Command} command - The command to send the help menu for.
+	 */
+	sendCommandHelp(message, command) {
+		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
+		messageHandler.sendCommandHelp(this.#game, channel, command);
+	}
+
+	/**
+	 * Sends a message to the log channel.
+	 * @param {string} logText - The message of the text to send.
+	 */
+	sendLogMessage(logText) {
+		messageHandler.sendLogMessage(this.#game, logText);
+	}
+
+	/**
+	 * Sends dialog as a webhook message to the specified channel.
+	 * @param {Dialog} dialog - The dialog to send.
+	 * @param {TextChannel} channel - The channel to send the webhook message to.
+	 * @param {string} [webhookUsername] - A custom username to use for the webhook that will send the spectate message. Optional.
+	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
+	 * @returns The created webhook message.
+	 */
+	async sendDialogAsWebhook(channel, dialog, webhookUsername = dialog.speakerDisplayName, webhookAvatarURL = dialog.speakerDisplayIcon) {
+		const webhook = await messageHandler.getOrCreateWebhook(channel);
+		const webhookMessage = await messageHandler.sendWebhookMessage(
+			webhook,
+			dialog.content,
+			webhookUsername,
+			webhookAvatarURL,
+			dialog.embeds,
+			dialog.attachments.map(attachment => attachment.url),
+			dialog.getGame(),
+			MessageDisplayType.PLAIN_TEXT,
+			dialog.speaker
+		);
+		return webhookMessage;
+	}
+}

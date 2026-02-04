@@ -1,22 +1,121 @@
-const constants = include('Configs/constants.json');
-const Narration = include(`${constants.dataDir}/Narration.js`);
+import Description from './Description.js';
+import GameEntity from './GameEntity.js';
+import { generatePlayerListString } from '../Modules/helpers.js';
+import { Collection } from 'discord.js';
 
-class Room {
-    constructor(name, channel, tags, iconURL, exit, description, row) {
-        this.name = name;
+/** @import Exit from './Exit.js' */
+/** @import Game from './Game.js' */
+/** @import Player from './Player.js' */
+/** @import { TextChannel } from 'discord.js' */
+
+/**
+ * @class Room
+ * @classdesc Represents a room in the game.
+ * @extends GameEntity
+ * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html
+ */
+export default class Room extends GameEntity {
+    /**
+     * The unique ID of the room.
+     * @readonly
+     * @type {string}
+     */
+    id;
+    /**
+     * The name of the room. Deprecated. Use `id` instead.
+     * @deprecated
+     * @readonly
+     * @type {string}
+     */
+    name;
+    /**
+     * The name of the room for display purposes. Can contain uppercase letters and special characters. Not to be used for identification.
+     * @readonly
+     * @type {string}
+     */
+    displayName;
+    /**
+     * The channel associated with the room.
+     * @readonly
+     * @type {TextChannel}
+     */
+    channel;
+    /**
+     * The tags associated with the room.
+     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html#tags
+     * @type {Set<string>}
+     */
+    tags;
+    /**
+     * The URL of the icon associated with the room.
+     * @type {string}
+     */
+    iconURL;
+    /**
+     * The exits of the room. Deprecated. Use `exits` instead.
+     * @deprecated
+     * @type {Exit[]}
+     */
+    exit;
+    /**
+     * A collection of all exits in the room. The key is the exit's name.
+     * @type {Collection<string, Exit>}
+     */
+    exits;
+    /**
+     * The default description of the room for when a player enters from the first listed exit or inspects the room.
+     * @readonly
+     * @type {Description}
+     */
+    description;
+    /**
+     * An array of all players currently in the room.
+     * @type {Player[]}
+     */
+    occupants;
+    /**
+     * A list of all players currently in the room, listed by their displayNames in alphabetical order.
+     * Players with the `hidden` behavior attribute are omitted.
+     * @type {string}
+     */
+    occupantsString;
+
+    /**
+     * @constructor
+     * @param {string} id - The unique ID of the room.
+     * @param {string} displayName - The name of the room for display purposes. Can contain uppercase letters and special characters.
+     * @param {TextChannel} channel - The channel associated with the room.
+     * @param {Set<string>} tags - The tags associated with the room. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html#tags}
+     * @param {string} iconURL - The URL of the icon associated with the room.
+     * @param {Collection<string, Exit>} exits - The exits of the room.
+     * @param {string} description - The default description of the room for when a player enters from the first listed exit or inspects the room.
+     * @param {number} row - The row number of the room in the sheet.
+     * @param {Game} game - The game this belongs to.
+     */
+    constructor(id, displayName, channel, tags, iconURL, exits, description, row, game) {
+        super(game, row);
+        this.id = id;
+        this.displayName = displayName;
+        this.name = this.id;
         this.channel = channel;
         this.tags = tags;
         this.iconURL = iconURL;
-        this.exit = exit;
-        this.description = description;
-        this.row = row;
+        this.exit = [];
+        this.exits = exits;
+        this.description = new Description(description, this, game);
 
-        this.occupants = new Array();
+        /** @type {Player[]} */
+        this.occupants = [];
         this.occupantsString = "";
     }
 
-    addPlayer(game, player, entrance, entranceMessage, sendDescription) {
-        player.location = this;
+    /**
+     * Adds a player to the room.
+     * @param {Player} player - The player to add to the room.
+     * @param {Exit} [entrance] - The exit they're entering from, if applicable.
+     */
+    addPlayer(player, entrance) {
+        player.setLocation(this);
         // Set the player's position.
         if (entrance) {
             player.pos.x = entrance.pos.x;
@@ -25,96 +124,154 @@ class Room {
         }
         // If no entrance is given, try to calculate the center of the room by averaging the coordinates of all exits.
         else {
+            /** @type {Pos} */
             let coordSum = { x: 0, y: 0, z: 0 };
-            for (let i = 0; i < this.exit.length; i++) {
-                coordSum.x += this.exit[i].pos.x;
-                coordSum.y += this.exit[i].pos.y;
-                coordSum.z += this.exit[i].pos.z;
-            }
+            this.exits.forEach(exit => {
+                coordSum.x += exit.pos.x;
+                coordSum.y += exit.pos.y;
+                coordSum.z += exit.pos.z;
+            });
+            /** @type {Pos} */
             let pos = { x: 0, y: 0, z: 0 };
-            pos.x = Math.floor(coordSum.x / this.exit.length);
-            pos.y = Math.floor(coordSum.y / this.exit.length);
-            pos.z = Math.floor(coordSum.z / this.exit.length);
+            pos.x = Math.floor(coordSum.x / this.exits.size);
+            pos.y = Math.floor(coordSum.y / this.exits.size);
+            pos.z = Math.floor(coordSum.z / this.exits.size);
             player.pos = pos;
         }
-        if (entranceMessage) new Narration(game, player, this, entranceMessage).send();
-        
-        if (player.getAttributeStatusEffects("no channel").length === 0)  
+
+        if (!player.hasBehaviorAttribute("no channel"))
             this.joinChannel(player);
 
-        if (sendDescription) {
-            if (player.hasAttribute("no sight"))
-                player.notify(game, "Fumbling against the wall, you make your way to the next room over.");
-            else {
-                let description;
-                if (entrance) description = entrance.description;
-                else description = this.description;
-                // Send the room description of the entrance the player enters from.
-                player.sendDescription(game, description, this);
-            }
-        }
-
         this.occupants.push(player);
-        this.occupantsString = this.generate_occupantsString(this.occupants.filter(occupant => !occupant.hasAttribute("hidden")));
+        this.setOccupantsString();
     }
 
-    removePlayer(game, player, exit, exitMessage) {
-        if (exitMessage) new Narration(game, player, this, exitMessage).send();
+    /**
+     * Removes a player from the room.
+     * @param {Player} player - The player to remove from the room.
+     */
+    removePlayer(player) {
         this.leaveChannel(player);
         this.occupants.splice(this.occupants.indexOf(player), 1);
-        this.occupantsString = this.generate_occupantsString(this.occupants.filter(occupant => !occupant.hasAttribute("hidden")));
-        player.removeFromWhispers(game, `${player.displayName} leaves the room.`);
+        this.setOccupantsString();
     }
 
-    // List should be an array of Players.
-    generate_occupantsString(list) {
-        list.sort(function (a, b) {
-            var nameA = a.displayName.toLowerCase();
-            var nameB = b.displayName.toLowerCase();
-            if (nameA < nameB) return -1;
-            if (nameA > nameB) return 1;
-            return 0;
-        });
-        var occupantsString = "";
-        if (list.length === 1) occupantsString = list[0].displayName;
-        else if (list.length === 2) occupantsString = `${list[0].displayName} and ${list[1].displayName}`;
-        else if (list.length >= 3) {
-            for (let i = 0; i < list.length - 1; i++)
-                occupantsString += `${list[i].displayName}, `;
-            occupantsString += `and ${list[list.length - 1].displayName}`;
-        }
-        return occupantsString;
+    /**
+     * Generates a string representing the occupants of the room, sorted alphabetically by display name.
+     * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players excluded.
+     * @returns {string}
+     */
+    generateOccupantsString(list = this.occupants.filter(occupant => !occupant.isHidden())) {
+        return generatePlayerListString(list);
     }
 
+    /**
+     * Generates a string representing the occupants of the room excluding the given player, sorted alphabetically by display name.
+     * @param {Player} player - The player to exclude. 
+     * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
+     * @returns {string}
+     */
+    generateOccupantsStringExcluding(player, list = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)) {
+        return generatePlayerListString(list);
+    }
+
+    /**
+     * Sets the room's occupants string to the given string. By default, sets it to the room's occupants, sorted alphabetically by display name with hidden players excluded.
+     */
+    setOccupantsString(occupantsString = this.generateOccupantsString()) {
+        this.occupantsString = occupantsString;
+    }
+
+    /**
+     * Gives player permission to view the room's channel.
+     * @param {Player} player
+     */
     joinChannel(player) {
-        if (player.talent !== "NPC") this.channel.permissionOverwrites.create(player.member, { ViewChannel: true });
+        if (!player.isNPC) this.channel.permissionOverwrites.create(player.member, { ViewChannel: true });
     }
 
+    /**
+     * Removes player's permission to view the room's channel.
+     * @param {Player} player
+     */
     leaveChannel(player) {
-        if (player.talent !== "NPC") this.channel.permissionOverwrites.create(player.member, { ViewChannel: null });
+        if (!player.isNPC) this.channel.permissionOverwrites.create(player.member, { ViewChannel: null });
     }
 
-    unlock(game, index) {
-        this.exit[index].unlock();
-        if (this.occupants.length > 0) new Narration(game, null, this, `${this.exit[index].name} unlocks.`).send();
-
-        // Post log message.
-        const time = new Date().toLocaleTimeString();
-        game.messageHandler.addLogMessage(game.logChannel, `${time} - ${this.exit[index].name} in ${this.channel} was unlocked.`);
+    /**
+     * Gets the exit with the given name.
+     * @param {string} name - The name of the exit to get.
+     */
+    getExit(name) {
+        return this.getGame().entityFinder.getExit(this, name);
     }
 
-    lock(game, index) {
-        this.exit[index].lock();
-        if (this.occupants.length > 0) new Narration(game, null, this, `${this.exit[index].name} locks.`).send();
-
-        // Post log message.
-        const time = new Date().toLocaleTimeString();
-        game.messageHandler.addLogMessage(game.logChannel, `${time} - ${this.exit[index].name} in ${this.channel} was locked.`);
+    /**
+     * Returns the URL to use for the room in the room description display component.
+     */
+    getIconURL() {
+        return this.iconURL !== "" ? this.iconURL
+            : this.getGame().settings.defaultRoomIconURL !== "" ? this.getGame().settings.defaultRoomIconURL
+                : this.getGame().guildContext.guild.iconURL();
     }
 
+    /**
+     * Returns true if the room has the given tag.
+     * @param {string} tag 
+     */
+    hasTag(tag) {
+        return this.tags.has(tag);
+    }
+
+    /**
+     * Returns true if the room has the `audio surveilled` tag.
+     */
+    isAudioSurveilled() {
+        return this.hasTag("audio surveilled");
+    }
+
+    /**
+     * Returns false if the room has the `video surveilled` tag.
+     */
+    isVideoSurveilled() {
+        return this.hasTag("video surveilled");
+    }
+
+    /**
+     * Returns true if the room has the `audio monitoring` tag.
+     */
+    isAudioMonitoring() {
+        return this.hasTag("audio monitoring");
+    }
+
+    /**
+     * Returns false if the room has the `video monitoring` tag.
+     */
+    isVideoMonitoring() {
+        return this.hasTag("video monitoring");
+    }
+
+    /**
+     * Returns the display name to use for the room in rooms with the `audio monitoring` or `video monitoring` tag.
+     * @param {boolean} monitoringRoomCanBeSeen - Whether or not the room that's monitoring this one can be seen.
+     */
+    getSurveilledDisplayName(monitoringRoomCanBeSeen) {
+        return this.hasTag("secret")
+            ? this.isVideoSurveilled() && monitoringRoomCanBeSeen
+                ? "Surveillance feed" : "Intercom"
+            : this.displayName;
+    }
+
+    /** @returns {string} */
     descriptionCell() {
-        return constants.roomSheetDescriptionColumn + this.row;
+        return this.getGame().constants.roomSheetDescriptionColumn + this.row;
+    }
+
+    /**
+     * Convert a room name to a valid Discord channel name which can be used as a Room's ID.
+     * @param {string} name - A string, preferably the name of a room.
+     */
+    static generateValidId(name) {
+        return name?.toLowerCase().replace(/[+=/<>\[\]!@#$%^&*()'":;,?`~\\|{}]/g, '').trim().replace(/ /g, '-');
     }
 }
-
-module.exports = Room;

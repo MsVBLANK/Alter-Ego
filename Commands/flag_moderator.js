@@ -1,34 +1,53 @@
-const settings = include('Configs/settings.json');
-const Flag = require('../Data/Flag.js');
+import Flag from '../Data/Flag.js';
+import Game from '../Data/Game.js';
 
-module.exports.config = {
-    name: "flag_moderator",
-    description: "Set and clear flags.",
-    details: 'Set and clear flags.\n\n'
-        + '-**set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
+/** @import GameSettings from '../Classes/GameSettings.js' */
+
+/** @type {CommandConfig} */
+export const config = {
+	name: "flag_moderator",
+	description: "Set and clear flags.",
+	details: 'Set and clear flags.\n\n'
+		+ '-**set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
 		+ 'will be created with the specified name. The specified value must be a boolean, number, or string. '
-		+ 'String values must be surrounded by quotation marks. If you want to set the flag\'s value script, '
+		+ 'String values must be surrounded by quotation marks. To add or subtract from the flag\'s current number value, '
+		+ 'prefix the number to add or subtract with `+=` or `-=`. If you want to set the flag\'s value script, '
 		+ 'surround your input with `` `tics` ``. This script will immediately be evaluated, '
 		+ 'and the flag\'s value will be set accordingly. Whether the flag\'s value or value script '
 		+ 'is set, the flag\'s set commands will be executed, unless the flag was set by another flag.\n\n'
-        + '-**clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
+		+ '-**clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
 		+ 'When this is cleared, the flag\'s cleared commands will be executed unless the flag was cleared by another flag.',
-    usage: `${settings.commandPrefix}flag set COLD SEASON FLAG true\n`
+	usableBy: "Moderator",
+	aliases: ["flag", "setflag", "clearflag"],
+	requiresGame: true
+};
+
+/**
+ * @param {GameSettings} settings 
+ * @returns {string} 
+ */
+export function usage(settings) {
+	return `${settings.commandPrefix}flag set COLD SEASON FLAG true\n`
 		+ `${settings.commandPrefix}setflag HOT SEASON FLAG False\n`
 		+ `${settings.commandPrefix}flag set TV PROGRAMMING 4\n`
 		+ `${settings.commandPrefix}setflag INDOOR TEMPERATURE 25.3\n`
+		+ `${settings.commandPrefix}flag set TV PROGRAMMING += 1\n`
+		+ `${settings.commandPrefix}setflag INDOOR TEMPERATURE -= 4.1\n`
 		+ `${settings.commandPrefix}flag set SOUP OF THE DAY "French Onion"\n`
 		+ `${settings.commandPrefix}setflag BLOOD SPLATTER “TWO MILKMEN GO COMEDY”\n`
 		+ `${settings.commandPrefix}flag set PRECIPITATION \`\` \`findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true\` \`\`\n`
 		+ `${settings.commandPrefix}setflag RANDOM ANIMAL \`\` \`getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])\` \`\`\n`
 		+ `${settings.commandPrefix}flag clear BLOOD SPLATTER\n`
-		+ `${settings.commandPrefix}clearflag TV PROGRAMMING\n`,
-    usableBy: "Moderator",
-    aliases: ["flag", "setflag", "clearflag"],
-    requiresGame: true
-};
+		+ `${settings.commandPrefix}clearflag TV PROGRAMMING\n`;
+}
 
-module.exports.run = async (bot, game, message, command, args) => {
+/**
+ * @param {Game} game - The game in which the command is being executed. 
+ * @param {UserMessage} message - The message in which the command was issued. 
+ * @param {string} command - The command alias that was used. 
+ * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ */
+export async function execute(game, message, command, args) {
 	let input = args.join(" ");
 	if (command === "flag") {
 		if (args[0] === "set") command = "setflag";
@@ -38,14 +57,16 @@ module.exports.run = async (bot, game, message, command, args) => {
 	}
 
 	if (args.length === 0)
-		return game.messageHandler.addReply(message, `You need to input all required arguments. Usage:\n${exports.config.usage}`);
+		return game.communicationHandler.reply(message, `You need to input all required arguments. Usage:\n${usage(game.settings)}`);
 
 	// The value, if it exists, is the easiest to find at the beginning. Look for that first.
 	let valueScript;
 	let value;
+	let update;
 	if (command === "setflag") {
 		const scriptMatch = input.match(/(?<!"|“)`(.*)`(?!"|”)/);
 		const stringMatch = input.match(/(?<!`)(?:"|“)(.*)(?:"|”)(?!`)/);
+		const addSubtractMatch = input.match(/(\+=|-=) ?(-?\d+(?:.\d+)?)/);
 		if (scriptMatch && scriptMatch.length === 2) {
 			valueScript = scriptMatch[1];
 			input = input.substring(0, input.indexOf(scriptMatch[0]));
@@ -53,6 +74,11 @@ module.exports.run = async (bot, game, message, command, args) => {
 		else if (stringMatch && stringMatch.length === 2) {
 			value = stringMatch[1];
 			input = input.substring(0, input.indexOf(stringMatch[0]));
+		}
+		else if (addSubtractMatch && addSubtractMatch.length === 3) {
+			update = addSubtractMatch[1] === "-=" ? "subtract" : "add";
+			value = parseFloat(addSubtractMatch[2]);
+			input = input.substring(0, input.indexOf(addSubtractMatch[0]));
 		}
 		else if (!isNaN(parseFloat(args[args.length - 1]))) {
 			value = parseFloat(args[args.length - 1]);
@@ -65,10 +91,9 @@ module.exports.run = async (bot, game, message, command, args) => {
 			if (value !== undefined)
 				input = input.substring(0, input.toLowerCase().lastIndexOf(lastArg));
 		}
-		if (valueScript === undefined && value === undefined) return game.messageHandler.addReply(message, `Couldn't find a valid value in "${input}". The value must be a string, number, or boolean.`);
+		if (valueScript === undefined && value === undefined) return game.communicationHandler.reply(message, `Couldn't find a valid value in "${input}". The value must be a string, number, or boolean.`);
 
-		const flagId = input.toUpperCase().replace(/[\'"“”`]/g, '').trim();
-		let flag = game.flags.get(flagId);
+		let flag = game.entityFinder.getFlag(input);
 		// If no flag was found, create a new one.
 		let newFlag = false;
 		if (!flag) {
@@ -76,42 +101,51 @@ module.exports.run = async (bot, game, message, command, args) => {
 			// It needs a row number. Get the flag with the highest row number and add 1.
 			const rowNumber = [...game.flags.values()].reduce((max, current) => max < current.row ? current.row : max, 0) + 1;
 			flag = new Flag(
-				flagId,
+				Game.generateValidEntityName(input),
 				value,
 				valueScript,
 				"",
 				[],
-				rowNumber
+				rowNumber,
+				game
 			);
 		}
 		if (valueScript) {
 			try {
 				value = flag.evaluate(valueScript);
-				if (newFlag) game.flags.set(flagId, flag);
+				if (newFlag) game.flags.set(flag.id, flag);
 				flag.valueScript = valueScript;
-				flag.setValue(value, true, bot, game);
+				flag.setValue(value, true);
 			}
 			catch (err) {
-				return game.messageHandler.addReply(message, `The specified script returned an error. ${err}`);
+				return game.communicationHandler.reply(message, `The specified script returned an error. ${err}`);
 			}
 		}
 		else {
-			if (newFlag) game.flags.set(flagId, flag);
-			flag.setValue(value, true, bot, game);
+			if (newFlag) {
+				if (update) return game.communicationHandler.reply(message, `Couldn't update the value of a flag that doesn't exist.`);
+				game.flags.set(flag.id, flag);
+			}
+			else if (update) {
+				if (typeof flag.value !== "number") return game.communicationHandler.reply(message, `Can't add or subtract to a flag whose value is not a number.`);
+				else if (typeof value !== "number") return game.communicationHandler.reply(message, `Can't add or subtract a non-number value to a flag.`);
+				else if (update === "subtract") value = flag.value - value;
+				else if (update === "add") value = flag.value + value;
+			}
+			flag.setValue(value, true);
 		}
 
-		const valueDisplay = 
+		const valueDisplay =
 			typeof flag.value === "string" ? `"${flag.value}"` :
-			typeof flag.value === "boolean" ? `\`${flag.value}\`` :
-			flag.value;
-		game.messageHandler.addGameMechanicMessage(message.channel, `Successfully set flag ${flag.id} with value ${valueDisplay}.`);
+				typeof flag.value === "boolean" ? `\`${flag.value}\`` :
+					flag.value;
+		game.communicationHandler.sendToCommandChannel(`Successfully set flag ${flag.id} with value ${valueDisplay}.`);
 	}
 	else if (command === "clearflag") {
-		const flagId = input.toUpperCase().replace(/[\'"“”`]/g, '').trim();
-		let flag = game.flags.get(flagId);
-		if (!flag) return game.messageHandler.addReply(message, `Couldn't find flag "${input}".`);
+		const flag = game.entityFinder.getFlag(input);
+		if (!flag) return game.communicationHandler.reply(message, `Couldn't find flag "${input}".`);
 
-		flag.clearValue(true, bot, game);
-		game.messageHandler.addGameMechanicMessage(message.channel, `Successfully cleared flag ${flag.id}.`);
+		flag.clearValue(true);
+		game.communicationHandler.sendToCommandChannel(`Successfully cleared flag ${flag.id}.`);
 	}
-};
+}

@@ -18,6 +18,7 @@ import Timer from '../Classes/Timer.js';
 import { MessageDisplayType } from '../Modules/enums.js';
 import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
+import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
 
 /** @import Action from './Action.js' */
@@ -1533,6 +1534,25 @@ export default class Player extends ItemContainer {
      */
     hasItem(id) {
         return !!this.findItem(id);
+    }
+
+    /**
+     * Gets the equipment slot in the player's inventory with the given ID. If it doesn't exist, returns undefined.
+     * @param {string} equipmentSlotId - The equipment slot ID to search for.
+     */
+    getEquipmentSlot(equipmentSlotId) {
+        return this.inventoryCollection.get(equipmentSlotId);
+    }
+
+    /**
+     * Returns true if the player has an item with the given identifier equipped to the given equipment slot.
+     * @param {string} identifier - The item identifier to search for.
+     * @param {string} equipmentSlotId - The equipment slot ID it should be equipped to.
+     */
+    hasEquippedItem(identifier, equipmentSlotId) {
+        const equippedItem = this.getEquipmentSlot(equipmentSlotId)?.equippedItem;
+        if (!equippedItem) return false;
+        return itemIdentifierMatches(equippedItem, identifier, true);
     }
 
     /**

@@ -123,4 +123,11 @@ export default class EquipmentSlot extends GameEntity {
             }
         };
     }
+
+    /**
+     * Returns true if the equipment slot contains no items.
+     */
+    containsNoItems() {
+        return this.equippedItem === null;
+    }
 }

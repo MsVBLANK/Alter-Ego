@@ -52,7 +52,7 @@ export default class Room extends GameEntity {
      */
     iconURL;
     /**
-     * The exits of the room. Deprecated. Use exitCollection instead.
+     * The exits of the room. Deprecated. Use `exits` instead.
      * @deprecated
      * @type {Exit[]}
      */
@@ -61,7 +61,7 @@ export default class Room extends GameEntity {
      * A collection of all exits in the room. The key is the exit's name.
      * @type {Collection<string, Exit>}
      */
-    exitCollection;
+    exits;
     /**
      * The default description of the room for when a player enters from the first listed exit or inspects the room.
      * @readonly
@@ -101,7 +101,7 @@ export default class Room extends GameEntity {
         this.tags = tags;
         this.iconURL = iconURL;
         this.exit = [];
-        this.exitCollection = exits;
+        this.exits = exits;
         this.description = new Description(description, this, game);
 
         /** @type {Player[]} */
@@ -126,16 +126,16 @@ export default class Room extends GameEntity {
         else {
             /** @type {Pos} */
             let coordSum = { x: 0, y: 0, z: 0 };
-            this.exitCollection.forEach(exit => {
+            this.exits.forEach(exit => {
                 coordSum.x += exit.pos.x;
                 coordSum.y += exit.pos.y;
                 coordSum.z += exit.pos.z;
             });
             /** @type {Pos} */
             let pos = { x: 0, y: 0, z: 0 };
-            pos.x = Math.floor(coordSum.x / this.exitCollection.size);
-            pos.y = Math.floor(coordSum.y / this.exitCollection.size);
-            pos.z = Math.floor(coordSum.z / this.exitCollection.size);
+            pos.x = Math.floor(coordSum.x / this.exits.size);
+            pos.y = Math.floor(coordSum.y / this.exits.size);
+            pos.z = Math.floor(coordSum.z / this.exits.size);
             player.pos = pos;
         }
 

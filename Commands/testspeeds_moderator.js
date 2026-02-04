@@ -70,8 +70,8 @@ async function testplayers(game, fileName) {
     let text = "";
     for (const room of game.rooms.values()) {
         text += room.id + '\n';
-        for (const exit1 of room.exitCollection.values()) {
-            for (const exit2 of room.exitCollection.values()) {
+        for (const exit1 of room.exits.values()) {
+            for (const exit2 of room.exits.values()) {
                 if (exit1.row !== exit2.row) {
                     text += "   ";
                     text += `${exit1.name} ==> ${exit2.name}\n`;
@@ -111,8 +111,8 @@ async function testspeeds(game, fileName) {
     let text = "";
     for (const room of game.rooms.values()) {
         text += room.id + '\n';
-        for (const exit1 of room.exitCollection.values()) {
-            for (const exit2 of room.exitCollection.values()) {
+        for (const exit1 of room.exits.values()) {
+            for (const exit2 of room.exits.values()) {
                 if (exit1.row !== exit2.row) {
                     text += "   ";
                     text += `${exit1.name} ==> ${exit2.name}\n`;

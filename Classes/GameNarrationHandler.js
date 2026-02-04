@@ -295,7 +295,7 @@ export default class GameNarrationHandler {
 		const destination = exit.dest;
 		if (destination.id === player.location.id) return;
 		const hearingPlayers = destination.occupants.filter(occupant => occupant.canHear());
-		const destinationNarration = this.#game.notificationGenerator.generateKnockDestinationNotification(destination.exitCollection.get(exit.link).getDoorPhrase());
+		const destinationNarration = this.#game.notificationGenerator.generateKnockDestinationNotification(destination.exits.get(exit.link).getDoorPhrase());
 		// If the number of hearing players is the same as the number of occupants in the room, send the message to the room.
 		if (hearingPlayers.length !== 0 && hearingPlayers.length === destination.occupants.length)
 			this.#sendNarration(messageType, action, player, destinationNarration, destination);

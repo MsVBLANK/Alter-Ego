@@ -207,7 +207,7 @@ export default class Dialog extends GameConstruct {
 			this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
 			this.neighboringRooms = new Collection();
 			if (!this.location.tags.has("soundproof")) {
-				for (const exit of this.location.exitCollection.values()) {
+				for (const exit of this.location.exits.values()) {
 					const neighboringRoom = exit.dest;
 					// Prevent duplication when two rooms are connected by multiple exits.
 					if (this.neighboringRooms.has(neighboringRoom.id)) continue;

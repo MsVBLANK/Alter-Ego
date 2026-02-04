@@ -442,7 +442,7 @@ describe('messageHandler test', () => {
                 test('OOC message is not communicated to neighboring rooms', async () => {
                     astrid.inflict(acuteHearing);
                     await sendPlayerMessage(kiara, "( HELLO?");
-                    for (const exit of kiara.location.exitCollection.values()) {
+                    for (const exit of kiara.location.exits.values()) {
                         expect(exit.dest.channel.messages.cache).toHaveSize(0);
                         for (const occupant of exit.dest.occupants) {
                             expect(occupant.notificationChannel.messages.cache).toHaveSize(0);

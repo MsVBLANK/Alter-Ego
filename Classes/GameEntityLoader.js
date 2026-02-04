@@ -499,7 +499,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			}
 			// Now go through and make the dest for each exit an actual Room object.
 			this.game.rooms.forEach(room => {
-				room.exitCollection.forEach(exit => {
+				room.exits.forEach(exit => {
 					const dest = this.game.entityFinder.getRoom(exit.destDisplayName);
 					if (dest) exit.dest = dest;
 				});
@@ -536,7 +536,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
 		if (room.iconURL !== "" && !iconURLSyntax.test(room.iconURL))
 			return new Error(`Couldn't load room on row ${room.row}. The icon URL must have a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
-		for (const exit of room.exitCollection.values()) {
+		for (const exit of room.exits.values()) {
 			if (exit.name === "" || exit.name === null || exit.name === undefined)
 				return new Error(`Couldn't load exit on row ${exit.row}. No exit name was given.`);
 			if (isNaN(exit.pos.x))
@@ -551,7 +551,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load exit on row ${exit.row}. The destination given is not a room.`);
 			if (exit.link === "" || exit.link === null || exit.link === undefined)
 				return new Error(`Couldn't load exit on row ${exit.row}. No linked exit was given.`);
-			const linkedExit = exit.dest.exitCollection.get(exit.link);
+			const linkedExit = exit.dest.exits.get(exit.link);
 			if (!linkedExit) 
 				return new Error(`Couldn't load exit on row ${exit.row}. Room "${exit.dest.displayName}" does not have an exit that links back to it.`);
 		}

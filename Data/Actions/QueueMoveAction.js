@@ -40,7 +40,7 @@ export default class QueueMoveAction extends Action {
 			else {
 				// Otherwise, check that the desired room is adjacent to the current room.
 				const destRoomId = Room.generateValidId(destinationString);
-				for (const targetExit of currentRoom.exitCollection.values()) {
+				for (const targetExit of currentRoom.exits.values()) {
 					if (targetExit.dest.id === destRoomId) {
 						exit = targetExit;
 						break;

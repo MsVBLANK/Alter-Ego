@@ -190,7 +190,7 @@ describe('GameEntityLoader test', () => {
                     const roomDescriptionText = room.description.toString();
                     expect(roomDescriptionText).not.toContain("<item>");
                     expect(roomDescriptionText).not.toContain("</item>");
-                    for (const exit of room.exitCollection.values()) {
+                    for (const exit of room.exits.values()) {
                         const exitDescriptionText = exit.description.toString();
                         expect(exitDescriptionText).not.toContain("<item>");
                         expect(exitDescriptionText).not.toContain("</item>");

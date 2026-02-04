@@ -91,7 +91,7 @@ export async function execute(game, command, args, player, callee) {
             // Check to see if the given room is adjacent to the current player's room.
             let exit;
             let entrance;
-            for (const targetExit of currentRoom.exitCollection.values()) {
+            for (const targetExit of currentRoom.exits.values()) {
                 if (targetExit.dest.id === desiredRoom.id) {
                     exit = targetExit;
                     entrance = game.entityFinder.getExit(desiredRoom, exit.link);

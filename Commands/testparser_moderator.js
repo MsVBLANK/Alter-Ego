@@ -141,7 +141,7 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += room.displayName + EOL;
 
-            for (const exit of room.exitCollection.values()) {
+            for (const exit of room.exits.values()) {
                 text += "      ";
                 text += exit.name + EOL;
                 const parsedDescription = parseDescriptionWithErrors(exit.description, room, player);

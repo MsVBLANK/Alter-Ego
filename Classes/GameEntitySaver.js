@@ -38,8 +38,8 @@ export default class GameEntitySaver {
 			/** @type {string[][]} */
 			let roomValues = [];
 			this.game.rooms.forEach(room => {
-				room.exitCollection.forEach(exit => {
-					const firstExit = room.exitCollection.firstKey() === exit.name;
+				room.exits.forEach(exit => {
+					const firstExit = room.exits.firstKey() === exit.name;
 					roomValues.push([
 						firstExit ? room.displayName : "",
 						firstExit ? Array.from(room.tags).join(", ") : "",

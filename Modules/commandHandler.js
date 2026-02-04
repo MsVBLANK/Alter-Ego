@@ -88,7 +88,7 @@ export async function executeCommand(commandStr, game, message, player, callee) 
         }
         if (message.channel.type === ChannelType.DM
             || message.channel.type === ChannelType.GuildText && game.guildContext.roomCategories.includes(message.channel.parentId)) {
-            for (const livingPlayer of game.livingPlayersCollection.values()) {
+            for (const livingPlayer of game.livingPlayers.values()) {
                 if (livingPlayer.id === message.author.id) {
                     player = livingPlayer;
                     break;

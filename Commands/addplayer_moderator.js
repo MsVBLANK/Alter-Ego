@@ -44,7 +44,7 @@ export async function execute(game, message, command, args) {
     const member = await game.guildContext.guild.members.fetch(mentionedMember.id);
     if (!member) return game.communicationHandler.reply(message, `Couldn't find "${args[0]}" in the server. If the user you want isn't appearing in Discord's suggestions, type @ and enter their full username.`);
 
-    for (const player of game.playersCollection.values()) {
+    for (const player of game.players.values()) {
         if (member.id === player.id)
             return game.communicationHandler.reply(message, "That user is already playing.");
     }
@@ -71,8 +71,8 @@ export async function execute(game, message, command, args) {
         game
     );
 
-    game.playersCollection.set(player.name, player);
-    game.livingPlayersCollection.set(player.name, player);
+    game.players.set(player.name, player);
+    game.livingPlayers.set(player.name, player);
     member.roles.add(game.guildContext.playerRole);
 
     const playerCells = [];
@@ -100,7 +100,7 @@ export async function execute(game, message, command, args) {
         row = row.concat(playerdefaults.defaultInventory[i]);
         for (let j = 0; j < row.length; j++) {
             if (row[j].includes('#'))
-                row[j] = row[j].replace(/#/g, String(game.playersCollection.size));
+                row[j] = row[j].replace(/#/g, String(game.players.size));
         }
         inventoryCells.push(row);
     }

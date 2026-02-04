@@ -34,7 +34,7 @@ export default class GameEntityFinder {
 	 */
 	getRoom(id) {
 		if (!id) return;
-		return this.game.roomsCollection.get(Room.generateValidId(id));
+		return this.game.rooms.get(Room.generateValidId(id));
 	}
 
 	/**
@@ -66,7 +66,7 @@ export default class GameEntityFinder {
 	 */
 	getPrefab(id) {
 		if (!id) return;
-		return this.game.prefabsCollection.get(Game.generateValidEntityName(id));
+		return this.game.prefabs.get(Game.generateValidEntityName(id));
 	}
 
 	/**
@@ -121,7 +121,7 @@ export default class GameEntityFinder {
 	 */
 	getEvent(id) {
 		if (!id) return;
-		return this.game.eventsCollection.get(Game.generateValidEntityName(id));
+		return this.game.events.get(Game.generateValidEntityName(id));
 	}
 
 	/**
@@ -131,7 +131,7 @@ export default class GameEntityFinder {
 	 */
 	getStatusEffect(id) {
 		if (!id) return;
-		return this.game.statusEffectsCollection.get(Status.generateValidId(id));
+		return this.game.statusEffects.get(Status.generateValidId(id));
 	}
 
 	/**
@@ -141,7 +141,7 @@ export default class GameEntityFinder {
 	 */
 	getPlayer(name) {
 		if (!name) return;
-		return this.game.playersCollection.get(Game.generateValidEntityName(name));
+		return this.game.players.get(Game.generateValidEntityName(name));
 	}
 
 	/**
@@ -151,7 +151,7 @@ export default class GameEntityFinder {
 	 */
 	getLivingPlayer(name) {
 		if (!name) return;
-		return this.game.livingPlayersCollection.get(Game.generateValidEntityName(name));
+		return this.game.livingPlayers.get(Game.generateValidEntityName(name));
 	}
 
 	/**
@@ -161,7 +161,7 @@ export default class GameEntityFinder {
 	 */
 	getLivingPlayerById(id) {
 		if (!id) return;
-		for (const livingPlayer of this.game.livingPlayersCollection.values()) {
+		for (const livingPlayer of this.game.livingPlayers.values()) {
 			if (!livingPlayer.isNPC && livingPlayer.id === id) return livingPlayer;
 		}
 	}
@@ -173,7 +173,7 @@ export default class GameEntityFinder {
 	 */
 	getDeadPlayer(name) {
 		if (!name) return;
-		return this.game.deadPlayersCollection.get(Game.generateValidEntityName(name));
+		return this.game.deadPlayers.get(Game.generateValidEntityName(name));
 	}
 
 	/**
@@ -266,7 +266,7 @@ export default class GameEntityFinder {
 	 */
 	getGesture(id) {
 		if (!id) return;
-		return this.game.gesturesCollection.get(Gesture.generateValidId(id));
+		return this.game.gestures.get(Gesture.generateValidId(id));
 	}
 
 	/**
@@ -303,7 +303,7 @@ export default class GameEntityFinder {
 	 */
 	getWhisper(players, hidingSpotName) {
 		if (!players || players.length === 0) return;
-		return this.game.whispersCollection.get(Whisper.generateValidId(players, players.at(0).location, hidingSpotName));
+		return this.game.whispers.get(Whisper.generateValidId(players, players.at(0).location, hidingSpotName));
 	}
 
 	/**
@@ -313,7 +313,7 @@ export default class GameEntityFinder {
 	 */
 	getWhisperByChannelId(channelId) {
 		if (!channelId) return;
-		return this.game.whispersCollection.find(whisper => whisper.channel.id === channelId);
+		return this.game.whispers.find(whisper => whisper.channel.id === channelId);
 	}
 
 	/**
@@ -329,7 +329,7 @@ export default class GameEntityFinder {
 		if (id) selectedFilters.set(Room.generateValidId(id), fuzzySearch ? matchers.roomIdContains : matchers.roomIdMatches);
 		if (tag) selectedFilters.set(tag.trim(), matchers.roomTagMatches);
 		if (occupied !== undefined && occupied !== null) selectedFilters.set(occupied, matchers.roomOccupiedMatches);
-		return this.game.roomsCollection.filter(room => selectedFilters.every((filterFunction, key) => filterFunction(room, key))).map(room => room);
+		return this.game.rooms.filter(room => selectedFilters.every((filterFunction, key) => filterFunction(room, key))).map(room => room);
 	}
 
 	/**
@@ -394,7 +394,7 @@ export default class GameEntityFinder {
 			equipmentSlots.forEach((equipmentSlot, i) => equipmentSlots[i] = Game.generateValidEntityName(equipmentSlot));
 			selectedFilters.set(equipmentSlots.join(','), matchers.prefabEquipmentSlotsMatches);
 		}
-		return this.game.prefabsCollection.filter(prefab => selectedFilters.every((filterFunction, key) => filterFunction(prefab, key))).map(prefab => prefab);
+		return this.game.prefabs.filter(prefab => selectedFilters.every((filterFunction, key) => filterFunction(prefab, key))).map(prefab => prefab);
 	}
 
 	/**
@@ -505,7 +505,7 @@ export default class GameEntityFinder {
 			refreshes.forEach((refresh, i) => refreshes[i] = Status.generateValidId(refresh));
 			selectedFilters.set(refreshes.join(','), matchers.eventRefreshesMatches);
 		}
-		return this.game.eventsCollection.filter(event => selectedFilters.every((filterFunction, key) => filterFunction(event, key))).map(event => event);
+		return this.game.events.filter(event => selectedFilters.every((filterFunction, key) => filterFunction(event, key))).map(event => event);
 	}
 
 	/**
@@ -529,7 +529,7 @@ export default class GameEntityFinder {
 			attributes.forEach((attribute, i) => attributes[i] = attribute.trim());
 			selectedFilters.set(attributes.join(','), matchers.statusAttributeMatches);
 		}
-		return this.game.statusEffectsCollection.filter(status => selectedFilters.every((filterFunction, key) => filterFunction(status, key))).map(status => status);
+		return this.game.statusEffects.filter(status => selectedFilters.every((filterFunction, key) => filterFunction(status, key))).map(status => status);
 	}
 
 	/**
@@ -553,7 +553,7 @@ export default class GameEntityFinder {
 			statuses.forEach((status, i) => statuses[i] = Status.generateValidId(status));
 			selectedFilters.set(statuses.join(','), matchers.playerStatusMatches);
 		}
-		return this.game.livingPlayersCollection.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
+		return this.game.livingPlayers.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
 	}
 
 	/**
@@ -567,7 +567,7 @@ export default class GameEntityFinder {
 		let selectedFilters = new Collection();
 		if (name) selectedFilters.set(name.toLowerCase().trim(), fuzzySearch ? matchers.playerNameOrDisplayNameContains : matchers.playerNameOrDisplayNameMatches);
 		if (isNPC !== undefined && isNPC !== null) selectedFilters.set(isNPC, matchers.playerNPCMatches);
-		return this.game.deadPlayersCollection.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
+		return this.game.deadPlayers.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
 	}
 
 	/**
@@ -610,7 +610,7 @@ export default class GameEntityFinder {
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (id) selectedFilters.set(Gesture.generateValidId(id), fuzzySearch ? matchers.gestureIdContains : matchers.gestureIdMatches);
-		return this.game.gesturesCollection.filter(gesture => selectedFilters.every((filterFunction, key) => filterFunction(gesture, key))).map(gesture => gesture);
+		return this.game.gestures.filter(gesture => selectedFilters.every((filterFunction, key) => filterFunction(gesture, key))).map(gesture => gesture);
 	}
 
 	/**

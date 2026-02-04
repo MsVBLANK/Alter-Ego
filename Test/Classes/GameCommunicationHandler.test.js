@@ -16,14 +16,14 @@ describe('GameCommunicationHandler test', () => {
             author: player.member.user,
             channel: player.location.channel
         });
-        spectateChannelIds = game.livingPlayersCollection.filter(player => player.spectateChannel !== null).map(player => player.spectateChannel.id);
+        spectateChannelIds = game.livingPlayers.filter(player => player.spectateChannel !== null).map(player => player.spectateChannel.id);
     });
 
 	test('cached actions contain mirrored channels after mirrorAnnouncement', () => {
         const sendWebhookSpectateMessageSpy = vi.spyOn(messageHandler, 'sendWebhookSpectateMessage').mockImplementation(async (player, dialog, webHookUsername) => {});
 		const dialog = new Dialog(game, message, player, player.location, undefined, true);
 		const action = new AnnounceAction(game, message, player, player.location, false);
-		for (const livingPlayer of game.livingPlayersCollection.values())
+		for (const livingPlayer of game.livingPlayers.values())
 			game.communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, action, dialog);
 		expect(sendWebhookSpectateMessageSpy).toHaveBeenCalledTimes(spectateChannelIds.length);
         for (const spectateChannelId of spectateChannelIds) {
@@ -40,7 +40,7 @@ describe('GameCommunicationHandler test', () => {
 		for (let i = 0; i < actionCacheLimit; i++) {
 			actions.push(new AnnounceAction(game, message, player, player.location, false));
 			const dialog = new Dialog(game, message, player, player.location, undefined, true);
-			for (const livingPlayer of game.livingPlayersCollection.values())
+			for (const livingPlayer of game.livingPlayers.values())
 				game.communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, actions[i], dialog);
 		}
 
@@ -49,7 +49,7 @@ describe('GameCommunicationHandler test', () => {
 
 		// Re-announcing the first action should NOT trigger another message (still in cache).
 		let dialog = new Dialog(game, message, player, player.location, undefined, true);
-		for (const livingPlayer of game.livingPlayersCollection.values())
+		for (const livingPlayer of game.livingPlayers.values())
 			game.communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, actions[0], dialog);
 		expect(sendWebhookSpectateMessageSpy).toHaveBeenCalledTimes(actionCacheLimit * spectateChannelIds.length);
 
@@ -57,7 +57,7 @@ describe('GameCommunicationHandler test', () => {
 		for (let i = actionCacheLimit; i < actionCacheLimit + 5; i++) {
 			actions.push(new AnnounceAction(game, message, player, player.location, false));
 			const dialog = new Dialog(game, message, player, player.location, undefined, true);
-			for (const livingPlayer of game.livingPlayersCollection.values())
+			for (const livingPlayer of game.livingPlayers.values())
 				game.communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, actions[i], dialog);
 		}
         expect(game.communicationHandler.getActionCache().size).toBe(actionCacheLimit);
@@ -67,7 +67,7 @@ describe('GameCommunicationHandler test', () => {
 
 		// The oldest action (actions[0]) should have been removed from the cache, but the action has already been mirrored, so it shouldn't be mirrored again.
 		dialog = new Dialog(game, message, player, player.location, undefined, true);
-		for (const livingPlayer of game.livingPlayersCollection.values())
+		for (const livingPlayer of game.livingPlayers.values())
 			game.communicationHandler.mirrorDialogInSpectateChannel(livingPlayer, actions[0], dialog);
 		expect(sendWebhookSpectateMessageSpy).toHaveBeenCalledTimes((actionCacheLimit + 5) * spectateChannelIds.length);
         expect(game.communicationHandler.getActionCache().size).toBe(actionCacheLimit);

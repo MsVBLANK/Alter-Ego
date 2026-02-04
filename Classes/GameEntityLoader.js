@@ -63,7 +63,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			const gestureCount = await this.loadGestures(false, errors);
 			const flagCount = await this.loadFlags(false, errors);
 
-			for (const room of this.game.roomsCollection.values()) {
+			for (const room of this.game.rooms.values()) {
 				const error = this.checkRoom(room);
 				if (error instanceof Error) errors.push(error);
 			}
@@ -71,7 +71,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				const error = this.checkFixture(fixture);
 				if (error instanceof Error) errors.push(error);
 			}
-			for (const prefab of this.game.prefabsCollection.values()) {
+			for (const prefab of this.game.prefabs.values()) {
 				const error = this.checkPrefab(prefab);
 				if (error instanceof Error) errors.push(error);
 			}
@@ -87,15 +87,15 @@ export default class GameEntityLoader extends GameEntityManager {
 				const error = this.checkPuzzle(puzzle);
 				if (error instanceof Error) errors.push(error);
 			}
-			for (const event of this.game.eventsCollection.values()) {
+			for (const event of this.game.events.values()) {
 				const error = this.checkEvent(event);
 				if (error instanceof Error) errors.push(error);
 			}
-			for (const statusEffect of this.game.statusEffectsCollection.values()) {
+			for (const statusEffect of this.game.statusEffects.values()) {
 				const error = this.checkStatusEffect(statusEffect);
 				if (error instanceof Error) errors.push(error);
 			}
-			for (const player of this.game.playersCollection.values()) {
+			for (const player of this.game.players.values()) {
 				const error = await this.checkPlayer(player);
 				if (error instanceof Error) errors.push(error);
 			}
@@ -103,7 +103,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				const error = this.checkInventoryItem(inventoryItem);
 				if (error instanceof Error) errors.push(error);
 			}
-			for (const gesture of this.game.gesturesCollection.values()) {
+			for (const gesture of this.game.gestures.values()) {
 				const error = this.checkGesture(gesture);
 				if (error instanceof Error) errors.push(error);
 			}
@@ -122,14 +122,14 @@ export default class GameEntityLoader extends GameEntityManager {
 					if (!this.game.settings.debug)
 						this.game.botContext.updatePresence();
 					if (sendPlayerRoomDescriptions) {
-						this.game.livingPlayersCollection.forEach(player => {
+						this.game.livingPlayers.forEach(player => {
 							player.sendDescription(player.location.description, player.location);
 						});
 					}
 				}
 
 				// Start event timers.
-				this.game.eventsCollection.forEach(event => {
+				this.game.events.forEach(event => {
 					if (event.ongoing && event.duration !== null)
 						event.startTimer();
 					if (event.ongoing && (event.effects.length > 0 || event.refreshes.length > 0))
@@ -168,8 +168,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getRooms(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.roomsCollection);
-				resolve(this.game.roomsCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.rooms);
+				resolve(this.game.rooms.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -208,8 +208,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getPrefabs(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.prefabsCollection);
-				resolve(this.game.prefabsCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.prefabs);
+				resolve(this.game.prefabs.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -288,8 +288,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getEvents(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.eventsCollection);
-				resolve(this.game.eventsCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.events);
+				resolve(this.game.events.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -308,8 +308,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getStatusEffects(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.statusEffectsCollection);
-				resolve(this.game.statusEffectsCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.statusEffects);
+				resolve(this.game.statusEffects.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -328,8 +328,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getPlayers(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.playersCollection);
-				resolve(this.game.playersCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.players);
+				resolve(this.game.players.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -370,8 +370,8 @@ export default class GameEntityLoader extends GameEntityManager {
 		return new Promise(async (resolve) => {
 			try {
 				await this.#getGestures(doErrorChecking);
-				if (this.game.settings.debug) this.#printData(this.game.gesturesCollection);
-				resolve(this.game.gesturesCollection.size);
+				if (this.game.settings.debug) this.#printData(this.game.gestures);
+				resolve(this.game.gestures.size);
 			}
 			catch (error) {
 				errors.push(...error);
@@ -495,10 +495,10 @@ export default class GameEntityLoader extends GameEntityManager {
 					errors.push(new Error(`Couldn't load room on row ${room.row}. Another room with the same ID already exists.`));
 					continue;
 				}
-				this.game.roomsCollection.set(room.id, room);
+				this.game.rooms.set(room.id, room);
 			}
 			// Now go through and make the dest for each exit an actual Room object.
-			this.game.roomsCollection.forEach(room => {
+			this.game.rooms.forEach(room => {
 				room.exitCollection.forEach(exit => {
 					const dest = this.game.entityFinder.getRoom(exit.destDisplayName);
 					if (dest) exit.dest = dest;
@@ -788,11 +788,11 @@ export default class GameEntityLoader extends GameEntityManager {
 						nextStageAssignments.set(prefab.nextStageId, assignmentsList);
 					}
 				}
-				this.game.prefabsCollection.set(prefab.id, prefab);
+				this.game.prefabs.set(prefab.id, prefab);
 				this.updatePrefabReferences(prefab);
 			}
 			if (doErrorChecking) {
-				this.game.prefabsCollection.forEach(prefab => {
+				this.game.prefabs.forEach(prefab => {
 					const error = this.checkPrefab(prefab);
 					if (error instanceof Error) errors.push(error);
 				});
@@ -1454,7 +1454,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const error = this.checkEvent(event);
 					if (error instanceof Error) errors.push(error);
 				}
-				this.game.eventsCollection.set(event.id, event);
+				this.game.events.set(event.id, event);
 				this.updateEventReferences(event);
 			}
 			if (errors.length > 0) {
@@ -1587,10 +1587,10 @@ export default class GameEntityLoader extends GameEntityManager {
 					errors.push(new Error(`Couldn't load status effect on row ${status.row}. Another status effect with this ID already exists.`));
 					continue;
 				}
-				this.game.statusEffectsCollection.set(status.id, status);
+				this.game.statusEffects.set(status.id, status);
 				this.updateStatusEffectReferences(status);
 			}
-			this.game.statusEffectsCollection.forEach(status => {
+			this.game.statusEffects.forEach(status => {
 				Status.postProcess(status);
 				if (doErrorChecking) {
 					const error = this.checkStatusEffect(status);
@@ -1736,7 +1736,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					row + 3,
 					this.game
 				);
-				if (this.game.playersCollection.has(Game.generateValidEntityName(player.name))) {
+				if (this.game.players.has(Game.generateValidEntityName(player.name))) {
 					errors.push(new Error(`Couldn't load player on row ${player.row}. Another player with this name already exists.`));
 					continue;
 				}
@@ -1745,7 +1745,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				if (player.isNPC) player.displayIcon = player.id;
 				player.setPronouns(player.originalPronouns, player.pronounString);
 				player.setPronouns(player.pronouns, player.pronounString);
-				this.game.playersCollection.set(Game.generateValidEntityName(player.name), player);
+				this.game.players.set(Game.generateValidEntityName(player.name), player);
 
 				if (player.alive) {
 					if (player.member !== null || player.isNPC) {
@@ -1775,16 +1775,16 @@ export default class GameEntityLoader extends GameEntityManager {
 							if (invalidStatusFound) continue;
 						}
 					}
-					this.game.livingPlayersCollection.set(Game.generateValidEntityName(player.name), player);
+					this.game.livingPlayers.set(Game.generateValidEntityName(player.name), player);
 				}
 				else
-					this.game.deadPlayersCollection.set(Game.generateValidEntityName(player.name), player);
+					this.game.deadPlayers.set(Game.generateValidEntityName(player.name), player);
 			}
 
 			// Now load player inventories.
 			await this.#getInventoryItems(false);
 			if (doErrorChecking) {
-				for (const player of this.game.playersCollection.values()) {
+				for (const player of this.game.players.values()) {
 					let error = await this.checkPlayer(player);
 					if (error instanceof Error) errors.push(error);
 					// Get all inventory items that are assigned to this player and check for errors on them.
@@ -2013,7 +2013,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				}
 				this.game.inventoryItems.push(inventoryItem);
 			}
-			this.game.playersCollection.forEach(player => {
+			this.game.players.forEach(player => {
 				const playerEquipmentSlots = equipmentSlots.get(player.name);
 				if (playerEquipmentSlots) {
 					player.setInventory(playerEquipmentSlots);
@@ -2150,7 +2150,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					let error = this.checkGesture(gesture);
 					if (error instanceof Error) errors.push(error);
 				}
-				this.game.gesturesCollection.set(gesture.id, gesture);
+				this.game.gestures.set(gesture.id, gesture);
 			}
 			if (errors.length > 0) {
 				this.game.loadedEntitiesWithErrors.add("Gestures");

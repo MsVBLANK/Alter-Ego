@@ -138,7 +138,7 @@ export default class Game {
 	 * A collection of all rooms in the game. The key for each room is its id.
 	 * @type {Collection<string, Room>}
 	 */
-	roomsCollection;
+	rooms;
 	/** 
 	 * An array of all fixtures in the game. Deprecated. Use fixtures instead.
 	 * @deprecated
@@ -154,7 +154,7 @@ export default class Game {
 	 * A collection of all prefabs in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Prefab>}
 	 */
-	prefabsCollection;
+	prefabs;
 	/** 
 	 * An array of all recipes in the game.
 	 * @type {Recipe[]}
@@ -180,27 +180,27 @@ export default class Game {
 	 * A collection of all events in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Event>}
 	 */
-	eventsCollection;
+	events;
 	/**
 	 * A collection of all status effects in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Status>}
 	 */
-	statusEffectsCollection;
+	statusEffects;
 	/**
 	 * A collection of all players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
 	 */
-	playersCollection;
+	players;
 	/**
 	 * A collection of all living players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
 	 */
-	livingPlayersCollection;
+	livingPlayers;
 	/**
 	 * A collection of all dead players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
 	 */
-	deadPlayersCollection;
+	deadPlayers;
 	/**
 	 * An array of all inventory items in the game. 
 	 * @type {InventoryItem[]}
@@ -210,7 +210,7 @@ export default class Game {
 	 * A collection of all gestures in the game. The key for each gesture is its id.
 	 * @type {Collection<string, Gesture>}
 	 */
-	gesturesCollection;
+	gestures;
 	/** 
 	 * A collection of all flags in the game, where the key is the flag's ID.
 	 * @type {Collection<string, Flag>}
@@ -220,7 +220,7 @@ export default class Game {
 	 * A collection of all whispers in the game. The key for each whisper is its channel name. These are not saved to the sheet.
 	 * @type {Collection<string, Whisper>}
 	 */
-	whispersCollection;
+	whispers;
 	/**
 	 * A queue of messages to be sent by the messageHandler.
 	 * @type {PriorityQueue}
@@ -265,23 +265,23 @@ export default class Game {
 		this.heated = false;
 		this.editMode = false;
 		this.loadedEntitiesWithErrors = new Set();
-		this.roomsCollection = new Collection();
+		this.rooms = new Collection();
 		this.objects = [];
 		this.fixtures = [];
-		this.prefabsCollection = new Collection();
+		this.prefabs = new Collection();
 		this.recipes = [];
 		this.items = [];
 		this.roomItems = [];
 		this.puzzles = [];
-		this.eventsCollection = new Collection();
-		this.statusEffectsCollection = new Collection();
-		this.playersCollection = new Collection();
-		this.livingPlayersCollection = new Collection();
-		this.deadPlayersCollection = new Collection();
+		this.events = new Collection();
+		this.statusEffects = new Collection();
+		this.players = new Collection();
+		this.livingPlayers = new Collection();
+		this.deadPlayers = new Collection();
 		this.inventoryItems = [];
-		this.gesturesCollection = new Collection();
+		this.gestures = new Collection();
 		this.flags = new Collection();
-		this.whispersCollection = new Collection();
+		this.whispers = new Collection();
 		this.messageQueue = new PriorityQueue();
 
 		// Send the messages in the queue every quarter of a second.
@@ -298,7 +298,7 @@ export default class Game {
 		this.#eventTriggerInterval = setInterval(() => {
 			if (this.inProgress) {
 				const now = DateTime.now();
-				this.eventsCollection.forEach(event => {
+				this.events.forEach(event => {
 					if (!event.ongoing) {
 						for (let triggerTimeString of event.triggerTimesStrings) {
 							const time = Event.parseTriggerTime(triggerTimeString);

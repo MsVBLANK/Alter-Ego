@@ -583,7 +583,7 @@ export function insertInventoryItems(player, items, equipmentSlot) {
                 game.inventoryItems[i].row = newRow;
 
             // Update the rows for all Player EquipmentSlots.
-            game.playersCollection.forEach(player => {
+            game.players.forEach(player => {
                 player.inventoryCollection.forEach(equipmentSlot => {
                     if (equipmentSlot.equippedItem === null) equipmentSlot.row = equipmentSlot.items[0].row;
                     else equipmentSlot.row = equipmentSlot.equippedItem.row;

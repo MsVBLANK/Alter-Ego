@@ -186,7 +186,7 @@ describe('GameEntityLoader test', () => {
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 expect(errors).toEqual([]);
                 expect(roomCount).toBe(198);
-                for (const room of game.roomsCollection.values()) {
+                for (const room of game.rooms.values()) {
                     const roomDescriptionText = room.description.toString();
                     expect(roomDescriptionText).not.toContain("<item>");
                     expect(roomDescriptionText).not.toContain("</item>");
@@ -340,11 +340,11 @@ describe('GameEntityLoader test', () => {
 
         describe('standard prefab response', () => {
             test('errorChecking true', async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
                 expect(prefabCount).toBe(1494);
-                for (const prefab of game.prefabsCollection.values()) {
+                for (const prefab of game.prefabs.values()) {
                     const descriptionText = prefab.description.toString();
                     expect(descriptionText).not.toContain("<item>");
                     expect(descriptionText).not.toContain("</item>");
@@ -356,8 +356,8 @@ describe('GameEntityLoader test', () => {
     describe('loadRecipes test', () => {
         describe('erroneous recipe response', () => {
             beforeEach(async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
             });
 
             test('incomplete recipes', async () => {
@@ -409,8 +409,8 @@ describe('GameEntityLoader test', () => {
 
         describe('standard recipe response', () => {
             test('errorChecking true', async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
                 expect(recipeCount).toBe(488);
@@ -421,11 +421,11 @@ describe('GameEntityLoader test', () => {
     describe('loadRoomItems test', () => {
         describe('erroneous room item response', () => {
             beforeEach(async () => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
                 if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
                 if (game.puzzles.length === 0) await game.entityLoader.loadPuzzles(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 if (game.inventoryItems.length === 0) await game.entityLoader.loadInventoryItems(false);
             });
 
@@ -499,11 +499,11 @@ describe('GameEntityLoader test', () => {
 
         describe('standard room item response', () => {
             test('errorChecking true', async () => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
                 if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
                 if (game.puzzles.length === 0) await game.entityLoader.loadPuzzles(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
                 expect(roomItemCount).toBe(1766);
@@ -541,10 +541,10 @@ describe('GameEntityLoader test', () => {
     describe('loadPuzzles test', () => {
         describe('erroneous puzzle response', () => {
             beforeEach(async() => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
                 if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
             });
 
             test('incomplete puzzles', async () => {
@@ -639,10 +639,10 @@ describe('GameEntityLoader test', () => {
 
         describe('standard puzzle response', () => {
             test('errorChecking true', async () => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
                 if (game.fixtures.length === 0) await game.entityLoader.loadFixtures(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const puzzleCount = await game.entityLoader.loadPuzzles(true, errors);
                 expect(errors).toEqual([]);
                 expect(puzzleCount).toBe(398);
@@ -706,7 +706,7 @@ describe('GameEntityLoader test', () => {
 
         describe('standard event response', () => {
             test('errorChecking true', async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const eventCount = await game.entityLoader.loadEvents(true, errors);
                 expect(errors).toEqual([]);
                 expect(eventCount).toBe(125);
@@ -781,9 +781,9 @@ describe('GameEntityLoader test', () => {
     describe('loadPlayers test', () => {
         describe('erroneous player response', () => {
             beforeEach(async () => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
             });
 
             test('incomplete players', async () => {
@@ -855,13 +855,13 @@ describe('GameEntityLoader test', () => {
 
         describe('standard player response', () => {
             test('errorChecking true', async () => {
-                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.rooms.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const playerCount = await game.entityLoader.loadPlayers(true, errors);
                 expect(errors).toEqual([]);
                 expect(playerCount).toBe(11);
-                for (const player of game.playersCollection.values()) {
+                for (const player of game.players.values()) {
                     const descriptionText = player.description.toString();
                     expect(descriptionText).not.toContain("<item>");
                     expect(descriptionText).not.toContain("</item>");
@@ -873,9 +873,9 @@ describe('GameEntityLoader test', () => {
     describe('loadInventoryItems test', () => {
         describe('standard inventory item response', () => {
             test('errorChecking true', async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
-                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
-                if (game.playersCollection.size === 0) await game.entityLoader.loadPlayers(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
+                if (game.players.size === 0) await game.entityLoader.loadPlayers(false);
                 const inventoryItemCount = await game.entityLoader.loadInventoryItems(true, errors);
                 expect(errors).toEqual([]);
                 expect(inventoryItemCount).toBe(130);
@@ -970,7 +970,7 @@ describe('GameEntityLoader test', () => {
     describe('loadGestures test', () => {
         describe('standard gesture response', () => {
             test('errorChecking true', async () => {
-                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const gestureCount = await game.entityLoader.loadGestures(true, errors);
                 expect(errors).toEqual([]);
                 expect(gestureCount).toBe(138);

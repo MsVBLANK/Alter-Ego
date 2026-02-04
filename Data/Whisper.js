@@ -127,7 +127,7 @@ export default class Whisper extends GameConstruct {
         this.revokeChannelAccess(player);
         this.playersCollection.delete(player.name);
         const newId = Whisper.generateValidId(this.playersCollection.map(player => player), this.location, this.hidingSpotName);
-        const deleteWhisper = this.playersCollection.size === 0 || this.getGame().whispersCollection.get(newId);
+        const deleteWhisper = this.playersCollection.size === 0 || this.getGame().whispers.get(newId);
         if (!deleteWhisper) {
             this.getGame().entityLoader.updateWhisperId(this, newId);
             if (narration) this.getGame().narrationHandler.narrateLeaveWhisper(action, player, this, narration);

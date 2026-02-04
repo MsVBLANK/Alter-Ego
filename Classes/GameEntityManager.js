@@ -55,7 +55,7 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearRooms() {
-		this.game.roomsCollection.clear();
+		this.game.rooms.clear();
 	}
 
 	/**
@@ -81,7 +81,7 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearPrefabs() {
-		this.game.prefabsCollection.clear();
+		this.game.prefabs.clear();
 	}
 
 	/**
@@ -113,13 +113,13 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearEvents() {
-		this.game.eventsCollection.forEach(event => {
+		this.game.events.forEach(event => {
 			if (event.timer !== null)
 				event.timer.stop();
 			if (event.effectsTimer !== null)
 				event.effectsTimer.stop();
 		});
-		this.game.eventsCollection.clear();
+		this.game.events.clear();
 	}
 
 	/**
@@ -127,7 +127,7 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearStatusEffects() {
-		this.game.statusEffectsCollection.clear();
+		this.game.statusEffects.clear();
 	}
 
 	/**
@@ -135,7 +135,7 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearPlayers() {
-		this.game.playersCollection.forEach(player => {
+		this.game.players.forEach(player => {
 			player.statusCollection.values().forEach(status => {
 				if (status.timer !== null)
 					status.timer.stop();
@@ -143,12 +143,12 @@ export default class GameEntityManager {
 			player.stopMoving();
 			player.setOffline();
 		});
-		this.game.roomsCollection.forEach(room => {
+		this.game.rooms.forEach(room => {
 			room.occupants.length = 0;
 		});
-		this.game.playersCollection.clear();
-		this.game.livingPlayersCollection.clear();
-		this.game.deadPlayersCollection.clear();
+		this.game.players.clear();
+		this.game.livingPlayers.clear();
+		this.game.deadPlayers.clear();
 	}
 
 	/**
@@ -164,7 +164,7 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearGestures() {
-		this.game.gesturesCollection.clear();
+		this.game.gestures.clear();
 	}
 
 	/**
@@ -181,7 +181,7 @@ export default class GameEntityManager {
 	 * @param {Room} room - The room to reference.
 	 */
 	updateRoomReferences(room) {
-		this.game.livingPlayersCollection.forEach(player => {
+		this.game.livingPlayers.forEach(player => {
 			if (Room.generateValidId(player.locationDisplayName) === room.id)
 				room.addPlayer(player);
 		});
@@ -197,7 +197,7 @@ export default class GameEntityManager {
 			if (Room.generateValidId(puzzle.locationDisplayName) === room.id)
 				puzzle.setLocation(room);
 		});
-		this.game.whispersCollection.forEach(whisper => {
+		this.game.whispers.forEach(whisper => {
 			if (whisper.locationId === room.id)
 				whisper.setLocation(room);
 		});
@@ -277,7 +277,7 @@ export default class GameEntityManager {
 	 * @param {Status} status 
 	 */
 	updateStatusEffectReferences(status) {
-		this.game.prefabsCollection.forEach(prefab => {
+		this.game.prefabs.forEach(prefab => {
 			prefab.effectsStrings.forEach((effectsString, i) => {
 				if (effectsString === status.id)
 					prefab.effects[i] = status;
@@ -287,7 +287,7 @@ export default class GameEntityManager {
 					prefab.cures[i] = status;
 			});
 		});
-		this.game.eventsCollection.forEach(event => {
+		this.game.events.forEach(event => {
 			event.effectsStrings.forEach((effectsString, i) => {
 				if (effectsString === status.id)
 					event.effects[i] = status;
@@ -297,7 +297,7 @@ export default class GameEntityManager {
 					event.refreshes[i] = status;
 			});
 		});
-		this.game.gesturesCollection.forEach(gesture => {
+		this.game.gestures.forEach(gesture => {
 			gesture.disabledStatusesStrings.forEach((disabledStatusString, i) => {
 				if (disabledStatusString === status.id)
 					gesture.disabledStatuses[i] = status;
@@ -328,7 +328,7 @@ export default class GameEntityManager {
 	async createWhisper(players, hidingSpotName) {
 		const whisper = new Whisper(this.game, players, hidingSpotName);
 		whisper.channel = await this.#createWhisperChannel(whisper);
-		this.game.whispersCollection.set(whisper.id, whisper);
+		this.game.whispers.set(whisper.id, whisper);
 		return whisper;
 	}
 
@@ -340,8 +340,8 @@ export default class GameEntityManager {
 	updateWhisperId(whisper, newId) {
 		const oldId = whisper.id;
 		whisper.id = newId;
-		this.game.whispersCollection.set(whisper.id, whisper);
-		this.game.whispersCollection.delete(oldId);
+		this.game.whispers.set(whisper.id, whisper);
+		this.game.whispers.delete(oldId);
 		whisper.channelName = whisper.id.substring(0, 100);
 		whisper.channel.edit({ name: whisper.channelName });
 	}
@@ -354,7 +354,7 @@ export default class GameEntityManager {
 		if (this.game.settings.autoDeleteWhisperChannels) await whisper.channel.delete();
 		else await whisper.channel.edit({ name: `archived-${whisper.location.id}`, lockPermissions: true });
 		whisper.playersCollection.clear();
-		this.game.whispersCollection.delete(whisper.id);
+		this.game.whispers.delete(whisper.id);
 	}
 
 	/**

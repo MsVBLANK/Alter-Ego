@@ -37,7 +37,7 @@ export default class GameEntitySaver {
 
 			/** @type {string[][]} */
 			let roomValues = [];
-			this.game.roomsCollection.forEach(room => {
+			this.game.rooms.forEach(room => {
 				room.exitCollection.forEach(exit => {
 					const firstExit = room.exitCollection.firstKey() === exit.name;
 					roomValues.push([
@@ -144,7 +144,7 @@ export default class GameEntitySaver {
 
 			/** @type {string[][]} */
 			let eventValues = [];
-			this.game.eventsCollection.forEach(event => {
+			this.game.events.forEach(event => {
 				eventValues.push([
 					event.id,
 					event.ongoing ? "TRUE" : "FALSE",
@@ -163,7 +163,7 @@ export default class GameEntitySaver {
 
 			/** @type {string[][]} */
 			let playerValues = [];
-			this.game.playersCollection.forEach(player => {
+			this.game.players.forEach(player => {
 				playerValues.push([
 					player.id,
 					player.name,

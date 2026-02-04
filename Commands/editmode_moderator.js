@@ -37,7 +37,7 @@ export async function execute(game, message, command, args) {
         try {
             await game.entitySaver.saveGame();
             game.editMode = true;
-            game.livingPlayersCollection.forEach(player => {
+            game.livingPlayers.forEach(player => {
                 player.stopMoving();
                 if (player.isConscious())
                     game.communicationHandler.sendMessageToPlayer(player, "A moderator has enabled edit mode. While the spreadsheet is being edited, you cannot do anything but speak. This should only take a few minutes.", false);
@@ -53,7 +53,7 @@ export async function execute(game, message, command, args) {
         if (game.loadedEntitiesWithErrors.size !== 0)
             return game.communicationHandler.reply(message, `Edit mode can't be disabled while there are errors on the sheet. Fix the errors found by the load command and then try again.`);
         game.editMode = false;
-        game.livingPlayersCollection.forEach(player => {
+        game.livingPlayers.forEach(player => {
             if (player.isConscious())
                 game.communicationHandler.sendMessageToPlayer(player, "Edit mode has been disabled. You are free to resume normal gameplay.", false);
         });

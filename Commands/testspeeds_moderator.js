@@ -68,14 +68,14 @@ export async function execute(game, message, command, args) {
  */
 async function testplayers(game, fileName) {
     let text = "";
-    for (const room of game.roomsCollection.values()) {
+    for (const room of game.rooms.values()) {
         text += room.id + '\n';
         for (const exit1 of room.exitCollection.values()) {
             for (const exit2 of room.exitCollection.values()) {
                 if (exit1.row !== exit2.row) {
                     text += "   ";
                     text += `${exit1.name} ==> ${exit2.name}\n`;
-                    for (const player of game.playersCollection.values()) {
+                    for (const player of game.players.values()) {
                         // Save the original coordinates.
                         const x = player.pos.x;
                         const y = player.pos.y;
@@ -109,7 +109,7 @@ async function testplayers(game, fileName) {
  */
 async function testspeeds(game, fileName) {
     let text = "";
-    for (const room of game.roomsCollection.values()) {
+    for (const room of game.rooms.values()) {
         text += room.id + '\n';
         for (const exit1 of room.exitCollection.values()) {
             for (const exit2 of room.exitCollection.values()) {

@@ -219,7 +219,7 @@ export default class Dialog extends GameConstruct {
 				}
 			}
 			if (this.speaker.hasBehaviorAttribute("sender")) {
-				for (const livingPlayer of game.livingPlayersCollection.values()) {
+				for (const livingPlayer of game.livingPlayers.values()) {
 					const receiverStatusEffects = livingPlayer.getBehaviorAttributeStatusEffects("receiver").map(status => status.id);
 					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name && !this.receiverRooms.has(livingPlayer.location.id)) {
 						for (const equipmentSlot of livingPlayer.inventoryCollection.values()) {
@@ -238,7 +238,7 @@ export default class Dialog extends GameConstruct {
 			this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
 			this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
 			if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0)
-				this.audioMonitoringRooms = game.roomsCollection.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
+				this.audioMonitoringRooms = game.rooms.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
 		}
 	}
 

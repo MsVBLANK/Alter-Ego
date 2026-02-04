@@ -137,7 +137,7 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "ROOMS:");
         let text = "";
-        for (const room of game.roomsCollection.values()) {
+        for (const room of game.rooms.values()) {
             text += "   ";
             text += room.displayName + EOL;
 
@@ -184,7 +184,7 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "PREFABS:");
         let text = "";
-        for (const prefab of game.prefabsCollection.values()) {
+        for (const prefab of game.prefabs.values()) {
             text += "   ";
             text += prefab.id + EOL;
 
@@ -386,7 +386,7 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "EVENTS:");
         let text = "";
-        for (const event of game.eventsCollection.values()) {
+        for (const event of game.events.values()) {
             text += "   ";
             text += event.id + EOL;
 
@@ -429,7 +429,7 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "STATUS EFFECTS:");
         let text = "";
-        for (const statusEffect of game.statusEffectsCollection.values()) {
+        for (const statusEffect of game.statusEffects.values()) {
             text += "   ";
             text += statusEffect.id + EOL;
 
@@ -472,7 +472,7 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "PLAYERS:");
         let text = "";
-        for (const player of game.playersCollection.values()) {
+        for (const player of game.players.values()) {
             text += "   ";
             text += player.name + EOL;
 

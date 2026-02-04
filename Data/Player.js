@@ -1546,9 +1546,9 @@ export default class Player extends ItemContainer {
         }
         this.statusCollection.clear();
         // Move player to dead list.
-        this.getGame().deadPlayersCollection.set(this.name, this);
+        this.getGame().deadPlayers.set(this.name, this);
         // Then remove them from living list.
-        this.getGame().livingPlayersCollection.delete(this.name);
+        this.getGame().livingPlayers.delete(this.name);
     }
 
     /**
@@ -1557,7 +1557,7 @@ export default class Player extends ItemContainer {
      * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
      */
     removeFromWhispers(narration, action) {
-        for (const whisper of this.getGame().whispersCollection.values()) {
+        for (const whisper of this.getGame().whispers.values()) {
             if (whisper.playersCollection.has(this.name))
                 whisper.removePlayer(this, narration, action);
         }

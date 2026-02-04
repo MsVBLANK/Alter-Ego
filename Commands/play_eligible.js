@@ -30,7 +30,7 @@ export function usage(settings) {
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
-    for (const player of game.playersCollection.values()) {
+    for (const player of game.players.values()) {
         if (message.author.id === player.id)
             return game.communicationHandler.reply(message, "You are already playing.");
     }
@@ -60,8 +60,8 @@ export async function execute(game, message, command, args) {
     );
     player.setPronouns(player.originalPronouns, player.pronounString);
     player.setPronouns(player.pronouns, player.pronounString);
-    game.playersCollection.set(player.name, player);
-    game.livingPlayersCollection.set(player.name, player);
+    game.players.set(player.name, player);
+    game.livingPlayers.set(player.name, player);
     member.roles.add(game.guildContext.playerRole);
 
     const channel = game.settings.debug ? game.guildContext.testingChannel : game.guildContext.generalChannel;

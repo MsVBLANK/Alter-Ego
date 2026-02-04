@@ -50,7 +50,7 @@ export async function execute(game, command, args, player, callee) {
     args.splice(0, 1);
 
     let input = args.join(" ").replace(/(?<=http(s?))@(?=.*?(jpg|jpeg|png|webp|avif))/g, ':').replace(/(?<=http(s?):.*?)\\(?=.*?(jpg|jpeg|png|webp|avif))/g, '/');
-    const iconURLSyntax = RegExp('(http(s?)://.*?.(jpg|jpeg|png|webp|avif))$');
+    const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|webp|avif))(\?[^\s]*)?$/;
     if (input === "") {
         if (player.isNPC) input = player.id;
         else input = null;

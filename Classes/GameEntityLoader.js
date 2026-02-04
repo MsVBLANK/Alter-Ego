@@ -533,7 +533,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load room on row ${room.row}. The room ID exceeds 100 characters in length.`);
 		if (room.channel === null || room.channel === undefined)
 			return new Error(`Couldn't load room "${room.id}" on row ${room.row}. There is no corresponding channel on the server, and a channel to accommodate the room could not be automatically created.`);
-		const iconURLSyntax = RegExp('(http(s?)://.*?.(jpg|jpeg|png|gif|webp|avif))$');
+		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
 		if (room.iconURL !== "" && !iconURLSyntax.test(room.iconURL))
 			return new Error(`Couldn't load room on row ${room.row}. The icon URL must have a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 		for (const exit of room.exitCollection.values()) {
@@ -1820,7 +1820,7 @@ export default class GameEntityLoader extends GameEntityManager {
 	async checkPlayer(player) {
 		if (!player.isNPC && (player.id === "" || player.id === null || player.id === undefined))
 			return new Error(`Couldn't load player on row ${player.row}. No Discord ID was given.`);
-		const iconURLSyntax = RegExp('(http(s?)://.*?.(jpg|jpeg|png|webp|avif))$');
+		const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|webp|avif))(\?[^\s]*)?$/;
 		if (player.isNPC && (player.id === "" || player.id === null || player.id === undefined || !iconURLSyntax.test(player.id)))
 			return new Error(`Couldn't load player on row ${player.row}. The Discord ID for an NPC must be a URL with a .jpg, .jpeg, .png, .webp, or .avif extension.`);
 		if (!player.isNPC && (player.member === null || player.member === undefined))

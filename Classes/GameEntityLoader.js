@@ -1768,8 +1768,7 @@ export default class GameEntityLoader extends GameEntityManager {
 											timeRemaining = Duration.fromObject(timeRemainingParsed);
 										else {
 											errors.push(new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid representation of the time remaining for the status "${statusDisplay.id}".`));
-                                            invalidStatusFound = true;
-                                            this.game.playersCollection.delete(Game.generateValidEntityName(player.name));
+											invalidStatusFound = true;
 											break;
 										}
 									} else timeRemaining = null;
@@ -1860,7 +1859,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (player.alive && !(player.location instanceof Room))
 			return new Error(`Couldn't load player on row ${player.row}. "${player.locationDisplayName}" is not a room.`);
 		for (let statusDisplay of player.statusDisplays) {
-			if (!player.hasStatus(statusDisplay.id))
+			if (!player.hasStatus(statusDisplay.id) && (statusDisplay.timeRemaining ? convertTimeStringToDurationUnits(statusDisplay.timeRemaining) !== undefined : true))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 		}
 		return;

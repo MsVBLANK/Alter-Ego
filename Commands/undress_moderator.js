@@ -75,13 +75,13 @@ export async function execute(game, message, command, args) {
             if (parsedInput.endsWith(items[i].name)) {
                 const itemContainer = items[i].container;
                 if (fixture === null || fixture !== null && itemContainer !== null && (itemContainer.name === fixture.name || itemContainer instanceof Puzzle && itemContainer.parentFixture.name === fixture.name)) {
-                    if (items[i].inventoryCollection.size === 0) return game.communicationHandler.reply(message, `${items[i].prefab.id} cannot hold items.`);
+                    if (items[i].inventory.size === 0) return game.communicationHandler.reply(message, `${items[i].prefab.id} cannot hold items.`);
                     containerItem = items[i];
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
                     // Check if a slot was specified.
                     if (parsedInput.endsWith(" OF")) {
                         parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
-                        for (const [id, slot] of containerItem.inventoryCollection) {
+                        for (const [id, slot] of containerItem.inventory) {
                             if (parsedInput.endsWith(id)) {
                                 containerItemSlot = slot;
                                 parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
@@ -105,14 +105,14 @@ export async function execute(game, message, command, args) {
         container = fixture.childPuzzle;
     else if (containerItem !== null) {
         container = containerItem;
-        if (containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
+        if (containerItemSlot === null) [containerItemSlot] = containerItem.inventory.values();
         slot = containerItemSlot;
         const totalSize = player.inventory.values().reduce((sum, item) => {
             return item.equippedItem !== null ? sum + item.equippedItem.prefab.size : sum;
         }, 0);
-        if (totalSize > containerItemSlot.capacity && container.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${containerItemSlot.id} of ${container.name} because it is too large.`);
+        if (totalSize > containerItemSlot.capacity && container.inventory.size !== 1) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${containerItemSlot.id} of ${container.name} because it is too large.`);
         else if (totalSize > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${container.name} because it is too large.`);
-        else if (containerItemSlot.takenSpace + totalSize > containerItemSlot.capacity && container.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${containerItemSlot.id} of ${container.name} because there isn't enough space left.`);
+        else if (containerItemSlot.takenSpace + totalSize > containerItemSlot.capacity && container.inventory.size !== 1) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${containerItemSlot.id} of ${container.name} because there isn't enough space left.`);
         else if (containerItemSlot.takenSpace + totalSize > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${player.name}'s inventory will not fit in ${container.name} because there isn't enough space left.`);
     }
     else {

@@ -20,7 +20,7 @@ describe("unstash_player command", () => {
     test("valid item from valid container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
         const container = game.entityFinder.getInventoryItem("PACK OF TOILET PAPER 2", player.name);
-        const [slot] = container.inventoryCollection.values();
+        const [slot] = container.inventory.values();
         const [item] = slot.items;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
@@ -30,7 +30,7 @@ describe("unstash_player command", () => {
     test("valid item without specified container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
         const containers = [game.entityFinder.getInventoryItem("PACK OF TOILET PAPER 2", player.name).container, game.entityFinder.getInventoryItem("PACK OF TOILET PAPER 3", player.name).container];
-        const slots = containers.flatMap(item => Array.from(item.inventoryCollection.values()));
+        const slots = containers.flatMap(item => Array.from(item.inventory.values()));
         const items = slots.flatMap(slot => slot.items).filter(item => item.name === "PACK OF TOILET PAPER");
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore

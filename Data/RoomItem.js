@@ -42,7 +42,7 @@ export default class RoomItem extends ItemInstance {
      * @override
      * @type {Collection<string, InventorySlot<RoomItem>>}
      */
-    inventoryCollection = new Collection();
+    inventory = new Collection();
 
     /**
      * @constructor
@@ -63,7 +63,7 @@ export default class RoomItem extends ItemInstance {
         this.locationDisplayName = locationDisplayName;
         this.location = null;
         this.accessible = accessible;
-        this.inventoryCollection = new Collection();
+        this.inventory = new Collection();
     }
 
     /**
@@ -96,7 +96,7 @@ export default class RoomItem extends ItemInstance {
                 prefabInventorySlot.weight,
                 items
             );
-            this.inventoryCollection.set(inventorySlot.id, inventorySlot);
+            this.inventory.set(inventorySlot.id, inventorySlot);
         });
     }
 
@@ -128,7 +128,7 @@ export default class RoomItem extends ItemInstance {
      */
     insertItem(item, slotId) {
         if (item.quantity !== 0) {
-            const inventorySlot = this.inventoryCollection.get(slotId);
+            const inventorySlot = this.inventory.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
             if (!isNaN(item.quantity)) this.addWeight(item.weight * item.quantity);
         }
@@ -141,7 +141,7 @@ export default class RoomItem extends ItemInstance {
      * @param {number} removedQuantity - The quantity of this item to remove.
      */
     removeItem(item, slotId, removedQuantity) {
-        const inventorySlot = this.inventoryCollection.get(slotId);
+        const inventorySlot = this.inventory.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
     }

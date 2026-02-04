@@ -525,7 +525,7 @@ describe('GameEntityLoader test', () => {
                         if (roomItem.container instanceof RoomItem)
                             expect(`${roomItem.container.getIdentifier()}/${roomItem.slot}`).toEqual(Game.generateValidEntityName(roomItem.containerName));
                     }
-                    expect(roomItem.inventoryCollection.size).toEqual(roomItem.prefab.inventory.size);
+                    expect(roomItem.inventory.size).toEqual(roomItem.prefab.inventory.size);
                     const descriptionText = roomItem.description.toString();
                     expect(descriptionText).not.toContain("<item>");
                     expect(descriptionText).not.toContain("</item>");
@@ -883,7 +883,7 @@ describe('GameEntityLoader test', () => {
                     if (inventoryItem.prefabId !== "") {
                         expect(inventoryItem.prefab).toBeInstanceOf(Prefab);
                         expect(inventoryItem.prefab.id).toEqual(Game.generateValidEntityName(inventoryItem.prefabId));
-                        expect(inventoryItem.inventoryCollection.size).toEqual(inventoryItem.prefab.inventory.size);
+                        expect(inventoryItem.inventory.size).toEqual(inventoryItem.prefab.inventory.size);
                     }
                     else expect(inventoryItem.prefab).toBe(null);
                     expect(inventoryItem.player).toBeInstanceOf(Player);
@@ -905,17 +905,17 @@ describe('GameEntityLoader test', () => {
                 expect(kyraJacket.items).toHaveLength(1);
                 expect(kyraJacket.equippedItem).not.toBeNull();
                 expect(kyraJacket.equippedItem.identifier).toBe("KYRAS LAB COAT 1");
-                expect(kyraJacket.equippedItem.inventoryCollection.size).toBe(2);
-                for (const inventorySlot of kyraJacket.equippedItem.inventoryCollection.values()) {
+                expect(kyraJacket.equippedItem.inventory.size).toBe(2);
+                for (const inventorySlot of kyraJacket.equippedItem.inventory.values()) {
                     expect(inventorySlot.takenSpace).toBe(0);
                     expect(inventorySlot.weight).toBe(0);
                 }
                 const kyraPants = kyra.inventory.get("PANTS");
                 expect(kyraPants.items).toHaveLength(2);
                 expect(kyraPants.equippedItem).not.toBeNull();
-                expect(kyraPants.equippedItem.inventoryCollection.size).toBe(2);
+                expect(kyraPants.equippedItem.inventory.size).toBe(2);
                 expect(kyraPants.items[1].prefab.id).toBe("MASTER KEY");
-                const kyraPantsRightPocket = kyraPants.equippedItem.inventoryCollection.get("RIGHT POCKET");
+                const kyraPantsRightPocket = kyraPants.equippedItem.inventory.get("RIGHT POCKET");
                 expect(kyraPantsRightPocket.takenSpace).toBe(1);
                 expect(kyraPantsRightPocket.weight).toBe(1);
                 expect(kyraPantsRightPocket.items).toHaveLength(1);
@@ -928,19 +928,19 @@ describe('GameEntityLoader test', () => {
                 expect(vivianBag.equippedItem).not.toBe(null);
                 expect(vivianBag.equippedItem.identifier).toBe("VIVIANS QUIVER");
                 expect(vivianBag.equippedItem.weight).toBe(20);
-                expect(vivianBag.equippedItem.inventoryCollection.size).toBe(1);
-                const vivianQuiver = vivianBag.equippedItem.inventoryCollection.get("QUIVER");
+                expect(vivianBag.equippedItem.inventory.size).toBe(1);
+                const vivianQuiver = vivianBag.equippedItem.inventory.get("QUIVER");
                 expect(vivianQuiver.takenSpace).toBe(5);
                 expect(vivianQuiver.weight).toBe(1);
                 expect(vivianQuiver.items).toHaveLength(1);
                 expect(vivianQuiver.items[0].identifier).toBe("WHITE JEANS 2");
                 const whiteJeans = vivianQuiver.items[0];
                 expect(whiteJeans.weight).toBe(19);
-                expect(whiteJeans.inventoryCollection.size).toBe(4);
-                const whiteJeansRightPocket = whiteJeans.inventoryCollection.get("RIGHT POCKET");
-                const whiteJeansLeftPocket = whiteJeans.inventoryCollection.get("LEFT POCKET");
-                const whiteJeansRightBackPocket = whiteJeans.inventoryCollection.get("RIGHT BACK POCKET");
-                const whiteJeansLeftBackPocket = whiteJeans.inventoryCollection.get("LEFT BACK POCKET");
+                expect(whiteJeans.inventory.size).toBe(4);
+                const whiteJeansRightPocket = whiteJeans.inventory.get("RIGHT POCKET");
+                const whiteJeansLeftPocket = whiteJeans.inventory.get("LEFT POCKET");
+                const whiteJeansRightBackPocket = whiteJeans.inventory.get("RIGHT BACK POCKET");
+                const whiteJeansLeftBackPocket = whiteJeans.inventory.get("LEFT BACK POCKET");
                 expect(whiteJeansRightBackPocket.items).toHaveLength(0);
                 expect(whiteJeansLeftBackPocket.items).toHaveLength(0);
                 expect(whiteJeansRightPocket.items).toHaveLength(1);
@@ -951,10 +951,10 @@ describe('GameEntityLoader test', () => {
                 expect(whiteJeansLeftPocket.items[0].identifier).toBe("PACK OF TOILET PAPER 3");
                 expect(whiteJeansRightPocket.items[0].weight).toBe(12);
                 expect(whiteJeansLeftPocket.items[0].weight).toBe(6);
-                expect(whiteJeansRightPocket.items[0].inventoryCollection.size).toBe(1);
-                expect(whiteJeansLeftPocket.items[0].inventoryCollection.size).toBe(1);
-                const tpPack2 = whiteJeansRightPocket.items[0].inventoryCollection.get("PACK");
-                const tpPack3 = whiteJeansLeftPocket.items[0].inventoryCollection.get("PACK");
+                expect(whiteJeansRightPocket.items[0].inventory.size).toBe(1);
+                expect(whiteJeansLeftPocket.items[0].inventory.size).toBe(1);
+                const tpPack2 = whiteJeansRightPocket.items[0].inventory.get("PACK");
+                const tpPack3 = whiteJeansLeftPocket.items[0].inventory.get("PACK");
                 expect(tpPack2.items).toHaveLength(1);
                 expect(tpPack3.items).toHaveLength(1);
                 expect(tpPack2.takenSpace).toBe(12);

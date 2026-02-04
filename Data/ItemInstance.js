@@ -87,7 +87,7 @@ export default class ItemInstance extends ItemContainer {
 	 * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
 	 * @type {Collection<string, InventorySlot<ItemInstance>>}
 	 */
-	inventoryCollection;
+	inventory;
 
 	/**
 	 * @constructor
@@ -110,7 +110,7 @@ export default class ItemInstance extends ItemContainer {
 		this.slot = "";
 		this.quantity = quantity;
 		this.uses = uses;
-		this.inventoryCollection = new Collection();
+		this.inventory = new Collection();
 	}
 
 	/**
@@ -197,6 +197,6 @@ export default class ItemInstance extends ItemContainer {
 	 * @param {InventorySlot<ItemInstance>} inventorySlot
 	 */
 	getSlotPhrase(inventorySlot) {
-		return this.inventoryCollection.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
+		return this.inventory.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
 	}
 }

@@ -40,7 +40,7 @@ export default class InventoryItem extends ItemInstance {
      * @override
      * @type {Collection<string, InventorySlot<InventoryItem>>}
      */
-    inventoryCollection = new Collection();
+    inventory = new Collection();
 
     /**
      * @constructor
@@ -60,7 +60,7 @@ export default class InventoryItem extends ItemInstance {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.playerName = playerName;
         this.equipmentSlot = equipmentSlot;
-        this.inventoryCollection = new Collection();
+        this.inventory = new Collection();
     }
 
     /**
@@ -93,7 +93,7 @@ export default class InventoryItem extends ItemInstance {
                 prefabInventorySlot.weight,
                 items
             );
-            this.inventoryCollection.set(inventorySlot.id, inventorySlot);
+            this.inventory.set(inventorySlot.id, inventorySlot);
         });
     }
 
@@ -123,7 +123,7 @@ export default class InventoryItem extends ItemInstance {
      */
     insertItem(item, slotId) {
         if (item.quantity !== 0) {
-            const inventorySlot = this.inventoryCollection.get(slotId);
+            const inventorySlot = this.inventory.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
             if (!isNaN(item.quantity)) this.addWeight(item.weight * item.quantity);
         }
@@ -136,7 +136,7 @@ export default class InventoryItem extends ItemInstance {
      * @param {number} removedQuantity - The quantity of this item to remove.
      */
     removeItem(item, slotId, removedQuantity) {
-        const inventorySlot = this.inventoryCollection.get(slotId);
+        const inventorySlot = this.inventory.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
     }

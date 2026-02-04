@@ -1364,7 +1364,7 @@ export default class Player extends ItemContainer {
                  */
                 let listChildItems = function (itemString, item) {
                     // If item is capable of holding other items, show what items it has inside.
-                    item.inventoryCollection.forEach(inventorySlot => {
+                    item.inventory.forEach(inventorySlot => {
                         /** @type {number[]} */
                         let parentItemIndexes = [];
                         for (let i = 0; i < descendantsCount; i++)
@@ -1382,7 +1382,7 @@ export default class Player extends ItemContainer {
                                     : childItem.quantity > 1 && childItem.pluralName ? childItem.pluralName
                                         : childItem.name;
                                 inventorySlotItemNames.push(`${quantityString}${childName}`);
-                                if (childItem.inventoryCollection.size !== 0) parentItemIndexes.push(i);
+                                if (childItem.inventory.size !== 0) parentItemIndexes.push(i);
                             });
                             itemString += inventorySlotItemNames.join(') (');
                             itemString += inventorySlotCloser;

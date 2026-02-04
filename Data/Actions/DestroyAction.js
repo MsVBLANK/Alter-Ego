@@ -21,7 +21,7 @@ export default class DestroyAction extends Action {
 	performDestroyRoomItem(item, quantity, destroyChildren) {
 		if (this.performed) return;
 		super.perform();
-		const inventorySlot = item.container instanceof ItemInstance ? item.container.inventoryCollection.get(item.slot) : undefined;
+		const inventorySlot = item.container instanceof ItemInstance ? item.container.inventory.get(item.slot) : undefined;
 		this.getGame().logHandler.logDestroyRoomItem(item, quantity, item.container, inventorySlot);
 		destroyRoomItem(item, quantity, destroyChildren);
 	}
@@ -37,7 +37,7 @@ export default class DestroyAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		const equipmentSlot = this.player.inventory.get(item.equipmentSlot);
-		const inventorySlot = item.container instanceof ItemInstance ? item.container.inventoryCollection.get(item.slot) : undefined;
+		const inventorySlot = item.container instanceof ItemInstance ? item.container.inventory.get(item.slot) : undefined;
 		if (!item.container) {
 			if (notify) this.getGame().narrationHandler.narrateDestroyEquippedInventoryItem(this, item, this.player);
 			this.getGame().logHandler.logDestroyEquippedInventoryItem(item, this.player, equipmentSlot);

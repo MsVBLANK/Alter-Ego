@@ -24,7 +24,7 @@ export default class StealAction extends Action {
 	performSteal(handEquipmentSlot, victim, container, inventorySlot) {
 		if (this.performed) return;
 		super.perform();
-		const slotPhrase = container.inventoryCollection.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
+		const slotPhrase = container.inventory.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
 		// If there are no items in that slot, tell the player.
 		if (inventorySlot.items.length === 0)
 			return this.player.notify(this.getGame().notificationGenerator.generateStoleFromEmptyInventorySlotNotification(slotPhrase, container.name, victim.displayName), true, MessageDisplayType.STANDARD, this);

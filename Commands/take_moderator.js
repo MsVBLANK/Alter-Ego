@@ -65,7 +65,7 @@ export async function execute(game, message, command, args) {
             item = roomItems[i];
             container = roomItems[i].container;
             slotName = roomItems[i].slot;
-            if (container instanceof RoomItem) slot = container.inventoryCollection.get(slotName);
+            if (container instanceof RoomItem) slot = container.inventory.get(slotName);
             break;
         }
         // A container was specified.
@@ -95,12 +95,12 @@ export async function execute(game, message, command, args) {
                     else if (containerName.endsWith(` OF ${roomItemContainer.name}`))
                         tempSlotName = containerName.substring(0, containerName.indexOf(` OF ${roomItemContainer.name}`));
 
-                    for (const id of roomItemContainer.inventoryCollection.keys()) {
+                    for (const id of roomItemContainer.inventory.keys()) {
                         if (id === tempSlotName && roomItems[i].slot === tempSlotName) {
                             item = roomItems[i];
                             container = roomItemContainer;
                             slotName = tempSlotName;
-                            slot = container.inventoryCollection.get(slotName);
+                            slot = container.inventory.get(slotName);
                             break;
                         }
                     }
@@ -114,7 +114,7 @@ export async function execute(game, message, command, args) {
                     item = roomItems[i];
                     container = roomItemContainer;
                     slotName = roomItems[i].slot;
-                    slot = container.inventoryCollection.get(slotName);
+                    slot = container.inventory.get(slotName);
                 }
                 // A puzzle's parent fixture was specified.
                 else if (roomItemContainer instanceof Puzzle && roomItemContainer.parentFixture.name === containerName) {
@@ -127,7 +127,7 @@ export async function execute(game, message, command, args) {
                     item = roomItems[i];
                     container = roomItemContainer;
                     slotName = roomItems[i].slot;
-                    if (container instanceof RoomItem) slot = container.inventoryCollection.get(slotName);
+                    if (container instanceof RoomItem) slot = container.inventory.get(slotName);
                     break;
                 }
             }

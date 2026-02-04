@@ -65,7 +65,7 @@ export async function execute(game, message, command, args, player) {
             container = playerItems[i].container;
             if (playerItems[i].container === null) continue;
             slotName = playerItems[i].slot;
-            slot = container.inventoryCollection.get(slotName);
+            slot = container.inventory.get(slotName);
             break;
         }
         // A container was specified.
@@ -76,12 +76,12 @@ export async function execute(game, message, command, args, player) {
                 if (containerName.endsWith(` OF ${playerItems[i].container.name}`)) {
                     const tempSlotName = containerName.substring(0, containerName.indexOf(` OF ${playerItems[i].container.name}`));
                     if (playerItems[i].container instanceof InventoryItem) {
-                        for (const id of playerItems[i].container.inventoryCollection.keys()) {
+                        for (const id of playerItems[i].container.inventory.keys()) {
                             if (id === tempSlotName && playerItems[i].slot === tempSlotName) {
                                 item = playerItems[i];
                                 container = playerItems[i].container;
                                 slotName = tempSlotName;
-                                slot = container.inventoryCollection.get(slotName);
+                                slot = container.inventory.get(slotName);
                                 break;
                             }
                         }
@@ -93,7 +93,7 @@ export async function execute(game, message, command, args, player) {
                     item = playerItems[i];
                     container = playerItems[i].container;
                     slotName = playerItems[i].slot;
-                    slot = container.inventoryCollection.get(slotName);
+                    slot = container.inventory.get(slotName);
                     break;
                 }
             }

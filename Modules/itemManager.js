@@ -132,7 +132,7 @@ export function replaceInventoryItem(item, newPrefab) {
         for (let i = 0; i < childItems.length; i++)
             destroyInventoryItem(childItems[i], childItems[i].quantity, false);
 
-        item.inventoryCollection.clear();
+        item.inventory.clear();
         item.initializeInventory();
         item.setDescription(newPrefab.description);
     }
@@ -216,7 +216,7 @@ export function convertRoomItem(item, player, equipmentSlotId, quantity) {
     createdItem.initializeInventory();
 
     // Now recursively run through all of the inventory items and convert them.
-    item.inventoryCollection.forEach(inventorySlot => {
+    item.inventory.forEach(inventorySlot => {
         for (let childItem of inventorySlot.items) {
             let inventoryItem = convertRoomItem(childItem, player, equipmentSlotId, childItem.quantity);
             if (inventoryItem.containerName !== "") {
@@ -224,7 +224,7 @@ export function convertRoomItem(item, player, equipmentSlotId, quantity) {
                 inventoryItem.slot = inventorySlot.id;
                 createdItem.insertItem(inventoryItem, inventoryItem.slot);
             }
-            else createdItem.inventoryCollection.get(inventorySlot.id).items.push(inventoryItem);
+            else createdItem.inventory.get(inventorySlot.id).items.push(inventoryItem);
         }
     });
 
@@ -290,7 +290,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
     createdItem.location = player.location;
 
     // Now recursively run through all of the inventory items and convert them.
-    item.inventoryCollection.forEach(inventorySlot => {
+    item.inventory.forEach(inventorySlot => {
         for (let childItem of inventorySlot.items) {
             let inventoryItem = convertInventoryItem(childItem, player, item, "", childItem.quantity);
             if (inventoryItem.containerName !== "") {
@@ -298,7 +298,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
                 inventoryItem.slot = inventorySlot.id;
                 createdItem.insertItem(inventoryItem, inventoryItem.slot);
             }
-            else createdItem.inventoryCollection.get(inventorySlot.id).items.push(inventoryItem);
+            else createdItem.inventory.get(inventorySlot.id).items.push(inventoryItem);
         }
     });
 
@@ -311,7 +311,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
  * @param {ItemInstance} item - The item whose child items are to be added.
  */
 export function getChildItems(items, item) {
-    item.inventoryCollection.forEach(inventorySlot => {
+    item.inventory.forEach(inventorySlot => {
         for (let childItem of inventorySlot.items) {
             items.push(childItem);
             getChildItems(items, childItem);
@@ -436,11 +436,11 @@ export function insertRoomItems(location, items) {
             else itemContainer = item.container;
             matchedItem.container = itemContainer;
             matchedItem.weight = item.weight;
-            matchedItem.inventoryCollection = item.inventoryCollection;
+            matchedItem.inventory = item.inventory;
             // Update container's references to this item.
             if (item.container instanceof RoomItem) {
                 let foundItem = false;
-                for (let inventorySlot of item.container.inventoryCollection.values()) {
+                for (let inventorySlot of item.container.inventory.values()) {
                     if (inventorySlot.id === item.slot) {
                         const containerSlot = inventorySlot;
                         for (let i = 0; i < containerSlot.items.length; i++) {
@@ -524,11 +524,11 @@ export function insertInventoryItems(player, items, equipmentSlot) {
             matchedItem.container = item.container;
             if (containerRow !== 0 && item.container.row === 0) matchedItem.container.row = containerRow;
             matchedItem.weight = item.weight;
-            matchedItem.inventoryCollection = item.inventoryCollection;
+            matchedItem.inventory = item.inventory;
             // Update container's references to this item.
             if (item.container instanceof InventoryItem) {
                 let foundItem = false;
-                for (let inventorySlot of item.container.inventoryCollection.values()) {
+                for (let inventorySlot of item.container.inventory.values()) {
                     if (inventorySlot.id === item.slot) {
                         const containerSlot = inventorySlot;
                         for (let j = 0; j < containerSlot.items.length; j++) {

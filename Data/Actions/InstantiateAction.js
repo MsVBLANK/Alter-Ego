@@ -27,7 +27,7 @@ export default class InstantiateAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		const createdItem = instantiateRoomItem(prefab, this.location, container, inventorySlotId, quantity, proceduralSelections, this.player);
-		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventoryCollection.get(inventorySlotId) : undefined;
+		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
 		this.getGame().logHandler.logInstantiateRoomItem(createdItem, quantity, container, inventorySlot);
 		return createdItem;
 	}
@@ -47,7 +47,7 @@ export default class InstantiateAction extends Action {
 		super.perform();
 		const createdItem = instantiateInventoryItem(prefab, this.player, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections);
 		const equipmentSlot = this.player.inventory.get(equipmentSlotId);
-		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventoryCollection.get(inventorySlotId) : undefined;
+		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
 		if (!container) {
 			if (notify) this.getGame().narrationHandler.narrateInstantiateEquippedInventoryItem(this, createdItem, this.player);
 			this.getGame().logHandler.logInstantiateEquippedInventoryItem(createdItem, this.player, equipmentSlot);

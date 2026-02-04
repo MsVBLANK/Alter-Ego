@@ -103,11 +103,11 @@ export async function execute(game, message, command, args, player) {
         }
     }
     if (container === null) return game.communicationHandler.reply(message, `Couldn't find "${itemName}" equipped to ${victim.displayName}'s inventory.`);
-    if (container.inventoryCollection.size === 0) return game.communicationHandler.reply(message, `${victim.displayName}'s ${container.name} cannot hold items.`);
+    if (container.inventory.size === 0) return game.communicationHandler.reply(message, `${victim.displayName}'s ${container.name} cannot hold items.`);
 
     // If no slot name was specified, pick one.
-    let slot = container.inventoryCollection.get(slotName);
-    if (slotName === "") slot = [... container.inventoryCollection.values()][Math.floor(Math.random() * container.inventoryCollection.size)];
+    let slot = container.inventory.get(slotName);
+    if (slotName === "") slot = [... container.inventory.values()][Math.floor(Math.random() * container.inventory.size)];
     if (slot === undefined) return game.communicationHandler.reply(message, `Couldn't find ${slotName} of ${container.name}.`);
 
     const action = new StealAction(game, message, player, player.location, false);

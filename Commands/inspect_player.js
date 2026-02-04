@@ -148,12 +148,12 @@ export async function execute(game, message, command, args, player) {
                     // Slot name was specified.
                     if (parsedInput.endsWith(` OF ${itemContainer.name}`)) {
                         const tempSlotName = containerString.substring(0, containerString.lastIndexOf(` OF ${itemContainer.name}`)).trim();
-                        container = itemContainer.inventoryCollection.get(tempSlotName)
+                        container = itemContainer.inventory.get(tempSlotName)
                         if (container && items[i].slot === tempSlotName) {
                             item = items[i];
                             slotName = item.slot;
                         } else {
-                            for (const [id, slot] of itemContainer.inventoryCollection) {
+                            for (const [id, slot] of itemContainer.inventory) {
                                 if (id === tempSlotName && items[i].slot === tempSlotName) {
                                     item = items[i];
                                     container = item.container;

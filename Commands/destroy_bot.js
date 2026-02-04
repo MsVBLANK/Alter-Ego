@@ -89,7 +89,7 @@ export async function execute(game, command, args, player, callee) {
                     newArgs = newArgs.slice(0, i);
                     break;
                 } else {
-                    if (find.inventoryCollection.size === 0 || find.prefab.preposition === "")
+                    if (find.inventory.size === 0 || find.prefab.preposition === "")
                         return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${find.getIdentifier()} cannot hold items.`);
                     container = find;
                     newArgs = newArgs.slice(0, i);
@@ -100,7 +100,7 @@ export async function execute(game, command, args, player, callee) {
         // Check if a slot was specified.
         if (container && newArgs.slice(-1)[0] === "OF" && container instanceof RoomItem) {
             newArgs = newArgs.slice(0, -1);
-            for (const [id, collectionSlot] of container.inventoryCollection) {
+            for (const [id, collectionSlot] of container.inventory) {
                 for (let i = 0; i < newArgs.length; i++) {
                     if (newArgs.slice(i).join(" ") === id) {
                         slot = collectionSlot;
@@ -113,7 +113,7 @@ export async function execute(game, command, args, player, callee) {
             if (!slot) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${container.getIdentifier()}.`);
         }
         if (container && !slot && container instanceof RoomItem) {
-            [slot] = container.inventoryCollection.values();
+            [slot] = container.inventory.values();
         }
 
         // Check if a fixture was specified.
@@ -229,7 +229,7 @@ export async function execute(game, command, args, player, callee) {
                         newArgs = newArgs.slice(0, i);
                         break;
                     } else {
-                        if (find.inventoryCollection.size === 0 || find.prefab.preposition === "")
+                        if (find.inventory.size === 0 || find.prefab.preposition === "")
                             return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${find.getIdentifier()} cannot hold items.`);
                         containerItem = find;
                         newArgs = newArgs.slice(0, i);
@@ -240,7 +240,7 @@ export async function execute(game, command, args, player, callee) {
             // Check if a slot was specified.
             if (containerItem && newArgs.slice(-1)[0] === "OF") {
                 newArgs = newArgs.slice(0, -1);
-                for (const [id, collectionSlot] of containerItem.inventoryCollection) {
+                for (const [id, collectionSlot] of containerItem.inventory) {
                     for (let i = 0; i < newArgs.length; i++) {
                         if (newArgs.slice(i).join(" ") === id) {
                             containerItemSlot = collectionSlot;
@@ -252,10 +252,10 @@ export async function execute(game, command, args, player, callee) {
                 }
                 if (!containerItemSlot) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.getIdentifier()}.`);
             } else if (containerItem && !containerItemSlot) {
-                [containerItemSlot] = containerItem.inventoryCollection.values();
+                [containerItemSlot] = containerItem.inventory.values();
             }
             if (containerItem && !containerItemSlot) {
-                [containerItemSlot] = containerItem.inventoryCollection.values();
+                [containerItemSlot] = containerItem.inventory.values();
             }
 
             if (destroyAll) {

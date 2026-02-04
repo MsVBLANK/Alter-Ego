@@ -55,7 +55,7 @@ export async function execute(game, message, command, args) {
             parsedInput.endsWith(items[i].prefab.id) && parsedInput !== items[i].prefab.id ||
             parsedInput.endsWith(items[i].name) && parsedInput !== items[i].name) {
             containerItem = items[i];
-            if (items[i].inventoryCollection.size === 0) continue;
+            if (items[i].inventory.size === 0) continue;
 
             if (items[i].identifier !== "" && parsedInput.endsWith(items[i].identifier))
                 parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].identifier)).trimEnd();
@@ -68,7 +68,7 @@ export async function execute(game, message, command, args) {
             if (parsedInput.endsWith(" OF")) {
                 parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
                 newArgs = parsedInput.split(' ');
-                for (const [id, slot] of containerItem.inventoryCollection) {
+                for (const [id, slot] of containerItem.inventory) {
                     if (parsedInput.endsWith(id)) {
                         containerItemSlot = slot;
                         parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
@@ -91,7 +91,7 @@ export async function execute(game, message, command, args) {
         }
     }
     if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${newArgs[newArgs.length - 1]}".`);
-    else if (containerItem.inventoryCollection.size === 0) return game.communicationHandler.reply(message, `${containerItem.prefab.id} cannot hold items.`);
+    else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.prefab.id} cannot hold items.`);
 
     // Now find the item in the player's inventory.
     const hand = game.entityFinder.getPlayerHandHoldingItem(player, parsedInput, containerItem.row);
@@ -107,10 +107,10 @@ export async function execute(game, message, command, args) {
         container = container.container;
     }
 
-    if (containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
-    if (item.prefab.size > containerItemSlot.capacity && containerItem.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItemSlot.id} of ${containerItem.identifier} because it is too large.`);
+    if (containerItemSlot === null) [containerItemSlot] = containerItem.inventory.values();
+    if (item.prefab.size > containerItemSlot.capacity && containerItem.inventory.size !== 1) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItemSlot.id} of ${containerItem.identifier} because it is too large.`);
     else if (item.prefab.size > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItem.identifier} because it is too large.`);
-    else if (containerItemSlot.takenSpace + item.prefab.size > containerItemSlot.capacity && containerItem.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItemSlot.id} of ${containerItem.identifier} because there isn't enough space left.`);
+    else if (containerItemSlot.takenSpace + item.prefab.size > containerItemSlot.capacity && containerItem.inventory.size !== 1) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItemSlot.id} of ${containerItem.identifier} because there isn't enough space left.`);
     else if (containerItemSlot.takenSpace + item.prefab.size > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${item.getIdentifier()} will not fit in ${containerItem.identifier} because there isn't enough space left.`);
 
     const action = new StashAction(game, message, player, player.location, true);

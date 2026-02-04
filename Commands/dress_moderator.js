@@ -80,7 +80,7 @@ export async function execute(game, message, command, args) {
                 // Check if a slot was specified.
                 if (parsedInput.endsWith(" OF")) {
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
-                    for (const slot of container.inventoryCollection.values()) {
+                    for (const slot of container.inventory.values()) {
                         if (parsedInput.endsWith(slot.id)) {
                             inventorySlot = slot;
                             parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(slot.id)).trimEnd();

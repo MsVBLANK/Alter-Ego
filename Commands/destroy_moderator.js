@@ -83,7 +83,7 @@ export async function execute(game, message, command, args) {
                 break;
             }
             if (parsedInput.endsWith(roomItems[i].identifier) && roomItems[i].identifier !== "") {
-                if (roomItems[i].inventoryCollection.size === 0 || roomItems[i].prefab.preposition === "") return game.communicationHandler.reply(message, `${roomItems[i].getIdentifier()} cannot hold items.`);
+                if (roomItems[i].inventory.size === 0 || roomItems[i].prefab.preposition === "") return game.communicationHandler.reply(message, `${roomItems[i].getIdentifier()} cannot hold items.`);
                 containerItem = roomItems[i];
 
                 if (parsedInput.endsWith(roomItems[i].identifier) && roomItems[i].identifier !== "")
@@ -95,7 +95,7 @@ export async function execute(game, message, command, args) {
                 if (parsedInput.endsWith(" OF")) {
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
                     newArgs = parsedInput.split(' ');
-                    for (const [id, slot] of containerItem.inventoryCollection) {
+                    for (const [id, slot] of containerItem.inventory) {
                         if (parsedInput.endsWith(id)) {
                             containerItemSlot = slot;
                             parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
@@ -111,7 +111,7 @@ export async function execute(game, message, command, args) {
                 break;
             }
         }
-        if (containerItem !== null && containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
+        if (containerItem !== null && containerItemSlot === null) [containerItemSlot] = containerItem.inventory.values();
 
         // Check if a fixture was specified.
         let fixture = null;
@@ -230,7 +230,7 @@ export async function execute(game, message, command, args) {
                 break;
             }
             if (parsedInput.endsWith(playerItems[i].identifier) && playerItems[i].identifier !== "" || parsedInput.endsWith(playerItems[i].prefab.id)) {
-                if (playerItems[i].inventoryCollection.size === 0 || playerItems[i].prefab.preposition === "") return game.communicationHandler.reply(message, `${playerItems[i].getIdentifier()} cannot hold items.`);
+                if (playerItems[i].inventory.size === 0 || playerItems[i].prefab.preposition === "") return game.communicationHandler.reply(message, `${playerItems[i].getIdentifier()} cannot hold items.`);
                 containerItem = playerItems[i];
 
                 if (parsedInput.endsWith(playerItems[i].identifier) && playerItems[i].identifier !== "")
@@ -242,7 +242,7 @@ export async function execute(game, message, command, args) {
                 if (parsedInput.endsWith(" OF")) {
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
                     newArgs = parsedInput.split(' ');
-                    for (const [id, slot] of containerItem.inventoryCollection) {
+                    for (const [id, slot] of containerItem.inventory) {
                         if (parsedInput.endsWith(id)) {
                             containerItemSlot = slot;
                             parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
@@ -258,7 +258,7 @@ export async function execute(game, message, command, args) {
                 break;
             }
         }
-        if (containerItem !== null && containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
+        if (containerItem !== null && containerItemSlot === null) [containerItemSlot] = containerItem.inventory.values();
         const slotName = containerItem !== null ? containerItemSlot.id : "";
 
         let containerItems = [];

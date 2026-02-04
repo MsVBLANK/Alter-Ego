@@ -1006,7 +1006,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				}
 				const location = this.game.entityFinder.getRoom(roomItem.locationDisplayName);
 				if (location) roomItem.setLocation(location);
-				if (roomItem.quantity !== 0 && roomItem.identifier !== "" && roomItem.inventoryCollection.size > 0) {
+				if (roomItem.quantity !== 0 && roomItem.identifier !== "" && roomItem.inventory.size > 0) {
 					if (containerItems.get(roomItem.identifier)) {
 						errors.push(new Error(`Couldn't load room item on row ${roomItem.row}. Another room item with this container identifier already exists.`));
 						continue;
@@ -1074,9 +1074,9 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkRoomItem(item) {
 		if (!(item.prefab instanceof Prefab))
 			return new Error(`Couldn't load room item on row ${item.row}. "${item.prefabId}" is not a prefab.`);
-		if (item.inventoryCollection.size > 0 && item.identifier === "")
+		if (item.inventory.size > 0 && item.identifier === "")
 			return new Error(`Couldn't load room item on row ${item.row}. This item is capable of containing items, but no container identifier was given.`);
-		if (item.inventoryCollection.size > 0 && (item.quantity > 1 || isNaN(item.quantity)))
+		if (item.inventory.size > 0 && (item.quantity > 1 || isNaN(item.quantity)))
 			return new Error(`Couldn't load room item on row ${item.row}. Items capable of containing items must have a quantity of 1.`);
 		if (item.identifier !== "" && item.quantity !== 0 &&
 			this.game.roomItems.filter(roomItem => roomItem.identifier === item.identifier && roomItem.quantity !== 0).length
@@ -1097,7 +1097,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (item.quantity !== 0 && item.containerType === "RoomItem" && !(item.container instanceof RoomItem)) {
 			const containerName = item.containerName.split('/');
 			const container = item.getGame().entityFinder.getRoomItem(containerName[0], item.location.id);
-			if (container && container.inventoryCollection.size === 0)
+			if (container && container.inventory.size === 0)
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container is a room item, but the item container's prefab on row ${container.prefab.row} has no inventory slots.`);
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a room item.`);
 		}
@@ -1105,7 +1105,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load room item on row ${item.row}. The container given is not a puzzle.`);
 		if (item.container instanceof RoomItem) {
 			if (item.slot === "") return new Error(`Couldn't load room item on row ${item.row}. The item's container is a room item, but a prefab inventory slot ID was not given.`);
-			const inventorySlot = item.container.inventoryCollection.get(item.slot);
+			const inventorySlot = item.container.inventory.get(item.slot);
 			if (!inventorySlot)
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container prefab on row ${item.container.prefab.row} has no inventory slot "${item.slot}".`);
 			if (inventorySlot.takenSpace > inventorySlot.capacity)
@@ -1913,7 +1913,7 @@ export default class GameEntityLoader extends GameEntityManager {
 						inventoryItem.setPrefab(prefab);
 						inventoryItem.initializeInventory();
 					}
-					if (inventoryItem.quantity !== 0 && inventoryItem.identifier !== "" && inventoryItem.inventoryCollection.size > 0) {
+					if (inventoryItem.quantity !== 0 && inventoryItem.identifier !== "" && inventoryItem.inventory.size > 0) {
 						if (containerItems.get(inventoryItem.identifier)) {
 							errors.push(new Error(`Couldn't load inventory item on row ${inventoryItem.row}. Another inventory item with this container identifier already exists.`));
 							continue;
@@ -2055,9 +2055,9 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (item.prefab !== null) {
 			if (!(item.prefab instanceof Prefab))
 				return new Error(`Couldn't load inventory item on row ${item.row}. "${item.prefabId}" is not a prefab.`);
-			if (item.inventoryCollection.size > 0 && item.identifier === "")
+			if (item.inventory.size > 0 && item.identifier === "")
 				return new Error(`Couldn't load inventory item on row ${item.row}. This item is capable of containing items, but no container identifier was given.`);
-			if (item.inventoryCollection.size > 0 && (item.quantity > 1))
+			if (item.inventory.size > 0 && (item.quantity > 1))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Items capable of containing items must have a quantity of 1.`);
 			if (item.identifier !== "" && item.quantity !== 0 && this.game.roomItems.filter(roomItem => roomItem.identifier === item.identifier && roomItem.quantity !== 0).length
 				+ this.game.inventoryItems.filter(inventoryItem => inventoryItem.identifier === item.identifier && inventoryItem.quantity !== 0).length > 1)
@@ -2068,11 +2068,11 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find equipment slot "${item.equipmentSlot}".`);
 			if (item.quantity !== 0 && item.equipmentSlot !== "RIGHT HAND" && item.equipmentSlot !== "LEFT HAND" && item.containerName !== "" && (item.container === null || item.container === undefined))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find container "${item.containerName}".`);
-			if (item.container instanceof InventoryItem && item.container.inventoryCollection.size === 0)
+			if (item.container instanceof InventoryItem && item.container.inventory.size === 0)
 				return new Error(`Couldn't load inventory item on row ${item.row}. The item's container is an inventory item, but the item container's prefab on row ${item.container.prefab.row} has no inventory slots.`);
 			if (item.container instanceof InventoryItem) {
 				if (item.slot === "") return new Error(`Couldn't load inventory item on row ${item.row}. The item's container is an inventory item, but a prefab inventory slot name was not given.`);
-				const inventorySlot = item.container.inventoryCollection.get(item.slot);
+				const inventorySlot = item.container.inventory.get(item.slot);
 				if (!inventorySlot)
 					return new Error(`Couldn't load inventory item on row ${item.row}. The item's container prefab on row ${item.container.prefab.row} has no inventory slot "${item.slot}".`);
 				if (inventorySlot.takenSpace > inventorySlot.capacity)

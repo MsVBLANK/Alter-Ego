@@ -788,7 +788,6 @@ export default class GameEntityLoader extends GameEntityManager {
 						nextStageAssignments.set(prefab.nextStageId, assignmentsList);
 					}
 				}
-				this.game.prefabs.push(prefab);
 				this.game.prefabsCollection.set(prefab.id, prefab);
 				this.updatePrefabReferences(prefab);
 			}
@@ -1455,7 +1454,6 @@ export default class GameEntityLoader extends GameEntityManager {
 					const error = this.checkEvent(event);
 					if (error instanceof Error) errors.push(error);
 				}
-				this.game.events.push(event);
 				this.game.eventsCollection.set(event.id, event);
 				this.updateEventReferences(event);
 			}
@@ -1589,7 +1587,6 @@ export default class GameEntityLoader extends GameEntityManager {
 					errors.push(new Error(`Couldn't load status effect on row ${status.row}. Another status effect with this ID already exists.`));
 					continue;
 				}
-				this.game.statusEffects.push(status);
 				this.game.statusEffectsCollection.set(status.id, status);
 				this.updateStatusEffectReferences(status);
 			}
@@ -1748,7 +1745,6 @@ export default class GameEntityLoader extends GameEntityManager {
 				if (player.isNPC) player.displayIcon = player.id;
 				player.setPronouns(player.originalPronouns, player.pronounString);
 				player.setPronouns(player.pronouns, player.pronounString);
-				this.game.players.push(player);
 				this.game.playersCollection.set(Game.generateValidEntityName(player.name), player);
 
 				if (player.alive) {
@@ -1779,13 +1775,10 @@ export default class GameEntityLoader extends GameEntityManager {
 							if (invalidStatusFound) continue;
 						}
 					}
-					this.game.players_alive.push(player);
 					this.game.livingPlayersCollection.set(Game.generateValidEntityName(player.name), player);
 				}
-				else {
-					this.game.players_dead.push(player);
+				else
 					this.game.deadPlayersCollection.set(Game.generateValidEntityName(player.name), player);
-				}
 			}
 
 			// Now load player inventories.
@@ -2157,7 +2150,6 @@ export default class GameEntityLoader extends GameEntityManager {
 					let error = this.checkGesture(gesture);
 					if (error instanceof Error) errors.push(error);
 				}
-				this.game.gestures.push(gesture);
 				this.game.gesturesCollection.set(gesture.id, gesture);
 			}
 			if (errors.length > 0) {

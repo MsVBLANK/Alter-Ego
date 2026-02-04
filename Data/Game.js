@@ -134,12 +134,6 @@ export default class Game {
 	 * @type {Set<string>}
 	 */
 	loadedEntitiesWithErrors;
-	/** 
-	 * An array of all rooms in the game.
-	 * @deprecated
-	 * @type {Room[]}
-	 */
-	rooms;
 	/**
 	 * A collection of all rooms in the game. The key for each room is its id.
 	 * @type {Collection<string, Room>}
@@ -156,12 +150,6 @@ export default class Game {
 	 * @type {Fixture[]}
 	 */
 	fixtures;
-	/**
-	 * An array of all prefabs in the game.
-	 * @deprecated
-	 * @type {Prefab[]}
-	 */
-	prefabs;
 	/**
 	 * A collection of all prefabs in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Prefab>}
@@ -188,56 +176,26 @@ export default class Game {
 	 * @type {Puzzle[]} 
 	 */
 	puzzles;
-	/** 
-	 * An array of all events in the game.
-	 * @deprecated
-	 * @type {Event[]}
-	 */
-	events;
 	/**
 	 * A collection of all events in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Event>}
 	 */
 	eventsCollection;
 	/**
-	 * An array of all status effects in the game. 
-	 * @deprecated
-	 * @type {Status[]} 
-	 */
-	statusEffects;
-	/**
 	 * A collection of all status effects in the game. The key for each prefab is its id.
 	 * @type {Collection<string, Status>}
 	 */
 	statusEffectsCollection;
 	/**
-	 * An array of all players in the game. 
-	 * @deprecated
-	 * @type {Player[]} 
-	 */
-	players;
-	/**
 	 * A collection of all players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
 	 */
 	playersCollection;
-	/** 
-	 * An array of all living players in the game.
-	 * @deprecated
-	 * @type {Player[]}
-	 */
-	players_alive;
 	/**
 	 * A collection of all living players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
 	 */
 	livingPlayersCollection;
-	/**
-	 * An array of all dead players in the game. 
-	 * @deprecated
-	 * @type {Player[]}
-	 */
-	players_dead;
 	/**
 	 * A collection of all dead players in the game. The key for each player is their name.
 	 * @type {Collection<string, Player>}
@@ -248,12 +206,6 @@ export default class Game {
 	 * @type {InventoryItem[]}
 	 */
 	inventoryItems;
-	/** 
-	 * An array of all gestures in the game.
-	 * @deprecated
-	 * @type {Gesture[]}
-	 */
-	gestures;
 	/**
 	 * A collection of all gestures in the game. The key for each gesture is its id.
 	 * @type {Collection<string, Gesture>}
@@ -264,12 +216,6 @@ export default class Game {
 	 * @type {Collection<string, Flag>}
 	 */
 	flags;
-	/** 
-	 * An array of all whispers in the game. These are not saved to the sheet.
-	 * @deprecated
-	 * @type {Whisper[]}
-	 */
-	whispers;
 	/**
 	 * A collection of all whispers in the game. The key for each whisper is its channel name. These are not saved to the sheet.
 	 * @type {Collection<string, Whisper>}
@@ -319,31 +265,22 @@ export default class Game {
 		this.heated = false;
 		this.editMode = false;
 		this.loadedEntitiesWithErrors = new Set();
-		this.rooms = [];
 		this.roomsCollection = new Collection();
 		this.objects = [];
 		this.fixtures = [];
-		this.prefabs = [];
 		this.prefabsCollection = new Collection();
 		this.recipes = [];
 		this.items = [];
 		this.roomItems = [];
 		this.puzzles = [];
-		this.events = [];
 		this.eventsCollection = new Collection();
-		this.statusEffects = [];
 		this.statusEffectsCollection = new Collection();
-		this.players = [];
 		this.playersCollection = new Collection();
-		this.players_alive = [];
 		this.livingPlayersCollection = new Collection();
-		this.players_dead = [];
 		this.deadPlayersCollection = new Collection();
 		this.inventoryItems = [];
-		this.gestures = [];
 		this.gesturesCollection = new Collection();
 		this.flags = new Collection();
-		this.whispers = [];
 		this.whispersCollection = new Collection();
 		this.messageQueue = new PriorityQueue();
 

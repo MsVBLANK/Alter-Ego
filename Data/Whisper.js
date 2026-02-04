@@ -21,12 +21,6 @@ export default class Whisper extends GameConstruct {
      * @type {string}
      */
     id;
-    /** 
-     * The players in the whisper. Deprecated. Use playersCollection instead.
-     * @deprecated
-     * @type {Player[]}
-     */
-    players;
     /**
      * A collection of players in the whisper. The key for each entry is the player's name.
      * @type {Collection<string, Player>}
@@ -73,7 +67,6 @@ export default class Whisper extends GameConstruct {
      */
     constructor(game, players, hidingSpotName) {
         super(game);
-        this.players = players;
         this.playersCollection = new Collection();
         for (const player of players)
             this.playersCollection.set(player.name, player);

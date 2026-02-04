@@ -60,8 +60,6 @@ export async function execute(game, message, command, args) {
     );
     player.setPronouns(player.originalPronouns, player.pronounString);
     player.setPronouns(player.pronouns, player.pronounString);
-    game.players.push(player);
-    game.players_alive.push(player);
     game.playersCollection.set(player.name, player);
     game.livingPlayersCollection.set(player.name, player);
     member.roles.add(game.guildContext.playerRole);

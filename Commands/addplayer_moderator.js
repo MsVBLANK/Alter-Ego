@@ -71,8 +71,6 @@ export async function execute(game, message, command, args) {
         game
     );
 
-    game.players.push(player);
-    game.players_alive.push(player);
     game.playersCollection.set(player.name, player);
     game.livingPlayersCollection.set(player.name, player);
     member.roles.add(game.guildContext.playerRole);

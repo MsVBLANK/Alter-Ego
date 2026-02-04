@@ -149,13 +149,6 @@ export default class Prefab extends GameEntity {
      */
     unequippedCommands;
     /**
-     * {@link InventorySlot|Inventory slots} that instances of this prefab will have. Deprecated. Use inventoryCollection instead.
-     * @deprecated
-     * @readonly
-     * @type {InventorySlot[]}
-     */
-    inventory;
-    /**
      * {@link InventorySlot|Inventory slots} that instances of this prefab will have. The key is the inventory slot's ID.
      * @readonly
      * @type {Collection<string, InventorySlot>}
@@ -227,7 +220,6 @@ export default class Prefab extends GameEntity {
         this.commandsString = commandsString;
         this.equippedCommands = equippedCommands;
         this.unequippedCommands = unequippedCommands;
-        this.inventory = [];
         this.inventoryCollection = inventory;
         this.preposition = preposition;
         this.description = new Description(description, this, game);

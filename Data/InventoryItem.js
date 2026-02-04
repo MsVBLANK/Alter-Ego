@@ -36,13 +36,6 @@ export default class InventoryItem extends ItemInstance {
      */
     container = null;
     /**
-     * An array of {@link InventorySlot|inventory slots} the item has. Deprecated. Use inventoryCollection instead.
-     * @deprecated
-     * @override
-     * @type {InventorySlot<InventoryItem>[]}
-     */
-    inventory = [];
-    /**
      * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
      * @override
      * @type {Collection<string, InventorySlot<InventoryItem>>}
@@ -67,7 +60,6 @@ export default class InventoryItem extends ItemInstance {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.playerName = playerName;
         this.equipmentSlot = equipmentSlot;
-        this.inventory = [];
         this.inventoryCollection = new Collection();
     }
 

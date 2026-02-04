@@ -38,13 +38,6 @@ export default class RoomItem extends ItemInstance {
      */
     container = null;
     /**
-     * An array of {@link InventorySlot|inventory slots} the item has. Deprecated. Use inventoryCollection instead.
-     * @deprecated
-     * @override
-     * @type {InventorySlot<RoomItem>[]}
-     */
-    inventory = [];
-    /**
      * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
      * @override
      * @type {Collection<string, InventorySlot<RoomItem>>}
@@ -70,7 +63,6 @@ export default class RoomItem extends ItemInstance {
         this.locationDisplayName = locationDisplayName;
         this.location = null;
         this.accessible = accessible;
-        this.inventory = [];
         this.inventoryCollection = new Collection();
     }
 

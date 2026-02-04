@@ -55,7 +55,6 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearRooms() {
-		this.game.rooms.length = 0;
 		this.game.roomsCollection.clear();
 	}
 
@@ -82,7 +81,6 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearPrefabs() {
-		this.game.prefabs.length = 0;
 		this.game.prefabsCollection.clear();
 	}
 
@@ -121,7 +119,6 @@ export default class GameEntityManager {
 			if (event.effectsTimer !== null)
 				event.effectsTimer.stop();
 		});
-		this.game.events.length = 0;
 		this.game.eventsCollection.clear();
 	}
 
@@ -130,7 +127,6 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearStatusEffects() {
-		this.game.statusEffects.length = 0;
 		this.game.statusEffectsCollection.clear();
 	}
 
@@ -150,9 +146,6 @@ export default class GameEntityManager {
 		this.game.roomsCollection.forEach(room => {
 			room.occupants.length = 0;
 		});
-		this.game.players.length = 0;
-		this.game.players_alive.length = 0;
-		this.game.players_dead.length = 0;
 		this.game.playersCollection.clear();
 		this.game.livingPlayersCollection.clear();
 		this.game.deadPlayersCollection.clear();
@@ -171,7 +164,6 @@ export default class GameEntityManager {
 	 * @protected
 	 */
 	clearGestures() {
-		this.game.gestures.length = 0;
 		this.game.gesturesCollection.clear();
 	}
 

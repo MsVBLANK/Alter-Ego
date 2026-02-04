@@ -211,14 +211,6 @@ export default class Player extends ItemContainer {
      */
     statusDisplays;
     /**
-     * All status effects the player currently has.
-     * Every time a status is inflicted or cured, the player's stats are recalculated.
-     * Deprecated. Use statusCollection instead.
-     * @type {Status[]}
-     * @deprecated
-     */
-    status;
-    /**
      * A comma-separated list of the names of all status effects the player currently has, including those that aren't visible.
      * Also contains a string representation of the {@link Status.remaining|remaining time} of the status.
      * Deprecated. Use statusDisplays instead.
@@ -232,12 +224,6 @@ export default class Player extends ItemContainer {
      * @type {Collection<string, Status>}
      */
     statusCollection;
-    /**
-     * All of the player's {@link EquipmentSlot | equipment slots}. Deprecated. Use inventoryCollection instead.
-     * @deprecated
-     * @type {EquipmentSlot[]}
-     */
-    inventory;
     /**
      * All of the player's {@link EquipmentSlot | equipment slots}. The key is the equipment slot's ID.
      * @type {Collection<string, EquipmentSlot>}
@@ -377,9 +363,7 @@ export default class Player extends ItemContainer {
         this.hidingSpot = hidingSpot;
         this.statusCollection = new Collection();
         this.statusDisplays = statusDisplays;
-        this.status = [];
         this.statusString = "";
-        this.inventory = [];
         this.inventoryCollection = inventory;
         this.notificationChannel = notificationChannel;
         this.spectateChannel = spectateChannel;
@@ -840,14 +824,7 @@ export default class Player extends ItemContainer {
      * @returns {boolean}
      */
     hasAttribute(attribute) {
-        let hasAttribute = false;
-        for (let i = 0; i < this.status.length; i++) {
-            if (this.status[i].behaviorAttributes.has(attribute)) {
-                hasAttribute = true;
-                break;
-            }
-        }
-        return hasAttribute;
+        return this.hasBehaviorAttribute(attribute);
     }
 
     /**
@@ -873,13 +850,7 @@ export default class Player extends ItemContainer {
      * @returns {Status[]}
      */
     getAttributeStatusEffects(attribute) {
-        /** @type {Status[]} */
-        let statusEffects = [];
-        for (let i = 0; i < this.status.length; i++) {
-            if (this.status[i].behaviorAttributes.has(attribute))
-                statusEffects.push(this.status[i]);
-        }
-        return statusEffects;
+        return this.getBehaviorAttributeStatusEffects(attribute);
     }
 
     /**

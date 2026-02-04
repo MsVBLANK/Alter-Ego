@@ -25,8 +25,8 @@ export default class UndressAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		// First, drop the items in the player's hands.
-		const rightHand = this.player.inventoryCollection.get("RIGHT HAND");
-		const leftHand = this.player.inventoryCollection.get("LEFT HAND");
+		const rightHand = this.player.inventory.get("RIGHT HAND");
+		const leftHand = this.player.inventory.get("LEFT HAND");
 		if (rightHand && rightHand.equippedItem !== null) {
 			const rightHandDropAction = new DropAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			rightHandDropAction.performDrop(rightHand.equippedItem, rightHand, container, inventorySlot, true);
@@ -37,7 +37,7 @@ export default class UndressAction extends Action {
 		}
 		/** @type {InventoryItem[]} */
 		const droppedItems = [];
-		for (const equipmentSlot of this.player.inventoryCollection.values()) {
+		for (const equipmentSlot of this.player.inventory.values()) {
 			if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippable) {
 				droppedItems.push(equipmentSlot.equippedItem);
 				this.player.unequip(equipmentSlot.equippedItem, equipmentSlot, rightHand);

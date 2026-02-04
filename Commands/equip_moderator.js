@@ -54,7 +54,7 @@ export async function execute(game, message, command, args) {
     // If no slot name was given, pick the first one this item can be equipped to.
     if (slotName === "") slotName = item.prefab.equipmentSlots[0];
 
-    let slot = player.inventoryCollection.get(slotName);
+    let slot = player.inventory.get(slotName);
     if (slot === undefined) return game.communicationHandler.reply(message, `Couldn't find equipment slot "${slotName}".`);
     if (slot.equippedItem !== null) return game.communicationHandler.reply(message, `Cannot equip items to ${slotName} because ${slot.equippedItem.getIdentifier()} is already equipped to it.`);
 

@@ -222,7 +222,7 @@ export default class Dialog extends GameConstruct {
 				for (const livingPlayer of game.livingPlayers.values()) {
 					const receiverStatusEffects = livingPlayer.getBehaviorAttributeStatusEffects("receiver").map(status => status.id);
 					if (livingPlayer.hasBehaviorAttribute("receiver") && livingPlayer.name !== this.speaker.name && !this.receiverRooms.has(livingPlayer.location.id)) {
-						for (const equipmentSlot of livingPlayer.inventoryCollection.values()) {
+						for (const equipmentSlot of livingPlayer.inventory.values()) {
 							for (const receiverStatusEffect of receiverStatusEffects) {
 								if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippedCommands.join(',').toLowerCase().includes(`inflict player ${receiverStatusEffect}`)) {
 									this.receivers.set(livingPlayer.name, equipmentSlot.equippedItem);

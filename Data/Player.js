@@ -228,7 +228,7 @@ export default class Player extends ItemContainer {
      * All of the player's {@link EquipmentSlot | equipment slots}. The key is the equipment slot's ID.
      * @type {Collection<string, EquipmentSlot>}
      */
-    inventoryCollection;
+    inventory;
     /**
      * The channel where notifications to the player will be sent. If the player is an NPC, this will be null.
      * @type {Messageable | null}
@@ -364,7 +364,7 @@ export default class Player extends ItemContainer {
         this.status = new Collection();
         this.statusDisplays = statusDisplays;
         this.statusString = "";
-        this.inventoryCollection = inventory;
+        this.inventory = inventory;
         this.notificationChannel = notificationChannel;
         this.spectateChannel = spectateChannel;
         this.maxCarryWeight = this.getMaxCarryWeight();
@@ -402,7 +402,7 @@ export default class Player extends ItemContainer {
      * @param {Collection<string, EquipmentSlot>} inventory 
      */
     setInventory(inventory) {
-        this.inventoryCollection = inventory;
+        this.inventory = inventory;
     }
 
     /**
@@ -651,10 +651,10 @@ export default class Player extends ItemContainer {
     createMoveAppendString() {
         /** @type {string[]} */
         let nonDiscreetItems = [];
-        const rightHand = this.inventoryCollection.get("RIGHT HAND");
+        const rightHand = this.inventory.get("RIGHT HAND");
         if (rightHand && rightHand.equippedItem !== null && !rightHand.equippedItem.prefab.discreet)
             nonDiscreetItems.push(rightHand.equippedItem.singleContainingPhrase);
-        const leftHand = this.inventoryCollection.get("LEFT HAND");
+        const leftHand = this.inventory.get("LEFT HAND");
         if (leftHand && leftHand.equippedItem !== null && !leftHand.equippedItem.prefab.discreet)
             nonDiscreetItems.push(leftHand.equippedItem.singleContainingPhrase);
 
@@ -1001,7 +1001,7 @@ export default class Player extends ItemContainer {
         const playerHands = this.getGame().entityFinder.getPlayerHands(this);
         if (itemListName === 'equipment') {
             const playerHandsIDs = playerHands.map(equipmentSlot => equipmentSlot.id);
-            equipmentSlots = this.inventoryCollection.filter(equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
+            equipmentSlots = this.inventory.filter(equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
         }
         else if (itemListName === 'hands')
 		    equipmentSlots = playerHands.filter(equipmentSlot => equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet);
@@ -1063,7 +1063,7 @@ export default class Player extends ItemContainer {
      */
     steal(item, handEquipmentSlot, victim, container, inventorySlot) {
         // Remove the item from its container.
-        itemManager.removeStashedItem(item, container, inventorySlot, victim.inventoryCollection.get(item.equipmentSlot));
+        itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
         const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
         victim.carryWeight -= createdItem.weight;
@@ -1148,7 +1148,7 @@ export default class Player extends ItemContainer {
         handEquipmentSlot.unequipItem(item);
 
         // Copy the inventory item to the given container.
-        const equipmentSlot = this.inventoryCollection.get(container.equipmentSlot);
+        const equipmentSlot = this.inventory.get(container.equipmentSlot);
         let createdItem = itemManager.copyInventoryItem(item, this, equipmentSlot.id, 1);
         createdItem.containerName = `${container.identifier}/${inventorySlot.id}`;
         createdItem.container = container;
@@ -1182,7 +1182,7 @@ export default class Player extends ItemContainer {
      */
     unstash(item, handEquipmentSlot, container, inventorySlot) {
         // Remove the inventory item from its container.
-        itemManager.removeStashedItem(item, container, inventorySlot, this.inventoryCollection.get(item.equipmentSlot));
+        itemManager.removeStashedItem(item, container, inventorySlot, this.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
         itemManager.putItemInHand(item, this, handEquipmentSlot);
 
@@ -1247,7 +1247,7 @@ export default class Player extends ItemContainer {
      */
     #coverEquippedItems(item) {
         for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventoryCollection.get(coveredEquipmentSlotId);
+            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
             if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
                 // Preserve quantity.
                 const quantity = coveredEquipmentSlot.equippedItem.quantity;
@@ -1259,7 +1259,7 @@ export default class Player extends ItemContainer {
 
         // Check to make sure that this item isn't covered by something else the player has equipped.
         let isCovered = false;
-        this.inventoryCollection.forEach(equipmentSlot => {
+        this.inventory.forEach(equipmentSlot => {
             if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !== "LEFT HAND") {
                 for (const coveredEquipmentSlotId of equipmentSlot.equippedItem.prefab.coveredEquipmentSlots) {
                     if (coveredEquipmentSlotId === item.equipmentSlot) {
@@ -1299,7 +1299,7 @@ export default class Player extends ItemContainer {
      * @param {InventoryItem} item - The inventory item to unequip.
      */
     directUnequip(item) {
-        const equipmentSlot = this.inventoryCollection.get(item.equipmentSlot);
+        const equipmentSlot = this.inventory.get(item.equipmentSlot);
         equipmentSlot.unequipItem(item);
 
         if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
@@ -1318,7 +1318,7 @@ export default class Player extends ItemContainer {
         this.removeItemFromDescription(item, "equipment");
         // Find any items that were covered by this item and add them to the equipment item list.
         for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventoryCollection.get(coveredEquipmentSlotId);
+            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
             if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
                 // Before adding this item to the equipment item slot, make sure it isn't covered by something else.
                 const coveringItems = this.getGame().inventoryItems.filter(item =>
@@ -1350,7 +1350,7 @@ export default class Player extends ItemContainer {
 
         const possessive = moderatorView ? `${this.name}'s` : `Your`;
         let itemString = `__${possessive} inventory:__\n`;
-        this.inventoryCollection.forEach(equipmentSlot => {
+        this.inventory.forEach(equipmentSlot => {
             itemString += `- \`${equipmentSlot.id}\`: `;
             const equippedItem = equipmentSlot.equippedItem;
             if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
@@ -1464,7 +1464,7 @@ export default class Player extends ItemContainer {
         let ingredient2 = oneDiscreet && recipe.ingredients[0].discreet ? recipe.ingredients[1] : recipe.ingredients[0];
 
         if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
-        const rightHand = this.inventoryCollection.get("RIGHT HAND");
+        const rightHand = this.inventory.get("RIGHT HAND");
         const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1);
         const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
         const ingredient2Instance = instantiateAction.performInstantiateInventoryItem(
@@ -1512,7 +1512,7 @@ export default class Player extends ItemContainer {
      * @param {string} equipmentSlotId - The equipment slot ID to search for.
      */
     getEquipmentSlot(equipmentSlotId) {
-        return this.inventoryCollection.get(equipmentSlotId);
+        return this.inventory.get(equipmentSlotId);
     }
 
     /**

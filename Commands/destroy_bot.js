@@ -292,13 +292,13 @@ export async function execute(game, command, args, player, callee) {
             } else {
                 // Check if an equipment slot was specified.
                 let equipmentSlotName = "";
-                if (player.inventoryCollection.has(newArgs.join(" "))) {
-                    item = player.inventoryCollection.get(newArgs.join(" ")).equippedItem;
+                if (player.inventory.has(newArgs.join(" "))) {
+                    item = player.inventory.get(newArgs.join(" ")).equippedItem;
                     equipmentSlotName = newArgs.join(" ");
                     if (!item) gotoNext = true;
                     if (destroyAll) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". The "all" argument cannot be used when the container is an equipment slot.`);
                 } else {
-                    for (const [id, slot] of player.inventoryCollection) {
+                    for (const [id, slot] of player.inventory) {
                         if (slot.equippedItem && itemIdentifierMatches(slot.equippedItem, newArgs.join(" "))) {
                             item = slot.equippedItem;
                             equipmentSlotName = id;

@@ -60,7 +60,7 @@ export async function execute(game, message, command, args, player) {
     }
 
     if (slotName !== "") {
-        slot = player.inventoryCollection.get(split[1]);
+        slot = player.inventory.get(split[1]);
         if (slot === undefined)
             return game.communicationHandler.reply(message, `Couldn't find equipment slot "${split[1]}".`);
         else if (slot.equippedItem === null)

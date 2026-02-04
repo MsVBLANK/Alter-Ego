@@ -294,14 +294,14 @@ export async function execute(game, message, command, args) {
         else {
             // Check if an equipment slot was specified.
             let equipmentSlotName = "";
-            if (player.inventoryCollection.get(parsedInput)) {
-                item = player.inventoryCollection.get(parsedInput).equippedItem
+            if (player.inventory.get(parsedInput)) {
+                item = player.inventory.get(parsedInput).equippedItem
                 equipmentSlotName = parsedInput;
                 if (item === null) return game.communicationHandler.reply(message, `Cannot destroy item equipped to ${equipmentSlotName} because nothing is equipped to it.`);
                 if (destroyAll) return game.communicationHandler.reply(message, `The "all" argument cannot be used when the container is an equipment slot.`);
             }
             else {
-                for (const [id, slot] of player.inventoryCollection) {
+                for (const [id, slot] of player.inventory) {
                     if (slot.equippedItem !== null && (slot.equippedItem.identifier === parsedInput || slot.equippedItem.prefab.id === parsedInput)) {
                         item = slot.equippedItem
                         equipmentSlotName = id

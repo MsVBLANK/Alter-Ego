@@ -32,10 +32,10 @@ export default class DressAction extends Action {
 			// Player shouldn't be able to take items that they're not strong enough to carry.
 			if (!this.forced && this.player.carryWeight + item.weight > this.player.maxCarryWeight) continue;
 			for (const slotId of item.prefab.equipmentSlots) {
-				if (this.player.inventoryCollection.has(slotId) && this.player.inventoryCollection.get(slotId).equippedItem === null) {
+				if (this.player.inventory.has(slotId) && this.player.inventory.get(slotId).equippedItem === null) {
 					this.player.take(item, handEquipmentSlot, container, inventorySlot);
-					this.player.equip(handEquipmentSlot.equippedItem, this.player.inventoryCollection.get(slotId), handEquipmentSlot);
-					equippedItems.push(this.player.inventoryCollection.get(slotId).equippedItem);
+					this.player.equip(handEquipmentSlot.equippedItem, this.player.inventory.get(slotId), handEquipmentSlot);
+					equippedItems.push(this.player.inventory.get(slotId).equippedItem);
 					break;
 				}
 			}

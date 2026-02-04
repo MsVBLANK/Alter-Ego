@@ -2018,7 +2018,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				if (playerEquipmentSlots) {
 					player.setInventory(playerEquipmentSlots);
 					// Calculate the player's carry weight.
-					player.carryWeight = player.inventoryCollection.reduce((weight, equipmentSlot) => {
+					player.carryWeight = player.inventory.reduce((weight, equipmentSlot) => {
 						const itemWeight = equipmentSlot.equippedItem !== null ? equipmentSlot.equippedItem.weight : 0;
 						return weight + itemWeight;
 					}, 0);
@@ -2064,7 +2064,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load inventory item on row ${item.row}. Another item or inventory item with this container identifier already exists.`);
 			if (item.prefab.pluralContainingPhrase === "" && (item.quantity > 1))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Quantity is higher than 1, but its prefab on row ${item.prefab.row} has no plural containing phrase.`);
-			if (!item.player.inventoryCollection.get(item.equipmentSlot))
+			if (!item.player.inventory.get(item.equipmentSlot))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find equipment slot "${item.equipmentSlot}".`);
 			if (item.quantity !== 0 && item.equipmentSlot !== "RIGHT HAND" && item.equipmentSlot !== "LEFT HAND" && item.containerName !== "" && (item.container === null || item.container === undefined))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find container "${item.containerName}".`);

@@ -45,7 +45,7 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable undress");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    const equippedItems = player.inventoryCollection.filter(equipmentSlot => equipmentSlot.equippedItem !== null);
+    const equippedItems = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem !== null);
     if (equippedItems.size === 0) return game.communicationHandler.reply(message, `You cannot undress because you are not wearing anything.`);
 
     const input = args.join(' ');
@@ -109,7 +109,7 @@ export async function execute(game, message, command, args, player) {
         container = containerItem;
         if (containerItemSlot === null) [containerItemSlot] = containerItem.inventoryCollection.values();
         slot = containerItemSlot;
-        const totalSize = player.inventoryCollection.values().reduce((sum, item) => {
+        const totalSize = player.inventory.values().reduce((sum, item) => {
             return item.equippedItem !== null ? sum + item.equippedItem.prefab.size : sum;
         }, 0);
         if (totalSize > containerItemSlot.capacity && container.inventoryCollection.size !== 1) return game.communicationHandler.reply(message, `Your inventory will not fit in ${containerItemSlot.id} of ${container.name} because it is too large.`);

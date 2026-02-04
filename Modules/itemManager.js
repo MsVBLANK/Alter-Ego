@@ -98,7 +98,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     player.carryWeight += createdItem.weight * quantity;
 
     // Item is being stashed.
-    const equipmentSlot = player.inventoryCollection.get(equipmentSlotId);
+    const equipmentSlot = player.inventory.get(equipmentSlotId);
     if (container !== null) {
         container.insertItem(createdItem, inventorySlotId);
         container.addItemToDescription(createdItem, inventorySlotId, quantity);
@@ -501,9 +501,9 @@ export function insertRoomItems(location, items) {
  */
 export function insertInventoryItems(player, items, equipmentSlot) {
     const game = player.getGame();
-    let lastNewItem = player.inventoryCollection.last().equippedItem !== null ?
-        player.inventoryCollection.last().equippedItem :
-        player.inventoryCollection.last().items[0];
+    let lastNewItem = player.inventory.last().equippedItem !== null ?
+        player.inventory.last().equippedItem :
+        player.inventory.last().items[0];
     for (let item of items) {
         // Check if this item already exists in the player's inventory.
         const playerItems = game.inventoryItems.filter(gameItem => gameItem.player.name === player.name);
@@ -584,7 +584,7 @@ export function insertInventoryItems(player, items, equipmentSlot) {
 
             // Update the rows for all Player EquipmentSlots.
             game.players.forEach(player => {
-                player.inventoryCollection.forEach(equipmentSlot => {
+                player.inventory.forEach(equipmentSlot => {
                     if (equipmentSlot.equippedItem === null) equipmentSlot.row = equipmentSlot.items[0].row;
                     else equipmentSlot.row = equipmentSlot.equippedItem.row;
                 });

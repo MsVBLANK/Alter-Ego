@@ -36,7 +36,7 @@ export default class DestroyAction extends Action {
 	performDestroyInventoryItem(item, quantity, destroyChildren, notify = true) {
 		if (this.performed) return;
 		super.perform();
-		const equipmentSlot = this.player.inventoryCollection.get(item.equipmentSlot);
+		const equipmentSlot = this.player.inventory.get(item.equipmentSlot);
 		const inventorySlot = item.container instanceof ItemInstance ? item.container.inventoryCollection.get(item.slot) : undefined;
 		if (!item.container) {
 			if (notify) this.getGame().narrationHandler.narrateDestroyEquippedInventoryItem(this, item, this.player);

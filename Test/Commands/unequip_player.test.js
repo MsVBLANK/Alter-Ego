@@ -20,7 +20,7 @@ describe('unequip_player command', () => {
     test('given valid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const item = game.entityFinder.getInventoryItem("kyras glasses", "Kyra");
-        const slot = player.inventoryCollection.get("GLASSES");
+        const slot = player.inventory.get("GLASSES");
         const hand = game.entityFinder.getPlayerFreeHand(player);
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore
@@ -30,7 +30,7 @@ describe('unequip_player command', () => {
     test('given valid item from valid slot', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const item = game.entityFinder.getInventoryItem("kyras glasses", "Kyra");
-        const slot = player.inventoryCollection.get("GLASSES");
+        const slot = player.inventory.get("GLASSES");
         const hand = game.entityFinder.getPlayerFreeHand(player);
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore

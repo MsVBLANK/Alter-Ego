@@ -184,8 +184,8 @@ export default class GameEntityFinder {
 	getPlayerHands(player) {
 		if (!player) return [];
 		let hands = [];
-		if (player.inventoryCollection.has("RIGHT HAND")) hands.push(player.inventoryCollection.get("RIGHT HAND"));
-		if (player.inventoryCollection.has("LEFT HAND")) hands.push(player.inventoryCollection.get("LEFT HAND"));
+		if (player.inventory.has("RIGHT HAND")) hands.push(player.inventory.get("RIGHT HAND"));
+		if (player.inventory.has("LEFT HAND")) hands.push(player.inventory.get("LEFT HAND"));
 		return hands;
 	}
 
@@ -233,11 +233,11 @@ export default class GameEntityFinder {
 		else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
 		if (equipmentSlotId) {
 			equipmentSlotId = Game.generateValidEntityName(equipmentSlotId);
-			const equipmentSlot = player.inventoryCollection.get(equipmentSlotId);
+			const equipmentSlot = player.inventory.get(equipmentSlotId);
 			selectedFilters.set(equipmentSlotId, matchers.inventoryItemEquipmentSlotMatches);
 			if (equipmentSlot?.equippedItem && selectedFilters.every((filterFunction, key) => filterFunction(equipmentSlot.equippedItem, key))) return equipmentSlot;
 		}
-		else return player.inventoryCollection.find(equipmentSlot => equipmentSlot.equippedItem ? selectedFilters.every((filterFunction, key) => filterFunction(equipmentSlot.equippedItem, key)) : false);
+		else return player.inventory.find(equipmentSlot => equipmentSlot.equippedItem ? selectedFilters.every((filterFunction, key) => filterFunction(equipmentSlot.equippedItem, key)) : false);
 	}
 
 	/**

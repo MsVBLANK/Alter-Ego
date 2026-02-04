@@ -259,7 +259,7 @@ export async function execute(game, message, command, args) {
         // Check if an equipment slot was specified.
         let equipmentSlotName = "";
         if (containerItem === null) {
-            for (const [id, slot] of player.inventoryCollection) {
+            for (const [id, slot] of player.inventory) {
                 if (parsedInput.endsWith(id)) {
                     equipmentSlotName = id;
                     parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();

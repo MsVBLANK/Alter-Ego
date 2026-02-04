@@ -197,7 +197,7 @@ export default class InventoryItem extends ItemInstance {
      */
     isCoveredByEquippedItem() {
         if (this.container) return true;
-        for (const equipmentSlot of this.player.inventoryCollection.values()) {
+        for (const equipmentSlot of this.player.inventory.values()) {
             if (equipmentSlot.equippedItem === null || equipmentSlot.id === "RIGHT HAND" || equipmentSlot.id === "LEFT HAND") continue;
             if (equipmentSlot.equippedItem.prefab.coveredEquipmentSlots.includes(this.equipmentSlot)) return true;
         }

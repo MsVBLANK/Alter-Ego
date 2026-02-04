@@ -61,7 +61,7 @@ export async function execute(game, message, command, args, player) {
     if (slotName === "") slotName = item.prefab.equipmentSlots[0];
     if (!item.prefab.equipmentSlots.includes(slotName)) return game.communicationHandler.reply(message, `${itemName} can't be equipped to equipment slot ${slotName}.`);
 
-    let slot = player.inventoryCollection.get(slotName);
+    let slot = player.inventory.get(slotName);
     if (slot === undefined) return game.communicationHandler.reply(message, `Couldn't find equipment slot "${slotName}".`);
     if (slot.equippedItem !== null) return game.communicationHandler.reply(message, `Cannot equip items to ${slotName} because ${slot.equippedItem.name} is already equipped to it.`);
 

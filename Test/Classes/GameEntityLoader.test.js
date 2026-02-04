@@ -888,7 +888,7 @@ describe('GameEntityLoader test', () => {
                     else expect(inventoryItem.prefab).toBe(null);
                     expect(inventoryItem.player).toBeInstanceOf(Player);
                     expect(inventoryItem.player.name).toEqual(inventoryItem.playerName);
-                    expect(inventoryItem.player.inventoryCollection.get(inventoryItem.equipmentSlot)).toBeInstanceOf(EquipmentSlot);
+                    expect(inventoryItem.player.inventory.get(inventoryItem.equipmentSlot)).toBeInstanceOf(EquipmentSlot);
                     if (inventoryItem.containerName !== "") {
                         expect(inventoryItem.container).toBeInstanceOf(InventoryItem);
                         expect(inventoryItem.containerType).toEqual("InventoryItem");
@@ -901,7 +901,7 @@ describe('GameEntityLoader test', () => {
 
                 const kyra = game.entityFinder.getPlayer("Kyra");
                 expect(kyra.carryWeight).toBe(5);
-                const kyraJacket = kyra.inventoryCollection.get("JACKET");
+                const kyraJacket = kyra.inventory.get("JACKET");
                 expect(kyraJacket.items).toHaveLength(1);
                 expect(kyraJacket.equippedItem).not.toBeNull();
                 expect(kyraJacket.equippedItem.identifier).toBe("KYRAS LAB COAT 1");
@@ -910,7 +910,7 @@ describe('GameEntityLoader test', () => {
                     expect(inventorySlot.takenSpace).toBe(0);
                     expect(inventorySlot.weight).toBe(0);
                 }
-                const kyraPants = kyra.inventoryCollection.get("PANTS");
+                const kyraPants = kyra.inventory.get("PANTS");
                 expect(kyraPants.items).toHaveLength(2);
                 expect(kyraPants.equippedItem).not.toBeNull();
                 expect(kyraPants.equippedItem.inventoryCollection.size).toBe(2);
@@ -923,7 +923,7 @@ describe('GameEntityLoader test', () => {
 
                 const vivian = game.entityFinder.getPlayer("Vivian");
                 expect(vivian.carryWeight).toBe(22);
-                const vivianBag = vivian.inventoryCollection.get("BAG");
+                const vivianBag = vivian.inventory.get("BAG");
                 expect(vivianBag.items).toHaveLength(6);
                 expect(vivianBag.equippedItem).not.toBe(null);
                 expect(vivianBag.equippedItem.identifier).toBe("VIVIANS QUIVER");

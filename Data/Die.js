@@ -124,7 +124,7 @@ export default class Die extends GameConstruct {
                         modifierStrings.push(`${dexterityModifier} (-1 * stat modifier of ${defender.name}'s dexterity stat: ${defender.dexterity})`);
                 }
                 // Apply any of the defender's status effect modifiers that affect the attacker.
-                for (const status of defender.statusCollection.values()) {
+                for (const status of defender.status.values()) {
                     for (const modifier of status.statModifiers) {
                         // Get defender's modifiers that affect the attacker's roll.
                         if (!modifier.modifiesSelf) {

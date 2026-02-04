@@ -35,7 +35,7 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable wake");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    if (!player.statusCollection.has("asleep")) return game.communicationHandler.reply(message, "You are not currently asleep.");
+    if (!player.status.has("asleep")) return game.communicationHandler.reply(message, "You are not currently asleep.");
 
     const sleepStatus = game.entityFinder.getStatusEffect("asleep");
     const action = new CureAction(game, message, player, player.location, false);

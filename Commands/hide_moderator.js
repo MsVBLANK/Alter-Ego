@@ -40,12 +40,12 @@ export async function execute(game, message, command, args) {
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
     args.splice(0, 1);
 
-    if (player.statusCollection.has("hidden") && command === "unhide") {
+    if (player.status.has("hidden") && command === "unhide") {
         const unhideAction = new UnhideAction(game, message, player, player.location, true);
         unhideAction.performUnhide();
         game.communicationHandler.sendToCommandChannel(`Successfully brought ${player.name} out of hiding.`);
     }
-    else if (player.statusCollection.has("hidden"))
+    else if (player.status.has("hidden"))
         return game.communicationHandler.reply(message, `${player.name} is already **hidden**. If you want ${player.originalPronouns.obj} to stop hiding, use "${game.settings.commandPrefix}unhide ${player.name}".`);
     else if (command === "unhide")
         return game.communicationHandler.reply(message, `${player.name} is not currently hidden.`);

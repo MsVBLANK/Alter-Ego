@@ -44,7 +44,7 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable hide");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    if (player.statusCollection.has("hidden") && command === "unhide") {
+    if (player.status.has("hidden") && command === "unhide") {
         const fixture = game.entityFinder.getFixtures(player.hidingSpot, player.location.id, true)[0];
         if (fixture !== undefined && (fixture.childPuzzle !== null && fixture.childPuzzle.type.endsWith("lock") && !fixture.childPuzzle.solved))
             return game.communicationHandler.reply(message, `You cannot come out of hiding right now.`);
@@ -53,7 +53,7 @@ export async function execute(game, message, command, args, player) {
             unhideAction.performUnhide(fixture.hidingSpot);
         }
     }
-    else if (player.statusCollection.has("hidden"))
+    else if (player.status.has("hidden"))
         return game.communicationHandler.reply(message, `You are already **hidden**. If you wish to stop hiding, use "${game.settings.commandPrefix}unhide".`);
     else if (command === "unhide")
         return game.communicationHandler.reply(message, "You are not currently hidden.");

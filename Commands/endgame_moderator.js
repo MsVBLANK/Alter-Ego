@@ -36,7 +36,7 @@ export async function execute(game, message, command, args) {
         player.member.roles.remove(game.guildContext.playerRole).catch();
         player.member.roles.add(game.guildContext.spectatorRole).catch();
 
-        for (const status of player.statusCollection.values()) {
+        for (const status of player.status.values()) {
             if (status.timer !== null)
                 status.timer.stop();
         }

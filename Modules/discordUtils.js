@@ -151,8 +151,15 @@ function createAlertNarrationComponents(game, messageText) {
  * @param {string} messageText - The text content of the narration.
  */
 function createMinorNarrationComponents(game, messageText) {
+    const indent = `> `;
+    const smallHeader = `-# `;
+    let messageLines = messageText.split('\n');
+    for (let i = 0; i < messageLines.length; i++) {
+        if (!messageLines[i].startsWith(smallHeader)) messageLines[i] = `${smallHeader}${messageLines[i]}`;
+        if (!messageLines[i].startsWith(indent)) messageLines[i] = `${indent}${messageLines[i]}`;
+    }
 	return [
-		new TextDisplayBuilder().setContent(`> -# ${messageText}`)
+		new TextDisplayBuilder().setContent(messageLines.join('\n'))
 	];
 }
 

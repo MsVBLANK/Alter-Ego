@@ -8,9 +8,15 @@ import EquipAction from '../Data/Actions/EquipAction.js';
 export const config = {
     name: "equip_player",
     description: "Equips an item.",
-    details: "Equips an item currently in your hand. You can specify which equipment slot you want to equip the item to, if you want. "
-        + "However, some items can only be equipped to certain equipment slots (for example, a mask can only be equipped to the FACE slot). "
-        + "People in the room will see you equip an item, regardless of its size.",
+    details: `Equips an item to one of your equipment slots. The item you want to equip must be in one of your hands. `
+        + `When you equip an item, it will be narrated in the room, so other people can see you equip it, regardless of its size. `
+        + `It will then appear in your description, unless it's covered by another equipped item. For example, something equipped to `
+        + `your PANTS slot is likely to cover something equipped to your UNDERWEAR slot.\n\n`
+        + `Each item can only be equipped to certain equipment slots, if they're equippable at all. For example, `
+        + `a mask is likely to only be equippable to the FACE slot. If you are unable to equip an item to its default equipment slot, `
+        + `you can specify which slot you want to equip it to. To do this, enter "to" after the name of the item, followed by `
+        + `the name of one of your equipment slots. You can view a list of all of your equipment slots with the \`inventory\` command.\n\n`
+        + `To equip many items at once, use the \`dress\` command. If you wish to remove one of your equipped items, use the \`unequip\` command.`,
     usableBy: "Player",
     aliases: ["equip", "wear", "e"],
     requiresGame: true
@@ -21,9 +27,9 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}equip mask\n`
-        + `${settings.commandPrefix}wear coat\n`
-        + `${settings.commandPrefix}equip sweater to shirt`;
+    return `${settings.commandPrefix}equip PLAGUE DOCTOR MASK\n`
+        + `${settings.commandPrefix}wear WHITE PARKA\n`
+        + `${settings.commandPrefix}e KNIT WOOL SWEATER to SHIRT`;
 }
 
 /**

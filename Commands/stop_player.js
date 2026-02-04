@@ -8,9 +8,9 @@
 export const config = {
     name: "stop_player",
     description: "Stops your movement.",
-    details: "Stops you in your tracks while moving to another room. Your distance to that room will be preserved, "
-        + "so if you decide to move to that room again, it will not take as long. This command will also cancel any "
-        + "queued movements.",
+    details: `Stops you in your tracks while moving to another room. Your distance to that room will be preserved, `
+        + `so if you decide to move to that room again, it will not take as long. This command will also cancel any `
+        + `queued movements.`,
     usableBy: "Player",
     aliases: ["stop"],
     requiresGame: true

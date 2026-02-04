@@ -8,12 +8,18 @@ import QueueMoveAction from '../Data/Actions/QueueMoveAction.js';
 export const config = {
     name: "run_player",
     description: "Runs to another room.",
-    details: 'Moves you to another room by running. This functions the same as the move command, however you will move twice as quickly and lose stamina '
-        + 'at three times the normal rate. You will be removed from the current channel and put into the channel corresponding to the room you specify. '
-        + 'You can specify either an exit of the current room or the name of the desired room, if you know it. Note that you can only move to adjacent rooms. '
-        + 'It is recommended that you open the new channel immediately so that you can start seeing messages as soon as you\'re added. '
-        + 'The room description will be sent to you via DMs. You can create a queue of movements to perform such that upon entering one room, you will immediately '
-        + 'start running to the next one. To do this, separate each destination with `>`.',
+    details: `Moves you to another room by running. This functions identically to the \`move\` command, however you will move twice as quickly and lose stamina `
+        + `at three times the normal rate.\n\n`
+        + `You must specify an exit in the room you're currently in, or the name of the desired room, if you know it. `
+        + `Unless you have the free movement role, you can only move to a room directly connected to the one you're currently in. `
+        + `It will take time for you to move to your destination. How much time it takes depends on its distance from your current position, and your speed. `
+        + `Once you reach the destination, you will be removed from your current room channel and put into the channel corresponding to the room you specify, `
+        + `as long as the exit leading to it isn't locked.\n\n`
+        + `When you enter a new room, its description will be sent to you via DMs. `
+        + `However, it is recommended that you open the new channel immediately so that you can start seeing messages as soon as you're added.\n\n`
+        + `You can also create a queue of movements to perform such that upon entering one room, you will immediately `
+        + `start moving to the next one. To do this, separate each destination with \`>\`.\n\n`
+        + `Note that if you are carrying any large items in your hands (for example, a sword), they will be mentioned when you exit or enter a room.`,
     usableBy: "Player",
     aliases: ["run"],
     requiresGame: true
@@ -24,10 +30,13 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}run hall 1\n`
-        + `${settings.commandPrefix}run botanical garden\n`
-        + `${settings.commandPrefix}run hall 1 > hall 2 > hall 3 > hall 4\n`
-        + `${settings.commandPrefix}run lobby>path 3>path 1>park>path 7>botanical garden`;
+    return `${settings.commandPrefix}run DOOR 1\n`
+        + `${settings.commandPrefix}run Kitchen\n`
+        + `${settings.commandPrefix}run locker-room\n`
+        + `${settings.commandPrefix}run DOOR\n`
+        + `${settings.commandPrefix}run DOOR 1>DOOR 1>DOOR 1\n`
+        + `${settings.commandPrefix}run HALL 1 > HALL 2 > HALL 3 > HALL 4\n`
+        + `${settings.commandPrefix}run Lobby>Path 3>Path 1>Park>Path 7>Botanical garden`;
 }
 
 /**

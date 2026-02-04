@@ -6,7 +6,14 @@
 export const config = {
     name: "inventory_player",
     description: "Lists the items in your inventory.",
-    details: "Shows you what items you currently have. Your inventory will be sent to you via DMs.",
+    details: `Lists all of the equipment slots you have available, and any items that are equipped to each one. `
+        + `Your "RIGHT HAND" and "LEFT HAND" equipment slots are your hands, which are your main ways of interacting with inventory items. `
+        + `You can manage the items in these equipment slots primarily with the \`take\` and \`drop\` commands. For all other equipment slots, `
+        + `you can equip items to them with the \`equip\` command, and remove items from them with the \`unequip\` command.\n\n`
+        + `If any of your equipped items have inventory slots, then you can store other items inside of them. These inventory slots will be `
+        + `listed underneath the equipped item, and any items they contain will be listed in parentheses. To store an item in one of these `
+        + `inventory slots, use the \`stash\` command. To retrieve one and put it in your hand, use the \`unstash\` command. Be warned `
+        + `that items that you have stashed in inventory slots can be stolen by other players, sometimes without you noticing.`,
     usableBy: "Player",
     aliases: ["inventory", "i"],
     requiresGame: true
@@ -17,7 +24,8 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}inventory`;
+    return `${settings.commandPrefix}inventory\n`
+        + `${settings.commandPrefix}i`;
 }
 
 /**

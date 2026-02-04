@@ -11,10 +11,12 @@ import Puzzle from "../Data/Puzzle.js";
 export const config = {
     name: "take_player",
     description: "Takes an item and puts it in your inventory.",
-    details: "Adds an item from the room you're in to your inventory. You must have a free hand to take an item. "
-        + "If there are multiple items with the same name in a room, you can specify which object or item you want to take it from. "
-        + "Additionally, if the item is contained in another item with multiple inventory slots (such as pockets), you can specify which slot to "
-        + "take it from. If you take a very large item (a sword, for example), people will see you pick it up and see you carrying it when you enter or exit a room.",
+    details: `Takes an item from the room you're in and puts it in your inventory. You must have a free hand to take an item. `
+        + `If you take a very large item (a sword, for example), this will be narrated in the room, so other players will see you take it.\n\n`
+        + `If there are multiple items with the same name in a room, you can specify which container you want to take it from. `
+        + `To do this, you must enter the container's preposition before its name. If you don't know its preposition, "in" will always work. `
+        + `If you want to take an item from another item that has multiple inventory slots (for example, a backpack with several pockets), you can `
+        + `specify which of the container's slots you want to take it from, by entering the name of the slot followed by "of" before the container item's name.`,
     usableBy: "Player",
     aliases: ["take", "get", "t"],
     requiresGame: true
@@ -25,13 +27,12 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}take butcher's knife\n`
-        + `${settings.commandPrefix}get first aid kit\n`
-        + `${settings.commandPrefix}take pill bottle from medicine cabinet\n`
-        + `${settings.commandPrefix}get towel from benches\n`
-        + `${settings.commandPrefix}take hammer from tool box\n`
-        + `${settings.commandPrefix}get key from pants\n`
-        + `${settings.commandPrefix}take key from left pocket of pants`;
+    return `${settings.commandPrefix}take BUTCHERS KNIFE\n`
+        + `${settings.commandPrefix}get FIRST AID KIT\n`
+        + `${settings.commandPrefix}t BOTTLE OF MIDAZOLAM from MEDICINE CABINET\n`
+        + `${settings.commandPrefix}take TOWEL from BENCHES\n`
+        + `${settings.commandPrefix}take HAMMER from TOP RACK of TOOLBOX\n`
+        + `${settings.commandPrefix}get KEY from RIGHT POCKET of PLAID SKIRT`;
 }
 
 /**

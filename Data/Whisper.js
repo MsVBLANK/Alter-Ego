@@ -59,6 +59,11 @@ export default class Whisper extends GameConstruct {
      * @type {TextChannel}
      */
     channel;
+    /**
+     * Whether or not the whisper has been deleted.
+     * @type {boolean}
+     */
+    deleted;
 
     /**
      * @constructor
@@ -80,6 +85,7 @@ export default class Whisper extends GameConstruct {
         this.id = Whisper.generateValidId(this.playersCollection.map(player => player), this.location, this.hidingSpotName)
         const discordChannelNameCharacterLimit = 100;
         this.channelName = this.id.substring(0, discordChannelNameCharacterLimit);
+        this.deleted = false;
     }
 
     /**
@@ -133,7 +139,10 @@ export default class Whisper extends GameConstruct {
             this.getGame().entityLoader.updateWhisperId(this, newId);
             if (narration) this.getGame().narrationHandler.narrateLeaveWhisper(action, player, this, narration);
         }
-        else this.getGame().entityLoader.deleteWhisper(this);
+        else {
+            this.deleted = true;
+            this.getGame().entityLoader.deleteWhisper(this);
+        }
     }
 
     /**

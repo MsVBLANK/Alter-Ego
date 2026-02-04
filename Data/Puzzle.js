@@ -260,20 +260,30 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Sets the puzzle as solved.
-     * @param {Player} player - The player who solved the puzzle.
-     * @param {string} outcome - The solution the puzzle was solved with.
-     * @param {ItemInstance[]} [requiredItems] - The actual item instances that were required for this puzzle to be solved.
      */
-    solve(player, outcome, requiredItems = []) {
+    solve() {
         // Mark it as solved.
         this.solved = true;
-        // Set the outcome.
+    }
+
+    /**
+     * Sets the puzzle's outcome.
+     * @param {string} outcome - The solution the puzzle was solved with.
+     */
+    setOutcome(outcome) {
         if (this.solutions.length > 1) {
             if (outcome)
                 this.outcome = outcome;
             else this.outcome = this.solutions[0];
         }
+    }
 
+    /**
+     * Decrements the uses of the required items that were used to solve the puzzle.
+     * @param {Player} player - The player who solved the puzzle.
+     * @param {ItemInstance[]} [requiredItems] - The actual item instances that were required for this puzzle to be solved.
+     */
+    decrementRequiredItemUses(player, requiredItems = []) {
         for (const requiredItem of requiredItems) {
             if (!isNaN(requiredItem.uses))
                 requiredItem.decreaseUses(player);
@@ -310,9 +320,13 @@ export default class Puzzle extends ItemContainer {
      * Sets the puzzle as unsolved.
      */
     unsolve() {
-        // Mark it as unsolved.
         this.solved = false;
-        // Clear the outcome.
+    }
+
+    /**
+     * Clears the puzzle's outcome.
+     */
+    clearOutcome() {
         if (this.solutions.length > 1 && this.type !== "channels")
             this.outcome = "";
     }
@@ -413,7 +427,7 @@ export default class Puzzle extends ItemContainer {
                 return false;
             else if (requirement instanceof Flag) {
                 if (requirement.valueScript !== "") {
-                    const value = requirement.evaluate();
+                    const value = requirement.evaluate(requirement.valueScript, player);
                     requirement.setValue(value, true, player);
                 }
                 if (requirement.value !== true) return false;

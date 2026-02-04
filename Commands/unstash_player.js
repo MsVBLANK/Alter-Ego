@@ -9,10 +9,13 @@ import InventoryItem from '../Data/InventoryItem.js';
 export const config = {
     name: "unstash_player",
     description: "Moves an inventory item into your hand.",
-    details: "Moves an inventory item from another item in your inventory into your hand. You can specify which item to remove it from, if you have "
-        + "multiple items with the same name. If the inventory item you choose to move it from has multiple slots for items (such as multiple pockets), "
-        + "you can specify which slot you want to take it from as well. If you attempt to unstash a very large item (a sword, for example), "
-        + "people in the room with you will see you doing so.",
+    details: `Moves an inventory item from another item in your inventory into your hand. You must have a free hand to unstash an item. `
+        + `If you unstash a very large item (a sword, for example), this will be narrated in the room, so other players will see you unstash it.\n\n`
+        + `If you have multiple inventory items with the same name as the one you want to unstash, you can specify which item to retrieve it from. `
+        + `To do this, you must enter "from" before the container's name. If the container has multiple inventory slots (for example, a backpack `
+        + `with several pockets), you can specify which of the container's slots you want to unstash the item from, by entering the name of the `
+        + `inventory slot followed by "of" before the container item's name.\n\n`
+        + `To store an item in one of your inventory items, use the \`stash\` command.`,
     usableBy: "Player",
     aliases: ["unstash", "retrieve", "r"],
     requiresGame: true
@@ -23,10 +26,10 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}unstash laptop\n`
-        + `${settings.commandPrefix}retrieve sword from sheath\n`
-        + `${settings.commandPrefix}unstash old key from right pocket of pants\n`
-        + `${settings.commandPrefix}retrieve water bottle from side pouch of backpack`;
+    return `${settings.commandPrefix}unstash LAPTOP\n`
+        + `${settings.commandPrefix}retrieve SWORD from SHEATH\n`
+        + `${settings.commandPrefix}unstash OLD KEY from RIGHT POCKET of BLACK DRESS PANTS\n`
+        + `${settings.commandPrefix}r WATER BOTTLE from SIDE POUCH of GREEN BACKPACK`;
 }
 
 /**

@@ -283,12 +283,13 @@ export default class GameEntityFinder {
 	 * Gets the value of a flag.
 	 * @param {string} id - The flag's ID. 
 	 * @param {boolean} [evaluate] - Whether or not to also evaluate the flag's value script and update its value. Does not execute the flag's set commands. Defaults to false.
+	 * @param {Player} [player] - The player to evaluate the flag's value script with. Optional.
 	 * @returns The value of the flag with the specified ID. If no such flag exists, returns undefined.
 	 */
-	getFlagValue(id, evaluate = false) {
+	getFlagValue(id, evaluate = false, player) {
 		const flag = this.getFlag(id);
 		if (flag && flag.valueScript && evaluate) {
-			const value = flag.evaluate();
+			const value = flag.evaluate(undefined, player);
 			flag.setValue(value, false);
 		}
 		return flag ? flag.value : undefined;

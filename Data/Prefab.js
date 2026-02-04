@@ -254,6 +254,13 @@ export default class Prefab extends GameEntity {
 		else return this.singleContainingPhrase;
 	}
 
+    /**
+     * Returns true if the prefab contains no items.
+     */
+    containsNoItems() {
+        return true;
+    }
+
     /** @returns {string} */
     descriptionCell() {
         return this.getGame().constants.prefabSheetDescriptionColumn + this.row;

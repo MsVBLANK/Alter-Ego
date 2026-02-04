@@ -297,50 +297,6 @@ export function sendReply(game, message, messageText) {
 }
 
 /**
- * Mirrors a dialog message in a spectate channel.
- * @deprecated
- * @param {Player} player - The player whose spectate channel this message is being sent to.
- * @param {Player|PseudoPlayer|GuildMember} speaker - The player who originally sent the dialog message.
- * @param {UserMessage} message - The message in which this dialog originated.
- * @param {Whisper} [whisper] - The whisper the dialog was sent in, if applicable.
- * @param {string} [displayName] - The displayName to use for the mirrored webhook message. If none is specified, the speaker's current displayName will be used.
- */
-export function addSpectatedPlayerMessage(player, speaker, message, whisper = null, displayName = null) {
-    if (player.spectateChannel !== null) {
-        const messageText =
-            whisper && whisper.playersCollection.size > 1
-                ? `*(Whispered to ${whisper.generatePlayerListStringExcludingDisplayName(speaker.displayName)}):*\n${message.content || ""}`
-                : whisper
-                    ? `*(Whispered):*\n${message.content || ""}`
-                    : message.content || "";
-
-        const files = message.attachments.map((attachment) => attachment.url);
-
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    const webhook = await getOrCreateWebhook(player.spectateChannel);
-                    const webhookMessage = await sendWebhookMessage(
-                        webhook,
-                        messageText,
-                        displayName ? displayName : speaker.displayName,
-                        !(speaker instanceof GuildMember) && speaker.displayIcon
-                            ? speaker.displayIcon
-                            : speaker instanceof Player && speaker.member
-                                ? speaker.member.displayAvatarURL()
-                                : message.author.avatarURL() || message.author.defaultAvatarURL,
-                        message.embeds,
-                        files,
-                    );
-                    player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
-                },
-            },
-            "spectator"
-        );
-    }
-}
-
-/**
  * Mirrors a narration in a spectate channel.
  * @param {Player} player - The player whose spectate channel this message is being sent to.
  * @param {string} messageText - The text of the message to send.

@@ -153,7 +153,7 @@ export default class Prefab extends GameEntity {
      * @readonly
      * @type {Collection<string, InventorySlot>}
      */
-    inventoryCollection;
+    inventory;
     /**
      * The preposition that will be used when a player puts an item into an instance of this prefab.
      * @readonly
@@ -220,7 +220,7 @@ export default class Prefab extends GameEntity {
         this.commandsString = commandsString;
         this.equippedCommands = equippedCommands;
         this.unequippedCommands = unequippedCommands;
-        this.inventoryCollection = inventory;
+        this.inventory = inventory;
         this.preposition = preposition;
         this.description = new Description(description, this, game);
     }

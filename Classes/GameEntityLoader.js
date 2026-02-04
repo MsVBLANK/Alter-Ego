@@ -833,13 +833,13 @@ export default class GameEntityLoader extends GameEntityManager {
 		}
 		if (prefab.nextStageId !== "" && !(prefab.nextStage instanceof Prefab))
 			return new Error(`Couldn't load prefab on row ${prefab.row}. "${prefab.nextStageId}" in turns into is not a prefab.`);
-		for (const [i, inventorySlot] of prefab.inventoryCollection.entries()) {
+		for (const [i, inventorySlot] of prefab.inventory.entries()) {
 			if (inventorySlot.id === "" || inventorySlot.id === null || inventorySlot.id === undefined)
 				return new Error(`Couldn't load prefab on row ${prefab.row}. No name was given for inventory slot ${i + 1}.`);
 			if (isNaN(inventorySlot.capacity))
 				return new Error(`Couldn't load prefab on row ${prefab.row}. The capacity given for inventory slot "${inventorySlot.id}" is not a number.`);
 		}
-		if (prefab.inventoryCollection.size !== 0 && prefab.preposition === "")
+		if (prefab.inventory.size !== 0 && prefab.preposition === "")
 			return new Error(`Couldn't load prefab on row ${prefab.row}. ${prefab.id} has inventory slots, but no preposition was given.`);
 	}
 

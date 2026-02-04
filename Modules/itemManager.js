@@ -600,7 +600,7 @@ export function insertInventoryItems(player, items, equipmentSlot) {
  */
 function generateIdentifier(prefab) {
     let identifier = "";
-    if (prefab.inventoryCollection.size > 0) {
+    if (prefab.inventory.size > 0) {
         identifier = prefab.id;
         let number = 1;
         while (prefab.getGame().roomItems.find(item => item.identifier === `${identifier} ${number}` && item.quantity !== 0) ||

@@ -83,7 +83,7 @@ export default class InventoryItem extends ItemInstance {
      * Creates instances of all of the prefab's {@link InventorySlot|inventory slots} and inserts them into this instance's inventory.
      */
     initializeInventory() {
-        this.prefab.inventoryCollection.forEach(prefabInventorySlot => {
+        this.prefab.inventory.forEach(prefabInventorySlot => {
             /** @type {InventoryItem[]} */
             const items = [];
             const inventorySlot = new InventorySlot(

@@ -525,7 +525,7 @@ describe('GameEntityLoader test', () => {
                         if (roomItem.container instanceof RoomItem)
                             expect(`${roomItem.container.getIdentifier()}/${roomItem.slot}`).toEqual(Game.generateValidEntityName(roomItem.containerName));
                     }
-                    expect(roomItem.inventoryCollection.size).toEqual(roomItem.prefab.inventoryCollection.size);
+                    expect(roomItem.inventoryCollection.size).toEqual(roomItem.prefab.inventory.size);
                     const descriptionText = roomItem.description.toString();
                     expect(descriptionText).not.toContain("<item>");
                     expect(descriptionText).not.toContain("</item>");
@@ -883,7 +883,7 @@ describe('GameEntityLoader test', () => {
                     if (inventoryItem.prefabId !== "") {
                         expect(inventoryItem.prefab).toBeInstanceOf(Prefab);
                         expect(inventoryItem.prefab.id).toEqual(Game.generateValidEntityName(inventoryItem.prefabId));
-                        expect(inventoryItem.inventoryCollection.size).toEqual(inventoryItem.prefab.inventoryCollection.size);
+                        expect(inventoryItem.inventoryCollection.size).toEqual(inventoryItem.prefab.inventory.size);
                     }
                     else expect(inventoryItem.prefab).toBe(null);
                     expect(inventoryItem.player).toBeInstanceOf(Player);

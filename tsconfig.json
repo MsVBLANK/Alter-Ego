@@ -2,6 +2,21 @@
     "extends": "@tsconfig/node24/tsconfig.json",
     "compilerOptions": {
         "rootDir": "./",
+        "outDir": "./dist",
+        // Environment Settings
+        // See also https://aka.ms/tsconfig/module
+        "module": "nodenext",
+        "esModuleInterop": true,
+        "target": "esnext",
+        "types": [
+            "node",
+            "vitest/globals"
+        ],
+        // For nodejs:
+        "lib": [
+            "esnext",
+            "dom"
+        ],
         "noEmit": true,
         "skipLibCheck": false,
         // JS support

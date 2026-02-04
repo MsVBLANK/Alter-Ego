@@ -8,7 +8,7 @@ import CureAction from '../Data/Actions/CureAction.js';
 export const config = {
     name: "wake_player",
     description: "Wakes you up.",
-    details: "Wakes you up when you're asleep.",
+    details: `Wakes you up when you're asleep. However, you may not be able to use this command without moderator assistance.`,
     usableBy: "Player",
     aliases: ["wake", "awaken", "wakeup"],
     requiresGame: true

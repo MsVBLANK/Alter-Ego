@@ -46,7 +46,7 @@ export async function executeCommand(commandStr, game, message, player, callee) 
     else if (isPlayer) playerCommand = game.botContext.playerCommands.find(command => command.config.aliases.includes(commandAlias));
     else if (isEligible) eligibleCommand = game.botContext.eligibleCommands.find(command => command.config.aliases.includes(commandAlias));
 
-    if (!botCommand && !moderatorCommand && !playerCommand && !botCommand) return false;
+    if (!botCommand && !moderatorCommand && !playerCommand && !eligibleCommand) return false;
     const getCommandName = (command) => command.config.name.substring(0, command.config.name.indexOf('_'));
 
     // If the commandLog is at its maximum capacity, remove the oldest entry.

@@ -62,10 +62,11 @@ export default class Flag extends GameEntity {
 	/**
 	 * Evaluates the supplied valueScript to get the new value.
 	 * @param {string} [valueScript=this.valueScript] - The script to evaluate. Defaults to the flag's own valueScript if one isn't supplied.
+	 * @param {Player} [player] - The player to evaluate the script with. Optional.
 	 * @returns {string | number | boolean}
 	 */
-	evaluate(valueScript = this.valueScript) {
-		return evaluateScript(valueScript, this);
+	evaluate(valueScript = this.valueScript, player) {
+		return evaluateScript(valueScript, this, player);
 	}
 
 	/**

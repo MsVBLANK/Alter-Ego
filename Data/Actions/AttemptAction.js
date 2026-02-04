@@ -227,6 +227,16 @@ export default class AttemptAction extends Action {
 			else
 				this.#failPuzzle(puzzle);
 		}
+		else if (puzzle.type === "player toggle") {
+			if (puzzle.solved && puzzle.outcome === this.player.name && hasRequiredItem)
+				this.#unsolvePuzzle(puzzle);
+			else if (puzzle.solved)
+				this.#narrateAndLogAlreadySolvedPuzzle(puzzle);
+			else if (puzzle.solutions.includes(this.player.name))
+				this.#solvePuzzle(puzzle, this.player.name, requiredItems, item);
+			else
+				this.#failPuzzle(puzzle);
+		}
 		else if (puzzle.type === "room player") {
 			let outcome = "";
 			if (targetPlayer) {
@@ -325,7 +335,9 @@ export default class AttemptAction extends Action {
 	 * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by the puzzle's solved commands, if any.
 	 */
 	#solvePuzzle(puzzle, outcome, requiredItems, item, targetPlayer) {
-		puzzle.solve(this.player, outcome, requiredItems);
+		puzzle.solve();
+		puzzle.setOutcome(outcome);
+		puzzle.decrementRequiredItemUses(this.player, requiredItems);
 		this.getGame().narrationHandler.narrateSolve(this, puzzle, outcome, this.player, item);
 		this.getGame().logHandler.logSolve(puzzle, this.player, this.forced);
 		puzzle.executeSolvedCommands(targetPlayer ? targetPlayer : this.player);
@@ -340,6 +352,7 @@ export default class AttemptAction extends Action {
 		this.getGame().logHandler.logUnsolve(puzzle, this.player, this.forced);
 		puzzle.unsolve();
 		puzzle.executeUnsolvedCommands(this.player);
+		puzzle.clearOutcome();
 	}
 
 	/**

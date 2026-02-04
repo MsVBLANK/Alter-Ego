@@ -39,7 +39,7 @@ export async function execute(game, message, command, args) {
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
     args.splice(0, 1);
 
-    const iconURLSyntax = RegExp('(http(s?)://.*?.(jpg|jpeg|png|webp|avif))$');
+    const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|webp|avif))(\?[^\s]*)?$/;
     let input = args.join(" ");
     if (input === "") {
         if (player.isNPC) input = player.id;

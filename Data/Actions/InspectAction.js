@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 import Description from "../Description.js";
 import Fixture from "../Fixture.js";
@@ -26,7 +27,7 @@ export default class InspectAction extends Action {
 		// If the player is inspecting an inventory item that belongs to another player, remove the contents of all il tags before parsing it.
 		if (target instanceof InventoryItem && target.player.name !== this.player.name)
 			description = new Description(description.text.replace(/(<(il)(\s[^>]+?)*>)[\s\S]+?(<\/\2>)/g, "$1$4"), target, this.getGame());
-		this.player.sendDescription(description, target);
+		this.player.sendDescription(description, target, description.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT);
 		this.getGame().logHandler.logInspect(target, this.player, this.forced);
 	}
 }

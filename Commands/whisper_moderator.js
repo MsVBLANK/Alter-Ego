@@ -61,18 +61,15 @@ export async function execute(game, message, command, args) {
                     return game.communicationHandler.reply(message, `Can't include the same player multiple times.`);
                 if (recipients[j].location.id !== player.location.id)
                     return game.communicationHandler.reply(message, `The selected players aren't all in the same room.`);
+                if (player.isHidden() && (!recipients[j].isHidden() || recipients[j].hidingSpot !== player.hidingSpot))
+                    return game.communicationHandler.reply(message, `The selected players aren't all hidden together.`);
                 // Check attributes that would prohibit the player from whispering to someone in the room.
                 let status = player.getBehaviorAttributeStatusEffects("disable whisper");
-                if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
+                if (!player.isHidden() && status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
                 status = player.getBehaviorAttributeStatusEffects("no hearing");
                 if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
                 status = player.getBehaviorAttributeStatusEffects("unconscious");
                 if (status.length > 0) return game.communicationHandler.reply(message, `${player.name} can't whisper because ${player.originalPronouns.sbj} ` + (player.originalPronouns.plural ? `are` : `is`) + ` **${status[0].id}**.`);
-                // If there are no attributes that prevent whispering, add them to the array.
-                playerExists = true;
-                if (player.isNPC) npc = player;
-                recipients.push(player);
-                break;
             }
             // If there are no attributes that prevent whispering, add them to the array.
             playerExists = true;
@@ -92,7 +89,8 @@ export async function execute(game, message, command, args) {
     const communication = args.join(' ');
 
     // Check if whisper already exists.
-    let whisper = game.entityFinder.getWhisper(recipients);
+    const hidingSpot = recipients[0].hidingSpot;
+    let whisper = game.entityFinder.getWhisper(recipients, hidingSpot);
     if (whisper && npc !== null && communication) {
         await sendMessageToWhisper(game, message, communication, npc, whisper);
         return;
@@ -100,8 +98,10 @@ export async function execute(game, message, command, args) {
     else if (whisper) return game.communicationHandler.reply(message, "Whisper group already exists.");
 
     // Whisper does not exist, so create it.
-    const action = new WhisperAction(game, message, recipients[0], recipients[0].location, true);
-    whisper = await action.performWhisper(recipients);
+    if (!whisper) {
+        const action = new WhisperAction(game, message, recipients[0], recipients[0].location, true);
+        whisper = await action.performWhisper(recipients);
+    }
     if (npc !== null && communication)
         await sendMessageToWhisper(game, message, communication, npc, whisper);
 }

@@ -8,8 +8,10 @@ import TextAction from '../Data/Actions/TextAction.js';
 export const config = {
     name: "text_player",
     description: "Sends a text message to another player.",
-    details: "Sends a text message to the player you specify. If an image is attached, it will be sent as well. This command works best "
-        + "when sent via direct message, rather than in a room channel. This command is only available to players with certain status effects.",
+    details: `Sends a text message to the player you specify. If an image is attached, it will be sent as well. This command works best `
+        + `when sent via direct message, rather than in a room channel. This command is only available to players with certain status effects. `
+        + `Additionally, even if you have a status effect that enables the use of the command, if the recipient you choose does not, you will `
+        + `not be able to send text messages to them.`,
     usableBy: "Player",
     aliases: ["text"],
     requiresGame: true
@@ -20,9 +22,9 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}text elijah Hello. I am EVA Chan. We are schoolmates.\n`
-        + `${settings.commandPrefix}text astrid i often paint cityscapes, urban scenes, and portraits of people - but today i decided to experiment with something a bit more abstract. (attached image)\n`
-        + `${settings.commandPrefix}text viviana (attached image)`;
+    return `${settings.commandPrefix}text Elijah Hello. I understand that you have come into possession of some illicit substances, and I would like to partake.\n`
+        + `${settings.commandPrefix}text Astrid i often paint cityscapes, urban scenes, and portraits of people - but today i decided to experiment with something a bit more abstract. (attached image)\n`
+        + `${settings.commandPrefix}text Vivian (attached image)`;
 }
 
 /**

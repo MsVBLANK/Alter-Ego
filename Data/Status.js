@@ -27,12 +27,12 @@ export default class Status extends GameEntity {
     /**
      * The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y. If there is none, this is `null`.
      * @readonly
-     * @type {import('luxon').Duration}
+     * @type {import('luxon').Duration<true>}
      */
     duration;
     /** 
      * The amount of time remaining until the status expires. If the status has no duration, this is `null`.
-     * @type {import('luxon').Duration} 
+     * @type {import('luxon').Duration<true>} 
      */
     remaining;
     /**

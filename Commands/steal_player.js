@@ -8,14 +8,20 @@
 export const config = {
     name: "steal_player",
     description: "Steals an item from another player.",
-    details: "Attempts to steal an item from another player in the room. You must specify one of the player's equipped items to steal from. "
-        + "You can also specify which of that item's inventory slots to steal from. If no slot is specified and the item has multiple inventory slots, "
-        + "one slot will be randomly chosen. If the inventory slot contains multiple items, you will attempt to steal one at random.\n\n"
-        + "There are three possible outcomes to attempting to steal an item: you steal the item without them noticing, you steal the item but they notice, "
-        + "and you fail to steal the item because they notice in time. If you happen to steal a very large item, the other player "
-        + "will notice you taking it whether you successfully steal it or not, and so will everyone else in the room. "
-        + "Your dexterity stat has a significant impact on how successful you are at stealing an item. "
-        + "Various status effects affect the outcome as well. For example, if the player you're stealing from is unconscious, they won't notice you stealing their items no matter what.",
+    details: `Attempts to steal an item from another player in the room. You must specify one of the player's equipped items to steal from. `
+        + `You can see a list of their equipped items by inspecting them with the \`inspect\` command. Then, you can steal from it by entering `
+        + `their name followed by 's and the name of the equipped item.\n\n`
+        + `If you inspect their equipped items, you may also learn what inventory slots each one has, if any. You can specify which inventory slot `
+        + `to steal from by entering the name of the slot followed by "of" before the equipped item's name. If no inventory slot is specified, but the `
+        + `equipped item has multiple slots (for example, a pair of pants with several pockets), one slot will be randomly chosen. `
+        + `If the inventory slot contains multiple items, you will attempt to steal one at random.\n\n`
+        + `There are three possible outcomes that can result from attempting to steal an item: you steal the item without them noticing, `
+        + `you steal the item but they notice, and you fail to steal the item because they notice in time. `
+        + `If you happen to steal a very large item, the other player will notice you taking it regardless of whether you were successful or not, `
+        + `and so will everyone else in the room.\n\n`
+        + `Your dexterity stat has a significant impact on how successful you are at stealing an item. If you have a high dexterity stat, `
+        + `you are more likely to succeed. Various status effects affect the outcome as well. `
+        + `For example, if the player you're stealing from is asleep or unconscious, they won't notice you stealing their items no matter what.`,
     usableBy: "Player",
     aliases: ["steal", "pickpocket"],
     requiresGame: true
@@ -26,12 +32,12 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}steal from faye's pants\n`
-        + `${settings.commandPrefix}pickpocket from veronicas jacket\n`
-        + `${settings.commandPrefix}steal micah's right pocket of pants\n`
-        + `${settings.commandPrefix}pickpocket devyns left pocket of pants\n`
-        + `${settings.commandPrefix}steal from an individual wearing a mask's cloak\n`
-        + `${settings.commandPrefix}pickpocket an individual wearing a buckets side pouch of backpack`;
+    return `${settings.commandPrefix}steal from Vivian's BEIGE SATCHEL\n`
+        + `${settings.commandPrefix}pickpocket from Kyra's LAB COAT\n`
+        + `${settings.commandPrefix}steal Michio's RIGHT SLEEVE of PASTEL HAORI\n`
+        + `${settings.commandPrefix}pickpocket Olavi's LEFT POCKET of BLUE TRENCH COAT\n`
+        + `${settings.commandPrefix}steal from an individual wearing a PLAGUE DOCTOR MASK's BLACK CLOAK\n`
+        + `${settings.commandPrefix}pickpocket an individual wearing a BUCKET's SIDE POUCH of BLUE BACKPACK`;
 }
 
 /**

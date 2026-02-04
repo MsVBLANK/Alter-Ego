@@ -8,9 +8,9 @@ import GiveAction from '../Data/Actions/GiveAction.js';
 export const config = {
     name: "give_player",
     description: "Gives an item to another player.",
-    details: "Transfers an item from your inventory to another player in the room. The item selected must be in one of your hands. "
-        + "The receiving player must also have a free hand, or else they will not be able to receive the item. If a particularly large item "
-        + "(a chainsaw, for example) is given, people in the room with you will see you giving it to the recipient.",
+    details: `Transfers an item from your inventory to another player in the room. The item selected must be in one of your hands. `
+        + `The receiving player must also have a free hand, or else they will not be able to receive the item. If a particularly large item `
+        + `is given (a chainsaw, for example), it will be narrated in the room, so other players in the room will see you giving it to the recipient.`,
     usableBy: "Player",
     aliases: ["give", "g"],
     requiresGame: true
@@ -21,7 +21,8 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}give keiko moldy bread`;
+    return `${settings.commandPrefix}give Astrid EMBALMING FLUID\n`
+        + `${settings.commandPrefix}g Flint BIRTHDAY PRESENT`;
 }
 
 /**

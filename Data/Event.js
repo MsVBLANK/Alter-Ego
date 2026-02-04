@@ -1,5 +1,6 @@
 import Description from './Description.js';
 import GameEntity from './GameEntity.js';
+import EndAction from './Actions/EndAction.js';
 import InflictAction from './Actions/InflictAction.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import Timer from '../Classes/Timer.js';
@@ -42,7 +43,7 @@ export default class Event extends GameEntity {
     durationString;
     /**
      * The duration object of the event.
-     * @type {Duration}
+     * @type {Duration<true>}
      */
     duration;
     /**
@@ -52,7 +53,7 @@ export default class Event extends GameEntity {
     remainingString;
     /**
      * The remaining time of the event.
-     * @type {Duration}
+     * @type {Duration<true>}
      */
     remaining;
     /**
@@ -254,8 +255,8 @@ export default class Event extends GameEntity {
             event.remainingString = event.remaining.toFormat(format);
 
             if (event.remaining.as('milliseconds') <= 0) {
-                event.end();
-                event.executeEndedCommands();
+                const endAction = new EndAction(event.getGame(), undefined, undefined, undefined, false);
+                endAction.performEnd(event);
             }
         });
     }

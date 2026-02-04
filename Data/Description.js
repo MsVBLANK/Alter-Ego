@@ -1,5 +1,6 @@
 import GameConstruct from "./GameConstruct.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
+import { MessageDisplayType } from "../Modules/enums.js";
 /** @import Game from "./Game.js"; */
 /** @import GameEntity from "./GameEntity.js"; */
 /** @import Player from "./Player.js"; */
@@ -41,6 +42,12 @@ export default class Description extends GameConstruct {
 	 * @type {string[]}
 	 */
 	#errors;
+	/**
+     * The display type of the message to send for this description.
+     * @readonly
+     * @type {MessageDisplayType}
+     */
+    messageDisplayType;
 
 	/**
 	 * @constructor
@@ -56,6 +63,7 @@ export default class Description extends GameConstruct {
 		this.document = descriptionDocument.document;
 		this.#warnings = descriptionDocument.warnings;
 		this.#errors = descriptionDocument.errors;
+		this.messageDisplayType = descriptionDocument.messageDisplayType;
 	}
 
 	getContainer() {

@@ -47,7 +47,7 @@ export async function execute(game, command, args, player, callee) {
     if (room === undefined)
         game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Room "${input}" not found.`);
 
-    const iconURLSyntax = RegExp('(http(s?)://.*?.(jpg|jpeg|png|gif|webp|avif))$');
+    const iconURLSyntax = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif))(\?[^\s]*)?$/;
     input = input.replace(iconURLSyntax, '$1').replace(/(?<=http(s?))@(?=.*?(jpg|jpeg|png|gif|webp|avif))/g, ':').replace(/(?<=http(s?):.*?)\\(?=.*?(jpg|jpeg|png|gif|webp|avif))/g, '/');
     if (!iconURLSyntax.test(input)) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". The display icon must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 

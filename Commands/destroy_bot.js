@@ -80,11 +80,11 @@ export async function execute(game, command, args, player, callee) {
 
         // Check if a container item was specified.
         const roomItems = game.entityFinder.getRoomItems(null, room.id);
-        for (let i = 0; i < newArgs.length; i++) {
+        for (let i = args.length - 1; i >= 0; i--) {
             let find = roomItems.find((item) => itemIdentifierMatches(item, newArgs.slice(i).join(" ")));
             if (find) {
                 // If we have a complete slice of newArgs, we've found the item to delete.
-                if (i === 0) {
+                if (i === args.length - 1) {
                     item = find;
                     newArgs = newArgs.slice(0, i);
                     break;
@@ -219,8 +219,8 @@ export async function execute(game, command, args, player, callee) {
             let containerItem = null;
             /** @type {InventorySlot} */
             let containerItemSlot = null;
-            const playerItems = player.inventoryCollection.filter(slot => slot.equippedItem && slot.equippedItem.prefab !== null && (slot.equippedItem.quantity > 0 || isNaN(slot.equippedItem.quantity))).map(slot => slot.equippedItem);
-            for (let i = 0; i > newArgs.length; i++) {
+            const playerItems = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null && (item.quantity > 0 || isNaN(item.quantity)));
+            for (let i = 0; i < newArgs.length; i++) {
                 let find = playerItems.find((item) => itemIdentifierMatches(item, newArgs.slice(i).join(" ")));
                 if (find) {
                     // If we have a complete slice of newArgs, we've found the item to delete.

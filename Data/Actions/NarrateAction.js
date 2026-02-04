@@ -41,7 +41,18 @@ export default class NarrateAction extends Action {
 	 */
 	#playerShouldReceiveNotification(narration, player) {
 		return player.hasBehaviorAttribute("see room")
-			|| narration.message && narration.message.channel.type === ChannelType.GuildText && !player.member.permissionsIn(narration.message.channel).has('ViewChannel');
+			|| narration.whisper && narration.whisper.playersCollection.has(player.name) && !player.member.permissionsIn(narration.whisper.channel).has('ViewChannel');
+	}
+
+	/**
+	 * Returns a custom username for webhooks for narrations in rooms with the `video surveilled` tag.
+	 * @param {Narration} narration - The narration to be communicated.
+	 * @param {string} prefix - A prefix to apply to the beginning of the webhook username. A space will be added before the rest of the username. 
+	 * @param {string} [webhookUsername] - A custom username to use for the webhook without the prefix. Optional.
+	 */
+	#assembleVideoSurveilledWebhookUsername(narration, prefix, webhookUsername = narration.narratorDisplayName) {
+		if (!narration.narrator) return;
+		return `${prefix} ${webhookUsername}`;
 	}
 
 	/**
@@ -127,11 +138,13 @@ export default class NarrateAction extends Action {
 	#communicateNarrationToVideoMonitoringRooms(narration) {
 		if (!narration.locationIsVideoSurveilled || narration.isInHidingSpot() || narration.action instanceof SayAction) return;
 		const roomDisplayName = narration.location.getSurveilledDisplayName(true);
-		const prefix = narration.narrator ? `` : `[${roomDisplayName}] `;
-		const narrationText = `\`${prefix}${narration.content}\``;
+		const narrationHasNarrator = !!narration.narrator;
+		const prefix = `[${roomDisplayName}] `;
+		const narrationText = narrationHasNarrator ? `${narration.content}` : `\`${prefix}${narration.content}\``;
 		for (const videoMonitoringRoom of narration.videoMonitoringRooms) {
-			this.#communicateNarrationToPlayers(narration, videoMonitoringRoom.occupants, `[${roomDisplayName}] ${narration.narratorDisplayName}`, narration.narratorDisplayIcon, narrationText);
-			if (!narration.isModeratorNarration()) this.getGame().communicationHandler.narrateInRoom(narration, narrationText);
+			const webhookUsername = this.#assembleVideoSurveilledWebhookUsername(narration, prefix, narration.narratorDisplayName);
+			this.#communicateNarrationToPlayers(narration, videoMonitoringRoom.occupants, webhookUsername, narration.narratorDisplayIcon, narrationText);
+			if (!narration.isModeratorNarration()) this.getGame().communicationHandler.narrateInRoom(narration, narrationText, false, videoMonitoringRoom, webhookUsername);
 		}
 	}
 }

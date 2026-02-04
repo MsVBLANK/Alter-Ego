@@ -1,5 +1,6 @@
 import {ChannelType, type Guild, type GuildBasedChannel} from 'discord.js';
 import {access, constants, readFile, writeFile, mkdir} from "node:fs/promises";
+import type Game from '../Data/Game.js';
 
 const SERVER_CONFIG_PATH = "./Configs/serverconfig.json";
 
@@ -47,11 +48,11 @@ export async function validateServerConfig(guild: Guild, serverConfig: ServerCon
         } else missingSettings.push("playerRole");
     }
     if (serverConfig.freeMovementRole === "") {
-        let headmasterRole = guild.roles.cache.find(role => role.name === "Headmaster");
-        if (headmasterRole) {
-            serverConfig.freeMovementRole = headmasterRole.id;
+        let freeMovementRole = guild.roles.cache.find(role => role.name === "Free Movement");
+        if (freeMovementRole) {
+            serverConfig.freeMovementRole = freeMovementRole.id;
             save = true;
-        } else missingSettings.push("headmasterRole");
+        } else missingSettings.push("freeMovementRole");
     }
     if (serverConfig.moderatorRole === "") {
         let moderatorRole = guild.roles.cache.find(role => role.name === "Moderator");
@@ -196,12 +197,13 @@ export function createCategory(guild: Guild, name: string): Promise<GuildBasedCh
     });
 }
 
-export async function registerRoomCategory(category: GuildBasedChannel): Promise<string> {
+export async function registerRoomCategory(game: Game, category: GuildBasedChannel): Promise<string> {
     let serverConfig = await loadServerConfig();
     if (!serverConfig.roomCategories.includes(category.id)) {
         if (serverConfig.roomCategories !== "")
             serverConfig.roomCategories += ",";
         serverConfig.roomCategories += category.id;
+        game.guildContext.roomCategories.push(category.id);
 
         await writeServerConfig(serverConfig);
 

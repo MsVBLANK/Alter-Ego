@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 import CureAction from "./CureAction.js";
 /** @import InventoryItem from "../InventoryItem.js" */
@@ -17,7 +18,7 @@ export default class InflictAction extends Action {
      * @param {boolean} [doCures=true] - Whether or not the status's cures should actually be cured. Defaults to true.
      * @param {boolean} [narrate=true] - Whether or not to send any narrations caused by the status being inflicted. Defaults to true.
      * @param {InventoryItem} [item] - The inventory item that caused the status to be inflicted, if applicable.
-	 * @param {import('luxon').Duration} [duration] - A custom duration that overrides the status's default duration.
+	 * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
 	 * @returns Whether or not the bot should send a followup message.
 	 */
 	performInflict(status, notify = true, doCures = true, narrate = true, item, duration = null) {
@@ -74,7 +75,7 @@ export default class InflictAction extends Action {
 			this.player.stopMoving();
 
 		this.player.inflict(status, duration);
-		if (notify) this.player.sendDescription(status.inflictedDescription, status);
+		if (notify) this.player.sendDescription(status.inflictedDescription, status, status.inflictedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		if (narrate) this.getGame().narrationHandler.narrateInflict(this, status, this.player);
 		this.getGame().logHandler.logInflict(status, this.player);
 		return true;

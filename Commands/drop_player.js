@@ -13,11 +13,16 @@ import Puzzle from "../Data/Puzzle.js";
 export const config = {
     name: "drop_player",
     description: "Discards an item from your inventory.",
-    details: "Discards an item from your inventory and leaves it in the room you're currently in. The item you want to discard must be in either of your hands. "
-        + "You can specify where in the room you'd like to leave it by putting the name of an object or item in the room after the item. "
-        + "Not all objects and items can contain items, but it should be fairly obvious which ones can. If you want to discard it in an item with multiple "
-        + "inventory slots (such as pockets), you can specify which slot to put it in. If you don't specify an object or item, you will simply leave it on the floor. "
-        + "If you drop a very large item (a sword, for example), people in the room with you will see you discard it.",
+    details: `Discards an item from your inventory and leaves it in the room you're currently in. The item you want to drop must be in one of your hands. `
+        + `If you discard a very large item (a sword, for example), this will be narrated in the room, so other players will see you drop it.\n\n`
+        + `If you want to put the item in a specific fixture or item in the room, add a preposition after the name of the item, followed by the container's name. `
+        + `Every container has a set preposition which should be fairly obvious. For example, a fixture called "DESK" is likely to have the preposition "on". `
+        + `However, if the preposition is unclear, "in" will always work. Keep in mind that not all fixtures and items can be item containers. `
+        + `If you don't specify a container, you will simply leave the item on the floor.\n\n`
+        + `If the container has multiple inventory slots (for example, a backpack with several pockets), you can also specify which slot you want to put the item in. `
+        + `To do this, enter the name of the inventory slot followed by "of" before the name of the container. If you don't specify an inventory slot, you will put it `
+        + `in the first slot it has.\n\n`
+        + `You can only put items in containers in the room that you're in. If you want to put an item in one of your inventory items, use the \`stash\` command.`,
     usableBy: "Player",
     aliases: ["drop", "discard", "put", "d"],
     requiresGame: true
@@ -28,12 +33,12 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}drop first aid kit\n`
-        + `${settings.commandPrefix}discard basketball\n`
-        + `${settings.commandPrefix}drop knife in sink\n`
-        + `${settings.commandPrefix}discard towel on benches\n`
-        + `${settings.commandPrefix}drop key in right pocket of skirt\n`
-        + `${settings.commandPrefix}discard wrench on top rack of tool box`;
+    return `${settings.commandPrefix}drop FIRST AID KIT\n`
+        + `${settings.commandPrefix}discard BASKETBALL\n`
+        + `${settings.commandPrefix}put KNIFE in SINK\n`
+        + `${settings.commandPrefix}d TOWEL on BENCHES\n`
+        + `${settings.commandPrefix}drop KEY in RIGHT POCKET of PLAID SKIRT\n`
+        + `${settings.commandPrefix}d WRENCH on TOP RACK of TOOL BOX`;
 }
 
 /**

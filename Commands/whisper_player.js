@@ -1,5 +1,4 @@
-﻿import Whisper from '../Data/Whisper.js';
-import WhisperAction from '../Data/Actions/WhisperAction.js';
+﻿import WhisperAction from '../Data/Actions/WhisperAction.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
@@ -9,12 +8,11 @@ import WhisperAction from '../Data/Actions/WhisperAction.js';
 export const config = {
     name: "whisper_player",
     description: "Allows you to speak privately with the selected player(s).",
-    details: "Creates a channel for you to whisper to the selected recipients. Only you and the people you select "
-        + "will be able to read messages posted in the new channel, but everyone in the room will be notified "
-        + "that you've begun whispering to each other. You can select as many players as you want as long as they're "
-        + "in the same room as you. When one of you leaves the room, they will be removed from the channel. "
-        + "If everyone leaves the room, the whisper channel will be deleted. You are required to use this when "
-        + "discussing the game with other players. Do not use DMs.",
+    details: `Creates a channel for you to whisper to the selected recipients. Only you and the people you select `
+        + `will be able to read messages posted in the new channel, but everyone in the room will be notified `
+        + `that you've begun whispering to each other. You can select as many players as you want as long as they're `
+        + `in the same room as you. When one of you leaves the room, they will be removed from the channel. `
+        + `If everyone leaves the room, the whisper channel will be deleted.`,
     usableBy: "Player",
     aliases: ["whisper"],
     requiresGame: true
@@ -25,8 +23,8 @@ export const config = {
  * @returns {string} 
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}whisper tim\n`
-        + `${settings.commandPrefix}whisper katie susie tim`;
+    return `${settings.commandPrefix}whisper Jun\n`
+        + `${settings.commandPrefix}whisper Florian Michio Ava`;
 }
 
 /**

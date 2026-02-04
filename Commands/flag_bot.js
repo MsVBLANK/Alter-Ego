@@ -111,7 +111,7 @@ export async function execute(game, command, args, player, callee) {
 		}
 		if (valueScript) {
 			try {
-				value = flag.evaluate(valueScript);
+				value = flag.evaluate(valueScript, player);
 				if (newFlag) game.flags.set(flag.id, flag);
 				flag.valueScript = valueScript;
 				flag.setValue(value, doCommands, player);

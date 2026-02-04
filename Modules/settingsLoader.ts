@@ -34,15 +34,15 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
     showOnlinePlayerCount: true,
     autoLoad: false,
     onlineActivity: {
-        name: "Future Foundation HQ",
-        type: BotContext.getActivityType("LISTENING")
+        name: "Waiting for commands...",
+        type: BotContext.getActivityType("CUSTOM")
     },
     debugModeActivity: {
-        name: "NWP Debugger.exe",
+        name: "Debug Mode",
         type: BotContext.getActivityType("PLAYING")
     },
     gameInProgressActivity: {
-        name: "Neo World Program",
+        name: "NWP",
         type: BotContext.getActivityType("STREAMING"),
         url: "https://www.twitch.tv/twitch"
     }

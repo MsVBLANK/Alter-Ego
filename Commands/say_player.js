@@ -10,8 +10,11 @@ import { ChannelType } from "discord.js";
 export const config = {
     name: "say_player",
     description: "Sends your message to the room you're in.",
-    details: "Sends your message to the channel of the room you're currently in. This command is "
-        + "only available to players with certain status effects.",
+    details: `Sends your message to the channel of the room you're currently in as dialog. It will appear in the channel with a webhook, `
+        + `meaning it will use the display name and display avatar that you have in-game. By default, your display name is your character's name, `
+        + `and your display avatar is the avatar you have in the game server, or your account's avatar. However, if something has changed `
+        + `your display name or avatar (for example, if you are wearing a mask), then those will be used instead.\n\n`
+        + `This command is only available to players with certain status effects. In most situations, you should send your message to the room channel directly.`,
     usableBy: "Player",
     aliases: ["say", "speak"],
     requiresGame: true

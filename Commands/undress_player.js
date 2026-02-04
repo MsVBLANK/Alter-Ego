@@ -11,9 +11,13 @@ import Puzzle from "../Data/Puzzle.js";
 export const config = {
     name: "undress_player",
     description: "Unequips and drops all items.",
-    details: "Unequips all items you have equipped and drops them into a container of your choosing. If no container is chosen, then items will be "
-        + `dropped on the floor. The given container must have a large enough capacity to hold all of the items in your `
-        + "inventory. This command will also drop any items in your hands.",
+    details: `Unequips all items you have equipped and drops them in the room you're currently in. You will undress completely, `
+        + `including any items in your hands. This will be narrated, so any other players in the room will see you undress.\n\n`
+        + `If you want to put your items in a specific fixture or item in the room, add the container's name. No preposition is necessary. `
+        + `If you don't specify a container, you will simply leave the items on the floor.\n\n`
+        + `If the container has multiple inventory slots (for example, a backpack with several pockets), you can also specify which slot you want to put the items in. `
+        + `To do this, enter the name of the inventory slot followed by "of" before the name of the container. If you don't specify an inventory slot, you will put `
+        + `the items in the first slot it has. Keep in mind that the specified container must have a large enough capacity to hold all of the items in your inventory.`,
     usableBy: "Player",
     aliases: ["undress"],
     requiresGame: true
@@ -25,9 +29,9 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}undress\n`
-        + `${settings.commandPrefix}undress wardrobe\n`
-        + `${settings.commandPrefix}undress laundry basket\n`
-        + `${settings.commandPrefix}undress main pocket of backpack`;
+        + `${settings.commandPrefix}undress WARDROBE\n`
+        + `${settings.commandPrefix}undress LAUNDRY BASKET\n`
+        + `${settings.commandPrefix}undress MAIN POCKET of BLUE BACKPACK`;
 }
 
 /**
@@ -115,9 +119,9 @@ export async function execute(game, message, command, args, player) {
     }
     else {
         if (parsedInput !== "") return game.communicationHandler.reply(message, `Couldn't find "${parsedInput}" to drop item into.`);
-        const defaultDropObject = fixtures.find(fixture => fixture.name === game.settings.defaultDropFixture);
-        if (defaultDropObject === null || defaultDropObject === undefined) return game.communicationHandler.reply(message, `You cannot drop items in this room.`);
-        container = defaultDropObject;
+        const defaultDropFixture = fixtures.find(fixture => fixture.name === game.settings.defaultDropFixture);
+        if (defaultDropFixture === null || defaultDropFixture === undefined) return game.communicationHandler.reply(message, `You cannot drop items in this room.`);
+        container = defaultDropFixture;
     }
 
     let topContainer = container;

@@ -38,15 +38,6 @@ export default class ItemContainer extends GameEntity {
 	}
 
 	/**
-	 * Sets the entity's description which can contain an item list.
-	 * @deprecated
-	 * @param {string} description - The new description.
-	 */
-	#setDescription(description) {
-		//this.description = description;
-	}
-
-	/**
 	 * Adds an item to the specified item list in the container's description.
 	 * @deprecated
 	 * @param {ItemInstance} item - The item to add.

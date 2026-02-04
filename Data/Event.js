@@ -57,18 +57,6 @@ export default class Event extends GameEntity {
      */
     remaining;
     /**
-     * The string representation of what times the event will be automatically triggered. Deprecated. Use triggerTimesStrings instead.
-     * @deprecated
-     * @type {string}
-     */
-    triggerTimesString;
-    /**
-     * What times the event will be automatically triggered. Deprecated. Use triggerTimesStrings instead.
-     * @deprecated
-     * @type {string[]}
-     */
-    triggerTimes;
-    /**
      * The string representations of what times the event will be automatically triggered.
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-strings
      * @type {string[]}

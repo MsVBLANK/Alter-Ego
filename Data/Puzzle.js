@@ -375,15 +375,6 @@ export default class Puzzle extends ItemContainer {
     }
 
     /**
-     * Sets the alreadySolvedDescription.
-     * @deprecated
-     * @param {string} description 
-     */
-    #setDescription(description) {
-        //this.alreadySolvedDescription = description;
-    }
-
-    /**
      * Adds an item to the specified item list in the puzzle's already solved description.
      * @deprecated
      * @override

@@ -199,24 +199,6 @@ export default class Room extends GameEntity {
     }
 
     /**
-     * Unlocks an exit in the room. Deprecated. Use an UnlockAction instead.
-     * @deprecated
-     * @param {number} index - The exit's index within the room's array of exits.
-     */
-    unlock(index) {
-        this.exit[index].unlock();
-    }
-
-    /**
-     * Locks an exit in the room. Deprecated. Use a LockAction instead.
-     * @deprecated
-     * @param {number} index - The exit's index within the room's array of exits.
-     */
-    lock(index) {
-        this.exit[index].lock();
-    }
-
-    /**
      * Gets the exit with the given name.
      * @param {string} name - The name of the exit to get.
      */

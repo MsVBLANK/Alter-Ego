@@ -17,7 +17,7 @@ import Gesture from '../Data/Gesture.js';
 import Flag from '../Data/Flag.js';
 import InflictAction from '../Data/Actions/InflictAction.js';
 import { getSheetValues } from '../Modules/sheets.js';
-import { convertTimeStringToDurationUnits, parseDuration } from '../Modules/helpers.js';
+import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.js';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
 
@@ -939,7 +939,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 products must require a fixture tag.`);
-		if (recipe.duration !== null && (Duration.isDuration(recipe.duration) && !recipe.duration.isValid))
+		if (recipe.duration !== null && !validateDuration(recipe.duration))
 			return new Error(`Couldn't load recipe on row ${recipe.row}. An invalid duration was given.`);
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);
@@ -1477,9 +1477,9 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkEvent(event) {
 		if (event.id === "" || event.id === null || event.id === undefined)
 			return new Error(`Couldn't load event on row ${event.row}. No event ID was given.`);
-		if (event.duration !== null && (Duration.isDuration(event.duration) && !event.duration.isValid))
+		if (event.duration !== null && !validateDuration(event.duration))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.durationString}" is not a valid duration.`);
-		if (event.remaining !== null && (Duration.isDuration(event.remaining) && !event.remaining.isValid))
+		if (event.remaining !== null && !validateDuration(event.remaining))
 			return new Error(`Couldn't load event on row ${event.row}. "${event.remainingString}" is not a valid representation of the time remaining.`);
 		if (!event.ongoing && event.remaining !== null)
 			return new Error(`Couldn't load event on row ${event.row}. The event is not ongoing, but an amount of time remaining was given.`);
@@ -1618,7 +1618,7 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkStatusEffect(status) {
 		if (status.id === "" || status.id === null || status.id === undefined)
 			return new Error(`Couldn't load status effect on row ${status.row}. No status effect ID was given.`);
-		if (status.duration !== null && (Duration.isDuration(status.duration) && !status.duration.isValid))
+		if (!validateDuration(status.duration))
 			return new Error(`Couldn't load status effect on row ${status.row}. An invalid duration was given.`);
 		for (let i = 0; i < status.statModifiers.length; i++) {
 			const statModifier = status.statModifiers[i];
@@ -1755,8 +1755,9 @@ export default class GameEntityLoader extends GameEntityManager {
 					if (player.member !== null || player.isNPC) {
 						if (player.location instanceof Room) {
 							player.location.addPlayer(player);
+							let invalidStatusFound = false;
 							// Parse statuses and inflict the player with them.
-							player.statusDisplays.forEach(statusDisplay => {
+							for (const statusDisplay of player.statusDisplays) {
 								const status = this.game.entityFinder.getStatusEffect(statusDisplay.id);
 								if (status) {
 									const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
@@ -1766,13 +1767,16 @@ export default class GameEntityLoader extends GameEntityManager {
 										if (timeRemainingParsed !== undefined)
 											timeRemaining = Duration.fromObject(timeRemainingParsed);
 										else {
-											timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
+											errors.push(new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.timeRemaining}" is not a valid representation of the time remaining for the status "${statusDisplay.id}".`));
+											invalidStatusFound = true;
+											break;
 										}
 									} else timeRemaining = null;
 									const inflictAction = new InflictAction(this.game, undefined, player, player.location, true);
 									inflictAction.performInflict(status, false, false, false, undefined, timeRemaining);
 								}
-							});
+							}
+							if (invalidStatusFound) continue;
 						}
 					}
 					this.game.players_alive.push(player);
@@ -1857,20 +1861,6 @@ export default class GameEntityLoader extends GameEntityManager {
 		for (let statusDisplay of player.statusDisplays) {
 			if (!player.hasStatus(statusDisplay.id))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
-			if (statusDisplay.timeRemaining) {
-				const timeRemainingString = statusDisplay.timeRemaining ? statusDisplay.timeRemaining : "";
-				const timeRemainingParsed = convertTimeStringToDurationUnits(timeRemainingString);
-				let timeRemaining;
-				if (timeRemainingString !== "") {
-					if (timeRemainingParsed !== undefined)
-						timeRemaining = Duration.fromObject(timeRemainingParsed);
-					else
-						timeRemaining = Duration.invalid("created from invalid duration string", `${timeRemainingString} is not a valid duration string`);
-				} else timeRemaining = null;
-				if (Duration.isDuration(timeRemaining) && !timeRemaining.isValid) {
-					return new Error(`Couldn't load player on row ${player.row}. The given representation of the time remaining for the status "${statusDisplay.id}" is not valid.`);
-				}
-			}
 		}
 		return;
 	}

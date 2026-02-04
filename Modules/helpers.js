@@ -182,3 +182,12 @@ export function convertTimeStringToDurationUnits(timeString) {
 		};
 	}
 }
+
+/**
+ * Determines if a given object is a valid luxon duration object or not.
+ * @param {unknown} input - The object to test.
+ * @returns {input is Duration<true>} Whether or not the input object is a valid luxon duration object.
+ */
+export function validateDuration(input) {
+	return Duration.isDuration(input) && input.isValid
+}

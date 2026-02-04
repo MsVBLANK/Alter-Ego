@@ -148,15 +148,15 @@ describe('GameEntityLoader test', () => {
             test('exit error messages', async () => {
                 sheets.__setMock(game.constants.roomSheetDataCells, [
                     ["Room 1", "", ""],
-                    ["Room 2", "", "", "DOOR A", "X"],
-                    ["Room 3", "", "", "DOOR B", "0", "Y"],
-                    ["Room 4", "", "", "DOOR C", "0", "0", "Z"],
-                    ["Room 5", "", "", "DOOR D", "0", "0", "0", "TRUE"],
-                    ["Room 6", "", "", "DOOR E", "0", "0", "0", "TRUE", "Room 0"],
-                    ["Room 7", "", "", "DOOR F", "0", "0", "0", "TRUE", "Room 2"],
-                    ["Room 8", "", "", "DOOR G", "0", "0", "0", "TRUE", "Room 9", "DOOR Y"],
-                    ["Room 9", "", "", "DOOR Z", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
-                    ["", "", "", "DOOR Z", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
+                    ["Room 2", "", "", "DOOR A", "", "", "X"],
+                    ["Room 3", "", "", "DOOR B", "", "", "0", "Y"],
+                    ["Room 4", "", "", "DOOR C", "", "", "0", "0", "Z"],
+                    ["Room 5", "", "", "DOOR D", "", "", "0", "0", "0", "TRUE"],
+                    ["Room 6", "", "", "DOOR E", "", "", "0", "0", "0", "TRUE", "Room 0"],
+                    ["Room 7", "", "", "DOOR F", "", "", "0", "0", "0", "TRUE", "Room 2"],
+                    ["Room 8", "", "", "DOOR G", "", "", "0", "0", "0", "TRUE", "Room 9", "DOOR Y"],
+                    ["Room 9", "", "", "DOOR Z","", "",  "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
+                    ["", "", "", "DOOR Z", "", "", "0", "0", "0", "TRUE", "Room 8", "DOOR G"],
                 ]);
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
@@ -678,17 +678,26 @@ describe('GameEntityLoader test', () => {
                 sheets.__setMock(game.constants.eventSheetDataCells, [
                     ["aaa","","90x"],
                     ["bbb","TRUE","90s","90y"],
+                    ["ccc","FALSE","90s","00:01:30"],
+                    ["ddd","TRUE","90s",""],
+                    ["eee","FALSE","90s","","99:365 XY"],
+                    ["fff","FALSE","90s","","","","","invalid"],
+                    ["ggg","FALSE","90s","","","","","","invalid"],
                 ]);
                 const eventCount = await game.entityLoader.loadEvents(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
                     "Error: Couldn't load event on row 2. \"90x\" is not a valid duration.",
                     "Error: Couldn't load event on row 3. \"90y\" is not a valid representation of the time remaining.",
+                    "Error: Couldn't load event on row 4. The event is not ongoing, but an amount of time remaining was given.",
+                    "Error: Couldn't load event on row 5. The event is ongoing and has a duration, but no amount of time remaining was given.",
+                    "Error: Couldn't load event on row 6. \"99:365 XY\" is not a valid time to trigger at.",
+                    "Error: Couldn't load event on row 7. \"invalid\" in inflicted status effects is not a status effect.",
+                    "Error: Couldn't load event on row 8. \"invalid\" in refreshed status effects is not a status effect.",
                 ];
-                console.log(errorStrings);
                 expect(errors).not.toEqual([]);
                 expect(eventCount).toBe(0);
-                //expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
                 for (const errorString of expectedErrorStrings) {
                     expect(errorStrings).toContain(errorString);
                 }
@@ -706,6 +715,60 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadStatusEffects test', () => {
+        describe('erroneous status effect response', () => {
+            test('incomplete status effects', async () => {
+                sheets.__setMock(game.constants.statusSheetDataCells, [
+                    [""]
+                ]);
+                const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load status effect on row 2. No status effect ID was given."
+                ];
+                expect(errors).not.toEqual([]);
+                expect(statusEffectCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid status effects', async () => {
+                sheets.__setMock(game.constants.statusSheetDataCells, [
+                    ["aaa","365xyz"],
+                    ["bbb","","","","","","","","","1"],
+                    ["ccc","","","","","","","","","inv+1"],
+                    ["ddd","","","","","","","","","per"],
+                    ["eee","","","","","","","","","per+NaN"],
+                    ["fff","","","","invalid","","","","",""],
+                    ["ggg","","","","","invalid","","","",""],
+                    ["hhh","","","","","","invalid","","",""],
+                    ["iii","","","","","","","invalid","",""],
+                    ["jjj","","","","","","","","invalid",""],
+                ]);
+                const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load status effect on row 2. An invalid duration was given.",
+                    "Error: Couldn't load status effect on row 3. No stat in stat modifier 1 was given.",
+                    "Error: Couldn't load status effect on row 4. \"inv\" in stat modifier 1 is not a valid stat.",
+                    "Error: Couldn't load status effect on row 5. No number was given in stat modifier 1.",
+                    "Error: Couldn't load status effect on row 6. The value given in stat modifier 1 is not an integer.",
+                    "Error: Couldn't load status effect on row 7. \"invalid\" in \"don't inflict if\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 8. \"invalid\" in cures is not a status effect.",
+                    "Error: Couldn't load status effect on row 9. Next stage \"invalid\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 10. Duplicated status \"invalid\" is not a status effect.",
+                    "Error: Couldn't load status effect on row 11. Cured condition \"invalid\" is not a status effect.",
+                ];
+                expect(errors).not.toEqual([]);
+                expect(statusEffectCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+        });
+
         describe('standard status effect response', () => {
             test('errorChecking true', async () => {
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
@@ -716,6 +779,80 @@ describe('GameEntityLoader test', () => {
     });
 
     describe('loadPlayers test', () => {
+        describe('erroneous player response', () => {
+            beforeEach(async () => {
+                if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);
+                if (game.statusEffectsCollection.size === 0) await game.entityLoader.loadStatusEffects(false);
+                if (game.prefabsCollection.size === 0) await game.entityLoader.loadPrefabs(false);
+            });
+
+            test('incomplete players', async () => {
+                sheets.__setMock(game.constants.playerSheetDataCells, [
+                    ["", "aaa"],
+                    ["665168062697177107",""],
+                    ["665168062697177107","bbb","","/////"],
+                    ["665168062697177107","ccc","","a/////"],
+                    ["665168062697177107","ddd","","a/b////"],
+                    ["665168062697177107","eee","","a/b/c///"],
+                    ["665168062697177107","fff","","a/b/c/d//"],
+                    ["665168062697177107","ggg","","a/b/c/d/e/"],
+                    ["665168062697177107","hhh","","neutral",""],
+                ]);
+                const playerCount = await game.entityLoader.loadPlayers(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load player on row 3. No Discord ID was given.",
+                    "Error: Couldn't load player on row 4. No player name was given.",
+                    "Error: Couldn't load player on row 5. No subject pronoun was given.",
+                    "Error: Couldn't load player on row 6. No object pronoun was given.",
+                    "Error: Couldn't load player on row 7. No dependent possessive pronoun was given.",
+                    "Error: Couldn't load player on row 8. No independent possessive pronoun was given.",
+                    "Error: Couldn't load player on row 9. No reflexive pronoun was given.",
+                    "Error: Couldn't load player on row 10. Whether the player's pronouns pluralize verbs was not specified.",
+                    "Error: Couldn't load player on row 11. No voice descriptor was given.",
+                ];
+                expect(errors).not.toEqual([]);
+                expect(playerCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+
+            test('invalid players', async () => {
+                sheets.__setMock(game.constants.playerSheetDataCells, [
+                    ["665168062697177107","aaa","","neutral","a generic voice","NaN"],
+                    ["665168062697177107","bbb","","neutral","a generic voice","1","NaN"],
+                    ["665168062697177107","ccc","","neutral","a generic voice","1","2","NaN"],
+                    ["665168062697177107","ddd","","neutral","a generic voice","1","2","3","NaN"],
+                    ["665168062697177107","eee","","neutral","a generic voice","1","2","3","4","NaN"],
+                    ["665168062697177107","fff","","neutral","a generic voice","1","2","3","4","5","TRUE","invalid"],
+                    ["665168062697177107","ggg","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","invalid"],
+                    ["665168062697177107","hhh","","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","","feminizing (365)"],
+                    ["665168062697177107","iii","NPC","neutral","a generic voice","1","2","3","4","5","TRUE","lobby","",""],
+                ]);
+                const playerCount = await game.entityLoader.loadPlayers(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load player on row 3. The strength stat given is not an integer.",
+                    "Error: Couldn't load player on row 4. The perception stat given is not an integer.",
+                    "Error: Couldn't load player on row 5. The dexterity stat given is not an integer.",
+                    "Error: Couldn't load player on row 6. The speed stat given is not an integer.",
+                    "Error: Couldn't load player on row 7. The stamina stat given is not an integer.",
+                    "Error: Couldn't load player on row 8. \"invalid\" is not a room.",
+                    "Error: Couldn't load player on row 9. \"invalid\" is not a status effect.",
+                    "Error: Couldn't load player on row 10. The given representation of the time remaining for the status \"feminizing\" is not valid.",
+                    "Error: Couldn't load player on row 11. The Discord ID for an NPC must be a URL with a .jpg, .jpeg, .png, .webp, or .avif extension.",
+                ];
+                expect(errors).not.toEqual([]);
+                expect(playerCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
+        });
+
         describe('standard player response', () => {
             test('errorChecking true', async () => {
                 if (game.roomsCollection.size === 0) await game.entityLoader.loadRooms(false);

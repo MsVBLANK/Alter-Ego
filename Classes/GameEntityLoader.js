@@ -1618,7 +1618,7 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkStatusEffect(status) {
 		if (status.id === "" || status.id === null || status.id === undefined)
 			return new Error(`Couldn't load status effect on row ${status.row}. No status effect ID was given.`);
-		if (!validateDuration(status.duration))
+		if (status.duration !== null && !validateDuration(status.duration))
 			return new Error(`Couldn't load status effect on row ${status.row}. An invalid duration was given.`);
 		for (let i = 0; i < status.statModifiers.length; i++) {
 			const statModifier = status.statModifiers[i];
@@ -1859,7 +1859,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (player.alive && !(player.location instanceof Room))
 			return new Error(`Couldn't load player on row ${player.row}. "${player.locationDisplayName}" is not a room.`);
 		for (let statusDisplay of player.statusDisplays) {
-			if (!player.hasStatus(statusDisplay.id))
+			if (!player.hasStatus(statusDisplay.id) && (statusDisplay.timeRemaining ? convertTimeStringToDurationUnits(statusDisplay.timeRemaining) !== undefined : true))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 		}
 		return;

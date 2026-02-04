@@ -157,7 +157,7 @@ export default class SayAction extends Action {
 	 * @param {Dialog} dialog - The dialog that was spoken. 
 	 */
 	#communicateWhisperedDialog(dialog) {
-		for (const player of dialog.whisper.playersCollection.values()) {
+		for (const player of dialog.whisper.players.values()) {
 			if (dialog.speaker.name === player.name) {
 				this.#mirrorPlayersOwnDialog(dialog);
 				continue;
@@ -196,7 +196,7 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			// Players with the acute hearing attribute should overhear other whispers.
 			if (dialog.whisper) {
-				if (!dialog.isOOCMessage && player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.playersCollection.has(player.name)) {
+				if (!dialog.isOOCMessage && player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.players.has(player.name)) {
 					const notification = this.getGame().notificationGenerator.generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player);
 					if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 						this.getGame().communicationHandler.notifyPlayer(player, this, notification);

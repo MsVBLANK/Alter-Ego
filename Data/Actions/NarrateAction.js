@@ -41,7 +41,7 @@ export default class NarrateAction extends Action {
 	 */
 	#playerShouldReceiveNotification(narration, player) {
 		return player.hasBehaviorAttribute("see room")
-			|| narration.whisper && narration.whisper.playersCollection.has(player.name) && !player.member.permissionsIn(narration.whisper.channel).has('ViewChannel');
+			|| narration.whisper && narration.whisper.players.has(player.name) && !player.member.permissionsIn(narration.whisper.channel).has('ViewChannel');
 	}
 
 	/**
@@ -127,7 +127,7 @@ export default class NarrateAction extends Action {
 	 */
 	#communicateNarrationToWhisper(narration) {
 		if (!narration.whisper) return;
-		this.#communicateNarrationToPlayers(narration, narration.whisper.playersCollection.map(player => player));
+		this.#communicateNarrationToPlayers(narration, narration.whisper.players.map(player => player));
 		if (!narration.isModeratorNarration()) this.getGame().communicationHandler.narrateInWhisper(narration, narration.content, false);
 	}
 

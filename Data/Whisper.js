@@ -25,7 +25,7 @@ export default class Whisper extends GameConstruct {
      * A collection of players in the whisper. The key for each entry is the player's name.
      * @type {Collection<string, Player>}
      */
-    playersCollection;
+    players;
     /**
      * The ID of the room the players are whispering in.
      * @readonly
@@ -67,15 +67,15 @@ export default class Whisper extends GameConstruct {
      */
     constructor(game, players, hidingSpotName) {
         super(game);
-        this.playersCollection = new Collection();
+        this.players = new Collection();
         for (const player of players)
-            this.playersCollection.set(player.name, player);
-        if (this.playersCollection.size > 0) {
-            this.locationId = this.playersCollection.first().location.id;
+            this.players.set(player.name, player);
+        if (this.players.size > 0) {
+            this.locationId = this.players.first().location.id;
             this.location = this.getGame().entityFinder.getRoom(this.locationId);
         } 
         if (hidingSpotName) this.hidingSpotName = hidingSpotName;
-        this.id = Whisper.generateValidId(this.playersCollection.map(player => player), this.location, this.hidingSpotName)
+        this.id = Whisper.generateValidId(this.players.map(player => player), this.location, this.hidingSpotName)
         const discordChannelNameCharacterLimit = 100;
         this.channelName = this.id.substring(0, discordChannelNameCharacterLimit);
         this.deleted = false;
@@ -94,7 +94,7 @@ export default class Whisper extends GameConstruct {
      * @param {Player[]} players - The list of players to include in the generated string. Defaults to all players in the whisper.
      * @returns {string}
      */
-    generatePlayerListString(players = this.playersCollection.map(player => player)) {
+    generatePlayerListString(players = this.players.map(player => player)) {
         return generatePlayerListString(players);
     }
 
@@ -104,7 +104,7 @@ export default class Whisper extends GameConstruct {
      * @returns {string}
      */
     generatePlayerListStringExcluding(player) {
-        return this.generatePlayerListString(this.playersCollection.filter(participant => participant.name !== player.name).map(player => player));
+        return this.generatePlayerListString(this.players.filter(participant => participant.name !== player.name).map(player => player));
     }
 
     /**
@@ -114,7 +114,7 @@ export default class Whisper extends GameConstruct {
      * @returns {string}
      */
     generatePlayerListStringExcludingDisplayName(playerDisplayName) {
-        return this.generatePlayerListString(this.playersCollection.filter(participant => participant.displayName !== playerDisplayName).map(player => player));
+        return this.generatePlayerListString(this.players.filter(participant => participant.displayName !== playerDisplayName).map(player => player));
     }
 
     /**
@@ -125,9 +125,9 @@ export default class Whisper extends GameConstruct {
      */
     removePlayer(player, narration, action) {
         this.revokeChannelAccess(player);
-        this.playersCollection.delete(player.name);
-        const newId = Whisper.generateValidId(this.playersCollection.map(player => player), this.location, this.hidingSpotName);
-        const deleteWhisper = this.playersCollection.size === 0 || this.getGame().whispers.get(newId);
+        this.players.delete(player.name);
+        const newId = Whisper.generateValidId(this.players.map(player => player), this.location, this.hidingSpotName);
+        const deleteWhisper = this.players.size === 0 || this.getGame().whispers.get(newId);
         if (!deleteWhisper) {
             this.getGame().entityLoader.updateWhisperId(this, newId);
             if (narration) this.getGame().narrationHandler.narrateLeaveWhisper(action, player, this, narration);

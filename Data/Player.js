@@ -1558,7 +1558,7 @@ export default class Player extends ItemContainer {
      */
     removeFromWhispers(narration, action) {
         for (const whisper of this.getGame().whispers.values()) {
-            if (whisper.playersCollection.has(this.name))
+            if (whisper.players.has(this.name))
                 whisper.removePlayer(this, narration, action);
         }
     }

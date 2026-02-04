@@ -63,7 +63,7 @@ export default class GameLogHandler {
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
 	 */
 	logWhisper(whisper, player, forced) {
-		const playerListString = generateListString(whisper.playersCollection.filter(whisperPlayer => whisperPlayer.name !== player.name).map(player => player.name));
+		const playerListString = generateListString(whisper.players.filter(whisperPlayer => whisperPlayer.name !== player.name).map(player => player.name));
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}began whispering to ${playerListString} in ${player.location.channel}`);
 	}
 

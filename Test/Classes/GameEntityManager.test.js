@@ -52,7 +52,7 @@ describe('GameEntityManager test', () => {
             const whisper = game.entityFinder.getWhisper(players);
             await game.entityLoader.deleteWhisper(whisper);
             expect(whisper.channel.delete).toHaveBeenCalledOnce();
-            expect(whisper.playersCollection.size).toBe(0);
+            expect(whisper.players.size).toBe(0);
             expect(game.whispers.has("lobby-astrid-asuka")).toBe(false);
         });
 
@@ -65,7 +65,7 @@ describe('GameEntityManager test', () => {
             expect(whisper.channel.permissionOverwrites.resolve(asuka.id)).toBeUndefined();
             expect(whisper.channel.permissionOverwrites.resolve(astrid.id)).toBeUndefined();
             expect(whisper.channel.permissionOverwrites.cache.size).toBe(0);
-            expect(whisper.playersCollection.size).toBe(0);
+            expect(whisper.players.size).toBe(0);
             expect(game.whispers.has("lobby-astrid-asuka")).toBe(false);
         });
     });

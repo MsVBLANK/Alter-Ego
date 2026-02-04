@@ -353,7 +353,7 @@ export default class GameEntityManager {
 	async deleteWhisper(whisper) {
 		if (this.game.settings.autoDeleteWhisperChannels) await whisper.channel.delete();
 		else await whisper.channel.edit({ name: `archived-${whisper.location.id}`, lockPermissions: true });
-		whisper.playersCollection.clear();
+		whisper.players.clear();
 		this.game.whispers.delete(whisper.id);
 	}
 
@@ -369,7 +369,7 @@ export default class GameEntityManager {
 				type: ChannelType.GuildText,
 				parent: this.game.guildContext.whisperCategoryId
 			}).then(channel => {
-				whisper.playersCollection.forEach(player => {
+				whisper.players.forEach(player => {
 					const noChannel = player.isNPC
 						|| player.isHidden() && player.getBehaviorAttributeStatusEffects("no channel").length > 1
 						|| !player.isHidden() && player.hasBehaviorAttribute("no channel")

@@ -130,7 +130,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
             "tell"
         );
         if (addSpectate) {
-            whisper.playersCollection.forEach((player) => {
+            whisper.players.forEach((player) => {
                 if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
                     let messageCreateOptions;
                     if (sendWebhookMessage) messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);

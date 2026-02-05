@@ -144,15 +144,18 @@ async function testparse (game, fileName, player) {
             for (const exit of room.exits.values()) {
                 text += "      ";
                 text += exit.name + EOL;
-                const parsedDescription = parseDescriptionWithErrors(exit.description, room, player);
-                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: exit.descriptionCell(), warnings: parsedDescription.warnings });
-                if (parsedDescription.errors.length !== 0) errors.push({ cell: exit.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += exit.description.text + EOL;
+                if (exit.description.text !== "") {
+                    const parsedDescription = parseDescriptionWithErrors(exit.description, room, player);
+                    if (parsedDescription.warnings.length !== 0) warnings.push({ cell: exit.descriptionCell(), warnings: parsedDescription.warnings });
+                    if (parsedDescription.errors.length !== 0) errors.push({ cell: exit.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += parsedDescription.text + EOL;
+                    text += "         ";
+                    text += exit.description.text + EOL;
+
+                    text += "         ";
+                    text += parsedDescription.text + EOL;
+                }
             }
             text += EOL;
         }
@@ -167,15 +170,17 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += game.fixtures[i].name + EOL;
 
-            const parsedDescription = parseDescriptionWithErrors(game.fixtures[i].description, game.fixtures[i], player);
-            if (parsedDescription.warnings.length !== 0) warnings.push({ cell: game.fixtures[i].descriptionCell(), warnings: parsedDescription.warnings });
-            if (parsedDescription.errors.length !== 0) errors.push({ cell: game.fixtures[i].descriptionCell(), errors: parsedDescription.errors });
+            if (game.fixtures[i].description.text !== "") {
+                const parsedDescription = parseDescriptionWithErrors(game.fixtures[i].description, game.fixtures[i], player);
+                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: game.fixtures[i].descriptionCell(), warnings: parsedDescription.warnings });
+                if (parsedDescription.errors.length !== 0) errors.push({ cell: game.fixtures[i].descriptionCell(), errors: parsedDescription.errors });
 
-            text += "      ";
-            text += game.fixtures[i].description.text + EOL;
+                text += "      ";
+                text += game.fixtures[i].description.text + EOL;
 
-            text += "      ";
-            text += parsedDescription.text + EOL;
+                text += "      ";
+                text += parsedDescription.text + EOL;
+            }
         }
         await appendFile(fileName, text);
     }
@@ -188,15 +193,17 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += prefab.id + EOL;
 
-            const parsedDescription = parseDescriptionWithErrors(prefab.description, prefab, player);
-            if (parsedDescription.warnings.length !== 0) warnings.push({ cell: prefab.descriptionCell(), warnings: parsedDescription.warnings });
-            if (parsedDescription.errors.length !== 0) errors.push({ cell: prefab.descriptionCell(), errors: parsedDescription.errors });
+            if (prefab.description.text !== "") {
+                const parsedDescription = parseDescriptionWithErrors(prefab.description, prefab, player);
+                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: prefab.descriptionCell(), warnings: parsedDescription.warnings });
+                if (parsedDescription.errors.length !== 0) errors.push({ cell: prefab.descriptionCell(), errors: parsedDescription.errors });
 
-            text += "      ";
-            text += prefab.description.text + EOL;
+                text += "      ";
+                text += prefab.description.text + EOL;
 
-            text += "      ";
-            text += parsedDescription.text + EOL;
+                text += "      ";
+                text += parsedDescription.text + EOL;
+            }
         }
         await appendFile(fileName, text);
     }
@@ -266,15 +273,17 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += roomItem.name + EOL;
 
-            const parsedDescription = parseDescriptionWithErrors(roomItem.description, roomItem, player);
-            if (parsedDescription.warnings.length !== 0) warnings.push({ cell: roomItem.descriptionCell(), warnings: parsedDescription.warnings });
-            if (parsedDescription.errors.length !== 0) errors.push({ cell: roomItem.descriptionCell(), errors: parsedDescription.errors });
+            if (roomItem.description.text !== "") {
+                const parsedDescription = parseDescriptionWithErrors(roomItem.description, roomItem, player);
+                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: roomItem.descriptionCell(), warnings: parsedDescription.warnings });
+                if (parsedDescription.errors.length !== 0) errors.push({ cell: roomItem.descriptionCell(), errors: parsedDescription.errors });
 
-            text += "      ";
-            text += roomItem.description.text + EOL;
+                text += "      ";
+                text += roomItem.description.text + EOL;
 
-            text += "      ";
-            text += parsedDescription.text + EOL;
+                text += "      ";
+                text += parsedDescription.text + EOL;
+            }
         }
         await appendFile(fileName, text);
     }
@@ -476,15 +485,17 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += player.name + EOL;
 
-            const parsedDescription = parseDescriptionWithErrors(player.description, player, player);
-            if (parsedDescription.warnings.length !== 0) warnings.push({ cell: player.descriptionCell(), warnings: parsedDescription.warnings });
-            if (parsedDescription.errors.length !== 0) errors.push({ cell: player.descriptionCell(), errors: parsedDescription.errors });
+            if (player.description.text !== "") {
+                const parsedDescription = parseDescriptionWithErrors(player.description, player, player);
+                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: player.descriptionCell(), warnings: parsedDescription.warnings });
+                if (parsedDescription.errors.length !== 0) errors.push({ cell: player.descriptionCell(), errors: parsedDescription.errors });
 
-            text += "      ";
-            text += player.description.text + EOL;
+                text += "      ";
+                text += player.description.text + EOL;
 
-            text += "      ";
-            text += parsedDescription.text + EOL;
+                text += "      ";
+                text += parsedDescription.text + EOL;
+            }
         }
         await appendFile(fileName, text);
     }
@@ -498,15 +509,17 @@ async function testparse (game, fileName, player) {
                 text += "   ";
                 text += inventoryItem.name + EOL;
 
-                const parsedDescription = parseDescriptionWithErrors(inventoryItem.description, inventoryItem, player);
-                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: inventoryItem.descriptionCell(), warnings: parsedDescription.warnings });
-                if (parsedDescription.errors.length !== 0) errors.push({ cell: inventoryItem.descriptionCell(), errors: parsedDescription.errors });
+                if (inventoryItem.description.text !== "") {
+                    const parsedDescription = parseDescriptionWithErrors(inventoryItem.description, inventoryItem, player);
+                    if (parsedDescription.warnings.length !== 0) warnings.push({ cell: inventoryItem.descriptionCell(), warnings: parsedDescription.warnings });
+                    if (parsedDescription.errors.length !== 0) errors.push({ cell: inventoryItem.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "      ";
-                text += inventoryItem.description.text + EOL;
+                    text += "      ";
+                    text += inventoryItem.description.text + EOL;
 
-                text += "      ";
-                text += parsedDescription.text + EOL;
+                    text += "      ";
+                    text += parsedDescription.text + EOL;
+                }
             }
         }
         await appendFile(fileName, text);

@@ -16,8 +16,8 @@
     "type": "git",
     "url": "git+https://github.com/MolSnoo/Alter-Ego.git"
   },
-  "author": "Vivian Anderson",
-  "license": "UNLICENSED",
+  "author": "MolSnoo",
+  "license": "AGPL-3.0-or-later",
   "bugs": {
     "url": "https://github.com/MolSnoo/Alter-Ego/issues"
   },

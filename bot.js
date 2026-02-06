@@ -14,12 +14,12 @@ import { default as autoUpdate } from './Modules/updateHandler.js';
 import { editSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.js';
 
-import {Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role} from 'discord.js';
-import fs, {readdir, readFileSync} from 'fs';
-import {loadEnvFile} from 'node:process';
-import {loadGameSettings, loadPlayerDefaults} from "./Modules/settingsLoader.ts";
+import { Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
+import { readdir, readFileSync } from 'fs';
+import { loadDotEnv } from "./Modules/envLoader.ts";
+import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
-import {loadCredentials} from "./Modules/credentialsLoader.ts";
+import { loadCredentials } from "./Modules/credentialsLoader.ts";
 
 const client = new Client({
     partials: [
@@ -218,22 +218,6 @@ async function checkVersion() {
     const localPackage = JSON.parse(readFileSync('./package.json').toString())
     if (masterPackage.version !== localPackage.version && !localPackage.version.endsWith("d"))
         guildContext.commandChannel.send(`This version of Alter Ego is out of date. Please update using Docker or download the latest version from https://github.com/MolSnoo/Alter-Ego at your earliest convenience.`);
-}
-
-function loadDotEnv() {
-    /** @type string */
-    const dotenvPath = process.env.DOTENV_PATH ?? './.env';
-
-    // Load .env file if it exists.
-    if (fs.existsSync(dotenvPath)) {
-        try {
-            loadEnvFile(dotenvPath);
-        } catch (e) {
-            console.error(`Error: Cannot load .env file: ${e.toString()}`);
-        }
-    } else {
-        console.warn(`Warning: .env file not found at ${dotenvPath}. You can ignore this warning if you are using Docker.`);
-    }
 }
 
 function sendStartupLog() {

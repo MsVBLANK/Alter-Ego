@@ -1,37 +1,12 @@
 import GameConstants from '../Classes/GameConstants.js';
+import { loadDotEnv } from '../Modules/envLoader.ts';
+import { loadCredentials } from '../Modules/credentialsLoader.ts';
 import { getSheetValues } from '../Modules/sheets.js';
-import { copyFileSync, existsSync, writeFileSync } from 'fs';
-import { createRequire } from 'node:module';
+import { writeFileSync } from 'fs';
 
 async function main() {
-    // Copy the default config files into the Configs folder.
-    const configMappings = [
-        ['./Defaults/default_credentials.json', './Configs/credentials.json'],
-        ['./Defaults/default_demodata.json', './Configs/demodata.json'],
-        ['./Defaults/default_playerdefaults.json', './Configs/playerdefaults.json'],
-        ['./Defaults/default_serverconfig.json', './Configs/serverconfig.json'],
-        ['./Defaults/default_settings.json', './Configs/settings.json']
-    ];
-    for (const [defaultsFilePath, configsFilePath] of configMappings) {
-        const configFileExists = existsSync(configsFilePath);
-        if (!configFileExists) {
-            console.log(`File does not exist: ${configsFilePath}. Attempting to copy from Defaults directory...`);
-            const defaultFileExists = existsSync(defaultsFilePath);
-            if (!defaultFileExists) {
-                console.warn(`No such file exists: ${defaultsFilePath}, skipping.`);
-                continue;
-            }
-            copyFileSync(defaultsFilePath, configsFilePath);
-            console.log(`Wrote ${configsFilePath}.`);
-        }
-    }
-
-    // If there are still no valid credentials, skip the rest.
-    const require = createRequire(import.meta.url);
-    let credentials = null;
-    try { 
-        credentials = require('../Configs/credentials.json');
-    } catch (err) { credentials = null; }
+    loadDotEnv();
+    const credentials = loadCredentials();
     if (!credentials || !credentials.google)
         return console.warn('No usable Google credentials found in Configs/credentials.json. Execution cannot proceed.');
     

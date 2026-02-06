@@ -10,7 +10,7 @@ describe('UnstashAction test', () => {
     afterAll(async () => {
         clearQueue(game);
         vi.resetAllMocks();
-        await game.entityLoader.loadPlayers(false);
+        await game.entityLoader.loadInventoryItems(false);
     });
     
     test('ported legacy test', async () => {

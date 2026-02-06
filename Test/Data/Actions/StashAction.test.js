@@ -12,7 +12,8 @@ describe('StashAction test', () => {
     afterAll(async () => {
         clearQueue(game);
         vi.resetAllMocks();
-        await game.entityLoader.loadPlayers(false);
+        await game.entityLoader.loadInventoryItems(false);
+        await game.entityLoader.loadRoomItems(false);
     });
 
     test('ported legacy test', async () => {

@@ -398,7 +398,7 @@ export function insertRoomItems(location, items) {
             roomItem.containerName === item.containerName &&
             roomItem.slot === item.slot &&
             (roomItem.uses === item.uses || isNaN(item.uses) && isNaN(item.uses)) &&
-            roomItem.description === item.description
+            roomItem.description.text === item.description.text
         );
         if (matchedItem) {
             if (!isNaN(matchedItem.quantity))
@@ -424,7 +424,7 @@ export function insertRoomItems(location, items) {
                     roomItem.containerName === item.container.containerName &&
                     roomItem.slot === item.container.slot &&
                     (roomItem.uses === item.container.uses || isNaN(roomItem.uses) && isNaN(item.container.uses)) &&
-                    roomItem.description === item.container.description
+                    roomItem.description.text === item.container.description.text
                 );
                 for (let j = 0; j < possibleContainers.length; j++) {
                     if (item.container instanceof RoomItem && containersMatch(item.container, possibleContainers[j])) {
@@ -447,7 +447,7 @@ export function insertRoomItems(location, items) {
                             if (containerSlot.items[i].prefab.id === item.prefab.id &&
                                 containerSlot.items[i].identifier === item.identifier &&
                                 (containerSlot.items[i].uses === item.uses || isNaN(containerSlot.items[i].uses) && isNaN(item.uses)) &&
-                                containerSlot.items[i].description === item.description) {
+                                containerSlot.items[i].description.text === item.description.text) {
                                 foundItem = true;
                                 containerSlot.items.splice(i, 1, matchedItem);
                                 break;
@@ -515,7 +515,7 @@ export function insertInventoryItems(player, items, equipmentSlot) {
             playerItem.containerName === item.containerName &&
             playerItem.slot === item.slot &&
             (playerItem.uses === item.uses || isNaN(playerItem.uses) && isNaN(item.uses)) &&
-            playerItem.description === item.description
+            playerItem.description.text === item.description.text
         );
         if (matchedItem) {
             if (!isNaN(matchedItem.quantity))
@@ -535,7 +535,7 @@ export function insertInventoryItems(player, items, equipmentSlot) {
                             if (containerSlot.items[j].prefab.id === item.prefab.id &&
                                 containerSlot.items[j].identifier === item.identifier &&
                                 (containerSlot.items[j].uses === item.uses || isNaN(containerSlot.items[j].uses) && isNaN(item.uses)) &&
-                                containerSlot.items[j].description === item.description) {
+                                containerSlot.items[j].description.text === item.description.text) {
                                 foundItem = true;
                                 containerSlot.items.splice(j, 1, matchedItem);
                                 break;

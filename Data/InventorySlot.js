@@ -79,7 +79,7 @@ export default class InventorySlot {
 			inventoryItem.containerName === item.containerName &&
 			inventoryItem.slot === item.slot &&
 			(inventoryItem.uses === item.uses || isNaN(inventoryItem.uses) && isNaN(item.uses)) &&
-			inventoryItem.description === item.description
+			inventoryItem.description.text === item.description.text
 		);
 		if (!matchedItem || isNaN(matchedItem.quantity)) this.items.push(item);
 		if (!isNaN(item.quantity)) {
@@ -95,11 +95,10 @@ export default class InventorySlot {
 	 */
 	removeItem(item, removedQuantity) {
 		for (let i = 0; i < this.items.length; i++) {
-			if (this.items[i].row === item.row && this.items[i].description === item.description) {
+			if (this.items[i].row === item.row && this.items[i].description.text === item.description.text) {
 				if (item.quantity === 0) this.items.splice(i, 1);
 				this.weight -= item.weight * removedQuantity;
 				this.takenSpace -= item.prefab.size * removedQuantity;
-				this.weight -= item.weight * removedQuantity;
 				break;
 			}
 		}

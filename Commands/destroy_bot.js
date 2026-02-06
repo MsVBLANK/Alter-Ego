@@ -73,8 +73,8 @@ export async function execute(game, command, args, player, callee) {
         let item;
         /** @type {Fixture | Puzzle | RoomItem} */
         let container = null;
-        /** @type {InventorySlot} */
-        let slot;
+        /** @type {InventorySlot<RoomItem>} */
+        let containerItemSlot;
 
         newArgs = newArgs.splice(0, atIndex);
 
@@ -103,34 +103,34 @@ export async function execute(game, command, args, player, callee) {
             for (const [id, collectionSlot] of container.inventory) {
                 for (let i = 0; i < newArgs.length; i++) {
                     if (newArgs.slice(i).join(" ") === id) {
-                        slot = collectionSlot;
+                        containerItemSlot = collectionSlot;
                         newArgs = newArgs.slice(0, i);
                         break;
                     }
                 }
-                if (slot) break;
+                if (containerItemSlot) break;
             }
-            if (!slot) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${container.getIdentifier()}.`);
+            if (!containerItemSlot) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${container.getIdentifier()}.`);
         }
-        if (container && !slot && container instanceof RoomItem) {
-            [slot] = container.inventory.values();
+        if (container && !containerItemSlot && container instanceof RoomItem) {
+            containerItemSlot = container.inventory.first();
         }
 
         // Check if a fixture was specified.
         if (!container && !item) {
             const fixtures = game.entityFinder.getFixtures(null, room.id, true);
             for (let i = 0; i < newArgs.length; i++) {
-                let find = fixtures.find((fixture) => fixture.name === newArgs.slice(i).join(" "));
-                if (find) {
+                let fixture = fixtures.find((fixture) => fixture.name === newArgs.slice(i).join(" "));
+                if (fixture) {
                     if (i === 0) {
                         return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". You need to supply an item and a preposition.`);
                     } else {
-                        if (newArgs.slice(i - 1, i)[0] === "IN" || newArgs.slice(i - 1, i)[0] === find.preposition.toUpperCase()) {
-                            container = find;
+                        if (newArgs.slice(i - 1, i)[0] === "IN" || newArgs.slice(i - 1, i)[0] === fixture.preposition.toUpperCase()) {
+                            container = fixture;
                             newArgs = newArgs.slice(0, i - 1);
                             break;
                         } else {
-                            container = find;
+                            container = fixture;
                             newArgs = newArgs.slice(0, i);
                             break;
                         }
@@ -146,13 +146,15 @@ export async function execute(game, command, args, player, callee) {
             containerItems = roomItems;
         // Container is a Fixture.
         else if (container instanceof Fixture)
-            containerItems = roomItems.filter(item => item.containerName === `Object: ${container.name}`);
+            containerItems = container.getContainedItems();
         // Container is a Puzzle.
         else if (container instanceof Puzzle)
-            containerItems = roomItems.filter(item => item.containerName === `Puzzle: ${container.name}`);
+            containerItems = container.getContainedItems();
         // Container is a RoomItem.
-        else if (container instanceof RoomItem)
-            containerItems = roomItems.filter(item => item.containerName === `Item: ${container.identifier}/${slot.id}`);
+        else if (container instanceof RoomItem) {
+            if (containerItemSlot) containerItems = containerItemSlot.getContainedItems();
+            else containerItems = container.getContainedItems();
+        }
 
         if (destroyAll) {
             newArgs.splice(0, 1);
@@ -175,7 +177,7 @@ export async function execute(game, command, args, player, callee) {
             if (!item) return;
 
             const destroyAction = new DestroyAction(game, undefined, undefined, room, true);
-            destroyAction.performDestroyRoomItem(item, item.quantity, true)
+            destroyAction.performDestroyRoomItem(item, item.quantity, true);
         }
     } else {
         /** @type {InventoryItem} */
@@ -252,23 +254,25 @@ export async function execute(game, command, args, player, callee) {
                 }
                 if (!containerItemSlot) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.getIdentifier()}.`);
             } else if (containerItem && !containerItemSlot) {
-                [containerItemSlot] = containerItem.inventory.values();
+                containerItemSlot = containerItem.inventory.first();
             }
             if (containerItem && !containerItemSlot) {
-                [containerItemSlot] = containerItem.inventory.values();
+                containerItemSlot = containerItem.inventory.first();
             }
 
             if (destroyAll) {
                 newArgs.splice(0, 1);
             }
 
+            /** @type {InventoryItem[]} */
             let containerItems = [];
             let containerName = "";
             let preposition = "in";
             if (containerItem !== null) {
-                containerItems = playerItems.filter(item => item.containerName === `${containerItem.identifier}/${containerItemSlot.id}`);
+                if (containerItemSlot) containerItems = containerItemSlot.getContainedItems();
+                else containerItems = containerItem.getContainedItems();
                 containerName = `${containerItemSlot.id} of ${containerItem.identifier} in ${player.name}'s inventory`;
-                preposition = containerItem.prefab.preposition ? containerItem.prefab.preposition : "in";
+                preposition = containerItem.getPreposition();
 
                 if (destroyAll) {
                     for (const containerItem of containerItems) {
@@ -292,8 +296,8 @@ export async function execute(game, command, args, player, callee) {
             } else {
                 // Check if an equipment slot was specified.
                 let equipmentSlotName = "";
-                if (player.inventory.has(newArgs.join(" "))) {
-                    item = player.inventory.get(newArgs.join(" ")).equippedItem;
+                if (player.getEquipmentSlot(newArgs.join(" "))) {
+                    item = player.getEquipmentSlot(newArgs.join(" ")).equippedItem;
                     equipmentSlotName = newArgs.join(" ");
                     if (!item) gotoNext = true;
                     if (destroyAll) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". The "all" argument cannot be used when the container is an equipment slot.`);

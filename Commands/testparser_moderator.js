@@ -481,17 +481,17 @@ async function testparse (game, fileName, player) {
     {
         await appendFile(fileName, "PLAYERS:");
         let text = "";
-        for (const player of game.players.values()) {
+        for (const gamePlayer of game.players.values()) {
             text += "   ";
-            text += player.name + EOL;
+            text += gamePlayer.name + EOL;
 
-            if (player.description.text !== "") {
-                const parsedDescription = parseDescriptionWithErrors(player.description, player, player);
-                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: player.descriptionCell(), warnings: parsedDescription.warnings });
-                if (parsedDescription.errors.length !== 0) errors.push({ cell: player.descriptionCell(), errors: parsedDescription.errors });
+            if (gamePlayer.description.text !== "") {
+                const parsedDescription = parseDescriptionWithErrors(gamePlayer.description, gamePlayer, player);
+                if (parsedDescription.warnings.length !== 0) warnings.push({ cell: gamePlayer.descriptionCell(), warnings: parsedDescription.warnings });
+                if (parsedDescription.errors.length !== 0) errors.push({ cell: gamePlayer.descriptionCell(), errors: parsedDescription.errors });
 
                 text += "      ";
-                text += player.description.text + EOL;
+                text += gamePlayer.description.text + EOL;
 
                 text += "      ";
                 text += parsedDescription.text + EOL;

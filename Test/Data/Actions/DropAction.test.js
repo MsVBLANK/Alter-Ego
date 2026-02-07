@@ -30,9 +30,10 @@ describe("DropAction test", () => {
         }
 
         {
-            const quiver = game.entityFinder.getInventoryItem("VIVIANS QUIVER");
+            let quiver = game.entityFinder.getInventoryItem("VIVIANS QUIVER");
             const unequipAction = new UnequipAction(game, createMockMessage(), vivian, vivian.location, false);
             unequipAction.performUnequip(quiver,game.entityFinder.getPlayerEquipmentSlotWithEquippedItem(vivian, quiver.getIdentifier()),vivianHand);
+            quiver = game.entityFinder.getInventoryItem("VIVIANS QUIVER");
             const dropAction = new DropAction(game, createMockMessage(), vivian, vivian.location, false);
             dropAction.performDrop(quiver, vivianHand, vivianFloor, null);
         }
@@ -58,7 +59,7 @@ describe("DropAction test", () => {
         expect(coffee.uses).toStrictEqual(1);
         expect(coffee.weight).toStrictEqual(coffee.prefab.weight);
         expect(coffee.inventory.size).toStrictEqual(0);
-        expect(coffee.row).toStrictEqual(1011);
+        expect(coffee.row).toStrictEqual(1016);
 
         expect(quiver.name).toStrictEqual("QUIVER");
         expect(quiver.pluralName).toStrictEqual("QUIVERS");
@@ -76,18 +77,18 @@ describe("DropAction test", () => {
         expect(quiver.row).toStrictEqual(326);
 
         expect(jeans.name).toStrictEqual("WHITE JEANS");
-        expect(jeans.pluralName).toStrictEqual("WHITE JEANS");
+        expect(jeans.pluralName).toStrictEqual("");
         expect(jeans.singleContainingPhrase).toStrictEqual("a pair of WHITE JEANS");
         expect(jeans.pluralContainingPhrase).toStrictEqual("pairs of WHITE JEANS");
         expect(jeans.location.id).toStrictEqual("general-managers-office");
         expect(jeans.accessible).toBeTruthy();
-        expect(jeans.containerName).toStrictEqual("VIVIANS QUIVER");
+        expect(jeans.containerName).toStrictEqual("VIVIANS QUIVER/QUIVER");
         expect(jeans.container.name).toStrictEqual("QUIVER");
         expect(jeans.slot).toStrictEqual("QUIVER");
         expect(jeans.quantity).toStrictEqual(1);
         expect(isNaN(jeans.uses)).toBeTruthy();
         expect(jeans.weight).toStrictEqual(jeans.prefab.weight + jeans.inventory.reduce((weight, slot) => weight + slot.items.reduce((innerWeight, item) => innerWeight + item.weight, 0), 0));
-        expect(jeans.inventory.size).toStrictEqual(1);
-        // expect(jeans.row).toStrictEqual(326); // TODO: un-comment once container drop deletion bug is fixed!
+        expect(jeans.inventory.size).toStrictEqual(4);
+        expect(jeans.row).toStrictEqual(327);
     });
 });

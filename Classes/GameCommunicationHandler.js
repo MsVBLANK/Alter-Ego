@@ -154,7 +154,8 @@ export default class GameCommunicationHandler {
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
 	 */
 	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT) {
-		messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
+		if (messageText !== "")
+			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
 	}
 
 	/**

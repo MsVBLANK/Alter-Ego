@@ -126,5 +126,22 @@ describe("DropAction test", () => {
         expect(detergent.uses).toStrictEqual(10);
         expect(detergent.weight).toStrictEqual(6);
         expect(detergent.inventory.size).toStrictEqual(0);
+        
+        // Test that all of the item row numbers were updated properly.
+        for (let i = 0; i < game.roomItems.length; i++)
+            expect(game.roomItems[i].row).toStrictEqual(i + 2);
+    
+        // Test that all of the inventoryItem row numbers were updated properly.
+        for (let i = 0; i < game.inventoryItems.length; i++)
+            expect(game.inventoryItems[i].row).toStrictEqual(i + 2);
+    
+        // Test that all of the inventoryItems and Player inventory items have the same row numbers.
+        for (const slot of vivian.inventory.values()) {
+            for (const item of slot.items) {
+                const match = game.inventoryItems.find(item => item.player.id === vivian.id && (item.prefab === null && item.prefab === null || item.prefab !== null && item.prefab !== null && item.prefab.id === item.prefab.id) && item.equipmentSlot === item.equipmentSlot && item.containerName === item.containerName);
+                expect(match !== null && match !== undefined).toBeTruthy();
+                expect(item.row === match.row);
+            }
+        }
     });
 });

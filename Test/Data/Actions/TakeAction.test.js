@@ -209,7 +209,7 @@ describe('TakeAction test', () => {
         {
             const drawer = game.entityFinder.getRoomItem("TOP DRAWER 9", kyra.location.id);
             expect(drawer).not.toBeUndefined();
-            const jacket = game.entityFinder.getRoomItem("KYRAS LAB COAT", kyra.location.id);
+            const jacket = drawer.inventory.get("TOP DRAWER").items[1];
             expect(jacket).not.toBeUndefined();
             const coffee = jacket.inventory.get("RIGHT POCKET").items[0];
             expect(coffee).not.toBeUndefined();
@@ -253,7 +253,7 @@ describe('TakeAction test', () => {
         {
             const drawer = hand.equippedItem;
             expect(drawer).not.toBeUndefined();
-            const jacket = game.entityFinder.getRoomItem("KYRAS LAB COAT", kyra.location.id);
+            const jacket = drawer.inventory.get("TOP DRAWER").items[1];
             expect(jacket).not.toBeUndefined();
             const coffee = jacket.inventory.get("RIGHT POCKET").items[0];
             expect(coffee).not.toBeUndefined();
@@ -283,6 +283,23 @@ describe('TakeAction test', () => {
             expect(coffee.uses).toStrictEqual(coffeeData.uses);
             expect(coffee.weight).toStrictEqual(coffeeData.weight);
             expect(coffee.inventory.size).toStrictEqual(coffeeData.inventory.size);
+        }
+        
+        // Test that all of the item row numbers were updated properly.
+        for (let i = 0; i < game.roomItems.length; i++)
+            expect(game.roomItems[i].row).toStrictEqual(i + 2);
+    
+        // Test that all of the inventoryItem row numbers were updated properly.
+        for (let i = 0; i < game.inventoryItems.length; i++)
+            expect(game.inventoryItems[i].row).toStrictEqual(i + 2);
+    
+        // Test that all of the inventoryItems and Player inventory items have the same row numbers.
+        for (const slot of kyra.inventory.values()) {
+            for (const item of slot.items) {
+                const match = game.inventoryItems.find(item => item.player.id === kyra.id && (item.prefab === null && item.prefab === null || item.prefab !== null && item.prefab !== null && item.prefab.id === item.prefab.id) && item.equipmentSlot === item.equipmentSlot && item.containerName === item.containerName);
+                expect(match !== null && match !== undefined).toBeTruthy();
+                expect(item.row === match.row);
+            }
         }
     });
 });

@@ -41,11 +41,15 @@ describe("DropAction test", () => {
         const coffee = game.entityFinder.getRoomItem("MUG OF COFFEE", kyra.location.id, "FIXTURE", kyraFloor.name);
         const quiver = game.entityFinder.getRoomItem("VIVIANS QUIVER", vivian.location.id, "FIXTURE", vivianFloor.name);
         const jeans = quiver.inventory.get("QUIVER").items[0];
+        const ptp2 = jeans.inventory.get("RIGHT POCKET").items[0];
+        const ptp3 = jeans.inventory.get("LEFT POCKET").items[0];
+        const buns = ptp2.inventory.get("PACK").items[0];
+        const detergent = ptp3.inventory.get("PACK").items[0];
 
         expect(coffee).not.toBeUndefined();
         expect(quiver).not.toBeUndefined();
         expect(jeans).not.toBeUndefined();
-        
+
         expect(coffee.name).toStrictEqual("COFFEE");
         expect(coffee.pluralName).toStrictEqual("");
         expect(coffee.singleContainingPhrase).toStrictEqual("a mug of COFFEE");
@@ -57,7 +61,7 @@ describe("DropAction test", () => {
         expect(coffee.slot).toStrictEqual("");
         expect(coffee.quantity).toStrictEqual(1);
         expect(coffee.uses).toStrictEqual(1);
-        expect(coffee.weight).toStrictEqual(coffee.prefab.weight);
+        expect(coffee.weight).toStrictEqual(3);
         expect(coffee.inventory.size).toStrictEqual(0);
         expect(coffee.row).toStrictEqual(1016);
 
@@ -72,7 +76,7 @@ describe("DropAction test", () => {
         expect(quiver.slot).toStrictEqual("");
         expect(quiver.quantity).toStrictEqual(1);
         expect(isNaN(quiver.uses)).toBeTruthy();
-        expect(quiver.weight).toStrictEqual(quiver.prefab.weight + quiver.inventory.reduce((weight, slot) => weight + slot.items.reduce((innerWeight, item) => innerWeight + item.weight, 0), 0));
+        expect(quiver.weight).toStrictEqual(20);
         expect(quiver.inventory.size).toStrictEqual(1);
         expect(quiver.row).toStrictEqual(326);
 
@@ -87,8 +91,40 @@ describe("DropAction test", () => {
         expect(jeans.slot).toStrictEqual("QUIVER");
         expect(jeans.quantity).toStrictEqual(1);
         expect(isNaN(jeans.uses)).toBeTruthy();
-        expect(jeans.weight).toStrictEqual(jeans.prefab.weight + jeans.inventory.reduce((weight, slot) => weight + slot.items.reduce((innerWeight, item) => innerWeight + item.weight, 0), 0));
+        expect(jeans.weight).toStrictEqual(19);
         expect(jeans.inventory.size).toStrictEqual(4);
         expect(jeans.row).toStrictEqual(327);
+
+        expect(ptp2.location.id).toStrictEqual("general-managers-office");
+        expect(ptp2.accessible).toBeTruthy();
+        expect(ptp2.containerName).toStrictEqual("WHITE JEANS 2/RIGHT POCKET");
+        expect(ptp2.quantity).toStrictEqual(1);
+        expect(isNaN(ptp2.uses)).toBeTruthy();
+        expect(ptp2.weight).toStrictEqual(12);
+        expect(ptp2.inventory.size).toStrictEqual(1);
+
+        expect(ptp3.location.id).toStrictEqual("general-managers-office");
+        expect(ptp3.accessible).toBeTruthy();
+        expect(ptp3.containerName).toStrictEqual("WHITE JEANS 2/LEFT POCKET");
+        expect(ptp3.quantity).toStrictEqual(1);
+        expect(isNaN(ptp3.uses)).toBeTruthy();
+        expect(ptp3.weight).toStrictEqual(6);
+        expect(ptp3.inventory.size).toStrictEqual(1);
+
+        expect(buns.location.id).toStrictEqual("general-managers-office");
+        expect(buns.accessible).toBeTruthy();
+        expect(buns.containerName).toStrictEqual("PACK OF TOILET PAPER 2/PACK");
+        expect(buns.quantity).toStrictEqual(12);
+        expect(buns.uses).toStrictEqual(1);
+        expect(buns.weight).toStrictEqual(1);
+        expect(buns.inventory.size).toStrictEqual(0);
+
+        expect(detergent.location.id).toStrictEqual("general-managers-office");
+        expect(detergent.accessible).toBeTruthy();
+        expect(detergent.containerName).toStrictEqual("PACK OF TOILET PAPER 3/PACK");
+        expect(detergent.quantity).toStrictEqual(1);
+        expect(detergent.uses).toStrictEqual(10);
+        expect(detergent.weight).toStrictEqual(6);
+        expect(detergent.inventory.size).toStrictEqual(0);
     });
 });

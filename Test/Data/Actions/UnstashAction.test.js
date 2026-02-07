@@ -18,14 +18,14 @@ describe('UnstashAction test', () => {
         const hand = game.entityFinder.getPlayerFreeHand(vivian);
         let toiletPaperPack = game.entityFinder.getInventoryItem("PACK OF TOILET PAPER 2", "Vivian", "WHITE JEANS 2/RIGHT POCKET", "BAG");
         const quiver = game.entityFinder.getInventoryItem("VIVIANS QUIVER", "Vivian")
-        const quiverWeightBefore = quiver.weight;
+        expect(quiver.weight).toStrictEqual(20);
         const unstashAction = new UnstashAction(game, createMockMessage(), vivian, vivian.location, false);
         unstashAction.performUnstash(toiletPaperPack, hand, toiletPaperPack.container, toiletPaperPack.container.inventory.get(toiletPaperPack.slot));
         
         // Test that all of the data was converted properly.
         toiletPaperPack = hand.equippedItem;
         expect(toiletPaperPack).not.toBeNull();
-        expect(quiver.weight).toStrictEqual(quiverWeightBefore - toiletPaperPack.weight);
+        expect(quiver.weight).toStrictEqual(8);
         const buns = toiletPaperPack.inventory.get("PACK").items[0];
         expect(toiletPaperPack.name).toStrictEqual("PACK OF TOILET PAPER");
         expect(buns.name).toStrictEqual("HAMBURGER BUN");
@@ -47,7 +47,7 @@ describe('UnstashAction test', () => {
         expect(buns.quantity).toStrictEqual(12);
         expect(isNaN(toiletPaperPack.uses));
         expect(buns.uses).toStrictEqual(1);
-        expect(toiletPaperPack.weight).toStrictEqual(buns.weight * buns.quantity + toiletPaperPack.prefab.weight);
+        expect(toiletPaperPack.weight).toStrictEqual(12);
         expect(buns.weight).toStrictEqual(1);
         expect(toiletPaperPack.inventory.size).toStrictEqual(1);
         expect(buns.inventory.size).toStrictEqual(0);

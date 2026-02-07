@@ -45,7 +45,7 @@ describe('UnstashAction test', () => {
         expect(buns.slot).toStrictEqual("PACK");
         expect(toiletPaperPack.quantity).toStrictEqual(1);
         expect(buns.quantity).toStrictEqual(12);
-        expect(isNaN(toiletPaperPack.uses));
+        expect(isNaN(toiletPaperPack.uses)).toBeTruthy();
         expect(buns.uses).toStrictEqual(1);
         expect(toiletPaperPack.weight).toStrictEqual(12);
         expect(buns.weight).toStrictEqual(1);

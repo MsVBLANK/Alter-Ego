@@ -15,7 +15,7 @@ export const config = {
     details: `Takes all items from a container of your choosing and equips them, if possible. You must have a free hand to take items with. `
         + `This will be narrated, so any other players in the room will see you dress.\n\n`
         + `Items will be equipped in the order in which they appear in the game's data, which should be the order they appear in the container's `
-        + `description, but in reverse. If an item is equippable to an equipment slot, but you already have something equipped to that slot, `
+        + `description. If an item is equippable to an equipment slot, but you already have something equipped to that slot, `
         + `it will not be equipped, and you will not be notified when this happens. If the container you choose has multiple inventory slots `
         + `(for example, a backpack with several pockets), you can specify which slot to dress from. Otherwise, you will dress from all slots.`,
     usableBy: "Player",

@@ -92,6 +92,9 @@ function createNarrateComponents(messageDisplayType, game, messageText, player) 
 		case MessageDisplayType.PLAYER:
 			components = createPlayerNarrationComponents(game, messageText, player);
             break;
+        case MessageDisplayType.MONOLOG:
+            components = createMonologNarrationComponents(game, messageText, player);
+            break;
 		default:
 			components = createStandardNarrationComponents(game, messageText);
             break;
@@ -173,6 +176,21 @@ function createPlayerNarrationComponents(game, messageText, player) {
 	return [
 		new ContainerBuilder()
             .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
+            .addTextDisplayComponents(
+                new TextDisplayBuilder().setContent(messageText),
+        )
+	];
+}
+
+/**
+ * Creates the components for a player monolog.
+ * @param {Game} game - The game the narration is for.
+ * @param {string} messageText - The text content of the narration.
+ * @param {Player} player - The player the narration is about.
+ */
+function createMonologNarrationComponents(game, messageText, player) {
+    return [
+		new ContainerBuilder()
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )

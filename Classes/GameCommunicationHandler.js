@@ -4,7 +4,7 @@ import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
-import { Attachment, Collection, TextChannel } from "discord.js";
+import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 
 /** @import Description from '../Data/Description.js' */
 /** @import Dialog from "../Data/Dialog.js" */
@@ -229,13 +229,34 @@ export default class GameCommunicationHandler {
 	}
 
 	/**
+	 * Mirrors a message in a player's spectate channel.
+	 * @param {Player} player - The player whose spectate channel this message is being sent to.
+	 * @param {Action} action - The action associated with the message.
+	 * @param {string} webhookUsername - The username to use for the mirrored webhook message.
+	 * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
+	 * @param {string} messageText - The text of the message to send.
+	 * @param {MessageDisplayType} messageDisplayType - The type of message to send.
+	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+	 * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
+	 * @param {UserMessage} [message] - The message being mirrored. Optional.
+	 */
+	mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, messageText, messageDisplayType, embeds, files, message) {
+		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
+			this.#cacheChannelFor(action, player.spectateChannel.id);
+			messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, embeds, files, message, messageDisplayType);
+		}
+	}
+
+	/**
 	 * Mirrors a narration in a player's spectate channel.
 	 * @param {Player} player - The player whose spectate channel this narration will be mirrored in.
 	 * @param {Action} action - The action associated with the narration.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
 	 * @param {string} narrationText - The text of the narration to send.
+	 * @param {string} [webhookUsername] - A custom username to use for the webhook that will send the spectate message. Optional.
+	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
 	 */
-	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText) {
+	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText, webhookUsername, webhookAvatarURL) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType);
@@ -253,10 +274,7 @@ export default class GameCommunicationHandler {
 	 */
 	mirrorWebhookNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
 		if (narration.isOOCMessage) return;
-		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
-			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendWebhookSpectateMessage(player, narrationText, webhookUsername, webhookAvatarURL, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url), narration.message, narration.messageDisplayType);
-		}
+		this.mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, narrationText, narration.messageDisplayType, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url), narration.message);
 	}
 
 	/**

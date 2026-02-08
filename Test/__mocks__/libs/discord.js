@@ -56,14 +56,15 @@ export function createMockWebhook(name, channel, owner) {
 		messages: new Collection(),
 		editMessage: vi.fn(async (id, { content }) => webhook.messages.get(id).edit(content)),
 		fetchMessage: vi.fn(async (id) => webhook.messages.get(id)),
-		send: vi.fn(async ({ content, username, avatarURL, embeds, files }) => {
+		send: vi.fn(async (messagePayload) => {
 			const message = createMockMessage({
-				content: content,
+				content: messagePayload.content,
 				member: null,
-				author: createMockUser(generateSnowflake(), username, avatarURL),
+				author: createMockUser(generateSnowflake(), messagePayload.username, messagePayload.avatarURL),
 				channel: webhook.channel,
 				webhookId: webhook.id,
-				client: owner
+				client: owner,
+				components: messagePayload.components
 			});
 			webhook.messages.set(message.id, message);
 			webhook.channel.messages.cache.set(message.id, message);

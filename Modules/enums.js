@@ -5,5 +5,6 @@ export const MessageDisplayType = {
     ALERT: 2,
     MINOR: 3,
     PLAYER: 4,
-    PLAIN_TEXT: 5
+    MONOLOG: 5,
+    PLAIN_TEXT: 6
 };

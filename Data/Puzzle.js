@@ -255,7 +255,7 @@ export default class Puzzle extends ItemContainer {
 	 * @param {Player} [player] - The player the description is being sent to. Unused.
 	 */
 	getContainedItemsForItemList(itemListName, player) {
-		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'Puzzle', this.name);
+		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
 	}
 
     /**

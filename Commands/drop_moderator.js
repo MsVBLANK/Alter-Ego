@@ -50,7 +50,7 @@ export async function execute(game, message, command, args) {
 
     const input = args.join(" ");
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
-    let newArgs = null;
+    let newArgs = [];
 
     // First, find the item in the player's inventory.
     /** @type {EquipmentSlot} */
@@ -61,12 +61,13 @@ export async function execute(game, message, command, args) {
         hand = game.entityFinder.getPlayerHandHoldingItem(player, args.slice(0, i).join(" "));
         if (hand) {
             item = hand.equippedItem;
+            parsedInput = parsedInput.substring(args.slice(0, i).join(" ").length).trim();
             args = args.slice(i);
             break;
         }
     }
     if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in either of ${player.name}'s hands.`);
-    newArgs = parsedInput.split(' ');
+    newArgs = parsedInput.split(" ");
 
     // Check if a fixture was specified.
     const fixtures = game.fixtures.filter(fixture => fixture.location.id === player.location.id && fixture.accessible);

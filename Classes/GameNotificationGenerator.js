@@ -1041,7 +1041,7 @@ export default class GameNotificationGenerator {
 	 * @param {ItemInstance} [item] - The item the puzzle was solved with, if applicable.
 	 */
 	generateSolvePuzzleNotification(player, secondPerson, puzzle, outcome, item) {
-		if (puzzle.type === "weight" || puzzle.type === "container") return "";
+		if (puzzle.type === "weight" || puzzle.type === "container" || puzzle.type === "restricted exit") return "";
 		const subject = secondPerson ? `You` : player.displayName;
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();

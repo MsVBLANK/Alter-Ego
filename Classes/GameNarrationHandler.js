@@ -261,7 +261,7 @@ export default class GameNarrationHandler {
 			if (target.container === null) {
 				// The inventory item is equipped.
 				notification = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, true, target.name);
-				if (!target.isCoveredByEquippedItem())
+				if (!target.prefab.discreet && (target.equipmentSlot === "RIGHT HAND" || target.equipmentSlot === "LEFT HAND" || !target.isCoveredByEquippedItem()))
 					narration = this.#game.notificationGenerator.generateInspectPlayersOwnEquippedInventoryItemNotification(player, false, target.name);
 			}
 			else {
@@ -655,8 +655,8 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateDropNotification(player, false, item.singleContainingPhrase);
 		}
 		else {
-			notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.singleContainingPhrase);
-			narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.singleContainingPhrase);
+			notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
+			narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		}
 		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
 		this.#sendNarration(messageType, action, player, narration);

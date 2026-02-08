@@ -38,12 +38,12 @@ export async function execute(game, message, command, args, player) {
     if (args.length === 0)
         return game.communicationHandler.reply(message, `You need to specify a player to text and a message. Usage:\n${usage(game.settings)}`);
 
-    const status = player.getBehaviorAttributeStatusEffects("enable text");
-    if (status.length === 0) return game.communicationHandler.reply(message, `You do not have a device with which to send a text message.`);
+    if (!player.hasBehaviorAttribute("enable text")) return game.communicationHandler.reply(message, `You do not have a device with which to send a text message.`);
 
     const recipient = game.entityFinder.getLivingPlayer(args[0]);
     if (recipient === undefined) return game.communicationHandler.reply(message, `Couldn't find player "${args[0]}".`);
     if (recipient.name === player.name) return game.communicationHandler.reply(message, `You cannot send a message to yourself.`);
+    if (!recipient.hasBehaviorAttribute("enable text")) return game.communicationHandler.reply(message, `${recipient.name} does not have a device with which to receive a text message.`);
     args.splice(0, 1);
 
     const input = args.join(" ");

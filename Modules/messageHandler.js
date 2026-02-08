@@ -372,7 +372,7 @@ export function editSpectatorMessage(game, messageOld, messageNew) {
             let messageText = messageNew.content;
             if (messageOld.channel.type === ChannelType.GuildText && messageOld.channel.parentId === game.guildContext.whisperCategoryId) {
                 const relatedMessage = await webhook.fetchMessage(mirror.messageId);
-                const regexGroups = relatedMessage.content.match(new RegExp(/(\*\(Whispered(?:.*)\):\*\n)(.*)/m));
+                const regexGroups = relatedMessage.content.match(new RegExp(/((?:-# )?\*\(Whispered(?:.*)\):\*\n)(.*)/m));
                 if (regexGroups) messageText = regexGroups[1] + messageNew.content;
             }
             webhook.editMessage(mirror.messageId, { content: messageText });

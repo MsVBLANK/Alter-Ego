@@ -66,13 +66,13 @@ export async function execute(game, command, args, player, callee) {
     /**
      * @type {Player[]}
      */
-    let players = new Array();
+    let players = [];
     if (args[0].toLowerCase() === "player" && player !== null)
         players.push(player);
     else if (args[0].toLowerCase() === "room" && player !== null)
         players = player.location.occupants;
-    else if (args[0].toLowerCase() === "all") {
-        players.concat(game.entityFinder.getLivingPlayers(null, false).filter((player) => {!player.member.roles.cache.find(role => role.id === game.guildContext.freeMovementRole.id)}));
+    else if (args[0].toLowerCase() === "all" || args[0].toLowerCase() === "living") {
+        players = game.entityFinder.getLivingPlayers(undefined, false).filter(player => !player.member.roles.cache.has(game.guildContext.freeMovementRole.id));
     }
     else {
         player = game.entityFinder.getLivingPlayer(args[0]);

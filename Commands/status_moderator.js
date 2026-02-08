@@ -67,9 +67,9 @@ export async function execute(game, message, command, args) {
     /**
      * @type {Player[]}
      */
-    const players = new Array();
+    let players = [];
     if (args[0] === "all" || args[0] === "living") {
-        players.concat(game.entityFinder.getLivingPlayers(null, false).filter((player) => {!player.member.roles.cache.find(role => role.id === game.guildContext.freeMovementRole.id)}));
+        players = game.entityFinder.getLivingPlayers(undefined, false).filter(player => !player.member.roles.cache.has(game.guildContext.freeMovementRole.id));
         args.splice(0, 1);
     }
     else {

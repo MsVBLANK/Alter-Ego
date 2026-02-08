@@ -2,12 +2,12 @@ import Action from "../Action.js";
 import AttemptAction from "./AttemptAction.js";
 import InventorySlot from "../InventorySlot.js";
 import Puzzle from "../Puzzle.js";
+import RoomItem from "../RoomItem.js";
 import { getSortedItemsString } from "../../Modules/helpers.js";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */
 /** @import Fixture from "../Fixture.js" */
 /** @import InventoryItem from "../InventoryItem.js" */
-/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class DressAction
@@ -31,6 +31,8 @@ export default class DressAction extends Action {
 		for (const item of items) {
 			// Player shouldn't be able to take items that they're not strong enough to carry.
 			if (!this.forced && this.player.carryWeight + item.weight > this.player.maxCarryWeight) continue;
+			if (!inventorySlot && container instanceof RoomItem)
+				inventorySlot = container.inventory.get(item.slot);
 			for (const slotId of item.prefab.equipmentSlots) {
 				if (this.player.inventory.has(slotId) && this.player.inventory.get(slotId).equippedItem === null) {
 					this.player.take(item, handEquipmentSlot, container, inventorySlot);

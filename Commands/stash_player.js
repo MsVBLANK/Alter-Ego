@@ -22,8 +22,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}stash LAPTOP in BEIGE SATCHEL\n`
@@ -33,11 +33,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -46,50 +46,55 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable stash");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    const input = args.join(' ');
-    let parsedInput = input.toUpperCase().replace(/\'/g, "");
-    let newArgs = parsedInput.split(' ');
+    let input = args.join(' ').toUpperCase().replace(/\'/g, "");
+    args = input.split(' ');
 
     // Look for the container item.
     const items = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null && item.quantity !== 0);
     let containerItem = null;
     let containerItemSlot = null;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].prefab !== null && parsedInput.endsWith(items[i].name) && parsedInput !== items[i].name) {
-            containerItem = items[i];
-            if (items[i].inventory.size === 0) continue;
-            parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
-            // Check if a slot was specified.
-            if (parsedInput.endsWith(" OF")) {
-                parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
-                newArgs = parsedInput.split(' ');
-                for (const [id, slot] of containerItem.inventory) {
-                    if (parsedInput.endsWith(id)) {
-                        containerItemSlot = slot;
-                        parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
-                        break;
-                    }
-                }
-                if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.name}.`);
+    for (let i = 0; i < args.length; i++) {
+        for (const item of items) {
+            if (args.slice(i).join(" ") === item.name) {
+                if (i === args.length)
+                    return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
+                containerItem = item;
+                if (item.inventory.size === 0) continue;
+                args = args.slice(0, i);
+                input = args.join(" ");
+                break;
             }
-            newArgs = parsedInput.split(' ');
-            newArgs.splice(newArgs.length - 1, 1);
-            parsedInput = newArgs.join(' ');
-            break;
         }
-        else if (parsedInput === items[i].name)
-            return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
+        if (containerItem !== null && containerItem.inventory.size !== 0) break;
     }
-    if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${newArgs[newArgs.length - 1]}".`);
+    if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${args[args.length - 1]}".`);
     else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.name} cannot hold items. Contact a moderator if you believe this is a mistake.`);
+    else if (args[args.length - 1] === "OF") {
+        args = args.slice(0, -1);
+        input = args.join(" ");
+        for (let i = 0; i < args.length; i++) {
+            for (const [id, slot] of containerItem.inventory) {
+                if (args.slice(i).join(" ") === id) {
+                    containerItemSlot = slot;
+                    args = args.slice(0, i);
+                    input = args.join(" ");
+                    break;
+                }
+            }
+            if (containerItemSlot !== null) break;
+        }
+        if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${args[args.length - 1]}" of ${containerItem.name}.`);
+    }
+    args = args.slice(0, -1);
+    input = args.join(" ");
 
     // Now find the item in the player's inventory.
-    const hand = game.entityFinder.getPlayerHandHoldingItem(player, parsedInput, containerItem.row, "player");
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, input, containerItem.row, "player");
     // Make sure item and containerItem aren't the same item.
-    if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, parsedInput))
+    if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, input))
         return game.communicationHandler.reply(message, `You can't stash ${containerItem.name} ${containerItem.prefab.preposition} itself.`);
     const item = hand ? hand.equippedItem : undefined;
-    if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in either of your hands. If this item is elsewhere in your inventory, please unequip or unstash it before trying to stash it.`);
+    if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in either of your hands. If this item is elsewhere in your inventory, please unequip or unstash it before trying to stash it.`);
     // Ensure an inventory item can't be stashed inside an inventory item that it contains.
     let container = containerItem.container;
     while (container !== null) {

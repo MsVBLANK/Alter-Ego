@@ -51,7 +51,7 @@ export async function execute(game, message, command, args) {
         const sayAction = new SayAction(game, dialogMessage, player, player.location, true);
         sayAction.performSay(dialog);
     }
-    else if (channel.type === ChannelType.GuildText && game.guildContext.roomCategories.includes(channel.parentId)) {
+    else if (channel?.type === ChannelType.GuildText && game.guildContext.roomCategories.includes(channel?.parentId)) {
         const room = game.entityFinder.getRoom(channel.name);
         const whisper = game.entityFinder.getWhisperByChannelId(channel.id);
         const location = whisper ? whisper.location : room;
@@ -60,7 +60,7 @@ export async function execute(game, message, command, args) {
             game.narrationHandler.sendPlainTextTypeNarration(narrateAction, content);
         }
     }
-    else if (channel.type === ChannelType.GuildText)
+    else if (channel?.type === ChannelType.GuildText)
         channel.send(content);
     else game.communicationHandler.reply(message, `Couldn't find a player or channel in your input. Usage:\n${usage(game.settings)}`);
 }

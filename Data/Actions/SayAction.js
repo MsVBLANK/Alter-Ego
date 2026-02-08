@@ -147,7 +147,7 @@ export default class SayAction extends Action {
 			const webhookUsername = this.#assembleAudioSurveilledWebhookUsername(dialog, `[${dialog.location.getSurveilledDisplayName(location.isVideoMonitoring())}]`);
 			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, webhookUsername, dialog.getDisplayIconForWebhook(false));
 		}
-		else
+		else if (location.occupants.length > 0)
 			this.getGame().narrationHandler.narrateSay(this, dialog, location, narrationText);
 		this.#solveVoicePuzzles(location, dialog);
 	}

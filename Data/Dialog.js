@@ -190,7 +190,7 @@ export default class Dialog extends GameConstruct {
 			if (this.speakerRecognitionName === this.speaker.name)
 				this.speakerRecognitionName = "unknown";
 		}
-		this.isOOCMessage = message.cleanContent.startsWith('(');
+		this.isOOCMessage = this.content.startsWith('(');
 		this.isShouted = false;
 		this.neighboringRooms = new Collection();
 		this.receiverRooms = new Collection();
@@ -203,7 +203,7 @@ export default class Dialog extends GameConstruct {
 		this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
 		// The remaining properties only need to be initialized if the dialog isn't an out-of-character message.
 		if (!this.isOOCMessage) {
-			const contentWithoutEmotes = message.cleanContent.replace(/<?:.*?:\d*>?/g, '');
+			const contentWithoutEmotes = this.content.replace(/<?:.*?:\d*>?/g, '');
 			this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
 			this.neighboringRooms = new Collection();
 			if (!this.location.tags.has("soundproof")) {

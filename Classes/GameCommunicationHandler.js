@@ -13,6 +13,7 @@ import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
 /** @import Player from "../Data/Player.js" */
+/** @import RoomItem from "../Data/RoomItem.js" */
 /** @import { Snowflake } from "discord.js" */
 
 /**
@@ -153,10 +154,11 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
+	 * @param {(Fixture|RoomItem)[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
 	 */
-	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT) {
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, mentionedEntities = []) {
 		if (messageText !== "")
-			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
+			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, undefined, mentionedEntities)
 	}
 
 	/**
@@ -168,25 +170,40 @@ export default class GameCommunicationHandler {
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
 	 */
 	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
+		/** @type {string[]} */
+		let potentialGameEntities = [];
+		/** @type {(Fixture|RoomItem)[]} */
+		const entities = [];
 		if (container instanceof Room) {
 			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
 			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
-			if (defaultDropFixture)
+			if (defaultDropFixture) {
 				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
+				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
+			}
 			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
 			const roomDescription = parseDescription(description, container, player);
-			const potentialGameEntities = Description.getPotentialGameEntities(roomDescription);
-			/** @type {Fixture[]} */
-			const fixtures = [];
+			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(roomDescription));
 			for (const entityName of potentialGameEntities) {
-				const entity = this.#game.entityFinder.getFixture(entityName, container.id);
-				if (entity) fixtures.push(entity);
+				/** @type {Fixture|RoomItem} */
+				let entity = this.#game.entityFinder.getFixture(entityName, container.id);
+				if (!entity) entity = this.#game.entityFinder.getRoomItems(entityName, container.id, true, undefined, undefined, undefined, false, 'player')[0];
+				if (entity) entities.push(entity);
 			}
-			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, fixtures);
+			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, entities);
 		}
-		else
-			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, messageDisplayType);
+		else {
+			const parsedDescription = parseDescription(description, container, player);
+			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
+			for (const entityName of potentialGameEntities) {
+				/** @type {Fixture|RoomItem} */
+				let entity = this.#game.entityFinder.getFixture(entityName, player.location.id);
+				if (!entity) entity = this.#game.entityFinder.getRoomItems(entityName, player.location.id, undefined, undefined, undefined, undefined, false, 'player')[0];
+				if (entity) entities.push(entity);
+			}
+			this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, entities);
+		}
 	}
 
 	/**

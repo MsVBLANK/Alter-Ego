@@ -22,6 +22,7 @@ import {
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
+ * @import RoomItem from "../Data/RoomItem.js";
  * @typedef {import('discord.js').BitFieldResolvable<"SuppressEmbeds" | "SuppressNotifications" | "IsComponentsV2", MessageFlags.SuppressEmbeds | MessageFlags.SuppressNotifications | MessageFlags.IsComponentsV2>} Flags
  */
 
@@ -32,11 +33,12 @@ import {
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
+ * @param {(Fixture|RoomItem)[]} entities - An array of inspectable game entities.
  */
-export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = []) {
+export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], entities = []) {
     return {
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? getInspectableButtonComponents(entities) : createNarrateComponents(messageDisplayType, game, messageText, player),
         flags: generateFlags(messageDisplayType),
         files: files
     };
@@ -220,7 +222,7 @@ function createMonologNarrationComponents(game, messageText, player) {
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {string} color - The color as a hex code.
- * @param {Fixture[]} entities - An array of inspectable game entities.
+ * @param {(Fixture|RoomItem)[]} entities - An array of inspectable game entities.
  */
 export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color, entities = []) {
     /** @type {MediaGalleryBuilder} */
@@ -228,7 +230,7 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
     [mediaGalleryBuilder, descriptionText] = getMediaGalleryComponents(descriptionText);
 
     /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder | ActionRowBuilder<ButtonBuilder>)[]} */
-    const components = [];
+    let components = [];
     components.push(new ContainerBuilder()
         .setAccentColor(Number(`0x${color}`))
         .addSectionComponents(
@@ -255,7 +257,7 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
     components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
     if (entities.length > 0) {
         const actionRows = getInspectableButtonComponents(entities);
-        components.push(actionRows);
+        components = components.concat(actionRows);
     }
     return components;
 }
@@ -281,17 +283,29 @@ function getMediaGalleryComponents(originalMessageText) {
 
 /**
  * Creates an action row of button components for inspectable game entities.
- * @param {Fixture[]} entities - An array of game entities.
+ * @param {(Fixture|RoomItem)[]} entities - An array of game entities.
  */
 function getInspectableButtonComponents(entities) {
-    /** @type {ActionRowBuilder<ButtonBuilder>} */
-    let actionRow = new ActionRowBuilder();
+    /** @type {Set<string>} */
+    const includedEntities = new Set();
+    /** @type {ActionRowBuilder<ButtonBuilder>[]} */
+    const actionRows = [];
     /** @type {ButtonBuilder[]} */
     let buttonRow = [];
-    for (let i = 0; i < entities.length && i < 5; i++)
-        buttonRow.push(new ButtonBuilder().setCustomId(entities[i].getButtonId()).setLabel(entities[i].name).setStyle(ButtonStyle.Primary));
-    actionRow.addComponents(buttonRow);
-    return actionRow;
+    for (let i = 0; i < entities.length && includedEntities.size < 25; i++) {
+        if (!includedEntities.has(entities[i].getButtonId())) {
+            buttonRow.push(new ButtonBuilder().setCustomId(entities[i].getButtonId()).setLabel(entities[i].name).setStyle(ButtonStyle.Primary));
+            includedEntities.add(entities[i].getButtonId());
+        }
+        if (i === entities.length - 1 || buttonRow.length === 5) {
+            /** @type {ActionRowBuilder<ButtonBuilder>} */
+            const actionRow = new ActionRowBuilder();
+            actionRow.addComponents(buttonRow);
+            actionRows.push(actionRow);
+            buttonRow = [];
+        }
+    }
+    return actionRows;
 }
 
 /**

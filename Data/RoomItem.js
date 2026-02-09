@@ -179,6 +179,13 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
+     * Returns a custom ID for this fixture.
+     */
+    getButtonId() {
+        return `RoomItem|${this.getIdentifier()}|${this.location.id}|${this.containerType}|${this.containerName}`;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      * @override
      */

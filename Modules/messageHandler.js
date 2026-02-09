@@ -12,6 +12,7 @@ import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextCha
 /** @import Game from '../Data/Game.js' */
 /** @import Narration from '../Data/Narration.js' */
 /** @import Room from '../Data/Room.js' */
+/** @import RoomItem from '../Data/RoomItem.js' */
 /** @import Whisper from '../Data/Whisper.js' */
 
 /**
@@ -150,23 +151,23 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
+ * @param {(Fixture|RoomItem)[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
  */
-export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection()) {
+export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection(), mentionedEntities = []) {
     const files = attachments.map((attachment) => attachment.url);
-    const messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.notificationChannel.send(messageCreateOptions);
+                    await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, mentionedEntities));
                 },
             },
             "tell"
         );
     }
     if (addSpectate && player.spectateChannel !== null) {
-        sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, messageCreateOptions);
+        sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files));
     }
 }
 
@@ -178,7 +179,7 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- * @param {Fixture[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
+ * @param {(Fixture|RoomItem)[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
  */
 export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true, mentionedEntities = []) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {

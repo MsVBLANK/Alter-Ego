@@ -40,7 +40,7 @@ export function usage(settings) {
  * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
-    if (args.length === 0)
+    if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
 
     const status = player.getBehaviorAttributeStatusEffects("disable stash");
@@ -56,7 +56,7 @@ export async function execute(game, message, command, args, player) {
     for (let i = 0; i < args.length; i++) {
         for (const item of items) {
             if (args.slice(i).join(" ") === item.name) {
-                if (i === args.length)
+                if (i === 0)
                     return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
                 containerItem = item;
                 if (item.inventory.size === 0) continue;

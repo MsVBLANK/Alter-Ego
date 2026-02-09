@@ -52,7 +52,7 @@ export async function execute(game, message, command, args) {
     for (let i = 0; i < args.length; i++) {
         for (const item of items) {
             if (item.identifier !== "" && args.slice(i).join(" ") === item.identifier || args.slice(i).join(" ") === item.prefab.id) {
-                if (i === args.length)
+                if (i === 0)
                     return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
                 containerItem = item;
                 if (item.inventory.size === 0) continue;
@@ -64,7 +64,7 @@ export async function execute(game, message, command, args) {
         if (containerItem !== null && containerItem.inventory.size !== 0) break;
     }
     if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${args[args.length - 1]}".`);
-    else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.name} cannot hold items.`);
+    else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.getIdentifier()} cannot hold items.`);
     else if (args[args.length - 1] === "OF") {
         args = args.slice(0, -1);
         input = args.join(" ");
@@ -79,7 +79,7 @@ export async function execute(game, message, command, args) {
             }
             if (containerItemSlot !== null) break;
         }
-        if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${args[args.length - 1]}" of ${containerItem.name}.`);
+        if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${args[args.length - 1]}" of ${containerItem.getIdentifier()}.`);
     }
     args = args.slice(0, -1);
     input = args.join(" ");

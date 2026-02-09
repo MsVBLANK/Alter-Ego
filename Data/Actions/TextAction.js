@@ -1,3 +1,4 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.js";
 
 /** @import Player from "../Player.js" */
@@ -19,7 +20,7 @@ export default class TextAction extends Action {
 		super.perform();
 		const senderText = this.getGame().notificationGenerator.generateTextNotification(messageText, this.player.name, recipient.name);
 		const recipientText = this.getGame().notificationGenerator.generateTextNotification(messageText, this.player.name);
-		this.getGame().communicationHandler.notifyPlayerWithAttachments(this.player, this, senderText, this.message.attachments);
-		this.getGame().communicationHandler.notifyPlayerWithAttachments(recipient, this, recipientText, this.message.attachments);
+		this.getGame().communicationHandler.notifyPlayer(this.player, this, senderText, MessageDisplayType.PLAIN_TEXT, true, this.message.embeds, this.message.attachments);
+		this.getGame().communicationHandler.notifyPlayer(recipient, this, recipientText, MessageDisplayType.PLAIN_TEXT, true, this.message.embeds, this.message.attachments);
 	}
 }

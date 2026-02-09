@@ -59,10 +59,10 @@ export function generateWebhookMessageDisplayCreateOptions(messageDisplayType, g
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
         username: username,
         avatarURL: avatarURL,
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player, files),
         flags: generateFlags(messageDisplayType),
         embeds: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? embeds : [],
-        files: files
+        files: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : files
     };
 }
 
@@ -84,11 +84,12 @@ function generateFlags(messageDisplayType) {
  * @param {Game} game - The game the narration is for.
  * @param {string} messageText - The text content of the narration.
  * @param {Player} [player] - The player the narration is about. Optional.
+ * @param {string[]} [files] - An array of file URLs to send. Optional. 
  */
-function createNarrateComponents(messageDisplayType, game, messageText, player) {
+function createNarrateComponents(messageDisplayType, game, messageText, player, files) {
     /** @type {MediaGalleryBuilder} */
     let mediaGalleryBuilder;
-    [mediaGalleryBuilder, messageText] = getMediaGalleryComponents(messageText);
+    [mediaGalleryBuilder, messageText] = getMediaGalleryComponents(messageText, files);
 
     /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder)[]} */
     let components = [];
@@ -263,17 +264,22 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
 /**
  * Creates a media gallery builder using linked images and videos in the message. Can only contain up to 3 gallery items.
  * @param {string} originalMessageText - The original text of the message.
+ * @param {string[]} [fileURLs] - An array of file URLs to send. Optional. 
  * @returns {[MediaGalleryBuilder, string]} - A media gallery builder and the message text after removing links that have been inserted into it.
  */
-function getMediaGalleryComponents(originalMessageText) {
+function getMediaGalleryComponents(originalMessageText, fileURLs = []) {
     const mediaGalleryBuilder = new MediaGalleryBuilder();
     const imageURLRegex = /(http(s?):\/\/.*?\.(jpg|jpeg|png|gif|webp|avif|mp4|webm))(?:\?[^#\s]*)?/g;
     let match;
     let messageText = originalMessageText;
     while (match = imageURLRegex.exec(originalMessageText)) {
+        fileURLs.push(match[0]);
+    }
+    for (const fileURL of fileURLs) {
         if (mediaGalleryBuilder.items.length < 3) {
-            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(match[0]));
-            messageText = messageText.replace(match[0], '');
+            mediaGalleryBuilder.addItems(new MediaGalleryItemBuilder().setURL(fileURL));
+            const newMessageText = messageText.replace(fileURL, '');
+            if (newMessageText !== "") messageText = newMessageText;
         }
     }
     return [mediaGalleryBuilder, messageText];

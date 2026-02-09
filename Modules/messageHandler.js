@@ -55,7 +55,7 @@ export function processIncomingMessage(game, message) {
     else if (isModerator && (room || whisper)) {
         const location = whisper ? whisper.location : room;
         const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
-        game.narrationHandler.sendPlainTextTypeNarration(narrateAction, message.content, message.member);
+        game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, message.member);
     }
 }
 
@@ -71,10 +71,11 @@ export function processIncomingMessage(game, message) {
  */
 export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null, webhookUsername = narration.narratorDisplayName) {
     if (messageText !== "") {
+        const files = narration.attachments.map((attachment) => attachment.url);
         const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
         let messageCreateOptions;
         if (sendWebhookMessage)
-            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, [], [], player);
+            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, narration.embeds, files, player);
         else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(
@@ -92,7 +93,7 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
         if (addSpectate) {
             room.occupants.forEach((occupant) => {
                 if (doMirrorInSpectateChannel(occupant, player)) {
-                    sendNarrationSpectateMessage(occupant, messageText, messageDisplayType, [], messageCreateOptions);
+                    sendNarrationSpectateMessage(occupant, messageText, messageDisplayType, files, messageCreateOptions);
                 }
             });
         }
@@ -111,6 +112,7 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
  */
 export function sendNarrationToWhisper(whisper, narration, messageText, messageTextWithSpectatePrefix, messageDisplayType, addSpectate = true, player = null) {
     if (messageText !== "") {
+        const files = narration.attachments.map((attachment) => attachment.url);
         const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
 
         whisper.getGame().messageQueue.enqueue(
@@ -119,7 +121,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
                     if (whisper.deleted) return;
                     let messageCreateOptions;
                     if (sendWebhookMessage) {
-                        messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
+                        messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, narration.embeds, files, player);
                         const webhook = await getOrCreateWebhook(whisper.channel);
                         webhook.send(messageCreateOptions);
                     }
@@ -137,7 +139,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
                     let messageCreateOptions;
                     if (sendWebhookMessage) messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
                     else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix);
-                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, [], messageCreateOptions);
+                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, messageCreateOptions);
                 }
             });
         }

@@ -8,7 +8,7 @@ import DieAction from "../Data/Actions/DieAction.js";
 import NarrateAction from "../Data/Actions/NarrateAction.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
-import { generateListString } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.js";
 
 /** @import Action from "../Data/Action.js" */
 /** @import Dialog from "../Data/Dialog.js" */
@@ -49,12 +49,13 @@ export default class GameNarrationHandler {
 
 	/**
 	 * Creates a new dialog-type narrate action and sends the narration.
+	 * @param {MessageDisplayType} type - The type of narration to send.
 	 * @param {NarrateAction} narrateAction - The narrate action to send.
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration.
 	 */
-	sendPlainTextTypeNarration(narrateAction, narrationText, narrator) {
-		const narration = new Narration(this.#game, MessageDisplayType.PLAIN_TEXT, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
+	sendNarrateAction(type, narrateAction, narrationText, narrator) {
+		const narration = new Narration(this.#game, type, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
 		narrateAction.performNarrate(narration);
 	}
 
@@ -69,7 +70,7 @@ export default class GameNarrationHandler {
 	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Optional.
 	 */
 	#sendNarration(type, action, player, narrationText, location = player.location, whisper, narrator) {
-		const narration = new Narration(this.#game, type, action, player, location, narrationText, whisper, action.message, narrator);
+		const narration = new Narration(this.#game, type, action, player, location, capitalizeFirstLetter(narrationText), whisper, action.message, narrator);
 		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);
 	}

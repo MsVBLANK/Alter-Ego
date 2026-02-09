@@ -42,64 +42,55 @@ export async function execute(game, message, command, args) {
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
     args.splice(0, 1);
 
-    const input = args.join(' ');
-    let parsedInput = input.toUpperCase().replace(/\'/g, "");
-    let newArgs = parsedInput.split(' ');
+    let input = args.join(' ').toUpperCase().replace(/\'/g, "");
+    args = input.split(' ');
 
     // Look for the container item.
     const items = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null && item.quantity !== 0);
     let containerItem = null;
     let containerItemSlot = null;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].identifier !== "" && parsedInput.endsWith(items[i].identifier) && parsedInput !== items[i].identifier ||
-            parsedInput.endsWith(items[i].prefab.id) && parsedInput !== items[i].prefab.id ||
-            parsedInput.endsWith(items[i].name) && parsedInput !== items[i].name) {
-            containerItem = items[i];
-            if (items[i].inventory.size === 0) continue;
-
-            if (items[i].identifier !== "" && parsedInput.endsWith(items[i].identifier))
-                parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].identifier)).trimEnd();
-            else if (parsedInput.endsWith(items[i].prefab.id))
-                parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].prefab.id)).trimEnd();
-            else if (parsedInput.endsWith(items[i].name))
-                parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
-
-            // Check if a slot was specified.
-            if (parsedInput.endsWith(" OF")) {
-                parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(" OF")).trimEnd();
-                newArgs = parsedInput.split(' ');
-                for (const [id, slot] of containerItem.inventory) {
-                    if (parsedInput.endsWith(id)) {
-                        containerItemSlot = slot;
-                        parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(id)).trimEnd();
-                        break;
-                    }
-                }
-                if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.identifier}.`);
+    for (let i = 0; i < args.length; i++) {
+        for (const item of items) {
+            if (item.identifier !== "" && args.slice(i).join(" ") === item.identifier || args.slice(i).join(" ") === item.prefab.id) {
+                if (i === 0)
+                    return game.communicationHandler.reply(message, `You need to specify two items. Usage:\n${usage(game.settings)}`);
+                containerItem = item;
+                if (item.inventory.size === 0) continue;
+                args = args.slice(0, i);
+                input = args.join(" ");
+                break;
             }
-            newArgs = parsedInput.split(' ');
-            newArgs.splice(newArgs.length - 1, 1);
-            parsedInput = newArgs.join(' ');
-            break;
         }
-        else if (items[i].identifier !== "" && parsedInput === items[i].identifier ||
-            parsedInput === items[i].prefab.id ||
-            parsedInput === items[i].name) {
-            game.communicationHandler.reply(message, `You need to specify two items. Usage:`);
-            game.communicationHandler.sendToCommandChannel(usage(game.settings));
-            return;
-        }
+        if (containerItem !== null && containerItem.inventory.size !== 0) break;
     }
-    if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${newArgs[newArgs.length - 1]}".`);
-    else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.prefab.id} cannot hold items.`);
+    if (containerItem === null) return game.communicationHandler.reply(message, `Couldn't find container item "${args[args.length - 1]}".`);
+    else if (containerItem.inventory.size === 0) return game.communicationHandler.reply(message, `${containerItem.getIdentifier()} cannot hold items.`);
+    else if (args[args.length - 1] === "OF") {
+        args = args.slice(0, -1);
+        input = args.join(" ");
+        for (let i = 0; i < args.length; i++) {
+            for (const [id, slot] of containerItem.inventory) {
+                if (args.slice(i).join(" ") === id) {
+                    containerItemSlot = slot;
+                    args = args.slice(0, i);
+                    input = args.join(" ");
+                    break;
+                }
+            }
+            if (containerItemSlot !== null) break;
+        }
+        if (containerItemSlot === null) return game.communicationHandler.reply(message, `Couldn't find "${args[args.length - 1]}" of ${containerItem.getIdentifier()}.`);
+    }
+    args = args.slice(0, -1);
+    input = args.join(" ");
 
     // Now find the item in the player's inventory.
-    const hand = game.entityFinder.getPlayerHandHoldingItem(player, parsedInput, containerItem.row);
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, input, containerItem.row);
     // Make sure item and containerItem aren't the same item.
-    if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, parsedInput))
+    if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, input))
         return game.communicationHandler.reply(message, `Can't stash ${containerItem.getIdentifier()} ${containerItem.prefab.preposition} itself.`);
     const item = hand ? hand.equippedItem : undefined;
-    if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in either of ${player.name}'s hands.`);
+    if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in either of ${player.name}'s hands.`);
     // Ensure an inventory item can't be stashed inside an inventory item that it contains.
     let container = containerItem.container;
     while (container !== null) {

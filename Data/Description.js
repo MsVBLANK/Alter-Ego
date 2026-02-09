@@ -89,4 +89,19 @@ export default class Description extends GameConstruct {
 	parseFor(player) {
 		return parseDescription(this, this.getContainer(), player);
 	}
+
+	/**
+	 * Gets all potential game entities in the given parsed description.
+	 * @param {string} parsedDescription - The parsed description that a player will receive.
+	 * @returns {string[]} A list of strings in all uppercase letters that may be referring to game entities.
+	 */
+	static getPotentialGameEntities(parsedDescription) {
+		/** @type {string[]} */
+		let potentialGameEntities = [];
+		const allCapsRegex = /([A-Z \d]{3,})/g;
+		let match;
+		while (match = allCapsRegex.exec(parsedDescription))
+			potentialGameEntities.push(match[0].trim());
+		return potentialGameEntities;
+	}
 }

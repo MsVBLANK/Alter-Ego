@@ -14,7 +14,7 @@ import { default as autoUpdate } from './Modules/updateHandler.js';
 import { editSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.js';
 
-import { Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
+import { Client, Collection, ChannelType, Events, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
 import { readdir, readFileSync } from 'fs';
 import { loadDotEnv } from "./Modules/envLoader.ts";
 import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.ts";
@@ -283,6 +283,11 @@ client.on('messageUpdate', async (messageOld, messageNew) => {
             || messageOld.channel.id === game.guildContext.announcementChannel.id)) {
         editSpectatorMessage(game, messageOld, messageNew);
     }
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+    if (!initialized) return;
+    botContext.interactionHandler.interceptInteraction(interaction);
 });
 
 process.on('unhandledRejection', error => {

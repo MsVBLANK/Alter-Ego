@@ -1,13 +1,14 @@
 import Action from "../Data/Action.js";
-import { MessageDisplayType } from "../Modules/enums.js";
+import Description from "../Data/Description.js";
 import Room from "../Data/Room.js";
+import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 
-/** @import Description from '../Data/Description.js' */
 /** @import Dialog from "../Data/Dialog.js" */
+/** @import Fixture from "../Data/Fixture.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
@@ -174,7 +175,15 @@ export default class GameCommunicationHandler {
 			if (defaultDropFixture)
 				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
 			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
-			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
+			const roomDescription = parseDescription(description, container, player);
+			const potentialGameEntities = Description.getPotentialGameEntities(roomDescription);
+			/** @type {Fixture[]} */
+			const fixtures = [];
+			for (const entityName of potentialGameEntities) {
+				const entity = this.#game.entityFinder.getFixture(entityName, container.id);
+				if (entity) fixtures.push(entity);
+			}
+			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, fixtures);
 		}
 		else
 			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, messageDisplayType);

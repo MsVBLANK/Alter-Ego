@@ -8,6 +8,7 @@ import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
 import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
+/** @import Fixture from '../Data/Fixture.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import Narration from '../Data/Narration.js' */
 /** @import Room from '../Data/Room.js' */
@@ -177,16 +178,16 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
+ * @param {Fixture[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
  */
-export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
+export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true, mentionedEntities = []) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
-        const components = discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor);
         if (!player.isNPC) {
             location.getGame().messageQueue.enqueue(
                 {
                     fire: async () => {
                         await player.notificationChannel.send({
-                            components: components,
+                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor, mentionedEntities),
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
@@ -199,7 +200,7 @@ export function sendRoomDescription(player, location, descriptionText, occupants
                 {
                     fire: async () => {
                         await player.spectateChannel.send({
-                            components: components,
+                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor),
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },

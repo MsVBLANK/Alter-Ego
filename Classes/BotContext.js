@@ -1,5 +1,6 @@
 import { ActivityType, Collection } from "discord.js";
 import PrettyPrinter from "./PrettyPrinter.js";
+import BotInteractionHandler from "./BotInteractionHandler.js";
 
 /** @import Game from "../Data/Game.js" */
 /** @import BotCommand from "./BotCommand.js" */
@@ -65,6 +66,11 @@ export default class BotContext {
 	 */
 	prettyPrinter;
 	/**
+	 * A set of functions for handling Interactions.
+	 * @type {BotInteractionHandler}
+	 */
+	interactionHandler;
+	/**
 	 * A timeout which updates the client user's presence every 30 seconds.
 	 * @type NodeJS.Timeout
 	 */
@@ -90,7 +96,8 @@ export default class BotContext {
 		this.eligibleCommands = eligibleCommands;
 		this.game = game;
 		this.commandLog = [];
-		this.prettyPrinter = new PrettyPrinter()
+		this.prettyPrinter = new PrettyPrinter();
+		this.interactionHandler = new BotInteractionHandler(this.game);
 		this.#presenceUpdateInterval = setInterval(
 			() => this.updatePresence(),
 			30 * 1000

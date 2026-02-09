@@ -1,8 +1,24 @@
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Embed,
+    EmbedBuilder,
+    TextDisplayBuilder,
+    ThumbnailBuilder,
+    SectionBuilder,
+    ContainerBuilder,
+    SeparatorBuilder,
+    SeparatorSpacingSize,
+    MessageFlags,
+    MediaGalleryBuilder,
+    MediaGalleryItemBuilder
+} from 'discord.js';
 
 /**
+ * @import Fixture from "../Data/Fixture.js"
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
@@ -204,13 +220,14 @@ function createMonologNarrationComponents(game, messageText, player) {
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {string} color - The color as a hex code.
+ * @param {Fixture[]} entities - An array of inspectable game entities.
  */
-export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
+export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color, entities = []) {
     /** @type {MediaGalleryBuilder} */
     let mediaGalleryBuilder;
     [mediaGalleryBuilder, descriptionText] = getMediaGalleryComponents(descriptionText);
 
-    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder)[]} */
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder | ActionRowBuilder<ButtonBuilder>)[]} */
     const components = [];
     components.push(new ContainerBuilder()
         .setAccentColor(Number(`0x${color}`))
@@ -236,6 +253,10 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
     components.push(new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`));
     components.push(new TextDisplayBuilder().setContent(defaultDropFixtureText));
     components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
+    if (entities.length > 0) {
+        const actionRows = getInspectableButtonComponents(entities);
+        components.push(actionRows);
+    }
     return components;
 }
 
@@ -256,6 +277,21 @@ function getMediaGalleryComponents(originalMessageText) {
         }
     }
     return [mediaGalleryBuilder, messageText];
+}
+
+/**
+ * Creates an action row of button components for inspectable game entities.
+ * @param {Fixture[]} entities - An array of game entities.
+ */
+function getInspectableButtonComponents(entities) {
+    /** @type {ActionRowBuilder<ButtonBuilder>} */
+    let actionRow = new ActionRowBuilder();
+    /** @type {ButtonBuilder[]} */
+    let buttonRow = [];
+    for (let i = 0; i < entities.length && i < 5; i++)
+        buttonRow.push(new ButtonBuilder().setCustomId(entities[i].getButtonId()).setLabel(entities[i].name).setStyle(ButtonStyle.Primary));
+    actionRow.addComponents(buttonRow);
+    return actionRow;
 }
 
 /**

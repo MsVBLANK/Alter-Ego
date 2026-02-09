@@ -171,6 +171,13 @@ export default class Fixture extends ItemContainer {
     }
 
     /**
+     * Returns a custom ID for this fixture.
+     */
+    getButtonId() {
+        return `Fixture|${this.name}|${this.location.id}`;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      * @override
      */

@@ -56,19 +56,26 @@ export default class BotInteractionHandler {
 		let target;
 		if (buttonIdParts[0] === 'Fixture') {
 			const fixture = this.#game.entityFinder.getFixture(buttonIdParts[1], buttonIdParts[2]);
-			if (!fixture || player.location.id !== fixture.location.id || !fixture.accessible) {
-				this.replyToInteraction(`Couldn't inspect "${buttonIdParts[1]}".`, interaction, false);
-				return;
-			}
-			target = fixture;
+			if (fixture && player.location.id === fixture.location.id && fixture.accessible)
+				target = fixture;
 		}
 		else if (buttonIdParts[0] === 'RoomItem') {
 			const roomItem = this.#game.entityFinder.getRoomItem(buttonIdParts[1], buttonIdParts[2], buttonIdParts[3], buttonIdParts[4]);
-			if (!roomItem || player.location.id !== roomItem.location.id || !roomItem.accessible || roomItem.quantity === 0) {
-				this.replyToInteraction(`Couldn't inspect "${buttonIdParts[1]}".`, interaction, false);
-				return;
-			}
-			target = roomItem;
+			if (roomItem && player.location.id === roomItem.location.id && roomItem.accessible && roomItem.quantity !== 0)
+				target = roomItem;
+		}
+		else if (buttonIdParts[0] === 'Player') {
+			const otherPlayer = player.location.getOccupantsExcluding(player).find(otherPlayer => otherPlayer.displayName === buttonIdParts[1]);
+			if (otherPlayer && player.location.id === otherPlayer.location.id)
+				target = otherPlayer;
+		}
+		else if (buttonIdParts[0] === 'InventoryItem') {
+			const inventoryItem = this.#game.entityFinder.getInventoryItem(buttonIdParts[1], buttonIdParts[2], buttonIdParts[3], buttonIdParts[4]);
+			const ownerIsVisible = inventoryItem === undefined ? false
+				: inventoryItem.player.name === player.name ? true
+					: player.location.getOccupantsExcluding(player).includes(inventoryItem.player);
+			if (inventoryItem && ownerIsVisible && inventoryItem.quantity !== 0)
+				target = inventoryItem;
 		}
 		
 		if (target) {
@@ -76,6 +83,7 @@ export default class BotInteractionHandler {
 			inspectAction.performInspect(target);
 			reply.resource.message.delete();
 		}
+		else this.replyToInteraction(`Couldn't inspect "${buttonIdParts[1]}".`, interaction, false);
 	}
 
 	/**

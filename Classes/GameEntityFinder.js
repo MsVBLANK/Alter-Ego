@@ -1,11 +1,15 @@
 import { Collection } from "discord.js";
 import Game from "../Data/Game.js";
 import Gesture from "../Data/Gesture.js";
+import InventoryItem from "../Data/InventoryItem.js";
 import Player from "../Data/Player.js";
+import Puzzle from "../Data/Puzzle.js";
 import Room from "../Data/Room.js";
 import Status from "../Data/Status.js";
 import Whisper from "../Data/Whisper.js";
 import * as matchers from '../Modules/matchers.js';
+
+/** @import GameEntity from "../Data/GameEntity.js"; */
 
 /**
  * @class GameEntityFinder
@@ -623,5 +627,30 @@ export default class GameEntityFinder {
 		let selectedFilters = new Collection();
 		if (id) selectedFilters.set(Game.generateValidEntityName(id), fuzzySearch ? matchers.entityIdContains : matchers.entityIdMatches);
 		return this.game.flags.filter(flag => selectedFilters.every((filterFunction, key) => filterFunction(flag, key))).map(flag => flag);
+	}
+
+	/**
+	 * Gets all inspectable game entities given a list of names of potential game entities.
+	 * @param {string[]} potentialGameEntities - A list of names of potential game entities.
+	 * @param {GameEntity} container - The game entity the list of potential game entities came from.
+	 * @param {Player} player - The player who inspected the container.
+	 */
+	getInspectableGameEntities(potentialGameEntities, container, player) {
+		/** @type {Inspectable[]} */
+		const entities = [];
+		for (const entityName of potentialGameEntities) {
+			/** @type {Inspectable} */
+			let entity;
+			if (container instanceof Player)
+				entity = this.getInventoryItems(entityName, container.name, undefined, undefined, undefined, false, 'player')[0];
+			else if (container instanceof InventoryItem)
+				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
+			else {
+				entity = this.getFixture(entityName, player.location.id);
+				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, undefined, undefined, undefined, false, 'player')[0];
+			}
+			if (entity) entities.push(entity);
+		}
+		return entities;
 	}
 }

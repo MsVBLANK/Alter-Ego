@@ -1,6 +1,6 @@
 import Description from './Description.js';
 import GameEntity from './GameEntity.js';
-import { generatePlayerListString } from '../Modules/helpers.js';
+import { generatePlayerListString, sortPlayersByDisplayName } from '../Modules/helpers.js';
 import { Collection } from 'discord.js';
 
 /** @import Exit from './Exit.js' */
@@ -157,6 +157,16 @@ export default class Room extends GameEntity {
     }
 
     /**
+     * Gets a list of the room's occupants excluding the given player, sorted alphabetically by display name.
+     * @param {Player} player - The player to exclude. 
+     * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
+     */
+    getOccupantsExcluding(player, list = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)) {
+        sortPlayersByDisplayName(list);
+        return list;
+    }
+
+    /**
      * Generates a string representing the occupants of the room, sorted alphabetically by display name.
      * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players excluded.
      * @returns {string}
@@ -260,6 +270,13 @@ export default class Room extends GameEntity {
             ? this.isVideoSurveilled() && monitoringRoomCanBeSeen
                 ? "Surveillance feed" : "Intercom"
             : this.displayName;
+    }
+
+    /**
+     * Returns a custom ID for this room.
+     */
+    getButtonId() {
+        return `Room|${this.id}`;
     }
 
     /** @returns {string} */

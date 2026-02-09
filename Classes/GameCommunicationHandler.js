@@ -8,12 +8,10 @@ import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 
 /** @import Dialog from "../Data/Dialog.js" */
-/** @import Fixture from "../Data/Fixture.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
 /** @import Player from "../Data/Player.js" */
-/** @import RoomItem from "../Data/RoomItem.js" */
 /** @import { Snowflake } from "discord.js" */
 
 /**
@@ -154,7 +152,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
-	 * @param {(Fixture|RoomItem)[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
+	 * @param {Inspectable[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
 	 */
 	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, mentionedEntities = []) {
 		if (messageText !== "")
@@ -172,9 +170,10 @@ export default class GameCommunicationHandler {
 	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
 		/** @type {string[]} */
 		let potentialGameEntities = [];
-		/** @type {(Fixture|RoomItem)[]} */
-		const entities = [];
+		/** @type {Inspectable[]} */
+		let entities = [];
 		if (container instanceof Room) {
+			entities = entities.concat(container.getOccupantsExcluding(player));
 			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
 			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
@@ -185,23 +184,13 @@ export default class GameCommunicationHandler {
 			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
 			const roomDescription = parseDescription(description, container, player);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(roomDescription));
-			for (const entityName of potentialGameEntities) {
-				/** @type {Fixture|RoomItem} */
-				let entity = this.#game.entityFinder.getFixture(entityName, container.id);
-				if (!entity) entity = this.#game.entityFinder.getRoomItems(entityName, container.id, true, undefined, undefined, undefined, false, 'player')[0];
-				if (entity) entities.push(entity);
-			}
+			entities = entities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
 			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, entities);
 		}
 		else {
 			const parsedDescription = parseDescription(description, container, player);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			for (const entityName of potentialGameEntities) {
-				/** @type {Fixture|RoomItem} */
-				let entity = this.#game.entityFinder.getFixture(entityName, player.location.id);
-				if (!entity) entity = this.#game.entityFinder.getRoomItems(entityName, player.location.id, undefined, undefined, undefined, undefined, false, 'player')[0];
-				if (entity) entities.push(entity);
-			}
+			entities = entities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
 			this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, entities);
 		}
 	}

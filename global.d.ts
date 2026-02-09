@@ -1,6 +1,7 @@
 import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
 import type Event from "./Data/Event.js";
+import type Fixture from "./Data/Fixture.js";
 import type Flag from "./Data/Flag.js";
 import type Game from "./Data/Game.js";
 import type GameEntity from "./Data/GameEntity.js";
@@ -8,6 +9,7 @@ import type InventoryItem from "./Data/InventoryItem.js";
 import type Player from "./Data/Player.js";
 import type Puzzle from "./Data/Puzzle.js";
 import type Recipe from "./Data/Recipe.js";
+import type Room from "./Data/Room.js";
 import type RoomItem from "./Data/RoomItem.js";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
@@ -41,6 +43,11 @@ declare global {
 	 * Represents the callee of a bot command.
 	 */
 	type Callee = Event | Flag | InventoryItem | Puzzle;
+
+	/**
+	 * Represents an inspectable game entity.
+	 */
+	type Inspectable = Room|Fixture|RoomItem|InventoryItem|Player;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.

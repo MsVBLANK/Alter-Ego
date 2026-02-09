@@ -472,6 +472,13 @@ export default class Player extends ItemContainer {
     }
 
     /**
+     * Returns a custom ID for this player.
+     */
+    getButtonId() {
+        return `Player|${this.name}`;
+    }
+
+    /**
      * Moves the player to the desired room.
      * @param {boolean} isRunning - Whether the player is running.
      * @param {Room} currentRoom - The room the player is currently in.

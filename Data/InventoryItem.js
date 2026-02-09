@@ -142,6 +142,13 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Returns a custom ID for this inventory item.
+     */
+    getButtonId() {
+        return `InventoryItem|${this.getIdentifier()}|${this.player.name}|${this.containerName}|${this.equipmentSlot}`;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      * @override
      */

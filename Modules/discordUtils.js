@@ -18,11 +18,9 @@ import {
 } from 'discord.js';
 
 /**
- * @import Fixture from "../Data/Fixture.js"
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
- * @import RoomItem from "../Data/RoomItem.js";
  * @typedef {import('discord.js').BitFieldResolvable<"SuppressEmbeds" | "SuppressNotifications" | "IsComponentsV2", MessageFlags.SuppressEmbeds | MessageFlags.SuppressNotifications | MessageFlags.IsComponentsV2>} Flags
  */
 
@@ -33,7 +31,7 @@ import {
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
- * @param {(Fixture|RoomItem)[]} entities - An array of inspectable game entities.
+ * @param {Inspectable[]} entities - An array of inspectable game entities.
  */
 export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], entities = []) {
     return {
@@ -222,7 +220,7 @@ function createMonologNarrationComponents(game, messageText, player) {
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {string} color - The color as a hex code.
- * @param {(Fixture|RoomItem)[]} entities - An array of inspectable game entities.
+ * @param {Inspectable[]} entities - An array of inspectable game entities.
  */
 export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color, entities = []) {
     /** @type {MediaGalleryBuilder} */
@@ -283,7 +281,7 @@ function getMediaGalleryComponents(originalMessageText) {
 
 /**
  * Creates an action row of button components for inspectable game entities.
- * @param {(Fixture|RoomItem)[]} entities - An array of game entities.
+ * @param {Inspectable[]} entities - An array of game entities.
  */
 function getInspectableButtonComponents(entities) {
     /** @type {Set<string>} */

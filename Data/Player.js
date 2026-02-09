@@ -27,8 +27,7 @@ import { Collection } from 'discord.js';
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
-/** @import { GuildMember } from 'discord.js' */
-/** @import { TextChannel } from 'discord.js' */
+/** @import { Attachment, GuildMember, TextChannel } from 'discord.js' */
 
 /**
  * @class Player
@@ -1580,12 +1579,13 @@ export default class Player extends ItemContainer {
      * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
      * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
      * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
+     * @param {Collection<string, Attachment>} [attachments] - The attachments to send.
      */
-    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action) {
+    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action, attachments = new Collection()) {
         if (this.isConscious() && !this.isNPC) {
             messageText = capitalizeFirstLetter(messageText);
             this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
-            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText);
+            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText, attachments.map(attachment => attachment.url));
         }
     }
 

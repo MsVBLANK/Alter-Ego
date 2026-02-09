@@ -1,6 +1,7 @@
 ﻿import Dialog from '../Data/Dialog.js';
 import NarrateAction from '../Data/Actions/NarrateAction.js';
 import SayAction from '../Data/Actions/SayAction.js';
+import { MessageDisplayType } from '../Modules/enums.js';
 import { ChannelType } from 'discord.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -57,7 +58,7 @@ export async function execute(game, message, command, args) {
         const location = whisper ? whisper.location : room;
         if (room !== null) {
             const narrateAction = new NarrateAction(game, message, undefined, location, true, whisper);
-            game.narrationHandler.sendPlainTextTypeNarration(narrateAction, content);
+            game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, content);
         }
     }
     else if (channel?.type === ChannelType.GuildText)

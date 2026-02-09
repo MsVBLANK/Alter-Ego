@@ -3,6 +3,7 @@ import Player from "./Player.js";
 import UnhideAction from "./Actions/UnhideAction.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { MessageDisplayType } from "../Modules/enums.js";
+import { Attachment, Collection, Embed } from "discord.js";
 
 /** @import Action from "./Action.js" */
 /** @import Game from "./Game.js" */
@@ -59,6 +60,16 @@ export default class Narration extends GameConstruct {
      */
     message;
     /**
+	 * A collection of attachments sent with the original message.
+	 * @type {Collection<string, Attachment>}
+	 */
+	attachments;
+	/**
+	 * An array of embeds sent with the original message.
+	 * @type {Embed[]}
+	 */
+	embeds;
+    /**
      * The player or guild member who wrote the narration, if applicable. If the narration didn't originate with a message, this is null.
      * @readonly
      * @type {Player|GuildMember}
@@ -112,9 +123,6 @@ export default class Narration extends GameConstruct {
         this.action = action;
         this.player = player;
         this.location = location;
-        // Capitalize the first letter of the content, if necessary.
-        if (content.charAt(0) === content.charAt(0).toLocaleLowerCase())
-			content = capitalizeFirstLetter(content);
         this.content = content;
         // If no whisper was provided but the player is hidden, find the whisper associated with their hiding spot.
         if (!whisper && this.player && this.player.isHidden()) {
@@ -123,6 +131,8 @@ export default class Narration extends GameConstruct {
         }
         this.whisper = whisper;
         this.message = message;
+        this.attachments = message?.attachments ?? new Collection();
+		this.embeds = message?.embeds ?? [];
         this.isOOCMessage = false;
         this.narrator = narrator;
         if (this.narrator) {

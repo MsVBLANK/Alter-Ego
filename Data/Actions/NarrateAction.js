@@ -63,7 +63,7 @@ export default class NarrateAction extends Action {
 	 */
 	#mirrorNarrationInSpectateChannel(player, narration, narrationText = narration.content) {
 		narrationText = narration.getWhisperPrefixString() + narrationText;
-		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration.messageDisplayType, narrationText);
+		this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(player, narration.action, narration.messageDisplayType, narrationText, narration.attachments.map(attachment => attachment.url));
 	}
 
 	/**
@@ -105,7 +105,7 @@ export default class NarrateAction extends Action {
 			if (this.#playerCannotReceiveCommunications(narration, player)) continue;
 			const mirrorNotificationInSpectateChannel = narration.narrator === undefined;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? MessageDisplayType.STANDARD : narration.messageDisplayType, mirrorNotificationInSpectateChannel);
+				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? MessageDisplayType.STANDARD : narration.messageDisplayType, mirrorNotificationInSpectateChannel, narration.embeds, narration.attachments);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 			else this.#mirrorNarrationInSpectateChannel(player, narration, narrationText);
 		}

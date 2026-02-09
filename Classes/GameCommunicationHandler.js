@@ -152,10 +152,11 @@ export default class GameCommunicationHandler {
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
+	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
 	 */
-	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT) {
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, attachments) {
 		if (messageText !== "")
-			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel)
+			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, attachments)
 	}
 
 	/**
@@ -187,26 +188,13 @@ export default class GameCommunicationHandler {
 	 * @param {string} notification - The text of the notification to send.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
+	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
+	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
 	 */
-	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
+	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, embeds, attachments = new Collection()) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
 			player.notify(notification, mirrorInSpectateChannel, messageDisplayType, action);
-		}
-	}
-
-	/**
-	 * Sends a notification to a player with attachments.
-	 * @param {Player} player - The player to send the notification to.
-	 * @param {Action} action - The action that triggered the notification.
-	 * @param {string} notification - The text of the notification to send.
-	 * @param {Collection<string, Attachment>} attachments - The attachments to send.
-	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
-	 */
-	notifyPlayerWithAttachments(player, action, notification, attachments, mirrorInSpectateChannel = true) {
-		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
-			this.#cacheChannelFor(action, player.notificationChannel.id);
-			messageHandler.sendNotification(player, notification, MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel, attachments);
 		}
 	}
 
@@ -253,13 +241,12 @@ export default class GameCommunicationHandler {
 	 * @param {Action} action - The action associated with the narration.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
 	 * @param {string} narrationText - The text of the narration to send.
-	 * @param {string} [webhookUsername] - A custom username to use for the webhook that will send the spectate message. Optional.
-	 * @param {string} [webhookAvatarURL] - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
+	 * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
 	 */
-	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText, webhookUsername, webhookAvatarURL) {
+	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText, files) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType);
+			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType, files);
 		}
 	}
 
@@ -274,7 +261,7 @@ export default class GameCommunicationHandler {
 	 */
 	mirrorWebhookNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
 		if (narration.isOOCMessage) return;
-		this.mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, narrationText, narration.messageDisplayType, narration.message.embeds, narration.message.attachments.map(attachment => attachment.url), narration.message);
+		this.mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, narrationText, narration.messageDisplayType, narration.embeds, narration.attachments.map(attachment => attachment.url), narration.message);
 	}
 
 	/**

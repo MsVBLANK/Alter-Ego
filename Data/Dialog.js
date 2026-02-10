@@ -50,10 +50,15 @@ export default class Dialog extends GameConstruct {
 	 */
 	content;
 	/**
-	 * The cleanContent of the message, but only including alphanumeric characters, cast to lowercase.
+	 * The cleanContent of the message.
 	 * @type {string}
 	 */
 	cleanContent;
+	/**
+	 * The cleanContent of the dialog, but only including alphanumeric characters, cast to lowercase.
+	 * @type {string}
+	 */
+	alphanumericContent;
 	/**
 	 * A collection of attachments sent with the original message.
 	 * @type {Collection<string, Attachment>}
@@ -163,8 +168,9 @@ export default class Dialog extends GameConstruct {
 	 * @param {string} [content] - The content of the dialog. Optional.
 	 * @param {boolean} [isAnnouncement] - Whether or not the dialog was made by a player in the announcement channel. Defaults to false.
 	 * @param {Whisper} [whisper] - The whisper the dialog occurred in. Defaults to null.
+	 * @param {string} [cleanContent] - The clean content of the dialog. Optional.
 	 */
-	constructor(game, message, player, location, content = message.cleanContent, isAnnouncement = false, whisper = null) {
+	constructor(game, message, player, location, content = message.content, isAnnouncement = false, whisper = null, cleanContent = content) {
 		super(game);
 		this.message = message;
 		this.speaker = player;
@@ -172,7 +178,8 @@ export default class Dialog extends GameConstruct {
 		this.isAnnouncement = isAnnouncement;
 		this.whisper = whisper;
 		this.content = content;
-		this.cleanContent = this.content.replace(/[^a-zA-Z0-9 ]+/g, "").toLowerCase().trim();
+		this.cleanContent = cleanContent;
+		this.alphanumericContent = this.cleanContent.replace(/[^a-zA-Z0-9 ]+/g, "").toLowerCase().trim();
 		this.attachments = this.message.attachments;
 		this.embeds = this.message.embeds;
 		this.speakerDisplayName = this.speaker.displayName;
@@ -190,7 +197,7 @@ export default class Dialog extends GameConstruct {
 			if (this.speakerRecognitionName === this.speaker.name)
 				this.speakerRecognitionName = "unknown";
 		}
-		this.isOOCMessage = this.content.startsWith('(');
+		this.isOOCMessage = this.cleanContent.startsWith('(');
 		this.isShouted = false;
 		this.neighboringRooms = new Collection();
 		this.receiverRooms = new Collection();
@@ -203,7 +210,7 @@ export default class Dialog extends GameConstruct {
 		this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
 		// The remaining properties only need to be initialized if the dialog isn't an out-of-character message.
 		if (!this.isOOCMessage) {
-			const contentWithoutEmotes = this.content.replace(/<?:.*?:\d*>?/g, '');
+			const contentWithoutEmotes = this.cleanContent.replace(/<?:.*?:\d*>?/g, '');
 			this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
 			this.neighboringRooms = new Collection();
 			if (!this.location.tags.has("soundproof")) {

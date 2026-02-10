@@ -69,10 +69,24 @@ export default class Prefab extends GameEntity {
     usable;
     /**
      * The verb that will be used when a player uses an inventory item instance of this prefab.
+     * Deprecated. Use `thirdPersonVerb` or `secondPersonVerb` instead.
      * @readonly
+     * @deprecated
      * @type {string}
      */
     verb;
+    /**
+     * The verb that will be used in narrations when a player uses an inventory item instance of this prefab.
+     * @readonly
+     * @type {string}
+     */
+    thirdPersonVerb;
+    /**
+     * The verb that will be used in second person notifications when a player uses an inventory item instance of this prefab.
+     * @readonly
+     * @type {string}
+     */
+    secondPersonVerb;
     /**
      * The number of uses the prefab has.
      * @readonly
@@ -178,7 +192,8 @@ export default class Prefab extends GameEntity {
      * @param {number} size - How large the prefab is. Does not correspond with any particular unit of measurement.
      * @param {number} weight - How much the prefab weighs in kilograms.
      * @param {boolean} usable - Whether the instances of the prefab can be used by a player to inflict or cure one or more status effects.
-     * @param {string} verb - The verb that will be used when a player uses an inventory item instance of this prefab.
+     * @param {string} thirdPersonVerb - The verb that will be used in narrations when a player uses an inventory item instance of this prefab.
+     * @param {string} secondPersonVerb - TThe verb that will be used in second person notifications when a player uses an inventory item instance of this prefab.
      * @param {number} uses - The number of uses the prefab has.
      * @param {string[]} effectsStrings - A list of status effects that will be inflicted on the player when they use an inventory item instance of this prefab.
      * @param {string[]} curesStrings - A list of status effects that the player will be cured of when they use an inventory item instance of this prefab.
@@ -195,7 +210,7 @@ export default class Prefab extends GameEntity {
      * @param {number} row - The row number of the prefab in the sheet.
      * @param {Game} game - The game this belongs to.
      */
-    constructor(id, name, pluralName, singleContainingPhrase, pluralContainingPhrase, discreet, size, weight, usable, verb, uses, effectsStrings, curesStrings, nextStageId, equippable, equipmentSlots, coveredEquipmentSlots, commandsString, equippedCommands, unequippedCommands, inventory, preposition, description, row, game) {
+    constructor(id, name, pluralName, singleContainingPhrase, pluralContainingPhrase, discreet, size, weight, usable, thirdPersonVerb, secondPersonVerb, uses, effectsStrings, curesStrings, nextStageId, equippable, equipmentSlots, coveredEquipmentSlots, commandsString, equippedCommands, unequippedCommands, inventory, preposition, description, row, game) {
         super(game, row);
         this.id = id;
         this.name = name;
@@ -206,7 +221,9 @@ export default class Prefab extends GameEntity {
         this.size = size;
         this.weight = weight;
         this.usable = usable;
-        this.verb = verb;
+        this.verb = thirdPersonVerb;
+        this.thirdPersonVerb = thirdPersonVerb;
+        this.secondPersonVerb = secondPersonVerb;
         this.uses = uses;
         this.effectsStrings = effectsStrings;
         this.effects = new Array(this.effectsStrings.length);

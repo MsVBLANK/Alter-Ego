@@ -40,7 +40,7 @@ export function usage(settings) {
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");
-    if (args.length === 0) {
+    if (args.length < 2) {
         game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Insufficient arguments.`);
         return;
     }

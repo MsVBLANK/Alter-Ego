@@ -403,13 +403,16 @@ export default class GameNarrationHandler {
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateUse(action, item, player, target, customNarration) {
-		if (customNarration)
-			this.#sendNarration(MessageDisplayType.WARNING, action, player, customNarration);
-		else {
-			const verb = item.prefab.verb ? item.prefab.verb : `uses`;
-			const targetPhrase = target.name !== player.name ? ` on ${target.displayName}` : ``;
-			this.#sendNarration(MessageDisplayType.STANDARD, action, player, `${player.displayName} ${verb} ${item.singleContainingPhrase}${targetPhrase}.`);
+		let notification = customNarration;
+		let narration = customNarration;
+		const messageType = customNarration ? MessageDisplayType.WARNING : MessageDisplayType.STANDARD;
+		if (!customNarration) {
+			const targetDisplayName = target.name !== player.name ? target.displayName : ``;
+			notification = this.#game.notificationGenerator.generateUseNotification(player, true, item.singleContainingPhrase, item.prefab.secondPersonVerb, targetDisplayName);
+			narration = this.#game.notificationGenerator.generateUseNotification(player, false, item.singleContainingPhrase, item.prefab.thirdPersonVerb, targetDisplayName);
 		}
+		this.#game.communicationHandler.notifyPlayer(player, action, notification, messageType);
+		this.#sendNarration(messageType, action, player, narration);
 	}
 
 	/**

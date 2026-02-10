@@ -686,6 +686,8 @@ export default class GameEntityLoader extends GameEntityManager {
 				const name = sheet[row][columnName] ? sheet[row][columnName].split(',') : "";
 				// Separate single containing phrase and plural containing phrase.
 				const containingPhrase = sheet[row][columnContainingPhrase] ? sheet[row][columnContainingPhrase].split(',') : "";
+				// Separate third person verb and second person verb.
+				const verb = sheet[row][columnUseVerb] ? sheet[row][columnUseVerb].split(',') : "";
 				// Create a list of all status effect IDs this prefab will inflict when used.
 				let effectsStrings = sheet[row][columnEffectsStrings] ? sheet[row][columnEffectsStrings].split(',') : [];
 				effectsStrings.forEach((effectString, i) => {
@@ -742,7 +744,8 @@ export default class GameEntityLoader extends GameEntityManager {
 					parseInt(sheet[row][columnSize]),
 					parseInt(sheet[row][columnWeight]),
 					sheet[row][columnUsable] ? sheet[row][columnUsable].trim() === "TRUE" : false,
-					sheet[row][columnUseVerb] ? sheet[row][columnUseVerb].trim() : "",
+					verb[0] ? verb[0].trim() : "",
+					verb[1] ? verb[1].trim() : "",
 					parseInt(sheet[row][columnUses]),
 					effectsStrings,
 					curesStrings,

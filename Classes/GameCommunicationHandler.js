@@ -209,7 +209,7 @@ export default class GameCommunicationHandler {
 	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, embeds, attachments = new Collection()) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
 			this.#cacheChannelFor(action, player.notificationChannel.id);
-			player.notify(notification, mirrorInSpectateChannel, messageDisplayType, action);
+			player.notify(capitalizeFirstLetter(notification), mirrorInSpectateChannel, messageDisplayType, action);
 		}
 	}
 

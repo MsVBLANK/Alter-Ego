@@ -222,11 +222,24 @@ export function parseDescription(description, container, player) {
 function addItemsToItemList(document, sentence, container, player) {
     const items = container.getCollatedContainedItemsInItemList(sentence.itemListName, player);
     for (const [prefab, quantity] of items) {
+        const singleContainingPhrase = prefab.singleContainingPhrase.toLocaleUpperCase();
+        const pluralContainingPhrase = prefab.pluralContainingPhrase?.toLocaleUpperCase();
         let itemAlreadyExists = false;
         for (const clause of sentence.clause) {
             const clauseText = clause.node.data.toLocaleUpperCase();
-            if (isNaN(quantity) && (clauseText.includes(prefab.pluralContainingPhrase.toLocaleUpperCase()) || clauseText.includes(prefab.pluralName) || clauseText.includes(prefab.name))) {
+            if (isNaN(quantity) && (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase) || clauseText.includes(prefab.pluralName) || clauseText.includes(prefab.name))) {
                 itemAlreadyExists = true;
+                break;
+            }
+            else if (!isNaN(quantity) && clause.isItem && (clauseText === singleContainingPhrase || pluralContainingPhrase && clauseText.includes(pluralContainingPhrase))) {
+                itemAlreadyExists = true;
+                if (clauseText === singleContainingPhrase)
+                    clause.set(`${1 + quantity} ${prefab.pluralContainingPhrase}`);
+                else if (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase)) {
+                    const quantityMatch = clauseText.match(/\d+/);
+                    const oldQuantity = parseInt(quantityMatch[0]);
+                    clause.set(clause.text.replace(oldQuantity, oldQuantity + quantity));
+                }
                 break;
             }
         }
@@ -653,7 +666,8 @@ function addClause(sentence, phrase, itemQuantity = 1) {
         // INSERT: "DRUM STICKS"
         // AFTER:  "<desc><s>There are <il><item>a set of DRUM STICKS</item>, <item>3 CLARINETS</item>, a PIANO, and some SNARE DRUMS</il>.</s></desc>"
         else if (clause[i + 2].isItem
-            && !clause[i + 3].isItem && clause[i + 3].text.startsWith(", ") && clause[i + 3].text.includes(", and")) {
+            && (!clause[i + 3].isItem && clause[i + 3].text.startsWith(", ") && clause[i + 3].text.includes(", and")
+            || (clause[i + 3].text === ", " && clause[i + 4] && !clause[i + 4].isItem && clause[i + 4].text.includes(", and")))) {
             clause[i + 1].set(", ");
             return 5;
         }

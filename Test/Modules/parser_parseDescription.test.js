@@ -535,6 +535,13 @@ describe('test parseDescription', () => {
 			expect(result).toBe(expected);
 		});
 
+		test('two items and two fixtures', () => {
+			const container = game.entityFinder.getFixture('BED', 'cell-1');
+			const expected = `The bed is little more than a concrete slab with a thin cushion on top. On it, you find a PILLOW, a BLANKET, a BURN HOLE, and a STAIN.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
 		test('two items single quantity', () => {
 			const container = game.entityFinder.getFixture('TABLE 1', 'dining-hall');
 			const expected = `This table is near the corner to the left of the PIANO. It's a small, circular table covered with a white table cloth that reaches the floor. It's surrounded by 4 chairs. On it, you find a SALT SHAKER and a PEPPER SHAKER.`;
@@ -589,6 +596,13 @@ describe('test parseDescription', () => {
 		test('four items', () => {
 			const container = game.entityFinder.getFixture('PREP TABLE', 'canteen');
 			const expected = `You examine the prep table. It's just a stainless steel table for preparing dishes. It's mostly clear, but you do find a POT, a COOKIE SHEET, a FRYING PAN, and a BUTCHERS KNIFE on it.`;
+			const result = parseDescription(container.description, container, kyra);
+			expect(result).toBe(expected);
+		});
+
+		test('many items with the same plural name', () => {
+			const container = game.entityFinder.getFixture('POOL TABLE', 'break-room');
+			const expected = `You examine the pool table. On it are 2 POOL STICKS, a TRIANGLE, CHALK, and 15 BILLIARD BALLS.`
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
@@ -701,7 +715,7 @@ describe('test parseDescription', () => {
 			smallWeight.quantity = 4;
 			mediumWeight.quantity = 3;
 			heavyWeight.quantity = 2;
-		})
+		});
 	});
 
 	describe('test description contains other description', () => {

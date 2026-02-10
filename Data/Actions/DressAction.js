@@ -42,6 +42,10 @@ export default class DressAction extends Action {
 				}
 			}
 		}
+		if (equippedItems.length === 0) {
+			if (this.message) this.getGame().communicationHandler.reply(this.message, `${container.name} has no equippable items.`);
+			return;
+		}
 		this.getGame().narrationHandler.narrateDress(this, equippedItems, container, this.player);
 		this.getGame().logHandler.logDress(equippedItems, this.player, container, inventorySlot, this.forced);
 		// Execute equipped commands.

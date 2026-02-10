@@ -1590,7 +1590,6 @@ export default class Player extends ItemContainer {
      */
     notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action, attachments = new Collection()) {
         if (this.isConscious() && !this.isNPC) {
-            messageText = capitalizeFirstLetter(messageText);
             this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
             if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText, attachments.map(attachment => attachment.url));
         }

@@ -17,6 +17,11 @@ export default class PriorityQueue {
      * @type {Collection<PriorityQueuePriority, StackQueue<MessageQueueEntry>>}
      */
     queues;
+    /** 
+     * Whether or not the PriorityQueue is "Firing", that is, whether or not it is being fully dequeued by the Message Handler.
+     * @type {boolean}
+     */
+    firing;
 
     constructor() {
         this.priorityOrder = ['mod', 'tell', 'mechanic', 'log', 'spectator'];
@@ -24,6 +29,7 @@ export default class PriorityQueue {
         for (let i = 0; i < this.priorityOrder.length; i++) {
             this.queues.set(this.priorityOrder[i], new StackQueue());
         }
+        this.firing = false;
     }
 
     /**

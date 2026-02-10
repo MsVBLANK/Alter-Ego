@@ -197,7 +197,7 @@ export async function execute(game, message, command, args, player) {
     const inventory = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
     for (let i = 0; i < inventory.length; i++) {
         parsedInput = parsedInput.replace("MY ", "");
-        if (inventory[i].prefab.name === parsedInput && inventory[i].quantity > 0) {
+        if ((inventory[i].prefab.name === parsedInput || inventory[i].prefab.pluralName === parsedInput) && inventory[i].quantity > 0) {
             action.performInspect(inventory[i]);
             return;
         }

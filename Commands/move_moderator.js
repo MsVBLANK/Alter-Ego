@@ -34,7 +34,7 @@ export function usage(settings) {
  * @param {string[]} args - A list of arguments passed to the command as individual words. 
  */
 export async function execute(game, message, command, args) {
-    if (args.length === 0)
+    if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify at least one player and a room. Usage:\n${usage(game.settings)}`);
 
     // Get all listed players first.

@@ -417,15 +417,18 @@ export async function sendWebhookMessage(webhook, content, username, avatarURL, 
 export async function sendQueuedMessages(game) {
     if (game.messageQueue.firing) return;
     game.messageQueue.firing = true;
-    while (game.messageQueue.size() > 0) {
-        const message = game.messageQueue.dequeue();
-        try {
-            await message.fire();
-        } catch (error) {
-            console.error("Message Handler encountered exception sending message:", error);
+    try {
+        while (game.messageQueue.size() > 0) {
+            const message = game.messageQueue.dequeue();
+            try {
+                await message.fire();
+            } catch (error) {
+                console.error("Message Handler encountered exception sending message:", error);
+            }
         }
+    } finally {
+        game.messageQueue.firing = false;
     }
-    game.messageQueue.firing = false;
 }
 
 /**

@@ -35,7 +35,7 @@ export default class GameCommunicationHandler {
 	 * @readonly
 	 */
 	#actionCacheSizeLimit = 20;
-	/** 
+	/**
 	 * A collection of mirrored dialog messages to allow edits to dialog messages to be reflected in spectate channels.
 	 * The key is the ID of the original message that's being mirrored.
 	 * @type {Collection<string, DialogSpectateMirror[]>}
@@ -66,7 +66,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Adds an action to the cache. If the cache is at maximum capacity, removes the oldest one.
-	 * @param {Action} action - The action to cache. 
+	 * @param {Action} action - The action to cache.
 	 */
 	#addActionToCache(action) {
 		if (this.#actionCache.size >= this.#actionCacheSizeLimit)
@@ -76,7 +76,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Caches a channel for a given action.
-	 * @param {Action} action - The action to cache a channel for. 
+	 * @param {Action} action - The action to cache a channel for.
 	 * @param {string} channelId - The channel to cache.
 	 */
 	#cacheChannelFor(action, channelId) {
@@ -101,7 +101,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Adds the message to the dialog cache.
-	 * @param {UserMessage} message - The message that initiated the dialog. 
+	 * @param {UserMessage} message - The message that initiated the dialog.
 	 */
 	cacheDialog(message) {
 		if (this.#dialogSpectateMirrorCache.size >= this.#dialogSpectateMirrorCacheSizeLimit)
@@ -224,7 +224,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {MessageDisplayType} messageDisplayType - The type of message to send.
-	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
 	 * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
 	 * @param {UserMessage} [message] - The message being mirrored. Optional.
 	 */

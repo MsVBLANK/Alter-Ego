@@ -12,12 +12,12 @@ export default class PriorityQueue {
      * @type {["mod", "tell", "mechanic", "log", "spectator"]}
      */
     priorityOrder;
-    /** 
+    /**
      * Separate StackQueues to represent each different priority level.
      * @type {Collection<PriorityQueuePriority, StackQueue<MessageQueueEntry>>}
      */
     queues;
-    /** 
+    /**
      * Whether or not the PriorityQueue is "Firing", that is, whether or not it is being fully dequeued by the Message Handler.
      * @type {boolean}
      */
@@ -40,6 +40,10 @@ export default class PriorityQueue {
     enqueue(message, priority) {
         if (this.queues.has(priority)) {
             this.queues.get(priority).enqueue(message);
+            if (!this.firing) {
+                this.firing = true;
+                this.process();
+            }
         }
     }
 
@@ -55,6 +59,24 @@ export default class PriorityQueue {
                     return this.queues.get(priority).dequeue();
                 }
             }
+        }
+    }
+
+    /**
+     * Fully dequeues and fires every entry in the PriorityQueue.
+     */
+    async process() {
+        try {
+            while (this.size() > 0) {
+                const message = this.dequeue();
+                try {
+                    await message.fire();
+                } catch (error) {
+                    console.error("Message Handler encountered exception sending message:", error);
+                }
+            }
+        } finally {
+            this.firing = false;
         }
     }
 

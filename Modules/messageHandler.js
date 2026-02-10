@@ -100,9 +100,9 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
 
 /**
  * Narrates a message to a whisper.
- * @param {Whisper} whisper - The whisper to send the message to. 
+ * @param {Whisper} whisper - The whisper to send the message to.
  * @param {Narration} narration - The narration being sent.
- * @param {string} messageText - The message to send. 
+ * @param {string} messageText - The message to send.
  * @param {string} messageTextWithSpectatePrefix - The message to send with a prefix for spectate channels indicating which whisper the narration occurred in.
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
@@ -174,10 +174,10 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
 /**
  * Sends the room description to a player as an array of Discord Components.
  * @param {Player} player - The player to send the message to.
- * @param {Room} location - The room whose description is being sent. 
- * @param {string} descriptionText - The description of the room to send. 
+ * @param {Room} location - The room whose description is being sent.
+ * @param {string} descriptionText - The description of the room to send.
  * @param {string} occupantsString - The list of occupants in the room.
- * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
+ * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  */
 export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true) {
@@ -328,7 +328,7 @@ export function sendNarrationSpectateMessage(player, messageText, messageDisplay
  * @param {string} messageText - The text of the message to send.
  * @param {string} webhookUsername - The username to use for the mirrored webhook message.
  * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
- * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+ * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
  * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
  * @param {UserMessage} [message] - The message being mirrored. Optional.
  * @param {MessageDisplayType} [messageDisplayType] - The type of message to send. Defaults to PLAIN_TEXT.
@@ -384,7 +384,7 @@ export function editSpectatorMessage(game, messageOld, messageNew) {
 
 /**
  * Gets the client's webhook for the given channel, or creates one if it doesn't exist already.
- * @param {TextChannel} channel - The channel to get or create a webhook for. 
+ * @param {TextChannel} channel - The channel to get or create a webhook for.
  */
 export async function getOrCreateWebhook(channel) {
     const webhooks = await channel.fetchWebhooks();
@@ -397,10 +397,10 @@ export async function getOrCreateWebhook(channel) {
 /**
  * Sends a webhook message in the specified channel.
  * @param {Webhook} webhook - The channel to send the webhook message to.
- * @param {string} content - The content of the message to send. 
- * @param {string} username - The username of the webhook message. 
- * @param {string} avatarURL - The URL of the icon to use for the webhook message. 
- * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+ * @param {string} content - The content of the message to send.
+ * @param {string} username - The username of the webhook message.
+ * @param {string} avatarURL - The URL of the icon to use for the webhook message.
+ * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
  * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
  * @param {Game} [game] - The game the message is for. Optional.
  * @param {MessageDisplayType} [messageDisplayType] - The type of message to send. Defaults to PLAIN_TEXT.
@@ -415,24 +415,11 @@ export async function sendWebhookMessage(webhook, content, username, avatarURL, 
  * @param {Game} game - The game whose message queue should have its messages sent.
  */
 export async function sendQueuedMessages(game) {
-    if (game.messageQueue.firing) return;
-    game.messageQueue.firing = true;
-    try {
-        while (game.messageQueue.size() > 0) {
-            const message = game.messageQueue.dequeue();
-            try {
-                await message.fire();
-            } catch (error) {
-                console.error("Message Handler encountered exception sending message:", error);
-            }
-        }
-    } finally {
-        game.messageQueue.firing = false;
-    }
+    await game.messageQueue.process();
 }
 
 /**
- * @param {Game} game - The game whose message queue should be emptied. 
+ * @param {Game} game - The game whose message queue should be emptied.
  */
 export function clearQueue(game) {
     game.messageQueue.clear();

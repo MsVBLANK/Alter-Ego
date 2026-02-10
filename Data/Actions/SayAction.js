@@ -125,7 +125,7 @@ export default class SayAction extends Action {
 		for (const puzzle of this.#voicePuzzles) {
 			if (puzzle.location.id === location.id) {
 				for (const solution of puzzle.solutions) {
-					if (dialog.cleanContent.includes(solution)) {
+					if (dialog.alphanumericContent.includes(solution)) {
 						const player = dialog.speaker.location.id === location.id ? dialog.speaker : undefined;
 						const solveAction = new SolveAction(this.getGame(), undefined, player, location, this.forced, this.whisper);
 						solveAction.performSolve(puzzle, solution);

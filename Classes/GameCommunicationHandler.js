@@ -4,7 +4,7 @@ import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
-import { Attachment, Collection, Embed, TextChannel } from "discord.js";
+import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 
 /** @import Description from '../Data/Description.js' */
 /** @import Dialog from "../Data/Dialog.js" */
@@ -136,8 +136,8 @@ export default class GameCommunicationHandler {
 	 */
     reply(message, messageText) {
         let member = this.#game.guildContext.guild.members.resolve(message.author.id);
-        if (member && member.roles.cache.has(this.#game.guildContext.moderatorRole.id)) {
-            messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, `<@${message.author.id}>: ${messageText}`);
+        if (member && member.roles.cache.has(this.#game.guildContext.moderatorRole.id) && message.channel.id !== this.#game.guildContext.commandChannel.id && message.channel.type !== ChannelType.DM) {
+            messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, `<@${message.author.id}>, ${messageText}`);
         } else {
             messageHandler.sendReply(this.#game, message, messageText);
         }

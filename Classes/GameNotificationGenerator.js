@@ -630,6 +630,21 @@ export default class GameNotificationGenerator {
 	}
 
 	/**
+	 * Generates a notification indicating the player used an item.
+	 * @param {Player} player - The player referred to in this notification.
+	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 * @param {string} [useVerb] - The prefab's use verb. Optional.
+	 * @param {string} [targetDisplayName] - The display name of the target player of the use action.
+	 */
+	generateUseNotification(player, secondPerson, itemPhrase, useVerb, targetDisplayName) {
+		const subject = secondPerson ? `You` : player.displayName;
+		const verb = useVerb ? useVerb : secondPerson ? `use` : `uses`;
+		const targetPhrase = targetDisplayName ? ` on ${targetDisplayName}` : ``;
+		return `${subject} ${verb} ${itemPhrase}${targetPhrase}.`;
+	}
+
+	/**
 	 * Generates a notification indicating the player took an item.
 	 * @param {Player} player - The player referred to in this notification.
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.

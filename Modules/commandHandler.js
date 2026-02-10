@@ -1,10 +1,7 @@
 ﻿import Puzzle from '../Data/Puzzle.js';
 import { ChannelType } from 'discord.js';
 
-/** @import Event from '../Data/Event.js' */
-/** @import Flag from '../Data/Flag.js' */
 /** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
 /** @import Player from '../Data/Player.js' */
 
 /**
@@ -20,14 +17,12 @@ export async function executeCommand(commandStr, game, message, player, callee) 
     let isBot = false, isModerator = false, isPlayer = false, isEligible = false;
     // First, determine who is using the command.
     if (!message) isBot = true;
-    else if ((message.channel.id === game.guildContext.commandChannel.id || commandStr.startsWith('delete'))
-        && message.member.roles.cache.has(game.guildContext.moderatorRole.id))
-        isModerator = true;
     else {
         // Don't attempt to find the member who sent this message if it was sent by a webhook.
         if (message.webhookId !== null) return false;
         let member = game.guildContext.guild.members.resolve(message.author.id);
-        if (member && member.roles.cache.has(game.guildContext.playerRole.id)) isPlayer = true;
+        if (member && member.roles.cache.has(game.guildContext.moderatorRole.id)) isModerator = true;
+        else if (member && member.roles.cache.has(game.guildContext.playerRole.id)) isPlayer = true;
         else if (member && game.settings.debug && member.roles.cache.has(game.guildContext.testerRole.id)) isEligible = true;
         else if (member && !game.settings.debug && member.roles.cache.has(game.guildContext.eligibleRole.id)) isEligible = true;
     }
@@ -69,10 +64,18 @@ export async function executeCommand(commandStr, game, message, player, callee) 
     }
     else if (isModerator) {
         if (moderatorCommand.config.requiresGame && !game.inProgress) {
-            message.reply("There is no game currently running.");
-            return false;
+            if (message.channel.id === game.guildContext.commandChannel.id) {
+                message.reply("There is no game currently running.");
+                return false;
+            } else {
+                message.author.send("There is no game currently running.");
+                message.delete();
+                return false;
+            }
         }
         moderatorCommand.execute(game, message, commandAlias, args);
+        if (message.channel.id !== game.guildContext.commandChannel.id)
+            message.delete();
         entry = {
             timestamp: new Date(),
             author: message.author.username,
@@ -154,7 +157,6 @@ export async function executeCommand(commandStr, game, message, player, callee) 
 }
 
 /**
- * 
  * @param {string[]} commandSet - A list of bot commands to pass into the command handler's execute function.
  * @param {Game} game - The game in which the command is being executed.
  * @param {Callee} callee - The in-game entity that caused the command to be executed.
@@ -187,7 +189,7 @@ export async function parseAndExecuteBotCommands(commandSet, game, callee, playe
 }
 
 /**
- * @param {number} seconds 
+ * @param {number} seconds
  */
 function sleep(seconds) {
     return new Promise(resolve => setTimeout(resolve, seconds * 1000));

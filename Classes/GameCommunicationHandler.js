@@ -12,7 +12,7 @@ import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
 /** @import Player from "../Data/Player.js" */
-/** @import { Snowflake } from "discord.js" */
+/** @import { GuildMember, Snowflake, User } from "discord.js" */
 
 /**
  * @class GameCommunicationHandler
@@ -134,8 +134,13 @@ export default class GameCommunicationHandler {
 	 * @param {UserMessage} message - The message to reply to.
 	 * @param {string} messageText - The text of the message to send in response.
 	 */
-	reply(message, messageText) {
-		messageHandler.sendReply(this.#game, message, messageText);
+    reply(message, messageText) {
+        let member = game.guildContext.guild.members.resolve(message.author.id);
+        if (member && member.roles.cache.has(game.guildContext.moderatorRole.id)) {
+            messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, `<@${message.author.id}>: ${messageText}`);
+        } else {
+            messageHandler.sendReply(this.#game, message, messageText);
+        }
 	}
 
 	/**

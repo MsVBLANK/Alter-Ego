@@ -63,7 +63,7 @@ describe("DropAction test", () => {
         expect(coffee.uses).toStrictEqual(1);
         expect(coffee.weight).toStrictEqual(3);
         expect(coffee.inventory.size).toStrictEqual(0);
-        expect(coffee.row).toStrictEqual(1016);
+        expect(coffee.row).toStrictEqual(1031);
 
         expect(quiver.name).toStrictEqual("QUIVER");
         expect(quiver.pluralName).toStrictEqual("QUIVERS");
@@ -78,7 +78,7 @@ describe("DropAction test", () => {
         expect(isNaN(quiver.uses)).toBeTruthy();
         expect(quiver.weight).toStrictEqual(20);
         expect(quiver.inventory.size).toStrictEqual(1);
-        expect(quiver.row).toStrictEqual(326);
+        expect(quiver.row).toStrictEqual(341);
 
         expect(jeans.name).toStrictEqual("WHITE JEANS");
         expect(jeans.pluralName).toStrictEqual("");
@@ -93,7 +93,7 @@ describe("DropAction test", () => {
         expect(isNaN(jeans.uses)).toBeTruthy();
         expect(jeans.weight).toStrictEqual(19);
         expect(jeans.inventory.size).toStrictEqual(4);
-        expect(jeans.row).toStrictEqual(327);
+        expect(jeans.row).toStrictEqual(342);
 
         expect(ptp2.location.id).toStrictEqual("general-managers-office");
         expect(ptp2.accessible).toBeTruthy();

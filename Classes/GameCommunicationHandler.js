@@ -1,17 +1,23 @@
 import Action from "../Data/Action.js";
 import Description from "../Data/Description.js";
+import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
-import { Attachment, Collection, Embed, TextChannel } from "discord.js";
+import { Attachment, ButtonStyle, Collection, Embed, TextChannel } from "discord.js";
+import Interactable from "./Interactables/Interactable.js";
+import ButtonInteractable from "./Interactables/ButtonInteractable.js";
+import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.js";
+import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.js";
 
 /** @import Dialog from "../Data/Dialog.js" */
+/** @import Exit from "../Data/Exit.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
-/** @import Player from "../Data/Player.js" */
+/** @import Notification from "../Data/Notification.js" */
 /** @import { Snowflake } from "discord.js" */
 
 /**
@@ -153,11 +159,11 @@ export default class GameCommunicationHandler {
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
 	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
-	 * @param {Inspectable[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
+	 * @param {Interactable[]} interactables - An array of interactables.
 	 */
-	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, attachments, mentionedEntities = []) {
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, attachments, interactables = []) {
 		if (messageText !== "")
-			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, attachments, mentionedEntities)
+			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, attachments, interactables)
 	}
 
 	/**
@@ -167,14 +173,15 @@ export default class GameCommunicationHandler {
 	 * @param {GameEntity} container - The game entity the description belongs to.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT. Does nothing when sending a room description.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
+	 * @param {Interactable[]} interactables[] - An array of interactables to send with the message.
 	 */
-	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
+	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, interactables = []) {
 		/** @type {string[]} */
 		let potentialGameEntities = [];
 		/** @type {Inspectable[]} */
-		let entities = [];
+		let inspectableEntities = [];
 		if (container instanceof Room) {
-			entities = entities.concat(container.getOccupantsExcluding(player));
+			inspectableEntities = inspectableEntities.concat(container.getOccupantsExcluding(player));
 			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
 			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
@@ -185,31 +192,53 @@ export default class GameCommunicationHandler {
 			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
 			const roomDescription = parseDescription(description, container, player);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(roomDescription));
-			entities = entities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
-			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, entities);
+			inspectableEntities = inspectableEntities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
+			/** @type {Exit[]} */
+			const exits = [];
+			for (const potentialGameEntity of potentialGameEntities) {
+				if (container.exits.has(potentialGameEntity)) exits.push(container.exits.get(potentialGameEntity));
+			}
+			/** @type {ButtonInteractable[]} */
+			const moveButtons = [];
+			for (const exit of exits)
+				moveButtons.push(new ButtonInteractable(exit.getMoveInteractableCustomId(), `Move ${exit.name}`));
+			for (const exit of exits)
+				moveButtons.push(new ButtonInteractable(exit.getRunInteractableCustomId(), `Run ${exit.name}`, ButtonStyle.Danger));
+			if (moveButtons.length !== 0) interactables = interactables.concat(moveButtons);
+			/** @type {StringSelectMenuOptionInteractable[]} */
+			const menuOptions = [];
+			for (const entity of inspectableEntities) {
+				const label = entity instanceof Player ? entity.displayName : entity.name;
+				menuOptions.push(new StringSelectMenuOptionInteractable(label, entity.getInteractableCustomId(), entity.getInteractableCustomId()));
+			}
+			if (menuOptions.length !== 0) interactables.push(new StringSelectMenuInteractable("Room-Entry-Inspect-Selector", menuOptions, "Inspect"));
+			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, interactables);
 		}
 		else {
 			const parsedDescription = parseDescription(description, container, player);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			entities = entities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
-			this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, new Collection(), entities);
+			inspectableEntities = inspectableEntities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
+			/** @type {StringSelectMenuOptionInteractable[]} */
+			const menuOptions = [];
+			for (const entity of inspectableEntities) {
+				const label = entity instanceof Player ? entity.displayName : entity.name;
+				menuOptions.push(new StringSelectMenuOptionInteractable(label, entity.getInteractableCustomId(), entity.getInteractableCustomId()));
+			}
+			if (menuOptions.length !== 0) interactables.push(new StringSelectMenuInteractable("Room-Entry-Inspect-Selector", menuOptions, "Inspect"));
+			this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
 		}
 	}
 
 	/**
 	 * Sends a notification to a player.
-	 * @param {Player} player - The player to send the notification to.
-	 * @param {Action} action - The action that triggered the notification.
-	 * @param {string} notification - The text of the notification to send.
-	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
-	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
-	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
-	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
+	 * @param {Notification} notification - The text of the notification to send.
 	 */
-	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, embeds, attachments = new Collection()) {
-		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
-			this.#cacheChannelFor(action, player.notificationChannel.id);
-			player.notify(capitalizeFirstLetter(notification), mirrorInSpectateChannel, messageDisplayType, action);
+	notifyPlayer(notification) {
+		if (!this.#actionHasBeenCommunicatedInChannel(notification.player.notificationChannel, notification.action)) {
+			this.#cacheChannelFor(notification.action, notification.player.notificationChannel.id);
+			this.sendMessageToPlayer(notification.player, notification.content, false, notification.messageDisplayType);
+			if (notification.mirrorInSpectateChannel)
+				this.mirrorNarrationInSpectateChannel(notification.player, notification.action, notification.messageDisplayType, notification.content, notification.attachments.map(attachment => attachment.url));
 		}
 	}
 
@@ -227,7 +256,7 @@ export default class GameCommunicationHandler {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url), dialog.message);
-			if (notification) this.notifyPlayer(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
+			if (notification) this.#game.narrationHandler.sendNotification(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
 		}
 	}
 

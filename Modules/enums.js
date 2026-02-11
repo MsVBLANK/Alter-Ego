@@ -8,3 +8,10 @@ export const MessageDisplayType = {
     MONOLOG: 5,
     PLAIN_TEXT: 6
 };
+
+/** @enum {number} */
+export const InteractableType = {
+    BUTTON: 0,
+    STRING_SELECT_MENU: 1,
+    STRING_SELECT_MENU_OPTION: 2
+};

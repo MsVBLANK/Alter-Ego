@@ -181,7 +181,7 @@ export default class RoomItem extends ItemInstance {
     /**
      * Returns a custom ID for this fixture.
      */
-    getButtonId() {
+    getInteractableCustomId() {
         return `RoomItem|${this.getIdentifier()}|${this.location.id}|${this.containerType}|${this.containerName}`;
     }
 

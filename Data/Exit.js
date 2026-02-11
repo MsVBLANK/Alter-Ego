@@ -110,6 +110,20 @@ export default class Exit extends GameEntity {
     }
 
     /**
+     * Gets a custom ID for moving to this exit.
+     */
+    getMoveInteractableCustomId() {
+        return `Move|${this.name}`;
+    }
+
+    /**
+     * Gets a custom ID for running to this exit.
+     */
+    getRunInteractableCustomId() {
+        return `Run|${this.name}`;
+    }
+
+    /**
      * Gets a phrase to refer to the exit in narrations.
      */
     getNamePhrase() {

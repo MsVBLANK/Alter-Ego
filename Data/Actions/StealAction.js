@@ -26,8 +26,10 @@ export default class StealAction extends Action {
 		super.perform();
 		const slotPhrase = container.inventory.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
 		// If there are no items in that slot, tell the player.
-		if (inventorySlot.items.length === 0)
-			return this.player.notify(this.getGame().notificationGenerator.generateStoleFromEmptyInventorySlotNotification(slotPhrase, container.name, victim.displayName), true, MessageDisplayType.STANDARD, this);
+		if (inventorySlot.items.length === 0) {
+			const notification = this.getGame().notificationGenerator.generateStoleFromEmptyInventorySlotNotification(slotPhrase, container.name, victim.displayName);
+			return this.getGame().narrationHandler.sendNotification(this.player, this, notification, MessageDisplayType.STANDARD, true);
+		}
 		// There might be multiple of the same item, so we need to make an array where each item's index is inserted as many times as its quantity.
 		/** @type {number[]} */
 		let actualItems = [];
@@ -53,8 +55,10 @@ export default class StealAction extends Action {
 			this.player.steal(item, handEquipmentSlot, victim, container, inventorySlot);
 		}
 		else {
-			this.player.notify(this.getGame().notificationGenerator.generateFailedStealNotification(item.singleContainingPhrase, slotPhrase, container.name, victim), true, MessageDisplayType.ALERT, this);
-			victim.notify(this.getGame().notificationGenerator.generateFailedStolenFromNotification(this.player.displayName, slotPhrase, item.singleContainingPhrase, container.name), true, MessageDisplayType.ALERT, this);
+			const failedStealNotification = this.getGame().notificationGenerator.generateFailedStealNotification(item.singleContainingPhrase, slotPhrase, container.name, victim);
+			this.getGame().narrationHandler.sendNotification(this.player, this, failedStealNotification, MessageDisplayType.ALERT, true);
+			const failedStolenFromNotification = this.getGame().notificationGenerator.generateFailedStolenFromNotification(this.player.displayName, slotPhrase, item.singleContainingPhrase, container.name);
+			this.getGame().narrationHandler.sendNotification(victim, this, failedStolenFromNotification, MessageDisplayType.ALERT, true);
 			this.getGame().logHandler.logSteal(item, this.player, victim, container, inventorySlot, false, this.forced);
 		}
 	}

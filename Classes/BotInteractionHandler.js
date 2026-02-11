@@ -1,6 +1,8 @@
-import { ButtonInteraction, MessageFlags } from "discord.js";
+import { ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
+import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 /** 
+ * @import Exit from "../Data/Exit.js";
  * @import Game from "../Data/Game.js";
  * @import Fixture from "../Data/Fixture.js";
  * @import InventoryItem from "../Data/InventoryItem.js";
@@ -39,6 +41,8 @@ export default class BotInteractionHandler {
 		if (!player) return;
 		if (interaction instanceof ButtonInteraction)
 			this.processButtonInteraction(interaction, player);
+		if (interaction instanceof StringSelectMenuInteraction)
+			this.processStringSelectMenuInteraction(interaction, player);
 		return;
 	}
 
@@ -50,27 +54,49 @@ export default class BotInteractionHandler {
 	async processButtonInteraction(interaction, player) {
 		/** @type {InteractionCallbackResponse<boolean>} */
 		const reply = await interaction.deferReply({ withResponse: true });;
-		const buttonId = interaction.customId;
-		const buttonIdParts = buttonId.split('|');
+		const customId = interaction.customId;
+		const customIdParts = customId.split('|');
+		const exit = this.#game.entityFinder.getExit(player.location, customIdParts[1]);
+		if (exit) {
+			let isRunning = false;
+			if (customIdParts[0] === 'Run')
+				isRunning = true;
+			const queueMoveAction = new QueueMoveAction(this.#game, undefined, player, player.location, false);
+			queueMoveAction.performQueueMove(isRunning, exit.name);
+			reply.resource.message.delete();
+		}
+		else this.replyToInteraction(`Couldn't move to "${customIdParts[1]}".`, interaction, false);
+	}
+
+	/**
+	 * Processes a string select interaction and calls the correct function.
+	 * @param {StringSelectMenuInteraction} interaction - The interaction being executed.
+	 * @param {Player} player - The player who triggered the interaction.
+	 */
+	async processStringSelectMenuInteraction(interaction, player) {
+		/** @type {InteractionCallbackResponse<boolean>} */
+		const reply = await interaction.deferReply({ withResponse: true });;
+		const customId = interaction.customId;
+		const customIdParts = customId.split('|');
 		/** @type {Player | Fixture | Room | RoomItem | InventoryItem} */
 		let target;
-		if (buttonIdParts[0] === 'Fixture') {
-			const fixture = this.#game.entityFinder.getFixture(buttonIdParts[1], buttonIdParts[2]);
+		if (customIdParts[0] === 'Fixture') {
+			const fixture = this.#game.entityFinder.getFixture(customIdParts[1], customIdParts[2]);
 			if (fixture && player.location.id === fixture.location.id && fixture.accessible)
 				target = fixture;
 		}
-		else if (buttonIdParts[0] === 'RoomItem') {
-			const roomItem = this.#game.entityFinder.getRoomItem(buttonIdParts[1], buttonIdParts[2], buttonIdParts[3], buttonIdParts[4]);
+		else if (customIdParts[0] === 'RoomItem') {
+			const roomItem = this.#game.entityFinder.getRoomItem(customIdParts[1], customIdParts[2], customIdParts[3], customIdParts[4]);
 			if (roomItem && player.location.id === roomItem.location.id && roomItem.accessible && roomItem.quantity !== 0)
 				target = roomItem;
 		}
-		else if (buttonIdParts[0] === 'Player') {
-			const otherPlayer = player.location.getOccupantsExcluding(player).find(otherPlayer => otherPlayer.displayName === buttonIdParts[1]);
+		else if (customIdParts[0] === 'Player') {
+			const otherPlayer = player.location.getOccupantsExcluding(player).find(otherPlayer => otherPlayer.displayName === customIdParts[1]);
 			if (otherPlayer && player.location.id === otherPlayer.location.id)
 				target = otherPlayer;
 		}
-		else if (buttonIdParts[0] === 'InventoryItem') {
-			const inventoryItem = this.#game.entityFinder.getInventoryItem(buttonIdParts[1], buttonIdParts[2], buttonIdParts[3], buttonIdParts[4]);
+		else if (customIdParts[0] === 'InventoryItem') {
+			const inventoryItem = this.#game.entityFinder.getInventoryItem(customIdParts[1], customIdParts[2], customIdParts[3], customIdParts[4]);
 			const ownerIsVisible = inventoryItem === undefined ? false
 				: inventoryItem.player.name === player.name ? true
 					: player.location.getOccupantsExcluding(player).includes(inventoryItem.player);
@@ -83,13 +109,13 @@ export default class BotInteractionHandler {
 			inspectAction.performInspect(target);
 			reply.resource.message.delete();
 		}
-		else this.replyToInteraction(`Couldn't inspect "${buttonIdParts[1]}".`, interaction, false);
+		else this.replyToInteraction(`Couldn't inspect "${customIdParts[1]}".`, interaction, false);
 	}
 
 	/**
 	 * Replies to an interaction.
 	 * @param {string} response - The response to send.
-	 * @param {ButtonInteraction} interaction - The interaction to reply to.
+	 * @param {ButtonInteraction|StringSelectMenuInteraction} interaction - The interaction to reply to.
 	 * @param {boolean} [deleteAfterTimeout] - Whether or not to delete the reply after a set amount of time.
 	 */
 	replyToInteraction(response, interaction, deleteAfterTimeout = true) {

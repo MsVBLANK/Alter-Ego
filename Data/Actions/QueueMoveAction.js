@@ -54,7 +54,7 @@ export default class QueueMoveAction extends Action {
 		}
 		if (!destinationRoom) {
 			this.player.moveQueue.length = 0;
-			return this.player.notify(`There is no exit "${destinationString}" that you can currently move to. Please try the name of an exit in the room you're in or the name of the room you want to go to.`, false);
+			return this.getGame().communicationHandler.sendMessageToPlayer(this.player, `There is no exit "${destinationString}" that you can currently move to. Please try the name of an exit in the room you're in or the name of the room you want to go to.`, false);
 		}
 
 		if (exit) {

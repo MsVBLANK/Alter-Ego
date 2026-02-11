@@ -8,11 +8,10 @@ import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
 import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
 
-/** @import Fixture from '../Data/Fixture.js' */
+/** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import Narration from '../Data/Narration.js' */
 /** @import Room from '../Data/Room.js' */
-/** @import RoomItem from '../Data/RoomItem.js' */
 /** @import Whisper from '../Data/Whisper.js' */
 
 /**
@@ -37,7 +36,7 @@ export function processIncomingMessage(game, message) {
         player.setOnline();
         const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
         if (playerNoSpeechStatusEffects.length > 0) {
-            player.notify(game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
+            game.communicationHandler.sendMessageToPlayer(player, game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
             message.delete().catch();
             return;
         }
@@ -153,16 +152,16 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
- * @param {Inspectable[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
+ * @param {Interactable[]} interactables - An array of interactables.
  */
-export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection(), mentionedEntities = []) {
+export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection(), interactables = []) {
     const files = attachments.map((attachment) => attachment.url);
 
     if (!player.isNPC) {
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, mentionedEntities));
+                    await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables));
                 },
             },
             "tell"
@@ -181,16 +180,16 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
- * @param {Inspectable[]} [mentionedEntities] - A list of inspectable game entities mentioned in the description.
+ * @param {Interactable[]} interactables - An array of interactables.
  */
-export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true, mentionedEntities = []) {
+export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true, interactables = []) {
     if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
         if (!player.isNPC) {
             location.getGame().messageQueue.enqueue(
                 {
                     fire: async () => {
                         await player.notificationChannel.send({
-                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor, mentionedEntities),
+                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor, interactables),
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },

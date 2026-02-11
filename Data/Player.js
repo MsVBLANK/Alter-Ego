@@ -16,18 +16,19 @@ import QueueMoveAction from './Actions/QueueMoveAction.js';
 import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
 import { MessageDisplayType } from '../Modules/enums.js';
-import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
 
+/** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
 /** @import Description from './Description.js' */
 /** @import Exit from './Exit.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
-/** @import { Attachment, GuildMember, TextChannel } from 'discord.js' */
+/** @import Notification from './Notification.js' */
+/** @import { GuildMember, TextChannel } from 'discord.js' */
 
 /**
  * @class Player
@@ -473,7 +474,7 @@ export default class Player extends ItemContainer {
     /**
      * Returns a custom ID for this player.
      */
-    getButtonId() {
+    getInteractableCustomId() {
         return `Player|${this.name}`;
     }
 
@@ -1574,24 +1575,23 @@ export default class Player extends ItemContainer {
      * @param {Description} description - The description to parse and send.
      * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
      * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to the description's message display type. Does nothing when sending a room description.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
      */
-    sendDescription(description, container = description.getContainer(), messageDisplayType = description.messageDisplayType) {
+    sendDescription(description, container = description.getContainer(), messageDisplayType = description.messageDisplayType, interactables = []) {
         if (description.text && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container, messageDisplayType);
+            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container, messageDisplayType, true, interactables);
     }
 
     /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {string} messageText - The content of the message to send.
-     * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
-     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
-     * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
-     * @param {Collection<string, Attachment>} [attachments] - The attachments to send.
+     * @param {Notification} notification - The notification to send.
      */
-    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action, attachments = new Collection()) {
+    notify(notification) {
         if (this.isConscious() && !this.isNPC) {
-            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
-            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText, attachments.map(attachment => attachment.url));
+            this.getGame().communicationHandler.notifyPlayer(notification);
+            /*this.getGame().communicationHandler.sendMessageToPlayer(this, notification.content, false, notification.messageDisplayType);
+            if (notification.mirrorInSpectateChannel && notification.action)
+                this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, notification.action, notification.messageDisplayType, notification.content, notification.attachments.map(attachment => attachment.url));*/
         }
     }
 

@@ -105,7 +105,7 @@ export default class NarrateAction extends Action {
 			if (this.#playerCannotReceiveCommunications(narration, player)) continue;
 			const mirrorNotificationInSpectateChannel = narration.narrator === undefined;
 			if (this.#playerShouldReceiveNotification(narration, player))
-				this.getGame().communicationHandler.notifyPlayer(player, narration.action, narration.content, narration.narrator ? MessageDisplayType.STANDARD : narration.messageDisplayType, mirrorNotificationInSpectateChannel, narration.embeds, narration.attachments);
+				this.getGame().narrationHandler.sendNotification(player, narration.action, narration.content, narration.narrator ? MessageDisplayType.STANDARD : narration.messageDisplayType, mirrorNotificationInSpectateChannel, narration.attachments, [], narration.embeds);
 			if (narration.narrator) this.#mirrorMessageNarrationInSpectateChannel(player, narration, narratorDisplayName, narratorDisplayIcon, narrationText);
 			else this.#mirrorNarrationInSpectateChannel(player, narration, narrationText);
 		}

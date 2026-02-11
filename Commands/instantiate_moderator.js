@@ -51,7 +51,7 @@ export async function execute(game, message, command, args) {
         return game.communicationHandler.reply(message, `Not enough arguments given. Usage:\n${usage(game.settings)}`);
 
     let quantity = 1;
-    if (!isNaN(parseInt(args[0]))) {
+    if (args[0].match(/^\d+$/)) {
         quantity = parseInt(args[0]);
         args.splice(0, 1);
     }

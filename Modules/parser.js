@@ -237,8 +237,10 @@ function addItemsToItemList(document, sentence, container, player) {
                     clause.set(`${1 + quantity} ${prefab.pluralContainingPhrase}`);
                 else if (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase)) {
                     const quantityMatch = clauseText.match(/\d+/);
-                    const oldQuantity = parseInt(quantityMatch[0]);
-                    clause.set(clause.text.replace(oldQuantity, oldQuantity + quantity));
+                    if (quantityMatch) {
+                        const oldQuantity = parseInt(quantityMatch[0]);
+                        clause.set(clause.text.replace(oldQuantity, oldQuantity + quantity));
+                    }
                 }
                 break;
             }

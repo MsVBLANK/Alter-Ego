@@ -55,7 +55,7 @@ export async function execute(game, command, args, player, callee) {
     }
 
     let quantity = 1;
-    if (!isNaN(parseInt(args[0]))) {
+    if (args[0].match(/^\d+$/)) {
         quantity = parseInt(args[0]);
         args.splice(0, 1);
     }

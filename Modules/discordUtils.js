@@ -306,8 +306,10 @@ function generateActionRows(interactables) {
     let buttons = [];
     for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
         const interactable = buttonInteractables[i];
-        if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable)
+        if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable) {
             buttons.push(interactable.component);
+            includedInteractables.add(interactable.customId);
+        }
         if (i === buttonInteractables.length - 1 || buttons.length === 5) {
             /** @type {ActionRowBuilder<ButtonBuilder>} */
             const actionRow = new ActionRowBuilder();
@@ -323,6 +325,7 @@ function generateActionRows(interactables) {
             /** @type {ActionRowBuilder<StringSelectMenuBuilder>} */
             const actionRow = new ActionRowBuilder();
             actionRow.addComponents(interactable.component);
+            includedInteractables.add(interactable.customId);
             actionRows.push(actionRow);
         }
     }

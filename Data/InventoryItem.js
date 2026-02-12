@@ -141,11 +141,16 @@ export default class InventoryItem extends ItemInstance {
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.player.location;
+    }
+
     /**
      * Returns a custom ID for this inventory item.
      */
-    getActionDirectiveArgs() {
-        return [this];
+    getInspectActionDirectiveArgs() {
+        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot];
     }
 
     /**

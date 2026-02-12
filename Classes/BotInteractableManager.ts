@@ -55,7 +55,9 @@ export default class BotInteractableManager {
 	 */
 	addInteractable(interactable: Interactable) {
 		if (this.#interactableCache.size >= this.#interactableCacheSizeLimit)
-			this.#interactableCache.delete(this.#interactableCache.firstKey());
+			this.disableInteractable(this.#interactableCache.firstKey());
+		if (this.#interactableCache.has(interactable.customId))
+			this.disableInteractable(interactable.customId);
 		this.#interactableCache.set(interactable.customId, interactable);
 		setTimeout(() => this.disableInteractable(interactable.customId), 5 * 60 * 1000);
 	}
@@ -81,16 +83,16 @@ export default class BotInteractableManager {
 		const moveButtons: ButtonInteractable[] = [];
 		for (const exit of exits) {
 			if (!player.hasBehaviorAttribute("disable move")) {
-				const actionDirective = new ActionDirective(QueueMoveAction.prototype, exit.getActionDirectiveArgs(false));
-				const customId = await actionDirective.generateCustomId();
+				const actionDirective = new ActionDirective(QueueMoveAction.prototype, exit.getQueueMoveActionDirectiveArgs(player.location, false));
+				const customId = await actionDirective.generateCustomId(player);
 				actionDirective.setCustomId(customId);
 				const moveButton = new ButtonInteractable(actionDirective, `Move ${exit.name}`, ButtonStyle.Primary);
 				this.addInteractable(moveButton);
 				moveButtons.push(moveButton);
 			}
 			if (!player.hasBehaviorAttribute("disable run")) {
-				const actionDirective = new ActionDirective(QueueMoveAction.prototype, exit.getActionDirectiveArgs(true));
-				const customId = await actionDirective.generateCustomId();
+				const actionDirective = new ActionDirective(QueueMoveAction.prototype, exit.getQueueMoveActionDirectiveArgs(player.location, true));
+				const customId = await actionDirective.generateCustomId(player);
 				actionDirective.setCustomId(customId);
 				const moveButton = new ButtonInteractable(actionDirective, `Run ${exit.name}`, ButtonStyle.Danger);
 				this.addInteractable(moveButton);
@@ -106,21 +108,22 @@ export default class BotInteractableManager {
 	 * @param player - The player these interactables are being created for.
 	 */
 	async createInspectActionInteractable(entities: Inspectable[], player: Player): Promise<StringSelectMenuInteractable[]> {
-		const menuOptions: StringSelectMenuOptionInteractable[] = [];
+		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
 		for (const entity of entities) {
-			const actionDirective = new ActionDirective(InspectAction.prototype, entity.getActionDirectiveArgs());
-			const customId = await actionDirective.generateCustomId();
+			const actionDirective = new ActionDirective(InspectAction.prototype, entity.getInspectActionDirectiveArgs());
+			const customId = await actionDirective.generateCustomId(player);
+			if (menuOptions.has(customId)) continue;
 			actionDirective.setCustomId(customId);
 			const label = entity instanceof Player ? entity.displayName : entity.name;
 			const option = new StringSelectMenuOptionInteractable(actionDirective, label, customId);
 			this.addInteractable(option);
-			menuOptions.push(option);
+			menuOptions.set(customId, option);
 		}
-		if (menuOptions.length === 0) return [];
+		if (menuOptions.size === 0) return [];
 		const actionDirective = new ActionDirective(InspectAction.prototype, ["InspectAction Menu"]);
-		const customId = await actionDirective.generateCustomId();
+		const customId = await actionDirective.generateCustomId(player);
 		actionDirective.setCustomId(customId);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions, "Inspect");
+		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect");
 		this.addInteractable(menu);
 		return [menu];
 	}

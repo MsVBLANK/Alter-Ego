@@ -3,6 +3,7 @@ import InspectAction from "../Data/Actions/InspectAction.js";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import ActionDirective from "./ActionDirective.ts";
 /** 
+ * @import Action from "../Data/Action.js";
  * @import Exit from "../Data/Exit.js";
  * @import Game from "../Data/Game.js";
  * @import Fixture from "../Data/Fixture.js";
@@ -69,13 +70,17 @@ export default class BotInteractionHandler {
 			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
 			if (action instanceof QueueMoveAction) {
 				const args = interactable.actionDirective.getArgs();
-				const isRunning = args[0];
-				const destinationString = args[1];
-				action.performQueueMove(isRunning, destinationString);
+				const parsedArgs = this.#parseArgs(action, args);
+				const validatedArgs = this.#validateArgs(action, player, parsedArgs);
+				if (validatedArgs.length === 2) {
+					action.performQueueMove(validatedArgs[0], validatedArgs[1]);
+					reply.resource.message.delete();
+					return;
+				}
 			}
-			reply.resource.message.delete();
 		}
-		else this.replyToInteraction(`Interaction failed.`, interaction, false);
+		this.replyToInteraction(`Interaction failed.`, interaction, false);
+		return;
 	}
 
 	/**
@@ -87,39 +92,94 @@ export default class BotInteractionHandler {
 		/** @type {InteractionCallbackResponse<boolean>} */
 		const reply = await interaction.deferReply({ withResponse: true });;
 		const customId = interaction.customId;
-		const customIdParts = customId.split('|');
-		/** @type {Player | Fixture | Room | RoomItem | InventoryItem} */
-		let target;
-		if (customIdParts[0] === 'Fixture') {
-			const fixture = this.#game.entityFinder.getFixture(customIdParts[1], customIdParts[2]);
-			if (fixture && player.location.id === fixture.location.id && fixture.accessible)
-				target = fixture;
+		const interactable = this.getInteractable(customId);
+		if (interactable) {
+			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
+			if (action instanceof InspectAction) {
+				const args = interactable.actionDirective.getArgs();
+				const parsedArgs = this.#parseArgs(action, args);
+				const validatedArgs = this.#validateArgs(action, player, parsedArgs);
+				if (validatedArgs.length === 1) {
+					action.performInspect(validatedArgs[0]);
+					reply.resource.message.delete();
+					return;
+				}
+			}
 		}
-		else if (customIdParts[0] === 'RoomItem') {
-			const roomItem = this.#game.entityFinder.getRoomItem(customIdParts[1], customIdParts[2], customIdParts[3], customIdParts[4]);
-			if (roomItem && player.location.id === roomItem.location.id && roomItem.accessible && roomItem.quantity !== 0)
-				target = roomItem;
+		this.replyToInteraction(`Interaction failed.`, interaction, false);
+	}
+
+	/**
+	 * Finds any game entities in the args and returns the new args to pass into the action.
+	 * @param {Action} action - The action the args will be passed to.
+	 * @param {string[]} args - The args as strings.
+	 */
+	#parseArgs(action, args) {
+		/** @type {any[]} */
+		let newArgs = [];
+		if (action instanceof InspectAction) {
+			/** @type {Inspectable} */
+			let target;
+			switch (args[0]) {
+				case 'F':
+					target = this.#game.entityFinder.getFixture(args[1], args[2]);
+					break;
+				case 'II':
+					target = this.#game.entityFinder.getInventoryItem(args[1], args[2], args[3], args[4]);
+					break;
+				case 'P':
+					target = this.#game.entityFinder.getLivingPlayer(args[1]);
+					break;
+				case 'R':
+					target = this.#game.entityFinder.getRoom(args[1]);
+					break;
+				case 'RI':
+					target = this.#game.entityFinder.getRoomItem(args[1], args[2], args[3], args[4]);
+					break;
+			}
+			if (target) {
+				newArgs.push(args[0]);
+				newArgs.push(target);
+			}
 		}
-		else if (customIdParts[0] === 'Player') {
-			const otherPlayer = player.location.getOccupantsExcluding(player).find(otherPlayer => otherPlayer.displayName === customIdParts[1]);
-			if (otherPlayer && player.location.id === otherPlayer.location.id)
-				target = otherPlayer;
+		else if (action instanceof QueueMoveAction) {
+			const location = this.#game.entityFinder.getRoom(args[0]);
+			const isRunning = args[1].toLowerCase() === 'true';
+			/** @type {Exit} */
+			let exit = this.#game.entityFinder.getExit(location, args[2]);
+			if (exit) newArgs.push(location, isRunning, exit.name);
 		}
-		else if (customIdParts[0] === 'InventoryItem') {
-			const inventoryItem = this.#game.entityFinder.getInventoryItem(customIdParts[1], customIdParts[2], customIdParts[3], customIdParts[4]);
-			const ownerIsVisible = inventoryItem === undefined ? false
-				: inventoryItem.player.name === player.name ? true
-					: player.location.getOccupantsExcluding(player).includes(inventoryItem.player);
-			if (inventoryItem && ownerIsVisible && inventoryItem.quantity !== 0)
-				target = inventoryItem;
+		return newArgs;
+	}
+
+	/**
+	 * Validates the args before passing them into the action's perform function.
+	 * @param {Action} action - The action the args will be passed to.
+	 * @param {Player} player - The player performing the action.
+	 * @param {any[]} args - The args after being parsed.
+	 * @returns The args to pass into the perform function.
+	 */
+	#validateArgs(action, player, args) {
+		if (action instanceof InspectAction) {
+			if (args.length !== 2) return [];
+			if (player.hasBehaviorAttribute("disable inspect")) return [];
+			if (player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable inspect")) return [];
+			if (!args[1].getLocation()) return [];
+			if (args[1].getLocation().id !== player.location.id) return [];
+			if (args[0] === 'F' && !args[1]?.accessible) return [];
+			if (args[0] === 'RI' && (!args[1]?.accessible || args[1].quantity === 0)) return [];
+			return [args[1]];
 		}
-		
-		if (target) {
-			const inspectAction = new InspectAction(this.#game, undefined, player, player.location, false);
-			inspectAction.performInspect(target);
-			reply.resource.message.delete();
+		if (action instanceof QueueMoveAction) {
+			if (args.length !== 3) return [];
+			if (!args[0]) return [];
+			if (args[0].id !== player.location.id) return [];
+			if (player.isMoving) return [];
+			if (args[1] === false && (player.hasBehaviorAttribute("disable move") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable move"))) return [];
+			if (args[1] === true && (player.hasBehaviorAttribute("disable run") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable run"))) return [];
+			if (!args[2]) return [];
+			return [args[1], args[2]];
 		}
-		else this.replyToInteraction(`Couldn't inspect "${customIdParts[1]}".`, interaction, false);
 	}
 
 	/**

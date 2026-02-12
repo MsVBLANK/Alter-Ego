@@ -272,11 +272,16 @@ export default class Room extends GameEntity {
             : this.displayName;
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this;
+    }
+
     /**
      * Returns a custom ID for this room.
      */
-    getActionDirectiveArgs() {
-        return [this];
+    getInspectActionDirectiveArgs() {
+        return ["R", this];
     }
 
     /** @returns {string} */

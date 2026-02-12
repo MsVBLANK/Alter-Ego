@@ -471,11 +471,16 @@ export default class Player extends ItemContainer {
         }
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
     /**
      * Returns a custom ID for this player.
      */
-    getActionDirectiveArgs() {
-        return [this];
+    getInspectActionDirectiveArgs() {
+        return ["P", this.name];
     }
 
     /**

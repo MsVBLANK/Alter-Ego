@@ -178,11 +178,16 @@ export default class RoomItem extends ItemInstance {
         this.accessible = false;
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
     /**
      * Returns a custom ID for this fixture.
      */
-    getActionDirectiveArgs() {
-        return [this];
+    getInspectActionDirectiveArgs() {
+        return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName];
     }
 
     /**

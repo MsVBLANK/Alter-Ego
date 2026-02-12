@@ -19,7 +19,7 @@ export default class ActionDirective<T extends Action = Action> {
 	 * The raw arguments provided for this action.
 	 * @readonly
 	 */
-	#args: any[];
+	#args: string[];
 	customId: string;
 
 	/**
@@ -33,8 +33,12 @@ export default class ActionDirective<T extends Action = Action> {
 		this.#args = args;
 	}
 
-	async generateCustomId() {
-		const buffer = new TextEncoder().encode(this.#args.join(","));
+	/**
+	 * Generates a custom ID for this action directive based on its action and arguments. This is used to identify the directive when an interaction is received.
+	 * @param player - The player this directive is being generated for. This is included in the hash to ensure that directives generated for different players with the same action and arguments will have different custom IDs, preventing conflicts.
+	 */
+	async generateCustomId(player: Player) {
+		const buffer = new TextEncoder().encode([player.name].concat(this.#args).join(","));
 		const hashBuffer = await subtle.digest("SHA-256", buffer);
 		const hashArray = Array.from(new Uint8Array(hashBuffer));
 		const hashHex = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");

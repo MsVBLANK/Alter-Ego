@@ -122,31 +122,31 @@ export default class Description extends GameConstruct {
 		let inspectableEntities = [];
 		/** @type {Interactable[]} */
 		let interactables = [];
-		if (this.#container instanceof Room) {
-			inspectableEntities = inspectableEntities.concat(this.#container.getOccupantsExcluding(player));
-			const occupantsString = this.getGame().notificationGenerator.generateRoomOccupantsNotification(player, this.#container);
+		if (container instanceof Room) {
+			inspectableEntities = inspectableEntities.concat(container.getOccupantsExcluding(player));
+			const occupantsString = this.getGame().notificationGenerator.generateRoomOccupantsNotification(player, container);
 			let defaultDropFixtureString = "";
-			const defaultDropFixture = this.getGame().entityFinder.getFixture(this.getGame().settings.defaultDropFixture, this.#container.id);
+			const defaultDropFixture = this.getGame().entityFinder.getFixture(this.getGame().settings.defaultDropFixture, container.id);
 			if (defaultDropFixture) {
 				defaultDropFixtureString = defaultDropFixture.description.parseFor(player, container);
 				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
 			}
 			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, this.#container, player));
+			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
 			/** @type {Exit[]} */
 			const exits = [];
 			for (const potentialGameEntity of potentialGameEntities)
-				if (this.#container.exits.has(potentialGameEntity)) exits.push(this.#container.exits.get(potentialGameEntity));
+				if (container.exits.has(potentialGameEntity)) exits.push(container.exits.get(potentialGameEntity));
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createQueueMoveActionInteractables(exits, player));
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
-			player.sendRoomDescription(this.#container, parsedDescription, occupantsString, defaultDropFixtureString, interactables);
+			player.sendRoomDescription(container, parsedDescription, occupantsString, defaultDropFixtureString, interactables);
 		}
 		else {
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, this.#container, player));
+			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
-			player.sendDescription(this, this.#container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
+			player.sendDescription(this, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
 		}
 	}
 }

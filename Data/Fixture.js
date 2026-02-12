@@ -170,11 +170,16 @@ export default class Fixture extends ItemContainer {
         this.accessible = false;
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
     /**
      * Returns a custom ID for this fixture.
      */
-    getActionDirectiveArgs() {
-        return [this];
+    getInspectActionDirectiveArgs() {
+        return ["F", this.name, this.getLocation().id];
     }
 
     /**

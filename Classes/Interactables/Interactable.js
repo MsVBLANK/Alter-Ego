@@ -1,4 +1,7 @@
 import { InteractableType } from "../../Modules/enums.js";
+/**
+ * @import ActionDirective from "../ActionDirective.ts";
+ */
 
 /**
  * @class Interactable
@@ -11,6 +14,12 @@ export default class Interactable {
 	 * @type {InteractableType} */
 	type;
 	/**
+	 * The action directive for this interactable.
+	 * @readonly
+	 * @type {ActionDirective}
+	 */
+	actionDirective;
+	/**
 	 * The customId of the component.
 	 * @readonly
 	 * @type {string}
@@ -20,10 +29,17 @@ export default class Interactable {
 	/**
 	 * @constructor
 	 * @param {InteractableType} type - The type of interactive message component to create.
-	 * @param {string} customId - The customId of the component.
+	 * @param {ActionDirective} actionDirective - The action directive for this interactable.
 	 */
-	constructor(type, customId) {
+	constructor(type, actionDirective) {
 		this.type = type;
-		this.customId = customId;
+		this.actionDirective = actionDirective;
+		this.customId = actionDirective.customId;
 	}
+
+	/** 
+	 * Sets the interactable as disabled.
+	 * @abstract
+	 */
+	disable() {}
 }

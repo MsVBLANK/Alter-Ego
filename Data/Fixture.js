@@ -173,8 +173,8 @@ export default class Fixture extends ItemContainer {
     /**
      * Returns a custom ID for this fixture.
      */
-    getInteractableCustomId() {
-        return `Fixture|${this.name}|${this.location.id}`;
+    getActionDirectiveArgs() {
+        return [this];
     }
 
     /**

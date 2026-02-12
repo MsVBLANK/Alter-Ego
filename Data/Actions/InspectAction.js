@@ -3,9 +3,11 @@ import Action from "../Action.js";
 import Description from "../Description.js";
 import Fixture from "../Fixture.js";
 import InventoryItem from "../InventoryItem.js";
+import Room from "../Room.js";
 
+/** @import Interactable from "../../Classes/Interactables/Interactable.js" */
+/** @import Exit from "../Exit.js" */
 /** @import Player from "../Player.js" */
-/** @import Room from "../Room.js" */
 /** @import RoomItem from "../RoomItem.js" */
 
 /**
@@ -19,7 +21,7 @@ export default class InspectAction extends Action {
 	 * Performs an inspect action.
 	 * @param {Room|Fixture|RoomItem|InventoryItem|Player} target - The entity to inspect.
 	 */
-	performInspect(target) {
+	async performInspect(target) {
 		if (this.performed) return;
 		super.perform();
 		this.getGame().narrationHandler.narrateInspect(this, target, this.player);
@@ -27,7 +29,8 @@ export default class InspectAction extends Action {
 		// If the player is inspecting an inventory item that belongs to another player, remove the contents of all il tags before parsing it.
 		if (target instanceof InventoryItem && target.player.name !== this.player.name)
 			description = new Description(description.text.replace(/(<(il)(\s[^>]+?)*>)[\s\S]+?(<\/\2>)/g, "$1$4"), target, this.getGame());
-		this.player.sendDescription(description, target, description.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT);
+
+		description.parseAndSendTo(this.player);
 		this.getGame().logHandler.logInspect(target, this.player, this.forced);
 	}
 }

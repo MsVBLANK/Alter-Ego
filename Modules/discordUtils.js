@@ -330,33 +330,6 @@ function generateActionRows(interactables) {
 }
 
 /**
- * Creates an action row of button components for inspectable game entities.
- * @param {Inspectable[]} entities - An array of game entities.
- */
-function getInspectableButtonComponents(entities) {
-    /** @type {Set<string>} */
-    const includedEntities = new Set();
-    /** @type {ActionRowBuilder<ButtonBuilder>[]} */
-    const actionRows = [];
-    /** @type {ButtonBuilder[]} */
-    let buttonRow = [];
-    for (let i = 0; i < entities.length && includedEntities.size < 25; i++) {
-        if (!includedEntities.has(entities[i].getInteractableCustomId())) {
-            buttonRow.push(new ButtonBuilder().setCustomId(entities[i].getInteractableCustomId()).setLabel(entities[i].name).setStyle(ButtonStyle.Primary));
-            includedEntities.add(entities[i].getInteractableCustomId());
-        }
-        if (i === entities.length - 1 || buttonRow.length === 5) {
-            /** @type {ActionRowBuilder<ButtonBuilder>} */
-            const actionRow = new ActionRowBuilder();
-            actionRow.addComponents(buttonRow);
-            actionRows.push(actionRow);
-            buttonRow = [];
-        }
-    }
-    return actionRows;
-}
-
-/**
  * Creates an array of components for a command help display.
  * @param {string} title - The title of the help display. Should include the name of the command.
  * @param {string} description - The description of the command.

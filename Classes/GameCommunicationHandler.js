@@ -176,57 +176,21 @@ export default class GameCommunicationHandler {
 	 * @param {Interactable[]} interactables[] - An array of interactables to send with the message.
 	 */
 	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, interactables = []) {
-		/** @type {string[]} */
-		let potentialGameEntities = [];
-		/** @type {Inspectable[]} */
-		let inspectableEntities = [];
-		if (container instanceof Room) {
-			inspectableEntities = inspectableEntities.concat(container.getOccupantsExcluding(player));
-			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
-			let defaultDropFixtureString = "";
-			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
-			if (defaultDropFixture) {
-				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
-				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
-			}
-			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
-			const roomDescription = parseDescription(description, container, player);
-			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(roomDescription));
-			inspectableEntities = inspectableEntities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
-			/** @type {Exit[]} */
-			const exits = [];
-			for (const potentialGameEntity of potentialGameEntities) {
-				if (container.exits.has(potentialGameEntity)) exits.push(container.exits.get(potentialGameEntity));
-			}
-			/** @type {ButtonInteractable[]} */
-			const moveButtons = [];
-			for (const exit of exits)
-				moveButtons.push(new ButtonInteractable(exit.getMoveInteractableCustomId(), `Move ${exit.name}`));
-			for (const exit of exits)
-				moveButtons.push(new ButtonInteractable(exit.getRunInteractableCustomId(), `Run ${exit.name}`, ButtonStyle.Danger));
-			if (moveButtons.length !== 0) interactables = interactables.concat(moveButtons);
-			/** @type {StringSelectMenuOptionInteractable[]} */
-			const menuOptions = [];
-			for (const entity of inspectableEntities) {
-				const label = entity instanceof Player ? entity.displayName : entity.name;
-				menuOptions.push(new StringSelectMenuOptionInteractable(label, entity.getInteractableCustomId(), entity.getInteractableCustomId()));
-			}
-			if (menuOptions.length !== 0) interactables.push(new StringSelectMenuInteractable("Room-Entry-Inspect-Selector", menuOptions, "Inspect"));
-			messageHandler.sendRoomDescription(player, container, roomDescription, occupantsString, defaultDropFixtureString, mirrorInSpectateChannel, interactables);
-		}
-		else {
-			const parsedDescription = parseDescription(description, container, player);
-			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			inspectableEntities = inspectableEntities.concat(this.#game.entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
-			/** @type {StringSelectMenuOptionInteractable[]} */
-			const menuOptions = [];
-			for (const entity of inspectableEntities) {
-				const label = entity instanceof Player ? entity.displayName : entity.name;
-				menuOptions.push(new StringSelectMenuOptionInteractable(label, entity.getInteractableCustomId(), entity.getInteractableCustomId()));
-			}
-			if (menuOptions.length !== 0) interactables.push(new StringSelectMenuInteractable("Room-Entry-Inspect-Selector", menuOptions, "Inspect"));
-			this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
-		}
+		const parsedDescription = parseDescription(description, container, player);
+		this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
+	}
+
+	/**
+     * Sends an already-parsed room description to the player.
+	 * @param {Player} player - The player to send the description to.
+	 * @param {Room} room - The room the description belongs to.
+     * @param {string} roomDescriptionString - The already parsed room description.
+     * @param {string} occupantsString - A list of occupants in the room.
+     * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+     */
+	sendRoomDescriptionToPlayer(player, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
+		messageHandler.sendRoomDescription(player, room, roomDescriptionString, occupantsString, defaultDropFixtureString, true, interactables);
 	}
 
 	/**

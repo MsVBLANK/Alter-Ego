@@ -275,8 +275,8 @@ export default class Room extends GameEntity {
     /**
      * Returns a custom ID for this room.
      */
-    getInteractableCustomId() {
-        return `Room|${this.id}`;
+    getActionDirectiveArgs() {
+        return [this];
     }
 
     /** @returns {string} */

@@ -1,6 +1,9 @@
 import Interactable from "./Interactable.js";
 import { InteractableType } from "../../Modules/enums.js";
 import { StringSelectMenuOptionBuilder } from "discord.js";
+/**
+ * @import ActionDirective from "../ActionDirective.ts";
+ */
 
 /**
  * @class StringSelectMenuOptionInteractable
@@ -32,17 +35,22 @@ export default class StringSelectMenuOptionInteractable extends Interactable{
 
 	/**
 	 * @constructor
-	 * @param {string} customId - The customId of the component.
+	 * @param {ActionDirective} actionDirective - The action directive of the interactable.
 	 * @param {string} label - The label of the component.
 	 * @param {string} value - The value of the component.
 	 * @param {string} [description] - The description of the component. Optional.
 	 */
-	constructor(customId, label, value, description) {
-		super(InteractableType.STRING_SELECT_MENU_OPTION, customId);
+	constructor(actionDirective, label, value, description) {
+		super(InteractableType.STRING_SELECT_MENU_OPTION, actionDirective);
 		this.label = label;
 		this.value = value;
 		this.description = description;
 		this.component = new StringSelectMenuOptionBuilder().setValue(value);
 		if (this.description) this.component.setDescription(this.description);
 	}
+
+	/** 
+	 * Sets the interactable as disabled.
+	 */
+	disable() {}
 }

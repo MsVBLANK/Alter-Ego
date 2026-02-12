@@ -1,6 +1,9 @@
 import GameConstruct from "./GameConstruct.js";
+import Room from "./Room.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
 import { MessageDisplayType } from "../Modules/enums.js";
+/** @import Interactable from "../Classes/Interactables/Interactable.js"; */
+/** @import Exit from "./Exit.js"; */
 /** @import Game from "./Game.js"; */
 /** @import GameEntity from "./GameEntity.js"; */
 /** @import Player from "./Player.js"; */
@@ -85,9 +88,10 @@ export default class Description extends GameConstruct {
 	/**
 	 * Parses the description for the given player.
 	 * @param {Player} player 
+	 * @param {GameEntity} container
 	 */
-	parseFor(player) {
-		return parseDescription(this, this.getContainer(), player);
+	parseFor(player, container = this.getContainer()) {
+		return parseDescription(this, container, player);
 	}
 
 	/**
@@ -103,5 +107,46 @@ export default class Description extends GameConstruct {
 		while (match = allCapsRegex.exec(parsedDescription))
 			potentialGameEntities.push(match[0].trim());
 		return potentialGameEntities;
+	}
+
+	/**
+	 * Parses and sends the description to the given player with interactables.
+	 * @param {Player} player
+	 * @param {GameEntity} [container]
+	 */
+	async parseAndSendTo(player, container = this.getContainer()) {
+		const parsedDescription = this.parseFor(player, container);
+		/** @type {string[]} */
+		let potentialGameEntities = [];
+		/** @type {Inspectable[]} */
+		let inspectableEntities = [];
+		/** @type {Interactable[]} */
+		let interactables = [];
+		if (this.#container instanceof Room) {
+			inspectableEntities = inspectableEntities.concat(this.#container.getOccupantsExcluding(player));
+			const occupantsString = this.getGame().notificationGenerator.generateRoomOccupantsNotification(player, this.#container);
+			let defaultDropFixtureString = "";
+			const defaultDropFixture = this.getGame().entityFinder.getFixture(this.getGame().settings.defaultDropFixture, this.#container.id);
+			if (defaultDropFixture) {
+				defaultDropFixtureString = defaultDropFixture.description.parseFor(player, container);
+				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
+			}
+			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
+			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
+			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, this.#container, player));
+			/** @type {Exit[]} */
+			const exits = [];
+			for (const potentialGameEntity of potentialGameEntities)
+				if (this.#container.exits.has(potentialGameEntity)) exits.push(this.#container.exits.get(potentialGameEntity));
+			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createQueueMoveActionInteractables(exits, player));
+			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
+			player.sendRoomDescription(this.#container, parsedDescription, occupantsString, defaultDropFixtureString, interactables);
+		}
+		else {
+			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
+			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, this.#container, player));
+			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
+			player.sendDescription(this, this.#container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
+		}
 	}
 }

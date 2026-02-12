@@ -216,7 +216,7 @@ export default class GameNarrationHandler {
 		}
 		else {
 			const description = entrance ? entrance.description : destinationRoom.description;
-			player.sendDescription(description, destinationRoom);
+			description.parseAndSendTo(player, destinationRoom);
 		}
 	}
 
@@ -769,7 +769,7 @@ export default class GameNarrationHandler {
 	 * @param {string} [narration] - The narration to send. If none is supplied, uses the default puzzle interact notification.
 	 */
 	narrateAttempt(action, puzzle, player, description, narration = this.#game.notificationGenerator.generateAttemptPuzzleDefaultNotification(player.displayName, puzzle.getContainingPhrase())) {
-		if (description.text !== "" && description.text.includes("<desc>")) player.sendDescription(description, puzzle);
+		if (description.text !== "" && description.text.includes("<desc>")) description.parseAndSendTo(player, puzzle);
 		if (narration  !== "") this.#sendNarration(MessageDisplayType.MINOR, action, player, narration);
 	}
 
@@ -787,7 +787,7 @@ export default class GameNarrationHandler {
 		let narration = customNarration;
 		if (player && !customNarration)
 			narration = this.#game.notificationGenerator.generateSolvePuzzleNotification(player, false, puzzle, outcome, item);
-		if (player) player.sendDescription(puzzle.correctDescription, puzzle);
+		if (player) puzzle.correctDescription.parseAndSendTo(player, puzzle);
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);
 	}
 
@@ -803,7 +803,7 @@ export default class GameNarrationHandler {
 		let narration = customNarration;
 		if (player && !customNarration)
 			narration = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, false, puzzle);
-		if (player) player.sendDescription(puzzle.unsolvedDescription, puzzle);
+		if (player) puzzle.unsolvedDescription.parseAndSendTo(player, puzzle);
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);
 	}
 

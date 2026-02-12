@@ -110,17 +110,11 @@ export default class Exit extends GameEntity {
     }
 
     /**
-     * Gets a custom ID for moving to this exit.
+     * Gets the args for moving to this exit for an action directive.
+     * @param {boolean} isRunning - Whether not the player is running.
      */
-    getMoveInteractableCustomId() {
-        return `Move|${this.name}`;
-    }
-
-    /**
-     * Gets a custom ID for running to this exit.
-     */
-    getRunInteractableCustomId() {
-        return `Run|${this.name}`;
+    getActionDirectiveArgs(isRunning) {
+        return [isRunning, this.name];
     }
 
     /**

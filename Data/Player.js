@@ -474,8 +474,8 @@ export default class Player extends ItemContainer {
     /**
      * Returns a custom ID for this player.
      */
-    getInteractableCustomId() {
-        return `Player|${this.name}`;
+    getActionDirectiveArgs() {
+        return [this];
     }
 
     /**
@@ -1583,16 +1583,25 @@ export default class Player extends ItemContainer {
     }
 
     /**
+     * Sends an already-parsed room description to the player.
+     * @param {Room} room - The room the description is for.
+     * @param {string} roomDescriptionString - The already-parsed room description.
+     * @param {string} occupantsString - A list of occupants in the room.
+     * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+     */
+    sendRoomDescription(room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
+        if (roomDescriptionString && !this.isNPC && this.isConscious())
+            this.getGame().communicationHandler.sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables);
+    }
+
+    /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
      * @param {Notification} notification - The notification to send.
      */
     notify(notification) {
-        if (this.isConscious() && !this.isNPC) {
+        if (this.isConscious() && !this.isNPC)
             this.getGame().communicationHandler.notifyPlayer(notification);
-            /*this.getGame().communicationHandler.sendMessageToPlayer(this, notification.content, false, notification.messageDisplayType);
-            if (notification.mirrorInSpectateChannel && notification.action)
-                this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, notification.action, notification.messageDisplayType, notification.content, notification.attachments.map(attachment => attachment.url));*/
-        }
     }
 
     /**

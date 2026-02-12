@@ -1,6 +1,7 @@
 import { ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
+import ActionDirective from "./ActionDirective.ts";
 /** 
  * @import Exit from "../Data/Exit.js";
  * @import Game from "../Data/Game.js";
@@ -33,6 +34,14 @@ export default class BotInteractionHandler {
 	}
 
 	/**
+	 * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
+	 * @param {string} customId
+	 */
+	getInteractable(customId) {
+		return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
+	}
+
+	/**
 	 * Intercepts an interaction event and directs it to the correct function.
 	 * @param {Interaction} interaction - The interaction that was created.
 	 */
@@ -55,17 +64,18 @@ export default class BotInteractionHandler {
 		/** @type {InteractionCallbackResponse<boolean>} */
 		const reply = await interaction.deferReply({ withResponse: true });;
 		const customId = interaction.customId;
-		const customIdParts = customId.split('|');
-		const exit = this.#game.entityFinder.getExit(player.location, customIdParts[1]);
-		if (exit) {
-			let isRunning = false;
-			if (customIdParts[0] === 'Run')
-				isRunning = true;
-			const queueMoveAction = new QueueMoveAction(this.#game, undefined, player, player.location, false);
-			queueMoveAction.performQueueMove(isRunning, exit.name);
+		const interactable = this.getInteractable(customId);
+		if (interactable) {
+			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
+			if (action instanceof QueueMoveAction) {
+				const args = interactable.actionDirective.getArgs();
+				const isRunning = args[0];
+				const destinationString = args[1];
+				action.performQueueMove(isRunning, destinationString);
+			}
 			reply.resource.message.delete();
 		}
-		else this.replyToInteraction(`Couldn't move to "${customIdParts[1]}".`, interaction, false);
+		else this.replyToInteraction(`Interaction failed.`, interaction, false);
 	}
 
 	/**

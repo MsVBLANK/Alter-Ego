@@ -9,6 +9,7 @@ import Player from "../Data/Player.js";
 import ActionDirective from "./ActionDirective.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
+import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 
 /**
  * @class BotInteractableManager
@@ -30,6 +31,16 @@ export default class BotInteractableManager {
 	 * @readonly
 	 */
 	#interactableCacheSizeLimit = 500;
+	/**
+	 * A cache of messages with Interactables, indexed by message ID. This is used to keep track of which messages have interactables on them, so that we can disable those interactables when they're no longer valid.
+	 * @readonly
+	 */
+	#interactableMessageCache: Collection<InteractableMessage, string[]>;
+	/**
+	 * The maximum number of Interactable messages to keep in the cache at once. If the cache exceeds this size, the oldest message will be removed.
+	 * @readonly
+	 */
+	#interactableMessageCacheSizeLimit = 50;
 
 	/**
 	 * @constructor
@@ -38,6 +49,7 @@ export default class BotInteractableManager {
 	constructor(game: Game) {
 		this.#game = game;
 		this.#interactableCache = new Collection();
+		this.#interactableMessageCache = new Collection();
 	}
 
 	/**
@@ -59,7 +71,6 @@ export default class BotInteractableManager {
 		if (this.#interactableCache.has(interactable.customId))
 			this.disableInteractable(interactable.customId);
 		this.#interactableCache.set(interactable.customId, interactable);
-		setTimeout(() => this.disableInteractable(interactable.customId), 5 * 60 * 1000);
 	}
 
 	/**
@@ -72,6 +83,46 @@ export default class BotInteractableManager {
 			interactable.disable();
 			this.#interactableCache.delete(customId);
 		}
+	}
+
+	/**
+	 * Adds an interactable message to the cache, removing the oldest one if the cache size limit is exceeded.
+	 * @param channelId - The ID of the channel the message is in.
+	 * @param messageId - The ID of the message with interactables on it.
+	 * @param interactableCustomIds - The custom IDs of the interactables on the message.
+	 */
+	addInteractableMessage(channelId: string, messageId: string, interactableCustomIds: string[]) {
+		const key = { channelId: channelId, messageId: messageId };
+		if (this.#interactableMessageCache.size >= this.#interactableMessageCacheSizeLimit)
+			this.disableInteractableMessage(this.#interactableMessageCache.firstKey());
+		this.#interactableMessageCache.set(key, interactableCustomIds);
+		setTimeout(() => this.disableInteractableMessage(key), 5 * 60 * 1000);
+	}
+
+	/**
+	 * Disables all interactables associated with a message and removes the message from the cache.
+	 * @param interactableMessage - The message with interactables on it to disable.
+	 */
+	async disableInteractableMessage(interactableMessage: InteractableMessage) {
+		const message = await this.#getInteractableMessage(interactableMessage);
+		if (message) removeInteractablesFromMessage(message);
+		const interactableCustomIds = this.#interactableMessageCache.get(interactableMessage);
+		if (interactableCustomIds) {
+			for (const customId of interactableCustomIds) {
+				this.disableInteractable(customId);
+			}
+			this.#interactableMessageCache.delete(interactableMessage);
+		}
+	}
+
+	/**
+	 * Fetches a message from Discord by its channel ID and message ID, and returns it if it exists.
+	 * @param interactableMessage - The message to fetch, represented by its channel ID and message ID.
+	 */
+	async #getInteractableMessage(interactableMessage: InteractableMessage) {
+		const channel = await this.#game.botContext.client.channels.fetch(interactableMessage.channelId);
+		if (!channel.isTextBased()) return;
+		return await channel.messages.fetch(interactableMessage.messageId);
 	}
 	
 	/**

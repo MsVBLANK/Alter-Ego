@@ -6,7 +6,7 @@ import SayAction from '../Data/Actions/SayAction.js';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { MessageFlags, ChannelType, Attachment, Collection, GuildMember, TextChannel, Embed, Webhook } from 'discord.js';
+import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Game from '../Data/Game.js' */
@@ -161,7 +161,8 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
         player.getGame().messageQueue.enqueue(
             {
                 fire: async () => {
-                    await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables));
+                    const message = await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables));
+                    if (message && interactables.length > 0) player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
                 },
             },
             "tell"
@@ -188,10 +189,11 @@ export function sendRoomDescription(player, location, descriptionText, occupants
             location.getGame().messageQueue.enqueue(
                 {
                     fire: async () => {
-                        await player.notificationChannel.send({
+                        const message = await player.notificationChannel.send({
                             components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor, interactables),
                             flags: MessageFlags.IsComponentsV2,
                         });
+                        if (message && interactables.length > 0) player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
                     },
                 },
                 "tell"
@@ -211,6 +213,14 @@ export function sendRoomDescription(player, location, descriptionText, occupants
             );
         }
     }
+}
+
+/**
+ * Edits the given message to remove its interactable components.
+ * @param {Message} message - The message to remove interactable components from.
+ */
+export function removeInteractablesFromMessage(message) {
+    message.edit({ components: message.components.filter(component => component.type !== ComponentType.ActionRow)});
 }
 
 /**

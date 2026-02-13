@@ -60,6 +60,16 @@ declare global {
 	}
 
 	/**
+	 * A message with Interactables on it that has been cached for tracking.
+	 * @property {Snowflake} channelId - The ID of the channel the message is in.
+	 * @property {Snowflake} messageId - The ID of the message.
+	 */
+	interface InteractableMessage {
+		channelId: Snowflake;
+		messageId: Snowflake;
+	}
+
+	/**
 	 * The configuration for a command.
 	 * @property {string} name - The name of the command.
 	 * @property {string} description - A brief description of what the command does.

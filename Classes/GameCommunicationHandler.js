@@ -4,7 +4,7 @@ import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
-import { Attachment, Collection, Embed, TextChannel } from "discord.js";
+import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 
 /** @import Description from '../Data/Description.js' */
 /** @import Dialog from "../Data/Dialog.js" */
@@ -12,7 +12,7 @@ import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
 /** @import Player from "../Data/Player.js" */
-/** @import { Snowflake } from "discord.js" */
+/** @import { GuildMember, Snowflake, User } from "discord.js" */
 
 /**
  * @class GameCommunicationHandler
@@ -35,7 +35,7 @@ export default class GameCommunicationHandler {
 	 * @readonly
 	 */
 	#actionCacheSizeLimit = 20;
-	/** 
+	/**
 	 * A collection of mirrored dialog messages to allow edits to dialog messages to be reflected in spectate channels.
 	 * The key is the ID of the original message that's being mirrored.
 	 * @type {Collection<string, DialogSpectateMirror[]>}
@@ -66,7 +66,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Adds an action to the cache. If the cache is at maximum capacity, removes the oldest one.
-	 * @param {Action} action - The action to cache. 
+	 * @param {Action} action - The action to cache.
 	 */
 	#addActionToCache(action) {
 		if (this.#actionCache.size >= this.#actionCacheSizeLimit)
@@ -76,7 +76,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Caches a channel for a given action.
-	 * @param {Action} action - The action to cache a channel for. 
+	 * @param {Action} action - The action to cache a channel for.
 	 * @param {string} channelId - The channel to cache.
 	 */
 	#cacheChannelFor(action, channelId) {
@@ -101,7 +101,7 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Adds the message to the dialog cache.
-	 * @param {UserMessage} message - The message that initiated the dialog. 
+	 * @param {UserMessage} message - The message that initiated the dialog.
 	 */
 	cacheDialog(message) {
 		if (this.#dialogSpectateMirrorCache.size >= this.#dialogSpectateMirrorCacheSizeLimit)
@@ -134,8 +134,13 @@ export default class GameCommunicationHandler {
 	 * @param {UserMessage} message - The message to reply to.
 	 * @param {string} messageText - The text of the message to send in response.
 	 */
-	reply(message, messageText) {
-		messageHandler.sendReply(this.#game, message, messageText);
+    reply(message, messageText) {
+        let member = this.#game.guildContext.guild.members.resolve(message.author.id);
+        if (member && member.roles.cache.has(this.#game.guildContext.moderatorRole.id) && message.channel.id !== this.#game.guildContext.commandChannel.id && message.channel.type !== ChannelType.DM) {
+            messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, `<@${message.author.id}>, ${messageText}`);
+        } else {
+            messageHandler.sendReply(this.#game, message, messageText);
+        }
 	}
 
 	/**
@@ -224,7 +229,7 @@ export default class GameCommunicationHandler {
 	 * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
 	 * @param {string} messageText - The text of the message to send.
 	 * @param {MessageDisplayType} messageDisplayType - The type of message to send.
-	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional. 
+	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
 	 * @param {string[]} [files] - An array of URLs to send as attachments. Optional.
 	 * @param {UserMessage} [message] - The message being mirrored. Optional.
 	 */

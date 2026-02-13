@@ -63,26 +63,29 @@ export async function executeCommand(commandStr, game, message, player, callee) 
         return true;
     }
     else if (isModerator) {
-        if (moderatorCommand.config.requiresGame && !game.inProgress) {
-            if (message.channel.id === game.guildContext.commandChannel.id) {
-                message.reply("There is no game currently running.");
-                return false;
-            } else {
-                message.author.send("There is no game currently running.");
-                message.delete();
-                return false;
+        if (message.channel.type === ChannelType.GuildText && (message.channel.id === game.guildContext.commandChannel.id || game.guildContext.roomCategories.includes(message.channel.parentId) || commandStr.startsWith('delete'))) {
+            if (moderatorCommand.config.requiresGame && !game.inProgress) {
+                if (message.channel.id === game.guildContext.commandChannel.id) {
+                    message.reply("There is no game currently running.");
+                    return false;
+                } else {
+                    message.author.send("There is no game currently running.");
+                    message.delete();
+                    return false;
+                }
             }
+            moderatorCommand.execute(game, message, commandAlias, args);
+            if (message.channel.id !== game.guildContext.commandChannel.id)
+                message.delete();
+            entry = {
+                timestamp: new Date(),
+                author: message.author.username,
+                content: message.content
+            };
+            game.botContext.commandLog.push(entry);
+            return true;
         }
-        moderatorCommand.execute(game, message, commandAlias, args);
-        if (message.channel.id !== game.guildContext.commandChannel.id)
-            message.delete();
-        entry = {
-            timestamp: new Date(),
-            author: message.author.username,
-            content: message.content
-        };
-        game.botContext.commandLog.push(entry);
-        return true;
+        return false;
     }
     else if (isPlayer) {
         if (playerCommand.config.requiresGame && !game.inProgress) {

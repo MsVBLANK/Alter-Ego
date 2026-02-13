@@ -46,7 +46,7 @@ export function generateWebhookMessageDisplayCreateOptions(messageDisplayType, g
         components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player, files),
         flags: generateFlags(messageDisplayType),
         embeds: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? embeds : [],
-        files: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : files
+        files: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? files : []
     };
 }
 

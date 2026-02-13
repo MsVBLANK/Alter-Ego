@@ -51,6 +51,6 @@ export default class StringSelectMenuInteractable extends Interactable {
 	 * Sets the interactable as disabled.
 	 */
 	disable() {
-		this.component.setDisabled();
+		this.component.setDisabled(true);
 	}
 }

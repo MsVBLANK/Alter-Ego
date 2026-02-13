@@ -46,6 +46,6 @@ export default class ButtonInteractable extends Interactable {
 	 * Sets the interactable as disabled.
 	 */
 	disable() {
-		this.component.setDisabled();
+		this.component.setDisabled(true);
 	}
 }

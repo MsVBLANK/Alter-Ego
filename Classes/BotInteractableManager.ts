@@ -81,6 +81,7 @@ export default class BotInteractableManager {
 	 */
 	async createQueueMoveActionInteractables(exits: Exit[], player: Player): Promise<ButtonInteractable[]> {
 		const moveButtons: ButtonInteractable[] = [];
+		const runButtons: ButtonInteractable[] = [];
 		for (const exit of exits) {
 			if (!player.hasBehaviorAttribute("disable move")) {
 				const actionDirective = new ActionDirective(QueueMoveAction.prototype, exit.getQueueMoveActionDirectiveArgs(player.location, false));
@@ -96,10 +97,10 @@ export default class BotInteractableManager {
 				actionDirective.setCustomId(customId);
 				const moveButton = new ButtonInteractable(actionDirective, `Run ${exit.name}`, ButtonStyle.Danger);
 				this.addInteractable(moveButton);
-				moveButtons.push(moveButton);
+				runButtons.push(moveButton);
 			}
 		}
-		return moveButtons;
+		return moveButtons.concat(runButtons);
 	}
 
 	/**

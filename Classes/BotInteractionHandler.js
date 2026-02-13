@@ -90,8 +90,9 @@ export default class BotInteractionHandler {
 	 */
 	async processStringSelectMenuInteraction(interaction, player) {
 		/** @type {InteractionCallbackResponse<boolean>} */
-		const reply = await interaction.deferReply({ withResponse: true });;
-		const customId = interaction.customId;
+		const reply = await interaction.deferReply({ withResponse: true });
+		const selectedValue = interaction.values[0];
+		const customId = selectedValue;
 		const interactable = this.getInteractable(customId);
 		if (interactable) {
 			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);

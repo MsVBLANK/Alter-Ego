@@ -100,13 +100,13 @@ export default class Description extends GameConstruct {
 	 * @returns {string[]} A list of strings in all uppercase letters that may be referring to game entities.
 	 */
 	static getPotentialGameEntities(parsedDescription) {
-		/** @type {string[]} */
-		let potentialGameEntities = [];
+		/** @type {Set<string>} */
+		let potentialGameEntities = new Set();
 		const allCapsRegex = /([A-Z]{2,}(?:[A-Z \d]+))/g;
 		let match;
 		while (match = allCapsRegex.exec(parsedDescription))
-			potentialGameEntities.push(match[0].trim());
-		return potentialGameEntities;
+			potentialGameEntities.add(match[0].trim());
+		return Array.from(potentialGameEntities);
 	}
 
 	/**

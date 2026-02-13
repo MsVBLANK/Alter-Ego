@@ -16,7 +16,7 @@ export const config = {
         + `You can view a list of all recipes that you can craft with the items in your inventory using the \`recipes\` command. Some crafting recipes `
         + `can be reversed once performed using the \`uncraft\` command. For more information on both of these commands, use the \`help\` command.`,
     usableBy: "Player",
-    aliases: ["craft", "combine", "mix"],
+    aliases: ["craft", "combine", "mix", "c"],
     requiresGame: true
 };
 

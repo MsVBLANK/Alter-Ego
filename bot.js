@@ -263,9 +263,10 @@ client.on('messageCreate', async message => {
 
     // If the message begins with the command prefix, attempt to run a command.
     // If the command is run successfully, the message will be deleted.
-    let isCommand;
-    if (message.content.startsWith(game.settings.commandPrefix)) {
-        const command = message.content.substring(game.settings.commandPrefix.length);
+    const messageStartsWithCommandAlias = message.content.startsWith(game.settings.commandPrefix);
+    let isCommand = messageStartsWithCommandAlias || message.channel.type === ChannelType.DM || message.channel.id === game.guildContext.commandChannel.id;
+    if (isCommand) {
+        const command = messageStartsWithCommandAlias ? message.content.substring(game.settings.commandPrefix.length) : message.content;
         isCommand = await executeCommand(command, game, message);
     }
     if (message.channel.type !== ChannelType.DM && !isCommand && game.inProgress) {

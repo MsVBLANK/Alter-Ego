@@ -17,7 +17,7 @@ export const config = {
         + `To specify a target, enter the identifier of the target directly after the name of the gesture. For a room item or inventory item, this must be its `
         + `container identifier or prefab ID. For any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Moderator",
-    aliases: ["gesture"],
+    aliases: ["gesture", "g"],
     requiresGame: true
 };
 

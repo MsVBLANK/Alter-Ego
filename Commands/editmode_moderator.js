@@ -12,7 +12,7 @@ export const config = {
         + "to wait until the confirmation message has been sent before making any edits. When you are finished making edits, "
         + "be sure to load the updated spreadsheet data before disabling edit mode.",
     usableBy: "Moderator",
-    aliases: ["editmode"],
+    aliases: ["editmode", "em"],
     requiresGame: true
 };
 

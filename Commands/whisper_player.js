@@ -14,7 +14,7 @@ export const config = {
         + `in the same room as you. When one of you leaves the room, they will be removed from the channel. `
         + `If everyone leaves the room, the whisper channel will be deleted.`,
     usableBy: "Player",
-    aliases: ["whisper"],
+    aliases: ["whisper", "w"],
     requiresGame: true
 };
 

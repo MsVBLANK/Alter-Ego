@@ -13,7 +13,7 @@ export const config = {
 		+ `that if you send the command in the room channel, it will still appear there before being deleted. For that reason, this command works best `
 		+ `when it is sent in DMs. Please note that you cannot send a monolog that exceeds Discord's character limit, which is 2000 characters.`,
 	usableBy: "Player",
-	aliases: ["monolog", "monologue"],
+	aliases: ["monolog", "monologue", "mo", "mn"],
 	requiresGame: true
 };
 

@@ -30,7 +30,7 @@ export const config = {
 		+ 'To filter by Equipment Slot, enter "in" or "on", followed by the name of an Equipment Slot. To filter by Player, enter their name followed by `\'s`, '
 		+ 'directly after the preposition, if there is one. Keep in mind that it is not possible to filter by Equipment Slot and container at the same time.',
     usableBy: "Moderator",
-    aliases: ["find", "search"],
+    aliases: ["find", "search", "f"],
     requiresGame: true
 };
 

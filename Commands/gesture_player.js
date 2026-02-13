@@ -19,7 +19,7 @@ export const config = {
         + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an exit, a fixture, another player, etc. `
         + `To specify a target, enter the name of the target directly after the name of the gesture. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Player",
-    aliases: ["gesture"],
+    aliases: ["gesture", "g"],
     requiresGame: true
 };
 

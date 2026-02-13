@@ -18,7 +18,7 @@ export const config = {
         + "instantiate the item into. The player will not be notified if a container item is specified. An equipment slot can also be chosen instead of a container item. "
         + "The player will be notified of obtaining the item in this case, and the prefab's equipped commands will be run.",
     usableBy: "Bot",
-    aliases: ["instantiate", "create", "generate"],
+    aliases: ["instantiate", "create", "generate", "is", "gn"],
     requiresGame: true
 };
 

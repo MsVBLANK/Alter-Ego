@@ -13,7 +13,7 @@ export const config = {
         + 'items must be separated by "with" or "and". If no recipe for those two items exists, the items cannot be crafted together. '
         + "Note that this command can also be used to use one item on another item, which may produce something new.",
     usableBy: "Moderator",
-    aliases: ["craft", "combine", "mix"],
+    aliases: ["craft", "combine", "mix", "c"],
     requiresGame: true
 };
 

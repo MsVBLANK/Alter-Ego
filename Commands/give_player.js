@@ -12,7 +12,7 @@ export const config = {
         + `The receiving player must also have a free hand, or else they will not be able to receive the item. If a particularly large item `
         + `is given (a chainsaw, for example), it will be narrated in the room, so other players in the room will see you giving it to the recipient.`,
     usableBy: "Player",
-    aliases: ["give", "g"],
+    aliases: ["give"],
     requiresGame: true
 };
 

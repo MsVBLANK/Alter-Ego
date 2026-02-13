@@ -12,7 +12,7 @@ export const config = {
         + "or else they will not be able to receive the item. If a particularly large item "
         + "(a chainsaw, for example) is given, people in the room with you will see the player giving it to the recipient.",
     usableBy: "Moderator",
-    aliases: ["give", "g"],
+    aliases: ["give"],
     requiresGame: true
 };
 

@@ -171,7 +171,8 @@ export default class GameNarrationHandler {
 		const messageType = MessageDisplayType.MINOR;
 		const wearyStatus = this.#game.entityFinder.getStatusEffect("weary");
 		const narration = this.#game.notificationGenerator.generateWearyNotification(player);
-		player.sendDescription(wearyStatus.inflictedDescription, wearyStatus, wearyStatus.inflictedDescription.messageDisplayType ?? MessageDisplayType.ALERT);
+		const wearyDescription = wearyStatus.inflictedDescription.parseFor(player, wearyStatus);
+		player.sendDescription(wearyDescription, wearyStatus, wearyStatus.inflictedDescription.messageDisplayType ?? MessageDisplayType.ALERT);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 

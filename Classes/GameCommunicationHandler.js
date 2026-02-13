@@ -1,19 +1,13 @@
 import Action from "../Data/Action.js";
-import Description from "../Data/Description.js";
 import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
-import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
-import { Attachment, ButtonStyle, Collection, Embed, TextChannel } from "discord.js";
+import { Attachment, Collection, Embed, TextChannel } from "discord.js";
 import Interactable from "./Interactables/Interactable.js";
-import ButtonInteractable from "./Interactables/ButtonInteractable.js";
-import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.js";
-import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.js";
 
 /** @import Dialog from "../Data/Dialog.js" */
-/** @import Exit from "../Data/Exit.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import GameEntity from "../Data/GameEntity.js" */
 /** @import Narration from "../Data/Narration.js" */
@@ -169,15 +163,14 @@ export default class GameCommunicationHandler {
 	/**
 	 * Sends a description to a player without any checks.
 	 * @param {Player} player - The player to send the notification to.
-	 * @param {Description} description - The description to parse and send.
+	 * @param {string} descriptionString - The already parsed description.
 	 * @param {GameEntity} container - The game entity the description belongs to.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT. Does nothing when sending a room description.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
 	 * @param {Interactable[]} interactables[] - An array of interactables to send with the message.
 	 */
-	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, interactables = []) {
-		const parsedDescription = parseDescription(description, container, player);
-		this.sendMessageToPlayer(player, parsedDescription, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
+	sendDescriptionToPlayer(player, descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, interactables = []) {
+		this.sendMessageToPlayer(player, descriptionString, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
 	}
 
 	/**

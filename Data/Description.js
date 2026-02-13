@@ -146,7 +146,7 @@ export default class Description extends GameConstruct {
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
 			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
-			player.sendDescription(this, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
+			player.sendDescription(parsedDescription, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
 		}
 	}
 }

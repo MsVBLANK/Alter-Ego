@@ -22,7 +22,6 @@ import { Collection } from 'discord.js';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
-/** @import Description from './Description.js' */
 /** @import Exit from './Exit.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
@@ -721,7 +720,7 @@ export default class Player extends ItemContainer {
                         const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
                             if (playerStatusIds.includes(overrider.id)) {
-                                player.sendDescription(statusInstance.curedDescription, statusInstance);
+                                statusInstance.curedDescription.parseAndSendTo(player, statusInstance);
                                 inflictNextStage = false;
                                 break;
                             }
@@ -1576,15 +1575,15 @@ export default class Player extends ItemContainer {
     }
 
     /**
-     * Parses a description and sends it to the player.
-     * @param {Description} description - The description to parse and send.
-     * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
-     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to the description's message display type. Does nothing when sending a room description.
+     * Sends a description to the player.
+     * @param {string} descriptionString - The already-parsed description to send.
+     * @param {GameEntity} container - The game entity the description belongs to.
+     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
      * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
      */
-    sendDescription(description, container = description.getContainer(), messageDisplayType = description.messageDisplayType, interactables = []) {
-        if (description.text && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container, messageDisplayType, true, interactables);
+    sendDescription(descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, interactables = []) {
+        if (descriptionString && !this.isNPC && (this.isConscious() || container instanceof Status))
+            this.getGame().communicationHandler.sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
     }
 
     /**

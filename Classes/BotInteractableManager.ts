@@ -119,6 +119,7 @@ export default class BotInteractableManager {
 			const option = new StringSelectMenuOptionInteractable(actionDirective, label, customId);
 			this.addInteractable(option);
 			menuOptions.set(customId, option);
+			if (menuOptions.size >= 25) break;
 		}
 		if (menuOptions.size === 0) return [];
 		const actionDirective = new ActionDirective(InspectAction.prototype, ["InspectAction Menu"]);

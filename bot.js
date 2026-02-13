@@ -21,6 +21,10 @@ import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.t
 import GameSettings from "./Classes/GameSettings.js";
 import { loadCredentials } from "./Modules/credentialsLoader.ts";
 
+if (process.env.STACK_TRACE_LIMIT && Number.isInteger(parseInt(process.env.STACK_TRACE_LIMIT))) {
+    Error.stackTraceLimit = Math.min(Math.max(10, parseInt(process.env.STACK_TRACE_LIMIT)), 200);
+}
+
 const client = new Client({
     partials: [
         Partials.User,

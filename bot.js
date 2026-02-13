@@ -11,7 +11,7 @@ import EligibleCommand from './Classes/EligibleCommand.js';
 
 import {createServerConfigFileIfNotExists, loadServerConfig, validateServerConfig} from './Modules/serverManager.ts';
 import { default as autoUpdate } from './Modules/updateHandler.js';
-import { editSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
+import { editSpectatorMessage, deleteSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.js';
 
 import { Client, Collection, ChannelType, Events, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
@@ -282,6 +282,16 @@ client.on('messageUpdate', async (messageOld, messageNew) => {
             || messageOld.channel.parentId === game.guildContext.whisperCategoryId
             || messageOld.channel.id === game.guildContext.announcementChannel.id)) {
         editSpectatorMessage(game, messageOld, messageNew);
+    }
+});
+
+client.on('messageDelete', async (message) => {
+    if (!initialized) return;
+    if (message.channel.type !== ChannelType.DM && game.inProgress
+        && (game.guildContext.roomCategories.includes(message.channel.parentId)
+            || message.channel.parentId === game.guildContext.whisperCategoryId
+            || message.channel.id === game.guildContext.announcementChannel.id)) {
+        deleteSpectatorMessage(game, message);
     }
 });
 

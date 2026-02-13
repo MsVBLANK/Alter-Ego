@@ -23,7 +23,7 @@ export const config = {
         + "The player will be notified in this case, and the item's unequipped commands will be run.\n\n"
         + "Note that using the \"all\" argument with a container will destroy all items in that container.",
     usableBy: "Moderator",
-    aliases: ["destroy"],
+    aliases: ["destroy", "ds"],
     requiresGame: true
 };
 

@@ -14,7 +14,7 @@ export const config = {
         + "which object or item to take the item from, but only items in the same room as the player can be taken. Additionally, if "
         + "the item is contained in another item with multiple inventory slots (such as pockets), you can specify which slot to take it from.",
     usableBy: "Moderator",
-    aliases: ["take", "get", "t"],
+    aliases: ["take", "get", "grab", "t"],
     requiresGame: true
 };
 

@@ -11,7 +11,7 @@ export const config = {
         + "However, this command can be used to overwrite their new display name afterwards as well. Note that this command will not change the player's "
         + "nickname in the server.",
     usableBy: "Moderator",
-    aliases: ["setdisplayname"],
+    aliases: ["setdisplayname", "sdn"],
     requiresGame: true
 };
 

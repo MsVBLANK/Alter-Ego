@@ -19,7 +19,7 @@ export const config = {
         + "after the list of players will be sent in the whisper channel. Once the channel is created, "
         + "NPC players can only speak in the whisper using this command and the list of players in the whisper.",
     usableBy: "Moderator",
-    aliases: ["whisper"],
+    aliases: ["whisper", "w"],
     requiresGame: true
 };
 

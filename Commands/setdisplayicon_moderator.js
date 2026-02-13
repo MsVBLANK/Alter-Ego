@@ -12,7 +12,7 @@ export const config = {
         + "their new display icon afterwards as well. Note that this command will not change the player's avatar when they send messages to Room channels "
         + "normally. To reset a player's display icon to their Discord avatar, simply do not specify a new display icon.",
     usableBy: "Moderator",
-    aliases: ["setdisplayicon"],
+    aliases: ["setdisplayicon", "sdi"],
     requiresGame: true
 };
 

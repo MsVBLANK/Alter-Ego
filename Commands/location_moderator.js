@@ -7,7 +7,7 @@ export const config = {
     description: "Tells you a player's location.",
     details: "Tells you the given player's location, with a link to the channel.",
     usableBy: "Moderator",
-    aliases: ["location"],
+    aliases: ["location", "l"],
     requiresGame: true
 };
 

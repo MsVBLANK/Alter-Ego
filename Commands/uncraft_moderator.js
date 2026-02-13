@@ -12,7 +12,7 @@ export const config = {
         + "This will produce two items, so they will need a free hand in order for this command to be usable. "
         + "If there is no crafting recipe that produces the supplied item which allows it to be uncrafted again, this command cannot be used.",
     usableBy: "Moderator",
-    aliases: ["uncraft", "dismantle", "disassemble"],
+    aliases: ["uncraft", "dismantle", "disassemble", "uc"],
     requiresGame: true
 };
 

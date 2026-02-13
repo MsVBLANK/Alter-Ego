@@ -15,7 +15,7 @@ export const config = {
         + 'All of the same things that happen when a player moves to a room of their own volition apply, however you can move players to non-adjacent rooms this way. '
         + 'The bot will not announce which exit the player leaves through or which entrance they enter from when a player is moved to a non-adjacent room.',
     usableBy: "Bot",
-    aliases: ["move"],
+    aliases: ["move", "go", "enter", "walk", "m"],
     requiresGame: true
 };
 

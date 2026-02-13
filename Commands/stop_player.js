@@ -12,7 +12,7 @@ export const config = {
         + `so if you decide to move to that room again, it will not take as long. This command will also cancel any `
         + `queued movements.`,
     usableBy: "Player",
-    aliases: ["stop"],
+    aliases: ["stop", "st"],
     requiresGame: true
 };
 

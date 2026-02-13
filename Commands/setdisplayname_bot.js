@@ -13,7 +13,7 @@ export const config = {
         + "nickname in the server. If you use \"player\" in place of a player's name, then the player who triggered the command will have their "
         + "display name changed. To reset a player's display name to their real name, simply do not specify a new display name.",
     usableBy: "Bot",
-    aliases: ["setdisplayname"],
+    aliases: ["setdisplayname", "sdn"],
     requiresGame: true
 };
 

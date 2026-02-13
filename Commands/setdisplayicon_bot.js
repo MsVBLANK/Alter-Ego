@@ -14,7 +14,7 @@ export const config = {
         + "normally. If you use \"player\" in place of a player's name, then the player who triggered the command will have their display icon changed. "
         + "To reset a player's display icon to their Discord avatar, simply do not specify a new display icon.",
     usableBy: "Bot",
-    aliases: ["setdisplayicon"],
+    aliases: ["setdisplayicon", "sdi"],
     requiresGame: true
 };
 

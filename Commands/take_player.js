@@ -18,7 +18,7 @@ export const config = {
         + `If you want to take an item from another item that has multiple inventory slots (for example, a backpack with several pockets), you can `
         + `specify which of the container's slots you want to take it from, by entering the name of the slot followed by "of" before the container item's name.`,
     usableBy: "Player",
-    aliases: ["take", "get", "t"],
+    aliases: ["take", "get", "grab", "t"],
     requiresGame: true
 };
 

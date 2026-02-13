@@ -17,7 +17,7 @@ export const config = {
         + `that also allows it to be reversed, then the item cannot be uncrafted.\n\n`
         + `To see all of the items in your inventory that can be uncrafted, use the \`recipes\` command.`,
     usableBy: "Player",
-    aliases: ["uncraft", "dismantle", "disassemble"],
+    aliases: ["uncraft", "dismantle", "disassemble", "uc"],
     requiresGame: true
 };
 

@@ -87,6 +87,7 @@ export default class Description extends GameConstruct {
 	 * @param {Player} player 
 	 */
 	parseFor(player) {
+		if (this.text === "") return "";
 		return parseDescription(this, this.getContainer(), player);
 	}
 }

@@ -1,3 +1,4 @@
+import Description from "../../Data/Description.js";
 import EquipmentSlot from "../../Data/EquipmentSlot.js";
 import Event from "../../Data/Event.js";
 import Fixture from "../../Data/Fixture.js";
@@ -37,7 +38,7 @@ describe('GameEntityLoader test', () => {
                 updatePresenceSpy = vi.spyOn(game.botContext, 'updatePresence').mockImplementation(() => {});
                 eventStartTimerSpy = vi.spyOn(Event.prototype, 'startTimer').mockImplementation(async () => {});
                 eventStartEffectsTimerSpy = vi.spyOn(Event.prototype, 'startEffectsTimer').mockImplementation(() => {});
-                playerSendDescriptionSpy = vi.spyOn(Player.prototype, 'sendDescription').mockImplementation(() => {});
+                playerSendDescriptionSpy = vi.spyOn(Description.prototype, 'parseAndSendTo').mockImplementation(async () => {});
             });
 
             afterEach(() => {

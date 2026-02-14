@@ -1,4 +1,4 @@
-import { Collection, Guild, GuildMember, TextChannel } from "discord.js";
+import { Collection, Guild, GuildMember, TextChannel, DMChannel } from "discord.js";
 import { format } from "pretty-format";
 import { Duration } from "luxon";
 import humanize from "humanize-duration";
@@ -64,6 +64,22 @@ export class TextChannelPlugin {
      */
     serialize(value, config, indentation, depth, refs, printer) {
         return `<TextChannel "${value.name || "unknown"}">`;
+    }
+}
+
+/** @type {NewPlugin} */
+export class DMChannelPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        return value instanceof DMChannel;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {DMChannel} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        return `<DMChannel "${value.recipient.username || "unknown"}">`;
     }
 }
 
@@ -641,6 +657,7 @@ export default class PrettyPrinter {
             new GuildPlugin(),
             new GuildMemberPlugin(),
             new TextChannelPlugin(),
+            new DMChannelPlugin(),
             new DurationPlugin(),
             new TimeoutPlugin(),
             new TimerPlugin(),

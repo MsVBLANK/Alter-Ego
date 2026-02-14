@@ -27,7 +27,6 @@
   },
   "types": "dist/bot.d.ts",
   "dependencies": {
-    "@types/humanize-duration": "^3.27.4",
     "@xmldom/xmldom": "^0.8.11",
     "acorn": "^8.15.0",
     "date-fns": "^4.1.0",

@@ -14,7 +14,8 @@ export const config = {
 		+ `when it is sent in DMs. Please note that you cannot send a monolog that exceeds Discord's character limit, which is 2000 characters.`,
 	usableBy: "Player",
 	aliases: ["monolog", "monologue", "mo", "mn"],
-	requiresGame: true
+	requiresGame: true,
+	whitespaceSensitive: true
 };
 
 /**

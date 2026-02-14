@@ -394,7 +394,7 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load recipe on row 3. Recipes with more than 2 ingredients must require a fixture tag.",
                     "Error: Couldn't load recipe on row 4. Recipes with more than 2 products must require a fixture tag.",
                     "Error: Couldn't load recipe on row 5. Recipes without a fixture tag cannot have a duration.",
-                    "Error: Couldn't load recipe on row 6. An invalid duration was given.",
+                    "Error: Couldn't load recipe on row 6. \"1x\" is not a valid duration.",
                     "Error: Couldn't load recipe on row 7. \"INVALID\" in products is not a prefab.",
                     "Error: Couldn't load recipe on row 8. Recipes with a fixture tag cannot be uncraftable.",
                     "Error: Couldn't load recipe on row 9. Recipes with more than one product cannot be uncraftable.",

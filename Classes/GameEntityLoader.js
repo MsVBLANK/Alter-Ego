@@ -893,6 +893,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					ingredientsStrings,
 					sheet[row][columnUncraftable] ? sheet[row][columnUncraftable].trim() === "TRUE" : false,
 					sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : "",
+					durationString,
 					duration,
 					productsStrings,
 					sheet[row][columnInitiatedDescription] ? sheet[row][columnInitiatedDescription].trim() : "",
@@ -942,7 +943,7 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 products must require a fixture tag.`);
 		if (recipe.duration !== null && !validateDuration(recipe.duration))
-			return new Error(`Couldn't load recipe on row ${recipe.row}. An invalid duration was given.`);
+			return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.durationString}" is not a valid duration.`);
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);
 		for (let i = 0; i < recipe.products.length; i++) {

@@ -60,6 +60,7 @@ declare global {
 	 * @property {string} usableBy - The role that can use the command.
 	 * @property {string[]} aliases - Alternative names for the command.
 	 * @property {boolean} requiresGame - Indicates whether the command requires an ongoing game to be executed.
+	 * @property {boolean} [whitespaceSensitive] - Whether or not the command is sensitive to whitespace, and should not have argument whitespace altered.
 	 */
 	interface CommandConfig {
 		name: string;
@@ -68,6 +69,7 @@ declare global {
 		usableBy: string;
 		aliases: string[];
 		requiresGame: boolean;
+        whitespaceSensitive?: boolean;
 	}
 
 	/**

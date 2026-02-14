@@ -29,7 +29,7 @@ export async function executeCommand(commandStr, game, message, player, callee) 
 
     const commandSplit = commandStr.split(/[^\S\n]/).filter(arg => arg !== "");
     const commandAlias = commandSplit[0].toLocaleLowerCase();
-    const args = commandSplit.slice(1);
+    let args = commandSplit.slice(1);
 
     // Find the command by the alias used.
     let botCommand;
@@ -74,6 +74,9 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                     return false;
                 }
             }
+            if (moderatorCommand.config.whitespaceSensitive) {
+                args = commandStr.split(" ").slice(1);
+            }
             moderatorCommand.execute(game, message, commandAlias, args);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();
@@ -117,6 +120,10 @@ export async function executeCommand(commandStr, game, message, player, callee) 
             }
 
             player.setOnline();
+            
+            if (playerCommand.config.whitespaceSensitive) {
+                args = commandStr.split(" ").slice(1);
+            }
 
             playerCommand.execute(game, message, commandAlias, args, player).then(() => {
                 if (!game.settings.debug && commandName !== "say" && message.channel.type !== ChannelType.DM)

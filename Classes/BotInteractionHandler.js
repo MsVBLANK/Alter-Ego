@@ -2,8 +2,10 @@ import { ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
+import DropAction from "../Data/Actions/DropAction.js";
 /** 
  * @import Game from "../Data/Game.js";
+ * @import Interactable from "./Interactables/Interactable.js";
  * @import Player from "../Data/Player.js";
  * @import { Interaction, InteractionCallbackResponse } from "discord.js"
 */
@@ -60,20 +62,9 @@ export default class BotInteractionHandler {
 		const reply = await interaction.deferReply({ withResponse: true });;
 		const customId = interaction.customId;
 		const interactable = this.getInteractable(customId);
-		if (interactable) {
-			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
-			if (action instanceof QueueMoveAction) {
-				const args = interactable.actionDirective.getArgs();
-				const parsedArgs = action.parseInteractionArgs(args);
-				const validatedArgs = action.validateInteractionArgs(parsedArgs);
-				if (validatedArgs.length === 2) {
-					action.performQueueMove(validatedArgs[0], validatedArgs[1]);
-					reply.resource.message.delete();
-					return;
-				}
-			}
-		}
-		this.replyToInteraction(`Interaction failed.`, interaction, false);
+		let successfullyProcessedInteractable = false;
+		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, player);
+		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
 		return;
 	}
 
@@ -88,30 +79,62 @@ export default class BotInteractionHandler {
 		const selectedValue = interaction.values[0];
 		const customId = selectedValue;
 		const interactable = this.getInteractable(customId);
-		if (interactable) {
-			const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
-			if (action instanceof InspectAction) {
-				const args = interactable.actionDirective.getArgs();
-				const parsedArgs = action.parseInteractionArgs(args);
-				const validatedArgs = action.validateInteractionArgs(parsedArgs);
-				if (validatedArgs.length === 1) {
-					action.performInspect(validatedArgs[0]);
-					reply.resource.message.delete();
-					return;
-				}
-			}
-			if (action instanceof TakeAction) {
-				const args = interactable.actionDirective.getArgs();
-				const parsedArgs = action.parseInteractionArgs(args);
-				const validatedArgs = action.validateInteractionArgs(parsedArgs);
-				if (validatedArgs.length === 4) {
-					action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-					reply.resource.message.delete();
-					return;
-				}
+		let successfullyProcessedInteractable = false;
+		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, player);
+		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
+		return;
+	}
+
+	/**
+	 * Process an interactable and calls the correct function.
+	 * @param {InteractionCallbackResponse<boolean>} reply - The reply that was sent.
+	 * @param {Interactable} interactable - The interactable to process.
+	 * @param {Player} player - The player who triggered the interaction.
+	 * @returns Whether the interactable successfully performed an action or not.
+	 */
+	processInteractable(reply, interactable, player) {
+		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
+		if (action instanceof QueueMoveAction) {
+			const args = interactable.actionDirective.getArgs();
+			const parsedArgs = action.parseInteractionArgs(args);
+			const validatedArgs = action.validateInteractionArgs(parsedArgs);
+			if (validatedArgs.length === 2) {
+				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
+				reply.resource.message.delete();
+				return true;
 			}
 		}
-		this.replyToInteraction(`Interaction failed.`, interaction, false);
+		if (action instanceof InspectAction) {
+			const args = interactable.actionDirective.getArgs();
+			const parsedArgs = action.parseInteractionArgs(args);
+			const validatedArgs = action.validateInteractionArgs(parsedArgs);
+			if (validatedArgs.length === 1) {
+				action.performInspect(validatedArgs[0]);
+				reply.resource.message.delete();
+				return true;
+			}
+		}
+		if (action instanceof TakeAction) {
+			const args = interactable.actionDirective.getArgs();
+			const parsedArgs = action.parseInteractionArgs(args);
+			const validatedArgs = action.validateInteractionArgs(parsedArgs);
+			if (validatedArgs.length === 4) {
+				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+				reply.resource.message.delete();
+				return true;
+			}
+		}
+		if (action instanceof DropAction) {
+			const args = interactable.actionDirective.getArgs();
+			const parsedArgs = action.parseInteractionArgs(args);
+			const validatedArgs = action.validateInteractionArgs(parsedArgs);
+			if (validatedArgs.length === 4) {
+				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+				reply.resource.message.delete();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

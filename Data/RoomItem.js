@@ -208,6 +208,27 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
+     * Returns true if the room item is capable of containing items.
+     */
+    isItemContainer() {
+        return this.inventory.size > 0;
+    }
+
+    /**
+     * Returns true if the room item is currently capable of being taken from/dropped into.
+     */
+    canCurrentlyContainItems() {
+        let allInventorySlotsFilled = true;
+        for (const inventorySlot of this.inventory.values()) {
+            if (inventorySlot.takenSpace < inventorySlot.capacity) {
+                allInventorySlotsFilled = false;
+                break;
+            }
+        }
+        return this.isItemContainer() && !allInventorySlotsFilled;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      * @override
      */

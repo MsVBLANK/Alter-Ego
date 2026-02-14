@@ -39,9 +39,10 @@ export default class StringSelectMenuOptionInteractable extends Interactable{
 	 * @param {string} label - The label of the component.
 	 * @param {string} value - The value of the component.
 	 * @param {string} [description] - The description of the component. Optional.
+	 * @param {number} [priority] - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
 	 */
-	constructor(actionDirective, label, value, description) {
-		super(InteractableType.STRING_SELECT_MENU_OPTION, actionDirective);
+	constructor(actionDirective, label, value, description, priority) {
+		super(InteractableType.STRING_SELECT_MENU_OPTION, actionDirective, priority);
 		this.label = label;
 		this.value = value;
 		this.description = description;

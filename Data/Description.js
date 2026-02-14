@@ -2,6 +2,9 @@ import GameConstruct from "./GameConstruct.js";
 import Room from "./Room.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
 import { MessageDisplayType } from "../Modules/enums.js";
+import Fixture from "./Fixture.js";
+import RoomItem from "./RoomItem.js";
+import Puzzle from "./Puzzle.js";
 /** @import Interactable from "../Classes/Interactables/Interactable.js"; */
 /** @import Exit from "./Exit.js"; */
 /** @import Game from "./Game.js"; */
@@ -150,6 +153,14 @@ export default class Description extends GameConstruct {
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
 			const takeableEntities = selectableInteractableGameEntities[1];
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createTakeActionInteractable(takeableEntities, player));
+			if ((container instanceof Fixture || container instanceof RoomItem || container instanceof Puzzle)) {
+				let dropContainer = container;
+				if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+				if (dropContainer.canCurrentlyContainItems()) {
+					const droppableEntities = this.getGame().entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
+					if (droppableEntities.length !== 0) interactables = interactables.concat(await this.getGame().botContext.interactableManager.createDropActionInteractables(droppableEntities, player, container));
+				}
+			}
 			player.sendDescription(parsedDescription, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
 		}
 	}

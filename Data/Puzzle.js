@@ -210,6 +210,11 @@ export default class Puzzle extends ItemContainer {
         this.requirementsNotMetDescription = new Description(requirementsNotMetDescription, this, game);
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
     /**
      * Sets the location.
      * @param {Room} room
@@ -238,6 +243,20 @@ export default class Puzzle extends ItemContainer {
      */
     setInaccessible() {
         this.accessible = false;
+    }
+
+    /**
+     * Returns true if the puzzle is capable of containing items.
+     */
+    isItemContainer() {
+        return this.parentFixture !== null && this.parentFixture.isItemContainer();
+    }
+
+    /**
+     * Returns true if the puzzle is currently capable of being taken from/dropped into.
+     */
+    canCurrentlyContainItems() {
+        return this.isItemContainer() && (this.type === "weight" || this.type === "container" || this.accessible && this.solved);
     }
 
     /**

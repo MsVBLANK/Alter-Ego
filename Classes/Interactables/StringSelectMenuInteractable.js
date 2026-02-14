@@ -35,9 +35,10 @@ export default class StringSelectMenuInteractable extends Interactable {
 	 * @param {ActionDirective} actionDirective - The action directive of the interactable.
 	 * @param {StringSelectMenuOptionInteractable[]} options - An array of options. Maximum size is 25.
 	 * @param {string} [placeholder] - The placeholder to apply for the string select menu. Optional.
+	 * @param {number} [priority] - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
 	 */
-	constructor(actionDirective, options, placeholder) {
-		super(InteractableType.STRING_SELECT_MENU, actionDirective);
+	constructor(actionDirective, options, placeholder, priority = 1) {
+		super(InteractableType.STRING_SELECT_MENU, actionDirective, priority);
 		this.options = [];
 		for (let i = 0; i < options.length && i < 25; i++)
 			this.options.push(options[i]);

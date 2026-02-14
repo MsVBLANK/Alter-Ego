@@ -2,16 +2,20 @@ import { ButtonStyle, Collection } from "discord.js";
 import ButtonInteractable from "./Interactables/ButtonInteractable.js";
 import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.js";
 import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.js";
+import Fixture from "../Data/Fixture.js";
 import type Game from "../Data/Game.js";
 import type Interactable from "./Interactables/Interactable.js";
+import type InventoryItem from "../Data/InventoryItem.js";
 import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
-import type RoomItem from "../Data/RoomItem.js";
+import type Puzzle from "../Data/Puzzle.js";
+import RoomItem from "../Data/RoomItem.js";
 import ActionDirective from "./ActionDirective.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
+import DropAction from "../Data/Actions/DropAction.js";
 
 /**
  * @class BotInteractableManager
@@ -162,6 +166,7 @@ export default class BotInteractableManager {
 	 * @param player - The player these interactables are being created for.
 	 */
 	async createInspectActionInteractable(entities: Inspectable[], player: Player): Promise<StringSelectMenuInteractable[]> {
+		if (player.hasBehaviorAttribute("disable inspect") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable inspect")) return [];
 		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
 		for (const entity of entities) {
 			const actionDirective = new ActionDirective(InspectAction.prototype, entity.getInspectActionDirectiveArgs());
@@ -169,7 +174,12 @@ export default class BotInteractableManager {
 			if (menuOptions.has(customId)) continue;
 			actionDirective.setCustomId(customId);
 			const label = entity instanceof Player ? entity.displayName : entity.name;
-			const option = new StringSelectMenuOptionInteractable(actionDirective, label, customId);
+			const containerString = entity instanceof RoomItem ?
+				entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
+					` ${entity.container.getPreposition()} ${entity.slot} of ${entity.container.name}`
+					: ` ${entity.container.getPreposition()} ${entity.container.name}`
+				: "";
+			const option = new StringSelectMenuOptionInteractable(actionDirective, label, customId, `Inspect ${label}${containerString}`);
 			this.addInteractable(option);
 			menuOptions.set(customId, option);
 			if (menuOptions.size >= 25) break;
@@ -183,6 +193,11 @@ export default class BotInteractableManager {
 		return [menu];
 	}
 
+	/**
+	 * Creates StringSelectMenuInteractable for a list of takeable room items and adds it to the cache.
+	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
+	 * @param player - The player these interactables are being created for.
+	 */
 	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
 		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
 		for (const entity of entities) {
@@ -190,7 +205,10 @@ export default class BotInteractableManager {
 			const customId = await actionDirective.generateCustomId(player);
 			if (menuOptions.has(customId)) continue;
 			actionDirective.setCustomId(customId);
-			const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId);
+			const containerString = entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
+				` from ${entity.slot} of ${entity.container.name}`
+					: ` from ${entity.container.name}`
+			const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Take ${entity.name}${containerString}`);
 			this.addInteractable(option);
 			menuOptions.set(customId, option);
 			if (menuOptions.size >= 25) break;
@@ -202,5 +220,53 @@ export default class BotInteractableManager {
 		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take");
 		this.addInteractable(menu);
 		return [menu];
+	}
+
+	/**
+	 * Creates Interactables for a list of droppable inventory items and adds it to the cache.
+	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
+	 * @param player - The player these interactables are being created for.
+	 * @param container - The fixture or room item the player is dropping the items into.
+	 */
+	async createDropActionInteractables(entities: InventoryItem[], player: Player, container: Fixture|RoomItem|Puzzle): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable drop") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable drop")) return [];
+		if (container instanceof RoomItem && container.inventory.size > 1) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				for (const inventorySlot of container.inventory.values()) {
+					if (inventorySlot.willBeOverFilledBy(entity)) continue;
+					const actionDirective = new ActionDirective(DropAction.prototype, entity.getDropActionDirectiveArgs('RoomItem', container, inventorySlot));
+					const customId = await actionDirective.generateCustomId(player);
+					if (menuOptions.has(customId)) continue;
+					actionDirective.setCustomId(customId);
+					const option = new StringSelectMenuOptionInteractable(actionDirective, `${entity.name} ${container.getPreposition()} ${inventorySlot.id}`, customId, `Drop ${entity.name} ${container.getPreposition()} ${inventorySlot.id} of ${container.name}`);
+					this.addInteractable(option);
+					menuOptions.set(customId, option);
+					if (menuOptions.size >= 25) break;
+				}
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(DropAction.prototype, ["DropAction Menu"]);
+			const customId = await actionDirective.generateCustomId(player);
+			actionDirective.setCustomId(customId);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Drop");
+			this.addInteractable(menu);
+			return [menu];
+		}
+		else {
+			const dropButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				const containerType = container instanceof RoomItem ? 'RoomItem' : container instanceof Fixture ? 'Fixture' : 'Puzzle';
+				const inventorySlot = container instanceof RoomItem ? container.inventory.first() : undefined;
+				if (inventorySlot && inventorySlot.willBeOverFilledBy(entity)) continue;
+				const actionDirective = new ActionDirective(DropAction.prototype, entity.getDropActionDirectiveArgs(containerType, container, inventorySlot));
+				const customId = await actionDirective.generateCustomId(player);
+				actionDirective.setCustomId(customId);
+				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary);
+				this.addInteractable(dropButton);
+				dropButtons.push(dropButton);
+			}
+			return dropButtons;
+		}
 	}
 }

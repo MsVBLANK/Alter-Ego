@@ -1,5 +1,4 @@
 import InventoryItem from '../Data/InventoryItem.js';
-import humanize from 'humanize-duration';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -86,7 +85,7 @@ export async function execute(game, message, command, args, player) {
                     }
                     const ingredients = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
                     const products = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
+                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: game.recipes[i].durationString, uncraftable: false });
                     break;
                 }
             }
@@ -94,7 +93,7 @@ export async function execute(game, message, command, args, player) {
                 // This recipe contains the given item as the sole product and is uncraftable.
                 const ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
                 const products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
+                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: game.recipes[i].durationString, uncraftable: true });
             }
         }
         if (recipes.length === 0) return game.communicationHandler.reply(message, `There are no recipes that can be carried out with ${item.singleContainingPhrase}.`);
@@ -156,7 +155,7 @@ export async function execute(game, message, command, args, player) {
                 }
                 ingredients = ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
                 products = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
+                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: game.recipes[i].durationString, uncraftable: false });
             }
 
             if (game.recipes[i].products.length === 1 && game.recipes[i].uncraftable) {
@@ -175,7 +174,7 @@ export async function execute(game, message, command, args, player) {
                     });
                     ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
                     products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
-                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
+                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: game.recipes[i].durationString, uncraftable: true });
                 }
             }
         }

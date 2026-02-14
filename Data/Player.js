@@ -714,19 +714,19 @@ export default class Player extends ItemContainer {
 
                 if (statusInstance.remaining.as('milliseconds') <= 0) {
                     if (statusInstance.nextStage) {
+                        const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
                         const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
                         cureNextAction.performCure(statusInstance.nextStage, false, false, true);
                         let inflictNextStage = true;
                         const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
                             if (playerStatusIds.includes(overrider.id)) {
-                                statusInstance.curedDescription.parseAndSendTo(player, statusInstance);
+                                cureAction.performCure(statusInstance, true, false, true);
                                 inflictNextStage = false;
                                 break;
                             }
                         }
                         if (inflictNextStage) {
-                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
                             cureAction.performCure(statusInstance, false, false, false);
                             const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
                             nextStageAction.performInflict(statusInstance.nextStage, true, false, true);

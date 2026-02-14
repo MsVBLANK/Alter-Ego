@@ -5,8 +5,13 @@ import { replaceInventoryItem } from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
 
-/** @import Game from "./Game.js" */
-/** @import Player from "./Player.js" */
+/**
+ * @import Game from "./Game.js";
+ * @import Player from "./Player.js";
+ * @import Fixture from './Fixture.js';
+ * @import RoomItem from './RoomItem.js';
+ * @import Puzzle from './Puzzle.js';
+ */
 
 /**
  * @class InventoryItem
@@ -139,6 +144,30 @@ export default class InventoryItem extends ItemInstance {
         const inventorySlot = this.inventory.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
+    }
+
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.player.location;
+    }
+
+    /**
+     * Returns the args for the Inspect ActionDirective for this inventory item.
+     */
+    getInspectActionDirectiveArgs() {
+        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot];
+    }
+
+    /**
+     * Returns the args for the Drop ActionDirective for this inventory item.
+     * @param {'Fixture'|'RoomItem'|'Puzzle'} containerType - The type of container to drop the inventory item into.
+     * @param {Fixture|RoomItem|Puzzle} container - The container to drop the inventory item into.
+     * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot to drop the inventory item into.
+     */
+    getDropActionDirectiveArgs(containerType, container, inventorySlot) {
+        let containerName = container.name;
+        if (container instanceof ItemInstance) containerName = container.getIdentifier();
+        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
     }
 
     /**

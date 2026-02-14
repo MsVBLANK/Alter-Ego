@@ -110,6 +110,15 @@ export default class Exit extends GameEntity {
     }
 
     /**
+     * Gets the args for moving to this exit for an action directive.
+     * @param {Room} currentLocation - The player's current location.
+     * @param {boolean} isRunning - Whether not the player is running.
+     */
+    getQueueMoveActionDirectiveArgs(currentLocation, isRunning) {
+        return [currentLocation.id, String(isRunning), this.name];
+    }
+
+    /**
      * Gets a phrase to refer to the exit in narrations.
      */
     getNamePhrase() {

@@ -13,7 +13,7 @@ import { Attachment, Collection, Embed } from "discord.js";
 
 /**
  * @class Narration
- * @classdesc Represents a narration in the game. After instantiating a narration, the send method must be called.
+ * @classdesc Represents a narration in the game.
  * @extends GameConstruct
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/narration.html
  */

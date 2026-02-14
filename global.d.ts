@@ -1,6 +1,7 @@
 import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
 import type Event from "./Data/Event.js";
+import type Fixture from "./Data/Fixture.js";
 import type Flag from "./Data/Flag.js";
 import type Game from "./Data/Game.js";
 import type GameEntity from "./Data/GameEntity.js";
@@ -8,6 +9,7 @@ import type InventoryItem from "./Data/InventoryItem.js";
 import type Player from "./Data/Player.js";
 import type Puzzle from "./Data/Puzzle.js";
 import type Recipe from "./Data/Recipe.js";
+import type Room from "./Data/Room.js";
 import type RoomItem from "./Data/RoomItem.js";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
@@ -43,6 +45,11 @@ declare global {
 	type Callee = Event | Flag | InventoryItem | Puzzle;
 
 	/**
+	 * Represents an inspectable game entity.
+	 */
+	type Inspectable = Room|Fixture|RoomItem|InventoryItem|Player;
+
+	/**
 	 * A dialog message that has been mirrored in a spectate channel.
 	 * @property {Snowflake} messageId - The ID of the mirrored dialog message.
 	 * @property {Snowflake} webhookId - The ID of the webhook used to send the mirrored message to the spectate channel.
@@ -50,6 +57,16 @@ declare global {
 	interface DialogSpectateMirror {
 		messageId: Snowflake;
 		webhookId: Snowflake;
+	}
+
+	/**
+	 * A message with Interactables on it that has been cached for tracking.
+	 * @property {Snowflake} channelId - The ID of the channel the message is in.
+	 * @property {Snowflake} messageId - The ID of the message.
+	 */
+	interface InteractableMessage {
+		channelId: Snowflake;
+		messageId: Snowflake;
 	}
 
 	/**

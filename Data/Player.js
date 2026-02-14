@@ -16,18 +16,18 @@ import QueueMoveAction from './Actions/QueueMoveAction.js';
 import StopAction from './Actions/StopAction.js';
 import Timer from '../Classes/Timer.js';
 import { MessageDisplayType } from '../Modules/enums.js';
-import { capitalizeFirstLetter } from '../Modules/helpers.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
 
+/** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
-/** @import Description from './Description.js' */
 /** @import Exit from './Exit.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
-/** @import { Attachment, GuildMember, TextChannel } from 'discord.js' */
+/** @import Notification from './Notification.js' */
+/** @import { GuildMember, TextChannel } from 'discord.js' */
 
 /**
  * @class Player
@@ -470,6 +470,18 @@ export default class Player extends ItemContainer {
         }
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
+    /**
+     * Returns a custom ID for this player.
+     */
+    getInspectActionDirectiveArgs() {
+        return ["P", this.name];
+    }
+
     /**
      * Moves the player to the desired room.
      * @param {boolean} isRunning - Whether the player is running.
@@ -708,7 +720,7 @@ export default class Player extends ItemContainer {
                         const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
                         for (const overrider of statusInstance.nextStage.overriders) {
                             if (playerStatusIds.includes(overrider.id)) {
-                                player.sendDescription(statusInstance.curedDescription, statusInstance);
+                                statusInstance.curedDescription.parseAndSendTo(player, statusInstance);
                                 inflictNextStage = false;
                                 break;
                             }
@@ -1563,29 +1575,37 @@ export default class Player extends ItemContainer {
     }
 
     /**
-     * Parses a description and sends it to the player.
-     * @param {Description} description - The description to parse and send.
-     * @param {GameEntity} [container] - The game entity the description belongs to. Defaults to the container of the description.
-     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to the description's message display type. Does nothing when sending a room description.
+     * Sends a description to the player.
+     * @param {string} descriptionString - The already-parsed description to send.
+     * @param {GameEntity} container - The game entity the description belongs to.
+     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
      */
-    sendDescription(description, container = description.getContainer(), messageDisplayType = description.messageDisplayType) {
-        if (description.text && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().communicationHandler.sendDescriptionToPlayer(this, description, container, messageDisplayType);
+    sendDescription(descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, interactables = []) {
+        if (descriptionString && !this.isNPC && (this.isConscious() || container instanceof Status))
+            this.getGame().communicationHandler.sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
+    }
+
+    /**
+     * Sends an already-parsed room description to the player.
+     * @param {Room} room - The room the description is for.
+     * @param {string} roomDescriptionString - The already-parsed room description.
+     * @param {string} occupantsString - A list of occupants in the room.
+     * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+     */
+    sendRoomDescription(room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
+        if (roomDescriptionString && !this.isNPC && this.isConscious())
+            this.getGame().communicationHandler.sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables);
     }
 
     /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {string} messageText - The content of the message to send.
-     * @param {boolean} [addSpectate=true] - Whether or not to mirror this message in the player's spectateChannel. Defaults to true.
-     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
-     * @param {Action} [action] - The action that cause this notification. If the message needs to be mirrored in spectate channels, this is required.
-     * @param {Collection<string, Attachment>} [attachments] - The attachments to send.
+     * @param {Notification} notification - The notification to send.
      */
-    notify(messageText, addSpectate = true, messageDisplayType = MessageDisplayType.PLAIN_TEXT, action, attachments = new Collection()) {
-        if (this.isConscious() && !this.isNPC) {
-            this.getGame().communicationHandler.sendMessageToPlayer(this, messageText, false, messageDisplayType);
-            if (addSpectate && action) this.getGame().communicationHandler.mirrorNarrationInSpectateChannel(this, action, messageDisplayType, messageText, attachments.map(attachment => attachment.url));
-        }
+    notify(notification) {
+        if (this.isConscious() && !this.isNPC)
+            this.getGame().communicationHandler.notifyPlayer(notification);
     }
 
     /**

@@ -46,10 +46,11 @@ export default class CureAction extends Action {
 			sendFollowupMessage = false;
 		}
 		if (notify) {
-			this.player.sendDescription(status.curedDescription, status, status.curedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+			const curedDescription = status.curedDescription.parseFor(this.player, status);
+			this.player.sendDescription(curedDescription, status, status.curedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 			// If the player is waking up, send them the description of the room they wake up in.
 			if (status.behaviorAttributes.has("unconscious"))
-				this.player.sendDescription(this.player.location.description, this.player.location);
+				this.player.location.description.parseAndSendTo(this.player, this.player.location);
 		}
 		this.getGame().logHandler.logCure(status, this.player);
 		this.player.cure(status);

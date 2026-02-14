@@ -20,7 +20,7 @@ export default class TextAction extends Action {
 		super.perform();
 		const senderText = this.getGame().notificationGenerator.generateTextNotification(messageText, this.player.name, recipient.name);
 		const recipientText = this.getGame().notificationGenerator.generateTextNotification(messageText, this.player.name);
-		this.getGame().communicationHandler.notifyPlayer(this.player, this, senderText, MessageDisplayType.PLAIN_TEXT, true, this.message.embeds, this.message.attachments);
-		this.getGame().communicationHandler.notifyPlayer(recipient, this, recipientText, MessageDisplayType.PLAIN_TEXT, true, this.message.embeds, this.message.attachments);
+		this.getGame().narrationHandler.sendNotification(this.player, this, senderText, MessageDisplayType.PLAIN_TEXT, true, this.message.attachments, [], this.message.embeds);
+		this.getGame().narrationHandler.sendNotification(recipient, this, recipientText, MessageDisplayType.PLAIN_TEXT, true, this.message.attachments, [], this.message.embeds);
 	}
 }

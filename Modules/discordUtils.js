@@ -1,8 +1,28 @@
-import { MessageDisplayType } from './enums.js';
+import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.js';
+import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.js';
+import { InteractableType, MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.js';
-import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuilder, ContainerBuilder, SeparatorBuilder, SeparatorSpacingSize, MessageFlags, MediaGalleryBuilder, MediaGalleryItemBuilder } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    Embed,
+    EmbedBuilder,
+    TextDisplayBuilder,
+    ThumbnailBuilder,
+    SectionBuilder,
+    ContainerBuilder,
+    SeparatorBuilder,
+    SeparatorSpacingSize,
+    MessageFlags,
+    MediaGalleryBuilder,
+    MediaGalleryItemBuilder,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder
+} from 'discord.js';
 
 /**
+ * @import Interactable from "../Classes/Interactables/Interactable.js"
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
@@ -16,11 +36,12 @@ import { Embed, EmbedBuilder, TextDisplayBuilder, ThumbnailBuilder, SectionBuild
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
+ * @param {Interactable[]} interactables - An array of interactables.
  */
-export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = []) {
+export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], interactables = []) {
     return {
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? [] : createNarrateComponents(messageDisplayType, game, messageText, player),
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player),
         flags: generateFlags(messageDisplayType),
         files: files
     };
@@ -205,14 +226,15 @@ function createMonologNarrationComponents(game, messageText, player) {
  * @param {string} occupantsString - The list of occupants in the room.
  * @param {string} defaultDropFixtureText - The description of the default drop fixture in this room. 
  * @param {string} color - The color as a hex code.
+ * @param {Interactable[]} interactables - An array of interactables.
  */
-export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color) {
+export function createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, color, interactables = []) {
     /** @type {MediaGalleryBuilder} */
     let mediaGalleryBuilder;
     [mediaGalleryBuilder, descriptionText] = getMediaGalleryComponents(descriptionText);
 
-    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder)[]} */
-    const components = [];
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | SeparatorBuilder | ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>)[]} */
+    let components = [];
     components.push(new ContainerBuilder()
         .setAccentColor(Number(`0x${color}`))
         .addSectionComponents(
@@ -237,6 +259,10 @@ export function createRoomDescriptionComponents(location, descriptionText, occup
     components.push(new TextDisplayBuilder().setContent(`**${capitalizeFirstLetter(location.getGame().settings.defaultDropFixture.toLocaleLowerCase())}**`));
     components.push(new TextDisplayBuilder().setContent(defaultDropFixtureText));
     components.push(new SeparatorBuilder().setSpacing(SeparatorSpacingSize.Small).setDivider(true));
+    if (interactables.length > 0) {
+        const actionRows = generateActionRows(interactables);
+        components = components.concat(actionRows);
+    }
     return components;
 }
 
@@ -262,6 +288,48 @@ function getMediaGalleryComponents(originalMessageText, fileURLs = []) {
         }
     }
     return [mediaGalleryBuilder, messageText];
+}
+
+/**
+ * Returns an array of action row components to attach to the message.
+ * @param {Interactable[]} interactables - An array of interactables. 
+ */
+function generateActionRows(interactables) {
+    const buttonInteractables = interactables.filter(interactable => interactable.type === InteractableType.BUTTON);
+    const stringSelectInteractables = interactables.filter(interactable => interactable.type === InteractableType.STRING_SELECT_MENU);
+
+    /** @type {ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>[]} */
+    const actionRows = [];
+    /** @type {Set<string>} */
+    const includedInteractables = new Set();
+    /** @type {ButtonBuilder[]} */
+    let buttons = [];
+    for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
+        const interactable = buttonInteractables[i];
+        if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable) {
+            buttons.push(interactable.component);
+            includedInteractables.add(interactable.customId);
+        }
+        if (i === buttonInteractables.length - 1 || buttons.length === 5) {
+            /** @type {ActionRowBuilder<ButtonBuilder>} */
+            const actionRow = new ActionRowBuilder();
+            actionRow.addComponents(buttons);
+            actionRows.push(actionRow);
+            buttons = [];
+            if (actionRows.length === 5) break;
+        }
+    }
+    for (let i = 0; i < stringSelectInteractables.length && actionRows.length < 5 && includedInteractables.size < 25; i++) {
+        const interactable = stringSelectInteractables[i];
+        if (!includedInteractables.has(interactable.customId) && interactable instanceof StringSelectMenuInteractable) {
+            /** @type {ActionRowBuilder<StringSelectMenuBuilder>} */
+            const actionRow = new ActionRowBuilder();
+            actionRow.addComponents(interactable.component);
+            includedInteractables.add(interactable.customId);
+            actionRows.push(actionRow);
+        }
+    }
+    return actionRows;
 }
 
 /**

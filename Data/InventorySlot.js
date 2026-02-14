@@ -119,6 +119,22 @@ export default class InventorySlot {
 	}
 
 	/**
+	 * Returns true if the inventory slot's capacity is smaller than the given item.
+	 * @param {ItemInstance} item 
+	 */
+	capacityIsSmallerThan(item) {
+		return item.prefab.size > this.capacity;
+	}
+
+	/**
+	 * Returns true if the inventory slot will be over capacity if it takes the given item.
+	 * @param {ItemInstance} item 
+	 */
+	willBeOverFilledBy(item) {
+		return this.takenSpace + item.prefab.size > this.capacity;
+	}
+
+	/**
      * Gets the combined weight of all the items this inventory slot contains.
      */
     getContainedItemsWeight() {

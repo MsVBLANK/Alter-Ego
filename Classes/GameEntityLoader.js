@@ -123,7 +123,7 @@ export default class GameEntityLoader extends GameEntityManager {
 						this.game.botContext.updatePresence();
 					if (sendPlayerRoomDescriptions) {
 						this.game.livingPlayers.forEach(player => {
-							player.sendDescription(player.location.description, player.location);
+							player.location.description.parseAndSendTo(player, player.location);
 						});
 					}
 				}

@@ -164,6 +164,16 @@ export default class RoomItem extends ItemInstance {
         return preposition;
     }
 
+    /** 
+     * Gets the highest-level container of this item.
+     */
+    getTopContainer() {
+        let topContainer = this.container;
+        while (topContainer !== null && topContainer instanceof RoomItem)
+            topContainer = topContainer.container;
+        if (!(topContainer instanceof RoomItem)) return topContainer;
+    }
+
     /**
      * Sets the item as accessible.
      */
@@ -176,6 +186,46 @@ export default class RoomItem extends ItemInstance {
      */
     setInaccessible() {
         this.accessible = false;
+    }
+
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
+    /**
+     * Returns the args for the Inspect ActionDirective for this room item.
+     */
+    getInspectActionDirectiveArgs() {
+        return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName];
+    }
+
+    /**
+     * Returns the args for the Take ActionDirective for this room item.
+     */
+    getTakeActionDirectiveArgs() {
+        return [this.getIdentifier(), this.location.id, this.containerType, this.containerName];
+    }
+
+    /**
+     * Returns true if the room item is capable of containing items.
+     */
+    isItemContainer() {
+        return this.inventory.size > 0;
+    }
+
+    /**
+     * Returns true if the room item is currently capable of being taken from/dropped into.
+     */
+    canCurrentlyContainItems() {
+        let allInventorySlotsFilled = true;
+        for (const inventorySlot of this.inventory.values()) {
+            if (inventorySlot.takenSpace < inventorySlot.capacity) {
+                allInventorySlotsFilled = false;
+                break;
+            }
+        }
+        return this.isItemContainer() && !allInventorySlotsFilled;
     }
 
     /**

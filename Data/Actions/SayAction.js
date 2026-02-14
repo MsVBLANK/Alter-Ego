@@ -169,7 +169,7 @@ export default class SayAction extends Action {
 			const webhookAvatarURL = dialog.getDisplayIconForWebhook(playerCanSeeSpeaker);
 			const notification = this.getGame().notificationGenerator.generateHearWhisperNotification(dialog, player);
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
+				this.getGame().narrationHandler.sendNotification(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
 				continue;
 			}
 			if (!dialog.isOOCMessage && webhookUsername)
@@ -199,7 +199,7 @@ export default class SayAction extends Action {
 				if (!dialog.isOOCMessage && player.hasBehaviorAttribute("acute hearing") && !dialog.whisper.players.has(player.name)) {
 					const notification = this.getGame().notificationGenerator.generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player);
 					if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-						this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+						this.getGame().narrationHandler.sendNotification(player, this, notification);
 						continue;
 					}
 					this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL, notification);
@@ -209,7 +209,7 @@ export default class SayAction extends Action {
 
 			if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
 				const notification = this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player);
-				this.getGame().communicationHandler.notifyPlayer(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
+				this.getGame().narrationHandler.sendNotification(player, this, notification, MessageDisplayType.PLAIN_TEXT, !dialog.isOOCMessage);
 				continue;
 			}
 			const notification = this.#playerShouldReceiveNotification(dialog, player, playerCanSeeSpeaker) ? this.getGame().notificationGenerator.generateHearDialogNotification(dialog, player) : "";
@@ -233,7 +233,7 @@ export default class SayAction extends Action {
 						if (this.#playerShouldReceiveNotification(dialog, player, false)) {
 							const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring() && player.canSee());
 							const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledNeighboringRoomDialogNotification(neighboringRoomDisplayName, dialog, player);
-							this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+							this.getGame().narrationHandler.sendNotification(player, this, notification);
 						}
 					}
 					const neighboringRoomDisplayName = neighboringAudioSurveilledRoom.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring());
@@ -247,7 +247,7 @@ export default class SayAction extends Action {
 				if (this.#playerCannotReceiveCommunications(player)) continue;
 				if (player.hasBehaviorAttribute("acute hearing") || dialog.isShouted && this.#playerShouldReceiveNotification(dialog, player, false)) {
 					const notification = this.getGame().notificationGenerator.generateHearNeighboringRoomDialogNotification(dialog, player);
-					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().narrationHandler.sendNotification(player, this, notification);
 				}
 			}
 			if (dialog.isShouted)
@@ -270,7 +270,7 @@ export default class SayAction extends Action {
 				const webhookContentPrefix = dialog.getWhisperPrefixStringForWebhook(playerCanSeeSpeaker);
 				const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player);
 				if (this.#playerNotificationTakesPriority(dialog, player, playerCanSeeSpeaker)) {
-					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().narrationHandler.sendNotification(player, this, notification);
 					continue;
 				}
 				const customWebhookUsername = this.#generateWebhookUsername(dialog, player, playerCanSeeSpeaker);
@@ -282,7 +282,7 @@ export default class SayAction extends Action {
 				else if (monitoringRoomCanSeeSurveilledRoom)
 					this.#mirrorDialogInSpectateChannel(player, dialog, webhookContentPrefix, webhookUsername, webhookAvatarURL);
 				else if (playerShouldReceiveNotification)
-					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().narrationHandler.sendNotification(player, this, notification);
 			}
 			const roomDisplayName = dialog.location.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring());
 			this.#narrateDialogAndSolveVoicePuzzles(audioMonitoringRoom, dialog, this.getGame().notificationGenerator.generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog));
@@ -306,7 +306,7 @@ export default class SayAction extends Action {
 							const monitoringRoomCanSeeSurveilledRoom = audioMonitoringRoom.isVideoMonitoring() && receiverAudioSurveilledRoom.isVideoSurveilled();
 							const playerCanSeeReceiver = player.canSee() && monitoringRoomCanSeeSurveilledRoom && !receiverPlayer.isHidden();
 							const notification = this.getGame().notificationGenerator.generateHearAudioSurveilledReceiverDialogNotification(receiverRoomDisplayName, dialog, receiverPlayer, receiverItem.name, player, receiverPlayer.name === player.name, playerCanSeeReceiver);
-							this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+							this.getGame().narrationHandler.sendNotification(player, this, notification);
 						}
 					}
 					const receiverRoomDisplayName = receiverAudioSurveilledRoom.getSurveilledDisplayName(audioMonitoringRoom.isVideoMonitoring());
@@ -320,7 +320,7 @@ export default class SayAction extends Action {
 					const playerAndReceiverAreHidingTogether = receiverPlayer.isHidden() && player.isHidden() && receiverPlayer.hidingSpot === player.hidingSpot;
 					const playerCanSeeReceiver = player.canSee() && (!receiverPlayer.isHidden() || playerAndReceiverAreHidingTogether);
 					const notification = this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, receiverItem.name, player, receiverPlayer.name === player.name, playerCanSeeReceiver);
-					this.getGame().communicationHandler.notifyPlayer(player, this, notification);
+					this.getGame().narrationHandler.sendNotification(player, this, notification);
 				}
 			}
 			this.#narrateDialogAndSolveVoicePuzzles(receiverPlayer.location, dialog, this.getGame().notificationGenerator.generateHearReceiverDialogNotification(dialog, receiverPlayer, receiverItem.name));

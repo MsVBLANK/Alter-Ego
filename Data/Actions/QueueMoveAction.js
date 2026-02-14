@@ -1,5 +1,4 @@
 import Action from "../Action.js";
-import Game from "../Game.js";
 import Room from "../Room.js";
 import MoveAction from "./MoveAction.js";
 import StartMoveAction from "./StartMoveAction.js";
@@ -54,7 +53,7 @@ export default class QueueMoveAction extends Action {
 		}
 		if (!destinationRoom) {
 			this.player.moveQueue.length = 0;
-			return this.player.notify(`There is no exit "${destinationString}" that you can currently move to. Please try the name of an exit in the room you're in or the name of the room you want to go to.`, false);
+			return this.getGame().communicationHandler.sendMessageToPlayer(this.player, `There is no exit "${destinationString}" that you can currently move to. Please try the name of an exit in the room you're in or the name of the room you want to go to.`, false);
 		}
 
 		if (exit) {
@@ -66,5 +65,35 @@ export default class QueueMoveAction extends Action {
 			moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance, isMovingFreely);
 			this.player.moveQueue.length = 0;
 		}
+	}
+
+	/**
+	 * Finds the required room item to call performQueueMove.
+	 * @param {string[]} args - The args as strings.
+	 * @returns {[Room, boolean, string]}
+	 */
+	parseInteractionArgs(args) {
+		const location = this.getGame().entityFinder.getRoom(args[0]);
+		const isRunning = args[1].toLowerCase() === 'true';
+		/** @type {Exit} */
+		let exit = this.getGame().entityFinder.getExit(location, args[2]);
+		const exitName = exit ? exit.name : "";
+		return [location, isRunning, exitName];
+	}
+
+	/**
+	 * Validates the parsed args. The results can be passed directly into performQueueMove.
+	 * @param {[Room, boolean, string]} args - The args after being parsed.
+	 * @returns {[boolean, string]|[]}
+	 */
+	validateInteractionArgs(args) {
+		if (args.length !== 3) return [];
+		if (!args[0]) return [];
+		if (args[0].id !== this.player.location.id) return [];
+		if (this.player.isMoving) return [];
+		if (args[1] === false && (this.player.hasBehaviorAttribute("disable move") || this.player.hasBehaviorAttribute("disable all") && !this.player.hasBehaviorAttribute("enable move"))) return [];
+		if (args[1] === true && (this.player.hasBehaviorAttribute("disable run") || this.player.hasBehaviorAttribute("disable all") && !this.player.hasBehaviorAttribute("enable run"))) return [];
+		if (!args[2]) return [];
+		return [args[1], args[2]];
 	}
 }

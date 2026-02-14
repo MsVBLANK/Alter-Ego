@@ -23,7 +23,8 @@ export default class CraftAction extends Action {
 		const item1Id = item1.getIdentifier();
     	const item2Id = item2.getIdentifier();
 		const craftingResult = this.player.craft(item1, item2, recipe);
-		this.player.sendDescription(recipe.completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+		const completedDescription = recipe.completedDescription.parseFor(this.player, recipe);
+		this.player.sendDescription(completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		this.getGame().narrationHandler.narrateCraft(this, craftingResult, this.player);
 		this.getGame().logHandler.logCraft(item1Id, item2Id, craftingResult, this.player, this.forced);
 	}

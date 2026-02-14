@@ -58,7 +58,7 @@ export default class GameNotificationGenerator {
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
 		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${speakerString} ${verb} "${dialog.content}"${punctuation}`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${punctuation}`;
 	}
 
 	/**
@@ -80,7 +80,7 @@ export default class GameNotificationGenerator {
 			speakerString = `${dialog.speakerDisplayName}`;
 		const contentAffix = hidingSpotPhrase !== `` && !speakerString.includes(hidingSpotPhrase) ? `${hidingSpotPhrase}` : ``;
 		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? `${contentAffix} in your voice!` : contentAffix === `` && endsWithPunctuation(dialog.content) ? `` : `${contentAffix}.`;
-		return `${speakerString} whispers "${dialog.content}"${punctuation}`;
+		return `${capitalizeFirstLetter(speakerString)} whispers "${dialog.content}"${punctuation}`;
 	}
 
 	/**
@@ -118,7 +118,7 @@ export default class GameNotificationGenerator {
 			speakerString = player && dialog.isMimicking(player) ? `someone in a nearby room` : `someone in a nearby room with ${dialog.speakerVoiceString}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
 		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : locator === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${speakerString} ${verb} "${dialog.content}"${locator}${punctuation}`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${locator}${punctuation}`;
 	}
 
 	/**
@@ -174,7 +174,7 @@ export default class GameNotificationGenerator {
 			speakerString = player && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverItemName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverItemName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
 		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : receiverString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${speakerString} ${verb} "\`${dialog.content}\`"${receiverString}${punctuation}`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "\`${dialog.content}\`"${receiverString}${punctuation}`;
 	}
 
 	/**
@@ -198,7 +198,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerListString - A list of the other players in the whisper.
 	 */
 	generateWhisperNotification(player, secondPerson, playerListString) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `begin` : `begins`;
 		const whisperPhrase = playerListString ? ` to ${playerListString}` : ``;
 		return `${subject} ${verb} whispering${whisperPhrase}.`;
@@ -224,7 +224,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} exitPhrase - The phrase of the exit the player is moving toward.
 	 */
 	generateStartMoveNotification(player, secondPerson, isRunning, exitPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `start` : `starts`;
 		const action = isRunning ? `running` : `walking`;
 		return `${subject} ${verb} ${action} toward ${exitPhrase}.`;
@@ -236,7 +236,7 @@ export default class GameNotificationGenerator {
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 */
 	generateHalfStaminaNotification(player, secondPerson) {
-		const subject = secondPerson ? `Your breathing` : `${player.displayName}'s breathing`;
+		const subject = secondPerson ? `Your breathing` : `${capitalizeFirstLetter(player.displayName)}'s breathing`;
 		const sentence2 = secondPerson ? `You might want to stop moving and rest soon.` : `It seems like ${player.pronouns.sbj}${player.pronouns.plural ? `'re` : `'s`} starting to get tired.`;
 		return `${subject} is getting heavy. ${sentence2}`;
 	}
@@ -246,7 +246,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} player - The player referred to in this notification.
 	 */
 	generateWearyNotification(player) {
-		return `${player.displayName} stops moving. ${player.pronouns.Sbj} ${player.pronouns.plural ? `seem` : `seems`} weary.`;
+		return `${capitalizeFirstLetter(player.displayName)} stops moving. ${player.pronouns.Sbj} ${player.pronouns.plural ? `seem` : `seems`} weary.`;
 	}
 
 	/**
@@ -255,7 +255,7 @@ export default class GameNotificationGenerator {
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 */
 	generateStopNotification(player, secondPerson) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `stop` : `stops`;
 		return `${subject} ${verb} moving.`;
 	}
@@ -267,7 +267,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} doorPhrase - The door phrase of the locked exit.
 	 */
 	generateExitLockedNotification(player, secondPerson, doorPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		return `${subject} ${verb} to open ${doorPhrase}, but it seems to be locked.`;
 	}
@@ -280,7 +280,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
 	generateExitNotification(player, secondPerson, exitPhrase, appendString) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `exit` : `exits`;
 		const destinationPhrase = exitPhrase ? ` into ${exitPhrase}` : ``;
 		return `${subject} ${verb}${destinationPhrase}${appendString}.`;
@@ -294,7 +294,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
 	generateSuddenExitNotification(player, secondPerson, roomName, appendString) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `exit ${roomName}` : `suddenly disappears`;
 		const punctuation = secondPerson ? `.` : `!`;
 		return `${subject} ${verb}${appendString}${punctuation}`;
@@ -308,7 +308,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
 	generateEnterNotification(player, secondPerson, entranceName, appendString) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `enter` : `enters`;
 		const exitPhrase = entranceName ? ` from ${entranceName}` : ``;
 		return `${subject} ${verb}${exitPhrase}${appendString}.`;
@@ -322,7 +322,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
 	generateSuddenEnterNotification(player, secondPerson, roomName, appendString) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `enter ${roomName}` : `suddenly appears`;
 		const punctuation = secondPerson ? `.` : `!`;
 		return `${subject} ${verb}${appendString}${punctuation}`;
@@ -379,7 +379,7 @@ export default class GameNotificationGenerator {
 	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
 	 */
 	generateInspectRoomNotification(player, secondPerson) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `look` : `looks`;
 		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
 		return `${subject} ${verb} around, taking in ${dpos} surroundings.`;
@@ -392,7 +392,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} fixturePhrase - The phrase of the fixture.
 	 */
 	generateInspectFixtureNotification(player, secondPerson, fixturePhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${fixturePhrase}.`;
 	}
@@ -406,7 +406,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerPhrase - The phrase of the container.
 	 */
 	generateInspectRoomItemNotification(player, secondPerson, itemPhrase, preposition, containerPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${itemPhrase} ${preposition} ${containerPhrase}.`;
 	}
@@ -418,7 +418,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
 	generateInspectPlayersOwnStashedInventoryItemNotification(player, secondPerson, itemPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb1} ${itemPhrase} and ${verb2} it.`;
@@ -431,7 +431,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemName - The name of the item.
 	 */
 	generateInspectPlayersOwnEquippedInventoryItemNotification(player, secondPerson, itemName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
 		return `${subject} ${verb} ${dpos} ${itemName}.`;
@@ -445,7 +445,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
 	generateInspectOtherPlayersInventoryItemNotification(player, secondPerson, otherPlayer, itemPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${otherPlayer.displayName}'s ${itemPhrase}.`;
 	}
@@ -474,7 +474,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} doorPhrase - The door phrase of the exit.
 	 */
 	generateKnockNotification(player, secondPerson, doorPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `knock` : `knocks`;
 		return `${subject} ${verb} on ${doorPhrase}.`;
 	}
@@ -536,7 +536,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} statusId - The ID of the status effect that made the player unable to whisper.
 	 */
 	generateNoChannelLeaveWhisperNotification(player, statusId) {
-		return `${player.displayName} can no longer whisper because ${player.originalPronouns.sbj} ${player.originalPronouns.plural ? `are` : `is`} ${statusId}.`;
+		return `${capitalizeFirstLetter(player.displayName)} can no longer whisper because ${player.originalPronouns.sbj} ${player.originalPronouns.plural ? `are` : `is`} ${statusId}.`;
 	}
 
 	/**
@@ -545,7 +545,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateNoHearingLeaveWhisperNotification(playerDisplayName) {
-		return `${playerDisplayName} can no longer hear.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} can no longer hear.`;
 	}
 
 	/**
@@ -553,7 +553,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateExitLeaveWhisperNotification(playerDisplayName) {
-		return `${playerDisplayName} leaves the room.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} leaves the room.`;
 	}
 
 	/**
@@ -561,7 +561,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateFallAsleepNotification(playerDisplayName) {
-		return `${playerDisplayName} falls asleep.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} falls asleep.`;
 	}
 
 	/**
@@ -569,7 +569,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateBlackOutNotification(playerDisplayName) {
-		return `${playerDisplayName} blacks out.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} blacks out.`;
 	}
 
 	/**
@@ -577,7 +577,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateUnconsciousNotification(playerDisplayName) {
-		return `${playerDisplayName} goes unconscious.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} goes unconscious.`;
 	}
 
 	/**
@@ -594,7 +594,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateWakeUpNotification(playerDisplayName) {
-		return `${playerDisplayName} wakes up.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} wakes up.`;
 	}
 
 	/**
@@ -602,7 +602,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} playerDisplayName - The display name of the player.
 	 */
 	generateRegainConsciousnessNotification(playerDisplayName) {
-		return `${playerDisplayName} regains consciousness.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} regains consciousness.`;
 	}
 
 	/**
@@ -612,7 +612,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the player is hiding in.
 	 */
 	generateHideNotification(player, secondPerson, hidingSpotPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `hide` : `hides`;
 		return `${subject} ${verb} in ${hidingSpotPhrase}.`;
 	}
@@ -624,7 +624,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the player is coming out from.
 	 */
 	generateUnhideNotification(player, secondPerson, hidingSpotPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `come out` : `comes out`;
 		return `${subject} ${verb} of ${hidingSpotPhrase}.`;
 	}
@@ -638,7 +638,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} [targetDisplayName] - The display name of the target player of the use action.
 	 */
 	generateUseNotification(player, secondPerson, itemPhrase, useVerb, targetDisplayName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = useVerb ? useVerb : secondPerson ? `use` : `uses`;
 		const targetPhrase = targetDisplayName ? ` on ${targetDisplayName}` : ``;
 		return `${subject} ${verb} ${itemPhrase}${targetPhrase}.`;
@@ -652,7 +652,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} [containerPhrase] - The entire phrase of the container. Optional.
 	 */
 	generateTakeNotification(player, secondPerson, itemPhrase, containerPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take` : `takes`;
 		const containerAppendString = containerPhrase ? ` from ${containerPhrase}` : ``;
 		return `${subject} ${verb} ${itemPhrase}${containerAppendString}.`;
@@ -666,7 +666,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerPhrase - The entire phrase of the container.
 	 */
 	generateTakeTooHeavyNotification(player, secondPerson, itemPhrase, containerPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const obj = secondPerson ? `you` : player.pronouns.obj;
 		return `${subject} ${verb} to take ${itemPhrase} from ${containerPhrase}, but it is too heavy for ${obj} to lift.`;
@@ -680,7 +680,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerPhrase - The entire phrase of the container.
 	 */
 	generateTakeTooMuchWeightNotification(player, secondPerson, itemPhrase, containerPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const sbj = secondPerson ? `you` : player.pronouns.sbj;
 		const contraction = secondPerson || player.pronouns.plural ? `'re` : `'s`;
@@ -708,7 +708,7 @@ export default class GameNotificationGenerator {
 	 * @param {boolean} victimAware - Whether or not the victim noticed that they were stolen from.
 	 */
 	generateSuccessfulStealNotification(player, secondPerson, itemPhrase, slotPhrase, containerName, victim, victimAware) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `steal` : `steals`;
 		const successDisplay = secondPerson ? `.`
 			: victimAware ? `, but ${victim.pronouns.sbj} ${victim.pronouns.plural ? `seem` : `seems`} to notice.`
@@ -735,7 +735,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerName - The name of the container the item was stolen from.
 	 */
 	generateSuccessfulStolenFromNotification(thiefDisplayName, slotPhrase, itemPhrase, containerName) {
-		return `${thiefDisplayName} steals ${itemPhrase} from ${slotPhrase}your ${containerName}!`;
+		return `${capitalizeFirstLetter(thiefDisplayName)} steals ${itemPhrase} from ${slotPhrase}your ${containerName}!`;
 	}
 
 	/**
@@ -746,7 +746,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerName - The name of the container the item was stolen from.
 	 */
 	generateFailedStolenFromNotification(thiefDisplayName, slotPhrase, itemPhrase, containerName) {
-		return `${thiefDisplayName} attempts to steal ${itemPhrase} from ${slotPhrase}your${containerName}, but you notice in time!`;
+		return `${capitalizeFirstLetter(thiefDisplayName)} attempts to steal ${itemPhrase} from ${slotPhrase}your${containerName}, but you notice in time!`;
 	}
 
 	/**
@@ -758,7 +758,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} [containerPhrase] - The entire phrase of the container. Optional.
 	 */
 	generateDropNotification(player, secondPerson, itemPhrase, preposition, containerPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `discard` : `discards`;
 		if (containerPhrase) verb = secondPerson ? `put` : `puts`;
 		const containerAppendString = containerPhrase ? ` ${preposition} ${containerPhrase}` : ``;
@@ -773,7 +773,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} recipientDisplayName - The display name of the recipient.
 	 */
 	generateGiveNotification(player, secondPerson, itemPhrase, recipientDisplayName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `give` : `gives`;
 		return `${subject} ${verb} ${itemPhrase} to ${recipientDisplayName}.`;
 	}
@@ -786,7 +786,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} recipient - The recipient of the item.
 	 */
 	generateGiveTooHeavyNotification(player, secondPerson, itemPhrase, recipient) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		return `${subject} ${verb} to give ${recipient.displayName} ${itemPhrase}, but it is too heavy for ${recipient.pronouns.obj} to lift.`;
 	}
@@ -799,7 +799,7 @@ export default class GameNotificationGenerator {
 	 * @param {Player} recipient - The recipient of the item.
 	 */
 	generateGiveTooMuchWeightNotification(player, secondPerson, itemPhrase, recipient) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const contraction = secondPerson || player.pronouns.plural ? `'re` : `'s`;
 		return `${subject} ${verb} to give ${recipient.displayName} ${itemPhrase}, but ${recipient.pronouns.sbj}${contraction} carrying too much weight.`;
@@ -811,7 +811,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} giverDisplayName - The display name of the giver.
 	 */
 	generateReceiveNotification(itemPhrase, giverDisplayName) {
-		return `${giverDisplayName} gives you ${itemPhrase}!`;
+		return `${capitalizeFirstLetter(giverDisplayName)} gives you ${itemPhrase}!`;
 	}
 
 	/**
@@ -820,7 +820,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} giverDisplayName - The display name of the player giving them the item.
 	 */
 	generateReceiveTooHeavyNotification(itemPhrase, giverDisplayName) {
-		return `${giverDisplayName} tries to give you ${itemPhrase}, but it is too heavy for you to lift.`;
+		return `${capitalizeFirstLetter(giverDisplayName)} tries to give you ${itemPhrase}, but it is too heavy for you to lift.`;
 	}
 
 	/**
@@ -829,7 +829,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} giverDisplayName - The display name of the player giving them the item.
 	 */
 	generateReceiveTooMuchWeightNotification(itemPhrase, giverDisplayName) {
-		return `${giverDisplayName} tries to give you ${itemPhrase}, but you're carrying too much weight.`;
+		return `${capitalizeFirstLetter(giverDisplayName)} tries to give you ${itemPhrase}, but you're carrying too much weight.`;
 	}
 
 	/**
@@ -842,7 +842,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerName - The name of the container the item is being stashed in.
 	 */
 	generateStashNotification(player, secondPerson, itemPhrase, preposition, slotPhrase, containerName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `stash` : `stashes`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
 		return `${subject} ${verb} ${itemPhrase} ${preposition} ${slotPhrase}${dpos} ${containerName}.`;
@@ -857,7 +857,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} containerName - The name of the container the item is being unstashed from.
 	 */
 	generateUnstashNotification(player, secondPerson, itemPhrase, slotPhrase, containerName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take` : `takes`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
 		return `${subject} ${verb} ${itemPhrase} out of ${slotPhrase}${dpos} ${containerName}.`;
@@ -870,7 +870,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemPhrase - The single containing phrase of the item.
 	 */
 	generateEquipNotification(player, secondPerson, itemPhrase) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `put on` : `puts on`;
 		return `${subject} ${verb} ${itemPhrase}.`;
 	}
@@ -882,7 +882,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemName - The name of the item.
 	 */
 	generateUnequipNotification(player, secondPerson, itemName) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take off` : `takes off`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
 		return `${subject} ${verb} ${dpos} ${itemName}.`;
@@ -896,7 +896,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemList - A list of items the player put on.
 	 */
 	generateDressNotification(player, secondPerson, containerName, itemList) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `dress` : `dresses`;
 		return `${subject} ${verb} from the ${containerName}, putting on ${itemList}.`;
 	}
@@ -910,7 +910,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} itemList - A list of items the player took off.
 	 */
 	generateUndressNotification(player, secondPerson, preposition, containerPhrase, itemList) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `undress` : `undresses`;
 		return `${subject} ${verb}, putting ${itemList} ${preposition} ${containerPhrase}.`;
 	}
@@ -922,7 +922,7 @@ export default class GameNotificationGenerator {
 	 * @param {CraftingResult} craftingResult - The result of the craft action.
 	 */
 	generateCraftNotification(player, secondPerson, craftingResult) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `craft` : `crafts`;
 		let productPhrase = "";
 		let product1Phrase = "";
@@ -948,7 +948,7 @@ export default class GameNotificationGenerator {
 	 * @param {UncraftingResult} uncraftingResult - The result of the uncraft action.
 	 */
 	generateUncraftNotification(player, secondPerson, recipe, originalItemPhrase, itemPhrase, uncraftingResult) {
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		// If only one ingredient is discreet, the first ingredient should be the discreet one.
         // This will result in more natural sounding notifications.
 		const oneDiscreet = !recipe.ingredients[0].discreet && recipe.ingredients[1].discreet || recipe.ingredients[0].discreet && !recipe.ingredients[1].discreet;
@@ -987,7 +987,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateActivateNotification(fixturePhrase, player, secondPerson) {
 		if (player) {
-			const subject = secondPerson ? `You` : player.displayName;
+			const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 			const verb = secondPerson ? `turn on` : `turns on`;
 			return `${subject} ${verb} ${fixturePhrase}.`;
 		}
@@ -1002,7 +1002,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateDeactivateNotification(fixturePhrase, player, secondPerson) {
 		if (player) {
-			const subject = secondPerson ? `You` : player.displayName;
+			const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 			const verb = secondPerson ? `turn off` : `turns off`;
 			return `${subject} ${verb} ${fixturePhrase}.`;
 		}
@@ -1015,7 +1015,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} puzzlePhrase - The containing phrase of the puzzle.
 	 */
 	generateAttemptPuzzleDefaultNotification(playerDisplayName, puzzlePhrase) {
-		return `${playerDisplayName} uses ${puzzlePhrase}.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} uses ${puzzlePhrase}.`;
 	}
 
 	/**
@@ -1024,7 +1024,7 @@ export default class GameNotificationGenerator {
 	 * @param {string} puzzlePhrase - The containing phrase of the puzzle.
 	 */
 	generateAttemptPuzzleWithNoRemainingAttemptsNotification(playerDisplayName, puzzlePhrase) {
-		return `${playerDisplayName} attempts and fails to use ${puzzlePhrase}.`;
+		return `${capitalizeFirstLetter(playerDisplayName)} attempts and fails to use ${puzzlePhrase}.`;
 	}
 
 	/**
@@ -1035,7 +1035,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateAttemptPuzzleWithoutItemSolutionNotification(player, secondPerson, puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let predicate = secondPerson ? `attempt to use` : `attempts to use`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
 		let appendString = secondPerson ? `, but struggle` : `, but struggles`;
@@ -1057,7 +1057,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateSolvePuzzleNotification(player, secondPerson, puzzle, outcome, item) {
 		if (puzzle.type === "weight" || puzzle.type === "container" || puzzle.type === "restricted exit") return "";
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
 		let appendString = ``;
@@ -1088,7 +1088,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateUnsolvePuzzleNotification(player, secondPerson, puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
 		if (puzzle.type === "combination lock" || puzzle.type === "key lock")
@@ -1110,7 +1110,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateAttemptAlreadySolvedPuzzleNotification(player, secondPerson, puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
 		let appendString = ``;
@@ -1134,7 +1134,7 @@ export default class GameNotificationGenerator {
 	 */
 	generateAttemptAndFailPuzzleNotification(player, secondPerson, puzzle, item) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
-		const subject = secondPerson ? `You` : player.displayName;
+		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
 		let appendString = ``;
@@ -1166,7 +1166,7 @@ export default class GameNotificationGenerator {
 	generateDieNotification(player, secondPerson) {
 		const message = secondPerson
 			? `You have died. When your body is discovered, you will be given the ${this.#game.guildContext.deadRole.name} role. Until then, your death must remain a secret to the server and to other players.`
-			: `${player.displayName} dies.`;
+			: `${capitalizeFirstLetter(player.displayName)} dies.`;
 		return message;
 	}
 
@@ -1175,7 +1175,7 @@ export default class GameNotificationGenerator {
 	 * @param {Exit} exit - The exit that was unlocked.
 	 */
 	generateUnlockNotification(exit) {
-		return `${exit.getDoorPhrase()} unlocks.`;
+		return `${capitalizeFirstLetter(exit.getDoorPhrase())} unlocks.`;
 	}
 
 	/**
@@ -1183,6 +1183,6 @@ export default class GameNotificationGenerator {
 	 * @param {Exit} exit - The exit that was locked.
 	 */
 	generateLockNotification(exit) {
-		return `${exit.getDoorPhrase()} locks.`;
+		return `${capitalizeFirstLetter(exit.getDoorPhrase())} locks.`;
 	}
 }

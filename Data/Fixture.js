@@ -170,6 +170,32 @@ export default class Fixture extends ItemContainer {
         this.accessible = false;
     }
 
+    /** Gets the entity's location. */
+    getLocation() {
+        return this.location;
+    }
+
+    /**
+     * Returns a custom ID for this fixture.
+     */
+    getInspectActionDirectiveArgs() {
+        return ["F", this.name, this.getLocation().id];
+    }
+
+    /**
+     * Returns true if the fixture is capable of containing items.
+     */
+    isItemContainer() {
+        return this.preposition !== "";
+    }
+
+    /**
+     * Returns true if the fixture is currently capable of being taken from/dropped into.
+     */
+    canCurrentlyContainItems() {
+        return this.isItemContainer() && !this.isProcessingItems() && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
+    }
+
     /**
      * Gets all of the items this entity contains.
      * @override
@@ -187,6 +213,13 @@ export default class Fixture extends ItemContainer {
 	getContainedItemsForItemList(itemListName, player) {
 		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'Fixture', this.name);
 	}
+
+    /**
+     * Returns true if the fixture is activated and deactivates automatically.
+     */
+    isProcessingItems() {
+        return this.autoDeactivate && this.activated;
+    }
 
     /**
      * Makes the fixture start processing recipes.
@@ -216,7 +249,10 @@ export default class Fixture extends ItemContainer {
 
         this.process.recipe = result.recipe;
         this.process.ingredients = result.ingredients;
-        if (player) player.sendDescription(this.process.recipe.initiatedDescription, this, this.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+        if (player) {
+            const initiatedDescription = this.process.recipe.initiatedDescription.parseFor(player, this);
+            player.sendDescription(initiatedDescription, this, this.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+        }
         this.process.duration = this.process.recipe.duration;
 
         let fixture = this;
@@ -365,7 +401,10 @@ export default class Fixture extends ItemContainer {
                     instantiateAction.performInstantiateRoomItem(product, this, "", quantity, new Map());
                 }
             }
-            if (player && player.alive && player.location.id === this.location.id) player.sendDescription(this.process.recipe.completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+            if (player && player.alive && player.location.id === this.location.id) {
+                const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
+                player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+            }
         }
 
         if (this.autoDeactivate) {

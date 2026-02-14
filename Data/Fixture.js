@@ -201,6 +201,13 @@ export default class Fixture extends ItemContainer {
 	}
 
     /**
+     * Returns true if the fixture is activated and deactivates automatically.
+     */
+    isProcessingItems() {
+        return this.autoDeactivate && this.activated;
+    }
+
+    /**
      * Makes the fixture start processing recipes.
      * @param {Player} [player] - The player who activated the fixture, if applicable.
      */

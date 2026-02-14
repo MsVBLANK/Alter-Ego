@@ -1,12 +1,12 @@
 import Action from "../Action.js";
 import AttemptAction from "./AttemptAction.js";
+import Fixture from "../Fixture.js";
 import InventorySlot from "../InventorySlot.js";
 import Puzzle from "../Puzzle.js";
+import RoomItem from "../RoomItem.js";
 import { getSortedItemsString } from "../../Modules/helpers.js";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */
-/** @import Fixture from "../Fixture.js" */
-/** @import RoomItem from "../RoomItem.js" */
 
 /**
  * @class TakeAction
@@ -20,7 +20,7 @@ export default class TakeAction extends Action {
 	 * @param {RoomItem} item - The room item to take. 
 	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the item in.
      * @param {Puzzle|Fixture|RoomItem} container - The item's current container.
-     * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
+     * @param {InventorySlot<RoomItem>} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
      * @param {boolean} [notify] - Whether or not to notify the player that they took the item. Defaults to true.
 	 */
 	performTake(item, handEquipmentSlot, container, inventorySlot, notify = true) {
@@ -44,5 +44,41 @@ export default class TakeAction extends Action {
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "take", "");
 		}
+	}
+
+	/**
+	 * Finds the required room item to call performTake.
+	 * @param {string[]} args - The args as strings.
+	 * @returns {[RoomItem]}
+	 */
+	parseInteractionArgs(args) {
+		const item = this.getGame().entityFinder.getRoomItem(args[0], args[1], args[2], args[3]);
+		return [item];
+	}
+
+	/**
+	 * Validates the parsed args. The results can be passed directly into performTake.
+	 * @param {[RoomItem]} args - The args after being parsed.
+	 * @returns {[RoomItem, EquipmentSlot, Puzzle|Fixture|RoomItem, InventorySlot<RoomItem>]|[]}
+	 */
+	validateInteractionArgs(args) {
+		if (args.length !== 1) return [];
+		if (!args[0] || !(args[0] instanceof RoomItem)) return [];
+		const item = args[0];
+		if (this.player.hasBehaviorAttribute("disable take")) return [];
+		if (this.player.hasBehaviorAttribute("disable all") && !this.player.hasBehaviorAttribute("enable take")) return [];
+		if (item.getLocation().id !== this.player.location.id) return [];
+		if (!item.accessible || item.quantity === 0) return [];
+		const freeHand = this.getGame().entityFinder.getPlayerFreeHand(this.player);
+		if (!freeHand) return [];
+		const container = item.container;
+		if (!container) return [];
+		const topContainer = item.getTopContainer();
+		if (topContainer !== null) {
+			if (topContainer instanceof Fixture && topContainer.isProcessingItems()) return [];
+			if (topContainer instanceof Puzzle && (topContainer.parentFixture === null || this.player.isHidden() && topContainer.name !== this.player.hidingSpot)) return [];
+		}
+		const inventorySlot = container instanceof RoomItem ? container.inventory.get(item.slot) : undefined;
+		return [item, freeHand, container, inventorySlot];
 	}
 }

@@ -124,11 +124,8 @@ export async function execute(game, message, command, args, player) {
         else return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in the room.`);
     }
     
-    let topContainer = container;
-    while (topContainer !== null && topContainer instanceof RoomItem)
-        topContainer = topContainer.container;
-
-    if (topContainer !== null && topContainer instanceof Fixture && topContainer.autoDeactivate && topContainer.activated)
+    let topContainer = item.getTopContainer();
+    if (topContainer !== null && topContainer instanceof Fixture && topContainer.isProcessingItems())
         return game.communicationHandler.reply(message, `You cannot take items from ${topContainer.name} while it is turned on.`);
     const hiddenStatus = player.getBehaviorAttributeStatusEffects("hidden");
     if (hiddenStatus.length > 0) {

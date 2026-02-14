@@ -134,7 +134,7 @@ export default class Description extends GameConstruct {
 			}
 			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
+			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialGameEntities, container, player)[0]);
 			/** @type {Exit[]} */
 			const exits = [];
 			for (const potentialGameEntity of potentialGameEntities)
@@ -145,8 +145,11 @@ export default class Description extends GameConstruct {
 		}
 		else {
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
-			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getInspectableGameEntities(potentialGameEntities, container, player));
+			const selectableInteractableGameEntities = this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialGameEntities, container, player);
+			inspectableEntities = inspectableEntities.concat(selectableInteractableGameEntities[0]);
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
+			const takeableEntities = selectableInteractableGameEntities[1];
+			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createTakeActionInteractable(takeableEntities, player));
 			player.sendDescription(parsedDescription, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
 		}
 	}

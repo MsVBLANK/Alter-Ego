@@ -6,9 +6,11 @@ import type Game from "../Data/Game.js";
 import type Interactable from "./Interactables/Interactable.js";
 import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
+import type RoomItem from "../Data/RoomItem.js";
 import ActionDirective from "./ActionDirective.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import InspectAction from "../Data/Actions/InspectAction.js";
+import TakeAction from "../Data/Actions/TakeAction.js";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 
 /**
@@ -177,6 +179,27 @@ export default class BotInteractableManager {
 		const customId = await actionDirective.generateCustomId(player);
 		actionDirective.setCustomId(customId);
 		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect");
+		this.addInteractable(menu);
+		return [menu];
+	}
+
+	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
+		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+		for (const entity of entities) {
+			const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+			const customId = await actionDirective.generateCustomId(player);
+			if (menuOptions.has(customId)) continue;
+			actionDirective.setCustomId(customId);
+			const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId);
+			this.addInteractable(option);
+			menuOptions.set(customId, option);
+			if (menuOptions.size >= 25) break;
+		}
+		if (menuOptions.size === 0) return [];
+		const actionDirective = new ActionDirective(TakeAction.prototype, ["TakeAction Menu"]);
+		const customId = await actionDirective.generateCustomId(player);
+		actionDirective.setCustomId(customId);
+		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take");
 		this.addInteractable(menu);
 		return [menu];
 	}

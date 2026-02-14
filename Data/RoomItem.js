@@ -164,6 +164,16 @@ export default class RoomItem extends ItemInstance {
         return preposition;
     }
 
+    /** 
+     * Gets the highest-level container of this item.
+     */
+    getTopContainer() {
+        let topContainer = this.container;
+        while (topContainer !== null && topContainer instanceof RoomItem)
+            topContainer = topContainer.container;
+        if (!(topContainer instanceof RoomItem)) return topContainer;
+    }
+
     /**
      * Sets the item as accessible.
      */
@@ -184,10 +194,17 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
-     * Returns a custom ID for this fixture.
+     * Returns the args for the Inspect ActionDirective for this room item.
      */
     getInspectActionDirectiveArgs() {
         return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName];
+    }
+
+    /**
+     * Returns the args for the Take ActionDirective for this room item.
+     */
+    getTakeActionDirectiveArgs() {
+        return [this.getIdentifier(), this.location.id, this.containerType, this.containerName];
     }
 
     /**

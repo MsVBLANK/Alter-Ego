@@ -5,6 +5,7 @@ import InventoryItem from "../Data/InventoryItem.js";
 import Player from "../Data/Player.js";
 import Puzzle from "../Data/Puzzle.js";
 import Room from "../Data/Room.js";
+import RoomItem from "../Data/RoomItem.js";
 import Status from "../Data/Status.js";
 import Whisper from "../Data/Whisper.js";
 import * as matchers from '../Modules/matchers.js';
@@ -630,14 +631,17 @@ export default class GameEntityFinder {
 	}
 
 	/**
-	 * Gets all inspectable game entities given a list of names of potential game entities.
+	 * Gets all game entities that can be selected in interactables, given a list of names of potential game entities.
 	 * @param {string[]} potentialGameEntities - A list of names of potential game entities.
 	 * @param {GameEntity} container - The game entity the list of potential game entities came from.
 	 * @param {Player} player - The player who inspected the container.
+	 * @returns {[Inspectable[], RoomItem[]]}
 	 */
-	getInspectableGameEntities(potentialGameEntities, container, player) {
+	getSelectableInteractableGameEntities(potentialGameEntities, container, player) {
 		/** @type {Inspectable[]} */
-		const entities = [];
+		const inspectableEntities = [];
+		/** @type {RoomItem[]} */
+		const takeableEntities = [];
 		for (const entityName of potentialGameEntities) {
 			/** @type {Inspectable} */
 			let entity;
@@ -649,8 +653,9 @@ export default class GameEntityFinder {
 				entity = this.getFixture(entityName, player.location.id);
 				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, undefined, undefined, undefined, false, 'player')[0];
 			}
-			if (entity) entities.push(entity);
+			if (entity) inspectableEntities.push(entity);
+			if (entity && entity instanceof RoomItem) takeableEntities.push(entity);
 		}
-		return entities;
+		return [inspectableEntities, takeableEntities];
 	}
 }

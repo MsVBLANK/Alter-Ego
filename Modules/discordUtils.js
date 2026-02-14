@@ -295,26 +295,31 @@ function getMediaGalleryComponents(originalMessageText, fileURLs = []) {
  * @param {Interactable[]} interactables - An array of interactables. 
  */
 function generateActionRows(interactables) {
+    /** @typedef {{actionRow: ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>, priority: number}} ActionRowIntermediary */
+    /** @typedef {{button: ButtonBuilder, priority: number}} ButtonIntermediary */
+    
     const buttonInteractables = interactables.filter(interactable => interactable.type === InteractableType.BUTTON);
     const stringSelectInteractables = interactables.filter(interactable => interactable.type === InteractableType.STRING_SELECT_MENU);
 
-    /** @type {ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>[]} */
+    /** @type {ActionRowIntermediary[]} */
     const actionRows = [];
     /** @type {Set<string>} */
     const includedInteractables = new Set();
-    /** @type {ButtonBuilder[]} */
+    /** @type {ButtonIntermediary[]} */
     let buttons = [];
     for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
         const interactable = buttonInteractables[i];
         if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable) {
-            buttons.push(interactable.component);
+            buttons.push({ button: interactable.component, priority: interactable.priority });
             includedInteractables.add(interactable.customId);
         }
         if (i === buttonInteractables.length - 1 || buttons.length === 5) {
+            buttons.sort((a, b) => a.priority - b.priority);
             /** @type {ActionRowBuilder<ButtonBuilder>} */
             const actionRow = new ActionRowBuilder();
-            actionRow.addComponents(buttons);
-            actionRows.push(actionRow);
+            let priority = buttons.reduce((value, button) => value + button.priority, 0) / buttons.length;
+            actionRow.addComponents(buttons.map((button) => button.button));
+            actionRows.push({ actionRow: actionRow, priority: priority });
             buttons = [];
             if (actionRows.length === 5) break;
         }
@@ -326,10 +331,11 @@ function generateActionRows(interactables) {
             const actionRow = new ActionRowBuilder();
             actionRow.addComponents(interactable.component);
             includedInteractables.add(interactable.customId);
-            actionRows.push(actionRow);
+            actionRows.push({ actionRow: actionRow, priority: interactable.priority });
         }
     }
-    return actionRows;
+    actionRows.sort((a, b) => a.priority - b.priority);
+    return actionRows.map((actionRow) => actionRow.actionRow);
 }
 
 /**

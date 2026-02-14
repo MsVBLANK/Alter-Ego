@@ -44,6 +44,12 @@ export default class Recipe extends GameEntity {
     /**
      * How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
      * @readonly
+     * @type {string}
+     */
+    durationString;
+    /**
+     * How long it takes to process the recipe, as a duration object.
+     * @readonly
      * @type {import('luxon').Duration<true>}
      */
     duration;
@@ -82,7 +88,8 @@ export default class Recipe extends GameEntity {
      * @param {string[]} ingredientsStrings - The IDs of the ingredients required to carry out the recipe.
      * @param {boolean} uncraftable - Whether the product can be transformed back into its ingredients.
      * @param {string} fixtureTag - Phrase that allows a fixture with the matching recipeTag to process this recipe.
-     * @param {import('luxon').Duration} duration - How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
+     * @param {string} durationString - How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
+     * @param {import('luxon').Duration} duration - How long it takes to process the recipe, as a duration object.
      * @param {string[]} productsStrings - The IDs of the products produced by the recipe.
      * @param {string} initiatedDescription - The description that indicates when a recipe has begun being processed.
      * @param {string} completedDescription - The description that indicates when a recipe has finished being processed or crafted.
@@ -90,13 +97,14 @@ export default class Recipe extends GameEntity {
      * @param {number} row - The row number of the recipe in the sheet.
      * @param {Game} game - The game this belongs to.
      */
-    constructor(ingredientsStrings, uncraftable, fixtureTag, duration, productsStrings, initiatedDescription, completedDescription, uncraftedDescription, row, game) {
+    constructor(ingredientsStrings, uncraftable, fixtureTag, durationString, duration, productsStrings, initiatedDescription, completedDescription, uncraftedDescription, row, game) {
         super(game, row);
         this.ingredientsStrings = ingredientsStrings;
         this.ingredients = new Array(this.ingredientsStrings.length);
         this.uncraftable = uncraftable;
         this.fixtureTag = fixtureTag;
         this.objectTag = fixtureTag;
+        this.durationString = durationString;
         this.duration = duration;
         this.productsStrings = productsStrings;
         this.products = new Array(this.productsStrings.length);

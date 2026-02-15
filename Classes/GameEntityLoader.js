@@ -980,6 +980,8 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
 			if (ingredient.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.size === 0)
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`)
 			ingredientVariables.add(ingredient.variableName);
 		}
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
@@ -999,6 +1001,8 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
 			if (product.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (product.containedItems.length > 0 && product.prefab.inventory.size === 0)
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`)
 		}
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);

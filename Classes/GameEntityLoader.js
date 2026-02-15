@@ -986,9 +986,9 @@ export default class GameEntityLoader extends GameEntityManager {
 			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
 			ingredientVariables.add(ingredient.variableName);
 		}
-		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
+		if ((recipe.ingredients.length || recipe.products.reduce((quantity, recipeItem) => quantity + recipeItem.quantity, 0)) > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
-		if (recipe.products.length > 2 && recipe.fixtureTag === "")
+		if ((recipe.products.length || recipe.products.reduce((quantity, recipeItem) => quantity + recipeItem.quantity, 0)) > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 products must require a fixture tag.`);
 		if (recipe.duration !== null && !validateDuration(recipe.duration))
 			return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.durationString}" is not a valid duration.`);

@@ -981,7 +981,9 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (ingredient.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
 			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.size === 0)
-			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`);
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < ingredient.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
 			ingredientVariables.add(ingredient.variableName);
 		}
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
@@ -1002,7 +1004,9 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (product.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
 			if (product.containedItems.length > 0 && product.prefab.inventory.size === 0)
-			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`);
+			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);

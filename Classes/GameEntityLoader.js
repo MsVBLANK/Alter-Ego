@@ -908,7 +908,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const prefab = this.game.entityFinder.getPrefab(ingredient.prefabId);
 					if (prefab) ingredient.setPrefab(prefab);
 					if (ingredient.containedItemsString) {
-						const containedItemsStrings = ingredient.containedItemsString.split('\n');
+						const containedItemsStrings = ingredient.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
 							const containedIngredient = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
@@ -925,7 +925,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const prefab = this.game.entityFinder.getPrefab(product.prefabId);
 					if (prefab) product.setPrefab(prefab);
 					if (product.containedItemsString) {
-						const containedItemsStrings = product.containedItemsString.split('\n');
+						const containedItemsStrings = product.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
 							const containedProduct = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);

@@ -149,7 +149,7 @@ describe('Recipe test', () => {
         expect(recipe.containedItemsString).toBe(null);
     });
 
-    test('CRATE (5X PLANK, 10X NAILS)', () => {
+    test('CRATE (5X PLANK + 10X NAILS)', () => {
         const recipe = new RecipeItem("CRATE (5X PLANK, 10X NAILS)", game);
         expect(recipe.recipeItemString).toBe("CRATE (5X PLANK, 10X NAILS)");
         expect(recipe.quantity).toBe(1);

@@ -711,7 +711,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateUncraft(action, recipe, originalItemPrefab, item, uncraftingResult, player) {
 		const messageType = MessageDisplayType.STANDARD;
-		if (!originalItemPrefab.discreet || !recipe.ingredients[0].discreet || !recipe.ingredients[1].discreet) {
+		if (!originalItemPrefab.discreet || !recipe.ingredients[0].prefab.discreet || !recipe.ingredients[1].prefab.discreet) {
 			const originalItemPhrase = originalItemPrefab.singleContainingPhrase;
 			const itemPhrase = item.singleContainingPhrase;
 			const narration = this.#game.notificationGenerator.generateUncraftNotification(player, false, recipe, originalItemPhrase, itemPhrase, uncraftingResult);

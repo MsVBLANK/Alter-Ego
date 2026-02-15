@@ -5,8 +5,8 @@ import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import Player from '../Data/Player.js' */
-/** @import Prefab from '../Data/Prefab.js' */
 /** @import ItemInstance from '../Data/ItemInstance.js' */
+/** @import RecipeItem from '../Data/RecipeItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -74,7 +74,7 @@ export async function execute(game, message, command, args, player) {
 
         for (let i = 0; i < game.recipes.length; i++) { // TODO: optimize this ENTIRE for block later!
             for (let j = 0; j < game.recipes[i].ingredients.length; j++) {
-                if (game.recipes[i].ingredients[j].id === item.prefab.id) {
+                if (game.recipes[i].ingredients[j].prefab.id === item.prefab.id) {
                     // This recipe contains the given item as an ingredient.
                     // Gather a list of fixtures in the room that can be used to process this recipe, if applicable.
                     let fixtures = [];
@@ -84,16 +84,16 @@ export async function execute(game, message, command, args, player) {
                         if (recipeFixtures.length === 0) fixtures.push(game.recipes[i].fixtureTag);
                         else fixtures = recipeFixtures.map(fixture => fixture.name);
                     }
-                    const ingredients = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
-                    const products = game.recipes[i].products.map(product => product.singleContainingPhrase);
+                    const ingredients = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
+                    const products = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
                     recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
                     break;
                 }
             }
-            if (game.recipes[i].uncraftable && game.recipes[i].products.length === 1 && game.recipes[i].products[0].id === item.prefab.id) {
+            if (game.recipes[i].uncraftable && game.recipes[i].products.length === 1 && game.recipes[i].products[0].prefab.id === item.prefab.id) {
                 // This recipe contains the given item as the sole product and is uncraftable.
-                const ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                const products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
+                const ingredients = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
+                const products = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
                 recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
             }
         }
@@ -126,7 +126,7 @@ export async function execute(game, message, command, args, player) {
                 // Find all the ingredients for this Recipe in the player's inventory or in the room.
                 let found = false;
                 for (let k = 0; k < inventoryItems.length; k++) {
-                    if (inventoryItems[k].prefab.id === game.recipes[i].ingredients[j].id) {
+                    if (inventoryItems[k].prefab.id === game.recipes[i].ingredients[j].prefab.id) {
                         ingredients.push(inventoryItems[k]);
                         found = true;
                         break;
@@ -134,7 +134,7 @@ export async function execute(game, message, command, args, player) {
                 }
                 if (!found) {
                     for (let k = 0; k < roomItems.length; k++) {
-                        if (roomItems[k].prefab.id === game.recipes[i].ingredients[j].id) {
+                        if (roomItems[k].prefab.id === game.recipes[i].ingredients[j].prefab.id) {
                             ingredients.push(roomItems[k]);
                             break;
                         }
@@ -155,14 +155,14 @@ export async function execute(game, message, command, args, player) {
                     fixtures = recipeFixtures.map(fixture => fixture.name);
                 }
                 ingredients = ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
-                products = game.recipes[i].products.map(product => product.singleContainingPhrase);
+                products = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
                 recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: false });
             }
 
             if (game.recipes[i].products.length === 1 && game.recipes[i].uncraftable) {
                 products = [];
                 for (let j = 0; j < inventoryItems.length; j++) {
-                    if (inventoryItems[j].prefab.id == game.recipes[i].products[0].id) {
+                    if (inventoryItems[j].prefab.id == game.recipes[i].products[0].prefab.id) {
                         products.push(inventoryItems[j].singleContainingPhrase);
                         break;
                     }
@@ -173,8 +173,8 @@ export async function execute(game, message, command, args, player) {
                         if (a > b) return 1;
                         return 0;
                     });
-                    ingredients = game.recipes[i].products.map(product => product.singleContainingPhrase);
-                    products = game.recipes[i].ingredients.map(ingredient => ingredient.singleContainingPhrase);
+                    ingredients = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
+                    products = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
                     recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: humanize(game.recipes[i].duration?.as('milliseconds')), uncraftable: true });
                 }
             }
@@ -275,13 +275,13 @@ export async function execute(game, message, command, args, player) {
 /**
  * Returns true if the items and ingredients match.
  * @param {ItemInstance[]} items - The actually existing items. 
- * @param {Prefab[]} ingredients - The list of ingredients in the recipe.
+ * @param {RecipeItem[]} ingredients - The list of ingredients in the recipe.
  */
 function ingredientsMatch(items, ingredients) {
     if (items.length !== ingredients.length) return false;
     let hasInventoryItem = false;
     for (let i = 0; i < items.length; i++) {
-        if (items[i].prefab.id !== ingredients[i].id) return false;
+        if (items[i].prefab.id !== ingredients[i].prefab.id) return false;
         if (items[i] instanceof InventoryItem) hasInventoryItem = true;
     }
     if (!hasInventoryItem) return false;
@@ -291,13 +291,13 @@ function ingredientsMatch(items, ingredients) {
 /**
  * Returns true if the items and ingredients match.
  * @param {ItemInstance[]} items - The actually existing items. 
- * @param {Prefab[]} products - The list of products in the recipe.
+ * @param {RecipeItem[]} products - The list of products in the recipe.
  */
 function productsMatch(items, products) {
     if (items.length !== products.length) return false;
     let hasInventoryItem = false;
     for (let i = 0; i < items.length; i++) {
-        if (items[i].prefab.id !== products[i].id) return false;
+        if (items[i].prefab.id !== products[i].prefab.id) return false;
         if (items[i] instanceof InventoryItem) hasInventoryItem = true;
     }
     if (!hasInventoryItem) return false;

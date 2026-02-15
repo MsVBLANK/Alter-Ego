@@ -265,7 +265,7 @@ export const recipeFixtureTagMatches = (recipe, fixtureTag, normalize = false) =
 export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = false) => {
 	let ingredients = ingredientsString.split(',');
 	if (normalize) ingredients.forEach((ingredient, i) => ingredients[i] = Game.generateValidEntityName(ingredient));
-	return ingredients.every(ingredient => recipe.ingredientsStrings.includes(ingredient));
+	return ingredients.every(ingredient => recipe.ingredientsFlat.map(recipeIngredient => recipeIngredient.prefab.id).includes(ingredient));
 };
 
 /**
@@ -277,7 +277,7 @@ export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = 
 export const recipeProductsMatches = (recipe, productsString, normalize = false) => {
 	let products = productsString.split(',');
 	if (normalize) products.forEach((product, i) => products[i] = Game.generateValidEntityName(product));
-	return products.every(product => recipe.productsStrings.includes(product));
+	return products.every(product => recipe.productsFlat.map(recipeProduct => recipeProduct.prefab.id).includes(product));
 };
 
 /**

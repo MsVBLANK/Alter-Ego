@@ -71,7 +71,7 @@ export async function execute(game, message, command, args) {
     const recipes = game.recipes.filter(recipe => recipe.uncraftable === true && recipe.products.length === 1);
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].products[0].id === item.prefab.id) {
+        if (recipes[i].products[0].prefab.id === item.prefab.id) {
             recipe = recipes[i];
             break;
         }

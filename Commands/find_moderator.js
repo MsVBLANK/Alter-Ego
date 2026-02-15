@@ -354,9 +354,9 @@ function createPages(fields, results) {
 			else if (key === 'id' && result instanceof ItemInstance)
 				cellContents = result.getIdentifier();
 			else if (key === 'ingredients' && result instanceof Recipe)
-				cellContents = result.ingredients.map(ingredient => ingredient.id).join(',');
+				cellContents = result.ingredients.map(ingredient => ingredient.prefab.id).join(',');
 			else if (key === 'products' && result instanceof Recipe)
-				cellContents = result.products.map(product => product.id).join(',');
+				cellContents = result.products.map(product => product.prefab.id).join(',');
 			else
 				cellContents = String(result[key]);
 			// If the cellContents exceed the preset character limit, truncate it.

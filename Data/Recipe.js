@@ -2,7 +2,7 @@ import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
 /** @import Game from './Game.js' */
-/** @import Prefab from './Prefab.js' */
+/** @import RecipeItem from './RecipeItem.js' */
 
 /**
  * @class Recipe
@@ -19,9 +19,14 @@ export default class Recipe extends GameEntity {
     ingredientsStrings;
     /**
      * The ingredients required to carry out the recipe.
-     * @type {Prefab[]}
+     * @type {RecipeItem[]}
      */
     ingredients;
+    /**
+     * The ingredients required to carry out the recipe, as a flattened array.
+     * @type {RecipeItem[]}
+     */
+    ingredientsFlat;
     /**
      * Whether the product can be transformed back into its ingredients.
      * @readonly
@@ -61,9 +66,14 @@ export default class Recipe extends GameEntity {
     productsStrings;
     /**
      * The products produced by the recipe.
-     * @type {Prefab[]}
+     * @type {RecipeItem[]}
      */
     products;
+    /**
+     * The products produced by the recipe, as a flattened array.
+     * @type {RecipeItem[]}
+     */
+    productsFlat;
     /**
      * The description that indicates when a recipe has begun being processed.
      * @readonly
@@ -82,6 +92,15 @@ export default class Recipe extends GameEntity {
      * @type {Description}
      */
     uncraftedDescription;
+    /**
+     * A regular expression for parsing ingredients and products strings.
+     * $1 - Quantity. Any number of digits.
+     * $2 - Variable name. Consists of one letter.
+     * $3 - Prefab ID.
+     * $4 - Contained items string. This should be split by comma and checked against this regex separately.
+     * @readonly
+     */
+    static itemRegex = /^(?:(\d*)([A-Z]) )?([^\n\r\(]+)(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
 
     /**
      * @constructor
@@ -101,6 +120,7 @@ export default class Recipe extends GameEntity {
         super(game, row);
         this.ingredientsStrings = ingredientsStrings;
         this.ingredients = new Array(this.ingredientsStrings.length);
+        this.ingredientsFlat = [];
         this.uncraftable = uncraftable;
         this.fixtureTag = fixtureTag;
         this.objectTag = fixtureTag;
@@ -108,6 +128,7 @@ export default class Recipe extends GameEntity {
         this.duration = duration;
         this.productsStrings = productsStrings;
         this.products = new Array(this.productsStrings.length);
+        this.productsFlat = [];
         this.initiatedDescription = new Description(initiatedDescription, this, game);
         this.completedDescription = new Description(completedDescription, this, game);
         this.uncraftedDescription = new Description(uncraftedDescription, this, game);

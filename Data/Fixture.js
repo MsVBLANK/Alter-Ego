@@ -14,6 +14,7 @@ import { MessageDisplayType } from '../Modules/enums.js';
 /** @import Prefab from './Prefab.js' */
 /** @import Puzzle from './Puzzle.js' */
 /** @import Recipe from './Recipe.js' */
+/** @import RecipeItem from './RecipeItem.js' */
 /** @import Room from './Room.js' */
 
 /**
@@ -343,7 +344,7 @@ export default class Fixture extends ItemContainer {
             }
             for (let j = 0; j < this.process.recipe.products.length; j++) {
                 const product = this.process.recipe.products[j];
-                if (product.id === ingredient.prefab.id) {
+                if (product.prefab.id === ingredient.prefab.id) {
                     let decreaseUses = false;
                     let nextStage = false;
                     if (ingredient.uses - 1 === 0 && ingredient.prefab.nextStage !== null)
@@ -375,7 +376,7 @@ export default class Fixture extends ItemContainer {
             // Instantiate the products.
             for (let i = 0; i < this.process.recipe.products.length; i++) {
                 let instantiate = true;
-                let product = this.process.recipe.products[i];
+                let product = this.process.recipe.products[i].prefab;
                 for (let j = 0; j < remainingIngredients.length; j++) {
                     const ingredient = this.process.ingredients[remainingIngredients[j].ingredientIndex];
                     if (remainingIngredients[j].productIndex === i && remainingIngredients[j].decreaseUses) {
@@ -459,7 +460,7 @@ export default class Fixture extends ItemContainer {
                     const ingredient = recipes[i].ingredients[j];
                     for (let k = 0; k < items.length; k++) {
                         // Check if this item has the same prefab as the current ingredient and that it isn't already in the ingredients list.
-                        if (items[k].prefab.id === ingredient.id && !ingredients.find(ingredient => ingredient.row === items[k].row)) {
+                        if (items[k].prefab.id === ingredient.prefab.id && !ingredients.find(ingredient => ingredient.row === items[k].row)) {
                             ingredients.push(items[k]);
                             break;
                         }
@@ -485,13 +486,13 @@ export default class Fixture extends ItemContainer {
     /**
      * Checks if items match ingredients.
      * @param {RoomItem[]} items
-     * @param {Prefab[]} ingredients
+     * @param {RecipeItem[]} ingredients
      * @returns {boolean}
      */
     #ingredientsMatch(items, ingredients) {
         if (items.length !== ingredients.length) return false;
         for (let i = 0; i < items.length; i++)
-            if (items[i].prefab.id !== ingredients[i].id) return false;
+            if (items[i].prefab.id !== ingredients[i].prefab.id) return false;
         return true;
     }
 

@@ -443,7 +443,7 @@ export default class Fixture extends ItemContainer {
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {
-            if (this.#ingredientsMatch(items, recipes[i].ingredients)) {
+            if (recipes[i].ingredientsMatch(items)) {
                 recipe = recipes[i];
                 ingredients = items;
                 break;
@@ -454,20 +454,8 @@ export default class Fixture extends ItemContainer {
             /** @type {FindRecipeResult[]} */
             let matches = [];
             for (let i = 0; i < recipes.length; i++) {
-                ingredients.length = 0;
-                // Find all the items that match the ingredients in this recipe.
-                for (let j = 0; j < recipes[i].ingredients.length; j++) {
-                    const ingredient = recipes[i].ingredients[j];
-                    for (let k = 0; k < items.length; k++) {
-                        // Check if this item has the same prefab as the current ingredient and that it isn't already in the ingredients list.
-                        if (items[k].prefab.id === ingredient.prefab.id && !ingredients.find(ingredient => ingredient.row === items[k].row)) {
-                            ingredients.push(items[k]);
-                            break;
-                        }
-                    }
-                }
-                if (recipes[i].ingredients.length === ingredients.length)
-                    matches.push({ recipe: recipes[i], ingredients: [...ingredients] });
+                const matchedIngredients = recipes[i].getIngredientItems(items);
+                if (matchedIngredients) matches.push({ recipe: recipes[i], ingredients: [...matchedIngredients] });
             }
             if (matches.length > 0) {
                 // Sort matches by number of matched ingredients in decreasing order.
@@ -481,19 +469,6 @@ export default class Fixture extends ItemContainer {
         }
 
         return { recipe: recipe, ingredients: ingredients };
-    }
-
-    /**
-     * Checks if items match ingredients.
-     * @param {RoomItem[]} items
-     * @param {RecipeItem[]} ingredients
-     * @returns {boolean}
-     */
-    #ingredientsMatch(items, ingredients) {
-        if (items.length !== ingredients.length) return false;
-        for (let i = 0; i < items.length; i++)
-            if (items[i].prefab.id !== ingredients[i].prefab.id) return false;
-        return true;
     }
 
     /**

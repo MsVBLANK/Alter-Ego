@@ -827,7 +827,7 @@ describe("GameEntityFinder test", () => {
                 undefined,
                 "stovetop",
             );
-            expect(fixtures.length).toBe(6);
+            expect(fixtures.length).toBe(9);
             for (const fixture of fixtures) {
                 expect(fixture).toBeInstanceOf(Fixture);
                 expect(fixture.recipeTag).toBe("stovetop");

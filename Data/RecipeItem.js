@@ -64,7 +64,7 @@ export default class RecipeItem extends GameConstruct {
      * $4 - Contained items string. This should be split by comma and checked against this regex separately.
      * @readonly
      */
-    static itemRegex = /^(?:(\d+)([^\d\n\r]) )?([^\n\r\(]+)(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
+    static itemRegex = /^(?:(\d+)([^\d\n\r])? )?([^\n\r\(]+)(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
 
 	/**
 	 * @constructor

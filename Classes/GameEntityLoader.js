@@ -973,15 +973,14 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load recipe on row ${recipe.row}. No ingredients were given.`);
 		/** @type {Set<string>} */
 		const ingredientVariables = new Set();
-		for (let i = 0; i < recipe.ingredients.length; i++) {
-			const ingredients = [recipe.ingredients[i]].concat(recipe.ingredients[i].containedItems);
-			for (const ingredient of ingredients) {
-				if (ingredient.variableName !== '' && /^[A-Z]$/.test(ingredient.variableName) === false)
-					return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.quantity}" in ingredients is not a valid variable name.`);
-				if (!(ingredient.prefab instanceof Prefab))
-					return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
-				ingredientVariables.add(ingredient.variableName);
-			}
+		for (const ingredient of recipe.ingredientsFlat) {
+			if (ingredient.variableName !== '' && /^[A-Z]$/.test(ingredient.variableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.variableName}" in ingredients is not a valid variable name.`);
+			if (!(ingredient.prefab instanceof Prefab))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
+			if (ingredient.quantity < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
+			ingredientVariables.add(ingredient.variableName);
 		}
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
@@ -991,21 +990,30 @@ export default class GameEntityLoader extends GameEntityManager {
 			return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.durationString}" is not a valid duration.`);
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);
-		for (let i = 0; i < recipe.products.length; i++) {
-			const products = [recipe.products[i]].concat(recipe.products[i].containedItems);
-			for (const product of products) {
-				if (product.variableName !== '' && /^[A-Z]$/.test(product.variableName) === false)
-					return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.quantity}" in products is not a valid variable name.`);
-				if (product.variableName !== '' && !ingredientVariables.has(product.variableName))
-					return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.variableName}" does not appear in ingredients.`);
-				if (!(product.prefab instanceof Prefab))
-					return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
-			}
+		for (const product of recipe.productsFlat) {
+			if (product.variableName !== '' && /^[A-Z]$/.test(product.variableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.variableName}" in products is not a valid variable name.`);
+			if (product.variableName !== '' && !ingredientVariables.has(product.variableName))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.variableName}" does not appear in ingredients.`);
+			if (!(product.prefab instanceof Prefab))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
+			if (product.quantity < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
 		}
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
-			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);
 		if (recipe.products.length > 1 && recipe.uncraftable)
-			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than one product cannot be uncraftable.`)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than one product cannot be uncraftable.`);
+		if (recipe.fixtureTag === "") {
+			for (const ingredient of recipe.ingredients) {
+				if (ingredient.quantity !== 1)
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Ingredients in crafting-type recipes must have a quantity of 1.`);
+			}
+			for (const product of recipe.products) {
+				if (product.quantity !== 1)
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Products in crafting-type recipes must have a quantity of 1.`);
+			}
+		}
 	}
 
 	/**

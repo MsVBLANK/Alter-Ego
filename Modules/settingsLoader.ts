@@ -45,7 +45,8 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
         name: "NWP",
         type: BotContext.getActivityType("STREAMING"),
         url: "https://www.twitch.tv/twitch"
-    }
+    },
+    readMessageHistory: false
 }
 
 export const DEFAULT_PLAYER_DEFAULTS: PlayerDefaults = {
@@ -175,6 +176,8 @@ export function loadGameSettings(): [GameSettings, string[]] {
         url: gameInProgressActivityUrl
     }
 
+    const readMessageHistory = pushErrors(stringToBoolOrDefault(process.env.READ_MESSAGE_HISTORY, DEFAULT_GAME_SETTINGS.readMessageHistory), errors);
+
     let settings = new GameSettings(
         commandPrefix,
         debug,
@@ -198,7 +201,8 @@ export function loadGameSettings(): [GameSettings, string[]] {
         autoLoad,
         onlineActivity,
         debugModeActivity,
-        gameInProgressActivity
+        gameInProgressActivity,
+        readMessageHistory
     );
 
     return [settings, errors];

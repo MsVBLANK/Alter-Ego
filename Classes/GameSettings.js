@@ -124,6 +124,11 @@ export default class GameSettings {
 	 * @type {Activity}
 	 */
 	gameInProgressActivity;
+	/**
+	 * Whether or not @everyone should have the Read Message History permission.
+	 * @type {boolean}
+	 */
+	readMessageHistory;
 
 	/**
 	 * @constructor
@@ -150,6 +155,7 @@ export default class GameSettings {
 	 * @param {Activity} onlineActivity - The activity the bot will set for itself while it is online with no game in progress.
 	 * @param {Activity} debugModeActivity - The activity the bot will set for itself while it is online when debug mode is enabled.
 	 * @param {Activity} gameInProgressActivity - The activity the bot will set for itself while it is online when a game is in progress.
+	 * @param {boolean} readMessageHistory - Whether or not @everyone should have the Read Message History permission.
 	 */
 	constructor(
 		commandPrefix,
@@ -174,7 +180,8 @@ export default class GameSettings {
 		autoLoad,
 		onlineActivity,
 		debugModeActivity,
-		gameInProgressActivity
+		gameInProgressActivity,
+		readMessageHistory
 	) {
 		this.commandPrefix = commandPrefix;
 		this.debug = debug;
@@ -199,5 +206,6 @@ export default class GameSettings {
 		this.onlineActivity = onlineActivity;
 		this.debugModeActivity = debugModeActivity;
 		this.gameInProgressActivity = gameInProgressActivity
+		this.readMessageHistory = readMessageHistory;
 	}
 }

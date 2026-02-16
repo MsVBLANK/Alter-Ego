@@ -111,20 +111,20 @@ export default class GameCommunicationHandler {
 		const emojiData = [];
 
 		for (const match of message.content.matchAll(emojiRegex)) {
-			const animated = match[0] === "a";
-			const name = match[1];
-			const snowflake = match[2];
+			const animated = match[1] === "a";
+			const name = match[2];
+			const snowflake = match[3];
 			const hash = crypto.createHash('md5').update(`${name}:${snowflake}:${animated}`).digest('hex');
 			emojiData.push({ animated: animated, name: name, snowflake: snowflake, hash: hash });
 		}
 
 		if (emojiData.length === 0) return;
 
-		const appEmojis = (await application.emojis.fetch()).map(emoji => emoji.id);
+		const appEmojis = (await application.emojis.fetch()).map(emoji => emoji.name);
 
 		for (const data of emojiData) {
-		  let shouldContinue = false;
-			for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) { shouldContinue = true; break };
+			let shouldContinue = false;
+			for (const emoji of appEmojis) if (emoji === data.hash) { shouldContinue = true; break };
 			if (shouldContinue) continue;
 
 			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}${data.animated ? ".gif?animated=true" : ".png"}`

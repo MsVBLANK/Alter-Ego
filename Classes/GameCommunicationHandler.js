@@ -127,10 +127,10 @@ export default class GameCommunicationHandler {
 			for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) { shouldContinue = true; break };
 			if (shouldContinue) continue;
 
-			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}.webp${data.animated ? "?animated=true" : ""}`
+			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}${data.animated ? ".gif?animated=true" : ".png"}`
 			const emoji = await fetch(url);
-			const emojiBase64 = Buffer.from(await emoji.arrayBuffer()).toString("base64"); // TODO: convert webp to png or gif as needed
-			await application.emojis.create({attachment: `data:image/webp;base64,${emojiBase64}`, name: data.hash});
+			const emojiBase64 = Buffer.from(await emoji.arrayBuffer()).toString("base64");
+			await application.emojis.create({attachment: `data:image/${data.animated ? "gif" : "png"};base64,${emojiBase64}`, name: data.hash});
 		}
 	}
 

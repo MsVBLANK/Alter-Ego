@@ -276,7 +276,7 @@ export default class GameCommunicationHandler {
 	mirrorDialogInSpectateChannel(player, action, dialog, webhookUsername = capitalizeFirstLetter(dialog.speakerDisplayName), webhookAvatarURL = dialog.speakerDisplayIcon, messageText = dialog.content, notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url), dialog.message);
+			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, this.replaceEmoji(messageText), webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url), dialog.message);
 			if (notification) this.#game.narrationHandler.sendNotification(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
 		}
 	}
@@ -296,7 +296,7 @@ export default class GameCommunicationHandler {
 	mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, messageText, messageDisplayType, embeds, files, message) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, embeds, files, message, messageDisplayType);
+			messageHandler.sendWebhookSpectateMessage(player, this.replaceEmoji(messageText), webhookUsername, webhookAvatarURL, embeds, files, message, messageDisplayType);
 		}
 	}
 
@@ -311,7 +311,7 @@ export default class GameCommunicationHandler {
 	mirrorNarrationInSpectateChannel(player, action, messageDisplayType, narrationText, files) {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
-			messageHandler.sendNarrationSpectateMessage(player, narrationText, messageDisplayType, files);
+			messageHandler.sendNarrationSpectateMessage(player, this.replaceEmoji(narrationText), messageDisplayType, files);
 		}
 	}
 
@@ -326,7 +326,7 @@ export default class GameCommunicationHandler {
 	 */
 	mirrorWebhookNarrationInSpectateChannel(player, action, narration, webhookUsername, webhookAvatarURL, narrationText = narration.content) {
 		if (narration.isOOCMessage) return;
-		this.mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, narrationText, narration.messageDisplayType, narration.embeds, narration.attachments.map(attachment => attachment.url), narration.message);
+		this.mirrorWebhookMessageInSpectateChannel(player, action, webhookUsername, webhookAvatarURL, this.replaceEmoji(narrationText), narration.messageDisplayType, narration.embeds, narration.attachments.map(attachment => attachment.url), narration.message);
 	}
 
 	/**
@@ -340,7 +340,7 @@ export default class GameCommunicationHandler {
 	narrateInRoom(narration, narrationText = narration.content, mirrorInSpectateChannel = true, room = narration.location, webhookUsername) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(room.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, room.channel.id);
-			messageHandler.sendNarrationToRoom(room, narration, narrationText, narration.messageDisplayType, mirrorInSpectateChannel, narration.player, webhookUsername);
+			messageHandler.sendNarrationToRoom(room, narration, this.replaceEmoji(narrationText), narration.messageDisplayType, mirrorInSpectateChannel, narration.player, webhookUsername);
 		}
 	}
 
@@ -353,7 +353,7 @@ export default class GameCommunicationHandler {
 	narrateInWhisper(narration, narrationText = narration.content, mirrorInSpectateChannel = true) {
 		if (!narration.action || !this.#actionHasBeenCommunicatedInChannel(narration.whisper.channel, narration.action)) {
 			if (narration.action) this.#cacheChannelFor(narration.action, narration.whisper.channel.id);
-			messageHandler.sendNarrationToWhisper(narration.whisper, narration, narrationText, narration.getWhisperPrefixString(), narration.messageDisplayType, mirrorInSpectateChannel);
+			messageHandler.sendNarrationToWhisper(narration.whisper, narration, this.replaceEmoji(narrationText), narration.getWhisperPrefixString(), narration.messageDisplayType, mirrorInSpectateChannel);
 		}
 	}
 

@@ -908,7 +908,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const prefab = this.game.entityFinder.getPrefab(ingredient.prefabId);
 					if (prefab) ingredient.setPrefab(prefab);
 					if (ingredient.containedItemsString) {
-						const containedItemsStrings = ingredient.containedItemsString.split('\n');
+						const containedItemsStrings = ingredient.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
 							const containedIngredient = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
@@ -925,7 +925,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const prefab = this.game.entityFinder.getPrefab(product.prefabId);
 					if (prefab) product.setPrefab(prefab);
 					if (product.containedItemsString) {
-						const containedItemsStrings = product.containedItemsString.split('\n');
+						const containedItemsStrings = product.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
 							const containedProduct = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);
@@ -980,6 +980,12 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
 			if (ingredient.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.size === 0)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`);
+            if (ingredient.prefab.inventory.size > 1)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" has more than one inventory slot.`)
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < ingredient.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
 			ingredientVariables.add(ingredient.variableName);
 		}
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
@@ -999,6 +1005,12 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
 			if (product.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (product.containedItems.length > 0 && product.prefab.inventory.size === 0)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`);
+            if (product.prefab.inventory.size > 1)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" has more than one inventory slot.`)
+			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);

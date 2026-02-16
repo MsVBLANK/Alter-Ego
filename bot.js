@@ -252,6 +252,7 @@ client.on('clientReady', async () => {
                 loadCommand.execute(game, undefined, "lar", []);
         }, 0);
     }
+    client.application.emojis.fetch() // make sure app emoji cache is populated for application emoji mirroring
     initialized = true;
 });
 

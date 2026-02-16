@@ -6,6 +6,7 @@ import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.js";
 import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 import Interactable from "./Interactables/Interactable.js";
+import crypto from 'crypto';
 
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Game from "../Data/Game.js" */
@@ -106,7 +107,7 @@ export default class GameCommunicationHandler {
 	async cacheEmojis(message) {
 	  const application = this.#game.botContext.client.application
 		const emojiRegex = /<(a?):([^:])+:([0-9]+)>/g;
-	  /** @type {{animated: boolean, name: string, snowflake: string}[]} */
+	  /** @type {{animated: boolean, name: string, snowflake: string, hash: string}[]} */
 	  const emojiData = [];
 
 
@@ -114,7 +115,8 @@ export default class GameCommunicationHandler {
       const animated = match[0] === "a";
       const name = match[1];
       const snowflake = match[2];
-      emojiData.push({ animated: animated, name: name, snowflake: snowflake });
+      const hash = crypto.createHash('md5').update(`${name}:${snowflake}:${animated}`).digest('hex');
+      emojiData.push({ animated: animated, name: name, snowflake: snowflake, hash: hash });
 		}
 
 		if (emojiData.length === 0) return;
@@ -124,7 +126,7 @@ export default class GameCommunicationHandler {
 		for (const data of emojiData) {
 		  for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) continue;
 			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}.webp${data.animated ? "?animated=true" : ""}`
-			await application.emojis.create({attachment: url, name: `data.snowflake`});
+			await application.emojis.create({attachment: url, name: data.hash});
 		}
 	}
 

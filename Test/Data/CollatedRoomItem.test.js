@@ -219,6 +219,48 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent3.uses).toBeNaN();
 		});
 
+		test('decrease uses of detergent in video room SINK 1 by 3', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(3);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(4);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			const detergent3 = newItems[3];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("DETERGENT");
+			expect(detergent3.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent1.quantity).toBe(2);
+			expect(detergent2.quantity).toBe(1);
+			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(4);
+			expect(detergent2.uses).toBe(2);
+			expect(detergent3.uses).toBeNaN();
+		});
+
+		test('decrease uses of detergent in video room SINK 1 by 4', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(4);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(4);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			const detergent3 = newItems[3];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("DETERGENT");
+			expect(detergent3.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent1.quantity).toBe(2);
+			expect(detergent2.quantity).toBe(1);
+			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(4);
+			expect(detergent2.uses).toBe(1);
+			expect(detergent3.uses).toBeNaN();
+		});
+
 		test('decrease uses of detergent in video room SINK 1 by 5', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
 			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
@@ -233,6 +275,44 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent1.quantity).toBe(2);
 			expect(detergent2.quantity).toBe(2);
 			expect(detergent1.uses).toBe(4);
+			expect(detergent2.uses).toBeNaN();
+		});
+
+		test('decrease uses of detergent in video room SINK 1 by 6', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(6);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(4);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			const detergent3 = newItems[3];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent3.prefab.id).toBe("DETERGENT");
+			expect(detergent1.quantity).toBe(1);
+			expect(detergent2.quantity).toBe(2);
+			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(3);
+			expect(detergent2.uses).toBeNaN();
+			expect(detergent3.uses).toBe(4);
+		});
+
+		test('decrease uses of detergent in video room SINK 1 by 7', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(7);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(3);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent1.quantity).toBe(2);
+			expect(detergent2.quantity).toBe(2);
+			expect(detergent1.uses).toBe(3);
 			expect(detergent2.uses).toBeNaN();
 		});
 
@@ -271,6 +351,44 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent1.quantity).toBe(2);
 			expect(detergent2.quantity).toBe(2);
 			expect(detergent1.uses).toBe(2);
+			expect(detergent2.uses).toBeNaN();
+		});
+
+		test('decrease uses of detergent in video room SINK 1 by 10', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(10);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(4);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			const detergent3 = newItems[3];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent3.prefab.id).toBe("DETERGENT");
+			expect(detergent1.quantity).toBe(1);
+			expect(detergent2.quantity).toBe(2);
+			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(1);
+			expect(detergent2.uses).toBeNaN();
+			expect(detergent3.uses).toBe(2);
+		});
+
+		test('decrease uses of detergent in video room SINK 1 by 11', () => {
+			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+			const detergent = items[0];
+			detergent.decreaseUses(11);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(3);
+			const detergent1 = newItems[1];
+			const detergent2 = newItems[2];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent1.quantity).toBe(2);
+			expect(detergent2.quantity).toBe(2);
+			expect(detergent1.uses).toBe(1);
 			expect(detergent2.uses).toBeNaN();
 		});
 

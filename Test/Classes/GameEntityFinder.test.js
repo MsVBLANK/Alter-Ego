@@ -827,7 +827,7 @@ describe("GameEntityFinder test", () => {
                 undefined,
                 "stovetop",
             );
-            expect(fixtures.length).toBe(6);
+            expect(fixtures.length).toBe(9);
             for (const fixture of fixtures) {
                 expect(fixture).toBeInstanceOf(Fixture);
                 expect(fixture.recipeTag).toBe("stovetop");
@@ -926,7 +926,7 @@ describe("GameEntityFinder test", () => {
             let recipes = game.entityFinder.getRecipes(undefined, undefined, "CLEAN BOWL");
             expect(recipes.length).toBeGreaterThan(1);
             for (const recipe of recipes) {
-                expect(recipe.ingredients).toContain(game.entityFinder.getPrefab("CLEAN BOWL"));
+                expect(recipe.ingredientsFlat.map(recipeItem => recipeItem.prefab)).toContain(game.entityFinder.getPrefab("CLEAN BOWL"));
             }
         });
         test("Get recipes by ingredients, multiple ingredients, expect one", () => {

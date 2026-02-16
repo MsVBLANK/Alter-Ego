@@ -1422,8 +1422,8 @@ export default class Player extends ItemContainer {
      * @returns {CraftingResult} The resulting product(s).
      */
     craft(item1, item2, recipe) {
-        let product1 = recipe.products[0];
-        let product2 = recipe.products[1];
+        let product1 = recipe.products[0].prefab;
+        let product2 = recipe.products[1].prefab;
         // First, check if either of the ingredients are also products.
         // If they are, simply decrease their uses.
         // If their uses would become 0, change the product to its next stage, if it has one.
@@ -1470,16 +1470,16 @@ export default class Player extends ItemContainer {
      */
     uncraft(item, recipe) {
         // If only one ingredient is discreet, the first ingredient should be the discreet one.
-        const oneDiscreet = !recipe.ingredients[0].discreet && recipe.ingredients[1].discreet || recipe.ingredients[0].discreet && !recipe.ingredients[1].discreet;
-        let ingredient1 = oneDiscreet && recipe.ingredients[0].discreet ? recipe.ingredients[0] : recipe.ingredients[1];
-        let ingredient2 = oneDiscreet && recipe.ingredients[0].discreet ? recipe.ingredients[1] : recipe.ingredients[0];
+        const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet || recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
+        let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
+        let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
 
         if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
         const rightHand = this.inventory.get("RIGHT HAND");
-        const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1);
+        const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
         const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
         const ingredient2Instance = instantiateAction.performInstantiateInventoryItem(
-            ingredient2,
+            ingredient2.prefab,
             rightHand.equippedItem === null ? "RIGHT HAND" : "LEFT HAND",
             null,
             "",
@@ -1487,9 +1487,9 @@ export default class Player extends ItemContainer {
             new Map(),
             false
         );
-        if (!ingredient1.discreet)
+        if (!ingredient1.prefab.discreet)
             this.addItemToDescription(ingredient1Instance, "hands");
-        if (!ingredient2.discreet)
+        if (!ingredient2.prefab.discreet)
             this.addItemToDescription(ingredient2Instance, "hands");
 
         return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };

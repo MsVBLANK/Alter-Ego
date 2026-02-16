@@ -951,9 +951,9 @@ export default class GameNotificationGenerator {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		// If only one ingredient is discreet, the first ingredient should be the discreet one.
         // This will result in more natural sounding notifications.
-		const oneDiscreet = !recipe.ingredients[0].discreet && recipe.ingredients[1].discreet || recipe.ingredients[0].discreet && !recipe.ingredients[1].discreet;
-        let ingredient1 = oneDiscreet && recipe.ingredients[0].discreet ? recipe.ingredients[0] : recipe.ingredients[1];
-        let ingredient2 = oneDiscreet && recipe.ingredients[0].discreet ? recipe.ingredients[1] : recipe.ingredients[0];
+		const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet || recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
+        let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
+        let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
 		let ingredientPhrase = "";
 		let ingredient1Phrase = "";
 		let ingredient2Phrase = "";
@@ -961,10 +961,10 @@ export default class GameNotificationGenerator {
 		let preposition = "from";
 		if (!uncraftingResult.ingredient1.prefab.discreet) {
 			if (uncraftingResult.ingredient1.singleContainingPhrase !== originalItemPhrase || uncraftingResult.ingredient1.singleContainingPhrase !== itemPhrase)
-				ingredient1Phrase = ingredient1.singleContainingPhrase;
+				ingredient1Phrase = ingredient1.prefab.singleContainingPhrase;
 		}
 		if (!uncraftingResult.ingredient2.prefab.discreet) {
-			if (ingredient2.singleContainingPhrase !== originalItemPhrase || uncraftingResult.ingredient2.singleContainingPhrase !== itemPhrase)
+			if (ingredient2.prefab.singleContainingPhrase !== originalItemPhrase || uncraftingResult.ingredient2.singleContainingPhrase !== itemPhrase)
 				ingredient2Phrase = uncraftingResult.ingredient2.singleContainingPhrase;
 		}
 		if (ingredient1Phrase !== "" && ingredient2Phrase !== "") {

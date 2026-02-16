@@ -7,6 +7,8 @@ import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
 import { MessageDisplayType } from '../Modules/enums.js';
+import { getSortedItems } from '../Modules/helpers.js';
+import CollatedRoomItem from './CollatedRoomItem.js';
 
 /** @import Game from './Game.js' */
 /** @import RoomItem from './RoomItem.js' */
@@ -14,6 +16,7 @@ import { MessageDisplayType } from '../Modules/enums.js';
 /** @import Prefab from './Prefab.js' */
 /** @import Puzzle from './Puzzle.js' */
 /** @import Recipe from './Recipe.js' */
+/** @import RecipeItem from './RecipeItem.js' */
 /** @import Room from './Room.js' */
 
 /**
@@ -137,7 +140,7 @@ export default class Fixture extends ItemContainer {
 
         this.process = { recipe: null, ingredients: [], duration: null, timer: null };
         let fixture = this;
-        this.recipeInterval = this.recipeTag ? new Timer(1000, { start: true, loop: true }, function () { fixture.processRecipes(); }) : null;
+        this.recipeInterval = this.recipeTag ? new Timer(1000, { start: true, loop: true }, function () { if (fixture.activated) fixture.processRecipes(); }) : null;
     }
 
     /**
@@ -222,6 +225,62 @@ export default class Fixture extends ItemContainer {
     }
 
     /**
+     * Sets the fixture's process with the recipe result's recipe and ingredients.
+     * @param {FindRecipeResult} recipeResult - A found recipe result.
+     */
+    #setProcess(recipeResult) {
+        this.process.recipe = recipeResult.recipe;
+        this.process.ingredients = recipeResult.ingredients;
+    }
+
+    /**
+     * Sets the fixture's duration.
+     * @param {Duration} [duration] - A duration object. Defaults to the duration of the recipe currently being processed.
+     */
+    #setProcessDuration(duration = this.process.recipe.duration) {
+        this.process.duration = duration;
+    }
+
+    /**
+     * Starts the process timer, and executes the given callback when its timer expires.
+     * @param {() => void} callback 
+     */
+    #whenProcessTimerExpires(callback) {
+        const fixture = this;
+        this.process.timer = new Timer(1000, { start: true, loop: true }, function () {
+            if (fixture.process.duration !== null) {
+                fixture.process.duration = fixture.process.duration.minus(1000);
+                if (fixture.process.duration.as('milliseconds') <= 0) {
+                    callback();
+                }
+            }
+        });
+    }
+
+    /**
+     * Sets the current process's recipe and duration to null, empties the process's list of ingredients, and stops the process timer.
+     */
+    #clearProcess() {
+        this.process.recipe = null;
+        this.process.ingredients.length = 0;
+        if (this.process.timer !== null)
+            this.process.timer.stop();
+        this.process.duration = null;
+    }
+
+    /**
+     * Starts the process timer when no recipe was found and the fixture is set to deactivate automatically.
+     * @param {Player} [player] - The player who activated the fixture, if applicable.
+     */
+    #startProcessTimerForAutoDeactivateFixtureWithNoRecipe(player) {
+        this.#setProcessDuration(Duration.fromObject({minutes: 1}));
+        this.#whenProcessTimerExpires(() => {
+            const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
+            deactivateAction.performDeactivate(this, true);
+        });
+    }
+
+    /**
      * Makes the fixture start processing recipes.
      * @param {Player} [player] - The player who activated the fixture, if applicable.
      */
@@ -231,38 +290,13 @@ export default class Fixture extends ItemContainer {
         const result = this.findRecipe();
         if (result.recipe === null) {
             // If this is supposed to deactivate automatically and no recipe was found, turn it off after 1 minute.
-            if (this.autoDeactivate) {
-                this.process.duration = Duration.fromObject({minutes: 1});
-                let fixture = this;
-                this.process.timer = new Timer(1000, { start: true, loop: true }, function () {
-                    if (fixture.process.duration !== null) {
-                        fixture.process.duration = fixture.process.duration.minus(1000);
-                        if (fixture.process.duration.as('milliseconds') <= 0) {
-                            const deactivateAction = new DeactivateAction(fixture.getGame(), undefined, player, fixture.location, true);
-                            deactivateAction.performDeactivate(fixture, true);
-                        }
-                    }
-                });
-            }
-            return;
+            if (this.autoDeactivate) return this.#startProcessTimerForAutoDeactivateFixtureWithNoRecipe();
         }
 
-        this.process.recipe = result.recipe;
-        this.process.ingredients = result.ingredients;
-        if (player) {
-            const initiatedDescription = this.process.recipe.initiatedDescription.parseFor(player, this);
-            player.sendDescription(initiatedDescription, this, this.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
-        }
-        this.process.duration = this.process.recipe.duration;
-
-        let fixture = this;
-        fixture.process.timer = new Timer(1000, { start: true, loop: true }, function () {
-            if (fixture.process.duration !== null) {
-                fixture.process.duration = fixture.process.duration.minus(1000);
-
-                if (fixture.process.duration.as('milliseconds') <= 0)
-                    fixture.#processRecipe(player);
-            }
+        this.#setProcess(result);
+        this.#setProcessDuration();
+        this.#whenProcessTimerExpires(() => {
+            this.#processRecipe(player);
         });
     }
 
@@ -271,58 +305,26 @@ export default class Fixture extends ItemContainer {
      */
     deactivate() {
         this.activated = false;
-        this.process.recipe = null;
-        this.process.ingredients.length = 0;
-        if (this.process.timer !== null)
-            this.process.timer.stop();
-        this.process.duration = null;
+        this.#clearProcess();
     }
 
     /**
      * Checks if the fixture is activated and processes its recipes if it is.
      */
     processRecipes() {
-        if (this.activated) {
-            const result = this.findRecipe();
-            if (this.process.recipe === null && this.process.duration === null && result.recipe === null && this.autoDeactivate) {
-                this.process.duration = Duration.fromObject({minutes: 1});
-                const fixture = this;
-                this.process.timer = new Timer(1000, { start: true, loop: true }, function () {
-                    if (fixture.process.duration !== null) {
-                        fixture.process.duration = fixture.process.duration.minus(1000);
-                        if (fixture.process.duration.as('milliseconds') <= 0) {
-                            const deactivateAction = new DeactivateAction(fixture.getGame(), undefined, undefined, fixture.location, true);
-                            deactivateAction.performDeactivate(fixture, true);
-                        }
-                    }
-                });
-                return;
-            }
-            // If the current recipe being processed is no longer the one it found, cancel it.
-            if (this.process.recipe !== null && result.recipe !== null && this.process.recipe.row !== result.recipe.row
-                || this.process.recipe !== null && result.recipe === null) {
-                this.process.recipe = null;
-                this.process.ingredients.length = 0;
-                if (this.process.timer !== null)
-                    this.process.timer.stop();
-                this.process.duration = null;
-            }
-            // Start a new process.
-            if (this.process.recipe === null && result.recipe !== null) {
-                this.process.recipe = result.recipe;
-                this.process.ingredients = result.ingredients;
-                this.process.duration = this.process.recipe.duration;
-
-                const fixture = this;
-                this.process.timer = new Timer(1000, { start: true, loop: true }, function () {
-                    if (fixture.process.duration !== null) {
-                        fixture.process.duration = fixture.process.duration.minus(1000);
-
-                        if (fixture.process.duration.as('milliseconds') <= 0)
-                            fixture.#processRecipe();
-                    }
-                });
-            }
+        const result = this.findRecipe();
+        if (this.process.recipe === null && this.process.duration === null && result.recipe === null && this.autoDeactivate)
+            return this.#startProcessTimerForAutoDeactivateFixtureWithNoRecipe();
+        // If the current recipe being processed is no longer the one it found, cancel it.
+        if (this.process.recipe !== null && (result.recipe === null || result.recipe !== null && this.process.recipe.row !== result.recipe.row))
+            this.#clearProcess();
+        // Start a new process.
+        if (this.process.recipe === null && result.recipe !== null) {
+            this.#setProcess(result);
+            this.#setProcessDuration();
+            this.#whenProcessTimerExpires(() => {
+                this.#processRecipe();
+            });
         }
     }
 
@@ -334,8 +336,15 @@ export default class Fixture extends ItemContainer {
         /** @type {RemainingIngredient[]} */
         let remainingIngredients = [];
         // Make sure all the ingredients are still there.
-        let stillThere = true;
-        for (let i = 0; i < this.process.ingredients.length; i++) {
+        const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
+        for (const ingredient of this.process.ingredients) {
+            for (const product of this.process.recipe.products) {
+                if (product.prefab.id === ingredient.prefab.id) {
+
+                }
+            }
+        }
+        /*for (let i = 0; i < this.process.ingredients.length; i++) {
             const ingredient = this.process.ingredients[i];
             if (ingredient.quantity === 0) {
                 stillThere = false;
@@ -343,7 +352,7 @@ export default class Fixture extends ItemContainer {
             }
             for (let j = 0; j < this.process.recipe.products.length; j++) {
                 const product = this.process.recipe.products[j];
-                if (product.id === ingredient.prefab.id) {
+                if (product.prefab.id === ingredient.prefab.id) {
                     let decreaseUses = false;
                     let nextStage = false;
                     if (ingredient.uses - 1 === 0 && ingredient.prefab.nextStage !== null)
@@ -355,7 +364,7 @@ export default class Fixture extends ItemContainer {
                 }
             }
         }
-        if (stillThere) {
+        if (satisfactoryProcessCount > 0) {
             // If there is only one ingredient in this, remember its quantity.
             const quantity = this.process.ingredients.length === 1 ? this.process.ingredients[0].quantity : 1;
             // Destroy the ingredients.
@@ -375,7 +384,7 @@ export default class Fixture extends ItemContainer {
             // Instantiate the products.
             for (let i = 0; i < this.process.recipe.products.length; i++) {
                 let instantiate = true;
-                let product = this.process.recipe.products[i];
+                let product = this.process.recipe.products[i].prefab;
                 for (let j = 0; j < remainingIngredients.length; j++) {
                     const ingredient = this.process.ingredients[remainingIngredients[j].ingredientIndex];
                     if (remainingIngredients[j].productIndex === i && remainingIngredients[j].decreaseUses) {
@@ -405,18 +414,14 @@ export default class Fixture extends ItemContainer {
                 const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
                 player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
             }
-        }
+        }*/
 
         if (this.autoDeactivate) {
             const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
             deactivateAction.performDeactivate(this, true);
         }
-        else {
-            this.process.timer.stop();
-            this.process.duration = null;
-            this.process.recipe = null;
-            this.process.ingredients.length = 0;
-        }
+        else
+            this.#clearProcess();
     }
 
     /**
@@ -429,22 +434,18 @@ export default class Fixture extends ItemContainer {
         const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
-        items.sort(function (a, b) {
-            if (a.prefab.id < b.prefab.id) return -1;
-            if (a.prefab.id > b.prefab.id) return 1;
-            return 0;
-        });
+        const collatedItems = CollatedRoomItem.collate(getSortedItems(items));
 
         const recipes = this.getGame().recipes.filter(recipe => recipe.fixtureTag === this.recipeTag);
         /** @type {Recipe} */
         let recipe = null;
-        /** @type {RoomItem[]} */
+        /** @type {CollatedRoomItem[]} */
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {
-            if (this.#ingredientsMatch(items, recipes[i].ingredients)) {
+            if (recipes[i].ingredientsMatch(collatedItems)) {
                 recipe = recipes[i];
-                ingredients = items;
+                ingredients = collatedItems;
                 break;
             }
         }
@@ -453,20 +454,8 @@ export default class Fixture extends ItemContainer {
             /** @type {FindRecipeResult[]} */
             let matches = [];
             for (let i = 0; i < recipes.length; i++) {
-                ingredients.length = 0;
-                // Find all the items that match the ingredients in this recipe.
-                for (let j = 0; j < recipes[i].ingredients.length; j++) {
-                    const ingredient = recipes[i].ingredients[j];
-                    for (let k = 0; k < items.length; k++) {
-                        // Check if this item has the same prefab as the current ingredient and that it isn't already in the ingredients list.
-                        if (items[k].prefab.id === ingredient.id && !ingredients.find(ingredient => ingredient.row === items[k].row)) {
-                            ingredients.push(items[k]);
-                            break;
-                        }
-                    }
-                }
-                if (recipes[i].ingredients.length === ingredients.length)
-                    matches.push({ recipe: recipes[i], ingredients: [...ingredients] });
+                const matchedIngredients = recipes[i].getIngredientItems(collatedItems);
+                if (matchedIngredients) matches.push({ recipe: recipes[i], ingredients: [...matchedIngredients] });
             }
             if (matches.length > 0) {
                 // Sort matches by number of matched ingredients in decreasing order.
@@ -480,19 +469,6 @@ export default class Fixture extends ItemContainer {
         }
 
         return { recipe: recipe, ingredients: ingredients };
-    }
-
-    /**
-     * Checks if items match ingredients.
-     * @param {RoomItem[]} items
-     * @param {Prefab[]} ingredients
-     * @returns {boolean}
-     */
-    #ingredientsMatch(items, ingredients) {
-        if (items.length !== ingredients.length) return false;
-        for (let i = 0; i < items.length; i++)
-            if (items[i].prefab.id !== ingredients[i].id) return false;
-        return true;
     }
 
     /**

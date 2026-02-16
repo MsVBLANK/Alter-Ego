@@ -1,5 +1,6 @@
 import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
+import type CollatedRoomItem from "./Data/CollatedRoomItem.js";
 import type Event from "./Data/Event.js";
 import type Fixture from "./Data/Fixture.js";
 import type Flag from "./Data/Flag.js";
@@ -173,7 +174,7 @@ declare global {
 	 */
 	interface Process {
 		recipe?: Recipe;
-		ingredients: RoomItem[];
+		ingredients: CollatedRoomItem[];
 		duration?: Duration;
 		timer?: any;
 	}
@@ -184,7 +185,7 @@ declare global {
 	 */
 	interface FindRecipeResult {
 		recipe: Recipe | null;
-		ingredients: RoomItem[];
+		ingredients: CollatedRoomItem[];
 	}
 
 	/**

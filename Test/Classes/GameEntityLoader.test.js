@@ -270,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1548);
+                expect(fixtureCount).toBe(1552);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -344,7 +344,7 @@ describe('GameEntityLoader test', () => {
                 if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
-                expect(prefabCount).toBe(1494);
+                expect(prefabCount).toBe(1498);
                 for (const prefab of game.prefabs.values()) {
                     const descriptionText = prefab.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -414,7 +414,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
-                expect(recipeCount).toBe(488);
+                expect(recipeCount).toBe(489);
             });
         });
     });
@@ -485,7 +485,7 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load room item on row 11. The item's container is over capacity.",
                     "Error: Couldn't load room item on row 12. The item's container prefab on row 5 has no inventory slot \"INVALID SLOT\".",
                     "Error: Couldn't load room item on row 13. The item's container is a room item, but a prefab inventory slot ID was not given.",
-                    "Error: Couldn't load room item on row 15. The item's container is a room item, but the item container's prefab on row 292 has no inventory slots.",
+                    "Error: Couldn't load room item on row 15. The item's container is a room item, but the item container's prefab on row 293 has no inventory slots.",
                     "Error: Couldn't load room item on row 16. The item's container chain contains itself, resulting in an infinite loop.",
                     "Error: Couldn't load room item on row 17. The item's container chain contains itself, resulting in an infinite loop."
                 ];
@@ -507,7 +507,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1781);
+                expect(roomItemCount).toBe(1809);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

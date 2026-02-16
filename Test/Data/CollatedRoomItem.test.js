@@ -242,7 +242,7 @@ describe('CollatedRoomItem test', () => {
 			const detergent = items[0];
 			detergent.decreaseUses(8);
 			const newItems = sink.getContainedItems();
-			expect(newItems).toHaveLength (4);
+			expect(newItems).toHaveLength(4);
 			const detergent1 = newItems[1];
 			const detergent2 = newItems[2];
 			const detergent3 = newItems[3];

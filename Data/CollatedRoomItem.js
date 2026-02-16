@@ -95,30 +95,92 @@ export default class CollatedRoomItem {
 	}
 
 	/**
+	 * Recalculates uses and quantity stats.
+	 */
+	#recalculate() {
+		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
+		this.uses = this.items.reduce((uses, item) => uses + (isNaN(item.uses) ? NaN : item.quantity * item.uses), 0);
+	}
+
+	/**
 	 * Decreases the collated room items' uses.
 	 * @param {number} ingredientUseCount - The number of times to use the item.
 	 */
 	decreaseUses(ingredientUseCount) {
-		// Sort collated items by lowest number of uses to highest.
-		this.items.sort((a, b) => a.uses - b.uses);
-		let stepSize = 1;
-		for (let i = 0; i < ingredientUseCount; i += stepSize) {
+		// Sort collated items by lowest number of uses to highest, sorting within use by lowest quantity to highest.
+		this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
+		while (ingredientUseCount > 0) {
+		  // Early exit if total uses or total quantity is equal to zero.
+			if (this.uses === 0 || this.quantity === 0) return;
 			for (const item of this.items) {
-				if (item.uses <= 0) continue;
-				const remainingDecrementValue = ingredientUseCount - i;
-				const stepSizeRemainder = remainingDecrementValue % (item.uses - stepSize);
-				if (item.quantity > 1 && i + item.quantity < ingredientUseCount && stepSizeRemainder === 0)
-					stepSize = item.quantity;
-				if (item.quantity > 1 && stepSizeRemainder !== 0) {
-					// TODO: figure out how to handle this.
+			  // Return if ingredientUseCount is 0.
+			  if (ingredientUseCount === 0) return;
+        // Continue to next item if uses is 0 or NaN or if quantity is 0.
+        if (item.uses === 0 || item.quantity === 0 || isNaN(item.uses)) continue;
+        // Define step as the lowest of either item.uses or ⌊ingredientUseCount/item.quantity⌋.
+        const step = Math.min(Math.floor(ingredientUseCount / item.quantity), item.uses);
+				// If step === 0, then we're on an item whose quantity prevents clean division of ingredientUseCount.
+				if (step === 0) {
+				  if (item.quantity === 1) {
+						console.error("Erroneous step?");
+						console.error({ uses: item.uses, quantity: item.quantity, iuc: ingredientUseCount, iucq: ingredientUseCount / item.quantity, iucqf: Math.floor(ingredientUseCount / item.quantity), cu: this.uses, cq: this.quantity, step: step });
+						throw new Error();
+					}
+				  // First, check if there's an item that *doesn't* have this issue; if there is, continue.
+					if (this.items.find((findItem) => Math.min(Math.floor(ingredientUseCount / findItem.quantity), findItem.uses) > 0) !== undefined) continue;
+					// Next, check if we could simply consume one item off this stack to handle the remainder.
+					if (ingredientUseCount === item.uses) {
+					  // Decrement quantity by 1 and decrement ingredientUseCount by item.uses.
+						item.quantity -= 1;
+						ingredientUseCount -= item.uses;
+						// Store nextStage.
+						const nextStage = item.prefab.nextStage;
+  					if (nextStage)
+  					  // If we have a nextStage, we should instantiate it accordingly.
+  						this.instantiate(nextStage, 1);
+  					// Re-sort.
+  					this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
+  					// Re-calculate stats.
+  					this.#recalculate();
+  					// Break, to refresh this for loop.
+  					break;
+					}
+					// Otherwise, split one item off of this stack.
+					item.quantity -= 1;
+					const split = this.instantiate(item.prefab, 1);
+					// Manually set the newly split item's uses to be equal to the current stack's uses.
+					split.uses = item.uses;
+					this.items.push(split);
+					// Sort the collated items again so that the newly-split item is positioned properly.
+					this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
+					// Re-calculate stats.
+					this.#recalculate();
+					// Break so that we immediately re-enter the loop.
+					break;
 				}
-				item.uses -= stepSize;
+				// We go here if step is greater than zero.
+				// First, decrement the item's uses, the collated uses, and the ingredientUseCount by the current step.
+				item.uses -= step;
+				ingredientUseCount -= step * item.quantity;
+				// Check if the item uses is equal to zero.
 				if (item.uses === 0) {
+				  // Grab references now so we don't lose them when the item is destroyed.
 					const nextStage = item.prefab.nextStage;
+					const quantity = item.quantity;
+					// Destroy the item.
 					this.destroy(item);
-					if (nextStage) this.instantiate(nextStage, stepSize);
+					if (nextStage)
+					  // If we have a nextStage, we should instantiate it accordingly.
+						this.instantiate(nextStage, quantity);
+					// Re-sort.
+					this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
+					// Re-calculate stats.
+					this.#recalculate();
+					// Break, on the off-chance this is the last loop we need.
+					break;
 				}
-				break;
+				// Re-calculate stats.
+				this.#recalculate();
 			}
 		}
 	}
@@ -157,6 +219,6 @@ export default class CollatedRoomItem {
 	 */
 	instantiate(prefab, quantity) {
 		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, undefined, this.location, true);
-		instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map());
+		return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map());
 	}
 }

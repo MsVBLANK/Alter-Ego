@@ -193,9 +193,9 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent1.quantity).toBe(2);
 			expect(detergent2.quantity).toBe(1);
 			expect(detergent3.quantity).toBe(1);
-			expect(detergent1.quantity).toBe(2);
-			expect(detergent2.quantity).toBe(1);
-			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(4);
+			expect(detergent2.uses).toBe(3);
+			expect(detergent3.uses).toBe(1);
 		});
 
 		test('decrease uses of detergent in video room SINK 1 by 2', () => {
@@ -242,19 +242,19 @@ describe('CollatedRoomItem test', () => {
 			const detergent = items[0];
 			detergent.decreaseUses(8);
 			const newItems = sink.getContainedItems();
-			expect(newItems).toHaveLength(4);
+			expect(newItems).toHaveLength (4);
 			const detergent1 = newItems[1];
 			const detergent2 = newItems[2];
 			const detergent3 = newItems[3];
 			expect(detergent1.prefab.id).toBe("DETERGENT");
-			expect(detergent2.prefab.id).toBe("DETERGENT");
-			expect(detergent3.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
+			expect(detergent3.prefab.id).toBe("DETERGENT");
 			expect(detergent1.quantity).toBe(1);
-			expect(detergent2.quantity).toBe(1);
-			expect(detergent3.quantity).toBe(2);
-			expect(detergent1.uses).toBe(4);
-			expect(detergent2.uses).toBe(1);
-			expect(detergent3.uses).toBeNaN();
+			expect(detergent2.quantity).toBe(2);
+			expect(detergent3.quantity).toBe(1);
+			expect(detergent1.uses).toBe(2);
+			expect(detergent2.uses).toBeNaN();
+			expect(detergent3.uses).toBe(3);
 		});
 
 		test('decrease uses of detergent in video room SINK 1 by 9', () => {
@@ -269,7 +269,7 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent1.prefab.id).toBe("DETERGENT");
 			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
 			expect(detergent1.quantity).toBe(2);
-			expect(detergent2.quantity).toBe(1);
+			expect(detergent2.quantity).toBe(2);
 			expect(detergent1.uses).toBe(2);
 			expect(detergent2.uses).toBeNaN();
 		});
@@ -286,7 +286,7 @@ describe('CollatedRoomItem test', () => {
 			expect(detergent1.prefab.id).toBe("DETERGENT");
 			expect(detergent2.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
 			expect(detergent1.quantity).toBe(1);
-			expect(detergent2.quantity).toBe(2);
+			expect(detergent2.quantity).toBe(3);
 			expect(detergent1.uses).toBe(1);
 			expect(detergent2.uses).toBeNaN();
 		});
@@ -300,7 +300,7 @@ describe('CollatedRoomItem test', () => {
 			expect(newItems).toHaveLength(2);
 			const newDetergent = newItems[1];
 			expect(newDetergent.prefab.id).toBe("EMPTY DETERGENT BOTTLE");
-			expect(newDetergent.quantity).toBe(3);
+			expect(newDetergent.quantity).toBe(4);
 			expect(newDetergent.uses).toBeNaN();
 		});
 	});

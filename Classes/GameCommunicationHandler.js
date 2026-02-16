@@ -105,18 +105,17 @@ export default class GameCommunicationHandler {
 	 * @param {UserMessage} message - The message that initiated the cache.
 	 */
 	async cacheEmojis(message) {
-	  const application = this.#game.botContext.client.application
-		const emojiRegex = /<(a?):([^:])+:([0-9]+)>/g;
-	  /** @type {{animated: boolean, name: string, snowflake: string, hash: string}[]} */
-	  const emojiData = [];
-
+		const application = this.#game.botContext.client.application
+		const emojiRegex = /<(a?):([a-zA-Z0-9_]+):([0-9]+)>/g;
+		/** @type {{animated: boolean, name: string, snowflake: string, hash: string}[]} */
+		const emojiData = [];
 
 		for (const match of message.content.matchAll(emojiRegex)) {
-      const animated = match[0] === "a";
-      const name = match[1];
-      const snowflake = match[2];
-      const hash = crypto.createHash('md5').update(`${name}:${snowflake}:${animated}`).digest('hex');
-      emojiData.push({ animated: animated, name: name, snowflake: snowflake, hash: hash });
+			const animated = match[0] === "a";
+			const name = match[1];
+			const snowflake = match[2];
+			const hash = crypto.createHash('md5').update(`${name}:${snowflake}:${animated}`).digest('hex');
+			emojiData.push({ animated: animated, name: name, snowflake: snowflake, hash: hash });
 		}
 
 		if (emojiData.length === 0) return;
@@ -124,10 +123,39 @@ export default class GameCommunicationHandler {
 		const appEmojis = (await application.emojis.fetch()).map(emoji => emoji.id);
 
 		for (const data of emojiData) {
-		  for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) continue;
+			for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) continue;
 			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}.webp${data.animated ? "?animated=true" : ""}`
 			await application.emojis.create({attachment: url, name: data.hash});
 		}
+	}
+
+	/**
+	 * Fetches the application emoji version of the given emoji
+	 * @param {{animated: boolean, name: string, snowflake: string}} emoji - The message that initiated the cache.
+	 */
+	fetchCachedEmoji(emoji) {
+		const application = this.#game.botContext.client.application
+		const hash = crypto.createHash('md5').update(`${emoji.name}:${emoji.snowflake}:${emoji.animated}`).digest('hex');
+
+		return application.emojis.cache.find(emoji => emoji.name === hash);
+	}
+
+	/**
+	 * Replaces custom emojis in the input with application cached emojis
+	 * @param {string} text - The body of text to replace emojis in.
+	 */
+	replaceEmoji(text) {
+		const emojiRegex = /<(a?):([a-zA-Z0-9_]+):([0-9]+)>/g;
+
+		return text.replace(emojiRegex, (match, g1, g2, g3) => {
+			const animated = g1 === "a";
+			const name = g2;
+			const snowflake = g3;
+			const emoji = this.fetchCachedEmoji({ animated: animated, name: name, snowflake: snowflake });
+			if (emoji) {
+			  return `<${emoji.animated ? "a" : ""}:${emoji.name}:${emoji.id}>`
+			} else return match;
+		});
 	}
 
 	/**

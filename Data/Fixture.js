@@ -7,6 +7,8 @@ import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
 import { MessageDisplayType } from '../Modules/enums.js';
+import { getSortedItems } from '../Modules/helpers.js';
+import CollatedRoomItem from './CollatedRoomItem.js';
 
 /** @import Game from './Game.js' */
 /** @import RoomItem from './RoomItem.js' */
@@ -292,10 +294,6 @@ export default class Fixture extends ItemContainer {
         }
 
         this.#setProcess(result);
-        if (player) {
-            const initiatedDescription = this.process.recipe.initiatedDescription.parseFor(player, this);
-            player.sendDescription(initiatedDescription, this, this.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
-        }
         this.#setProcessDuration();
         this.#whenProcessTimerExpires(() => {
             this.#processRecipe(player);
@@ -338,8 +336,15 @@ export default class Fixture extends ItemContainer {
         /** @type {RemainingIngredient[]} */
         let remainingIngredients = [];
         // Make sure all the ingredients are still there.
-        let stillThere = true;
-        for (let i = 0; i < this.process.ingredients.length; i++) {
+        const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
+        for (const ingredient of this.process.ingredients) {
+            for (const product of this.process.recipe.products) {
+                if (product.prefab.id === ingredient.prefab.id) {
+
+                }
+            }
+        }
+        /*for (let i = 0; i < this.process.ingredients.length; i++) {
             const ingredient = this.process.ingredients[i];
             if (ingredient.quantity === 0) {
                 stillThere = false;
@@ -359,7 +364,7 @@ export default class Fixture extends ItemContainer {
                 }
             }
         }
-        if (stillThere) {
+        if (satisfactoryProcessCount > 0) {
             // If there is only one ingredient in this, remember its quantity.
             const quantity = this.process.ingredients.length === 1 ? this.process.ingredients[0].quantity : 1;
             // Destroy the ingredients.
@@ -409,7 +414,7 @@ export default class Fixture extends ItemContainer {
                 const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
                 player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
             }
-        }
+        }*/
 
         if (this.autoDeactivate) {
             const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
@@ -429,22 +434,18 @@ export default class Fixture extends ItemContainer {
         const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
-        items.sort(function (a, b) {
-            if (a.prefab.id < b.prefab.id) return -1;
-            if (a.prefab.id > b.prefab.id) return 1;
-            return 0;
-        });
+        const collatedItems = CollatedRoomItem.collate(getSortedItems(items));
 
         const recipes = this.getGame().recipes.filter(recipe => recipe.fixtureTag === this.recipeTag);
         /** @type {Recipe} */
         let recipe = null;
-        /** @type {RoomItem[]} */
+        /** @type {CollatedRoomItem[]} */
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {
-            if (recipes[i].ingredientsMatch(items)) {
+            if (recipes[i].ingredientsMatch(collatedItems)) {
                 recipe = recipes[i];
-                ingredients = items;
+                ingredients = collatedItems;
                 break;
             }
         }
@@ -453,7 +454,7 @@ export default class Fixture extends ItemContainer {
             /** @type {FindRecipeResult[]} */
             let matches = [];
             for (let i = 0; i < recipes.length; i++) {
-                const matchedIngredients = recipes[i].getIngredientItems(items);
+                const matchedIngredients = recipes[i].getIngredientItems(collatedItems);
                 if (matchedIngredients) matches.push({ recipe: recipes[i], ingredients: [...matchedIngredients] });
             }
             if (matches.length > 0) {

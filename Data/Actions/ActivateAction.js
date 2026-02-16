@@ -1,5 +1,5 @@
 import Action from "../Action.js";
-
+import { MessageDisplayType } from "../../Modules/enums.js";
 /** @import Fixture from "../Fixture.js" */
 
 /**
@@ -22,5 +22,9 @@ export default class ActivateAction extends Action {
 			this.getGame().narrationHandler.narrateActivate(this, fixture, this.player, customNarration);
 		this.getGame().logHandler.logActivate(fixture, this.player, this.forced);
 		fixture.activate(this.player);
+		if (this.player && fixture.process.recipe !== null) {
+			const initiatedDescription = fixture.process.recipe.initiatedDescription.parseFor(this.player, fixture);
+            this.player.sendDescription(initiatedDescription, fixture, fixture.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+		}
 	}
 }

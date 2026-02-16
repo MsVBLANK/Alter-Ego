@@ -1,6 +1,7 @@
 import Game from "./Game.js";
 import GameConstruct from "./GameConstruct.js";
 /**
+ * @import CollatedRoomItem from "./CollatedRoomItem.js";
  * @import Prefab from "./Prefab.js";
  */
 
@@ -87,5 +88,15 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	setPrefab(prefab) {
 		this.prefab = prefab;
+	}
+
+	/**
+	 * Calculates how many times the given ingredient use count satisfies the quantity of this recipe item.
+	 * @param {number} ingredientUseCount - How many times the ingredient is to be used.
+	 */
+	getSatisfiedQuantityCount(ingredientUseCount) {
+		const satisfiedQuantityCount = ingredientUseCount / this.quantity;
+		if (isNaN(satisfiedQuantityCount)) return NaN;
+		return Math.floor(satisfiedQuantityCount);
 	}
 }

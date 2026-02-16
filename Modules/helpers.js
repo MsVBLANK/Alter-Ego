@@ -90,15 +90,24 @@ export function generateListString(list) {
 }
 
 /**
+ * Sorts the list of items alphabetically by prefab ID.
+ * @param {RoomItem[]} items - A list of room items.
+ * @returns A copy of the list of room items, sorted alphabetically by prefab ID.
+ */
+export function getSortedItems(items) {
+	return items.toSorted(function (a, b) {
+		if (a.prefab.id < b.prefab.id) return -1;
+		if (a.prefab.id > b.prefab.id) return 1;
+		return 0;
+	});
+}
+
+/**
  * Generates a comma-separated list of items, sorted alphabetically by prefab ID.
  * @param {RoomItem[]} items - A list of room items.
  */
 export function getSortedItemsString(items) {
-	return items.sort(function (a, b) {
-		if (a.prefab.id < b.prefab.id) return -1;
-		if (a.prefab.id > b.prefab.id) return 1;
-		return 0;
-	}).map(item => item.prefab.id).join(',');
+	return getSortedItems(items).map(item => item.prefab.id).join(',');
 }
 
 /**

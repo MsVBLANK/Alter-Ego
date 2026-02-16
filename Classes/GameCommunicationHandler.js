@@ -100,6 +100,35 @@ export default class GameCommunicationHandler {
 	}
 
 	/**
+	 * Adds the emojis in the given message to the emoji cache.
+	 * @param {UserMessage} message - The message that initiated the cache.
+	 */
+	async cacheEmojis(message) {
+	  const application = this.#game.botContext.client.application
+		const emojiRegex = /<(a?):([^:])+:([0-9]+)>/g;
+	  /** @type {{animated: boolean, name: string, snowflake: string}[]} */
+	  const emojiData = [];
+
+
+		for (const match of message.content.matchAll(emojiRegex)) {
+      const animated = match[0] === "a";
+      const name = match[1];
+      const snowflake = match[2];
+      emojiData.push({ animated: animated, name: name, snowflake: snowflake });
+		}
+
+		if (emojiData.length === 0) return;
+
+		const appEmojis = (await application.emojis.fetch()).map(emoji => emoji.id);
+
+		for (const data of emojiData) {
+		  for (const emoji in appEmojis) if (emoji.endsWith(data.snowflake)) continue;
+			const url = `https://cdn.discordapp.com/emojis/${data.snowflake}.webp${data.animated ? "?animated=true" : ""}`
+			await application.emojis.create({attachment: url, name: `data.snowflake`});
+		}
+	}
+
+	/**
 	 * Adds the message to the dialog cache.
 	 * @param {UserMessage} message - The message that initiated the dialog.
 	 */

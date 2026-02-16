@@ -26,6 +26,7 @@ export function processIncomingMessage(game, message) {
     const isInRoomChannel = game.guildContext.roomCategories.includes(message.channel.parentId);
     if (!isInWhisperChannel && !isInAnnouncementChannel && !isInRoomChannel) return;
 
+    game.communicationHandler.cacheEmojis(message);
     game.communicationHandler.cacheDialog(message);
 
     const isModerator = message.member && message.member.roles.cache.has(game.guildContext.moderatorRole.id);

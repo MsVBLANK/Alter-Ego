@@ -121,11 +121,6 @@ export default class CollatedRoomItem {
         const step = Math.min(Math.floor(ingredientUseCount / item.quantity), item.uses);
 				// If step === 0, then we're on an item whose quantity prevents clean division of ingredientUseCount.
 				if (step === 0) {
-				  if (item.quantity === 1) {
-						console.error("Erroneous step?");
-						console.error({ uses: item.uses, quantity: item.quantity, iuc: ingredientUseCount, iucq: ingredientUseCount / item.quantity, iucqf: Math.floor(ingredientUseCount / item.quantity), cu: this.uses, cq: this.quantity, step: step });
-						throw new Error();
-					}
 				  // First, check if there's an item that *doesn't* have this issue; if there is, continue.
 					if (this.items.find((findItem) => Math.min(Math.floor(ingredientUseCount / findItem.quantity), findItem.uses) > 0) !== undefined) continue;
 					// Next, check if we could simply consume one item off this stack to handle the remainder.

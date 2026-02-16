@@ -1,7 +1,6 @@
 import { Collection, Guild, GuildMember, TextChannel, DMChannel } from "discord.js";
 import { format } from "pretty-format";
 import { Duration } from "luxon";
-import humanize from "humanize-duration";
 import Timer from "./Timer.js";
 import Status from "../Data/Status.js";
 import Gesture from "../Data/Gesture.js";
@@ -95,7 +94,9 @@ export class DurationPlugin {
      * @param {Duration} value
      */
     serialize(value, config, indentation, depth, refs, printer) {
-        return `<Duration ${humanize(value.as("milliseconds")) || "unknown"}>`;
+        const format = Math.floor(value.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+        const timeString = value.toFormat(format);
+        return `<Duration ${timeString}>`;
     }
 }
 
@@ -214,11 +215,15 @@ export class StatusPlugin {
      */
     serialize(value, config, indentation, depth, refs, printer) {
         if (depth > this.level || this.processing.size > 1) {
-            if (value.remaining)
-                return `<Status "${value.id}" inflicted with ${humanize(value.remaining.as("milliseconds")) || "???"} remaining>`;
-            else if (value.duration)
-                return `<Status "${value.id}" lasting for ${humanize(value.duration.as("milliseconds")) || "???"}>`;
-            else return `<Status "${value.id}">`;
+            if (value.remaining) {
+                const format = Math.floor(value.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+                const timeString = value.remaining.toFormat(format);
+                return `<Status "${value.id}" inflicted with ${timeString} remaining>`;
+            } else if (value.duration) {
+                const format = Math.floor(value.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+                const timeString = value.remaining.toFormat(format);
+                return `<Status "${value.id}" lasting for ${timeString}>`;
+            }  else return `<Status "${value.id}">`;
         } else {
             this.processing.add(value);
             let serialized = printer(value, config, indentation, depth, refs);

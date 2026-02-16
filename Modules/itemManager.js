@@ -18,10 +18,11 @@ import { generateProceduralOutput } from '../Modules/parser.js';
  * @param {Fixture|Puzzle|RoomItem} container - The container to instantiate the item in.
  * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
  * @param {number} quantity - The quantity to instantiate.
- * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+ * @param {number} [uses] - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
+ * @param {Map<string, string>} [proceduralSelections] - The manually selected procedural possibilities.
  * @param {Player} [player] - The player who caused this item to be instantiated, if applicable.
  */
-export function instantiateRoomItem(prefab, location, container, inventorySlotId, quantity, proceduralSelections, player) {
+export function instantiateRoomItem(prefab, location, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections = new Map(), player) {
     let containerType = "";
     let containerName = "";
     if (container instanceof Puzzle) {
@@ -45,7 +46,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
         containerType,
         containerName,
         quantity,
-        prefab.uses,
+        uses,
         generateProceduralOutput(prefab.description, proceduralSelections, player),
         0,
         prefab.getGame()
@@ -397,7 +398,7 @@ export function insertRoomItems(location, items) {
             roomItem.accessible &&
             roomItem.containerName === item.containerName &&
             roomItem.slot === item.slot &&
-            (roomItem.uses === item.uses || isNaN(item.uses) && isNaN(item.uses)) &&
+            (roomItem.uses === item.uses || isNaN(roomItem.uses) && isNaN(item.uses)) &&
             roomItem.description.text === item.description.text
         );
         if (matchedItem) {

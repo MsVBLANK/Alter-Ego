@@ -22,11 +22,12 @@ export default class InstantiateAction extends Action {
 	 * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @param {number} quantity - The quantity to instantiate.
 	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+	 * @param {number} [uses] - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
 	 */
-	performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections) {
+	performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses = prefab.uses) {
 		if (this.performed) return;
 		super.perform();
-		const createdItem = instantiateRoomItem(prefab, this.location, container, inventorySlotId, quantity, proceduralSelections, this.player);
+		const createdItem = instantiateRoomItem(prefab, this.location, container, inventorySlotId, quantity, uses, proceduralSelections, this.player);
 		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
 		this.getGame().logHandler.logInstantiateRoomItem(createdItem, quantity, container, inventorySlot);
 		return createdItem;

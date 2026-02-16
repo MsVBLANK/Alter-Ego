@@ -29,10 +29,10 @@ export default class CollatedRoomItem {
 	 */
 	location;
 	/**
-     * The container these items all have.
-     * @type {Fixture|Puzzle|RoomItem}
-     */
-    container;
+	 * The container these items all have.
+	 * @type {Fixture|Puzzle|RoomItem}
+	 */
+	container;
 	/**
 	 * The ID of the {@link InventorySlot|inventory slot} these items can be found in.
 	 * @type {string}
@@ -107,42 +107,45 @@ export default class CollatedRoomItem {
 	 * @param {number} ingredientUseCount - The number of times to use the item.
 	 */
 	decreaseUses(ingredientUseCount) {
+		// If all items have infinite uses, don't do anything.
+		if (this.items.filter(item => !isNaN(item.uses)).length === 0) return;
 		// Sort collated items by lowest number of uses to highest, sorting within use by lowest quantity to highest.
 		this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
 		while (ingredientUseCount > 0) {
-		  // Early exit if total uses or total quantity is equal to zero.
+			// Early exit if total uses or total quantity is equal to zero.
 			if (this.uses === 0 || this.quantity === 0) return;
 			for (const item of this.items) {
-			  // Return if ingredientUseCount is 0.
-			  if (ingredientUseCount === 0) return;
-        // Continue to next item if uses is 0 or NaN or if quantity is 0.
-        if (item.uses === 0 || item.quantity === 0 || isNaN(item.uses)) continue;
-        // Define step as the lowest of either item.uses or ⌊ingredientUseCount/item.quantity⌋.
-        const step = Math.min(Math.floor(ingredientUseCount / item.quantity), item.uses);
+				// Return if ingredientUseCount is 0.
+				if (ingredientUseCount === 0) return;
+				// Continue to next item if uses is 0 or NaN or if quantity is 0.
+				if (item.uses === 0 || item.quantity === 0 || isNaN(item.uses)) continue;
+				// Define step as the lowest of either item.uses or ⌊ingredientUseCount/item.quantity⌋.
+				const step = Math.min(Math.floor(ingredientUseCount / item.quantity), item.uses);
 				// If step === 0, then we're on an item whose quantity prevents clean division of ingredientUseCount.
 				if (step === 0) {
-				  // First, check if there's an item that *doesn't* have this issue; if there is, continue.
+					// First, check if there's an item that *doesn't* have this issue; if there is, continue.
 					if (this.items.find((findItem) => Math.min(Math.floor(ingredientUseCount / findItem.quantity), findItem.uses) > 0) !== undefined) continue;
 					// Next, check if we could simply consume one item off this stack to handle the remainder.
 					if (ingredientUseCount === item.uses) {
-					  // Decrement quantity by 1 and decrement ingredientUseCount by item.uses.
+						// Decrement quantity by 1 and decrement ingredientUseCount by item.uses.
 						item.quantity -= 1;
 						ingredientUseCount -= item.uses;
 						// Store nextStage.
 						const nextStage = item.prefab.nextStage;
-  					if (nextStage)
-  					  // If we have a nextStage, we should instantiate it accordingly.
-  						this.instantiate(nextStage, 1);
-  					// Re-sort.
-  					this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
-  					// Re-calculate stats.
-  					this.#recalculate();
-  					// Break, to refresh this for loop.
-  					break;
+						if (nextStage)
+							// If we have a nextStage, we should instantiate it accordingly.
+							this.instantiate(nextStage, 1);
+						// Re-sort.
+						this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
+						// Re-calculate stats.
+						this.#recalculate();
+						// Break, to refresh this for loop.
+						break;
 					}
 					// Otherwise, split one item off of this stack.
 					item.quantity -= 1;
-					const split = this.instantiate(item.prefab, 1);
+					// To prevent it from being collated by the itemManager, it's necessary to instantiate it with a unique number of uses.
+					const split = this.instantiate(item.prefab, 1, NaN);
 					// Manually set the newly split item's uses to be equal to the current stack's uses.
 					split.uses = item.uses;
 					this.items.push(split);
@@ -159,13 +162,13 @@ export default class CollatedRoomItem {
 				ingredientUseCount -= step * item.quantity;
 				// Check if the item uses is equal to zero.
 				if (item.uses === 0) {
-				  // Grab references now so we don't lose them when the item is destroyed.
+					// Grab references now so we don't lose them when the item is destroyed.
 					const nextStage = item.prefab.nextStage;
 					const quantity = item.quantity;
 					// Destroy the item.
 					this.destroy(item);
 					if (nextStage)
-					  // If we have a nextStage, we should instantiate it accordingly.
+						// If we have a nextStage, we should instantiate it accordingly.
 						this.instantiate(nextStage, quantity);
 					// Re-sort.
 					this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
@@ -177,24 +180,6 @@ export default class CollatedRoomItem {
 				// Re-calculate stats.
 				this.#recalculate();
 			}
-		}
-	}
-
-	/**
-	 * Iterates through the list of items and decrements the uses of the first one with a non-zero number of uses by the given amount.
-	 * If the decremented item's new number of uses is 0, it is destroyed, and its prefab's nextStage is instantiated in its place, if applicable.
-	 * @param {number} [amount] - The given amount to decrement the item's uses by. Defaults to 1.
-	 */
-	#decrementUses(amount = 1) {
-		for (const item of this.items) {
-			if (item.uses <= 0) continue;
-			item.uses -= amount;
-			if (item.uses === 0) {
-				const nextStage = item.prefab.nextStage;
-				this.destroy(item);
-				if (nextStage) this.instantiate(nextStage, 1);
-			}
-			break;
 		}
 	}
 
@@ -211,9 +196,10 @@ export default class CollatedRoomItem {
 	 * Instantiates the given prefab in the collated room item's container.
 	 * @param {Prefab} prefab - The prefab to instantiate.
 	 * @param {number} quantity - The quantity to instantiate it with.
+	 * @param {number} uses - The number of uses to instantiate it with.
 	 */
-	instantiate(prefab, quantity) {
+	instantiate(prefab, quantity, uses = prefab.uses) {
 		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, undefined, this.location, true);
-		return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map());
+		return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses);
 	}
 }

@@ -995,5 +995,27 @@ describe('CollatedRoomItem test', () => {
 			expect(newItems[0].prefabId === "DIRTY DISHES");
 			expect(newItems[0].quantity === 20);
 		});
+
+		test('destroy detergent in video room SINK 2 by 1', () => {
+			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
+			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const detergent = items[0];
+			detergent.destroy(1);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(2);
+			const detergent1 = newItems[1];
+			expect(detergent1.prefab.id).toBe("DETERGENT");
+			expect(detergent1.quantity).toBe(1);
+			expect(detergent1.uses).toBe(10);
+		});
+
+		test('destroy detergent in video room SINK 2 by 2', () => {
+			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
+			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const detergent = items[0];
+			detergent.destroy(2);
+			const newItems = sink.getContainedItems();
+			expect(newItems).toHaveLength(1);
+		});
 	});
 });

@@ -9,29 +9,40 @@ describe('Recipe test', () => {
     describe('test ingredientsMatch', () => {
         test('ingredientsMatch on canteen BURNER 1', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner1 = game.entityFinder.getFixture("BURNER 1", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner1.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 1", "canteen");
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe).toBe(null);
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
             expect(recipe.ingredientsMatch(items)).toBe(false);
         });
 
         test('ingredientsMatch on canteen BURNER 2', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner2 = game.entityFinder.getFixture("BURNER 2", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner2.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 2", "canteen");
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
             expect(recipe.ingredientsMatch(items)).toBe(true);
         });
 
         test('ingredientsMatch on canteen BURNER 3', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner3 = game.entityFinder.getFixture("BURNER 3", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner3.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 3", "canteen");
+            const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
             expect(recipe.ingredientsMatch(items)).toBe(true);
         });
 
         test('ingredientsMatch on canteen BURNER 4', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner4 = game.entityFinder.getFixture("BURNER 4", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner4.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 4", "canteen");
+            const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
             expect(recipe.ingredientsMatch(items)).toBe(true);
         });
     });
@@ -39,79 +50,111 @@ describe('Recipe test', () => {
     describe('test getSatisfactoryProcessCount', () => {
         test('getSatisfactoryProcessCount on canteen BURNER 1', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner1 = game.entityFinder.getFixture("BURNER 1", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner1.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 1", "canteen");
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe).toBe(null);
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
         });
 
         test('getSatisfactoryProcessCount on canteen BURNER 2', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner2 = game.entityFinder.getFixture("BURNER 2", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner2.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 2", "canteen");
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
         });
 
         test('getSatisfactoryProcessCount on canteen BURNER 3', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner3 = game.entityFinder.getFixture("BURNER 3", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner3.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 3", "canteen");
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
         });
 
         test('getSatisfactoryProcessCount on canteen BURNER 4', () => {
             const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN")[0];
-            const burner4 = game.entityFinder.getFixture("BURNER 4", "canteen");
-            const items = CollatedRoomItem.collate(getSortedItems(burner4.getContainedItems()));
+            const burner = game.entityFinder.getFixture("BURNER 4", "canteen");
+            const items = CollatedRoomItem.collate(burner.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(2);
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
         });
 
         test('getSatisfactoryProcessCount in video-room BLENDER', () => {
             const recipe = game.entityFinder.getRecipes("processing", "blender", "ORANGE", "ORANGE SMOOTHIE")[0];
             const blender = game.entityFinder.getFixture("BLENDER", "video-room");
-            const items = CollatedRoomItem.collate(getSortedItems(blender.getContainedItems()));
+            const items = CollatedRoomItem.collate(blender.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(3);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe.row).toBe(recipe.row);
+			expect(blenderRecipe.ingredients.toString()).toBe(items.toString());
         });
 
         test('getSatisfactoryProcessCount in video-room SINK 1', () => {
             const recipe = game.entityFinder.getRecipes("processing", "small water source", "DIRTY PLATE, DETERGENT", "CLEAN PLATE, DETERGENT")[0];
             const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-            const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+            const items = CollatedRoomItem.collate(sink.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(13);
+			const sinkRecipe = sink.findRecipe();
+			expect(sinkRecipe.recipe.row).toBe(recipe.row);
+			expect(sinkRecipe.ingredients.toString()).toBe(items.toString());
         });
 
         test('getSatisfactoryProcessCount in video-room SINK 2', () => {
             const recipe = game.entityFinder.getRecipes("processing", "small water source", "DIRTY PLATE, DETERGENT", "CLEAN PLATE, DETERGENT")[0];
             const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-            const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
+            const items = CollatedRoomItem.collate(sink.getContainedItems());
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(19);
+			const sinkRecipe = sink.findRecipe();
+			expect(sinkRecipe.recipe.row).toBe(recipe.row);
+			expect(sinkRecipe.ingredients.toString()).toBe(items.toString());
         });
 
 		test('getSatisfactoryProcessCount on video-room BURNER 1', () => {
 			const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT FILLED WITH WATER, SPAGHETTI NOODLES", "POT OF SPAGHETTI")[0];
 			const burner = game.entityFinder.getFixture("BURNER 1", "video-room");
-			const items = CollatedRoomItem.collate(getSortedItems(burner.getContainedItems()));
+			const items = CollatedRoomItem.collate(burner.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
 		});
 
 		test('getSatisfactoryProcessCount on video-room BURNER 2', () => {
 			const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT FILLED WITH WATER, SPAGHETTI NOODLES", "POT OF SPAGHETTI")[0];
 			const burner = game.entityFinder.getFixture("BURNER 2", "video-room");
-			const items = CollatedRoomItem.collate(getSortedItems(burner.getContainedItems()));
+			const items = CollatedRoomItem.collate(burner.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+			const burnerRecipe = burner.findRecipe();
+			expect(burnerRecipe.recipe.row).toBe(recipe.row);
+			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
 		});
 
 		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 1', () => {
 			const recipe = game.entityFinder.getRecipes("processing", "cutting board", "ORANGE, LARGE KNIFE", "PEELED ORANGE, LARGE KNIFE")[0];
 			const cuttingBoard = game.entityFinder.getFixture("CUTTING BOARD 1", "video-room");
-			const items = CollatedRoomItem.collate(getSortedItems(cuttingBoard.getContainedItems()));
+			const items = CollatedRoomItem.collate(cuttingBoard.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(10);
+			const cuttingBoardRecipe = cuttingBoard.findRecipe();
+			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
+			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
 		});
 
 		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 2', () => {
 			const recipe = game.entityFinder.getRecipes("processing", "cutting board", "ORANGE, VEGETABLE PEELER", "PEELED ORANGE, VEGETABLE PEELER")[0];
 			const cuttingBoard = game.entityFinder.getFixture("CUTTING BOARD 2", "video-room");
-			const items = CollatedRoomItem.collate(getSortedItems(cuttingBoard.getContainedItems()));
+			const items = CollatedRoomItem.collate(cuttingBoard.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(10);
+			const cuttingBoardRecipe = cuttingBoard.findRecipe();
+			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
+			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
 		});
     });
 });

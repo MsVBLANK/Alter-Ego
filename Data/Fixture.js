@@ -448,7 +448,7 @@ export default class Fixture extends ItemContainer {
             let matches = [];
             for (let i = 0; i < recipes.length; i++) {
                 const matchedIngredients = recipes[i].getIngredientItems(collatedItems);
-                if (matchedIngredients) matches.push({ recipe: recipes[i], ingredients: [...matchedIngredients] });
+                if (matchedIngredients.length > 0) matches.push({ recipe: recipes[i], ingredients: [...matchedIngredients] });
             }
             if (matches.length > 0) {
                 // Sort matches by number of matched ingredients in decreasing order.

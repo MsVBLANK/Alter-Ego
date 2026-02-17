@@ -1,4 +1,5 @@
 import { Collection } from "discord.js";
+import Fixture from "../Data/Fixture.js";
 import Game from "../Data/Game.js";
 import Gesture from "../Data/Gesture.js";
 import InventoryItem from "../Data/InventoryItem.js";
@@ -651,7 +652,9 @@ export default class GameEntityFinder {
 				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
 			else {
 				entity = this.getFixture(entityName, player.location.id);
-				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, undefined, undefined, undefined, false, 'player')[0];
+				const containerType = container instanceof RoomItem ? "RoomItem" : container instanceof Puzzle ? "Puzzle" : container instanceof Fixture ? "Fixture" : undefined;
+				const containerName = container instanceof RoomItem ? container.getIdentifier() : container instanceof Puzzle || container instanceof Fixture ? container.name : undefined;
+				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, false, 'player')[0];
 			}
 			if (entity) inspectableEntities.push(entity);
 			if (entity && entity instanceof RoomItem) takeableEntities.push(entity);

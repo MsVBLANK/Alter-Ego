@@ -133,7 +133,8 @@ export default class Description extends GameConstruct {
 			const defaultDropFixture = this.getGame().entityFinder.getFixture(this.getGame().settings.defaultDropFixture, container.id);
 			if (defaultDropFixture) {
 				defaultDropFixtureString = defaultDropFixture.description.parseFor(player, defaultDropFixture);
-				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
+				const potentialFloorEntities = Description.getPotentialGameEntities(defaultDropFixtureString);
+				inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialFloorEntities, defaultDropFixture, player)[0]);
 			}
 			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));

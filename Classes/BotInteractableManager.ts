@@ -188,7 +188,7 @@ export default class BotInteractableManager {
 		const actionDirective = new ActionDirective(InspectAction.prototype, ["InspectAction Menu"]);
 		const customId = await actionDirective.generateCustomId(player);
 		actionDirective.setCustomId(customId);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect");
+		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect", 1);
 		this.addInteractable(menu);
 		return [menu];
 	}
@@ -198,28 +198,43 @@ export default class BotInteractableManager {
 	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
 	 * @param player - The player these interactables are being created for.
 	 */
-	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
-		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
-		for (const entity of entities) {
-			const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable take") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable take")) return [];
+		if (entities.length > 2) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				if (menuOptions.has(customId)) continue;
+				actionDirective.setCustomId(customId);
+				const containerString = entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
+					` from ${entity.slot} of ${entity.container.name}`
+						: ` from ${entity.container.name}`;
+				const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Take ${entity.name}${containerString}`);
+				this.addInteractable(option);
+				menuOptions.set(customId, option);
+				if (menuOptions.size >= 25) break;
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(TakeAction.prototype, ["TakeAction Menu"]);
 			const customId = await actionDirective.generateCustomId(player);
-			if (menuOptions.has(customId)) continue;
 			actionDirective.setCustomId(customId);
-			const containerString = entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
-				` from ${entity.slot} of ${entity.container.name}`
-					: ` from ${entity.container.name}`
-			const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Take ${entity.name}${containerString}`);
-			this.addInteractable(option);
-			menuOptions.set(customId, option);
-			if (menuOptions.size >= 25) break;
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take", 2);
+			this.addInteractable(menu);
+			return [menu];
 		}
-		if (menuOptions.size === 0) return [];
-		const actionDirective = new ActionDirective(TakeAction.prototype, ["TakeAction Menu"]);
-		const customId = await actionDirective.generateCustomId(player);
-		actionDirective.setCustomId(customId);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take");
-		this.addInteractable(menu);
-		return [menu];
+		else {
+			const takeButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				actionDirective.setCustomId(customId);
+				const takeButton = new ButtonInteractable(actionDirective, `Take ${entity.name}`, ButtonStyle.Primary, 2);
+				this.addInteractable(takeButton);
+				takeButtons.push(takeButton);
+			}
+			return takeButtons;
+		}
 	}
 
 	/**
@@ -262,7 +277,7 @@ export default class BotInteractableManager {
 				const actionDirective = new ActionDirective(DropAction.prototype, entity.getDropActionDirectiveArgs(containerType, container, inventorySlot));
 				const customId = await actionDirective.generateCustomId(player);
 				actionDirective.setCustomId(customId);
-				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary);
+				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, 3);
 				this.addInteractable(dropButton);
 				dropButtons.push(dropButton);
 			}

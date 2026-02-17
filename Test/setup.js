@@ -116,9 +116,14 @@ beforeAll(() => {
     globalThis.game = game;
 });
 
+beforeEach(() => {
+    game.messageQueue.firing = true;
+});
+
 afterEach(() => {
     vi.resetModules();
     vi.restoreAllMocks();
+    game.messageQueue.firing = true;
 });
 
 expect.extend({

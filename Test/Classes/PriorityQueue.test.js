@@ -3,10 +3,11 @@ import PriorityQueue from "../../Classes/PriorityQueue.js";
 describe("PriorityQueue test", () => {
     beforeEach(() => {
         queue.clear();
+        queue.firing = true;
     });
 
     const queue = new PriorityQueue();
-    const queueEntry = {fire: vi.fn()}
+    const queueEntry = { fire: vi.fn(async () => { const error = new Error();  console.error("You shouldn't see this!!!", error.stack) }) };
 
     test("Usage Test", () => {
         for (const priority of queue.priorityOrder) {

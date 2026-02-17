@@ -85,5 +85,33 @@ describe('Recipe test', () => {
             const items = CollatedRoomItem.collate(getSortedItems(sink.getContainedItems()));
             expect(recipe.getSatisfactoryProcessCount(items)).toBe(19);
         });
+
+		test('getSatisfactoryProcessCount on video-room BURNER 1', () => {
+			const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT FILLED WITH WATER, SPAGHETTI NOODLES", "POT OF SPAGHETTI")[0];
+			const burner = game.entityFinder.getFixture("BURNER 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(burner.getContainedItems()));
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+		});
+
+		test('getSatisfactoryProcessCount on video-room BURNER 2', () => {
+			const recipe = game.entityFinder.getRecipes("processing", "stovetop", "POT FILLED WITH WATER, SPAGHETTI NOODLES", "POT OF SPAGHETTI")[0];
+			const burner = game.entityFinder.getFixture("BURNER 2", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(burner.getContainedItems()));
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+		});
+
+		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 1', () => {
+			const recipe = game.entityFinder.getRecipes("processing", "cutting board", "ORANGE, LARGE KNIFE", "PEELED ORANGE, LARGE KNIFE")[0];
+			const cuttingBoard = game.entityFinder.getFixture("CUTTING BOARD 1", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(cuttingBoard.getContainedItems()));
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(10);
+		});
+
+		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 2', () => {
+			const recipe = game.entityFinder.getRecipes("processing", "cutting board", "ORANGE, VEGETABLE PEELER", "PEELED ORANGE, VEGETABLE PEELER")[0];
+			const cuttingBoard = game.entityFinder.getFixture("CUTTING BOARD 2", "video-room");
+			const items = CollatedRoomItem.collate(getSortedItems(cuttingBoard.getContainedItems()));
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(10);
+		});
     });
 });

@@ -1,13 +1,11 @@
 import HidingSpot from './HidingSpot.js';
 import ItemContainer from './ItemContainer.js';
 import DeactivateAction from './Actions/DeactivateAction.js';
-import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
 import { MessageDisplayType } from '../Modules/enums.js';
-import { getSortedItems } from '../Modules/helpers.js';
 import CollatedRoomItem from './CollatedRoomItem.js';
 
 /** @import Game from './Game.js' */
@@ -16,7 +14,6 @@ import CollatedRoomItem from './CollatedRoomItem.js';
 /** @import Prefab from './Prefab.js' */
 /** @import Puzzle from './Puzzle.js' */
 /** @import Recipe from './Recipe.js' */
-/** @import RecipeItem from './RecipeItem.js' */
 /** @import Room from './Room.js' */
 
 /**
@@ -275,10 +272,18 @@ export default class Fixture extends ItemContainer {
     #startProcessTimerForAutoDeactivateFixtureWithNoRecipe(player) {
         this.#setProcessDuration(Duration.fromObject({minutes: 1}));
         this.#whenProcessTimerExpires(() => {
-            const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
-            deactivateAction.performDeactivate(this, true);
+			this.#performDeactivate(player);
         });
     }
+
+	/**
+     * Ends recipe processing. If `this.autoDeactivate` is true, deactivates the fixture. Otherwise, just clears the process.
+     * @param {Player} [player] - The player who initiated the recipe, if any.
+     */
+	#endProcess(player) {
+		if (this.autoDeactivate) this.#performDeactivate(player);
+        else this.#clearProcess();
+	}
 
     /**
      * Makes the fixture start processing recipes.
@@ -297,6 +302,7 @@ export default class Fixture extends ItemContainer {
         this.#setProcessDuration();
         this.#whenProcessTimerExpires(() => {
             this.#processRecipe(player);
+			this.#endProcess(player);
         });
     }
 
@@ -324,105 +330,92 @@ export default class Fixture extends ItemContainer {
             this.#setProcessDuration();
             this.#whenProcessTimerExpires(() => {
                 this.#processRecipe();
+				this.#endProcess();
             });
         }
     }
 
     /**
-     * Processes a recipe.
-     * @param {Player} [player] - The player who initiated the recipe, if any.
+     * Processes a recipe. This destroys the process's ingredients and instantiates the products.
+     * @param {Player} [player] - The player who initiated the recipe, if any. If a player is given and they are still in the room, they will be sent the recipe's completedDescription.
      */
     #processRecipe(player) {
-        /** @type {RemainingIngredient[]} */
-        let remainingIngredients = [];
-        // Make sure all the ingredients are still there.
+        // Calculate how many times the fixture's ingredients satisfy the current recipe.
         const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
-        for (const ingredient of this.process.ingredients) {
-            for (const product of this.process.recipe.products) {
-                if (product.prefab.id === ingredient.prefab.id) {
-
-                }
-            }
-        }
-        /*for (let i = 0; i < this.process.ingredients.length; i++) {
-            const ingredient = this.process.ingredients[i];
-            if (ingredient.quantity === 0) {
-                stillThere = false;
-                break;
-            }
-            for (let j = 0; j < this.process.recipe.products.length; j++) {
-                const product = this.process.recipe.products[j];
-                if (product.prefab.id === ingredient.prefab.id) {
-                    let decreaseUses = false;
-                    let nextStage = false;
-                    if (ingredient.uses - 1 === 0 && ingredient.prefab.nextStage !== null)
-                        nextStage = true;
-                    else if (!isNaN(ingredient.uses))
-                        decreaseUses = true;
-                    remainingIngredients.push({ ingredientIndex: i, productIndex: j, decreaseUses: decreaseUses, nextStage: nextStage });
-                    break;
-                }
-            }
-        }
-        if (satisfactoryProcessCount > 0) {
-            // If there is only one ingredient in this, remember its quantity.
-            const quantity = this.process.ingredients.length === 1 ? this.process.ingredients[0].quantity : 1;
-            // Destroy the ingredients.
-            for (let i = 0; i < this.process.ingredients.length; i++) {
-                let destroy = true;
-                for (let j = 0; j < remainingIngredients.length; j++) {
-                    if (remainingIngredients[j].ingredientIndex === i && !remainingIngredients[j].nextStage) {
-                        destroy = false;
-                        break;
-                    }
-                }
-                if (destroy && this.process.ingredients[i].quantity > 0) {
-                    const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
-                    destroyAction.performDestroyRoomItem(this.process.ingredients[i], quantity, true);
-                }
-            }
-            // Instantiate the products.
-            for (let i = 0; i < this.process.recipe.products.length; i++) {
-                let instantiate = true;
-                let product = this.process.recipe.products[i].prefab;
-                for (let j = 0; j < remainingIngredients.length; j++) {
-                    const ingredient = this.process.ingredients[remainingIngredients[j].ingredientIndex];
-                    if (remainingIngredients[j].productIndex === i && remainingIngredients[j].decreaseUses) {
-                        instantiate = false;
-                        ingredient.uses--;
-                        if (ingredient.uses === 0) {
-                            const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
-                            destroyAction.performDestroyRoomItem(ingredient, ingredient.quantity, true);
-                        }
-                        break;
-                    }
-                    else if (remainingIngredients[j].productIndex === i && remainingIngredients[j].nextStage) {
-                        product = ingredient.prefab.nextStage;
-                        break;
-                    }
-                    else if (remainingIngredients[j].productIndex === i && isNaN(ingredient.uses)) {
-                        instantiate = false;
-                        break;
-                    }
-                }
-                if (instantiate) {
-                    const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
-                    instantiateAction.performInstantiateRoomItem(product, this, "", quantity, new Map());
-                }
-            }
-            if (player && player.alive && player.location.id === this.location.id) {
-                const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
-                player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
-            }
-        }*/
-
-        if (this.autoDeactivate) {
-            const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
-            deactivateAction.performDeactivate(this, true);
-        }
-        else
-            this.#clearProcess();
+		if (satisfactoryProcessCount < 1) return;
+        this.destroyIngredients(satisfactoryProcessCount);
+		this.instantiateProducts(satisfactoryProcessCount);
+		this.#sendRecipeCompletedDescription(player);
     }
+
+	/**
+	 * Destroys the ingredients for the current recipe being processed.
+	 * @param {number} satisfactoryProcessCount - How many times the fixture's ingredients satisfy the current recipe.
+	 */
+	destroyIngredients(satisfactoryProcessCount) {
+		if (satisfactoryProcessCount < 1) return;
+		for (const ingredient of this.process.ingredients) {
+            if (this.process.recipe.isIngredientAndProduct(ingredient))
+				ingredient.decreaseUses(satisfactoryProcessCount);
+			else
+				ingredient.destroy(satisfactoryProcessCount);
+        }
+	}
+
+	/**
+	 * Instantiate the products for the current recipe being processed.
+	 * @param {number} satisfactoryProcessCount - How many times the fixture's ingredients satisfy the current recipe.
+	 */
+	instantiateProducts(satisfactoryProcessCount) {
+		if (satisfactoryProcessCount < 1) return;
+		for (const product of this.process.recipe.products) {
+			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
+			if (product.prefab.inventory.size > 0) {
+				for (let i = 0; i < quantity; i++) {
+					const instantiatedProduct = this.#instantiate(product.prefab, 1, new Map());
+					for (const childProduct of product.containedItems) {
+						const childQuantity = childProduct.quantityIsConstant ? childProduct.quantity : childProduct.quantity * satisfactoryProcessCount;
+						this.#instantiate(childProduct.prefab, childQuantity, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
+					}
+				}
+			}
+			else this.#instantiate(product.prefab, quantity, new Map());
+		}
+	}
+
+	/**
+	 * Instantiates a room item in this fixture.
+	 * @param {Prefab} prefab - The prefab to instantiate.
+	 * @param {number} quantity - The quantity of the prefab to instantiate.
+	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+	 * @param {Fixture|Puzzle|RoomItem} [container] - The container to instantiate the prefab into. Defaults to the fixture itself.
+	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+	 * @returns The instantiated room item.
+	 */
+	#instantiate(prefab, quantity, proceduralSelections = new Map(), container = this, inventorySlotId = "") {
+		const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
+		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections);
+	}
+
+	/**
+	 * If a player is given and they are still alive and in the same room as the fixture, sends them the processed recipe's completed description.
+	 * @param {Player} player - The player to send the completed description to.
+	 */
+	#sendRecipeCompletedDescription(player) {
+		if (player && player.alive && player.location.id === this.location.id) {
+			const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
+			player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+		}
+	}
+
+	/**
+	 * Creates a DeactivateAction and calls performDeactivate.
+	 * @param {Player} [player] - The player who initiated the recipe, if any.
+	 */
+	#performDeactivate(player) {
+		const deactivateAction = new DeactivateAction(this.getGame(), undefined, player, this.location, true);
+        deactivateAction.performDeactivate(this, true);
+	}
 
     /**
      * Finds a recipe that can currently be processed by this fixture. The fixture must contain all of the ingredients for this recipe.
@@ -434,7 +427,7 @@ export default class Fixture extends ItemContainer {
         const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
-        const collatedItems = CollatedRoomItem.collate(getSortedItems(items));
+        const collatedItems = CollatedRoomItem.collate(items);
 
         const recipes = this.getGame().recipes.filter(recipe => recipe.fixtureTag === this.recipeTag);
         /** @type {Recipe} */

@@ -1,5 +1,7 @@
 import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
+import { getSortedItems } from '../Modules/helpers.js';
+import { getChildItems } from '../Modules/itemManager.js';
 /**
  * @import Fixture from './Fixture.js';
  * @import Prefab from './Prefab.js';
@@ -73,6 +75,12 @@ export default class CollatedRoomItem {
 	 * @param {RoomItem[]} items - The room items to collate.
 	 */
 	static collate(items) {
+		/** @type {RoomItem[]} */
+		const childItems = [];
+		for (const item of items)
+			getChildItems(childItems, item);
+		items = items.concat(childItems);
+		items = getSortedItems(items);
 		/** @type {CollatedRoomItem[]} */
 		const collatedItems = [];
 		/** @type {Map<string, RoomItem[]>} */
@@ -166,7 +174,7 @@ export default class CollatedRoomItem {
 					const nextStage = item.prefab.nextStage;
 					const quantity = item.quantity;
 					// Destroy the item.
-					this.destroy(item);
+					this.#destroyItem(item);
 					if (nextStage)
 						// If we have a nextStage, we should instantiate it accordingly.
 						this.instantiate(nextStage, quantity);
@@ -184,12 +192,53 @@ export default class CollatedRoomItem {
 	}
 
 	/**
-	 * Destroys the given item.
-	 * @param {RoomItem} item
+	 * Destroys the given quantity of this item.
+	 * @param {number} [ingredientDestroyCount] - The quantity to destroy. Defaults to the item's total quantity.
 	 */
-	destroy(item) {
+	destroy(ingredientDestroyCount = this.quantity) {
+		// If the given quantity is finite but all items have infinite uses, don't do anything.
+		if (!isNaN(ingredientDestroyCount) && this.items.filter(item => !isNaN(item.uses)).length === 0) return;
+		// Sort collated items by lowest quantity to highest.
+		this.items.sort((a, b) => a.quantity - b.quantity);
+		while (ingredientDestroyCount > 0) {
+			// Early exit if total quantity is equal to zero.
+			if (this.quantity === 0) return;
+			for (const item of this.items) {
+				// Return if ingredientDestroyCount is 0.
+				if (ingredientDestroyCount === 0) return;
+				// Continue to the next item if quantity is 0 or NaN.
+				if (item.quantity === 0 || isNaN(item.quantity)) continue;
+				// If ingredientDestroyCount is NaN, destroy the whole item.
+				if (isNaN(ingredientDestroyCount))
+					this.#destroyItem(item);
+				// If ingredientDestroyCount is greater than the current item's quantity, we have to destroy this one and move on to the next.
+				else if (ingredientDestroyCount > item.quantity) {
+					ingredientDestroyCount -= item.quantity;
+					this.#destroyItem(item);
+				}
+				// If ingredientDestroyCount is less than or equal to the current item's quantity, we just need to destroy ingredientDestroyCount instances of this item.
+				else if (ingredientDestroyCount <= item.quantity){
+					this.#destroyItem(item, ingredientDestroyCount);
+					ingredientDestroyCount -= ingredientDestroyCount;
+				}
+				// Re-sort.
+				this.items.sort((a, b) => a.quantity - b.quantity);
+				// Re-calculate stats.
+				this.#recalculate();
+				// Break, to refresh this for loop.
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Destroys the given item.
+	 * @param {RoomItem} item - The item to destroy.
+	 * @param {number} [quantity] - The quantity to destroy. Defaults to the item's total quantity.
+	 */
+	#destroyItem(item, quantity = item.quantity) {
 		const destroyAction = new DestroyAction(item.getGame(), undefined, undefined, item.location, true);
-		destroyAction.performDestroyRoomItem(item, item.quantity, true);
+		destroyAction.performDestroyRoomItem(item, quantity, true);
 	}
 
 	/**

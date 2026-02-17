@@ -54,6 +54,12 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	variableName;
 	/**
+	 * Whether or not the quantity of this recipe item is constant. If a quantity is given, but it is not accompanied by a variable, it is assumed to be constant.
+	 * @readonly
+	 * @type {boolean}
+	 */
+	quantityIsConstant;
+	/**
      * A regular expression for parsing ingredients and products strings.
 	 * 
      * $1 - Quantity. Any number of digits.
@@ -76,11 +82,13 @@ export default class RecipeItem extends GameConstruct {
 		super(game);
 		this.recipeItemString = recipeItemString.trim();
 		const matches = this.recipeItemString.match(RecipeItem.itemRegex);
-		this.quantity = matches && matches[1] ? parseInt(matches[1]) : 1;
+		const quantityGiven = matches && matches[1];
+		this.quantity = quantityGiven ? parseInt(matches[1]) : 1;
 		this.variableName = matches && matches[2] && matches[2] ? matches[2].trim().toUpperCase() : '';
 		this.prefabId = matches && matches[3] ? Game.generateValidEntityName(matches[3]) : '';
 		this.containedItemsString = matches && matches[4] ? matches[4].trim() : null;
 		this.containedItems = [];
+		this.quantityIsConstant = quantityGiven && this.variableName === '';
 	}
 
 	/**
@@ -88,6 +96,15 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	setPrefab(prefab) {
 		this.prefab = prefab;
+	}
+
+	/**
+	 * Returns true if the given item satisfies the quantity required of this recipe item.
+	 * @param {CollatedRoomItem} item
+	 */
+	quantitySatisfiedBy(item) {
+		if (isNaN(item.quantity)) return true;
+		return item.quantity >= this.quantity;
 	}
 
 	/**

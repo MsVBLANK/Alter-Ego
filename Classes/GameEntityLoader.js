@@ -873,8 +873,8 @@ export default class GameEntityLoader extends GameEntityManager {
 				// Separate the ingredients and sort them in alphabetical order.
 				let ingredientsStrings = sheet[row][columnIngredients] ? sheet[row][columnIngredients].split(',') : [];
 				ingredientsStrings.sort((a, b) => {
-					const trimmedA = Game.generateValidEntityName(a).replace(Recipe.itemRegex, "$3");
-					const trimmedB = Game.generateValidEntityName(b).replace(Recipe.itemRegex, "$3");
+					const trimmedA = Game.generateValidEntityName(a).replace(RecipeItem.itemRegex, "$3");
+					const trimmedB = Game.generateValidEntityName(b).replace(RecipeItem.itemRegex, "$3");
 					if (trimmedA < trimmedB) return -1;
 					if (trimmedA > trimmedB) return 1;
 					return 0;

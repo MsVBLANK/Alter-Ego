@@ -215,8 +215,8 @@ export default class CollatedRoomItem {
 				if (ingredientDestroyCount === 0) return;
 				// Continue to the next item if quantity is 0 or NaN.
 				if (item.quantity === 0 || isNaN(item.quantity)) continue;
-				// If ingredientDestroyCount is NaN, destroy the whole item.
-				if (isNaN(ingredientDestroyCount))
+				// If ingredientDestroyCount is Infinity, destroy the whole item.
+				if (ingredientDestroyCount === Infinity)
 					this.#destroyItem(item);
 				// If ingredientDestroyCount is greater than the current item's quantity, we have to destroy this one and move on to the next.
 				else if (ingredientDestroyCount > item.quantity) {

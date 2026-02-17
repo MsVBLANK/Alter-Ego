@@ -193,7 +193,7 @@ export default class Fixture extends ItemContainer {
      * Returns true if the fixture is currently capable of being taken from/dropped into.
      */
     canCurrentlyContainItems() {
-        return this.isItemContainer() && !this.isProcessingItems() && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
+        return !this.isProcessingItems() && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
     }
 
     /**

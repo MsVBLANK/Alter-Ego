@@ -256,7 +256,7 @@ export default class Puzzle extends ItemContainer {
      * Returns true if the puzzle is currently capable of being taken from/dropped into.
      */
     canCurrentlyContainItems() {
-        return this.isItemContainer() && (this.type === "weight" || this.type === "container" || this.accessible && this.solved);
+        return this.type === "weight" || this.type === "container" || this.accessible && this.solved;
     }
 
     /**

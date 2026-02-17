@@ -139,7 +139,7 @@ export default class Game {
 	 * @type {Collection<string, Room>}
 	 */
 	rooms;
-	/** 
+	/**
 	 * An array of all fixtures in the game. Deprecated. Use fixtures instead.
 	 * @deprecated
 	 * @type {Fixture[]}
@@ -155,12 +155,12 @@ export default class Game {
 	 * @type {Collection<string, Prefab>}
 	 */
 	prefabs;
-	/** 
+	/**
 	 * An array of all recipes in the game.
 	 * @type {Recipe[]}
 	 */
 	recipes;
-	/** 
+	/**
 	 * An array of all room items in the game. Deprecated. Use roomItems instead.
 	 * @deprecated
 	 * @type {RoomItem[]}
@@ -171,9 +171,9 @@ export default class Game {
 	 * @type {RoomItem[]}
 	 */
 	roomItems;
-	/** 
+	/**
 	 * An array of all puzzles in the game.
-	 * @type {Puzzle[]} 
+	 * @type {Puzzle[]}
 	 */
 	puzzles;
 	/**
@@ -202,7 +202,7 @@ export default class Game {
 	 */
 	deadPlayers;
 	/**
-	 * An array of all inventory items in the game. 
+	 * An array of all inventory items in the game.
 	 * @type {InventoryItem[]}
 	 */
 	inventoryItems;
@@ -211,7 +211,7 @@ export default class Game {
 	 * @type {Collection<string, Gesture>}
 	 */
 	gestures;
-	/** 
+	/**
 	 * A collection of all flags in the game, where the key is the flag's ID.
 	 * @type {Collection<string, Flag>}
 	 */
@@ -231,12 +231,12 @@ export default class Game {
 	 * @type {NodeJS.Timeout}
 	 */
 	#queuedMessageSendInterval;
-	/** 
+	/**
 	 * A timeout that saves the game data to the spreadsheet periodically.
 	 * @type NodeJS.Timeout
 	 */
 	#autoSaveInterval;
-	/** 
+	/**
 	 * A timeout that checks for events that should be triggered every minute.
 	 * @type NodeJS.Timeout
 	 */
@@ -284,11 +284,6 @@ export default class Game {
 		this.whispers = new Collection();
 		this.messageQueue = new PriorityQueue();
 
-		// Send the messages in the queue every quarter of a second.
-		this.#queuedMessageSendInterval = setInterval(
-			() => sendQueuedMessages(this),
-			0.25 * 1000
-		);
 		// Save data to the sheet periodically.
 		this.#autoSaveInterval = setInterval(
 			() => { if (this.inProgress && !this.editMode) this.entitySaver.saveGame(); },
@@ -326,7 +321,7 @@ export default class Game {
 	/**
 	 * Generate a name in all uppercase with no apostrophes or quotation marks.
 	 * @param {string} name
-	 * @returns {string} 
+	 * @returns {string}
 	 */
 	static generateValidEntityName(name) {
 		return name?.toUpperCase().replace(/[\'"“”`]/g, '').trim();

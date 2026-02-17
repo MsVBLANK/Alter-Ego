@@ -440,14 +440,7 @@ export async function sendWebhookMessage(webhook, content, username, avatarURL, 
  * @param {Game} game - The game whose message queue should have its messages sent.
  */
 export async function sendQueuedMessages(game) {
-    while (game.messageQueue.size() > 0) {
-        const message = game.messageQueue.dequeue();
-        try {
-            await message.fire();
-        } catch (error) {
-            console.error("Message Handler encountered exception sending message:", error);
-        }
-    }
+    await game.messageQueue.process();
 }
 
 /**

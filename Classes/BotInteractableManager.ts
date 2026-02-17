@@ -194,7 +194,7 @@ export default class BotInteractableManager {
 	}
 
 	/**
-	 * Creates StringSelectMenuInteractable for a list of takeable room items and adds it to the cache.
+	 * Creates Interactables for a list of takeable room items and adds them to the cache.
 	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
 	 * @param player - The player these interactables are being created for.
 	 */
@@ -238,7 +238,7 @@ export default class BotInteractableManager {
 	}
 
 	/**
-	 * Creates Interactables for a list of droppable inventory items and adds it to the cache.
+	 * Creates Interactables for a list of droppable inventory items and adds them to the cache.
 	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
 	 * @param player - The player these interactables are being created for.
 	 * @param container - The fixture or room item the player is dropping the items into.

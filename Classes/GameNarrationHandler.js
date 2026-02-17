@@ -724,20 +724,22 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Fixture} fixture - The fixture being activated.
 	 * @param {Player} [player] - The player performing the activate action.
+	 * @param {boolean} [recipeInitiatedDescriptionSent] - Whether or not an initiated description for a recipe has already been sent. Defaults to false.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
-	narrateActivate(action, fixture, player, customNarration = "") {
-		const messageType = MessageDisplayType.STANDARD;
+	narrateActivate(action, fixture, player, recipeInitiatedDescriptionSent = false, customNarration = "") {
+		let messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
 		let narration = customNarration;
 		if (player && !customNarration) {
 			notification = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase, player, true);
 			narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase, player, false);
+			if (recipeInitiatedDescriptionSent) messageType = MessageDisplayType.MINOR;
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase);
 		if (notification) this.sendNotification(player, action, notification, messageType);
-		this.#sendNarration(messageType, action, player, narration, fixture.location);
+		this.#sendNarration(MessageDisplayType.STANDARD, action, player, narration, fixture.location);
 	}
 
 	/**

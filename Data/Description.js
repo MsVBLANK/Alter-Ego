@@ -152,12 +152,12 @@ export default class Description extends GameConstruct {
 			const selectableInteractableGameEntities = this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialGameEntities, container, player);
 			inspectableEntities = inspectableEntities.concat(selectableInteractableGameEntities[0]);
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
-			const takeableEntities = selectableInteractableGameEntities[1];
-			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createTakeActionInteractable(takeableEntities, player));
 			if ((container instanceof Fixture || container instanceof RoomItem || container instanceof Puzzle)) {
 				let dropContainer = container;
 				if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
 				if (dropContainer.canCurrentlyContainItems()) {
+					const takeableEntities = selectableInteractableGameEntities[1];
+					interactables = interactables.concat(await this.getGame().botContext.interactableManager.createTakeActionInteractable(takeableEntities, player));
 					const droppableEntities = this.getGame().entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
 					if (droppableEntities.length !== 0) interactables = interactables.concat(await this.getGame().botContext.interactableManager.createDropActionInteractables(droppableEntities, player, container));
 				}

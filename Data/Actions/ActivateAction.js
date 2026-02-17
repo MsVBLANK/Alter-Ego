@@ -18,13 +18,20 @@ export default class ActivateAction extends Action {
 	performActivate(fixture, narrate, customNarration) {
 		if (this.performed) return;
 		super.perform();
-		if (narrate)
-			this.getGame().narrationHandler.narrateActivate(this, fixture, this.player, customNarration);
 		this.getGame().logHandler.logActivate(fixture, this.player, this.forced);
 		fixture.activate(this.player);
+		/** @type {string} */
+		let initiatedDescription;
+		/** @type {MessageDisplayType} */
+		let messageDisplayType;
 		if (this.player && fixture.process.recipe !== null) {
-			const initiatedDescription = fixture.process.recipe.initiatedDescription.parseFor(this.player, fixture);
-            this.player.sendDescription(initiatedDescription, fixture, fixture.process.recipe.initiatedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+			initiatedDescription = fixture.process.recipe.initiatedDescription.parseFor(this.player, fixture);
+			messageDisplayType = fixture.process.recipe.initiatedDescription.messageDisplayType;
+		}
+		if (narrate)
+			this.getGame().narrationHandler.narrateActivate(this, fixture, this.player, initiatedDescription !== undefined && initiatedDescription !== "", customNarration);
+		if (initiatedDescription) {
+			this.player.sendDescription(initiatedDescription, fixture, messageDisplayType ?? MessageDisplayType.STANDARD);
 		}
 	}
 }

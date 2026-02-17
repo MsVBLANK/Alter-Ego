@@ -36,12 +36,12 @@ import {
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
- * @param {Interactable[]} interactables - An array of interactables.
+ * @param {Interactable[]} [interactables] - An array of interactables. Optional.
  */
 export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], interactables = []) {
     return {
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player),
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player, [], interactables),
         flags: generateFlags(messageDisplayType),
         files: files
     };
@@ -90,13 +90,14 @@ function generateFlags(messageDisplayType) {
  * @param {string} messageText - The text content of the narration.
  * @param {Player} [player] - The player the narration is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional. 
+ * @param {Interactable[]} [interactables] - An array of interactables. Optional.
  */
-function createNarrateComponents(messageDisplayType, game, messageText, player, files) {
+function createNarrateComponents(messageDisplayType, game, messageText, player, files, interactables = []) {
     /** @type {MediaGalleryBuilder} */
     let mediaGalleryBuilder;
     [mediaGalleryBuilder, messageText] = getMediaGalleryComponents(messageText, files);
 
-    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder)[]} */
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>)[]} */
     let components = [];
     switch (messageDisplayType) {
 		case MessageDisplayType.STANDARD:
@@ -122,6 +123,11 @@ function createNarrateComponents(messageDisplayType, game, messageText, player, 
             break;
 	}
     if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
+	if (interactables.length > 0) {
+        const actionRows = generateActionRows(interactables);
+        components = components.concat(actionRows);
+    }
+
     return components;
 }
 

@@ -267,21 +267,19 @@ export default class Fixture extends ItemContainer {
 
     /**
      * Starts the process timer when no recipe was found and the fixture is set to deactivate automatically.
-     * @param {Player} [player] - The player who activated the fixture, if applicable.
      */
-    #startProcessTimerForAutoDeactivateFixtureWithNoRecipe(player) {
+    #startProcessTimerForAutoDeactivateFixtureWithNoRecipe() {
         this.#setProcessDuration(Duration.fromObject({minutes: 1}));
         this.#whenProcessTimerExpires(() => {
-			this.#performDeactivate(player);
+			this.#performDeactivate();
         });
     }
 
 	/**
      * Ends recipe processing. If `this.autoDeactivate` is true, deactivates the fixture. Otherwise, just clears the process.
-     * @param {Player} [player] - The player who initiated the recipe, if any.
      */
-	#endProcess(player) {
-		if (this.autoDeactivate) this.#performDeactivate(player);
+	#endProcess() {
+		if (this.autoDeactivate) this.#performDeactivate();
         else this.#clearProcess();
 	}
 
@@ -302,7 +300,7 @@ export default class Fixture extends ItemContainer {
         this.#setProcessDuration();
         this.#whenProcessTimerExpires(() => {
             this.#processRecipe(player);
-			this.#endProcess(player);
+			this.#endProcess();
         });
     }
 
@@ -401,10 +399,12 @@ export default class Fixture extends ItemContainer {
 	 * If a player is given and they are still alive and in the same room as the fixture, sends them the processed recipe's completed description.
 	 * @param {Player} player - The player to send the completed description to.
 	 */
-	#sendRecipeCompletedDescription(player) {
+	async #sendRecipeCompletedDescription(player) {
 		if (player && player.alive && player.location.id === this.location.id) {
 			const completedDescription = this.process.recipe.completedDescription.parseFor(player, this);
-			player.sendDescription(completedDescription, this, this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+			const messageDisplayType = this.process.recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD;
+			const interactables = await this.getGame().botContext.interactableManager.createInspectActionInteractable([this], player);
+			player.sendDescription(completedDescription, this, messageDisplayType, interactables);
 		}
 	}
 

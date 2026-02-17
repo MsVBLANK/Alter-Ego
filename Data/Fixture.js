@@ -51,9 +51,9 @@ export default class Fixture extends ItemContainer {
      * @type {string}
      */
     childPuzzleName;
-    /** 
+    /**
      * The puzzle that is associated with the fixture.
-     * @type {Puzzle} 
+     * @type {Puzzle}
      */
     childPuzzle;
     /**
@@ -92,12 +92,12 @@ export default class Fixture extends ItemContainer {
      * @type {string}
      */
     preposition;
-    /** 
+    /**
      * The current recipe being processed, the ingredients being processed, the recipe's duration, and a timer counting down until the recipe finishes.
-     * @type {Process} 
+     * @type {Process}
      */
     process;
-    /** 
+    /**
      * A timer that checks for recipes that the fixture can process every second.
      * @type {Timer}
      */
@@ -234,13 +234,13 @@ export default class Fixture extends ItemContainer {
      * Sets the fixture's duration.
      * @param {Duration} [duration] - A duration object. Defaults to the duration of the recipe currently being processed.
      */
-    #setProcessDuration(duration = this.process.recipe.duration) {
+    #setProcessDuration(duration = this.process.recipe?.duration ?? null) {
         this.process.duration = duration;
     }
 
     /**
      * Starts the process timer, and executes the given callback when its timer expires.
-     * @param {() => void} callback 
+     * @param {() => void} callback
      */
     #whenProcessTimerExpires(callback) {
         const fixture = this;
@@ -355,6 +355,8 @@ export default class Fixture extends ItemContainer {
 		for (const ingredient of this.process.ingredients) {
             if (this.process.recipe.isIngredientAndProduct(ingredient) && !ingredient.allItemsHaveInfiniteUses())
 				ingredient.decreaseUses(satisfactoryProcessCount);
+			else if (this.process.recipe.isIngredientAndProduct(ingredient) && ingredient.allItemsHaveInfiniteUses())
+				continue;
 			else
 				ingredient.destroy(satisfactoryProcessCount);
         }
@@ -367,6 +369,8 @@ export default class Fixture extends ItemContainer {
 	instantiateProducts(satisfactoryProcessCount) {
 		if (satisfactoryProcessCount < 1) return;
 		for (const product of this.process.recipe.products) {
+			if (this.process.recipe.isIngredientAndProduct(product) && isNaN(product.prefab.uses))
+				continue;
 			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
 			if (product.prefab.inventory.size > 0) {
 				for (let i = 0; i < quantity; i++) {

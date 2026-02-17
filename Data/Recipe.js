@@ -1,9 +1,11 @@
 import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
-/** @import CollatedRoomItem from './CollatedRoomItem.js' */
-/** @import Game from './Game.js' */
-/** @import RecipeItem from './RecipeItem.js' */
+/**
+ * @import CollatedRoomItem from './CollatedRoomItem.js'
+ * @import Game from './Game.js'
+ * @import RecipeItem from './RecipeItem.js'
+ */
 
 /**
  * @class Recipe
@@ -210,7 +212,7 @@ export default class Recipe extends GameEntity {
 
 	/**
 	 * Returns true if the given item is both an ingredient and a product.
-	 * @param {CollatedRoomItem} item 
+	 * @param {CollatedRoomItem | RecipeItem} item 
 	 */
 	isIngredientAndProduct(item) {
 		return this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id) !== undefined && this.productsFlat.find(product => product.prefab.id === item.prefab.id) !== undefined;

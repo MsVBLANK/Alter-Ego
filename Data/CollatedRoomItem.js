@@ -111,12 +111,19 @@ export default class CollatedRoomItem {
 	}
 
 	/**
+	 * Returns true if all of the collated items have infinite uses.
+	 */
+	allItemsHaveInfiniteUses() {
+		return this.items.filter(item => !isNaN(item.uses)).length === 0;
+	}
+
+	/**
 	 * Decreases the collated room items' uses.
 	 * @param {number} ingredientUseCount - The number of times to use the item.
 	 */
 	decreaseUses(ingredientUseCount) {
 		// If all items have infinite uses, don't do anything.
-		if (this.items.filter(item => !isNaN(item.uses)).length === 0) return;
+		if (this.allItemsHaveInfiniteUses()) return;
 		// Sort collated items by lowest number of uses to highest, sorting within use by lowest quantity to highest.
 		this.items.sort((a, b) => a.uses !== b.uses ? a.uses - b.uses : a.quantity - b.quantity);
 		while (ingredientUseCount > 0) {
@@ -196,8 +203,8 @@ export default class CollatedRoomItem {
 	 * @param {number} [ingredientDestroyCount] - The quantity to destroy. Defaults to the item's total quantity.
 	 */
 	destroy(ingredientDestroyCount = this.quantity) {
-		// If the given quantity is finite but all items have infinite uses, don't do anything.
-		if (!isNaN(ingredientDestroyCount) && this.items.filter(item => !isNaN(item.uses)).length === 0) return;
+		// If the given quantity is finite but all items have an infinite quantity, don't do anything.
+		if (!isNaN(ingredientDestroyCount) && this.items.filter(item => !isNaN(item.quantity)).length === 0) return;
 		// Sort collated items by lowest quantity to highest.
 		this.items.sort((a, b) => a.quantity - b.quantity);
 		while (ingredientDestroyCount > 0) {

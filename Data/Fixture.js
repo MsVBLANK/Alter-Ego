@@ -355,7 +355,7 @@ export default class Fixture extends ItemContainer {
 	destroyIngredients(satisfactoryProcessCount) {
 		if (satisfactoryProcessCount < 1) return;
 		for (const ingredient of this.process.ingredients) {
-            if (this.process.recipe.isIngredientAndProduct(ingredient))
+            if (this.process.recipe.isIngredientAndProduct(ingredient) && !ingredient.allItemsHaveInfiniteUses())
 				ingredient.decreaseUses(satisfactoryProcessCount);
 			else
 				ingredient.destroy(satisfactoryProcessCount);

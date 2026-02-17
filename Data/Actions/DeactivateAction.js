@@ -18,7 +18,7 @@ export default class DeactivateAction extends Action {
 	performDeactivate(fixture, narrate, customNarration) {
 		if (this.performed) return;
 		super.perform();
-		const player = this.player.location.id === fixture.location.id && this.player.isConscious() && !this.player.isHidden() ? this.player : undefined;
+		const player = this.player && this.player.location.id === fixture.location.id && this.player.isConscious() && !this.player.isHidden() ? this.player : undefined;
 		if (narrate)
 			this.getGame().narrationHandler.narrateDeactivate(this, fixture, player, customNarration);
 		this.getGame().logHandler.logDeactivate(fixture, player, this.forced);

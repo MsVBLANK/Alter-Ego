@@ -281,6 +281,8 @@ paket-files/
 __pycache__/
 *.pyc
 
+# Zed Text Editor
+.zed/
 
 convert.js
 convertedText.txt

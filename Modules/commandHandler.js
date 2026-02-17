@@ -27,8 +27,8 @@ export async function executeCommand(commandStr, game, message, player, callee) 
         else if (member && !game.settings.debug && member.roles.cache.has(game.guildContext.eligibleRole.id)) isEligible = true;
     }
 
-    const commandSplit = commandStr.split(/[^\S\n]/).filter(arg => arg !== "");
-    const commandAlias = commandSplit[0].toLocaleLowerCase();
+    const commandSplit = commandStr?.split(/[^\S\n]/).filter(arg => arg !== "");
+    const commandAlias = commandSplit[0] ? commandSplit[0].toLocaleLowerCase() : "";
     const args = commandSplit.slice(1);
 
     // Find the command by the alias used.

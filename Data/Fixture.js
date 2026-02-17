@@ -234,7 +234,7 @@ export default class Fixture extends ItemContainer {
      * Sets the fixture's duration.
      * @param {Duration} [duration] - A duration object. Defaults to the duration of the recipe currently being processed.
      */
-    #setProcessDuration(duration = this.process.recipe.duration) {
+    #setProcessDuration(duration = this.process.recipe?.duration ?? null) {
         this.process.duration = duration;
     }
 

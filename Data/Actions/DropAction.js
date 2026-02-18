@@ -4,7 +4,7 @@ import InventoryItem from "../InventoryItem.js";
 import InventorySlot from "../InventorySlot.js";
 import Puzzle from "../Puzzle.js";
 import RoomItem from "../RoomItem.js";
-import { getSortedItemsString } from "../../Modules/helpers.js";
+import { getSortedItemsString } from "../../Modules/helpers.ts";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */
 /** @import Fixture from "../Fixture.js" */

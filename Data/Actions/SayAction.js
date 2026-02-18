@@ -1,7 +1,7 @@
 import Action from "../Action.js";
 import SolveAction from "./SolveAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
-import { capitalizeFirstLetter } from "../../Modules/helpers.js";
+import { capitalizeFirstLetter } from "../../Modules/helpers.ts";
 
 /** @import Dialog from "../Dialog.js" */
 /** @import Player from "../Player.js" */

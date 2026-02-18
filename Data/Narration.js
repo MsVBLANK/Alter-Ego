@@ -1,7 +1,7 @@
 ﻿import GameConstruct from "./GameConstruct.js";
 import Player from "./Player.js";
 import UnhideAction from "./Actions/UnhideAction.js";
-import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { Attachment, Collection, Embed } from "discord.js";
 

@@ -1,7 +1,7 @@
 import RoomItem from './RoomItem.js';
 import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
-import { getSortedItems } from '../Modules/helpers.js';
+import { getSortedItems } from '../Modules/helpers.ts';
 import { getChildItems } from '../Modules/itemManager.js';
 /**
  * @import Fixture from './Fixture.js';

@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.ts";
 
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Fixture from "../Data/Fixture.js" */

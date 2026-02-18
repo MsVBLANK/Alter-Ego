@@ -7,7 +7,7 @@ import Player from "../Data/Player.js";
 import Puzzle from "../Data/Puzzle.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
-import { generateListString } from "../Modules/helpers.js";
+import { generateListString } from "../Modules/helpers.ts";
 
 /** @import EquipmentSlot from "../Data/EquipmentSlot.js" */
 /** @import Flag from "../Data/Flag.js" */

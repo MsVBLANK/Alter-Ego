@@ -1,7 +1,7 @@
 import GameConstants from '../Classes/GameConstants.js';
 import GameSettings from '../Classes/GameSettings.js';
 import { batchUpdateSheet, batchUpdateSheetValues, getSheetWithProperties } from './sheets.js';
-import { generateListString } from './helpers.js';
+import { generateListString } from './helpers.ts';
 
 import fs from 'fs';
 

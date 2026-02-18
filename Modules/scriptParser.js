@@ -1,5 +1,5 @@
 import * as finder from './finder.js';
-import * as helpers from './helpers.js';
+import * as helpers from './helpers.ts';
 
 import { parse as parseScript } from 'acorn';
 

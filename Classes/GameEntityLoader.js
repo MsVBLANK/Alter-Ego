@@ -17,7 +17,7 @@ import Gesture from '../Data/Gesture.js';
 import Flag from '../Data/Flag.js';
 import InflictAction from '../Data/Actions/InflictAction.js';
 import { getSheetValues } from '../Modules/sheets.js';
-import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.js';
+import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
 import RecipeItem from '../Data/RecipeItem.js';

@@ -5,7 +5,7 @@ import NarrateAction from '../Data/Actions/NarrateAction.js';
 import SayAction from '../Data/Actions/SayAction.js';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
-import { capitalizeFirstLetter } from './helpers.js';
+import { capitalizeFirstLetter } from './helpers.ts';
 import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */

@@ -1,6 +1,6 @@
 import GameEntity from "./GameEntity.js";
 import Whisper from "./Whisper.js";
-import { generatePlayerListString } from "../Modules/helpers.js";
+import { generatePlayerListString } from "../Modules/helpers.ts";
 
 /** @import Action from "./Action.js" */
 /** @import Fixture from "./Fixture.js" */

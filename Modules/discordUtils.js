@@ -1,7 +1,7 @@
 import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.js';
 import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.js';
 import { InteractableType, MessageDisplayType } from './enums.js';
-import { capitalizeFirstLetter } from './helpers.js';
+import { capitalizeFirstLetter } from './helpers.ts';
 import {
     ActionRowBuilder,
     ButtonBuilder,

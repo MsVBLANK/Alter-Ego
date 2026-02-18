@@ -3,7 +3,7 @@ import AttemptAction from "./AttemptAction.js";
 import InventorySlot from "../InventorySlot.js";
 import Puzzle from "../Puzzle.js";
 import DropAction from "./DropAction.js";
-import { getSortedItemsString } from "../../Modules/helpers.js";
+import { getSortedItemsString } from "../../Modules/helpers.ts";
 
 /** @import Fixture from "../Fixture.js" */
 /** @import InventoryItem from "../InventoryItem.js" */

@@ -3,7 +3,7 @@ import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
-import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 import Interactable from "./Interactables/Interactable.js";
 

@@ -8,7 +8,7 @@ import DieAction from "../Data/Actions/DieAction.js";
 import NarrateAction from "../Data/Actions/NarrateAction.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
-import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts";
 import { Collection } from "discord.js";
 import Notification from "../Data/Notification.js";
 

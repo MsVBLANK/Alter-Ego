@@ -1,4 +1,5 @@
-﻿/** @import GameSettings from '../Classes/GameSettings.js' */
+﻿import InventoryAction from '../Data/Actions/InventoryAction.js';
+/** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import Player from '../Data/Player.js' */
 
@@ -39,6 +40,6 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable inventory");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    const inventoryString = player.viewInventory(false);
-    game.communicationHandler.sendMessageToPlayer(player, inventoryString);
+    const action = new InventoryAction(game, message, player, player.location, false);
+	action.performInventory();
 }

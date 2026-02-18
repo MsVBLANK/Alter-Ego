@@ -1,4 +1,5 @@
-﻿/** @import GameSettings from '../Classes/GameSettings.js' */
+﻿import InventoryAction from '../Data/Actions/InventoryAction.js';
+/** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
 
 /** @type {CommandConfig} */
@@ -32,6 +33,6 @@ export async function execute(game, message, command, args) {
     const player = game.entityFinder.getLivingPlayer(args[0]);
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
 
-    const inventoryString = player.viewInventory(true);
-    game.communicationHandler.sendToCommandChannel(inventoryString);
+    const action = new InventoryAction(game, message, player, player.location, true);
+	action.performInventory();
 }

@@ -1,11 +1,9 @@
-import InventoryItem from '../Data/InventoryItem.js';
-import { createPaginatedEmbed } from '../Modules/discordUtils.js';
+import RecipesAction from '../Data/Actions/RecipesAction.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
+/** @import InventoryItem from '../Data/InventoryItem.js' */
 /** @import Player from '../Data/Player.js' */
-/** @import ItemInstance from '../Data/ItemInstance.js' */
-/** @import RecipeItem from '../Data/RecipeItem.js' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -40,10 +38,6 @@ export function usage(settings) {
         + `${settings.commandPrefix}recipes POT OF RICE`;
 }
 
-var uncraftingRecipesDescription = "";
-var craftingRecipesDescription = "";
-var fixtureRecipesDescription = "";
-
 /**
  * @param {Game} game - The game in which the command is being executed. 
  * @param {UserMessage} message - The message in which the command was issued. 
@@ -55,12 +49,12 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable recipes");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-    const recipes = [];
+	/** @type {InventoryItem} */
+    let item;
     if (args.length > 0) {
         const input = args.join(" ");
         const parsedInput = input.toUpperCase().replace(/\'/g, "");
 
-        let item = null;
         // Check if the input is an item in the player's inventory.
         const inventory = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
         for (let i = 0; i < inventory.length; i++) {
@@ -69,236 +63,9 @@ export async function execute(game, message, command, args, player) {
                 break;
             }
         }
-        if (item === null) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in your inventory.`);
-
-        for (let i = 0; i < game.recipes.length; i++) { // TODO: optimize this ENTIRE for block later!
-            for (let j = 0; j < game.recipes[i].ingredients.length; j++) {
-                if (game.recipes[i].ingredients[j].prefab.id === item.prefab.id) {
-                    // This recipe contains the given item as an ingredient.
-                    // Gather a list of fixtures in the room that can be used to process this recipe, if applicable.
-                    let fixtures = [];
-                    if (game.recipes[i].fixtureTag !== "") {
-                        const recipeFixtures = game.fixtures.filter(fixture => fixture.location.id === player.location.id && fixture.recipeTag === game.recipes[i].fixtureTag);
-                        // If there are no fixtures in the room, provide the fixture tag.
-                        if (recipeFixtures.length === 0) fixtures.push(game.recipes[i].fixtureTag);
-                        else fixtures = recipeFixtures.map(fixture => fixture.name);
-                    }
-                    const ingredients = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
-                    const products = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
-                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: game.recipes[i].durationString, uncraftable: false });
-                    break;
-                }
-            }
-            if (game.recipes[i].uncraftable && game.recipes[i].products.length === 1 && game.recipes[i].products[0].prefab.id === item.prefab.id) {
-                // This recipe contains the given item as the sole product and is uncraftable.
-                const ingredients = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
-                const products = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: game.recipes[i].durationString, uncraftable: true });
-            }
-        }
-        if (recipes.length === 0) return game.communicationHandler.reply(message, `There are no recipes that can be carried out with ${item.singleContainingPhrase}.`);
-
-        craftingRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}craft\` command with your ${item.name} as an ingredient. The other ingredient may not be available in this room, or you may need to create it yourself.`;
-        uncraftingRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}uncraft\` command with your ${item.name} as an ingredient.`;
-        fixtureRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}use\` command on a fixture after dropping your ${item.name} and any other required ingredients into it. The other ingredients may not be available in this room, or you may need to create them yourself. `;
-        fixtureRecipesDescription += `If there is no fixture listed in all uppercase, then you cannot carry out this recipe in the room you're currently in and must find a suitable fixture elsewhere.`;
-    }
-    else {
-        // Get lists of all the player's inventory items and items in the room.
-        const inventoryItems = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null && item.quantity > 0);
-        inventoryItems.sort(function (a, b) {
-            if (a.prefab.id < b.prefab.id) return -1;
-            if (a.prefab.id > b.prefab.id) return 1;
-            return 0;
-        });
-        const roomItems = game.entityFinder.getRoomItems(null, player.location.id);
-        roomItems.sort(function (a, b) {
-            if (a.prefab.id < b.prefab.id) return -1;
-            if (a.prefab.id > b.prefab.id) return 1;
-            return 0;
-        });
-
-        for (let i = 0; i < game.recipes.length; i++) { // TODO: optimize this ENTIRE for block later!
-            let ingredients = [];
-            let products = [];
-            for (let j = 0; j < game.recipes[i].ingredients.length; j++) {
-                // Find all the ingredients for this Recipe in the player's inventory or in the room.
-                let found = false;
-                for (let k = 0; k < inventoryItems.length; k++) {
-                    if (inventoryItems[k].prefab.id === game.recipes[i].ingredients[j].prefab.id) {
-                        ingredients.push(inventoryItems[k]);
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    for (let k = 0; k < roomItems.length; k++) {
-                        if (roomItems[k].prefab.id === game.recipes[i].ingredients[j].prefab.id) {
-                            ingredients.push(roomItems[k]);
-                            break;
-                        }
-                    }
-                }
-            }
-            ingredients.sort(function (a, b) {
-                if (a.prefab.id < b.prefab.id) return -1;
-                if (a.prefab.id > b.prefab.id) return 1;
-                return 0;
-            });
-            if (ingredientsMatch(ingredients, game.recipes[i].ingredients)) {
-                // Gather a list of fixtures in the room that can be used to process this recipe, if applicable.
-                let fixtures = [];
-                if (game.recipes[i].fixtureTag !== "") {
-                    const recipeFixtures = game.fixtures.filter(fixture => fixture.location.id === player.location.id && fixture.recipeTag === game.recipes[i].fixtureTag);
-                    if (recipeFixtures.length === 0) continue;
-                    fixtures = recipeFixtures.map(fixture => fixture.name);
-                }
-                ingredients = ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
-                products = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
-                recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: fixtures.join(', '), duration: game.recipes[i].durationString, uncraftable: false });
-            }
-
-            if (game.recipes[i].products.length === 1 && game.recipes[i].uncraftable) {
-                products = [];
-                for (let j = 0; j < inventoryItems.length; j++) {
-                    if (inventoryItems[j].prefab.id == game.recipes[i].products[0].prefab.id) {
-                        products.push(inventoryItems[j].singleContainingPhrase);
-                        break;
-                    }
-                }
-                if (products.length !== 0) {
-                    products.sort(function (a, b) {
-                        if (a < b) return -1;
-                        if (a > b) return 1;
-                        return 0;
-                    });
-                    ingredients = game.recipes[i].products.map(product => product.prefab.singleContainingPhrase);
-                    products = game.recipes[i].ingredients.map(ingredient => ingredient.prefab.singleContainingPhrase);
-                    recipes.push({ ingredients: ingredients.join(', '), products: products.join(', '), fixtures: "", duration: game.recipes[i].durationString, uncraftable: true });
-                }
-            }
-        }
-        if (recipes.length === 0) return game.communicationHandler.reply(message, `There are no recipes you can carry out with the items currently in your inventory and the items in this room.`);
-
-        craftingRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}craft\` command. Note that only recipes whose ingredients include at least one item currently in your inventory are listed.`;
-        uncraftingRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}uncraft\` command. Note that only recipes whose sole product is an item currently in your inventory are listed.`;
-        fixtureRecipesDescription = `These are recipes you can carry out using the \`${game.settings.commandPrefix}use\` command on a fixture after dropping all of the ingredients into it. Note that only recipes whose ingredients include at least one item currently in your inventory are listed.`;
-    }
-
-    // Create a rich embed for the Recipes.
-    const craftingFields = [];
-    const fixtureFields = [];
-    const uncraftingFields = [];
-    const pages = [];
-    let page = 0;
-
-    for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].fixtures.length > 0) fixtureFields.push(recipes[i]);
-        else if (recipes[i].uncraftable) uncraftingFields.push(recipes[i]);
-        else craftingFields.push(recipes[i]);
-    }
-
-    let pageNo = 0;
-    // Divide the fields into pages. Split them up by crafting Recipes and fixture Recipes.
-    for (let i = 0; i < craftingFields.length; i++) {
-        // Divide the menu into groups of 5.
-        if (i % 5 === 0) {
-            pages.push([]);
-            if (i !== 0) pageNo++;
-        }
-        pages[pageNo].push(craftingFields[i]);
-    }
-    if (pages[pageNo] && pages[pageNo].length > 0) pageNo++;
-    for (let i = 0; i < fixtureFields.length; i++) {
-        // Divide the menu into groups of 5.
-        if (i % 5 === 0) {
-            pages.push([]);
-            if (i !== 0) pageNo++;
-        }
-        pages[pageNo].push(fixtureFields[i]);
-    }
-    if (pages[pageNo] && pages[pageNo].length > 0) pageNo++;
-    for (let i = 0; i < uncraftingFields.length; i++) {
-        // Divide the menu into groups of 5.
-        if (i % 5 === 0) {
-            pages.push([]);
-            if (i !== 0) pageNo++;
-        }
-        pages[pageNo].push(uncraftingFields[i]);
-    }
-
-    const embedAuthorName = `Recipes List`;
-    const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-    let processingRecipe = pages[page].at(0).fixtures.length > 0;
-    let uncraftingRecipe = pages[page].at(0).uncraftable;
-    let fieldDescription = processingRecipe ? fixtureRecipesDescription : uncraftingRecipe ? uncraftingRecipesDescription : craftingRecipesDescription;
-    const fieldName = (entryIndex) => `**Recipe ${entryIndex + 1}**`;
-    const fieldValue = (entryIndex) => `**Ingredients:** ${pages[page][entryIndex].ingredients}\n` +
-        `**Products:** ${pages[page][entryIndex].products}\n` +
-        (processingRecipe ? `**Using Fixture(s):** ${pages[page][entryIndex].fixtures}\n` : '') +
-        (processingRecipe ? `**Duration:** ${pages[page][entryIndex].duration}` : '');
-    let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-    message.author.send({ embeds: [embed] }).then(msg => {
-        msg.react('⏪').then(() => {
-            msg.react('⏩');
-
-            const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-            const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
-
-            const backwards = msg.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-            const forwards = msg.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-            backwards.on("collect", () => {
-                if (page === 0) return;
-                page--;
-                processingRecipe = pages[page][0].fixtures.length > 0;
-                uncraftingRecipe = pages[page][0].uncraftable;
-                fieldDescription = processingRecipe ? fixtureRecipesDescription : uncraftingRecipe ? uncraftingRecipesDescription : craftingRecipesDescription;
-                embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-                msg.edit({ embeds: [embed] });
-            });
-
-            forwards.on("collect", () => {
-                if (page === pages.length - 1) return;
-                page++;
-                processingRecipe = pages[page][0].fixtures.length > 0;
-                uncraftingRecipe = pages[page][0].uncraftable;
-                fieldDescription = processingRecipe ? fixtureRecipesDescription : uncraftingRecipe ? uncraftingRecipesDescription : craftingRecipesDescription;
-                embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-                msg.edit({ embeds: [embed] });
-            });
-        });
-    });
-}
-
-/**
- * Returns true if the items and ingredients match.
- * @param {ItemInstance[]} items - The actually existing items. 
- * @param {RecipeItem[]} ingredients - The list of ingredients in the recipe.
- */
-function ingredientsMatch(items, ingredients) {
-    if (items.length !== ingredients.length) return false;
-    let hasInventoryItem = false;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].prefab.id !== ingredients[i].prefab.id) return false;
-        if (items[i] instanceof InventoryItem) hasInventoryItem = true;
-    }
-    if (!hasInventoryItem) return false;
-    return true;
-}
-
-/**
- * Returns true if the items and ingredients match.
- * @param {ItemInstance[]} items - The actually existing items. 
- * @param {RecipeItem[]} products - The list of products in the recipe.
- */
-function productsMatch(items, products) {
-    if (items.length !== products.length) return false;
-    let hasInventoryItem = false;
-    for (let i = 0; i < items.length; i++) {
-        if (items[i].prefab.id !== products[i].prefab.id) return false;
-        if (items[i] instanceof InventoryItem) hasInventoryItem = true;
-    }
-    if (!hasInventoryItem) return false;
-    return true;
+        if (!item) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in your inventory.`);
+	}
+    
+	const action = new RecipesAction(game, message, player, player.location, false);
+	action.performRecipes(item);
 }

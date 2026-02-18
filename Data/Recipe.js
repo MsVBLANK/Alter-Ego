@@ -1,9 +1,10 @@
+import CollatedRoomItem from './CollatedRoomItem.js';
 import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
 /**
- * @import CollatedRoomItem from './CollatedRoomItem.js'
  * @import Game from './Game.js'
+ * @import ItemInstance from './ItemInstance.js'
  * @import RecipeItem from './RecipeItem.js'
  */
 
@@ -153,7 +154,7 @@ export default class Recipe extends GameEntity {
      * Returns true if the given list of items matches the ingredients list exactly.
      * To be considered an exact match, all of the ingredient prefabs must match those of the given items,
      * and the given items must have a quantity greater than or equal to the required ingredient quantity.
-     * @param {CollatedRoomItem[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {(CollatedRoomItem|ItemInstance)[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     ingredientsMatch(items) {
         if (items.length !== this.ingredientsFlat.length) return false;
@@ -162,8 +163,8 @@ export default class Recipe extends GameEntity {
             if (item.prefab.id !== ingredient.prefab.id) return false;
             if (item.quantity < ingredient.quantity) return false;
 			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
-			if (!item.containerMatches(ingredient)) return false;
-            item.setVariable(ingredient.quantityVariableName);
+			if (item instanceof CollatedRoomItem && !item.containerMatches(ingredient)) return false;
+            if (item instanceof CollatedRoomItem) item.setVariable(ingredient.quantityVariableName);
         }
         return true;
     }

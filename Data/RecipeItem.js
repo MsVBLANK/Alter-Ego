@@ -154,4 +154,16 @@ export default class RecipeItem extends GameConstruct {
 		if (isNaN(satisfiedQuantityCount)) return NaN;
 		return Math.floor(satisfiedQuantityCount);
 	}
+
+	/**
+	 * Returns a string to display this recipe item in a list of recipes list.
+	 */
+	getDisplayString() {
+		let displayString = "";
+		if (this.quantityIsConstant || this.quantityVariableName === "") displayString = this.prefab.toContainingPhrase(this.quantity);
+		else displayString = `${this.quantity}${this.quantityVariableName} ${this.prefab.pluralContainingPhrase}`;
+		const containedItemsString = this.containedItems.map(containedItem => containedItem.getDisplayString()).join(', ');
+		if (containedItemsString !== "") displayString += ` (${containedItemsString})`;
+		return displayString;
+	}
 }

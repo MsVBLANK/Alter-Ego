@@ -170,6 +170,15 @@ export default class InventoryItem extends ItemInstance {
         return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
     }
 
+	/**
+	 * Returns the args for the Stash ActionDirective for this inventory item.
+	 * @param {InventoryItem} container - The container to stash the inventory item into.
+	 * @param {InventorySlot<InventoryItem>} inventorySlot - The inventory slot to stash the inventory item into.
+	 */
+	getStashActionDirectiveArgs(container, inventorySlot) {
+		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
+	}
+
     /**
      * Gets all of the items this entity contains.
      * @override

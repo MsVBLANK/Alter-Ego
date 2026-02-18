@@ -3,6 +3,7 @@ import InspectAction from "../Data/Actions/InspectAction.js";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
 import DropAction from "../Data/Actions/DropAction.js";
+import StashAction from "../Data/Actions/StashAction.js";
 /** 
  * @import Game from "../Data/Game.js";
  * @import Interactable from "./Interactables/Interactable.js";
@@ -130,6 +131,16 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+				reply.resource.message.delete();
+				return true;
+			}
+		}
+		if (action instanceof StashAction) {
+			const args = interactable.actionDirective.getArgs();
+			const parsedArgs = action.parseInteractionArgs(args);
+			const validatedArgs = action.validateInteractionArgs(parsedArgs);
+			if (validatedArgs.length === 4) {
+				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				reply.resource.message.delete();
 				return true;
 			}

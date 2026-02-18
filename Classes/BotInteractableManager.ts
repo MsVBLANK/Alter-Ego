@@ -16,6 +16,7 @@ import InspectAction from "../Data/Actions/InspectAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import DropAction from "../Data/Actions/DropAction.js";
+import StashAction from "../Data/Actions/StashAction.js";
 
 /**
  * @class BotInteractableManager
@@ -282,6 +283,58 @@ export default class BotInteractableManager {
 				dropButtons.push(dropButton);
 			}
 			return dropButtons;
+		}
+	}
+
+	async createStashActionInteractables(entities: InventoryItem[], player: Player, viableContainers: Map<InventoryItem, string[]>): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable stash") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable stash")) return [];
+		if (viableContainers.values().reduce((sum, inventorySlots) => sum + inventorySlots.length, 0) > 2) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				for (const [container, inventorySlots] of viableContainers.entries()) {
+					if (container.identifier === entity.identifier) continue;
+					for (const inventorySlotId of inventorySlots) {
+						const inventorySlot = container.inventory.get(inventorySlotId);
+						if (!inventorySlot || inventorySlot.willBeOverFilledBy(entity)) continue;
+						const actionDirective = new ActionDirective(StashAction.prototype, entity.getStashActionDirectiveArgs(container, inventorySlot));
+						const customId = await actionDirective.generateCustomId(player);
+						if (menuOptions.has(customId)) continue;
+						actionDirective.setCustomId(customId);
+						const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.name}` : container.name;
+						const option = new StringSelectMenuOptionInteractable(actionDirective, `${entity.name} ${container.getPreposition()} ${containerName}`, customId, `Stash ${entity.name} ${container.getPreposition()} ${inventorySlot.id} of ${container.name}`);
+						this.addInteractable(option);
+						menuOptions.set(customId, option);
+						if (menuOptions.size >= 25) break;
+					}
+				}
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(StashAction.prototype, ["StashAction Menu"]);
+			const customId = await actionDirective.generateCustomId(player);
+			actionDirective.setCustomId(customId);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Stash", 0);
+			this.addInteractable(menu);
+			return [menu];
+		}
+		else {
+			const stashButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				for (const [container, inventorySlots] of viableContainers.entries()) {
+					if (container.identifier === entity.identifier) continue;
+					for (const inventorySlotId of inventorySlots) {
+						const inventorySlot = container.inventory.get(inventorySlotId);
+						if (!inventorySlot || inventorySlot.willBeOverFilledBy(entity)) continue;
+						const actionDirective = new ActionDirective(StashAction.prototype, entity.getStashActionDirectiveArgs(container, inventorySlot));
+						const customId = await actionDirective.generateCustomId(player);
+						actionDirective.setCustomId(customId);
+						const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.name}` : container.name;
+						const stashButton = new ButtonInteractable(actionDirective, `Stash ${entity.name} ${container.getPreposition()} ${containerName}`, ButtonStyle.Primary, 0);
+						this.addInteractable(stashButton);
+						stashButtons.push(stashButton);
+					}
+				}
+			}
+			return stashButtons;
 		}
 	}
 }

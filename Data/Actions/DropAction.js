@@ -64,7 +64,7 @@ export default class DropAction extends Action {
 	}
 
 	/**
-	 * Validates the parsed args. The results can be passed directly into performTake.
+	 * Validates the parsed args. The results can be passed directly into performDrop.
 	 * @param {[InventoryItem, EquipmentSlot, Puzzle|Fixture|RoomItem, InventorySlot<RoomItem>]} args - The args after being parsed.
 	 * @returns {[InventoryItem, EquipmentSlot, Puzzle|Fixture|RoomItem, InventorySlot<RoomItem>]|[]}
 	 */

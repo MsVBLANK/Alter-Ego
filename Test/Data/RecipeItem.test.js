@@ -9,7 +9,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("", game);
         expect(recipe.recipeItemString).toBe("");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -18,7 +18,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1X CHICKPEA FLOUR", game);
         expect(recipe.recipeItemString).toBe("1X CHICKPEA FLOUR");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("CHICKPEA FLOUR");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -27,7 +27,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1X SOY MILK", game);
         expect(recipe.recipeItemString).toBe("1X SOY MILK");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("SOY MILK");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -36,7 +36,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1Y DUCK EGG", game);
         expect(recipe.recipeItemString).toBe("1Y DUCK EGG");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("Y");
+        expect(recipe.quantityVariableName).toBe("Y");
         expect(recipe.prefabId).toBe("DUCK EGG");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -45,7 +45,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("MEASURING CUP OF HONEY", game);
         expect(recipe.recipeItemString).toBe("MEASURING CUP OF HONEY");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("MEASURING CUP OF HONEY");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -54,7 +54,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1X BREADED ONION RINGS", game);
         expect(recipe.recipeItemString).toBe("1X BREADED ONION RINGS");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("BREADED ONION RINGS");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -63,7 +63,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("2  SALT", game);
         expect(recipe.recipeItemString).toBe("2  SALT");
         expect(recipe.quantity).toBe(2);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("SALT");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -72,7 +72,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("OILED PAN", game);
         expect(recipe.recipeItemString).toBe("OILED PAN");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("OILED PAN");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -81,7 +81,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)", game);
         expect(recipe.recipeItemString).toBe("2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(2);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("GORED STUFFED MONKEY");
         expect(recipe.containedItemsString).toBe("PROPRIETARY SCREWDRIVER");
     });
@@ -90,7 +90,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)", game);
         expect(recipe.recipeItemString).toBe("2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(2);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("GORED STUFFED MONKEY");
         expect(recipe.containedItemsString).toBe("2X PROPRIETARY SCREWDRIVER");
     });
@@ -99,7 +99,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)", game);
         expect(recipe.recipeItemString).toBe("GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("GORED STUFFED MONKEY");
         expect(recipe.containedItemsString).toBe("PROPRIETARY SCREWDRIVER");
     });
@@ -108,7 +108,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("SWITCHBLADE", game);
         expect(recipe.recipeItemString).toBe("SWITCHBLADE");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("SWITCHBLADE");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -117,7 +117,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("3D BEAVER MATERIALS", game);
         expect(recipe.recipeItemString).toBe("3D BEAVER MATERIALS");
         expect(recipe.quantity).toBe(3);
-        expect(recipe.variableName).toBe("D");
+        expect(recipe.quantityVariableName).toBe("D");
         expect(recipe.prefabId).toBe("BEAVER MATERIALS");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -126,7 +126,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1X 3D BEAVER MATERIALS", game);
         expect(recipe.recipeItemString).toBe("1X 3D BEAVER MATERIALS");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("3D BEAVER MATERIALS");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -135,7 +135,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("K CUP", game);
         expect(recipe.recipeItemString).toBe("K CUP");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("K CUP");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -144,7 +144,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("1X K CUP", game);
         expect(recipe.recipeItemString).toBe("1X K CUP");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("X");
+        expect(recipe.quantityVariableName).toBe("X");
         expect(recipe.prefabId).toBe("K CUP");
         expect(recipe.containedItemsString).toBe(null);
     });
@@ -153,7 +153,7 @@ describe('Recipe test', () => {
         const recipe = new RecipeItem("CRATE (5X PLANK, 10X NAILS)", game);
         expect(recipe.recipeItemString).toBe("CRATE (5X PLANK, 10X NAILS)");
         expect(recipe.quantity).toBe(1);
-        expect(recipe.variableName).toBe("");
+        expect(recipe.quantityVariableName).toBe("");
         expect(recipe.prefabId).toBe("CRATE");
         expect(recipe.containedItemsString).toBe("5X PLANK, 10X NAILS");
     });

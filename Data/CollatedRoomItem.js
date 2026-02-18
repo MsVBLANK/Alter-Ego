@@ -1,3 +1,4 @@
+import RoomItem from './RoomItem.js';
 import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import { getSortedItems } from '../Modules/helpers.js';
@@ -6,8 +7,8 @@ import { getChildItems } from '../Modules/itemManager.js';
  * @import Fixture from './Fixture.js';
  * @import Prefab from './Prefab.js';
  * @import Puzzle from './Puzzle.js';
+ * @import RecipeItem from './RecipeItem.js';
  * @import Room from './Room.js';
- * @import RoomItem from './RoomItem.js';
  */
 
 /**
@@ -79,7 +80,10 @@ export default class CollatedRoomItem {
 		const childItems = [];
 		for (const item of items)
 			getChildItems(childItems, item);
-		items = items.concat(childItems);
+		for (const childItem of childItems) {
+			if (!items.includes(childItem))
+				items.push(childItem);
+		}
 		items = getSortedItems(items);
 		/** @type {CollatedRoomItem[]} */
 		const collatedItems = [];
@@ -108,6 +112,14 @@ export default class CollatedRoomItem {
 	#recalculate() {
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
 		this.uses = this.items.reduce((uses, item) => uses + (isNaN(item.uses) ? NaN : item.quantity * item.uses), 0);
+	}
+
+	/**
+	 * Returns true if the collated items' container matches the given recipe item's container.
+	 * @param {RecipeItem} recipeItem 
+	 */
+	containerMatches(recipeItem) {
+		return recipeItem.container === null || this.container instanceof RoomItem && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
 	/**
@@ -235,6 +247,8 @@ export default class CollatedRoomItem {
 				// Break, to refresh this for loop.
 				break;
 			}
+			// Re-calculate stats before repeating the while loop.
+			this.#recalculate();
 		}
 	}
 

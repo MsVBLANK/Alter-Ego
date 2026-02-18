@@ -913,6 +913,7 @@ export default class GameEntityLoader extends GameEntityManager {
 							const containedIngredient = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
 							if (prefab) containedIngredient.setPrefab(prefab);
+							containedIngredient.setContainer(ingredient);
 							ingredient.containedItems.push(containedIngredient);
 							recipe.ingredientsFlat.push(containedIngredient);
 						}
@@ -930,6 +931,7 @@ export default class GameEntityLoader extends GameEntityManager {
 							const containedProduct = new RecipeItem(containedItemString, this.game);
 							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);
 							if (prefab) containedProduct.setPrefab(prefab);
+							containedProduct.setContainer(product);
 							product.containedItems.push(containedProduct);
 							recipe.productsFlat.push(containedProduct);
 						}
@@ -974,19 +976,24 @@ export default class GameEntityLoader extends GameEntityManager {
 		/** @type {Set<string>} */
 		const ingredientVariables = new Set();
 		for (const ingredient of recipe.ingredientsFlat) {
-			if (ingredient.variableName !== '' && /^[A-Z]$/.test(ingredient.variableName) === false)
-				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.variableName}" in ingredients is not a valid variable name.`);
+			if (ingredient.quantityVariableName !== '' && /^[A-Z]$/.test(ingredient.quantityVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.quantityVariableName}" in ingredients is not a valid variable name.`);
+			if (ingredient.usesVariableName !== '' && /^[A-Z]$/.test(ingredient.usesVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.usesVariableName}" in ingredients is not a valid variable name.`);
 			if (!(ingredient.prefab instanceof Prefab))
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
 			if (ingredient.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (!isNaN(ingredient.uses) && ingredient.uses < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a number of uses greater than or equal to 1.`);
 			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.size === 0)
                 return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`);
             if (ingredient.prefab.inventory.size > 1)
                 return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" has more than one inventory slot.`)
-			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < ingredient.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < ingredient.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
 			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
-			ingredientVariables.add(ingredient.variableName);
+			ingredientVariables.add(ingredient.quantityVariableName);
+			ingredientVariables.add(ingredient.usesVariableName);
 		}
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
@@ -997,19 +1004,24 @@ export default class GameEntityLoader extends GameEntityManager {
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);
 		for (const product of recipe.productsFlat) {
-			if (product.variableName !== '' && /^[A-Z]$/.test(product.variableName) === false)
-				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.variableName}" in products is not a valid variable name.`);
-			if (product.variableName !== '' && !ingredientVariables.has(product.variableName))
-				return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.variableName}" does not appear in ingredients.`);
+			if (product.quantityVariableName !== '' && /^[A-Z]$/.test(product.quantityVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.quantityVariableName}" in products is not a valid variable name.`);
+			if (product.usesVariableName !== '' && /^[A-Z]$/.test(product.usesVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.usesVariableName}" in ingredients is not a valid variable name.`);
+			if (product.quantityVariableName !== '' && !ingredientVariables.has(product.quantityVariableName))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.quantityVariableName}" does not appear in ingredients.`);
+			if (product.usesVariableName !== '' && !ingredientVariables.has(product.usesVariableName))
 			if (!(product.prefab instanceof Prefab))
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
 			if (product.quantity < 1)
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (!isNaN(product.uses) && product.uses < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a number of uses greater than or equal to 1.`);
 			if (product.containedItems.length > 0 && product.prefab.inventory.size === 0)
                 return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`);
             if (product.prefab.inventory.size > 1)
                 return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" has more than one inventory slot.`)
-			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + item.prefab.size, 0))
+			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
 			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)

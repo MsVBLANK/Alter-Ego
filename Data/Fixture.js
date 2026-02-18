@@ -372,16 +372,18 @@ export default class Fixture extends ItemContainer {
 			if (this.process.recipe.isIngredientAndProduct(product) && isNaN(product.prefab.uses))
 				continue;
 			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
+			const uses = !isNaN(product.uses) && !product.usesIsConstant ? product.uses * satisfactoryProcessCount : product.uses;
 			if (product.prefab.inventory.size > 0) {
 				for (let i = 0; i < quantity; i++) {
-					const instantiatedProduct = this.#instantiate(product.prefab, 1, new Map());
+					const instantiatedProduct = this.#instantiate(product.prefab, 1, uses, new Map());
 					for (const childProduct of product.containedItems) {
 						const childQuantity = childProduct.quantityIsConstant ? childProduct.quantity : childProduct.quantity * satisfactoryProcessCount;
-						this.#instantiate(childProduct.prefab, childQuantity, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
+						const childUses = !isNaN(childProduct.uses) && !childProduct.usesIsConstant ? childProduct.uses * satisfactoryProcessCount : childProduct.uses;
+						this.#instantiate(childProduct.prefab, childQuantity, childUses, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
 					}
 				}
 			}
-			else this.#instantiate(product.prefab, quantity, new Map());
+			else this.#instantiate(product.prefab, quantity, uses, new Map());
 		}
 	}
 
@@ -389,14 +391,15 @@ export default class Fixture extends ItemContainer {
 	 * Instantiates a room item in this fixture.
 	 * @param {Prefab} prefab - The prefab to instantiate.
 	 * @param {number} quantity - The quantity of the prefab to instantiate.
+	 * @param {number} uses - The number of uses to instantiate the prefab with. Defaults to the prefab's number of uses.
 	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
 	 * @param {Fixture|Puzzle|RoomItem} [container] - The container to instantiate the prefab into. Defaults to the fixture itself.
 	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @returns The instantiated room item.
 	 */
-	#instantiate(prefab, quantity, proceduralSelections = new Map(), container = this, inventorySlotId = "") {
+	#instantiate(prefab, quantity, uses = prefab.uses, proceduralSelections = new Map(), container = this, inventorySlotId = "") {
 		const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
-		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections);
+		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
 	}
 
 	/**

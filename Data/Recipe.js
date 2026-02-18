@@ -161,7 +161,9 @@ export default class Recipe extends GameEntity {
             const ingredient = this.ingredientsFlat[i];
             if (item.prefab.id !== ingredient.prefab.id) return false;
             if (item.quantity < ingredient.quantity) return false;
-            item.setVariable(ingredient.variableName);
+			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
+			if (!item.containerMatches(ingredient)) return false;
+            item.setVariable(ingredient.quantityVariableName);
         }
         return true;
     }
@@ -177,9 +179,9 @@ export default class Recipe extends GameEntity {
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 // Check if this item has the same prefab as the current ingredient and has a sufficient quantity.
-                if (item.prefab.id === ingredient.prefab.id && item.quantity >= ingredient.quantity) {
+                if (item.prefab.id === ingredient.prefab.id && item.quantity >= ingredient.quantity && item.uses >= ingredient.uses && item.containerMatches(ingredient)) {
                     ingredients.push(item);
-                    item.setVariable(ingredient.variableName);
+                    item.setVariable(ingredient.quantityVariableName);
                     break;
                 }
             }
@@ -202,7 +204,7 @@ export default class Recipe extends GameEntity {
             const ingredientIsAlsoProduct = this.isIngredientAndProduct(item);
             const ingredientUseCount = ingredientIsAlsoProduct ? item.uses : item.quantity;
             const itemSatisfiedQuantityCount = ingredient.getSatisfiedQuantityCount(ingredientUseCount);
-            if (item.prefab.id !== ingredient.prefab.id || !ingredient.quantitySatisfiedBy(item) || !ingredient.quantityIsConstant && itemSatisfiedQuantityCount === 0) return 0;
+            if (item.prefab.id !== ingredient.prefab.id || !item.containerMatches(ingredient) || !ingredient.quantitySatisfiedBy(item) || !ingredient.quantityIsConstant && itemSatisfiedQuantityCount === 0) return 0;
             if(!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
         }
         if (satisfactoryItemsCounts.length === 1 && isNaN(satisfactoryItemsCounts[0])) return 1;

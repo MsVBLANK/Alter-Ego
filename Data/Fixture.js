@@ -6,7 +6,7 @@ import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
 import { MessageDisplayType } from '../Modules/enums.js';
-import CollatedRoomItem from './CollatedRoomItem.js';
+import CollatedItem from './CollatedItem.ts';
 
 /** @import Game from './Game.js' */
 /** @import RoomItem from './RoomItem.js' */
@@ -434,12 +434,12 @@ export default class Fixture extends ItemContainer {
         const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
-        const collatedItems = CollatedRoomItem.collate(items);
+        const collatedItems = CollatedItem.collate(items);
 
         const recipes = this.getGame().recipes.filter(recipe => recipe.fixtureTag === this.recipeTag);
         /** @type {Recipe} */
         let recipe = null;
-        /** @type {CollatedRoomItem[]} */
+        /** @type {CollatedItem[]} */
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {

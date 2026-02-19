@@ -1,6 +1,6 @@
 import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
-import type CollatedRoomItem from "./Data/CollatedRoomItem.js";
+import type CollatedItem from "./Data/CollatedItem.ts";
 import type Event from "./Data/Event.js";
 import type Fixture from "./Data/Fixture.js";
 import type Flag from "./Data/Flag.js";
@@ -44,6 +44,11 @@ declare global {
 	 * Represents the callee of a bot command.
 	 */
 	type Callee = Event | Flag | InventoryItem | Puzzle;
+
+    /**
+     * Represents a container that can hold room items.
+     */
+    type RoomItemContainer = Fixture | Puzzle | RoomItem;
 
 	/**
 	 * Represents an inspectable game entity.
@@ -174,7 +179,7 @@ declare global {
 	 */
 	interface Process {
 		recipe?: Recipe;
-		ingredients: CollatedRoomItem[];
+		ingredients: CollatedItem[];
 		duration?: Duration;
 		timer?: any;
 	}
@@ -185,7 +190,7 @@ declare global {
 	 */
 	interface FindRecipeResult {
 		recipe: Recipe | null;
-		ingredients: CollatedRoomItem[];
+		ingredients: CollatedItem[];
 	}
 
 	/**

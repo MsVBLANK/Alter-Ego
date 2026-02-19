@@ -1,7 +1,7 @@
 import Game from "./Game.js";
 import GameConstruct from "./GameConstruct.js";
 /**
- * @import CollatedRoomItem from "./CollatedRoomItem.js";
+ * @import CollatedItem from "./CollatedItem.ts";
  * @import Prefab from "./Prefab.js";
  */
 
@@ -139,7 +139,7 @@ export default class RecipeItem extends GameConstruct {
 
 	/**
 	 * Returns true if the given item satisfies the quantity required of this recipe item.
-	 * @param {CollatedRoomItem} item
+	 * @param {CollatedItem} item
 	 */
 	quantitySatisfiedBy(item) {
 		if (isNaN(item.quantity)) return true;

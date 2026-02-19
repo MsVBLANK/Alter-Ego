@@ -161,8 +161,8 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.destroyIngredients(2);
-			fixture.instantiateProducts(2);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 2);
+			fixture.instantiateProducts(fixture.process.recipe, 2);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(1);
@@ -187,8 +187,8 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.destroyIngredients(3);
-			fixture.instantiateProducts(3);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 3);
+			fixture.instantiateProducts(fixture.process.recipe, 3);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(1);
@@ -213,8 +213,8 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.destroyIngredients(7);
-			fixture.instantiateProducts(7);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 7);
+			fixture.instantiateProducts(fixture.process.recipe, 7);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(1);

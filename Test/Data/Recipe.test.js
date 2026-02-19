@@ -87,14 +87,14 @@ describe('Recipe test', () => {
 
 		test('ingredientsMatch on video-room BLENDER 5', () => {
 			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BLENDER CUP OF MILK')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.ingredientsMatch(items)).toBe(false);
 		});
 
 		test('ingredientsMatch on video-room BLENDER 6', async () => {
 			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BANANA MILKSHAKE')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.ingredientsMatch(items)).toBe(false);
 		});

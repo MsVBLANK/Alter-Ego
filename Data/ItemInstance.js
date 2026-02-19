@@ -5,6 +5,7 @@ import { Collection } from "discord.js";
 /** @import Game from "./Game.js" */
 /** @import Prefab from "./Prefab.js" */
 /** @import Player from "./Player.js" */
+/** @import RecipeItem from "./RecipeItem.js" */
 
 /**
  * @class ItemInstance
@@ -176,6 +177,14 @@ export default class ItemInstance extends ItemContainer {
 			containerChain.add(container.row);
 			container = container.container;
 		}
+	}
+
+	/**
+	 * Returns true if the item instance's container matches the given recipe item's container.
+	 * @param {RecipeItem} recipeItem 
+	 */
+	containerMatches(recipeItem) {
+		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
 	/**

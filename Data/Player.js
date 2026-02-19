@@ -19,6 +19,7 @@ import { MessageDisplayType } from '../Modules/enums.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
+import { getSortedItems } from '../Modules/helpers.ts';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
@@ -1536,6 +1537,25 @@ export default class Player extends ItemContainer {
         if (!equippedItem) return false;
         return itemIdentifierMatches(equippedItem, identifier, true);
     }
+
+	/**
+	 * Returns true if the player can craft the given recipe.
+	 * @param {Recipe} recipe - The recipe to check if the player can craft.
+	 * @param {[InventoryItem, InventoryItem]} itemsInHands - The two items in the player's hands.
+	 */
+	canCraft(recipe, itemsInHands) {
+		let items = [...itemsInHands];
+		/** @type {InventoryItem[]} */
+		const childItems = [];
+		for (const item of itemsInHands)
+			itemManager.getChildItems(childItems, item);
+		for (const childItem of childItems) {
+			if (!items.includes(childItem))
+				items.push(childItem);
+		}
+		items = getSortedItems(items);
+		return recipe.ingredientsMatch(items);
+	}
 
     /**
      * Kills the player.

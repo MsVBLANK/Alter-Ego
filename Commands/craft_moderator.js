@@ -83,7 +83,7 @@ export async function execute(game, message, command, args) {
     const recipes = game.recipes.filter(recipe => recipe.ingredients.length === 2 && recipe.fixtureTag === "");
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].ingredients[0].prefab.id === items[0].prefab.id && recipes[i].ingredients[1].prefab.id === items[1].prefab.id) {
+        if (player.canCraft(recipes[i], [items[0], items[1]])) {
             recipe = recipes[i];
             break;
         }

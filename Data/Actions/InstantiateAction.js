@@ -41,12 +41,13 @@ export default class InstantiateAction extends Action {
 	 * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @param {number} quantity - The quantity to instantiate.
 	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+	 * @param {number} [uses] - The number of uses to instantiate the inventory item with. Defaults to the prefab's uses.
 	 * @param {boolean} [notify] - Whether or not to notify the player that the item was added to their inventory. Defaults to true. 
 	 */
-	performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, notify = true) {
+	performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, notify = true) {
 		if (this.performed) return;
 		super.perform();
-		const createdItem = instantiateInventoryItem(prefab, this.player, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections);
+		const createdItem = instantiateInventoryItem(prefab, this.player, equipmentSlotId, container, inventorySlotId, quantity, uses, proceduralSelections);
 		const equipmentSlot = this.player.inventory.get(equipmentSlotId);
 		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
 		if (!container) {

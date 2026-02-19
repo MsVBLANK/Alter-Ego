@@ -120,6 +120,7 @@ export default class RecipeItem extends GameConstruct {
 		this.containedItems = [];
 		this.container = null;
 		this.quantityIsConstant = quantityGiven && this.quantityVariableName === '';
+		this.usesIsConstant = usesGiven && this.usesVariableName === '';
 	}
 
 	/**

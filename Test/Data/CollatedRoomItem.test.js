@@ -1,7 +1,7 @@
-import CollatedRoomItem from "../../Data/CollatedRoomItem.js";
+import CollatedItem from "../../Data/CollatedItem.ts";
 import Fixture from "../../Data/Fixture.js";
 
-describe('CollatedRoomItem test', () => {
+describe('CollatedItem test', () => {
 	beforeAll(async () => {
 		if (!game.inProgress) await game.entityLoader.loadAll();
 	});
@@ -9,7 +9,7 @@ describe('CollatedRoomItem test', () => {
 	describe('test collate method', () => {
 		test('collate items on canteen BURNER 1', () => {
 			const burner1 = game.entityFinder.getFixture("BURNER 1", "canteen");
-			const items = CollatedRoomItem.collate(burner1.getContainedItems());
+			const items = CollatedItem.collate(burner1.getContainedItems());
 			expect(items.length).toBe(7);
 			const butter = items[0];
 			const chickenBroth = items[1];
@@ -43,7 +43,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('collate items on canteen BURNER 2', () => {
 			const burner2 = game.entityFinder.getFixture("BURNER 2", "canteen");
-			const items = CollatedRoomItem.collate(burner2.getContainedItems());
+			const items = CollatedItem.collate(burner2.getContainedItems());
 			expect(items.length).toBe(7);
 			const butter = items[0];
 			const chickenBroth = items[1];
@@ -77,7 +77,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('collate items on canteen BURNER 3', () => {
 			const burner3 = game.entityFinder.getFixture("BURNER 3", "canteen");
-			const items = CollatedRoomItem.collate(burner3.getContainedItems());
+			const items = CollatedItem.collate(burner3.getContainedItems());
 			expect(items.length).toBe(7);
 			const butter = items[0];
 			const chickenBroth = items[1];
@@ -111,7 +111,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('collate items on canteen BURNER 4', () => {
 			const burner4 = game.entityFinder.getFixture("BURNER 4", "canteen");
-			const items = CollatedRoomItem.collate(burner4.getContainedItems());
+			const items = CollatedItem.collate(burner4.getContainedItems());
 			expect(items.length).toBe(7);
 			const butter = items[0];
 			const chickenBroth = items[1];
@@ -145,7 +145,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('collate items in video room SINK 1', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			expect(items.length).toBe(2);
 			const detergent = items[0];
 			const dirtyPlate = items[1];
@@ -159,7 +159,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('collate items in video room SINK 2', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			expect(items.length).toBe(2);
 			const detergent = items[0];
 			const dirtyPlate = items[1];
@@ -179,7 +179,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 1', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(1);
 			const newItems = sink.getContainedItems();
@@ -200,7 +200,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 2', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(2);
 			const newItems = sink.getContainedItems();
@@ -221,7 +221,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 3', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(3);
 			const newItems = sink.getContainedItems();
@@ -242,7 +242,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 4', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(4);
 			const newItems = sink.getContainedItems();
@@ -263,7 +263,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 5', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(5);
 			const newItems = sink.getContainedItems();
@@ -280,7 +280,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 6', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(6);
 			const newItems = sink.getContainedItems();
@@ -301,7 +301,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 7', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(7);
 			const newItems = sink.getContainedItems();
@@ -318,7 +318,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 8', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(8);
 			const newItems = sink.getContainedItems();
@@ -339,7 +339,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 9', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(9);
 			const newItems = sink.getContainedItems();
@@ -356,7 +356,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 10', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(10);
 			const newItems = sink.getContainedItems();
@@ -377,7 +377,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 11', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(11);
 			const newItems = sink.getContainedItems();
@@ -394,7 +394,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 12', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(12);
 			const newItems = sink.getContainedItems();
@@ -411,7 +411,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 1 by 13', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(13);
 			const newItems = sink.getContainedItems();
@@ -424,7 +424,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 1', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(1);
 			const newItems = sink.getContainedItems();
@@ -441,7 +441,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 2', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(2);
 			const newItems = sink.getContainedItems();
@@ -454,7 +454,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 3', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(3);
 			const newItems = sink.getContainedItems();
@@ -471,7 +471,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 4', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(4);
 			const newItems = sink.getContainedItems();
@@ -484,7 +484,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 5', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(5);
 			const newItems = sink.getContainedItems();
@@ -501,7 +501,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 6', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(6);
 			const newItems = sink.getContainedItems();
@@ -514,7 +514,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 7', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(7);
 			const newItems = sink.getContainedItems();
@@ -531,7 +531,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 8', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(8);
 			const newItems = sink.getContainedItems();
@@ -544,7 +544,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 9', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(9);
 			const newItems = sink.getContainedItems();
@@ -561,7 +561,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 10', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(10);
 			const newItems = sink.getContainedItems();
@@ -574,7 +574,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 11', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(11);
 			const newItems = sink.getContainedItems();
@@ -591,7 +591,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 12', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(12);
 			const newItems = sink.getContainedItems();
@@ -604,7 +604,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 13', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(13);
 			const newItems = sink.getContainedItems();
@@ -621,7 +621,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 14', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(14);
 			const newItems = sink.getContainedItems();
@@ -634,7 +634,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 15', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(15);
 			const newItems = sink.getContainedItems();
@@ -651,7 +651,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 16', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(16);
 			const newItems = sink.getContainedItems();
@@ -664,7 +664,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 17', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(17);
 			const newItems = sink.getContainedItems();
@@ -681,7 +681,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 18', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(18);
 			const newItems = sink.getContainedItems();
@@ -694,7 +694,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 19', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(19);
 			const newItems = sink.getContainedItems();
@@ -711,7 +711,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('decrease uses of detergent in video room SINK 2 by 20', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.decreaseUses(20);
 			const newItems = sink.getContainedItems();
@@ -725,13 +725,13 @@ describe('CollatedRoomItem test', () => {
 		describe('canteen BURNERS', () => {
 			/** @type {Fixture} */
 			let burner;
-			/** @type {CollatedRoomItem[]} */
+			/** @type {CollatedItem[]} */
 			let items;
-			/** @type {CollatedRoomItem} */
+			/** @type {CollatedItem} */
 			let butter;
-			/** @type {CollatedRoomItem} */
+			/** @type {CollatedItem} */
 			let cookingSherry;
-			/** @type {CollatedRoomItem} */
+			/** @type {CollatedItem} */
 			let chickenBroth;
 
 			describe('BURNER 2', () => {
@@ -740,7 +740,7 @@ describe('CollatedRoomItem test', () => {
 				});
 
 				beforeEach(() => {
-					items = CollatedRoomItem.collate(burner.getContainedItems());
+					items = CollatedItem.collate(burner.getContainedItems());
 					butter = items[0];
 					chickenBroth = items[1];
 					cookingSherry = items[2];
@@ -778,7 +778,7 @@ describe('CollatedRoomItem test', () => {
 				});
 
 				beforeEach(() => {
-					items = CollatedRoomItem.collate(burner.getContainedItems());
+					items = CollatedItem.collate(burner.getContainedItems());
 					butter = items[0];
 					chickenBroth = items[1];
 					cookingSherry = items[2];
@@ -849,7 +849,7 @@ describe('CollatedRoomItem test', () => {
 				});
 
 				beforeEach(() => {
-					items = CollatedRoomItem.collate(burner.getContainedItems());
+					items = CollatedItem.collate(burner.getContainedItems());
 					butter = items[0];
 					chickenBroth = items[1];
 					cookingSherry = items[2];
@@ -927,7 +927,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 1 by 1', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(1);
 			const newItems = sink.getContainedItems();
@@ -946,7 +946,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 1 by 2', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(2);
 			const newItems = sink.getContainedItems();
@@ -961,7 +961,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 1 by 3', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(3);
 			const newItems = sink.getContainedItems();
@@ -976,7 +976,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 1 by 4', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(4);
 			const newItems = sink.getContainedItems();
@@ -987,7 +987,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 1 by Infinity', () => {
 			const sink = game.entityFinder.getFixture("SINK 1", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(Infinity);
 			const newItems = sink.getContainedItems();
@@ -998,7 +998,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 2 by 1', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(1);
 			const newItems = sink.getContainedItems();
@@ -1011,7 +1011,7 @@ describe('CollatedRoomItem test', () => {
 
 		test('destroy detergent in video room SINK 2 by 2', () => {
 			const sink = game.entityFinder.getFixture("SINK 2", "video-room");
-			const items = CollatedRoomItem.collate(sink.getContainedItems());
+			const items = CollatedItem.collate(sink.getContainedItems());
 			const detergent = items[0];
 			detergent.destroy(2);
 			const newItems = sink.getContainedItems();

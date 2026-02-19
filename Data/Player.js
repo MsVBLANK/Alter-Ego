@@ -1,9 +1,10 @@
+import CollatedItem from './CollatedItem.ts';
 import Fixture from './Fixture.js';
 import Game from './Game.js';
 import GameEntity from './GameEntity.js';
 import Room from './Room.js';
 import RoomItem from './RoomItem.js';
-import ItemContainer from './ItemContainer.js';
+import RecipeProcessor from './RecipeProcessor.ts';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.js';
 import Status from './Status.js';
@@ -19,26 +20,24 @@ import { MessageDisplayType } from '../Modules/enums.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
-import { getSortedItems } from '../Modules/helpers.ts';
-import DestroyAction from './Actions/DestroyAction.js';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
 /** @import Exit from './Exit.js' */
+/** @import Prefab from './Prefab.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
-/** @import RecipeItem from './RecipeItem.js' */
 /** @import Notification from './Notification.js' */
 /** @import { GuildMember, TextChannel } from 'discord.js' */
 
 /**
  * @class Player
  * @classdesc Represents a player in the game.
- * @extends ItemContainer
+ * @extends RecipeProcessor
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html
  */
-export default class Player extends ItemContainer {
+export default class Player extends RecipeProcessor {
 	/**
 	 * The Discord ID of the player, or the avatar URL for an NPC.
 	 * @type {string}
@@ -1420,131 +1419,19 @@ export default class Player extends ItemContainer {
 	/**
 	 * Crafts held items according to a recipe.
 	 * @param {Recipe} recipe - The recipe that describes how these ingredients are crafted.
-	 * @param {boolean} forced - Whether or not the crafting is forced.
 	 * @returns {CraftingResult} The resulting product(s).
 	 */
-	craft(recipe, forced) {
-		// instantiate data structures
-		const hands = self.game.entityFinder.getPlayerHands(this);
-		/** @type {InventoryItem[]} */
-		const inputs = []
-		/** @type {InventoryItem[]} */
-		const inputsFlat = [];
-		hands.forEach(hand => {
-			if (hand.equippedItem !== null) {
-				const item = hand.equippedItem;
-				inputs.push(item);
-				inputsFlat.push(item);
-				item.inventory.forEach(slot => {
-					slot.items.forEach(innerItem => inputsFlat.push(innerItem));
-				})
-			}
-		})
-		/** @type {Collection<string, [number, number]>} */
-		const variables = new Collection();
-		/** @type {Collection<string, [InventoryItem, RecipeItem]>} */
-		const ingredientMap = new Collection();
-		for (const item of recipe.ingredients) {
-			ingredientMap.set(item.prefabId, [inputs.find(input => input.prefabId === item.prefabId), item])
-		}
-		/** @type {Collection<string, [InventoryItem, RecipeItem]>} */
-		const ingredientFlatMap = new Collection();
-		for (const item of recipe.ingredientsFlat) {
-			const input = inputsFlat.find(input => input.prefabId === item.prefabId)
-			if (!item.quantityIsConstant) {
-				variables.set(item.quantityVariableName, [item.quantity, input.quantity]);
-			} else if (!item.usesIsConstant) {
-				variables.set(item.usesVariableName, [item.uses, input.uses]);
-			}
-			ingredientFlatMap.set(item.prefabId, [input, item])
-		}
+	craft(recipe) {
+		let heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
+		const ingredients = [...heldItems];
+		const ingredientsFlat = this.#collateItems(ingredients);
+        const satisfactoryProcessCount = recipe.getSatisfactoryProcessCount(ingredientsFlat);
+        if (satisfactoryProcessCount < 1) return;
+        this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
+        this.instantiateProducts(recipe, satisfactoryProcessCount);
+        heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
 
-		// destroy/decrement ingredients as-needed
-		for (const [input, ingredient] of ingredientMap.values()) {
-			if (isFinite(input.uses) && ingredient.usesIsConstant) {
-				input.uses -= ingredient.uses;
-			} else if (isFinite(input.uses) && !ingredient.usesIsConstant) {
-				if (input.quantity === 1) {
-					// what if an item can have a use deducted,
-					// but its usage is not a constant,
-					// and furthermore is not defined?
-					// how do we know if this is the case?
-					input.uses -= 1; // abandon philosophy and fall back on old behavior
-					if (input.uses === 0) {
-						if (input.prefab.nextStage)
-							itemManager.replaceInventoryItem(input, input.prefab.nextStage)
-						else {
-							const destroyAction = new DestroyAction(this.getGame(), null, this, this.location, forced);
-							destroyAction.performDestroyInventoryItem(input, 1, true, false);
-						}
-					}
-				} else {
-					// uh oh!
-				}
-			} else {
-				if (ingredient.quantityIsConstant) {
-					const destroyAction = new DestroyAction(this.getGame(), null, this, this.location, forced);
-					destroyAction.performDestroyInventoryItem(input, ingredient.quantity, true, false);
-				} else {
-					const destroyAction = new DestroyAction(this.getGame(), null, this, this.location, forced);
-					destroyAction.performDestroyInventoryItem(input, 1, true, false); // we have a similar conundrum as earlier. destroy 1 as a placeholder for now
-				}
-			}
-		}
-
-		// instantiate products as-needed
-		// TODO: this is largely copied from fixture processing,
-		// but without satisfactoryProcessCount derived from collatedRoomItems,
-		// we need to do something else to calculate quantity and uses.
-		// we store variables earlier in the function for this reason.
-		for (const product of recipe.products) {
-			if (recipe.isIngredientAndProduct(product) && isNaN(product.prefab.uses))
-				continue;
-			const quantity = product.quantityIsConstant ? product.quantity : product.quantity;
-			const uses = !isNaN(product.uses) && !product.usesIsConstant ? product.uses : product.uses;
-			// TODO: instantiate product in free hand (we should have one by now) or re-use carry-through ingredient
-			if (product.prefab.inventory.size > 0) {
-				// TODO: instantiate contained items in product as needed
-				// (this is probably easier to implement on the face of it
-				//  but is difficult without the instantiated product/carry-through ingredient)
-			}
-		}
-
-		throw new Error("Not Implemented");
-		let product1 = recipe.products[0].prefab;
-		let product2 = recipe.products[1].prefab;
-		// First, check if either of the ingredients are also products.
-		// If they are, simply decrease their uses.
-		// If their uses would become 0, change the product to its next stage, if it has one.
-		/** @type {number} */
-		let item1Uses = null;
-		/** @type {number} */
-		let item2Uses = null;
-		if (product1 && item1.prefab.id === product1.id) {
-			if (item1.uses - 1 === 0) product1 = product1.nextStage;
-			else if (!isNaN(item1.uses)) item1Uses = item1.uses - 1;
-		}
-		else if (product2 && item1.prefab.id === product2.id) {
-			if (item1.uses - 1 === 0) product2 = product2.nextStage;
-			else if (!isNaN(item1.uses)) item2Uses = item1.uses - 1;
-		}
-		if (product1 && item2.prefab.id === product1.id) {
-			if (item2.uses - 1 === 0) product1 = product1.nextStage;
-			else if (!isNaN(item2.uses)) item1Uses = item2.uses - 1;
-		}
-		else if (product2 && item2.prefab.id === product2.id) {
-			if (item2.uses - 1 === 0) product2 = product2.nextStage;
-			else if (!isNaN(item2.uses)) item2Uses = item2.uses - 1;
-		}
-
-		itemManager.replaceInventoryItem(item1, product1);
-		itemManager.replaceInventoryItem(item2, product2);
-		if (item1Uses !== null)
-			item1.uses = item1Uses;
-		if (item2Uses !== null)
-			item2.uses = item2Uses;
-
-		return { product1: product1 ? item1 : null, product2: product2 ? item2 : null };
+		return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };
 	}
 	
 	/**
@@ -1570,6 +1457,7 @@ export default class Player extends ItemContainer {
 			"",
 			1,
 			new Map(),
+            ingredient2.prefab.uses,
 			false
 		);
 		if (!ingredient1.prefab.discreet)
@@ -1579,6 +1467,23 @@ export default class Player extends ItemContainer {
 
 		return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
 	}
+
+    /**
+	 * Instantiates an inventory item in the player's inventory.
+     * @protected
+	 * @param {Prefab} prefab - The prefab to instantiate.
+	 * @param {number} quantity - The quantity of the prefab to instantiate.
+	 * @param {number} uses - The number of uses to instantiate the prefab with. Defaults to the prefab's number of uses.
+	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+	 * @param {InventoryItem} [container] - The container to instantiate the prefab into. Defaults to null.
+	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+	 * @returns The instantiated inventory item.
+	 */
+    instantiate(prefab, quantity, uses = prefab.uses, proceduralSelections = new Map(), container = null, inventorySlotId = "") {
+        const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
+        const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
+        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
+    }
 
 	/**
 	 * Returns the player's inventory item whose prefab ID matches the given ID, if it exists.
@@ -1622,23 +1527,29 @@ export default class Player extends ItemContainer {
 		return itemIdentifierMatches(equippedItem, identifier, true);
 	}
 
+    /**
+     * Returns an array of CollatedItems for the given items.
+     * @param {InventoryItem[]} items
+     */
+    #collateItems(items) {
+		/** @type {InventoryItem[]} */
+		const childItems = [];
+		for (const item of items)
+			itemManager.getChildItems(childItems, item);
+		for (const childItem of childItems) {
+			if (!items.includes(childItem))
+				items.push(childItem);
+		}
+		return CollatedItem.collate(items);
+    }
+
 	/**
 	 * Returns true if the player can craft the given recipe.
 	 * @param {Recipe} recipe - The recipe to check if the player can craft.
 	 * @param {[InventoryItem, InventoryItem]} itemsInHands - The two items in the player's hands.
 	 */
 	canCraft(recipe, itemsInHands) {
-		let items = [...itemsInHands];
-		/** @type {InventoryItem[]} */
-		const childItems = [];
-		for (const item of itemsInHands)
-			itemManager.getChildItems(childItems, item);
-		for (const childItem of childItems) {
-			if (!items.includes(childItem))
-				items.push(childItem);
-		}
-		items = getSortedItems(items);
-		return recipe.ingredientsMatch(items);
+		return recipe.ingredientsMatch(this.#collateItems([...itemsInHands]));
 	}
 
 	/**

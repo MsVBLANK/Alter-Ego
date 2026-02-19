@@ -30,7 +30,7 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.destroyIngredients(1);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 1);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(2);
@@ -41,7 +41,7 @@ describe('Fixture test', () => {
 				expect(knife.quantity).toBe(1);
 				expect(knife.uses).toBe(NaN);
 			}
-			fixture.destroyIngredients(3);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 3);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(2);
@@ -69,7 +69,7 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.instantiateProducts(1);
+			fixture.instantiateProducts(fixture.process.recipe, 1);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(3);
@@ -83,7 +83,7 @@ describe('Fixture test', () => {
 				expect(slices.quantity).toBe(1);
 				expect(slices.uses).toBe(1);
 			}
-			fixture.instantiateProducts(3);
+			fixture.instantiateProducts(fixture.process.recipe, 3);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(3);
@@ -114,8 +114,8 @@ describe('Fixture test', () => {
 			const recipeData = fixture.findRecipe();
 			fixture.process.recipe = recipeData.recipe;
 			fixture.process.ingredients = recipeData.ingredients;
-			fixture.destroyIngredients(1);
-			fixture.instantiateProducts(1);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 1);
+			fixture.instantiateProducts(fixture.process.recipe, 1);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(3);
@@ -129,8 +129,8 @@ describe('Fixture test', () => {
 				expect(slices.quantity).toBe(1);
 				expect(slices.uses).toBe(1);
 			}
-			fixture.destroyIngredients(3);
-			fixture.instantiateProducts(3);
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, 3);
+			fixture.instantiateProducts(fixture.process.recipe, 3);
 			{
 				let items = fixture.getContainedItems();
 				expect(items.length).toBe(3);

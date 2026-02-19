@@ -34,7 +34,7 @@ export default class RoomItem extends ItemInstance {
     accessible;
     /**
      * The item's actual container.
-     * @type {Fixture|Puzzle|RoomItem}
+     * @type {RoomItemContainer}
      */
     container = null;
     /**
@@ -76,7 +76,7 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Sets the container.
-     * @param {Fixture|Puzzle|RoomItem} container
+     * @param {RoomItemContainer} container
      */
     setContainer(container) {
         this.container = container;
@@ -191,6 +191,11 @@ export default class RoomItem extends ItemInstance {
     /** Gets the entity's location. */
     getLocation() {
         return this.location;
+    }
+
+    /** Gets the item's container. */
+    getContainer() {
+        return this.container;
     }
 
     /**

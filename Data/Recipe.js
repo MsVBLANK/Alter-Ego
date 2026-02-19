@@ -1,4 +1,4 @@
-import CollatedRoomItem from './CollatedRoomItem.js';
+import CollatedItem from './CollatedItem.ts';
 import Description from './Description.js';
 import GameEntity from './GameEntity.js';
 
@@ -6,6 +6,7 @@ import GameEntity from './GameEntity.js';
  * @import Game from './Game.js'
  * @import ItemInstance from './ItemInstance.js'
  * @import RecipeItem from './RecipeItem.js'
+ * @import RoomItem from './RoomItem.js'
  */
 
 /**
@@ -154,7 +155,7 @@ export default class Recipe extends GameEntity {
      * Returns true if the given list of items matches the ingredients list exactly.
      * To be considered an exact match, all of the ingredient prefabs must match those of the given items,
      * and the given items must have a quantity greater than or equal to the required ingredient quantity.
-     * @param {(CollatedRoomItem|ItemInstance)[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {(CollatedItem|ItemInstance)[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     ingredientsMatch(items) {
         if (items.length !== this.ingredientsFlat.length) return false;
@@ -164,7 +165,7 @@ export default class Recipe extends GameEntity {
             if (item.quantity < ingredient.quantity) return false;
 			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
 			if (!item.containerMatches(ingredient)) return false;
-            if (item instanceof CollatedRoomItem) item.setVariable(ingredient.quantityVariableName);
+            if (item instanceof CollatedItem) item.setVariable(ingredient.quantityVariableName);
         }
         return true;
     }
@@ -172,10 +173,10 @@ export default class Recipe extends GameEntity {
     /**
      * Returns a subset of the given items which satisfy the recipe's ingredients list. 
      * If the given items do not satisfy the recipe's ingredients list, returns an empty array.
-     * @param {CollatedRoomItem[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {CollatedItem<RoomItem>[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     getIngredientItems(items) {
-        /** @type {CollatedRoomItem[]} */
+        /** @type {CollatedItem<RoomItem>[]} */
         let ingredients = [];
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
@@ -193,7 +194,7 @@ export default class Recipe extends GameEntity {
 
     /**
      * Calculates how many times the given list of ingredients satisfies this recipe.
-     * @param {CollatedRoomItem[]} items
+     * @param {CollatedItem[]} items
      */
     getSatisfactoryProcessCount(items) {
         /** @type {number[]} */
@@ -215,7 +216,7 @@ export default class Recipe extends GameEntity {
 
 	/**
 	 * Returns true if the given item is both an ingredient and a product.
-	 * @param {CollatedRoomItem | RecipeItem} item 
+	 * @param {CollatedItem | RecipeItem} item 
 	 */
 	isIngredientAndProduct(item) {
 		return this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id) !== undefined && this.productsFlat.find(product => product.prefab.id === item.prefab.id) !== undefined;

@@ -6,7 +6,7 @@ describe('Recipe test', () => {
     });
 
     test('', () => {
-        const recipe = new RecipeItem("", game);
+        const recipe = new RecipeItem("", game, "processing");
         expect(recipe.recipeItemString).toBe("");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -15,7 +15,7 @@ describe('Recipe test', () => {
     });
 
     test('1X CHICKPEA FLOUR', () => {
-        const recipe = new RecipeItem("1X CHICKPEA FLOUR", game);
+        const recipe = new RecipeItem("1X CHICKPEA FLOUR", game, "processing");
         expect(recipe.recipeItemString).toBe("1X CHICKPEA FLOUR");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("X");
@@ -24,7 +24,7 @@ describe('Recipe test', () => {
     });
 
     test('1X SOY MILK', () => {
-        const recipe = new RecipeItem("1X SOY MILK", game);
+        const recipe = new RecipeItem("1X SOY MILK", game, "processing");
         expect(recipe.recipeItemString).toBe("1X SOY MILK");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("X");
@@ -33,7 +33,7 @@ describe('Recipe test', () => {
     });
 
     test('1Y DUCK EGG', () => {
-        const recipe = new RecipeItem("1Y DUCK EGG", game);
+        const recipe = new RecipeItem("1Y DUCK EGG", game, "processing");
         expect(recipe.recipeItemString).toBe("1Y DUCK EGG");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("Y");
@@ -42,7 +42,7 @@ describe('Recipe test', () => {
     });
 
     test('MEASURING CUP OF HONEY', () => {
-        const recipe = new RecipeItem("MEASURING CUP OF HONEY", game);
+        const recipe = new RecipeItem("MEASURING CUP OF HONEY", game, "processing");
         expect(recipe.recipeItemString).toBe("MEASURING CUP OF HONEY");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -51,7 +51,7 @@ describe('Recipe test', () => {
     });
 
     test('1X BREADED ONION RINGS', () => {
-        const recipe = new RecipeItem("1X BREADED ONION RINGS", game);
+        const recipe = new RecipeItem("1X BREADED ONION RINGS", game, "processing");
         expect(recipe.recipeItemString).toBe("1X BREADED ONION RINGS");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("X");
@@ -60,7 +60,7 @@ describe('Recipe test', () => {
     });
 
     test('2  SALT', () => {
-        const recipe = new RecipeItem("2  SALT", game);
+        const recipe = new RecipeItem("2  SALT", game, "processing");
         expect(recipe.recipeItemString).toBe("2  SALT");
         expect(recipe.quantity).toBe(2);
         expect(recipe.quantityVariableName).toBe("");
@@ -69,7 +69,7 @@ describe('Recipe test', () => {
     });
 
     test('OILED PAN', () => {
-        const recipe = new RecipeItem("OILED PAN", game);
+        const recipe = new RecipeItem("OILED PAN", game, "processing");
         expect(recipe.recipeItemString).toBe("OILED PAN");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -78,7 +78,7 @@ describe('Recipe test', () => {
     });
 
     test('2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)', () => {
-        const recipe = new RecipeItem("2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)", game);
+        const recipe = new RecipeItem("2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)", game, "processing");
         expect(recipe.recipeItemString).toBe("2X GORED STUFFED MONKEY (PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(2);
         expect(recipe.quantityVariableName).toBe("X");
@@ -87,7 +87,7 @@ describe('Recipe test', () => {
     });
 
     test('2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)', () => {
-        const recipe = new RecipeItem("2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)", game);
+        const recipe = new RecipeItem("2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)", game, "processing");
         expect(recipe.recipeItemString).toBe("2X GORED STUFFED MONKEY(2X PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(2);
         expect(recipe.quantityVariableName).toBe("X");
@@ -96,7 +96,7 @@ describe('Recipe test', () => {
     });
 
     test('GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)', () => {
-        const recipe = new RecipeItem("GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)", game);
+        const recipe = new RecipeItem("GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)", game, "processing");
         expect(recipe.recipeItemString).toBe("GORED STUFFED MONKEY ( PROPRIETARY SCREWDRIVER)");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -105,7 +105,7 @@ describe('Recipe test', () => {
     });
 
     test('SWITCHBLADE', () => {
-        const recipe = new RecipeItem("SWITCHBLADE", game);
+        const recipe = new RecipeItem("SWITCHBLADE", game, "processing");
         expect(recipe.recipeItemString).toBe("SWITCHBLADE");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -114,7 +114,7 @@ describe('Recipe test', () => {
     });
 
     test('3D BEAVER MATERIALS', () => {
-        const recipe = new RecipeItem("3D BEAVER MATERIALS", game);
+        const recipe = new RecipeItem("3D BEAVER MATERIALS", game, "processing");
         expect(recipe.recipeItemString).toBe("3D BEAVER MATERIALS");
         expect(recipe.quantity).toBe(3);
         expect(recipe.quantityVariableName).toBe("D");
@@ -123,7 +123,7 @@ describe('Recipe test', () => {
     });
 
     test('1X 3D BEAVER MATERIALS', () => {
-        const recipe = new RecipeItem("1X 3D BEAVER MATERIALS", game);
+        const recipe = new RecipeItem("1X 3D BEAVER MATERIALS", game, "processing");
         expect(recipe.recipeItemString).toBe("1X 3D BEAVER MATERIALS");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("X");
@@ -132,7 +132,7 @@ describe('Recipe test', () => {
     });
 
     test('K CUP', () => {
-        const recipe = new RecipeItem("K CUP", game);
+        const recipe = new RecipeItem("K CUP", game, "processing");
         expect(recipe.recipeItemString).toBe("K CUP");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");
@@ -141,7 +141,7 @@ describe('Recipe test', () => {
     });
 
     test('1X K CUP', () => {
-        const recipe = new RecipeItem("1X K CUP", game);
+        const recipe = new RecipeItem("1X K CUP", game, "processing");
         expect(recipe.recipeItemString).toBe("1X K CUP");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("X");
@@ -150,7 +150,7 @@ describe('Recipe test', () => {
     });
 
     test('CRATE (5X PLANK + 10X NAILS)', () => {
-        const recipe = new RecipeItem("CRATE (5X PLANK, 10X NAILS)", game);
+        const recipe = new RecipeItem("CRATE (5X PLANK, 10X NAILS)", game, "processing");
         expect(recipe.recipeItemString).toBe("CRATE (5X PLANK, 10X NAILS)");
         expect(recipe.quantity).toBe(1);
         expect(recipe.quantityVariableName).toBe("");

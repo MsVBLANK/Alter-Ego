@@ -890,10 +890,11 @@ export default class GameEntityLoader extends GameEntityManager {
 				// For each product, convert the string to a valid entity name.
 				for (let j = 0; j < productsStrings.length; j++)
 					productsStrings[j] = productsStrings[j].trim();
+				const fixtureTag = sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : ""
 				let recipe = new Recipe(
 					ingredientsStrings,
 					sheet[row][columnUncraftable] ? sheet[row][columnUncraftable].trim() === "TRUE" : false,
-					sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : "",
+					fixtureTag,
 					durationString,
 					duration,
 					productsStrings,
@@ -904,13 +905,13 @@ export default class GameEntityLoader extends GameEntityManager {
 					this.game
 				);
 				recipe.ingredientsStrings.forEach((ingredientsString, i) => {
-					const ingredient = new RecipeItem(ingredientsString, this.game);
+					const ingredient = new RecipeItem(ingredientsString, this.game, fixtureTag ? "processing" : "crafting");
 					const prefab = this.game.entityFinder.getPrefab(ingredient.prefabId);
 					if (prefab) ingredient.setPrefab(prefab);
 					if (ingredient.containedItemsString) {
 						const containedItemsStrings = ingredient.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
-							const containedIngredient = new RecipeItem(containedItemString, this.game);
+							const containedIngredient = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
 							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
 							if (prefab) containedIngredient.setPrefab(prefab);
 							containedIngredient.setContainer(ingredient);
@@ -922,13 +923,13 @@ export default class GameEntityLoader extends GameEntityManager {
 					recipe.ingredientsFlat.push(ingredient);
 				});
 				recipe.productsStrings.forEach((productsString, i) => {
-					const product = new RecipeItem(productsString, this.game);
+					const product = new RecipeItem(productsString, this.game, fixtureTag ? "processing" : "crafting");
 					const prefab = this.game.entityFinder.getPrefab(product.prefabId);
 					if (prefab) product.setPrefab(prefab);
 					if (product.containedItemsString) {
 						const containedItemsStrings = product.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
-							const containedProduct = new RecipeItem(containedItemString, this.game);
+							const containedProduct = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
 							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);
 							if (prefab) containedProduct.setPrefab(prefab);
 							containedProduct.setContainer(product);

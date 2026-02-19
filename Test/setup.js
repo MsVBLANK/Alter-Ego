@@ -1,4 +1,5 @@
 import { beforeAll, afterEach, vi, expect } from 'vitest';
+import { plugins } from '@vitest/pretty-format';
 
 import credentials from './__mocks__/configs/credentials.js';
 import demodata from './__mocks__/configs/demodata.js';
@@ -133,3 +134,15 @@ expect.extend({
     toBeWebhookMessage,
     toBeMessageWith
 });
+
+import { PolyPlugin } from "../Classes/PrettyPrinter.js";
+const polyPlugin = new PolyPlugin()
+
+plugins.DOMElement.test = polyPlugin.test;
+plugins.DOMElement.serialize = polyPlugin.serialize;
+plugins.DOMCollection.test = () => false;
+plugins.DOMCollection.serialize = () => "";
+plugins.ReactElement.test = () => false;
+plugins.ReactElement.serialize = () => "";
+plugins.ReactTestComponent.test = () => false;
+plugins.ReactTestComponent.serialize = () => "";

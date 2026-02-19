@@ -241,7 +241,7 @@ describe('Recipe test', () => {
 
 		test('getSatisfactoryProcessCount on video-room BLENDER 5', () => {
 			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BLENDER CUP OF MILK')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
 			const blenderRecipe = blender.findRecipe();
@@ -251,7 +251,7 @@ describe('Recipe test', () => {
 
 		test('getSatisfactoryProcessCount on video-room BLENDER 6', async () => {
 			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BANANA MILKSHAKE')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
 			const blenderRecipe = blender.findRecipe();
@@ -326,14 +326,14 @@ describe('Recipe test', () => {
 
 		test('getIngredientItems on video-room BLENDER 5', () => {
 			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BLENDER CUP OF MILK')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
 		});
 
 		test('getIngredientItems on video-room BLENDER 6', async () => {
 			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
-			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const recipe = game.entityFinder.getRecipes('processing', 'blender', 'BANANA MILKSHAKE')[0];
 			const items = CollatedItem.collate(blender.getContainedItems());
 			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
 		});

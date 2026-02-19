@@ -184,6 +184,13 @@ export default class InventoryItem extends ItemInstance {
 		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
 	}
 
+	/**
+	 * Returns the args for the Unstash ActionDirective for this inventory item.
+	 */
+	getUnstashActionDirectiveArgs() {
+		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
+	}
+
     /**
      * Gets all of the items this entity contains.
      * @override

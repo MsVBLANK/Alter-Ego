@@ -104,8 +104,9 @@ export default class RecipeItem extends GameConstruct {
 	 * @constructor
 	 * @param {string} recipeItemString - A string representing a recipe item.
 	 * @param {Game} game - The game this belongs to.
+	 * @param {"processing" | "crafting"} type - The type of recipe this belongs to.
 	 */
-	constructor(recipeItemString, game) {
+	constructor(recipeItemString, game, type) {
 		super(game);
 		this.recipeItemString = recipeItemString.trim();
 		const matches = this.recipeItemString.match(RecipeItem.itemRegex);
@@ -119,8 +120,8 @@ export default class RecipeItem extends GameConstruct {
 		this.containedItemsString = matches && matches[6] ? matches[6].trim() : null;
 		this.containedItems = [];
 		this.container = null;
-		this.quantityIsConstant = this.quantityVariableName === '';
-		this.usesIsConstant = this.usesVariableName === '';
+		this.quantityIsConstant = (type === "crafting" ? true : quantityGiven) && this.quantityVariableName === '';
+		this.usesIsConstant = (type === "crafting" ? true : usesGiven) && this.usesVariableName === '';
 	}
 
 	/**

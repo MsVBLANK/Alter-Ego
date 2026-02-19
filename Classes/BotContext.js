@@ -1,7 +1,7 @@
 import { ActivityType, Collection } from "discord.js";
 import PrettyPrinter from "./PrettyPrinter.js";
 import BotInteractableManager from "./BotInteractableManager.ts";
-import BotInteractionHandler from "./BotInteractionHandler.js";
+import BotInteractionHandler from "./BotInteractionHandler.ts";
 
 /** @import Game from "../Data/Game.js" */
 /** @import BotCommand from "./BotCommand.js" */

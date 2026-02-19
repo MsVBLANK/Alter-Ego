@@ -4,12 +4,11 @@ import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
 import DropAction from "../Data/Actions/DropAction.js";
 import StashAction from "../Data/Actions/StashAction.js";
-/** 
- * @import Game from "../Data/Game.js";
- * @import Interactable from "./Interactables/Interactable.js";
- * @import Player from "../Data/Player.js";
- * @import { Interaction, InteractionCallbackResponse } from "discord.js"
-*/
+import UnstashAction from "../Data/Actions/UnstashAction.js";
+import type Game from "../Data/Game.js";
+import type Interactable from "./Interactables/Interactable.js";
+import type Player from "../Data/Player.js";
+import type { Interaction, InteractionCallbackResponse } from "discord.js"
 
 /**
  * @class InteractionHandler
@@ -19,31 +18,30 @@ export default class BotInteractionHandler {
 	/**
 	 * The game this belongs to.
 	 * @readonly
-	 * @type {Game}
 	 */
-	#game;
+	#game: Game;
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(game) {
+	constructor(game: Game) {
 		this.#game = game;
 	}
 
 	/**
 	 * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
-	 * @param {string} customId
+	 * @param customId
 	 */
-	getInteractable(customId) {
+	getInteractable(customId: string): Interactable {
 		return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
 	}
 
 	/**
 	 * Intercepts an interaction event and directs it to the correct function.
-	 * @param {Interaction} interaction - The interaction that was created.
+	 * @param interaction - The interaction that was created.
 	 */
-	interceptInteraction(interaction) {
+	interceptInteraction(interaction: Interaction) {
 		const player = this.#game.entityFinder.getLivingPlayerById(interaction.user.id);
 		if (!player) return;
 		if (interaction instanceof ButtonInteraction)
@@ -55,12 +53,11 @@ export default class BotInteractionHandler {
 
 	/**
 	 * Processes a button interaction and calls the correct function.
-	 * @param {ButtonInteraction} interaction - The interaction being executed.
-	 * @param {Player} player - The player who triggered the interaction.
+	 * @param interaction - The interaction being executed.
+	 * @param player - The player who triggered the interaction.
 	 */
-	async processButtonInteraction(interaction, player) {
-		/** @type {InteractionCallbackResponse<boolean>} */
-		const reply = await interaction.deferReply({ withResponse: true });;
+	async processButtonInteraction(interaction: ButtonInteraction, player: Player) {
+		const reply = await interaction.deferReply({ withResponse: true });
 		const customId = interaction.customId;
 		const interactable = this.getInteractable(customId);
 		let successfullyProcessedInteractable = false;
@@ -71,11 +68,10 @@ export default class BotInteractionHandler {
 
 	/**
 	 * Processes a string select interaction and calls the correct function.
-	 * @param {StringSelectMenuInteraction} interaction - The interaction being executed.
-	 * @param {Player} player - The player who triggered the interaction.
+	 * @param interaction - The interaction being executed.
+	 * @param player - The player who triggered the interaction.
 	 */
-	async processStringSelectMenuInteraction(interaction, player) {
-		/** @type {InteractionCallbackResponse<boolean>} */
+	async processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, player: Player) {
 		const reply = await interaction.deferReply({ withResponse: true });
 		const selectedValue = interaction.values[0];
 		const customId = selectedValue;
@@ -88,12 +84,12 @@ export default class BotInteractionHandler {
 
 	/**
 	 * Process an interactable and calls the correct function.
-	 * @param {InteractionCallbackResponse<boolean>} reply - The reply that was sent.
-	 * @param {Interactable} interactable - The interactable to process.
-	 * @param {Player} player - The player who triggered the interaction.
+	 * @param reply - The reply that was sent.
+	 * @param interactable - The interactable to process.
+	 * @param player - The player who triggered the interaction.
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
-	processInteractable(reply, interactable, player) {
+	processInteractable(reply: InteractionCallbackResponse<boolean>, interactable: Interactable, player: Player): boolean {
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
 		if (action instanceof QueueMoveAction) {
 			const args = interactable.actionDirective.getArgs();
@@ -145,16 +141,26 @@ export default class BotInteractionHandler {
 				return true;
 			}
 		}
+        if (action instanceof UnstashAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 4) {
+                action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                reply.resource.message.delete();
+                return true;
+            }
+        }
 		return false;
 	}
 
 	/**
 	 * Replies to an interaction.
-	 * @param {string} response - The response to send.
-	 * @param {ButtonInteraction|StringSelectMenuInteraction} interaction - The interaction to reply to.
-	 * @param {boolean} [deleteAfterTimeout] - Whether or not to delete the reply after a set amount of time.
+	 * @param response - The response to send.
+	 * @param interaction - The interaction to reply to.
+	 * @param deleteAfterTimeout - Whether or not to delete the reply after a set amount of time.
 	 */
-	replyToInteraction(response, interaction, deleteAfterTimeout = true) {
+	replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction, deleteAfterTimeout = true) {
 		interaction.editReply({ content: response }).then(response => {
 			if (deleteAfterTimeout) {
 				setTimeout(() => {

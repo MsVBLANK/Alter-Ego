@@ -119,8 +119,8 @@ export default class RecipeItem extends GameConstruct {
 		this.containedItemsString = matches && matches[6] ? matches[6].trim() : null;
 		this.containedItems = [];
 		this.container = null;
-		this.quantityIsConstant = quantityGiven && this.quantityVariableName === '';
-		this.usesIsConstant = usesGiven && this.usesVariableName === '';
+		this.quantityIsConstant = this.quantityVariableName === '';
+		this.usesIsConstant = this.usesVariableName === '';
 	}
 
 	/**

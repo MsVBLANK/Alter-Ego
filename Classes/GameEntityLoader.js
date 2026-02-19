@@ -30,7 +30,7 @@ import RecipeItem from '../Data/RecipeItem.js';
 export default class GameEntityLoader extends GameEntityManager {
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		super(game);
@@ -553,7 +553,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (exit.link === "" || exit.link === null || exit.link === undefined)
 				return new Error(`Couldn't load exit on row ${exit.row}. No linked exit was given.`);
 			const linkedExit = exit.dest.exits.get(exit.link);
-			if (!linkedExit) 
+			if (!linkedExit)
 				return new Error(`Couldn't load exit on row ${exit.row}. Room "${exit.dest.displayName}" does not have an exit that links back to it.`);
 		}
 	}
@@ -629,7 +629,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Fixture for errors.
-	 * @param {Fixture} fixture - The fixture to check. 
+	 * @param {Fixture} fixture - The fixture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFixture(fixture) {
@@ -813,7 +813,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Prefab for errors.
-	 * @param {Prefab} prefab - The prefab to check. 
+	 * @param {Prefab} prefab - The prefab to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPrefab(prefab) {
@@ -967,7 +967,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Recipe for errors.
-	 * @param {Recipe} recipe - The recipe to check. 
+	 * @param {Recipe} recipe - The recipe to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRecipe(recipe) {
@@ -994,6 +994,16 @@ export default class GameEntityLoader extends GameEntityManager {
 			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
 			ingredientVariables.add(ingredient.quantityVariableName);
 			ingredientVariables.add(ingredient.usesVariableName);
+		}
+		if (recipe.fixtureTag === "") {
+			for (const ingredient of recipe.ingredients) {
+				if (!(ingredient.quantity === 1 && ingredient.quantityIsConstant))
+    				return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level ingredients in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
+			for (const product of recipe.products) {
+				if (!(product.quantity === 1 && product.quantityIsConstant))
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level products in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
 		}
 		if (recipe.ingredients.filter(ingredient => ingredient.prefab.inventory.size > 0).length > 1)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as an ingredient.`);
@@ -1161,7 +1171,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a RoomItem for errors.
-	 * @param {RoomItem} item - The room item to check. 
+	 * @param {RoomItem} item - The room item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRoomItem(item) {
@@ -1363,7 +1373,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Puzzle for errors.
-	 * @param {Puzzle} puzzle - The puzzle to check. 
+	 * @param {Puzzle} puzzle - The puzzle to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPuzzle(puzzle) {
@@ -1562,7 +1572,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an Event for errors.
-	 * @param {Event} event - The event to check. 
+	 * @param {Event} event - The event to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkEvent(event) {
@@ -1702,7 +1712,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Status Effect for errors.
-	 * @param {Status} status - The status effect to check. 
+	 * @param {Status} status - The status effect to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkStatusEffect(status) {
@@ -1900,7 +1910,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Player for errors.
-	 * @param {Player} player - The player to check. 
+	 * @param {Player} player - The player to check.
 	 * @returns {Promise<Error|void>} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	async checkPlayer(player) {
@@ -2135,7 +2145,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an InventoryItem for errors.
-	 * @param {InventoryItem} item - The inventory item to check. 
+	 * @param {InventoryItem} item - The inventory item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkInventoryItem(item) {
@@ -2257,7 +2267,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Gesture for errors.
-	 * @param {Gesture} gesture - The gesture to check. 
+	 * @param {Gesture} gesture - The gesture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkGesture(gesture) {
@@ -2300,7 +2310,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				/** @type {FlagCommandSet[]} */
 				let commandSets = [];
 				/**
-				 * @param {string} commandString 
+				 * @param {string} commandString
 				 * @returns {FlagCommandSet}
 				 */
 				let getCommands = function (commandString) {
@@ -2371,7 +2381,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Flag for errors.
-	 * @param {Flag} flag - The flag to check. 
+	 * @param {Flag} flag - The flag to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFlag(flag) {
@@ -2403,7 +2413,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Prints an array or map of entities to the console.
-	 * @param {*[]|Map<*, *>} data 
+	 * @param {*[]|Map<*, *>} data
 	 */
 	#printData(data) {
 		if (data instanceof Array) {

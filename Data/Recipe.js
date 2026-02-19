@@ -163,7 +163,7 @@ export default class Recipe extends GameEntity {
             if (item.prefab.id !== ingredient.prefab.id) return false;
             if (item.quantity < ingredient.quantity) return false;
 			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
-			if (item instanceof CollatedRoomItem && !item.containerMatches(ingredient)) return false;
+			if (!item.containerMatches(ingredient)) return false;
             if (item instanceof CollatedRoomItem) item.setVariable(ingredient.quantityVariableName);
         }
         return true;

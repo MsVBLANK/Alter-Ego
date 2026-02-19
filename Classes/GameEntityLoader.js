@@ -995,6 +995,8 @@ export default class GameEntityLoader extends GameEntityManager {
 			ingredientVariables.add(ingredient.quantityVariableName);
 			ingredientVariables.add(ingredient.usesVariableName);
 		}
+		if (recipe.ingredients.filter(ingredient => ingredient.prefab.inventory.size > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as an ingredient.`);
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
@@ -1025,6 +1027,8 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
+		if (recipe.products.filter(product => product.prefab.inventory.size > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as a product.`);
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);
 		if (recipe.products.length > 1 && recipe.uncraftable)

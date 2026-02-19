@@ -63,6 +63,41 @@ describe('Recipe test', () => {
 			expect(burnerRecipe.ingredients.toString()).toBe(items.toString());
 			expect(recipe.ingredientsMatch(items)).toBe(true);
 		});
+
+		test('ingredientsMatch on video-room BLENDER 2', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 2', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.ingredientsMatch(items)).toBe(true);
+		});
+
+		test('ingredientsMatch on video-room BLENDER 3', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 3', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.ingredientsMatch(items)).toBe(true);
+		});
+
+		test('ingredientsMatch on video-room BLENDER 4', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 4', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.ingredientsMatch(items)).toBe(true);
+		});
+
+		test('ingredientsMatch on video-room BLENDER 5', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.ingredientsMatch(items)).toBe(false);
+		});
+
+		test('ingredientsMatch on video-room BLENDER 6', async () => {
+			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.ingredientsMatch(items)).toBe(false);
+		});
 	});
 
 	describe('test getSatisfactoryProcessCount', () => {
@@ -173,14 +208,134 @@ describe('Recipe test', () => {
 			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
 			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
 		});
+
+		test('getSatisfactoryProcessCount on video-room BLENDER 2', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 2', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(2);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe.row).toBe(recipe.row);
+			expect(blenderRecipe.ingredients.toString()).toBe(items.toString());
+		});
+
+		test('getSatisfactoryProcessCount on video-room BLENDER 3', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 3', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(3);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe.row).toBe(recipe.row);
+			expect(blenderRecipe.ingredients.toString()).toBe(items.toString());
+		});
+
+		test('getSatisfactoryProcessCount on video-room BLENDER 4', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 4', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(7);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe.row).toBe(recipe.row);
+			expect(blenderRecipe.ingredients.toString()).toBe(items.toString());
+		});
+
+		test('getSatisfactoryProcessCount on video-room BLENDER 5', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe).toBeNull();
+			expect(blenderRecipe.ingredients.toString()).toBe('');
+		});
+
+		test('getSatisfactoryProcessCount on video-room BLENDER 6', async () => {
+			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
+			const blenderRecipe = blender.findRecipe();
+			expect(blenderRecipe.recipe).toBeNull();
+			expect(blenderRecipe.ingredients.toString()).toBe('');
+		});
 	});
 
-	describe('test ingredientsMatch', () => {
-		test('ingredientsMatch on video-room BLENDER 2', () => {
+	describe('test getIngredientItems', () => {
+		test('getIngredientItems on canteen BURNER 1', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN')[0];
+			const burner = game.entityFinder.getFixture('BURNER 1', 'canteen');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
+		});
+
+		test('getIngredientItems on canteen BURNER 2', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN')[0];
+			const burner = game.entityFinder.getFixture('BURNER 2', 'canteen');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on canteen BURNER 3', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN')[0];
+			const burner = game.entityFinder.getFixture('BURNER 3', 'canteen');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on canteen BURNER 4', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT OF RICE, DICED ONIONS, BUTTER, COOKING SHERRY, SHREDDED CHEESE, CHICKEN BROTH, PAN')[0];
+			const burner = game.entityFinder.getFixture('BURNER 4', 'canteen');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on video room BURNER 1', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT FILLED WITH WATER, SPAGHETTI NOODLES', 'POT OF SPAGHETTI')[0];
+			const burner = game.entityFinder.getFixture('BURNER 1', 'video-room');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
+		});
+
+		test('getIngredientItems on video room BURNER 2', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT FILLED WITH WATER, SPAGHETTI NOODLES', 'POT OF SPAGHETTI')[0];
+			const burner = game.entityFinder.getFixture('BURNER 2', 'video-room');
+			const items = CollatedItem.collate(burner.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on video-room BLENDER 2', () => {
 			const blender = game.entityFinder.getFixture('BLENDER 2', 'video-room');
-			const recipe = blender.findRecipe().recipe
+			const recipe = blender.findRecipe().recipe;
 			const items = CollatedItem.collate(blender.getContainedItems());
-			expect(recipe.ingredientsMatch(items)).toBe(true);
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on video-room BLENDER 3', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 3', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on video-room BLENDER 4', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 4', 'video-room');
+			const recipe = blender.findRecipe().recipe;
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual(items);
+		});
+
+		test('getIngredientItems on video-room BLENDER 5', () => {
+			const blender = game.entityFinder.getFixture('BLENDER 5', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 491);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
+		});
+
+		test('getIngredientItems on video-room BLENDER 6', async () => {
+			const blender = game.entityFinder.getFixture('BLENDER 6', 'video-room');
+			const recipe = game.recipes.find(recipe => recipe.row === 492);
+			const items = CollatedItem.collate(blender.getContainedItems());
+			expect(recipe.getIngredientItems(items)).toStrictEqual([]);
 		});
 	});
 });

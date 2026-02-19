@@ -6,6 +6,7 @@ import GameEntity from './GameEntity.js';
  * @import Game from './Game.js'
  * @import ItemInstance from './ItemInstance.js'
  * @import RecipeItem from './RecipeItem.js'
+ * @import RoomItem from './RoomItem.js'
  */
 
 /**
@@ -172,10 +173,10 @@ export default class Recipe extends GameEntity {
     /**
      * Returns a subset of the given items which satisfy the recipe's ingredients list. 
      * If the given items do not satisfy the recipe's ingredients list, returns an empty array.
-     * @param {CollatedItem[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {CollatedItem<RoomItem>[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     getIngredientItems(items) {
-        /** @type {CollatedItem[]} */
+        /** @type {CollatedItem<RoomItem>[]} */
         let ingredients = [];
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {

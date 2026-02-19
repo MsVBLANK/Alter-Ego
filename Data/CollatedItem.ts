@@ -261,9 +261,9 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 	 * @param quantity - The quantity to destroy. Defaults to the item's total quantity.
 	 */
 	#destroyItem(item: T, quantity = item.quantity) {
-		const destroyAction = new DestroyAction(item.getGame(), undefined, undefined, item.getLocation(), true);
+		const destroyAction = new DestroyAction(item.getGame(), undefined, this.player, item.getLocation(), true);
         if (item instanceof RoomItem) destroyAction.performDestroyRoomItem(item, quantity, true);
-        else if (item instanceof InventoryItem) destroyAction.performDestroyInventoryItem(item, quantity, true);
+        else if (item instanceof InventoryItem) destroyAction.performDestroyInventoryItem(item, quantity, true, false);
 	}
 
 	/**
@@ -273,10 +273,10 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 	 * @param uses - The number of uses to instantiate it with. Defaults to the prefab's uses.
 	 */
 	instantiate(prefab: Prefab, quantity: number, uses = prefab.uses): T {
-		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, undefined, this.location, true);
+		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, this.player, this.location, true);
         if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem)
             return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T;
-        else if (this.container instanceof InventoryItem)
-            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses) as T;
+        else if (this.container instanceof InventoryItem || this.container === null)
+            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T;
 	}
 }

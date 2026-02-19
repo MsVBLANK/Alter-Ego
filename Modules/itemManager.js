@@ -77,7 +77,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
  * @param {number} [uses] - The number of uses to instantiate the inventory item with. Defaults to the prefab's uses.
  * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
  */
-export function instantiateInventoryItem(prefab, player, equipmentSlotId, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections) {
+export function instantiateInventoryItem(prefab, player, equipmentSlotId, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections = new Map()) {
     let createdItem = new InventoryItem(
         player.name,
         prefab.id,

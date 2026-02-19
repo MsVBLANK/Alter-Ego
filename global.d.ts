@@ -179,7 +179,7 @@ declare global {
 	 */
 	interface Process {
 		recipe?: Recipe;
-		ingredients: CollatedItem[];
+		ingredients: CollatedItem<RoomItem>[];
 		duration?: Duration;
 		timer?: any;
 	}
@@ -190,7 +190,7 @@ declare global {
 	 */
 	interface FindRecipeResult {
 		recipe: Recipe | null;
-		ingredients: CollatedItem[];
+		ingredients: CollatedItem<RoomItem>[];
 	}
 
 	/**

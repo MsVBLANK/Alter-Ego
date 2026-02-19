@@ -49,7 +49,8 @@ describe('Recipe test', () => {
 			const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'POT FILLED WITH WATER, SPAGHETTI NOODLES', 'POT OF SPAGHETTI')[0];
 			const burner = game.entityFinder.getFixture('BURNER 1', 'video-room');
 			const burnerRecipe = burner.findRecipe();
-			expect(burnerRecipe.recipe).toBeNull();
+            expect(burnerRecipe.recipe).not.toBeNull();
+			expect(burnerRecipe.recipe).not.toBe(recipe);
 			const items = CollatedItem.collate(burner.getContainedItems());
 			expect(recipe.ingredientsMatch(items)).toBe(false);
 		});
@@ -176,7 +177,8 @@ describe('Recipe test', () => {
 			const items = CollatedItem.collate(burner.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(0);
 			const burnerRecipe = burner.findRecipe();
-			expect(burnerRecipe.recipe).toBeNull();
+			expect(burnerRecipe.recipe).not.toBeNull();
+            expect(burnerRecipe.recipe).not.toBe(recipe);
 		});
 
 		test('getSatisfactoryProcessCount on video-room BURNER 2', () => {

@@ -379,7 +379,7 @@
   [ "BANANA", "", "blender", "1m", "BANANA SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
   [ "APPLE, BANANA", "", "blender", "1m", "APPLE BANANA SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
   [ "ORANGE", "", "blender", "1m", "ORANGE SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
-  [ "APPLE, ORANGE", "", "blender", "1m", "APPLE ORANGE SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
+  [ "APPLE, ORANGE", "", "blender", "1m", "APPLE ORANGE SMOOTHIE [2]", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
   [ "BANANA, ORANGE", "", "blender", "1m", "BANANA ORANGE SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
   [ "APPLE, BANANA, ORANGE", "", "blender", "1m", "APPLE BANANA ORANGE SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],
   [ "MANGO", "", "blender", "1m", "MANGO SMOOTHIE", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s></desc>" ],

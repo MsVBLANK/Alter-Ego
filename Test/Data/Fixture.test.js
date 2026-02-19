@@ -171,5 +171,57 @@ describe('Fixture test', () => {
 				expect(milkshake.uses).toBe(2);
 			}
 		});
+
+		test('Fixture process flow for BLENDER 3 of video-room', () => {
+			const fixture = game.entityFinder.getFixture('BLENDER 3', 'video-room');
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(2);
+				const apple = items[0];
+				const orange = items[1];
+				expect(apple.quantity).toBe(3);
+				expect(apple.uses).toBe(1);
+				expect(orange.quantity).toBe(3);
+				expect(orange.uses).toBe(1);
+			}
+			const recipeData = fixture.findRecipe();
+			fixture.process.recipe = recipeData.recipe;
+			fixture.process.ingredients = recipeData.ingredients;
+			fixture.destroyIngredients(3);
+			fixture.instantiateProducts(3);
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const smoothie = items[0];
+				expect(smoothie.quantity).toBe(3);
+				expect(smoothie.uses).toBe(2);
+			}
+		});
+
+		test('Fixture process flow for BLENDER 4 of video-room', () => {
+			const fixture = game.entityFinder.getFixture('BLENDER 4', 'video-room');
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(2);
+				const banana = items[0];
+				const orange = items[1];
+				expect(banana.quantity).toBe(7);
+				expect(banana.uses).toBe(1);
+				expect(orange.quantity).toBe(7);
+				expect(orange.uses).toBe(1);
+			}
+			const recipeData = fixture.findRecipe();
+			fixture.process.recipe = recipeData.recipe;
+			fixture.process.ingredients = recipeData.ingredients;
+			fixture.destroyIngredients(7);
+			fixture.instantiateProducts(7);
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const smoothie = items[0];
+				expect(smoothie.quantity).toBe(7);
+				expect(smoothie.uses).toBe(3);
+			}
+		});
 	});
 });

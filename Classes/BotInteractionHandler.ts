@@ -4,6 +4,7 @@ import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
 import TakeAction from "../Data/Actions/TakeAction.js";
 import DropAction from "../Data/Actions/DropAction.js";
 import StashAction from "../Data/Actions/StashAction.js";
+import UnstashAction from "../Data/Actions/UnstashAction.js";
 import type Game from "../Data/Game.js";
 import type Interactable from "./Interactables/Interactable.js";
 import type Player from "../Data/Player.js";
@@ -140,6 +141,16 @@ export default class BotInteractionHandler {
 				return true;
 			}
 		}
+        if (action instanceof UnstashAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 4) {
+                action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                reply.resource.message.delete();
+                return true;
+            }
+        }
 		return false;
 	}
 

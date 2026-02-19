@@ -42,6 +42,12 @@ export default class InventoryAction extends Action {
 			}
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createStashActionInteractables(heldItems, this.player, viableStashDestinations));
 		}
+		if (playerFreeHand && playerContainerItems.length > 0) {
+			const stashedItems = playerItems.filter(item => item.container !== null);
+			if (stashedItems.length > 0) {
+				interactables = interactables.concat(await this.getGame().botContext.interactableManager.createUnstashActionInteractables(stashedItems, this.player));
+			}
+		}
 
 		if (this.forced)
 			this.getGame().communicationHandler.sendToCommandChannel(inventoryString);

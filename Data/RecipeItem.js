@@ -146,6 +146,15 @@ export default class RecipeItem extends GameConstruct {
 		return item.quantity >= this.quantity;
 	}
 
+    /**
+	 * Returns true if the given item satisfies the uses required of this recipe item.
+	 * @param {CollatedItem} item
+	 */
+    usesSatisfiedBy(item) {
+        if (isNaN(item.uses) || this.uses === undefined) return true;
+        return item.uses >= this.uses;
+    }
+
 	/**
 	 * Calculates how many times the given ingredient use count satisfies the quantity of this recipe item.
 	 * @param {number} ingredientUseCount - How many times the ingredient is to be used.

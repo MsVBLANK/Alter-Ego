@@ -181,7 +181,7 @@ export default class Recipe extends GameEntity {
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 // Check if this item has the same prefab as the current ingredient and has a sufficient quantity.
-                if (item.prefab.id === ingredient.prefab.id && item.quantity >= ingredient.quantity && item.uses >= ingredient.uses && item.containerMatches(ingredient)) {
+                if (item.prefab.id === ingredient.prefab.id && ingredient.quantitySatisfiedBy(item) && ingredient.usesSatisfiedBy(item) && item.containerMatches(ingredient)) {
                     ingredients.push(item);
                     item.setVariable(ingredient.quantityVariableName);
                     break;

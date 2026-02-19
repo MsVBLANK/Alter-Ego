@@ -1827,6 +1827,6 @@
   [ "LARGE KNIFE", "", "video-room", "TRUE", "Fixture: CUTTING BOARD 1", "1", "", "<desc><s>You examine the knife.</s> <s>It appears to be a very sharp kitchen knife with a black handle.</s> <s>It's large enough that you really can't hide it unless you stash it somewhere.</s></desc>" ],
   [ "ORANGE", "", "video-room", "TRUE", "Fixture: CUTTING BOARD 2", "10", "1", "<desc><s>It's a regular orange.</s> <s>It looks perfectly ripe.</s> <s>It's still got the skin on it.</s></desc>" ],
   [ "VEGETABLE PEELER", "", "video-room", "TRUE", "Fixture: CUTTING BOARD 2", "9", "", "<desc><s>This is a tool used to peel off the outer skin of various fruits and vegetables.</s></desc>" ],
-  [ "BLENDER CUP OF MILK", "BLENDER CUP OF MILK 1", "video-room", "TRUE", "Fixture: BLENDER 2", "1", "1", "<desc><s>It's a blender cup full of milk.</s> <s>Floating in the milk is <il></il>.</s></desc>" ],
+  [ "BLENDER CUP OF MILK", "BLENDER CUP OF MILK 1", "video-room", "TRUE", "Fixture: BLENDER 2", "1", "", "<desc><s>It's a blender cup full of milk.</s> <s>Floating in the milk is <il></il>.</s></desc>" ],
   [ "BANANA CHUNK", "", "video-room", "TRUE", "RoomItem: BLENDER CUP OF MILK 1/CUP", "2", "1", "<desc><s>It's a sliced chunk of banana.</s></desc>" ]
 ]

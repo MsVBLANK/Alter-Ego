@@ -15,7 +15,7 @@ describe('Fixture test', () => {
 			await game.entityLoader.loadRoomItems(false);
 		});
 
-		test('Fixture.destroyIngredients', () => {
+		test('Fixture.destroyIngredients for CUTTING BOARD 1 of video-room', () => {
 			const fixture = game.entityFinder.getFixture('CUTTING BOARD 1', 'video-room');
 			{
 				let items = fixture.getContainedItems();
@@ -54,7 +54,7 @@ describe('Fixture test', () => {
 			}
 		});
 
-		test('Fixture.instantiateProducts', () => {
+		test('Fixture.instantiateProducts for CUTTING BOARD 1 of video-room', () => {
 			const fixture = game.entityFinder.getFixture('CUTTING BOARD 1', 'video-room');
 			{
 				let items = fixture.getContainedItems();
@@ -99,7 +99,7 @@ describe('Fixture test', () => {
 			}
 		});
 
-		test('Fixture process flow', () => {
+		test('Fixture process flow for CUTTING BOARD 1 of video-room', () => {
 			const fixture = game.entityFinder.getFixture('CUTTING BOARD 1', 'video-room');
 			{
 				let items = fixture.getContainedItems();
@@ -143,6 +143,32 @@ describe('Fixture test', () => {
 				expect(knife.uses).toBe(NaN);
 				expect(slices.quantity).toBe(4);
 				expect(slices.uses).toBe(1);
+			}
+		});
+
+		test('Fixture process flow for BLENDER 2 of video-room', () => {
+			const fixture = game.entityFinder.getFixture('BLENDER 2', 'video-room');
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const cup = items[0];
+				const banana = cup.inventory.get(cup.inventory.firstKey()).items[0];
+				expect(cup.quantity).toBe(1);
+				expect(cup.uses).toBe(NaN);
+				expect(banana.quantity).toBe(2);
+				expect(banana.uses).toBe(1);
+			}
+			const recipeData = fixture.findRecipe();
+			fixture.process.recipe = recipeData.recipe;
+			fixture.process.ingredients = recipeData.ingredients;
+			fixture.destroyIngredients(2);
+			fixture.instantiateProducts(2);
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const milkshake = items[0];
+				expect(milkshake.quantity).toBe(1);
+				expect(milkshake.uses).toBe(2);
 			}
 		});
 	});

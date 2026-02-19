@@ -2,7 +2,7 @@ import GameConstants from '../Classes/GameConstants.js';
 import { loadDotEnv } from '../Modules/envLoader.ts';
 import { loadCredentials } from '../Modules/credentialsLoader.ts';
 import { getSheetValues } from '../Modules/sheets.js';
-import { writeFileSync } from 'fs';
+import { writeFile } from 'fs/promises';
 
 async function main() {
 	loadDotEnv();
@@ -38,7 +38,7 @@ async function main() {
 				console.log(`Fetching ${sheetRangeConstant}.`);
 				const sheet = await getSheetValues(range, masterTestSheetId);
 				if (sheet && sheet.values) {
-					writeFileSync(
+					await writeFile(
 						fileWritePath,
 						JSON.stringify(sheet.values, undefined, 2)
 							.replace(/",\n +"/g, `", "`)

@@ -1038,7 +1038,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
-		if (recipe.products.filter(product => product.prefab.inventory.size > 0).length > 1)
+		if (recipe.products.filter(product => product.prefab.inventory.size > 0 && product.containedItems.length > 0).length > 1)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as a product.`);
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);
@@ -1959,7 +1959,6 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (!player.hasStatus(statusDisplay.id) && (statusDisplay.timeRemaining ? convertTimeStringToDurationUnits(statusDisplay.timeRemaining) !== undefined : true))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 		}
-		return;
 	}
 
 	/**

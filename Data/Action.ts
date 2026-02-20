@@ -54,7 +54,7 @@ export default abstract class Action extends GameConstruct {
 	 * @param forced - Whether or not the action was performed by someone other than the player themselves.
 	 * @param whisper - The whisper where this action is being performed, if applicable.
 	 */
-	protected constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
+	constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
 		super(game);
 		this.message = message;
 		this.player = player;

@@ -8,7 +8,6 @@ import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.js";
 import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
-import type Puzzle from "../Data/Puzzle.js";
 import RoomItem from "../Data/RoomItem.js";
 import ActionDirective from "./ActionDirective.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";

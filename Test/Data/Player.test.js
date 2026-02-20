@@ -50,7 +50,7 @@ describe('Player test', () => {
 			expect(potSlot.equippedItem).not.toBeUndefined();
 			expect(potSlot.equippedItem.uses).toBe(NaN);
 			expect(potSlot.equippedItem.quantity).toBe(1);
-			const eggItem = game.entityFinder.getInventoryItem("RAW EGG", "Asuka", "POT 39");
+			const eggItem = game.entityFinder.getInventoryItem("RAW EGG", "Asuka", `${potSlot.equippedItem.getIdentifier()}/POT`);
 			expect(eggItem).not.toBeUndefined();
 			expect(eggItem.uses).toBe(1);
 			expect(eggItem.quantity).toBe(1);
@@ -76,7 +76,7 @@ describe('Player test', () => {
 			expect(potSlot.equippedItem).not.toBeUndefined();
 			expect(potSlot.equippedItem.uses).toBe(NaN);
 			expect(potSlot.equippedItem.quantity).toBe(1);
-			const orangeJuiceItem = game.entityFinder.getInventoryItem("ORANGE JUICE", "Luna", "POT 3939");
+			const orangeJuiceItem = game.entityFinder.getInventoryItem("ORANGE JUICE", "Luna", `${potSlot.equippedItem.getIdentifier()}/POT`);
 			expect(orangeJuiceItem).not.toBeUndefined();
 			expect(orangeJuiceItem.uses).toBe(4);
 			expect(orangeJuiceItem.quantity).toBe(1);

@@ -1427,8 +1427,9 @@ export default class Player extends RecipeProcessor {
 		const ingredientsFlat = this.#collateItems(ingredients);
         const satisfactoryProcessCount = recipe.getSatisfactoryProcessCount(ingredientsFlat);
         if (satisfactoryProcessCount < 1) return;
+        const variableValues = recipe.getIngredientVariableValues(ingredientsFlat);
         this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
-        this.instantiateProducts(recipe, satisfactoryProcessCount);
+        this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues);
         heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
 
 		return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };

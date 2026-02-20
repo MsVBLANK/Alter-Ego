@@ -416,7 +416,7 @@ describe('messageHandler test', () => {
                 courtyard.addPlayer(asuka);
 
                 const mask = game.entityFinder.getPrefab("PLAGUE DOCTOR MASK");
-                instantiateInventoryItem(mask, kyra, "FACE", null, "", 1, new Map());
+                instantiateInventoryItem(mask, kyra, "FACE", null, "", 1, NaN, new Map());
                 kyra.inflict(concealed);
                 kyra.displayName = "an individual wearing a PLAGUE DOCTOR MASK";
                 kyra.voiceString = "a deep modulated voice";
@@ -4194,7 +4194,7 @@ describe('messageHandler test', () => {
 
                 test('transmitted dialog is narrated in audio/video monitoring rooms and communicated to spectate channels', async () => {
                     const walkieTalkie = game.entityFinder.getPrefab("WALKIE TALKIE");
-                    const receiverItem = instantiateInventoryItem(walkieTalkie, luna, "FACE", null, "", 1, new Map());
+                    const receiverItem = instantiateInventoryItem(walkieTalkie, luna, "FACE", null, "", 1, NaN, new Map());
                     luna.inflict(receiver);
 
                     await sendPlayerMessage(luna, "Hello.");
@@ -4257,7 +4257,7 @@ describe('messageHandler test', () => {
 
                 test('dialog is only narrated in room once when occupants include multiple receivers', async () => {
                     const walkieTalkie = game.entityFinder.getPrefab("WALKIE TALKIE");
-                    const receiverItem = instantiateInventoryItem(walkieTalkie, vivian, "FACE", null, "", 1, new Map());
+                    const receiverItem = instantiateInventoryItem(walkieTalkie, vivian, "FACE", null, "", 1, NaN, new Map());
                     vivian.inflict(receiver);
 
                     await sendPlayerMessage(nero, "Hello.");

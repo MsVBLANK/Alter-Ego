@@ -215,10 +215,33 @@ export default class Recipe extends GameEntity {
     }
 
 	/**
-	 * Returns true if the given item is both an ingredient and a product.
+	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
 	 * @param {CollatedItem | RecipeItem} item 
 	 */
 	isIngredientAndProduct(item) {
-		return this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id) !== undefined && this.productsFlat.find(product => product.prefab.id === item.prefab.id) !== undefined;
+        const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);
+        if (!matchedIngredient) return false;
+        const matchedProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id);
+        if (!matchedProduct) return false;
+        return matchedIngredient.container === matchedProduct.container && matchedIngredient.containedItemsString === matchedProduct.containedItemsString;
 	}
+
+    /**
+     * Gets a map of all values associated with the given items.
+     * @param {CollatedItem[]} items
+     */
+    getIngredientVariableValues(items) {
+        /** @type {Map<string, number>} */
+        const variableValues = new Map();
+        for (const ingredient of this.ingredientsFlat) {
+            for (const item of items) {
+                if (ingredient.prefab.id !== item.prefab.id) continue;
+                if (!ingredient.quantityIsConstant && ingredient.quantityVariableName !== "")
+                    variableValues.set(ingredient.quantityVariableName, Math.floor(item.quantity / ingredient.quantity));
+                if (!ingredient.usesIsConstant && ingredient.usesVariableName !== "")
+                    variableValues.set(ingredient.usesVariableName, Math.floor(item.uses / ingredient.uses));
+            }
+        }
+        return variableValues;
+    }
 }

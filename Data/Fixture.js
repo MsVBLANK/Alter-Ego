@@ -341,8 +341,9 @@ export default class Fixture extends RecipeProcessor {
         // Calculate how many times the fixture's ingredients satisfy the current recipe.
         const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
 		if (satisfactoryProcessCount < 1) return;
+        const variableValues = this.process.recipe.getIngredientVariableValues(this.process.ingredients);
         this.destroyIngredients(this.process.recipe, this.process.ingredients, satisfactoryProcessCount);
-		this.instantiateProducts(this.process.recipe, satisfactoryProcessCount);
+		this.instantiateProducts(this.process.recipe, satisfactoryProcessCount, variableValues);
 		this.#sendRecipeCompletedDescription(player);
     }
 

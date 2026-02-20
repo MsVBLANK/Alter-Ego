@@ -45,20 +45,21 @@ export default abstract class RecipeProcessor extends ItemContainer {
      * Instantiate the products for the current recipe.
      * @param recipe - The recipe being processed.
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param variableValues - The variable values to use when instantiating the products.
      */
-    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number) {
+    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map()) {
         if (satisfactoryProcessCount < 1) return;
 		for (const product of recipe.products) {
 			if (recipe.isIngredientAndProduct(product))
 				continue;
 			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
-			const uses = !isNaN(product.uses) && !product.usesIsConstant ? product.uses * satisfactoryProcessCount : product.uses;
+			const uses = product.calculateUses(satisfactoryProcessCount, variableValues);
 			if (product.prefab.inventory.size > 0) {
 				for (let i = 0; i < quantity; i++) {
 					const instantiatedProduct = this.instantiate(product.prefab, 1, uses, new Map());
 					for (const childProduct of product.containedItems) {
 						const childQuantity = childProduct.quantityIsConstant ? childProduct.quantity : childProduct.quantity * satisfactoryProcessCount;
-						const childUses = !isNaN(childProduct.uses) && !childProduct.usesIsConstant ? childProduct.uses * satisfactoryProcessCount : childProduct.uses;
+						const childUses = childProduct.calculateUses(satisfactoryProcessCount, variableValues);
 						this.instantiate(childProduct.prefab, childQuantity, childUses, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
 					}
 				}

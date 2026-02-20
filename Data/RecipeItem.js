@@ -166,6 +166,19 @@ export default class RecipeItem extends GameConstruct {
 		return Math.floor(satisfiedQuantityCount);
 	}
 
+    /**
+     * Calculates the number of uses to instantiate this recipe as a product with.
+     * @param {number} satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param {Map<string, number>} variableValues - The variable values captured from the actual ingredients.
+     */
+    calculateUses(satisfactoryProcessCount, variableValues) {
+        if (!isNaN(this.uses) && !this.usesIsConstant) {
+            if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return variableValues.get(this.usesVariableName);
+            else return this.uses * satisfactoryProcessCount;
+        }
+        else return this.uses;
+    }
+
 	/**
 	 * Returns a string to display this recipe item in a list of recipes list.
 	 */

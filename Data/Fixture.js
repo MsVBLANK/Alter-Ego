@@ -1,12 +1,12 @@
+import CollatedItem from './CollatedItem.ts';
 import HidingSpot from './HidingSpot.js';
-import ItemContainer from './ItemContainer.js';
+import RecipeProcessor from './RecipeProcessor.ts';
 import DeactivateAction from './Actions/DeactivateAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';
 import { MessageDisplayType } from '../Modules/enums.js';
-import CollatedRoomItem from './CollatedRoomItem.js';
 
 /** @import Game from './Game.js' */
 /** @import RoomItem from './RoomItem.js' */
@@ -19,10 +19,10 @@ import CollatedRoomItem from './CollatedRoomItem.js';
 /**
  * @class Fixture
  * @classdesc Represents a fixed structure in a room that cannot be taken or moved by a player.
- * @extends ItemContainer
+ * @extends RecipeProcessor
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/fixture.html
  */
-export default class Fixture extends ItemContainer {
+export default class Fixture extends RecipeProcessor {
     /**
      * The name of the fixture.
      * @readonly
@@ -341,54 +341,15 @@ export default class Fixture extends ItemContainer {
         // Calculate how many times the fixture's ingredients satisfy the current recipe.
         const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
 		if (satisfactoryProcessCount < 1) return;
-        this.destroyIngredients(satisfactoryProcessCount);
-		this.instantiateProducts(satisfactoryProcessCount);
+        const variableValues = this.process.recipe.getIngredientVariableValues(this.process.ingredients);
+        this.destroyIngredients(this.process.recipe, this.process.ingredients, satisfactoryProcessCount);
+		this.instantiateProducts(this.process.recipe, satisfactoryProcessCount, variableValues);
 		this.#sendRecipeCompletedDescription(player);
     }
 
 	/**
-	 * Destroys the ingredients for the current recipe being processed.
-	 * @param {number} satisfactoryProcessCount - How many times the fixture's ingredients satisfy the current recipe.
-	 */
-	destroyIngredients(satisfactoryProcessCount) {
-		if (satisfactoryProcessCount < 1) return;
-		for (const ingredient of this.process.ingredients) {
-            if (this.process.recipe.isIngredientAndProduct(ingredient) && !ingredient.allItemsHaveInfiniteUses())
-				ingredient.decreaseUses(satisfactoryProcessCount);
-			else if (this.process.recipe.isIngredientAndProduct(ingredient) && ingredient.allItemsHaveInfiniteUses())
-				continue;
-			else
-				ingredient.destroy(satisfactoryProcessCount);
-        }
-	}
-
-	/**
-	 * Instantiate the products for the current recipe being processed.
-	 * @param {number} satisfactoryProcessCount - How many times the fixture's ingredients satisfy the current recipe.
-	 */
-	instantiateProducts(satisfactoryProcessCount) {
-		if (satisfactoryProcessCount < 1) return;
-		for (const product of this.process.recipe.products) {
-			if (this.process.recipe.isIngredientAndProduct(product) && isNaN(product.prefab.uses))
-				continue;
-			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
-			const uses = !isNaN(product.uses) && !product.usesIsConstant ? product.uses * satisfactoryProcessCount : product.uses;
-			if (product.prefab.inventory.size > 0) {
-				for (let i = 0; i < quantity; i++) {
-					const instantiatedProduct = this.#instantiate(product.prefab, 1, uses, new Map());
-					for (const childProduct of product.containedItems) {
-						const childQuantity = childProduct.quantityIsConstant ? childProduct.quantity : childProduct.quantity * satisfactoryProcessCount;
-						const childUses = !isNaN(childProduct.uses) && !childProduct.usesIsConstant ? childProduct.uses * satisfactoryProcessCount : childProduct.uses;
-						this.#instantiate(childProduct.prefab, childQuantity, childUses, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
-					}
-				}
-			}
-			else this.#instantiate(product.prefab, quantity, uses, new Map());
-		}
-	}
-
-	/**
 	 * Instantiates a room item in this fixture.
+     * @protected
 	 * @param {Prefab} prefab - The prefab to instantiate.
 	 * @param {number} quantity - The quantity of the prefab to instantiate.
 	 * @param {number} uses - The number of uses to instantiate the prefab with. Defaults to the prefab's number of uses.
@@ -397,7 +358,7 @@ export default class Fixture extends ItemContainer {
 	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @returns The instantiated room item.
 	 */
-	#instantiate(prefab, quantity, uses = prefab.uses, proceduralSelections = new Map(), container = this, inventorySlotId = "") {
+	instantiate(prefab, quantity, uses = prefab.uses, proceduralSelections = new Map(), container = this, inventorySlotId = "") {
 		const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
 	}
@@ -434,12 +395,12 @@ export default class Fixture extends ItemContainer {
         const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
-        const collatedItems = CollatedRoomItem.collate(items);
+        const collatedItems = CollatedItem.collate(items);
 
         const recipes = this.getGame().recipes.filter(recipe => recipe.fixtureTag === this.recipeTag);
         /** @type {Recipe} */
         let recipe = null;
-        /** @type {CollatedRoomItem[]} */
+        /** @type {CollatedItem<RoomItem>[]} */
         let ingredients = [];
         // Check if there's a recipe whose ingredients matches items exactly.
         for (let i = 0; i < recipes.length; i++) {

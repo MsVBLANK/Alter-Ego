@@ -30,7 +30,7 @@ import RecipeItem from '../Data/RecipeItem.js';
 export default class GameEntityLoader extends GameEntityManager {
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		super(game);
@@ -553,7 +553,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (exit.link === "" || exit.link === null || exit.link === undefined)
 				return new Error(`Couldn't load exit on row ${exit.row}. No linked exit was given.`);
 			const linkedExit = exit.dest.exits.get(exit.link);
-			if (!linkedExit) 
+			if (!linkedExit)
 				return new Error(`Couldn't load exit on row ${exit.row}. Room "${exit.dest.displayName}" does not have an exit that links back to it.`);
 		}
 	}
@@ -629,7 +629,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Fixture for errors.
-	 * @param {Fixture} fixture - The fixture to check. 
+	 * @param {Fixture} fixture - The fixture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFixture(fixture) {
@@ -813,7 +813,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Prefab for errors.
-	 * @param {Prefab} prefab - The prefab to check. 
+	 * @param {Prefab} prefab - The prefab to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPrefab(prefab) {
@@ -890,10 +890,11 @@ export default class GameEntityLoader extends GameEntityManager {
 				// For each product, convert the string to a valid entity name.
 				for (let j = 0; j < productsStrings.length; j++)
 					productsStrings[j] = productsStrings[j].trim();
+				const fixtureTag = sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : ""
 				let recipe = new Recipe(
 					ingredientsStrings,
 					sheet[row][columnUncraftable] ? sheet[row][columnUncraftable].trim() === "TRUE" : false,
-					sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : "",
+					fixtureTag,
 					durationString,
 					duration,
 					productsStrings,
@@ -904,13 +905,13 @@ export default class GameEntityLoader extends GameEntityManager {
 					this.game
 				);
 				recipe.ingredientsStrings.forEach((ingredientsString, i) => {
-					const ingredient = new RecipeItem(ingredientsString, this.game);
+					const ingredient = new RecipeItem(ingredientsString, this.game, fixtureTag ? "processing" : "crafting");
 					const prefab = this.game.entityFinder.getPrefab(ingredient.prefabId);
 					if (prefab) ingredient.setPrefab(prefab);
 					if (ingredient.containedItemsString) {
 						const containedItemsStrings = ingredient.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
-							const containedIngredient = new RecipeItem(containedItemString, this.game);
+							const containedIngredient = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
 							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
 							if (prefab) containedIngredient.setPrefab(prefab);
 							containedIngredient.setContainer(ingredient);
@@ -922,13 +923,13 @@ export default class GameEntityLoader extends GameEntityManager {
 					recipe.ingredientsFlat.push(ingredient);
 				});
 				recipe.productsStrings.forEach((productsString, i) => {
-					const product = new RecipeItem(productsString, this.game);
+					const product = new RecipeItem(productsString, this.game, fixtureTag ? "processing" : "crafting");
 					const prefab = this.game.entityFinder.getPrefab(product.prefabId);
 					if (prefab) product.setPrefab(prefab);
 					if (product.containedItemsString) {
 						const containedItemsStrings = product.containedItemsString.split('+');
 						for (const containedItemString of containedItemsStrings) {
-							const containedProduct = new RecipeItem(containedItemString, this.game);
+							const containedProduct = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
 							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);
 							if (prefab) containedProduct.setPrefab(prefab);
 							containedProduct.setContainer(product);
@@ -967,7 +968,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Recipe for errors.
-	 * @param {Recipe} recipe - The recipe to check. 
+	 * @param {Recipe} recipe - The recipe to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRecipe(recipe) {
@@ -995,6 +996,18 @@ export default class GameEntityLoader extends GameEntityManager {
 			ingredientVariables.add(ingredient.quantityVariableName);
 			ingredientVariables.add(ingredient.usesVariableName);
 		}
+		if (recipe.fixtureTag === "") {
+			for (const ingredient of recipe.ingredients) {
+				if (!(ingredient.quantity === 1 && ingredient.quantityIsConstant))
+    				return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level ingredients in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
+			for (const product of recipe.products) {
+				if (!(product.quantity === 1 && product.quantityIsConstant))
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level products in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
+		}
+		if (recipe.ingredients.filter(ingredient => ingredient.prefab.inventory.size > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as an ingredient.`);
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
@@ -1025,6 +1038,8 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
 				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
+		if (recipe.products.filter(product => product.prefab.inventory.size > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as a product.`);
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);
 		if (recipe.products.length > 1 && recipe.uncraftable)
@@ -1157,7 +1172,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a RoomItem for errors.
-	 * @param {RoomItem} item - The room item to check. 
+	 * @param {RoomItem} item - The room item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRoomItem(item) {
@@ -1359,7 +1374,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Puzzle for errors.
-	 * @param {Puzzle} puzzle - The puzzle to check. 
+	 * @param {Puzzle} puzzle - The puzzle to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPuzzle(puzzle) {
@@ -1558,7 +1573,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an Event for errors.
-	 * @param {Event} event - The event to check. 
+	 * @param {Event} event - The event to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkEvent(event) {
@@ -1698,7 +1713,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Status Effect for errors.
-	 * @param {Status} status - The status effect to check. 
+	 * @param {Status} status - The status effect to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkStatusEffect(status) {
@@ -1896,7 +1911,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Player for errors.
-	 * @param {Player} player - The player to check. 
+	 * @param {Player} player - The player to check.
 	 * @returns {Promise<Error|void>} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	async checkPlayer(player) {
@@ -2131,7 +2146,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an InventoryItem for errors.
-	 * @param {InventoryItem} item - The inventory item to check. 
+	 * @param {InventoryItem} item - The inventory item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkInventoryItem(item) {
@@ -2253,7 +2268,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Gesture for errors.
-	 * @param {Gesture} gesture - The gesture to check. 
+	 * @param {Gesture} gesture - The gesture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkGesture(gesture) {
@@ -2296,7 +2311,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				/** @type {FlagCommandSet[]} */
 				let commandSets = [];
 				/**
-				 * @param {string} commandString 
+				 * @param {string} commandString
 				 * @returns {FlagCommandSet}
 				 */
 				let getCommands = function (commandString) {
@@ -2367,7 +2382,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Flag for errors.
-	 * @param {Flag} flag - The flag to check. 
+	 * @param {Flag} flag - The flag to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFlag(flag) {
@@ -2399,7 +2414,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Prints an array or map of entities to the console.
-	 * @param {*[]|Map<*, *>} data 
+	 * @param {*[]|Map<*, *>} data
 	 */
 	#printData(data) {
 		if (data instanceof Array) {

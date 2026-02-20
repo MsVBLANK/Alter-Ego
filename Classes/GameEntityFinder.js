@@ -12,6 +12,7 @@ import Whisper from "../Data/Whisper.js";
 import * as matchers from '../Modules/matchers.js';
 
 /** @import GameEntity from "../Data/GameEntity.js"; */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.js"; */
 
 /**
  * @class GameEntityFinder
@@ -189,6 +190,7 @@ export default class GameEntityFinder {
 	 */
 	getPlayerHands(player) {
 		if (!player) return [];
+		/** @type {EquipmentSlot[]} */
 		let hands = [];
 		if (player.inventory.has("RIGHT HAND")) hands.push(player.inventory.get("RIGHT HAND"));
 		if (player.inventory.has("LEFT HAND")) hands.push(player.inventory.get("LEFT HAND"));

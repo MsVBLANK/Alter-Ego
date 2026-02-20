@@ -215,13 +215,13 @@ export class StatusPlugin {
      */
     serialize(value, config, indentation, depth, refs, printer) {
         if (depth > this.level || this.processing.size > 1) {
-            if (value.remaining) {
+            if (value.remaining !== null) {
                 const format = Math.floor(value.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
                 const timeString = value.remaining.toFormat(format);
                 return `<Status "${value.id}" inflicted with ${timeString} remaining>`;
-            } else if (value.duration) {
-                const format = Math.floor(value.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
-                const timeString = value.remaining.toFormat(format);
+            } else if (value.duration !== null) {
+                const format = Math.floor(value.duration.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+                const timeString = value.duration.toFormat(format);
                 return `<Status "${value.id}" lasting for ${timeString}>`;
             }  else return `<Status "${value.id}">`;
         } else {
@@ -644,6 +644,89 @@ export class CollectionPlugin {
     }
 }
 
+const plugins = [
+    new GuildPlugin(),
+    new GuildMemberPlugin(),
+    new TextChannelPlugin(),
+    new DMChannelPlugin(),
+    new DurationPlugin(),
+    new TimeoutPlugin(),
+    new TimerPlugin(),
+    new GesturePlugin(),
+    new BotContextPlugin(),
+    new DescriptionPlugin(),
+    new StatusPlugin(),
+    new PuzzlePlugin(),
+    new PrefabPlugin(),
+    new FixturePlugin(),
+    new InventorySlotPlugin(),
+    new RoomItemPlugin(),
+    new InventoryItemPlugin(),
+    new RoomPlugin(),
+    new PlayerPlugin(),
+    new CollectionPlugin(),
+];
+
+const truncate = new Set(["game", "guild", "member", "channel", "spectateChannel", "timer"])
+
+/**
+ * Returns a copy of the object to display in console.log with certain properties excluded.
+ * @param {any} object - The object to display.
+ * @param {number} level - Level of recursion, for internal use only.
+ */
+const prettyObject = (object, level = 0) => {
+    if (level >= 3) return object;
+    if (object === null || object === undefined) return object;
+    const clone = Object.create(Object.getPrototypeOf(object));
+    for (const key of Object.keys(object)) {
+        if (truncate.has(key)) {
+            clone[key] = `<Truncated>`;
+        } else {
+            if (object[key] && typeof object[key] === "object") {
+                if (object[key] instanceof Array) {
+                    clone[key] = object[key].map((value) => prettyObject(value, level + 1));
+                } else if (object[key] instanceof Collection) {
+                    clone[key] = new Collection();
+                    for (const [k, v] of object[key]) {
+                        clone[key].set(k, prettyObject(v, level + 1));
+                    }
+                } else if (object[key] instanceof Map) {
+                    clone[key] = new Map();
+                    for (const [k, v] of object[key]) {
+                        clone[key].set(k, prettyObject(v, level + 1));
+                    }
+                } else clone[key] = prettyObject(object[key], level + 1);
+            } else clone[key] = object[key];
+        }
+    }
+    return clone;
+}
+
+export class PolyPlugin {
+    /** @type {NewPlugin["test"]} */
+    test(value) {
+        const processed = prettyObject(value);
+        for (const plugin of plugins) {
+            if (plugin.test(processed)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * @type {NewPlugin["serialize"]}
+     * @param {Collection} value
+     */
+    serialize(value, config, indentation, depth, refs, printer) {
+        const processed = prettyObject(value);
+        for (const plugin of plugins) {
+            if (plugin.test(processed)) {
+                return plugin.serialize(processed, config, indentation, depth, refs, printer);
+            }
+        }
+        return "";
+    }
+}
+
 export default class PrettyPrinter {
     /**
      * Game filtering plugins for prettyString
@@ -658,29 +741,9 @@ export default class PrettyPrinter {
     truncateProperties;
 
     constructor() {
-        this.gameFilterPlugins = [
-            new GuildPlugin(),
-            new GuildMemberPlugin(),
-            new TextChannelPlugin(),
-            new DMChannelPlugin(),
-            new DurationPlugin(),
-            new TimeoutPlugin(),
-            new TimerPlugin(),
-            new GesturePlugin(),
-            new BotContextPlugin(),
-            new DescriptionPlugin(),
-            new StatusPlugin(),
-            new PuzzlePlugin(),
-            new PrefabPlugin(),
-            new FixturePlugin(),
-            new InventorySlotPlugin(),
-            new RoomItemPlugin(),
-            new InventoryItemPlugin(),
-            new RoomPlugin(),
-            new PlayerPlugin(),
-            new CollectionPlugin(),
-        ];
-        this.truncateProperties = new Set(["game", "guild", "member", "channel", "spectateChannel", "timer"]);
+        this.gameFilterPlugins = plugins;
+        this.truncateProperties = truncate;
+        this.prettyObject = prettyObject;
     }
 
     /**
@@ -692,37 +755,5 @@ export default class PrettyPrinter {
             plugins: [...this.gameFilterPlugins],
             indent: 4,
         });
-    }
-
-    /**
-     * Returns a copy of the object to display in console.log with certain properties excluded.
-     * @param {any} object - The object to display.
-     * @param {number} level - Level of recursion, for internal use only.
-     */
-    prettyObject(object, level = 0) {
-        if (level >= 3) return object;
-        const clone = Object.create(Object.getPrototypeOf(object));
-        for (const key of Object.keys(object)) {
-            if (this.truncateProperties.has(key)) {
-                clone[key] = `<Truncated>`;
-            } else {
-                if (object[key] && typeof object[key] === "object") {
-                    if (object[key] instanceof Array) {
-                        clone[key] = object[key].map((value) => this.prettyObject(value, level + 1));
-                    } else if (object[key] instanceof Collection) {
-                        clone[key] = new Collection();
-                        for (const [k, v] of object[key]) {
-                            clone[key].set(k, this.prettyObject(v, level + 1));
-                        }
-                    } else if (object[key] instanceof Map) {
-                        clone[key] = new Map();
-                        for (const [k, v] of object[key]) {
-                            clone[key].set(k, this.prettyObject(v, level + 1));
-                        }
-                    } else clone[key] = this.prettyObject(object[key], level + 1);
-                } else clone[key] = object[key];
-            }
-        }
-        return clone;
     }
 }

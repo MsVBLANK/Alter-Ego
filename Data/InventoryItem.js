@@ -151,6 +151,11 @@ export default class InventoryItem extends ItemInstance {
         return this.player.location;
     }
 
+    /** Gets the item's container. */
+    getContainer() {
+        return this.container;
+    }
+
     /**
      * Returns the args for the Inspect ActionDirective for this inventory item.
      */

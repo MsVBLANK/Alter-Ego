@@ -3,68 +3,74 @@ import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import { getSortedItems } from '../Modules/helpers.ts';
 import { getChildItems } from '../Modules/itemManager.js';
-/**
- * @import Fixture from './Fixture.js';
- * @import Prefab from './Prefab.js';
- * @import Puzzle from './Puzzle.js';
- * @import RecipeItem from './RecipeItem.js';
- * @import Room from './Room.js';
- */
+import ItemInstance from './ItemInstance.js';
+
+import Fixture from './Fixture.js';
+import type Prefab from './Prefab.js';
+import Puzzle from './Puzzle.js';
+import type RecipeItem from './RecipeItem.js';
+import type Room from './Room.js';
+import InventoryItem from './InventoryItem.js';
+import type Player from './Player.js';
+type ContainerOf<T extends RoomItem | InventoryItem> = T extends RoomItem ? RoomItemContainer : InventoryItem;
 
 /**
  * @class CollatedRoomItem
  * @classdesc Represents a list of room items that are instances of the same prefab in the same location and container.
  */
-export default class CollatedRoomItem {
+export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem | InventoryItem> {
 	/**
 	 * The items collated together.
-	 * @type {RoomItem[]}
 	 */
-	items;
+	items: T[];
 	/**
 	 * The prefab these items all have.
-	 * @type {Prefab}
 	 */
-	prefab;
+	prefab: Prefab;
 	/**
 	 * The location these items all have.
-	 * @type {Room}
 	 */
-	location;
+	location: Room;
+    /**
+     * The player these items all have, if they are inventory items. Will be null if these are room items.
+     */
+    player: Player;
+    /**
+     * The equipment slot these items all have, if they are inventory items in an equipment slot.
+     */
+    equipmentSlotId: string;
 	/**
 	 * The container these items all have.
-	 * @type {Fixture|Puzzle|RoomItem}
 	 */
-	container;
+	container: ContainerOf<RoomItem | InventoryItem>;
 	/**
-	 * The ID of the {@link InventorySlot|inventory slot} these items can be found in.
-	 * @type {string}
+	 * The ID of the inventory slot these items can be found in.
 	 */
-	slot;
+	slot: string;
 	/**
 	 * The total quantity of the items collated together.
 	 * @type {number}
 	 */
-	quantity;
+	quantity: number;
 	/**
 	 * The total uses of the items collated together.
-	 * @type {number}
 	 */
-	uses;
+	uses: number;
 	/**
 	 * The recipe variable this is associated with.
-	 * @type {string}
 	 */
-	variable;
+	variable: string;
 
 	/**
 	 * @constructor
-	 * @param {RoomItem[]} items - The items to collate.
+	 * @param items - The items to collate.
 	 */
-	constructor(items) {
+	constructor(items: T[]) {
 		this.items = items;
 		this.prefab = items[0].prefab;
-		this.location = items[0].location;
+		this.location = items[0].getLocation();
+        this.player = items[0] instanceof InventoryItem ? items[0].player : null;
+        this.equipmentSlotId = items[0] instanceof InventoryItem ? items[0].equipmentSlot : null;
 		this.container = items[0].container;
 		this.slot = items[0].slot;
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
@@ -73,11 +79,10 @@ export default class CollatedRoomItem {
 
 	/**
 	 * Returns an array of collated room items.
-	 * @param {RoomItem[]} items - The room items to collate.
+	 * @param items - The room items to collate.
 	 */
-	static collate(items) {
-		/** @type {RoomItem[]} */
-		const childItems = [];
+	static collate<T extends RoomItem | InventoryItem = RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
+		const childItems: T[] = [];
 		for (const item of items)
 			getChildItems(childItems, item);
 		for (const childItem of childItems) {
@@ -85,24 +90,22 @@ export default class CollatedRoomItem {
 				items.push(childItem);
 		}
 		items = getSortedItems(items);
-		/** @type {CollatedRoomItem[]} */
-		const collatedItems = [];
-		/** @type {Map<string, RoomItem[]>} */
-		const itemsMap = new Map();
+		const collatedItems: CollatedItem<T>[] = [];
+		const itemsMap: Map<string, T[]> = new Map();
 		for (const item of items) {
 			if (itemsMap.has(item.prefab.id)) itemsMap.get(item.prefab.id).push(item);
 			else itemsMap.set(item.prefab.id, [item]);
 		}
 		for (const itemGroup of itemsMap.values())
-			collatedItems.push(new CollatedRoomItem(itemGroup));
+			collatedItems.push(new CollatedItem(itemGroup));
 		return collatedItems;
 	}
 
 	/**
 	 * Sets the collated room item's variable for recipe processing.
-	 * @param {string} variable - The variable to set.
+	 * @param variable - The variable to set.
 	 */
-	setVariable(variable) {
+	setVariable(variable: string) {
 		this.variable = variable;
 	}
 
@@ -116,10 +119,10 @@ export default class CollatedRoomItem {
 
 	/**
 	 * Returns true if the collated items' container matches the given recipe item's container.
-	 * @param {RecipeItem} recipeItem 
+	 * @param recipeItem 
 	 */
-	containerMatches(recipeItem) {
-		return recipeItem.container === null || this.container instanceof RoomItem && this.container.prefab.id === recipeItem.container.prefab.id;
+	containerMatches(recipeItem: RecipeItem) {
+		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
 	/**
@@ -131,9 +134,9 @@ export default class CollatedRoomItem {
 
 	/**
 	 * Decreases the collated room items' uses.
-	 * @param {number} ingredientUseCount - The number of times to use the item.
+	 * @param ingredientUseCount - The number of times to use the item.
 	 */
-	decreaseUses(ingredientUseCount) {
+	decreaseUses(ingredientUseCount: number) {
 		// If all items have infinite uses, don't do anything.
 		if (this.allItemsHaveInfiniteUses()) return;
 		// Sort collated items by lowest number of uses to highest, sorting within use by lowest quantity to highest.
@@ -212,7 +215,7 @@ export default class CollatedRoomItem {
 
 	/**
 	 * Destroys the given quantity of this item.
-	 * @param {number} [ingredientDestroyCount] - The quantity to destroy. Defaults to the item's total quantity.
+	 * @param ingredientDestroyCount - The quantity to destroy. Defaults to the item's total quantity.
 	 */
 	destroy(ingredientDestroyCount = this.quantity) {
 		// If the given quantity is finite but all items have an infinite quantity, don't do anything.
@@ -254,22 +257,26 @@ export default class CollatedRoomItem {
 
 	/**
 	 * Destroys the given item.
-	 * @param {RoomItem} item - The item to destroy.
-	 * @param {number} [quantity] - The quantity to destroy. Defaults to the item's total quantity.
+	 * @param item - The item to destroy.
+	 * @param quantity - The quantity to destroy. Defaults to the item's total quantity.
 	 */
-	#destroyItem(item, quantity = item.quantity) {
-		const destroyAction = new DestroyAction(item.getGame(), undefined, undefined, item.location, true);
-		destroyAction.performDestroyRoomItem(item, quantity, true);
+	#destroyItem(item: T, quantity = item.quantity) {
+		const destroyAction = new DestroyAction(item.getGame(), undefined, this.player, item.getLocation(), true);
+        if (item instanceof RoomItem) destroyAction.performDestroyRoomItem(item, quantity, true);
+        else if (item instanceof InventoryItem) destroyAction.performDestroyInventoryItem(item, quantity, true, false);
 	}
 
 	/**
 	 * Instantiates the given prefab in the collated room item's container.
-	 * @param {Prefab} prefab - The prefab to instantiate.
-	 * @param {number} quantity - The quantity to instantiate it with.
-	 * @param {number} uses - The number of uses to instantiate it with.
+	 * @param prefab - The prefab to instantiate.
+	 * @param quantity - The quantity to instantiate it with.
+	 * @param uses - The number of uses to instantiate it with. Defaults to the prefab's uses.
 	 */
-	instantiate(prefab, quantity, uses = prefab.uses) {
-		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, undefined, this.location, true);
-		return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses);
+	instantiate(prefab: Prefab, quantity: number, uses = prefab.uses): T {
+		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, this.player, this.location, true);
+        if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem)
+            return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T;
+        else if (this.container instanceof InventoryItem || this.container === null)
+            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T;
 	}
 }

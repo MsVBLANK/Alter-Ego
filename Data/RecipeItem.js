@@ -1,7 +1,7 @@
 import Game from "./Game.js";
 import GameConstruct from "./GameConstruct.js";
 /**
- * @import CollatedRoomItem from "./CollatedRoomItem.js";
+ * @import CollatedItem from "./CollatedItem.ts";
  * @import Prefab from "./Prefab.js";
  */
 
@@ -104,8 +104,9 @@ export default class RecipeItem extends GameConstruct {
 	 * @constructor
 	 * @param {string} recipeItemString - A string representing a recipe item.
 	 * @param {Game} game - The game this belongs to.
+	 * @param {"processing" | "crafting"} type - The type of recipe this belongs to.
 	 */
-	constructor(recipeItemString, game) {
+	constructor(recipeItemString, game, type) {
 		super(game);
 		this.recipeItemString = recipeItemString.trim();
 		const matches = this.recipeItemString.match(RecipeItem.itemRegex);
@@ -119,7 +120,8 @@ export default class RecipeItem extends GameConstruct {
 		this.containedItemsString = matches && matches[6] ? matches[6].trim() : null;
 		this.containedItems = [];
 		this.container = null;
-		this.quantityIsConstant = quantityGiven && this.quantityVariableName === '';
+		this.quantityIsConstant = (type === "crafting" ? true : quantityGiven) && this.quantityVariableName === '';
+		this.usesIsConstant = (type === "crafting" ? true : usesGiven) && this.usesVariableName === '';
 	}
 
 	/**
@@ -138,12 +140,21 @@ export default class RecipeItem extends GameConstruct {
 
 	/**
 	 * Returns true if the given item satisfies the quantity required of this recipe item.
-	 * @param {CollatedRoomItem} item
+	 * @param {CollatedItem} item
 	 */
 	quantitySatisfiedBy(item) {
 		if (isNaN(item.quantity)) return true;
 		return item.quantity >= this.quantity;
 	}
+
+    /**
+	 * Returns true if the given item satisfies the uses required of this recipe item.
+	 * @param {CollatedItem} item
+	 */
+    usesSatisfiedBy(item) {
+        if (isNaN(item.uses) || this.uses === undefined) return true;
+        return item.uses >= this.uses;
+    }
 
 	/**
 	 * Calculates how many times the given ingredient use count satisfies the quantity of this recipe item.
@@ -154,6 +165,19 @@ export default class RecipeItem extends GameConstruct {
 		if (isNaN(satisfiedQuantityCount)) return NaN;
 		return Math.floor(satisfiedQuantityCount);
 	}
+
+    /**
+     * Calculates the number of uses to instantiate this recipe as a product with.
+     * @param {number} satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param {Map<string, number>} variableValues - The variable values captured from the actual ingredients.
+     */
+    calculateUses(satisfactoryProcessCount, variableValues) {
+        if (!isNaN(this.uses) && !this.usesIsConstant) {
+            if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return variableValues.get(this.usesVariableName);
+            else return this.uses * satisfactoryProcessCount;
+        }
+        else return this.uses;
+    }
 
 	/**
 	 * Returns a string to display this recipe item in a list of recipes list.

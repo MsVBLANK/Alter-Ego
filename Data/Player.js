@@ -1,9 +1,10 @@
+import CollatedItem from './CollatedItem.ts';
 import Fixture from './Fixture.js';
 import Game from './Game.js';
 import GameEntity from './GameEntity.js';
 import Room from './Room.js';
 import RoomItem from './RoomItem.js';
-import ItemContainer from './ItemContainer.js';
+import RecipeProcessor from './RecipeProcessor.ts';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.js';
 import Status from './Status.js';
@@ -19,11 +20,11 @@ import { MessageDisplayType } from '../Modules/enums.js';
 import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
-import { getSortedItems } from '../Modules/helpers.ts';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.js' */
 /** @import Action from './Action.js' */
 /** @import Exit from './Exit.js' */
+/** @import Prefab from './Prefab.js' */
 /** @import Recipe from './Recipe.js' */
 /** @import EquipmentSlot from './EquipmentSlot.js' */
 /** @import InventoryItem from './InventoryItem.js' */
@@ -33,1509 +34,1514 @@ import { getSortedItems } from '../Modules/helpers.ts';
 /**
  * @class Player
  * @classdesc Represents a player in the game.
- * @extends ItemContainer
+ * @extends RecipeProcessor
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html
  */
-export default class Player extends ItemContainer {
-    /**
-     * The Discord ID of the player, or the avatar URL for an NPC.
-     * @type {string}
-     */
-    id;
-    /**
-     * member - The Discord member object of the player.
-     * @readonly
-     * @type {GuildMember | null} 
-     */
-    member;
-    /**
-     * The name of the player.
-     * @type {string}
-     */
-    name;
-    /**
-     * The name that will be displayed in most public gameplay narrations in lieu of the player's actual name.
-     * @type {string}
-     */
-    displayName;
-    /**
-     * An image URL that will be used as an avatar when the player's dialog is sent through a webhook. If this is not set, the member's displayAvatar will be used instead.
-     * @type {string}
-     */
-    displayIcon;
-    /**
-     * A title that can be used in descriptions. If this is set to "NPC", the player will be marked as an NPC.
-     * @readonly
-     * @type {string}
-     */
-    title;
-    /**
-     * A title that can be used in descriptions. If this is set to "NPC", the player will be marked as an NPC. Will eventually be removed.
-     * @deprecated
-     * @readonly
-     * @type {string}
-     */
-    talent;
-    /**
-     * Whether or not the player is an NPC.
-     * @readonly
-     * @type {boolean}
-     */
-    isNPC;
-    /**
-     * The player's third person personal pronouns. 
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string
-     * @type {string}
-     */
-    pronounString;
-    /**
-     * The player's default pronouns.
-     * @type {Pronouns}
-     */
-    originalPronouns;
-    /**
-     * The player's current pronouns. If the player is inflicted with a status effect that has the `concealed`
-     * behavior attribute, this is automatically changed to they/them.
-     * @type {Pronouns}
-     */
-    pronouns;
-    /**
-     * A phrase that will be used to describe the player's voice to other players when their identity is obscured in some way.
-     * This should begin with "a" or "an" and end with "voice".
-     * @type {string}
-     */
-    originalVoiceString;
-    /**
-     * The player's current voice string.
-     * If this is the name of another player, the player's voice will be indistinguishable from theirs.
-     * @type {string}
-     */
-    voiceString;
-    /**
-     * The player's default strength stat.
-     * @type {number}
-     */
-    defaultStrength;
-    /**
-     * The player's current strength stat.
-     * @type {number}
-     */
-    strength;
-    /**
-     * The player's default perception stat.
-     * @type {number}
-     */
-    defaultPerception;
-    /**
-     * The player's current perception stat.
-     * @type {number}
-     */
-    perception;
-    /**
-     * The player's default intelligence stat. Deprecated. Use defaultPerception instead.
-     * @deprecated
-     * @type {number}
-     */
-    defaultIntelligence;
-    /**
-     * The player's current intelligence stat. Deprecated. Use perception instead.
-     * @deprecated
-     * @type {number}
-     */
-    intelligence;
-    /**
-     * The player's default dexterity stat.
-     * @type {number}
-     */
-    defaultDexterity;
-    /**
-     * The player's current dexterity stat.
-     * @type {number}
-     */
-    dexterity;
-    /**
-     * The player's default speed stat.
-     * @type {number}
-     */
-    defaultSpeed;
-    /**
-     * The player's current speed stat.
-     * @type {number}
-     */
-    speed;
-    /**
-     * The player's default stamina stat.
-     * @type {number}
-     */
-    defaultStamina;
-    /**
-     * The player's current maximum stamina stat.
-     * @type {number}
-     */
-    maxStamina;
-    /**
-     * The amount of stamina the player currently has left.
-     * When this reaches 0, the player will be inflicted with the `weary` status effect.
-     * @type {number}
-     */
-    stamina;
-    /**
-     * Whether the player is alive or not.
-     * @type {boolean}
-     */
-    alive;
-    /**
-     * The display name of the room the player was loaded into.
-     * @type {string}
-     */
-    locationDisplayName;
-    /**
-     * The room the player is currently in.
-     * @type {Room}
-     */
-    location;
-    /**
-     * The player's current position in 3D space.
-     * @type {Pos}
-     */
-    pos;
-    /**
-     * The name of the fixture the player is currently hiding in. The fixture doesn't actually have to exist.
-     * @type {string}
-     */
-    hidingSpot;
-    /**
-     * A list of the names of all status effects the player currently has, including those that aren't visible.
-     * Also contains a string representation of the {@link Status.remaining|remaining time} of each status.
-     * @type {StatusDisplay[]}
-     */
-    statusDisplays;
-    /**
-     * A comma-separated list of the names of all status effects the player currently has, including those that aren't visible.
-     * Also contains a string representation of the {@link Status.remaining|remaining time} of the status.
-     * Deprecated. Use statusDisplays instead.
-     * @deprecated
-     * @type {string}
-     */
-    statusString;
-    /**
-     * All status effects the player currently has as a collection.
-     * Every time a status is inflicted or cured, the player's stats are recalculated.
-     * @type {Collection<string, Status>}
-     */
-    status;
-    /**
-     * All of the player's {@link EquipmentSlot | equipment slots}. The key is the equipment slot's ID.
-     * @type {Collection<string, EquipmentSlot>}
-     */
-    inventory;
-    /**
-     * The channel where notifications to the player will be sent. If the player is an NPC, this will be null.
-     * @type {Messageable | null}
-     */
-    notificationChannel;
-    /**
-     * The spectate channel of the player.
-     * @type {TextChannel | null}
-     */
-    spectateChannel;
-    /**
-     * The maximum weight of inventory items that the player can carry in kilograms.
-     * @type {number}
-     */
-    maxCarryWeight;
-    /**
-     * The combined weight of all inventory items the player is currently carrying.
-     * @type {number}
-     */
-    carryWeight;
-    /**
-     * Whether the player is currently moving or not.
-     * @type {boolean}
-     */
-    isMoving;
-    /**
-     * A timeout that updates the player's position and stamina every 100 milliseconds while the player is moving.
-     * @type {NodeJS.Timeout | null}
-     */
-    moveTimer;
-    /**
-     * How many milliseconds until the player is done moving to the exit they're currently moving to.
-     * @type {number}
-     */
-    remainingTime;
-    /**
-     * A list of all movements the player wishes to make in sequential order.
-     * When the player finishes moving to one destination, they will begin moving to the next one in the queue, if it exists.
-     * @type {string[]}
-     */
-    moveQueue;
-    /**
-     * Whether or not the player has depleted half of their stamina while moving.
-     * When they do, they will be warned that they're starting to become tired.
-     * @type {boolean}
-     */
-    #reachedHalfStamina;
-    /**
-     * A timeout that regenerates the player's stamina every 30 seconds while they're not moving.
-     * @type {NodeJS.Timeout}
-     */
-    #staminaRegenerationInterval;
-    /**
-     * Whether or not the player is considered online.
-     * This is automatically set to `false` after 15 minutes of inactivity.
-     * @type {boolean}
-     */
-    online;
-    /**
-     * A timeout that sets the player as offline after 15 minutes of inactivity.
-     * @type {NodeJS.Timeout}
-     */
-    #onlineInterval;
+export default class Player extends RecipeProcessor {
+	/**
+	 * The Discord ID of the player, or the avatar URL for an NPC.
+	 * @type {string}
+	 */
+	id;
+	/**
+	 * member - The Discord member object of the player.
+	 * @readonly
+	 * @type {GuildMember | null}
+	 */
+	member;
+	/**
+	 * The name of the player.
+	 * @type {string}
+	 */
+	name;
+	/**
+	 * The name that will be displayed in most public gameplay narrations in lieu of the player's actual name.
+	 * @type {string}
+	 */
+	displayName;
+	/**
+	 * An image URL that will be used as an avatar when the player's dialog is sent through a webhook. If this is not set, the member's displayAvatar will be used instead.
+	 * @type {string}
+	 */
+	displayIcon;
+	/**
+	 * A title that can be used in descriptions. If this is set to "NPC", the player will be marked as an NPC.
+	 * @readonly
+	 * @type {string}
+	 */
+	title;
+	/**
+	 * A title that can be used in descriptions. If this is set to "NPC", the player will be marked as an NPC. Will eventually be removed.
+	 * @deprecated
+	 * @readonly
+	 * @type {string}
+	 */
+	talent;
+	/**
+	 * Whether or not the player is an NPC.
+	 * @readonly
+	 * @type {boolean}
+	 */
+	isNPC;
+	/**
+	 * The player's third person personal pronouns.
+	 * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string
+	 * @type {string}
+	 */
+	pronounString;
+	/**
+	 * The player's default pronouns.
+	 * @type {Pronouns}
+	 */
+	originalPronouns;
+	/**
+	 * The player's current pronouns. If the player is inflicted with a status effect that has the `concealed`
+	 * behavior attribute, this is automatically changed to they/them.
+	 * @type {Pronouns}
+	 */
+	pronouns;
+	/**
+	 * A phrase that will be used to describe the player's voice to other players when their identity is obscured in some way.
+	 * This should begin with "a" or "an" and end with "voice".
+	 * @type {string}
+	 */
+	originalVoiceString;
+	/**
+	 * The player's current voice string.
+	 * If this is the name of another player, the player's voice will be indistinguishable from theirs.
+	 * @type {string}
+	 */
+	voiceString;
+	/**
+	 * The player's default strength stat.
+	 * @type {number}
+	 */
+	defaultStrength;
+	/**
+	 * The player's current strength stat.
+	 * @type {number}
+	 */
+	strength;
+	/**
+	 * The player's default perception stat.
+	 * @type {number}
+	 */
+	defaultPerception;
+	/**
+	 * The player's current perception stat.
+	 * @type {number}
+	 */
+	perception;
+	/**
+	 * The player's default intelligence stat. Deprecated. Use defaultPerception instead.
+	 * @deprecated
+	 * @type {number}
+	 */
+	defaultIntelligence;
+	/**
+	 * The player's current intelligence stat. Deprecated. Use perception instead.
+	 * @deprecated
+	 * @type {number}
+	 */
+	intelligence;
+	/**
+	 * The player's default dexterity stat.
+	 * @type {number}
+	 */
+	defaultDexterity;
+	/**
+	 * The player's current dexterity stat.
+	 * @type {number}
+	 */
+	dexterity;
+	/**
+	 * The player's default speed stat.
+	 * @type {number}
+	 */
+	defaultSpeed;
+	/**
+	 * The player's current speed stat.
+	 * @type {number}
+	 */
+	speed;
+	/**
+	 * The player's default stamina stat.
+	 * @type {number}
+	 */
+	defaultStamina;
+	/**
+	 * The player's current maximum stamina stat.
+	 * @type {number}
+	 */
+	maxStamina;
+	/**
+	 * The amount of stamina the player currently has left.
+	 * When this reaches 0, the player will be inflicted with the `weary` status effect.
+	 * @type {number}
+	 */
+	stamina;
+	/**
+	 * Whether the player is alive or not.
+	 * @type {boolean}
+	 */
+	alive;
+	/**
+	 * The display name of the room the player was loaded into.
+	 * @type {string}
+	 */
+	locationDisplayName;
+	/**
+	 * The room the player is currently in.
+	 * @type {Room}
+	 */
+	location;
+	/**
+	 * The player's current position in 3D space.
+	 * @type {Pos}
+	 */
+	pos;
+	/**
+	 * The name of the fixture the player is currently hiding in. The fixture doesn't actually have to exist.
+	 * @type {string}
+	 */
+	hidingSpot;
+	/**
+	 * A list of the names of all status effects the player currently has, including those that aren't visible.
+	 * Also contains a string representation of the {@link Status.remaining|remaining time} of each status.
+	 * @type {StatusDisplay[]}
+	 */
+	statusDisplays;
+	/**
+	 * A comma-separated list of the names of all status effects the player currently has, including those that aren't visible.
+	 * Also contains a string representation of the {@link Status.remaining|remaining time} of the status.
+	 * Deprecated. Use statusDisplays instead.
+	 * @deprecated
+	 * @type {string}
+	 */
+	statusString;
+	/**
+	 * All status effects the player currently has as a collection.
+	 * Every time a status is inflicted or cured, the player's stats are recalculated.
+	 * @type {Collection<string, Status>}
+	 */
+	status;
+	/**
+	 * All of the player's {@link EquipmentSlot | equipment slots}. The key is the equipment slot's ID.
+	 * @type {Collection<string, EquipmentSlot>}
+	 */
+	inventory;
+	/**
+	 * The channel where notifications to the player will be sent. If the player is an NPC, this will be null.
+	 * @type {Messageable | null}
+	 */
+	notificationChannel;
+	/**
+	 * The spectate channel of the player.
+	 * @type {TextChannel | null}
+	 */
+	spectateChannel;
+	/**
+	 * The maximum weight of inventory items that the player can carry in kilograms.
+	 * @type {number}
+	 */
+	maxCarryWeight;
+	/**
+	 * The combined weight of all inventory items the player is currently carrying.
+	 * @type {number}
+	 */
+	carryWeight;
+	/**
+	 * Whether the player is currently moving or not.
+	 * @type {boolean}
+	 */
+	isMoving;
+	/**
+	 * A timeout that updates the player's position and stamina every 100 milliseconds while the player is moving.
+	 * @type {NodeJS.Timeout | null}
+	 */
+	moveTimer;
+	/**
+	 * How many milliseconds until the player is done moving to the exit they're currently moving to.
+	 * @type {number}
+	 */
+	remainingTime;
+	/**
+	 * A list of all movements the player wishes to make in sequential order.
+	 * When the player finishes moving to one destination, they will begin moving to the next one in the queue, if it exists.
+	 * @type {string[]}
+	 */
+	moveQueue;
+	/**
+	 * Whether or not the player has depleted half of their stamina while moving.
+	 * When they do, they will be warned that they're starting to become tired.
+	 * @type {boolean}
+	 */
+	#reachedHalfStamina;
+	/**
+	 * A timeout that regenerates the player's stamina every 30 seconds while they're not moving.
+	 * @type {NodeJS.Timeout}
+	 */
+	#staminaRegenerationInterval;
+	/**
+	 * Whether or not the player is considered online.
+	 * This is automatically set to `false` after 15 minutes of inactivity.
+	 * @type {boolean}
+	 */
+	online;
+	/**
+	 * A timeout that sets the player as offline after 15 minutes of inactivity.
+	 * @type {NodeJS.Timeout}
+	 */
+	#onlineInterval;
 
-    /**
-     * @param {string} id - The Discord ID of the player, or the avatar URL for an NPC.
-     * @param {GuildMember | null} member - The Discord member object of the player.
-     * @param {string} name - The name of the player.
-     * @param {string} title - The player's title.
-     * @param {string} pronounString - The player's third person personal pronouns. For formatting, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string}
-     * @param {string} originalVoiceString - A phrase that will be used to describe the player's voice to other players when their identity is obscured in some way. This should begin with "a" or "an" and end with "voice".
-     * @param {Stats} stats - The stats of the player. For more details, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#stats}
-     * @param {boolean} alive - Whether the player is alive or not.
-     * @param {string} locationDisplayName - The display name of the room the player was loaded into.
-     * @param {string} hidingSpot - The name of the fixture the player is currently hiding in. The fixture doesn't actually have to exist.
-     * @param {StatusDisplay[]} statusDisplays - A list of the names of all status effects the player currently has, including those that aren't visible. Also contains a string representation of the {@link Status.remaining|remaining time} of each status.
-     * @param {string} description - The description of the player. Can contain two item lists: hands and equipment.
-     * @param {Collection<string, EquipmentSlot>} inventory - All of the player's {@link EquipmentSlot | equipment slots}.
-     * @param {Messageable | null} notificationChannel - The channel where notifications to the player will be sent.
-     * @param {TextChannel | null} spectateChannel - The spectate channel of the player.
-     * @param {number} row - The row of the player.
-     * @param {Game} game - The game this belongs to.
-     */
-    constructor(id, member, name, title, pronounString, originalVoiceString, stats, alive, locationDisplayName, hidingSpot, statusDisplays, description, inventory, notificationChannel, spectateChannel, row, game) {
-        super(game, row, description);
-        this.id = id;
-        this.member = member;
-        this.name = name;
-        this.title = title;
-        this.talent = title;
-        this.isNPC = this.title === "NPC";
-        this.displayName = this.name;
-        this.displayIcon = this.isNPC ? this.id : null;
-        this.pronounString = pronounString;
-        this.originalPronouns = {
-            sbj: null, Sbj: null,
-            obj: null, Obj: null,
-            dpos: null, Dpos: null,
-            ipos: null, Ipos: null,
-            ref: null, Ref: null,
-            plural: null
-        };
-        this.pronouns = {
-            sbj: null, Sbj: null,
-            obj: null, Obj: null,
-            dpos: null, Dpos: null,
-            ipos: null, Ipos: null,
-            ref: null, Ref: null,
-            plural: null
-        };
-        this.originalVoiceString = originalVoiceString;
-        this.voiceString = this.originalVoiceString;
+	/**
+	 * @param {string} id - The Discord ID of the player, or the avatar URL for an NPC.
+	 * @param {GuildMember | null} member - The Discord member object of the player.
+	 * @param {string} name - The name of the player.
+	 * @param {string} title - The player's title.
+	 * @param {string} pronounString - The player's third person personal pronouns. For formatting, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string}
+	 * @param {string} originalVoiceString - A phrase that will be used to describe the player's voice to other players when their identity is obscured in some way. This should begin with "a" or "an" and end with "voice".
+	 * @param {Stats} stats - The stats of the player. For more details, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#stats}
+	 * @param {boolean} alive - Whether the player is alive or not.
+	 * @param {string} locationDisplayName - The display name of the room the player was loaded into.
+	 * @param {string} hidingSpot - The name of the fixture the player is currently hiding in. The fixture doesn't actually have to exist.
+	 * @param {StatusDisplay[]} statusDisplays - A list of the names of all status effects the player currently has, including those that aren't visible. Also contains a string representation of the {@link Status.remaining|remaining time} of each status.
+	 * @param {string} description - The description of the player. Can contain two item lists: hands and equipment.
+	 * @param {Collection<string, EquipmentSlot>} inventory - All of the player's {@link EquipmentSlot | equipment slots}.
+	 * @param {Messageable | null} notificationChannel - The channel where notifications to the player will be sent.
+	 * @param {TextChannel | null} spectateChannel - The spectate channel of the player.
+	 * @param {number} row - The row of the player.
+	 * @param {Game} game - The game this belongs to.
+	 */
+	constructor(id, member, name, title, pronounString, originalVoiceString, stats, alive, locationDisplayName, hidingSpot, statusDisplays, description, inventory, notificationChannel, spectateChannel, row, game) {
+		super(game, row, description);
+		this.id = id;
+		this.member = member;
+		this.name = name;
+		this.title = title;
+		this.talent = title;
+		this.isNPC = this.title === "NPC";
+		this.displayName = this.name;
+		this.displayIcon = this.isNPC ? this.id : null;
+		this.pronounString = pronounString;
+		this.originalPronouns = {
+			sbj: null, Sbj: null,
+			obj: null, Obj: null,
+			dpos: null, Dpos: null,
+			ipos: null, Ipos: null,
+			ref: null, Ref: null,
+			plural: null
+		};
+		this.pronouns = {
+			sbj: null, Sbj: null,
+			obj: null, Obj: null,
+			dpos: null, Dpos: null,
+			ipos: null, Ipos: null,
+			ref: null, Ref: null,
+			plural: null
+		};
+		this.originalVoiceString = originalVoiceString;
+		this.voiceString = this.originalVoiceString;
 
-        this.defaultStrength = stats.strength;
-        this.strength = this.defaultStrength;
-        this.defaultPerception = stats.perception;
-        this.perception = this.defaultPerception;
-        this.defaultIntelligence = this.defaultPerception;
-        this.intelligence = this.perception;
-        this.defaultDexterity = stats.dexterity;
-        this.dexterity = this.defaultDexterity;
-        this.defaultSpeed = stats.speed;
-        this.speed = this.defaultSpeed;
-        this.defaultStamina = stats.stamina;
-        this.maxStamina = this.defaultStamina;
-        this.stamina = this.defaultStamina;
+		this.defaultStrength = stats.strength;
+		this.strength = this.defaultStrength;
+		this.defaultPerception = stats.perception;
+		this.perception = this.defaultPerception;
+		this.defaultIntelligence = this.defaultPerception;
+		this.intelligence = this.perception;
+		this.defaultDexterity = stats.dexterity;
+		this.dexterity = this.defaultDexterity;
+		this.defaultSpeed = stats.speed;
+		this.speed = this.defaultSpeed;
+		this.defaultStamina = stats.stamina;
+		this.maxStamina = this.defaultStamina;
+		this.stamina = this.defaultStamina;
 
-        this.alive = alive;
-        this.locationDisplayName = locationDisplayName;
-        this.location = null;
-        this.pos = { x: 0, y: 0, z: 0 };
-        this.hidingSpot = hidingSpot;
-        this.status = new Collection();
-        this.statusDisplays = statusDisplays;
-        this.statusString = "";
-        this.inventory = inventory;
-        this.notificationChannel = notificationChannel;
-        this.spectateChannel = spectateChannel;
-        this.maxCarryWeight = this.getMaxCarryWeight();
-        this.carryWeight = 0;
+		this.alive = alive;
+		this.locationDisplayName = locationDisplayName;
+		this.location = null;
+		this.pos = { x: 0, y: 0, z: 0 };
+		this.hidingSpot = hidingSpot;
+		this.status = new Collection();
+		this.statusDisplays = statusDisplays;
+		this.statusString = "";
+		this.inventory = inventory;
+		this.notificationChannel = notificationChannel;
+		this.spectateChannel = spectateChannel;
+		this.maxCarryWeight = this.getMaxCarryWeight();
+		this.carryWeight = 0;
 
-        this.isMoving = false;
-        this.moveTimer = null;
-        this.remainingTime = 0;
-        this.moveQueue = [];
+		this.isMoving = false;
+		this.moveTimer = null;
+		this.remainingTime = 0;
+		this.moveQueue = [];
 
-        /** @private */
-        this.#reachedHalfStamina = false;
-        let player = this;
-        /** @private */
-        this.#staminaRegenerationInterval = setInterval(function () {
-            if (!player.isMoving) player.#regenerateStamina();
-        }, 30000);
+		/** @private */
+		this.#reachedHalfStamina = false;
+		let player = this;
+		/** @private */
+		this.#staminaRegenerationInterval = setInterval(function () {
+			if (!player.isMoving) player.#regenerateStamina();
+		}, 30000);
 
-        this.online = false;
-        /** @private */
-        this.#onlineInterval = null;
-    }
+		this.online = false;
+		/** @private */
+		this.#onlineInterval = null;
+	}
 
-    /**
-     * Sets the location.
-     * @param {Room} room
-     */
-    setLocation(room) {
-        this.location = room;
-        this.locationDisplayName = room.displayName;
-    }
+	/**
+	 * Sets the location.
+	 * @param {Room} room
+	 */
+	setLocation(room) {
+		this.location = room;
+		this.locationDisplayName = room.displayName;
+	}
 
-    /**
-     * Sets the inventory.
-     * @param {Collection<string, EquipmentSlot>} inventory 
-     */
-    setInventory(inventory) {
-        this.inventory = inventory;
-    }
+	/**
+	 * Sets the inventory.
+	 * @param {Collection<string, EquipmentSlot>} inventory
+	 */
+	setInventory(inventory) {
+		this.inventory = inventory;
+	}
 
-    /**
-     * Sets the pronouns of the player.
-     * Modifies whichever pronoun set is passed into it.
-     * @param {Pronouns} pronouns - A set of pronouns
-     * @param {string} pronounString - A string representation of a set of pronouns.
-     */
-    setPronouns(pronouns, pronounString) {
-        if (pronounString === "male") {
-            pronouns.sbj = "he";
-            pronouns.Sbj = "He";
-            pronouns.obj = "him";
-            pronouns.Obj = "Him";
-            pronouns.dpos = "his";
-            pronouns.Dpos = "His";
-            pronouns.ipos = "his";
-            pronouns.Ipos = "His";
-            pronouns.ref = "himself";
-            pronouns.Ref = "Himself";
-            pronouns.plural = false;
-        }
-        else if (pronounString === "female") {
-            pronouns.sbj = "she";
-            pronouns.Sbj = "She";
-            pronouns.obj = "her";
-            pronouns.Obj = "Her";
-            pronouns.dpos = "her";
-            pronouns.Dpos = "Her";
-            pronouns.ipos = "hers";
-            pronouns.Ipos = "Hers";
-            pronouns.ref = "herself";
-            pronouns.Ref = "Herself";
-            pronouns.plural = false;
-        }
-        else if (pronounString === "neutral") {
-            pronouns.sbj = "they";
-            pronouns.Sbj = "They";
-            pronouns.obj = "them";
-            pronouns.Obj = "Them";
-            pronouns.dpos = "their";
-            pronouns.Dpos = "Their";
-            pronouns.ipos = "theirs";
-            pronouns.Ipos = "Theirs";
-            pronouns.ref = "themself";
-            pronouns.Ref = "Themself";
-            pronouns.plural = true;
-        }
-        // If none of the standard pronouns are given, let the user define their own.
-        else {
-            const pronounSet = pronounString.split('/');
-            if (pronounSet.length === 6) {
-                pronouns.sbj = pronounSet[0].trim();
-                pronouns.Sbj = pronouns.sbj.charAt(0).toUpperCase() + pronouns.sbj.substring(1);
-                pronouns.obj = pronounSet[1].trim();
-                pronouns.Obj = pronouns.obj.charAt(0).toUpperCase() + pronouns.obj.substring(1);
-                pronouns.dpos = pronounSet[2].trim();
-                pronouns.Dpos = pronouns.dpos.charAt(0).toUpperCase() + pronouns.dpos.substring(1);
-                pronouns.ipos = pronounSet[3].trim();
-                pronouns.Ipos = pronouns.ipos.charAt(0).toUpperCase() + pronouns.ipos.substring(1);
-                pronouns.ref = pronounSet[4].trim();
-                pronouns.Ref = pronouns.ref.charAt(0).toUpperCase() + pronouns.ref.substring(1);
-                const plural = pronounSet[5].trim().toLowerCase();
-                pronouns.plural = plural === "true" ? true : plural === "false" ? false : null;
-            }
-        }
-    }
+	/**
+	 * Sets the pronouns of the player.
+	 * Modifies whichever pronoun set is passed into it.
+	 * @param {Pronouns} pronouns - A set of pronouns
+	 * @param {string} pronounString - A string representation of a set of pronouns.
+	 */
+	setPronouns(pronouns, pronounString) {
+		if (pronounString === "male") {
+			pronouns.sbj = "he";
+			pronouns.Sbj = "He";
+			pronouns.obj = "him";
+			pronouns.Obj = "Him";
+			pronouns.dpos = "his";
+			pronouns.Dpos = "His";
+			pronouns.ipos = "his";
+			pronouns.Ipos = "His";
+			pronouns.ref = "himself";
+			pronouns.Ref = "Himself";
+			pronouns.plural = false;
+		}
+		else if (pronounString === "female") {
+			pronouns.sbj = "she";
+			pronouns.Sbj = "She";
+			pronouns.obj = "her";
+			pronouns.Obj = "Her";
+			pronouns.dpos = "her";
+			pronouns.Dpos = "Her";
+			pronouns.ipos = "hers";
+			pronouns.Ipos = "Hers";
+			pronouns.ref = "herself";
+			pronouns.Ref = "Herself";
+			pronouns.plural = false;
+		}
+		else if (pronounString === "neutral") {
+			pronouns.sbj = "they";
+			pronouns.Sbj = "They";
+			pronouns.obj = "them";
+			pronouns.Obj = "Them";
+			pronouns.dpos = "their";
+			pronouns.Dpos = "Their";
+			pronouns.ipos = "theirs";
+			pronouns.Ipos = "Theirs";
+			pronouns.ref = "themself";
+			pronouns.Ref = "Themself";
+			pronouns.plural = true;
+		}
+		// If none of the standard pronouns are given, let the user define their own.
+		else {
+			const pronounSet = pronounString.split('/');
+			if (pronounSet.length === 6) {
+				pronouns.sbj = pronounSet[0].trim();
+				pronouns.Sbj = pronouns.sbj.charAt(0).toUpperCase() + pronouns.sbj.substring(1);
+				pronouns.obj = pronounSet[1].trim();
+				pronouns.Obj = pronouns.obj.charAt(0).toUpperCase() + pronouns.obj.substring(1);
+				pronouns.dpos = pronounSet[2].trim();
+				pronouns.Dpos = pronouns.dpos.charAt(0).toUpperCase() + pronouns.dpos.substring(1);
+				pronouns.ipos = pronounSet[3].trim();
+				pronouns.Ipos = pronouns.ipos.charAt(0).toUpperCase() + pronouns.ipos.substring(1);
+				pronouns.ref = pronounSet[4].trim();
+				pronouns.Ref = pronouns.ref.charAt(0).toUpperCase() + pronouns.ref.substring(1);
+				const plural = pronounSet[5].trim().toLowerCase();
+				pronouns.plural = plural === "true" ? true : plural === "false" ? false : null;
+			}
+		}
+	}
 
-    /** Gets the entity's location. */
-    getLocation() {
-        return this.location;
-    }
+	/** Gets the entity's location. */
+	getLocation() {
+		return this.location;
+	}
 
-    /**
-     * Returns a custom ID for this player.
-     */
-    getInspectActionDirectiveArgs() {
-        return ["P", this.name];
-    }
+	/**
+	 * Returns a custom ID for this player.
+	 */
+	getInspectActionDirectiveArgs() {
+		return ["P", this.name];
+	}
 
-    /**
-     * Moves the player to the desired room.
-     * @param {boolean} isRunning - Whether the player is running.
-     * @param {Room} currentRoom - The room the player is currently in.
-     * @param {Room} destinationRoom - The room the player will be moved to.
-     * @param {Exit} exit - The exit the player will leave their current room through.
-     * @param {Exit} entrance - The exit the player will enter the desired room from.
-     * @param {number} time - The number of milliseconds it will take to move to the destination.
-     * @param {boolean} forced - Whether or not the player was forced to move to the destination.
-     */
-    move(isRunning, currentRoom, destinationRoom, exit, entrance, time, forced) {
-        this.remainingTime = time;
-        this.isMoving = true;
-        /** @type {Pos} */
-        const startingPos = { x: this.pos.x, y: this.pos.y, z: this.pos.z };
+	/**
+	 * Moves the player to the desired room.
+	 * @param {boolean} isRunning - Whether the player is running.
+	 * @param {Room} currentRoom - The room the player is currently in.
+	 * @param {Room} destinationRoom - The room the player will be moved to.
+	 * @param {Exit} exit - The exit the player will leave their current room through.
+	 * @param {Exit} entrance - The exit the player will enter the desired room from.
+	 * @param {number} time - The number of milliseconds it will take to move to the destination.
+	 * @param {boolean} forced - Whether or not the player was forced to move to the destination.
+	 */
+	move(isRunning, currentRoom, destinationRoom, exit, entrance, time, forced) {
+		this.remainingTime = time;
+		this.isMoving = true;
+		/** @type {Pos} */
+		const startingPos = { x: this.pos.x, y: this.pos.y, z: this.pos.z };
 
-        let player = this;
-        this.moveTimer = setInterval(function () {
-            const settings = player.getGame().settings;
-            let subtractedTime = 100;
-            if (player.getGame().heated) subtractedTime = settings.heatedSlowdownRate * subtractedTime;
-            if (time >= subtractedTime) player.remainingTime -= subtractedTime;
-            // Get the current coordinates based on what percentage of the duration has passed.
-            const elapsedTime = time - player.remainingTime;
-            const timeRatio = elapsedTime / time;
-            let x = startingPos.x + Math.round(timeRatio * (exit.pos.x - startingPos.x));
-            let y = startingPos.y + Math.round(timeRatio * (exit.pos.y - startingPos.y));
-            let z = startingPos.z + Math.round(timeRatio * (exit.pos.z - startingPos.z));
-            // Calculate the distance the player has traveled in this time.
-            let distance = Math.sqrt(Math.pow(x - player.pos.x, 2) + Math.pow(z - player.pos.z, 2)) / settings.pixelsPerMeter;
-            let rise = (y - player.pos.y) / settings.pixelsPerMeter;
-            // Calculate the amount of stamina the player has lost traveling this distance.
-            const staminaUseMultiplier = isRunning ? 3 : 1;
-            let lostStamina;
-            // If distance is 0, we'll treat it like a staircase.
-            if (distance === 0 && rise !== 0) {
-                const uphill = rise > 0 ? true : false;
-                distance = rise;
-                lostStamina = uphill ? 4 * staminaUseMultiplier * settings.staminaUseRate * distance : staminaUseMultiplier * settings.staminaUseRate / 4 * -distance;
-            }
-            else {
-                const slope = rise / distance;
-                lostStamina = !isNaN(slope) ? staminaUseMultiplier * (settings.staminaUseRate + slope * settings.staminaUseRate) * distance : staminaUseMultiplier * settings.staminaUseRate * distance;
-                if (isNaN(lostStamina)) lostStamina = 0;
-            }
-            player.pos.x = x;
-            player.pos.y = y;
-            player.pos.z = z;
-            if (!player.hasBehaviorAttribute('no stamina decrease')) player.stamina = player.stamina + lostStamina;
-            // If player reaches half of their stamina, give them a warning.
-            // Be sure to check player.#reachedHalfStamina so that this message is only sent once.
-            if (player.stamina <= player.maxStamina / 2 && !player.#reachedHalfStamina) {
-                player.#reachedHalfStamina = true;
-                // The communication handler needs an action to prevent notification duplication, so create a dummy here.
-                const reachedHalfStaminaAction = new MoveAction(player.getGame(), undefined, player, player.location, true);
-                player.getGame().narrationHandler.narrateReachedHalfStamina(reachedHalfStaminaAction, player);
-            }
-            // If player runs out of stamina, stop them in their tracks.
-            if (player.stamina <= 0) {
-                clearInterval(player.moveTimer);
-                player.stamina = 0;
-                const wearyStatus = player.getGame().entityFinder.getStatusEffect("weary");
-                if (wearyStatus) {
-                    const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
-                    wearyAction.performInflict(wearyStatus, false, true, true);
-                    player.getGame().narrationHandler.narrateWeary(wearyAction, player);
-                }
-            }
-            if (player.remainingTime <= 0 && player.stamina !== 0) {
-                clearInterval(player.moveTimer);
-                player.isMoving = false;
-                const exitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
-                const exitPuzzlePassable = exitPuzzle && exitPuzzle.solutions.includes(player.name);
-                if (exit.unlocked || exitPuzzlePassable) {
-                    const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
-                    moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
-                    player.moveQueue.splice(0, 1);
-                    if (player.moveQueue.length > 0) {
-                        const queueMoveAction = new QueueMoveAction(player.getGame(), undefined, player, player.location, forced);
-                        queueMoveAction.performQueueMove(isRunning, player.moveQueue[0]);
-                    }
-                }
-                else {
-                    // The exit is locked.
-                    const stopAction = new StopAction(player.getGame(), undefined, player, player.location, forced);
-                    stopAction.performStop(true, exit);
-                    player.pos.x = exit.pos.x;
-                    player.pos.y = exit.pos.y;
-                    player.pos.z = exit.pos.z;
-                    player.moveQueue.length = 0;
-                }
-            }
-        }, 100);
-    }
+		let player = this;
+		this.moveTimer = setInterval(function () {
+			const settings = player.getGame().settings;
+			let subtractedTime = 100;
+			if (player.getGame().heated) subtractedTime = settings.heatedSlowdownRate * subtractedTime;
+			if (time >= subtractedTime) player.remainingTime -= subtractedTime;
+			// Get the current coordinates based on what percentage of the duration has passed.
+			const elapsedTime = time - player.remainingTime;
+			const timeRatio = elapsedTime / time;
+			let x = startingPos.x + Math.round(timeRatio * (exit.pos.x - startingPos.x));
+			let y = startingPos.y + Math.round(timeRatio * (exit.pos.y - startingPos.y));
+			let z = startingPos.z + Math.round(timeRatio * (exit.pos.z - startingPos.z));
+			// Calculate the distance the player has traveled in this time.
+			let distance = Math.sqrt(Math.pow(x - player.pos.x, 2) + Math.pow(z - player.pos.z, 2)) / settings.pixelsPerMeter;
+			let rise = (y - player.pos.y) / settings.pixelsPerMeter;
+			// Calculate the amount of stamina the player has lost traveling this distance.
+			const staminaUseMultiplier = isRunning ? 3 : 1;
+			let lostStamina;
+			// If distance is 0, we'll treat it like a staircase.
+			if (distance === 0 && rise !== 0) {
+				const uphill = rise > 0 ? true : false;
+				distance = rise;
+				lostStamina = uphill ? 4 * staminaUseMultiplier * settings.staminaUseRate * distance : staminaUseMultiplier * settings.staminaUseRate / 4 * -distance;
+			}
+			else {
+				const slope = rise / distance;
+				lostStamina = !isNaN(slope) ? staminaUseMultiplier * (settings.staminaUseRate + slope * settings.staminaUseRate) * distance : staminaUseMultiplier * settings.staminaUseRate * distance;
+				if (isNaN(lostStamina)) lostStamina = 0;
+			}
+			player.pos.x = x;
+			player.pos.y = y;
+			player.pos.z = z;
+			if (!player.hasBehaviorAttribute('no stamina decrease')) player.stamina = player.stamina + lostStamina;
+			// If player reaches half of their stamina, give them a warning.
+			// Be sure to check player.#reachedHalfStamina so that this message is only sent once.
+			if (player.stamina <= player.maxStamina / 2 && !player.#reachedHalfStamina) {
+				player.#reachedHalfStamina = true;
+				// The communication handler needs an action to prevent notification duplication, so create a dummy here.
+				const reachedHalfStaminaAction = new MoveAction(player.getGame(), undefined, player, player.location, true);
+				player.getGame().narrationHandler.narrateReachedHalfStamina(reachedHalfStaminaAction, player);
+			}
+			// If player runs out of stamina, stop them in their tracks.
+			if (player.stamina <= 0) {
+				clearInterval(player.moveTimer);
+				player.stamina = 0;
+				const wearyStatus = player.getGame().entityFinder.getStatusEffect("weary");
+				if (wearyStatus) {
+					const wearyAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
+					wearyAction.performInflict(wearyStatus, false, true, true);
+					player.getGame().narrationHandler.narrateWeary(wearyAction, player);
+				}
+			}
+			if (player.remainingTime <= 0 && player.stamina !== 0) {
+				clearInterval(player.moveTimer);
+				player.isMoving = false;
+				const exitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
+				const exitPuzzlePassable = exitPuzzle && exitPuzzle.solutions.includes(player.name);
+				if (exit.unlocked || exitPuzzlePassable) {
+					const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
+					moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
+					player.moveQueue.splice(0, 1);
+					if (player.moveQueue.length > 0) {
+						const queueMoveAction = new QueueMoveAction(player.getGame(), undefined, player, player.location, forced);
+						queueMoveAction.performQueueMove(isRunning, player.moveQueue[0]);
+					}
+				}
+				else {
+					// The exit is locked.
+					const stopAction = new StopAction(player.getGame(), undefined, player, player.location, forced);
+					stopAction.performStop(true, exit);
+					player.pos.x = exit.pos.x;
+					player.pos.y = exit.pos.y;
+					player.pos.z = exit.pos.z;
+					player.moveQueue.length = 0;
+				}
+			}
+		}, 100);
+	}
 
-    /**
-     * Calculates the player's movement rate in meters per second, irrespective of distance or slope.
-     * @param {boolean} isRunning - Whether the player is running or not. Defaults to false.
-     */
-    calculateMoveRate(isRunning = false) {
-        // The formula to calculate the rate is a quadratic function.
-        // The equation is Rate = 0.0183x^2 + 0.005x + 0.916, where x is the player's speed stat multiplied by 2 or 1, depending on if the player is running or not.
-        const speedMultiplier = isRunning ? 2 : 1;
-        let rate = 0.0183 * Math.pow(speedMultiplier * this.speed, 2) + 0.005 * speedMultiplier * this.speed + 0.916;
-        // Slow down the player relative to how much weight they're carrying.
-        // The equation is Slowdown = 15/x, where x is the number of kilograms a player is carrying, and 1/4 <= Slowdown <= 1.
-        const slowdown = Math.min(Math.max(15.0 / this.carryWeight, 0.25), 1.0);
-        return rate * slowdown;
-    }
+	/**
+	 * Calculates the player's movement rate in meters per second, irrespective of distance or slope.
+	 * @param {boolean} isRunning - Whether the player is running or not. Defaults to false.
+	 */
+	calculateMoveRate(isRunning = false) {
+		// The formula to calculate the rate is a quadratic function.
+		// The equation is Rate = 0.0183x^2 + 0.005x + 0.916, where x is the player's speed stat multiplied by 2 or 1, depending on if the player is running or not.
+		const speedMultiplier = isRunning ? 2 : 1;
+		let rate = 0.0183 * Math.pow(speedMultiplier * this.speed, 2) + 0.005 * speedMultiplier * this.speed + 0.916;
+		// Slow down the player relative to how much weight they're carrying.
+		// The equation is Slowdown = 15/x, where x is the number of kilograms a player is carrying, and 1/4 <= Slowdown <= 1.
+		const slowdown = Math.min(Math.max(15.0 / this.carryWeight, 0.25), 1.0);
+		return rate * slowdown;
+	}
 
-    /**
-     * Calculates the time it takes to move the player to the desired exit.
-     * @param {Exit} exit
-     * @param {boolean} isRunning
-     * @returns {number} The number of milliseconds it will take to move to the desired exit.
-     */
-    calculateMoveTime(exit, isRunning) {
-        let rate = this.calculateMoveRate(isRunning);
-        let distance = Math.sqrt(Math.pow(exit.pos.x - this.pos.x, 2) + Math.pow(exit.pos.z - this.pos.z, 2));
-        distance = distance / this.getGame().settings.pixelsPerMeter;
-        // Slope should affect the rate.
-        const rise = (exit.pos.y - this.pos.y) / this.getGame().settings.pixelsPerMeter;
-        let time = 0;
-        // If distance is 0, we'll treat it like a staircase and just use the rise to calculate the time.
-        if (distance === 0 && rise !== 0) {
-            const uphill = rise > 0 ? true : false;
-            // Assume that the staircase is a right triangle leading to another right triangle flipped horizontally.
-            const legs = rise / 2;
-            // Calculate the length of the hypotenuse of these right triangles.
-            distance = Math.sqrt(2 * Math.pow(legs, 2));
-            // The distance should be two hypotenuses.
-            distance = distance * 2;
-            // If the player is moving uphill, reduce their rate of movement by 1/3.
-            // Otherwise, increase it by 1/3;
-            rate = uphill ? 2 * rate / 3 : 4 * rate / 3;
-            // To make it feel a little more realistic, multiply it by 2.
-            time = distance / rate * 2 * 1000;
-        }
-        else {
-            const slope = rise / distance;
-            rate = !isNaN(slope) ? rate - slope * rate : rate;
-            if (distance < rate) distance = 0;
-            time = distance / rate * 1000;
-        }
-        if (time < 0) time = 0;
-        return time;
-    }
+	/**
+	 * Calculates the time it takes to move the player to the desired exit.
+	 * @param {Exit} exit
+	 * @param {boolean} isRunning
+	 * @returns {number} The number of milliseconds it will take to move to the desired exit.
+	 */
+	calculateMoveTime(exit, isRunning) {
+		let rate = this.calculateMoveRate(isRunning);
+		let distance = Math.sqrt(Math.pow(exit.pos.x - this.pos.x, 2) + Math.pow(exit.pos.z - this.pos.z, 2));
+		distance = distance / this.getGame().settings.pixelsPerMeter;
+		// Slope should affect the rate.
+		const rise = (exit.pos.y - this.pos.y) / this.getGame().settings.pixelsPerMeter;
+		let time = 0;
+		// If distance is 0, we'll treat it like a staircase and just use the rise to calculate the time.
+		if (distance === 0 && rise !== 0) {
+			const uphill = rise > 0 ? true : false;
+			// Assume that the staircase is a right triangle leading to another right triangle flipped horizontally.
+			const legs = rise / 2;
+			// Calculate the length of the hypotenuse of these right triangles.
+			distance = Math.sqrt(2 * Math.pow(legs, 2));
+			// The distance should be two hypotenuses.
+			distance = distance * 2;
+			// If the player is moving uphill, reduce their rate of movement by 1/3.
+			// Otherwise, increase it by 1/3;
+			rate = uphill ? 2 * rate / 3 : 4 * rate / 3;
+			// To make it feel a little more realistic, multiply it by 2.
+			time = distance / rate * 2 * 1000;
+		}
+		else {
+			const slope = rise / distance;
+			rate = !isNaN(slope) ? rate - slope * rate : rate;
+			if (distance < rate) distance = 0;
+			time = distance / rate * 1000;
+		}
+		if (time < 0) time = 0;
+		return time;
+	}
 
-    /**
-     * Resets the player's stamina to its maximum value.
-     */
-    #regenerateStamina() {
-        if (this.stamina < this.maxStamina) {
-            // Recover 1/20th of the player's max stamina per cycle, times the heatedSlowdownRate if applicable.
-            let staminaAmount = this.maxStamina / 20;
-            if (this.getGame().heated) staminaAmount *= this.getGame().settings.heatedSlowdownRate;
-            const newStamina = this.stamina + staminaAmount;
-            // Make sure not to exceed the max stamina for this player.
-            if (newStamina >= this.maxStamina)
-                this.restoreStamina();
-            else
-                this.stamina = newStamina;
-        }
-    }
+	/**
+	 * Resets the player's stamina to its maximum value.
+	 */
+	#regenerateStamina() {
+		if (this.stamina < this.maxStamina) {
+			// Recover 1/20th of the player's max stamina per cycle, times the heatedSlowdownRate if applicable.
+			let staminaAmount = this.maxStamina / 20;
+			if (this.getGame().heated) staminaAmount *= this.getGame().settings.heatedSlowdownRate;
+			const newStamina = this.stamina + staminaAmount;
+			// Make sure not to exceed the max stamina for this player.
+			if (newStamina >= this.maxStamina)
+				this.restoreStamina();
+			else
+				this.stamina = newStamina;
+		}
+	}
 
-    /**
-     * Fully restores the player's stamina and resets their reachedHalfStamina flag.
-     */
-    restoreStamina() {
-        this.stamina = this.maxStamina;
-        this.#reachedHalfStamina = false;
-    }
+	/**
+	 * Fully restores the player's stamina and resets their reachedHalfStamina flag.
+	 */
+	restoreStamina() {
+		this.stamina = this.maxStamina;
+		this.#reachedHalfStamina = false;
+	}
 
-    /**
-     * Creates a string of non-discreet inventory items in the player's hands.
-     * @returns {string}
-     */
-    createMoveAppendString() {
-        /** @type {string[]} */
-        let nonDiscreetItems = [];
-        const rightHand = this.inventory.get("RIGHT HAND");
-        if (rightHand && rightHand.equippedItem !== null && !rightHand.equippedItem.prefab.discreet)
-            nonDiscreetItems.push(rightHand.equippedItem.singleContainingPhrase);
-        const leftHand = this.inventory.get("LEFT HAND");
-        if (leftHand && leftHand.equippedItem !== null && !leftHand.equippedItem.prefab.discreet)
-            nonDiscreetItems.push(leftHand.equippedItem.singleContainingPhrase);
+	/**
+	 * Creates a string of non-discreet inventory items in the player's hands.
+	 * @returns {string}
+	 */
+	createMoveAppendString() {
+		/** @type {string[]} */
+		let nonDiscreetItems = [];
+		const rightHand = this.inventory.get("RIGHT HAND");
+		if (rightHand && rightHand.equippedItem !== null && !rightHand.equippedItem.prefab.discreet)
+			nonDiscreetItems.push(rightHand.equippedItem.singleContainingPhrase);
+		const leftHand = this.inventory.get("LEFT HAND");
+		if (leftHand && leftHand.equippedItem !== null && !leftHand.equippedItem.prefab.discreet)
+			nonDiscreetItems.push(leftHand.equippedItem.singleContainingPhrase);
 
-        let appendString = "";
-        if (nonDiscreetItems.length === 1)
-            appendString = ` carrying ${nonDiscreetItems[0]}`;
-        else if (nonDiscreetItems.length === 2)
-            appendString = ` carrying ${nonDiscreetItems[0]} and ${nonDiscreetItems[1]}`;
+		let appendString = "";
+		if (nonDiscreetItems.length === 1)
+			appendString = ` carrying ${nonDiscreetItems[0]}`;
+		else if (nonDiscreetItems.length === 2)
+			appendString = ` carrying ${nonDiscreetItems[0]} and ${nonDiscreetItems[1]}`;
 
-        return appendString;
-    }
+		return appendString;
+	}
 
-    /**
-     * Stops the player, if they're moving.
-     */
-    stopMoving() {
-        if (this.moveTimer !== null)
-            clearInterval(this.moveTimer);
-        this.isMoving = false;
-        this.remainingTime = 0;
-        this.moveQueue.length = 0;
-    }
+	/**
+	 * Stops the player, if they're moving.
+	 */
+	stopMoving() {
+		if (this.moveTimer !== null)
+			clearInterval(this.moveTimer);
+		this.isMoving = false;
+		this.remainingTime = 0;
+		this.moveQueue.length = 0;
+	}
 
-    /**
-     * Inflicts the player with a status effect.
-     * @param {Status} status - The status to inflict.
-     * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
-     */
-    inflict(status, duration = null) {
-        const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text, status.curedDescription.text, status.row, this.getGame());
-        Status.postProcess(statusInstance);
+	/**
+	 * Inflicts the player with a status effect.
+	 * @param {Status} status - The status to inflict.
+	 * @param {import('luxon').Duration<true>} [duration] - A custom duration that overrides the status's default duration.
+	 */
+	inflict(status, duration = null) {
+		const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible, status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId, status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text, status.curedDescription.text, status.row, this.getGame());
+		Status.postProcess(statusInstance);
 
-        // Apply the duration, if applicable.
-        if (statusInstance.duration) {
-            if (duration !== null) statusInstance.remaining = duration;
-            else statusInstance.remaining = statusInstance.duration;
+		// Apply the duration, if applicable.
+		if (statusInstance.duration) {
+			if (duration !== null) statusInstance.remaining = duration;
+			else statusInstance.remaining = statusInstance.duration;
 
-            let player = this;
-            statusInstance.timer = new Timer(1000, { start: true, loop: true }, function () {
-                if (player.getGame().inProgress && !player.getGame().editMode) {
-                    let subtractedTime = 1000;
-                    if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
-                    statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
-                    player.statusDisplays = player.#generateStatusDisplays(true, true);
-                }
+			let player = this;
+			statusInstance.timer = new Timer(1000, { start: true, loop: true }, function () {
+				if (player.getGame().inProgress && !player.getGame().editMode) {
+					let subtractedTime = 1000;
+					if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
+					statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
+					player.statusDisplays = player.#generateStatusDisplays(true, true);
+				}
 
-                if (statusInstance.remaining.as('milliseconds') <= 0) {
-                    if (statusInstance.nextStage) {
-                        const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                        const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                        cureNextAction.performCure(statusInstance.nextStage, false, false, true);
-                        let inflictNextStage = true;
-                        const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
-                        for (const overrider of statusInstance.nextStage.overriders) {
-                            if (playerStatusIds.includes(overrider.id)) {
-                                cureAction.performCure(statusInstance, true, false, true);
-                                inflictNextStage = false;
-                                break;
-                            }
-                        }
-                        if (inflictNextStage) {
-                            cureAction.performCure(statusInstance, false, false, false);
-                            const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
-                            nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
-                        }
-                    }
-                    else {
-                        if (statusInstance.fatal) {
-                            statusInstance.timer.stop();
-                            const action = new DieAction(player.getGame(), undefined, player, player.location, true);
-                            action.performDie();
-                        }
-                        else {
-                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                            cureAction.performCure(statusInstance, true, true, true);
-                        }
-                    }
-                }
-            });
-        }
+				if (statusInstance.remaining.as('milliseconds') <= 0) {
+					if (statusInstance.nextStage) {
+						const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+						const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+						cureNextAction.performCure(statusInstance.nextStage, false, false, true);
+						let inflictNextStage = true;
+						const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
+						for (const overrider of statusInstance.nextStage.overriders) {
+							if (playerStatusIds.includes(overrider.id)) {
+								cureAction.performCure(statusInstance, true, false, true);
+								inflictNextStage = false;
+								break;
+							}
+						}
+						if (inflictNextStage) {
+							cureAction.performCure(statusInstance, false, false, false);
+							const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
+							nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
+						}
+					}
+					else {
+						if (statusInstance.fatal) {
+							statusInstance.timer.stop();
+							const action = new DieAction(player.getGame(), undefined, player, player.location, true);
+							action.performDie();
+						}
+						else {
+							const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
+							cureAction.performCure(statusInstance, true, true, true);
+						}
+					}
+				}
+			});
+		}
 
-        this.status.set(status.id, statusInstance);
-        this.#recalculateStats();
-        this.statusDisplays = this.#generateStatusDisplays(true, true);
-    }
+		this.status.set(status.id, statusInstance);
+		this.#recalculateStats();
+		this.statusDisplays = this.#generateStatusDisplays(true, true);
+	}
 
-    /**
-     * Removes a status effect from the player.
-     * @param {Status} status - The status to cure.
-     */
-    cure(status) {
-        /** @type {Status} */
-        let statusInstance = this.status.get(status.id);
-        // Stop the timer.
-        if (statusInstance.timer !== null)
-            statusInstance.timer.stop();
-        this.status.delete(status.id)
-        this.#recalculateStats();
-        this.statusDisplays = this.#generateStatusDisplays(true, true);
-    }
+	/**
+	 * Removes a status effect from the player.
+	 * @param {Status} status - The status to cure.
+	 */
+	cure(status) {
+		/** @type {Status} */
+		let statusInstance = this.status.get(status.id);
+		// Stop the timer.
+		if (statusInstance.timer !== null)
+			statusInstance.timer.stop();
+		this.status.delete(status.id)
+		this.#recalculateStats();
+		this.statusDisplays = this.#generateStatusDisplays(true, true);
+	}
 
-    /**
-     * Creates a list of the player's status effects.
-     * @param {boolean} includeHidden - Whether or not to include status effects that aren't visible.
-     * @param {boolean} includeDurations - Whether or not to display the remaining time before the status effect expires.
-     * @returns {StatusDisplay[]}
-     */
-    #generateStatusDisplays(includeHidden, includeDurations) {
-        /** @type {StatusDisplay[]} */
-        let statusDisplays = [];
-        this.status.forEach(status => {
-            if (status.visible || includeHidden) {
-                const statusId = status.id;
-                let timeString;
-                if (includeDurations && status.remaining !== null) {
-                    const format = Math.floor(status.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
-                    timeString = status.remaining.toFormat(format);
-                }
-                statusDisplays.push({ id: statusId, timeRemaining: timeString });
-            }
-        });
-        return statusDisplays;
-    }
+	/**
+	 * Creates a list of the player's status effects.
+	 * @param {boolean} includeHidden - Whether or not to include status effects that aren't visible.
+	 * @param {boolean} includeDurations - Whether or not to display the remaining time before the status effect expires.
+	 * @returns {StatusDisplay[]}
+	 */
+	#generateStatusDisplays(includeHidden, includeDurations) {
+		/** @type {StatusDisplay[]} */
+		let statusDisplays = [];
+		this.status.forEach(status => {
+			if (status.visible || includeHidden) {
+				const statusId = status.id;
+				let timeString;
+				if (includeDurations && status.remaining !== null) {
+					const format = Math.floor(status.remaining.as('days')) !== 0 ? 'd hh:mm:ss' : 'hh:mm:ss';
+					timeString = status.remaining.toFormat(format);
+				}
+				statusDisplays.push({ id: statusId, timeRemaining: timeString });
+			}
+		});
+		return statusDisplays;
+	}
 
-    /**
-     * Creates a list of the player's status effects.
-     * @param {boolean} includeHidden - Whether or not to include status effects that aren't visible.
-     * @param {boolean} includeDurations - Whether or not to display the remaining time before the status effect expires.
-     * @returns {string}
-     */
-    getStatusList(includeHidden, includeDurations) {
-        const statusDisplays = this.#generateStatusDisplays(includeHidden, includeDurations);
-        /** @type {string[]} */
-        let statusStrings = [];
-        statusDisplays.forEach(statusDisplay => {
-            let statusString = statusDisplay.id;
-            if (statusDisplay.timeRemaining) statusString += ` (${statusDisplay.timeRemaining})`;
-            statusStrings.push(statusString);
-        });
-        return statusStrings.join(", ");
-    }
+	/**
+	 * Creates a list of the player's status effects.
+	 * @param {boolean} includeHidden - Whether or not to include status effects that aren't visible.
+	 * @param {boolean} includeDurations - Whether or not to display the remaining time before the status effect expires.
+	 * @returns {string}
+	 */
+	getStatusList(includeHidden, includeDurations) {
+		const statusDisplays = this.#generateStatusDisplays(includeHidden, includeDurations);
+		/** @type {string[]} */
+		let statusStrings = [];
+		statusDisplays.forEach(statusDisplay => {
+			let statusString = statusDisplay.id;
+			if (statusDisplay.timeRemaining) statusString += ` (${statusDisplay.timeRemaining})`;
+			statusStrings.push(statusString);
+		});
+		return statusStrings.join(", ");
+	}
 
-    /**
-     * Returns true if the player has a status with the specified ID.
-     * @param {string} statusId - The ID of the status to look for. 
-     */
-    hasStatus(statusId) {
-        return this.status.has(statusId);
-    }
+	/**
+	 * Returns true if the player has a status with the specified ID.
+	 * @param {string} statusId - The ID of the status to look for.
+	 */
+	hasStatus(statusId) {
+		return this.status.has(statusId);
+	}
 
-    /**
-     * Returns true if the player has a status with the specified behavior attribute.
-     * @param {string} behaviorAttribute - The name of the behavior attribute.
-     * @returns {boolean}
-     */
-    hasBehaviorAttribute(behaviorAttribute) {
-        for (const status of this.status.values())
-            if (status.behaviorAttributes.has(behaviorAttribute)) return true;
-        return false;
-    }
+	/**
+	 * Returns true if the player has a status with the specified behavior attribute.
+	 * @param {string} behaviorAttribute - The name of the behavior attribute.
+	 * @returns {boolean}
+	 */
+	hasBehaviorAttribute(behaviorAttribute) {
+		for (const status of this.status.values())
+			if (status.behaviorAttributes.has(behaviorAttribute)) return true;
+		return false;
+	}
 
-    /**
-     * Returns true if the player has a status with the specified behavior attribute.
-     * Deprecated. Use hasBehaviorAttribute instead.
-     * @deprecated
-     * @param {string} attribute - The name of the behavior attribute.
-     * @returns {boolean}
-     */
-    hasAttribute(attribute) {
-        return this.hasBehaviorAttribute(attribute);
-    }
+	/**
+	 * Returns true if the player has a status with the specified behavior attribute.
+	 * Deprecated. Use hasBehaviorAttribute instead.
+	 * @deprecated
+	 * @param {string} attribute - The name of the behavior attribute.
+	 * @returns {boolean}
+	 */
+	hasAttribute(attribute) {
+		return this.hasBehaviorAttribute(attribute);
+	}
 
-    /**
-     * Returns list of status effects the player has with the specified behavior attribute.
-     * @param {string} behaviorAttribute - The name of the behavior attribute.
-     * @returns {Status[]}
-     */
-    getBehaviorAttributeStatusEffects(behaviorAttribute) {
-        /** @type {Status[]} */
-        let statusEffects = [];
-        for (const status of this.status.values()) {
-            if (status.behaviorAttributes.has(behaviorAttribute))
-                statusEffects.push(status);
-        }
-        return statusEffects;
-    }
+	/**
+	 * Returns list of status effects the player has with the specified behavior attribute.
+	 * @param {string} behaviorAttribute - The name of the behavior attribute.
+	 * @returns {Status[]}
+	 */
+	getBehaviorAttributeStatusEffects(behaviorAttribute) {
+		/** @type {Status[]} */
+		let statusEffects = [];
+		for (const status of this.status.values()) {
+			if (status.behaviorAttributes.has(behaviorAttribute))
+				statusEffects.push(status);
+		}
+		return statusEffects;
+	}
 
-    /**
-     * Returns list of status effects the player has with the specified behavior attribute.
-     * Deprecated. Use getBehaviorAttributeStatusEffects instead.
-     * @deprecated
-     * @param {string} attribute - The name of the behavior attribute.
-     * @returns {Status[]}
-     */
-    getAttributeStatusEffects(attribute) {
-        return this.getBehaviorAttributeStatusEffects(attribute);
-    }
+	/**
+	 * Returns list of status effects the player has with the specified behavior attribute.
+	 * Deprecated. Use getBehaviorAttributeStatusEffects instead.
+	 * @deprecated
+	 * @param {string} attribute - The name of the behavior attribute.
+	 * @returns {Status[]}
+	 */
+	getAttributeStatusEffects(attribute) {
+		return this.getBehaviorAttributeStatusEffects(attribute);
+	}
 
-    /**
-     * Returns true if the player doesn't have the `no sight` behavior attribute.
-     */
-    canSee() {
-        return !this.hasBehaviorAttribute("no sight");
-    }
+	/**
+	 * Returns true if the player doesn't have the `no sight` behavior attribute.
+	 */
+	canSee() {
+		return !this.hasBehaviorAttribute("no sight");
+	}
 
-    /**
-     * Returns true if the player doesn't have the `no hearing` behavior attribute.
-     */
-    canHear() {
-        return !this.hasBehaviorAttribute("no hearing");
-    }
-    
-    /**
-     * Returns true if the player has the `knows ${playerName}` behavior attribute.
-     * @param {string} playerName - The name of a player.
-     */
-    knows(playerName) {
-        return this.hasBehaviorAttribute(`knows ${playerName}`);
-    }
+	/**
+	 * Returns true if the player doesn't have the `no hearing` behavior attribute.
+	 */
+	canHear() {
+		return !this.hasBehaviorAttribute("no hearing");
+	}
 
-    /**
-     * Returns true if the player doesn't have the `unconscious` behavior attribute.
-     */
-    isConscious() {
-        return !this.hasBehaviorAttribute("unconscious");
-    }
+	/**
+	 * Returns true if the player has the `knows ${playerName}` behavior attribute.
+	 * @param {string} playerName - The name of a player.
+	 */
+	knows(playerName) {
+		return this.hasBehaviorAttribute(`knows ${playerName}`);
+	}
 
-    /**
-     * Returns true if the player has the `hidden` behavior attribute.
-     */
-    isHidden() {
-        return this.hasBehaviorAttribute("hidden");
-    }
+	/**
+	 * Returns true if the player doesn't have the `unconscious` behavior attribute.
+	 */
+	isConscious() {
+		return !this.hasBehaviorAttribute("unconscious");
+	}
 
-    /**
-     * Calculates the player's stats based on their current status effects.
-     */
-    #recalculateStats() {
-        const strength = this.defaultStrength;
-        const perception = this.defaultPerception;
-        const dexterity = this.defaultDexterity;
-        const speed = this.defaultSpeed;
-        const stamina = this.defaultStamina;
+	/**
+	 * Returns true if the player has the `hidden` behavior attribute.
+	 */
+	isHidden() {
+		return this.hasBehaviorAttribute("hidden");
+	}
 
-        /** @type {StatModifier[]} */
-        let strModifiers = [];
-        /** @type {StatModifier[]} */
-        let perModifiers = [];
-        /** @type {StatModifier[]} */
-        let dexModifiers = [];
-        /** @type {StatModifier[]} */
-        let spdModifiers = [];
-        /** @type {StatModifier[]} */
-        let staModifiers = [];
+	/**
+	 * Calculates the player's stats based on their current status effects.
+	 */
+	#recalculateStats() {
+		const strength = this.defaultStrength;
+		const perception = this.defaultPerception;
+		const dexterity = this.defaultDexterity;
+		const speed = this.defaultSpeed;
+		const stamina = this.defaultStamina;
 
-        for (const status of this.status.values()) {
-            for (const modifier of status.statModifiers) {
-                if (modifier.modifiesSelf) {
-                    switch (modifier.stat) {
-                        case "str":
-                            strModifiers.push(modifier);
-                            break;
-                        case "per":
-                            perModifiers.push(modifier);
-                            break;
-                        case "dex":
-                            dexModifiers.push(modifier);
-                            break;
-                        case "spd":
-                            spdModifiers.push(modifier);
-                            break;
-                        case "sta":
-                            staModifiers.push(modifier);
-                            break;
-                    }
-                }
-            }
-        }
+		/** @type {StatModifier[]} */
+		let strModifiers = [];
+		/** @type {StatModifier[]} */
+		let perModifiers = [];
+		/** @type {StatModifier[]} */
+		let dexModifiers = [];
+		/** @type {StatModifier[]} */
+		let spdModifiers = [];
+		/** @type {StatModifier[]} */
+		let staModifiers = [];
 
-        this.strength = this.#recalculateStat(strength, strModifiers);
-        this.maxCarryWeight = this.getMaxCarryWeight();
-        this.perception = this.#recalculateStat(perception, perModifiers);
-        this.intelligence = this.perception;
-        this.dexterity = this.#recalculateStat(dexterity, dexModifiers);
-        this.speed = this.#recalculateStat(speed, spdModifiers);
-        const staminaRatio = this.stamina / this.maxStamina;
-        this.maxStamina = this.#recalculateStat(stamina, staModifiers);
-        this.stamina = staminaRatio * this.maxStamina;
-    }
+		for (const status of this.status.values()) {
+			for (const modifier of status.statModifiers) {
+				if (modifier.modifiesSelf) {
+					switch (modifier.stat) {
+						case "str":
+							strModifiers.push(modifier);
+							break;
+						case "per":
+							perModifiers.push(modifier);
+							break;
+						case "dex":
+							dexModifiers.push(modifier);
+							break;
+						case "spd":
+							spdModifiers.push(modifier);
+							break;
+						case "sta":
+							staModifiers.push(modifier);
+							break;
+					}
+				}
+			}
+		}
 
-    /**
-     * Calculates stat after applying stat modifiers.
-     * @param {number} stat - The current stat value.
-     * @param {StatModifier[]} modifiers - The modifiers to apply.
-     * @returns {number}
-     */
-    #recalculateStat(stat, modifiers) {
-        let assignModifiers = modifiers.filter(modifier => modifier.assignValue === true).sort((a, b) => a.value - b.value);
-        if (assignModifiers.length !== 0) return assignModifiers[0].value;
+		this.strength = this.#recalculateStat(strength, strModifiers);
+		this.maxCarryWeight = this.getMaxCarryWeight();
+		this.perception = this.#recalculateStat(perception, perModifiers);
+		this.intelligence = this.perception;
+		this.dexterity = this.#recalculateStat(dexterity, dexModifiers);
+		this.speed = this.#recalculateStat(speed, spdModifiers);
+		const staminaRatio = this.stamina / this.maxStamina;
+		this.maxStamina = this.#recalculateStat(stamina, staModifiers);
+		this.stamina = staminaRatio * this.maxStamina;
+	}
 
-        for (let i = 0; i < modifiers.length; i++)
-            stat += modifiers[i].value;
-        if (stat < 1) stat = 1;
-        if (stat > 10) stat = 10;
-        return stat;
-    }
+	/**
+	 * Calculates stat after applying stat modifiers.
+	 * @param {number} stat - The current stat value.
+	 * @param {StatModifier[]} modifiers - The modifiers to apply.
+	 * @returns {number}
+	 */
+	#recalculateStat(stat, modifiers) {
+		let assignModifiers = modifiers.filter(modifier => modifier.assignValue === true).sort((a, b) => a.value - b.value);
+		if (assignModifiers.length !== 0) return assignModifiers[0].value;
 
-    /**
-     * Calculates dice roll modifier based on the specified stat value.
-     * @param {number} stat - The stat value.
-     * @returns {number}
-     */
-    getStatModifier(stat) {
-        const statMax = 10;
-        let modifier = Math.floor(Math.floor((stat - statMax / 3) / 2) + (this.getGame().settings.diceMax - this.getGame().settings.diceMin) / this.getGame().settings.diceMax);
-        return modifier;
-    }
+		for (let i = 0; i < modifiers.length; i++)
+			stat += modifiers[i].value;
+		if (stat < 1) stat = 1;
+		if (stat > 10) stat = 10;
+		return stat;
+	}
 
-    /**
-     * Calculates the player's maximum carry weight in kilograms.
-     * @returns {number}
-     */
-    getMaxCarryWeight() {
-        return Math.floor(1.783 * Math.pow(this.strength, 2) - 2 * this.strength + 22);
-    }
+	/**
+	 * Calculates dice roll modifier based on the specified stat value.
+	 * @param {number} stat - The stat value.
+	 * @returns {number}
+	 */
+	getStatModifier(stat) {
+		const statMax = 10;
+		let modifier = Math.floor(Math.floor((stat - statMax / 3) / 2) + (this.getGame().settings.diceMax - this.getGame().settings.diceMin) / this.getGame().settings.diceMax);
+		return modifier;
+	}
 
-    /**
-     * Gets all of the items this entity contains.
-     * @override
-     */
-    getContainedItems() {
-        return this.getGame().entityFinder.getInventoryItems(undefined, this.name);
-    }
+	/**
+	 * Calculates the player's maximum carry weight in kilograms.
+	 * @returns {number}
+	 */
+	getMaxCarryWeight() {
+		return Math.floor(1.783 * Math.pow(this.strength, 2) - 2 * this.strength + 22);
+	}
 
-    /**
+	/**
+	 * Gets all of the items this entity contains.
+	 * @override
+	 */
+	getContainedItems() {
+		return this.getGame().entityFinder.getInventoryItems(undefined, this.name);
+	}
+
+	/**
 	 * Gets all of the items that should appear in the given item list.
 	 * @override
 	 * @param {'equipment'|'hands'} [itemListName] - The name of the item list. Either "equipment" or "hands".
 	 * @param {Player} [player] - The player the description is being sent to. Unused.
 	 */
 	getContainedItemsForItemList(itemListName, player) {
-        /** @type {EquipmentSlot[]} */
-        let equipmentSlots = [];
-        const playerHands = this.getGame().entityFinder.getPlayerHands(this);
-        if (itemListName === 'equipment') {
-            const playerHandsIDs = playerHands.map(equipmentSlot => equipmentSlot.id);
-            equipmentSlots = this.inventory.filter(equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
-        }
-        else if (itemListName === 'hands')
-		    equipmentSlots = playerHands.filter(equipmentSlot => equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet);
-        return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
+		/** @type {EquipmentSlot[]} */
+		let equipmentSlots = [];
+		const playerHands = this.getGame().entityFinder.getPlayerHands(this);
+		if (itemListName === 'equipment') {
+			const playerHandsIDs = playerHands.map(equipmentSlot => equipmentSlot.id);
+			equipmentSlots = this.inventory.filter(equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
+		}
+		else if (itemListName === 'hands')
+			equipmentSlots = playerHands.filter(equipmentSlot => equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet);
+		return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
+	}
+
+	/**
+	 * Uses the player's inventory item.
+	 * @param {InventoryItem} item - The inventory item to use.
+	 * @param {Player} [target] - The player the inventory item is to be used on. Defaults to the player using it.
+	 */
+	use(item, target = this) {
+		for (let effect of item.prefab.effects) {
+			const inflictAction = new InflictAction(this.getGame(), undefined, target, target.location, true);
+			inflictAction.performInflict(effect, true, true, true, item);
+		}
+		for (let cure of item.prefab.cures) {
+			const cureAction = new CureAction(this.getGame(), undefined, target, target.location, true);
+			cureAction.performCure(cure, true, true, true, item);
+		}
+		if (!isNaN(item.uses))
+			item.decreaseUses();
+	}
+
+	/**
+	 * Takes an item and puts it in the player's inventory.
+	 * @param {RoomItem} item - The item to take.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the item in.
+	 * @param {Puzzle|Fixture|RoomItem|Room} container - The item's current container.
+	 * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
+	 */
+	take(item, handEquipmentSlot, container, inventorySlot) {
+		// Reduce quantity if the quantity is finite.
+		if (!isNaN(item.quantity))
+			item.quantity--;
+
+		// Update the container's description.
+		if (container instanceof Puzzle || container instanceof Fixture || container instanceof RoomItem)
+			container.removeItemFromDescription(item, inventorySlot ? inventorySlot.id : "");
+		if (container instanceof RoomItem)
+			container.removeItem(item, inventorySlot.id, 1);
+
+		// Put the item in the player's hand.
+		const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
+		this.carryWeight += createdItem.weight;
+
+		// Add the new item to the player's hands item list.
+		if (!createdItem.prefab.discreet)
+			this.addItemToDescription(createdItem, "hands");
+	}
+
+	/**
+	 * Steals an inventory item from another player.
+	 * @param {InventoryItem} item - The inventory item to steal.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
+	 * @param {Player} victim - The player to steal from.
+	 * @param {InventoryItem} container - An inventory item belonging to the victim that the player will attempt to steal from.
+	 * @param {InventorySlot<InventoryItem>} inventorySlot - The {@link InventorySlot|inventory slot} that the player will attempt to steal from.
+	 */
+	steal(item, handEquipmentSlot, victim, container, inventorySlot) {
+		// Remove the item from its container.
+		itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
+		// Put the item in the player's hand.
+		const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
+		victim.carryWeight -= createdItem.weight;
+		this.carryWeight += createdItem.weight;
+
+		if (!createdItem.prefab.discreet)
+			this.addItemToDescription(createdItem, "hands");
+	}
+
+	/**
+	 * Drops an inventory item and puts it in the specified container in the room.
+	 * @param {InventoryItem} item - The inventory item to drop.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
+	 * @param {Puzzle|Fixture|RoomItem} container - The container to put the item in.
+	 * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} to put the item in.
+	 */
+	drop(item, handEquipmentSlot, container, inventorySlot) {
+		// Unequip the item from the player's hand.
+		handEquipmentSlot.unequipItem(item);
+
+		// Convert the InventoryItem to a RoomItem.
+		const inventorySlotId = inventorySlot ? inventorySlot.id : "";
+		let createdItem = itemManager.convertInventoryItem(item, this, container, inventorySlotId, 1);
+		createdItem.container = container;
+		createdItem.slot = inventorySlotId;
+
+		// Update the container's description.
+		container.addItemToDescription(item, inventorySlotId);
+		if (container instanceof RoomItem)
+			container.insertItem(createdItem, inventorySlot.id);
+
+		// Create a list of all the child items.
+		/** @type {RoomItem[]} */
+		let items = [];
+		items.push(createdItem);
+		itemManager.getChildItems(items, createdItem);
+		// Now that the item has been converted, we can update the quantities of child items.
+		itemManager.setChildItemQuantitiesZero(item);
+		item.quantity = 0;
+		// Insert the new items into the game's list of room items.
+		itemManager.insertRoomItems(this.location, items);
+		this.carryWeight -= item.weight;
+
+		// Remove the item from the player's hands item list.
+		if (!item.prefab.discreet)
+			this.removeItemFromDescription(item, "hands");
+	}
+
+	/**
+	 * Gives an inventory item to another player.
+	 * @param {InventoryItem} item - The inventory item to give.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
+	 * @param {Player} recipient - The player to give the inventory item to.
+	 * @param {EquipmentSlot} recipientHandEquipmentSlot - The hand equipment slot of the recipient to put the item in.
+	 */
+	give(item, handEquipmentSlot, recipient, recipientHandEquipmentSlot) {
+		// Unequip the item from the player's hand.
+		handEquipmentSlot.unequipItem(item);
+
+		// Put the item in the recipient's hand.
+		const createdItem = itemManager.putItemInHand(item, recipient, recipientHandEquipmentSlot);
+		this.carryWeight -= createdItem.weight;
+		recipient.carryWeight += createdItem.weight;
+
+		if (!createdItem.prefab.discreet) {
+			// Remove the item from the player's hands item list.
+			this.removeItemFromDescription(createdItem, "hands");
+			// Add the item to the recipient's hands item list.
+			recipient.addItemToDescription(createdItem, "hands");
+		}
+	}
+
+	/**
+	 * Moves an inventory item from the player's hand into a container in their inventory.
+	 * @param {InventoryItem} item - The inventory item to stash.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
+	 * @param {InventoryItem} container - The container to stash the inventory item in.
+	 * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} to stash the inventory item in.
+	 */
+	stash(item, handEquipmentSlot, container, inventorySlot) {
+		// Unequip the item from the player's hand.
+		handEquipmentSlot.unequipItem(item);
+
+		// Copy the inventory item to the given container.
+		const equipmentSlot = this.inventory.get(container.equipmentSlot);
+		let createdItem = itemManager.copyInventoryItem(item, this, equipmentSlot.id, 1);
+		createdItem.containerName = `${container.identifier}/${inventorySlot.id}`;
+		createdItem.container = container;
+		createdItem.slot = inventorySlot.id;
+
+		// Update container.
+		container.insertItem(createdItem, inventorySlot.id);
+		container.addItemToDescription(createdItem, inventorySlot.id);
+
+		// Create a list of all the child items.
+		/** @type {InventoryItem[]} */
+		let items = [];
+		items.push(createdItem);
+		itemManager.getChildItems(items, createdItem);
+		// Now that the item has been converted, we can update the quantities of child items.
+		itemManager.setChildItemQuantitiesZero(item);
+		// Insert the new inventory items into the game's list of inventory items.
+		itemManager.insertInventoryItems(this, items, equipmentSlot);
+
+		// Remove the item from the player's hands item list.
+		if (!item.prefab.discreet)
+			this.removeItemFromDescription(item, "hands");
+	}
+
+	/**
+	 * Moves an inventory item from a container in the player's inventory to the player's hand.
+	 * @param {InventoryItem} item - The inventory item to unstash.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
+	 * @param {InventoryItem} container - The inventory item's current container.
+	 * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the inventory item is currently in.
+	 */
+	unstash(item, handEquipmentSlot, container, inventorySlot) {
+		// Remove the inventory item from its container.
+		itemManager.removeStashedItem(item, container, inventorySlot, this.inventory.get(item.equipmentSlot));
+		// Put the item in the player's hand.
+		itemManager.putItemInHand(item, this, handEquipmentSlot);
+
+		// Add the new item to the player's hands item list.
+		if (!item.prefab.discreet)
+			this.addItemToDescription(item, "hands");
+	}
+
+	/**
+	 * Moves an inventory item from the player's hand to one of their {@link EquipmentSlot|equipment slots}.
+	 * @param {InventoryItem} item - The inventory item to equip.
+	 * @param {EquipmentSlot} equipmentSlot - The equipment slot to equip the inventory item to.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
+	 */
+	equip(item, equipmentSlot, handEquipmentSlot) {
+		// Unequip the item from the player's hand.
+		handEquipmentSlot.unequipItem(item);
+
+		// Copy the inventory item to the new equipment slot.
+		let createdItem = itemManager.copyInventoryItem(item, this, equipmentSlot.id, 1);
+		createdItem.row = equipmentSlot.row;
+
+		// Equip the item to the player's equipment slot.
+		equipmentSlot.equipItem(createdItem);
+		// Create a list of all the child items.
+		/** @type {InventoryItem[]} */
+		let items = [];
+		itemManager.getChildItems(items, createdItem);
+		// Update the quantities of child items.
+		itemManager.setChildItemQuantitiesZero(item);
+		item.quantity = 0;
+		// Insert the newly created item in the game's list of inventory items.
+		itemManager.insertInventoryItems(this, items, equipmentSlot);
+
+		// Update the player's description.
+		if (!item.prefab.discreet)
+			this.removeItemFromDescription(item, "hands");
+		this.#coverEquippedItems(createdItem);
+	}
+
+	/**
+	 * Equips an inventory item to any of the player's {@link EquipmentSlot|equipment slots}.
+	 * This should only be used for newly created inventory items.
+	 * @param {InventoryItem} item - The inventory item to equip.
+	 * @param {EquipmentSlot} equipmentSlot - The equipment slot to equip the inventory item to.
+	 */
+	directEquip(item, equipmentSlot) {
+		item.row = equipmentSlot.row;
+		equipmentSlot.equipItem(item);
+
+		if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
+			this.addItemToDescription(item, "hands");
+		else {
+			this.#coverEquippedItems(item);
+			item.executeEquippedCommands();
+		}
+	}
+
+	/**
+	 * Removes equipped items that the given item covers from the player's description.
+	 * @param {InventoryItem} item - The equipped item that covers other items.
+	 */
+	#coverEquippedItems(item) {
+		for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
+			const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
+			if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
+				// Preserve quantity.
+				const quantity = coveredEquipmentSlot.equippedItem.quantity;
+				coveredEquipmentSlot.equippedItem.quantity = 0;
+				this.removeItemFromDescription(coveredEquipmentSlot.equippedItem, "equipment");
+				coveredEquipmentSlot.equippedItem.quantity = quantity;
+			}
+		}
+
+		// Check to make sure that this item isn't covered by something else the player has equipped.
+		let isCovered = false;
+		this.inventory.forEach(equipmentSlot => {
+			if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !== "LEFT HAND") {
+				for (const coveredEquipmentSlotId of equipmentSlot.equippedItem.prefab.coveredEquipmentSlots) {
+					if (coveredEquipmentSlotId === item.equipmentSlot) {
+						isCovered = true;
+						break;
+					}
+				}
+			}
+		});
+		// If it's not covered, add mention of this item to the player's equipment item list.
+		if (!isCovered)
+			this.addItemToDescription(item, "equipment");
+	}
+
+	/**
+	 * Moves an inventory item from a player's {@link EquipmentSlot|equipment slot} to their hand.
+	 * @param {InventoryItem} item - The inventory item to unequip.
+	 * @param {EquipmentSlot} equipmentSlot - The equipment slot the inventory item is currently equipped to.
+	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
+	 */
+	unequip(item, equipmentSlot, handEquipmentSlot) {
+		equipmentSlot.unequipItem(item);
+
+		// Put the item in the player's hand.
+		let createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
+		item.quantity = 0;
+
+		// Update the player's description.
+		if (!createdItem.prefab.discreet)
+			this.addItemToDescription(createdItem, "hands");
+		this.#uncoverEquippedItems(createdItem);
+	}
+
+	/**
+	 * Unequips an inventory item from a player's {@link EquipmentSlot|equipment slot} without moving it to their hand.
+	 * This should only be used for inventory items that are about to be destroyed.
+	 * @param {InventoryItem} item - The inventory item to unequip.
+	 */
+	directUnequip(item) {
+		const equipmentSlot = this.inventory.get(item.equipmentSlot);
+		equipmentSlot.unequipItem(item);
+
+		if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
+			this.removeItemFromDescription(item, "hands");
+		else {
+			this.#uncoverEquippedItems(item);
+			item.executeUnequippedCommands();
+		}
+	}
+
+	/**
+	 * Adds any equipped items that were previously covered by the newly unequipped item back to the player's description.
+	 * @param {InventoryItem} item - The now unequipped item that covered other items.
+	 */
+	#uncoverEquippedItems(item) {
+		this.removeItemFromDescription(item, "equipment");
+		// Find any items that were covered by this item and add them to the equipment item list.
+		for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
+			const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
+			if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
+				// Before adding this item to the equipment item slot, make sure it isn't covered by something else.
+				const coveringItems = this.getGame().inventoryItems.filter(item =>
+					item.player.name === this.name &&
+					item.prefab !== null &&
+					item.equipmentSlot !== "RIGHT HAND" &&
+					item.equipmentSlot !== "LEFT HAND" &&
+					item.containerName === "" &&
+					item.container === null &&
+					item.prefab.coveredEquipmentSlots.includes(coveredEquipmentSlotId)
+				);
+				if (coveringItems.length === 0) this.addItemToDescription(coveredEquipmentSlot.equippedItem, "equipment");
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Displays the player's inventory.
+	 * @param {boolean} moderatorView - Whether or not to use the identifier or prefab IDs of the player's inventory items. If this is false, the inventory item's name will be used instead.
+	 * @returns {string} A string representation of the player's inventory.
+	 */
+	viewInventory(moderatorView) {
+		const equipmentSlotOpener = `[ `;
+		const equipmentSlotCloser = ` ]`;
+		const inventorySlotOpener = `(`;
+		const inventorySlotCloser = `)`;
+		const indent = "  ";
+
+		const possessive = moderatorView ? `${this.name}'s` : `Your`;
+		let itemString = `__${possessive} inventory:__\n`;
+		this.inventory.forEach(equipmentSlot => {
+			itemString += `- \`${equipmentSlot.id}\`: `;
+			const equippedItem = equipmentSlot.equippedItem;
+			if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
+			else {
+				itemString += `${equipmentSlotOpener}${moderatorView ? equippedItem.getIdentifier() : equippedItem.name}${equipmentSlotCloser}\n`;
+				let descendantsCount = 1;
+				/**
+				 * Generates a display of an inventory item's children.
+				 * @param {string} itemString - A string representation of the inventory item's name.
+				 * @param {InventoryItem} item - The inventory item whose child items are being listed.
+				 */
+				let listChildItems = function (itemString, item) {
+					// If item is capable of holding other items, show what items it has inside.
+					item.inventory.forEach(inventorySlot => {
+						/** @type {number[]} */
+						let parentItemIndexes = [];
+						for (let i = 0; i < descendantsCount; i++)
+							itemString += indent;
+						itemString += `- \`${inventorySlot.id}\`: `;
+						if (inventorySlot.items.length === 0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
+						else {
+							itemString += inventorySlotOpener;
+							/** @type {string[]} */
+							let inventorySlotItemNames = [];
+							inventorySlot.items.forEach((inventoryItem, i) => {
+								const childItem = inventoryItem;
+								const quantityString = childItem.quantity === 1 ? `` : `${childItem.quantity} `;
+								const childName = moderatorView ? childItem.getIdentifier()
+									: childItem.quantity > 1 && childItem.pluralName ? childItem.pluralName
+										: childItem.name;
+								inventorySlotItemNames.push(`${quantityString}${childName}`);
+								if (childItem.inventory.size !== 0) parentItemIndexes.push(i);
+							});
+							itemString += inventorySlotItemNames.join(') (');
+							itemString += inventorySlotCloser;
+							for (let i = 0; i < parentItemIndexes.length; i++) {
+								itemString += `\n`;
+								descendantsCount++;
+								itemString = listChildItems(itemString, inventorySlot.items[parentItemIndexes[i]]);
+								descendantsCount--;
+							}
+						}
+						if (itemString[itemString.length - 1] !== '\n') itemString += '\n';
+					});
+					return itemString;
+				};
+				itemString = listChildItems(itemString, equippedItem);
+			}
+		});
+		return itemString.replace(/\n{2,}/g, '\n');
+	}
+
+	/**
+	 * Crafts held items according to a recipe.
+	 * @param {Recipe} recipe - The recipe that describes how these ingredients are crafted.
+	 * @returns {CraftingResult} The resulting product(s).
+	 */
+	craft(recipe) {
+		let heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
+		const ingredients = [...heldItems];
+		const ingredientsFlat = this.#collateItems(ingredients);
+        const satisfactoryProcessCount = recipe.getSatisfactoryProcessCount(ingredientsFlat);
+        if (satisfactoryProcessCount < 1) return;
+        const variableValues = recipe.getIngredientVariableValues(ingredientsFlat);
+        this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
+        this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues);
+        heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
+
+		return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };
+	}
+	
+	/**
+	 * Reverses a crafting recipe to convert a single product into two ingredients.
+	 * @param {InventoryItem} item - The product to uncraft.
+	 * @param {Recipe} recipe - The recipe that describes how this product is crafted.
+	 * @returns {UncraftingResult} The resulting ingredients.
+	 */
+	uncraft(item, recipe) {
+		// If only one ingredient is discreet, the first ingredient should be the discreet one.
+		const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet || recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
+		let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
+		let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
+
+		if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
+		const rightHand = this.inventory.get("RIGHT HAND");
+		const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
+		const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
+		const ingredient2Instance = instantiateAction.performInstantiateInventoryItem(
+			ingredient2.prefab,
+			rightHand.equippedItem === null ? "RIGHT HAND" : "LEFT HAND",
+			null,
+			"",
+			1,
+			new Map(),
+            ingredient2.prefab.uses,
+			false
+		);
+		if (!ingredient1.prefab.discreet)
+			this.addItemToDescription(ingredient1Instance, "hands");
+		if (!ingredient2.prefab.discreet)
+			this.addItemToDescription(ingredient2Instance, "hands");
+
+		return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
 	}
 
     /**
-     * Uses the player's inventory item.
-     * @param {InventoryItem} item - The inventory item to use.
-     * @param {Player} [target] - The player the inventory item is to be used on. Defaults to the player using it.
-     */
-    use(item, target = this) {
-        for (let effect of item.prefab.effects) {
-            const inflictAction = new InflictAction(this.getGame(), undefined, target, target.location, true);
-            inflictAction.performInflict(effect, true, true, true, item);
-        }
-        for (let cure of item.prefab.cures) {
-            const cureAction = new CureAction(this.getGame(), undefined, target, target.location, true);
-            cureAction.performCure(cure, true, true, true, item);
-        }
-        if (!isNaN(item.uses))
-            item.decreaseUses();
-    }
-
-    /**
-     * Takes an item and puts it in the player's inventory.
-     * @param {RoomItem} item - The item to take.
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the item in.
-     * @param {Puzzle|Fixture|RoomItem|Room} container - The item's current container.
-     * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
-     */
-    take(item, handEquipmentSlot, container, inventorySlot) {
-        // Reduce quantity if the quantity is finite.
-        if (!isNaN(item.quantity))
-            item.quantity--;
-
-        // Update the container's description.
-        if (container instanceof Puzzle || container instanceof Fixture || container instanceof RoomItem)
-            container.removeItemFromDescription(item, inventorySlot ? inventorySlot.id : "");
-        if (container instanceof RoomItem)
-            container.removeItem(item, inventorySlot.id, 1);
-
-        // Put the item in the player's hand.
-        const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
-        this.carryWeight += createdItem.weight;
-
-        // Add the new item to the player's hands item list.
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
-    }
-
-    /**
-     * Steals an inventory item from another player.
-     * @param {InventoryItem} item - The inventory item to steal.
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
-     * @param {Player} victim - The player to steal from.
-     * @param {InventoryItem} container - An inventory item belonging to the victim that the player will attempt to steal from.
-     * @param {InventorySlot<InventoryItem>} inventorySlot - The {@link InventorySlot|inventory slot} that the player will attempt to steal from.
-     */
-    steal(item, handEquipmentSlot, victim, container, inventorySlot) {
-        // Remove the item from its container.
-        itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
-        // Put the item in the player's hand.
-        const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
-        victim.carryWeight -= createdItem.weight;
-        this.carryWeight += createdItem.weight;
-
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
-    }
-
-    /**
-     * Drops an inventory item and puts it in the specified container in the room.
-     * @param {InventoryItem} item - The inventory item to drop.
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
-     * @param {Puzzle|Fixture|RoomItem} container - The container to put the item in.
-     * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} to put the item in.
-     */
-    drop(item, handEquipmentSlot, container, inventorySlot) {
-        // Unequip the item from the player's hand.
-        handEquipmentSlot.unequipItem(item);
-
-        // Convert the InventoryItem to a RoomItem.
-        const inventorySlotId = inventorySlot ? inventorySlot.id : "";
-        let createdItem = itemManager.convertInventoryItem(item, this, container, inventorySlotId, 1);
-        createdItem.container = container;
-        createdItem.slot = inventorySlotId;
-
-        // Update the container's description.
-        container.addItemToDescription(item, inventorySlotId);
-        if (container instanceof RoomItem)
-            container.insertItem(createdItem, inventorySlot.id);
-
-        // Create a list of all the child items.
-        /** @type {RoomItem[]} */
-        let items = [];
-        items.push(createdItem);
-        itemManager.getChildItems(items, createdItem);
-        // Now that the item has been converted, we can update the quantities of child items.
-        itemManager.setChildItemQuantitiesZero(item);
-        item.quantity = 0;
-        // Insert the new items into the game's list of room items.
-        itemManager.insertRoomItems(this.location, items);
-        this.carryWeight -= item.weight;
-        
-        // Remove the item from the player's hands item list.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-    }
-
-    /**
-     * Gives an inventory item to another player.
-     * @param {InventoryItem} item - The inventory item to give.
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
-     * @param {Player} recipient - The player to give the inventory item to.
-     * @param {EquipmentSlot} recipientHandEquipmentSlot - The hand equipment slot of the recipient to put the item in.
-     */
-    give(item, handEquipmentSlot, recipient, recipientHandEquipmentSlot) {
-        // Unequip the item from the player's hand.
-        handEquipmentSlot.unequipItem(item);
-
-        // Put the item in the recipient's hand.
-        const createdItem = itemManager.putItemInHand(item, recipient, recipientHandEquipmentSlot);
-        this.carryWeight -= createdItem.weight;
-        recipient.carryWeight += createdItem.weight;
-
-        if (!createdItem.prefab.discreet) {
-            // Remove the item from the player's hands item list.
-            this.removeItemFromDescription(createdItem, "hands");
-            // Add the item to the recipient's hands item list.
-            recipient.addItemToDescription(createdItem, "hands");
-        }
-    }
-
-    /**
-     * Moves an inventory item from the player's hand into a container in their inventory.
-     * @param {InventoryItem} item - The inventory item to stash. 
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
-     * @param {InventoryItem} container - The container to stash the inventory item in.
-     * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} to stash the inventory item in.
-     */
-    stash(item, handEquipmentSlot, container, inventorySlot) {
-        // Unequip the item from the player's hand.
-        handEquipmentSlot.unequipItem(item);
-
-        // Copy the inventory item to the given container.
-        const equipmentSlot = this.inventory.get(container.equipmentSlot);
-        let createdItem = itemManager.copyInventoryItem(item, this, equipmentSlot.id, 1);
-        createdItem.containerName = `${container.identifier}/${inventorySlot.id}`;
-        createdItem.container = container;
-        createdItem.slot = inventorySlot.id;
-
-        // Update container.
-        container.insertItem(createdItem, inventorySlot.id);
-        container.addItemToDescription(createdItem, inventorySlot.id);
-
-        // Create a list of all the child items.
-        /** @type {InventoryItem[]} */
-        let items = [];
-        items.push(createdItem);
-        itemManager.getChildItems(items, createdItem);
-        // Now that the item has been converted, we can update the quantities of child items.
-        itemManager.setChildItemQuantitiesZero(item);
-        // Insert the new inventory items into the game's list of inventory items.
-        itemManager.insertInventoryItems(this, items, equipmentSlot);
-
-        // Remove the item from the player's hands item list.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-    }
-
-    /**
-     * Moves an inventory item from a container in the player's inventory to the player's hand.
-     * @param {InventoryItem} item - The inventory item to unstash. 
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
-     * @param {InventoryItem} container - The inventory item's current container.
-     * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the inventory item is currently in.
-     */
-    unstash(item, handEquipmentSlot, container, inventorySlot) {
-        // Remove the inventory item from its container.
-        itemManager.removeStashedItem(item, container, inventorySlot, this.inventory.get(item.equipmentSlot));
-        // Put the item in the player's hand.
-        itemManager.putItemInHand(item, this, handEquipmentSlot);
-
-        // Add the new item to the player's hands item list.
-        if (!item.prefab.discreet)
-            this.addItemToDescription(item, "hands");
-    }
-
-    /**
-     * Moves an inventory item from the player's hand to one of their {@link EquipmentSlot|equipment slots}.
-     * @param {InventoryItem} item - The inventory item to equip.
-     * @param {EquipmentSlot} equipmentSlot - The equipment slot to equip the inventory item to. 
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
-     */
-    equip(item, equipmentSlot, handEquipmentSlot) {
-        // Unequip the item from the player's hand.
-        handEquipmentSlot.unequipItem(item);
-
-        // Copy the inventory item to the new equipment slot.
-        let createdItem = itemManager.copyInventoryItem(item, this, equipmentSlot.id, 1);
-        createdItem.row = equipmentSlot.row;
-
-        // Equip the item to the player's equipment slot.
-        equipmentSlot.equipItem(createdItem);
-        // Create a list of all the child items.
-        /** @type {InventoryItem[]} */
-        let items = [];
-        itemManager.getChildItems(items, createdItem);
-        // Update the quantities of child items.
-        itemManager.setChildItemQuantitiesZero(item);
-        item.quantity = 0;
-        // Insert the newly created item in the game's list of inventory items.
-        itemManager.insertInventoryItems(this, items, equipmentSlot);
-
-        // Update the player's description.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-        this.#coverEquippedItems(createdItem);
-    }
-
-    /**
-     * Equips an inventory item to any of the player's {@link EquipmentSlot|equipment slots}.
-     * This should only be used for newly created inventory items.
-     * @param {InventoryItem} item - The inventory item to equip.
-     * @param {EquipmentSlot} equipmentSlot - The equipment slot to equip the inventory item to.
-     */
-    directEquip(item, equipmentSlot) {
-        item.row = equipmentSlot.row;
-        equipmentSlot.equipItem(item);
-
-        if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
-            this.addItemToDescription(item, "hands");
-        else {
-            this.#coverEquippedItems(item);
-            item.executeEquippedCommands();
-        }
-    }
-
-    /**
-     * Removes equipped items that the given item covers from the player's description.
-     * @param {InventoryItem} item - The equipped item that covers other items.
-     */
-    #coverEquippedItems(item) {
-        for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
-            if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
-                // Preserve quantity.
-                const quantity = coveredEquipmentSlot.equippedItem.quantity;
-                coveredEquipmentSlot.equippedItem.quantity = 0;
-                this.removeItemFromDescription(coveredEquipmentSlot.equippedItem, "equipment");
-                coveredEquipmentSlot.equippedItem.quantity = quantity;
-            }
-        }
-
-        // Check to make sure that this item isn't covered by something else the player has equipped.
-        let isCovered = false;
-        this.inventory.forEach(equipmentSlot => {
-            if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !== "LEFT HAND") {
-                for (const coveredEquipmentSlotId of equipmentSlot.equippedItem.prefab.coveredEquipmentSlots) {
-                    if (coveredEquipmentSlotId === item.equipmentSlot) {
-                        isCovered = true;
-                        break;
-                    }
-                }
-            }
-        });
-        // If it's not covered, add mention of this item to the player's equipment item list.
-        if (!isCovered)
-            this.addItemToDescription(item, "equipment");
-    }
-
-    /**
-     * Moves an inventory item from a player's {@link EquipmentSlot|equipment slot} to their hand.
-     * @param {InventoryItem} item - The inventory item to unequip.
-     * @param {EquipmentSlot} equipmentSlot - The equipment slot the inventory item is currently equipped to. 
-     * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the inventory item in.
-     */
-    unequip(item, equipmentSlot, handEquipmentSlot) {
-        equipmentSlot.unequipItem(item);
-
-        // Put the item in the player's hand.
-        let createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
-        item.quantity = 0;
-        
-        // Update the player's description.
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
-        this.#uncoverEquippedItems(createdItem);
-    }
-
-    /**
-     * Unequips an inventory item from a player's {@link EquipmentSlot|equipment slot} without moving it to their hand.
-     * This should only be used for inventory items that are about to be destroyed.
-     * @param {InventoryItem} item - The inventory item to unequip.
-     */
-    directUnequip(item) {
-        const equipmentSlot = this.inventory.get(item.equipmentSlot);
-        equipmentSlot.unequipItem(item);
-
-        if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-        else {
-            this.#uncoverEquippedItems(item);
-            item.executeUnequippedCommands();
-        }
-    }
-
-    /**
-     * Adds any equipped items that were previously covered by the newly unequipped item back to the player's description.
-     * @param {InventoryItem} item - The now unequipped item that covered other items.
-     */
-    #uncoverEquippedItems(item) {
-        this.removeItemFromDescription(item, "equipment");
-        // Find any items that were covered by this item and add them to the equipment item list.
-        for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
-            if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
-                // Before adding this item to the equipment item slot, make sure it isn't covered by something else.
-                const coveringItems = this.getGame().inventoryItems.filter(item =>
-                    item.player.name === this.name &&
-                    item.prefab !== null &&
-                    item.equipmentSlot !== "RIGHT HAND" &&
-                    item.equipmentSlot !== "LEFT HAND" &&
-                    item.containerName === "" &&
-                    item.container === null &&
-                    item.prefab.coveredEquipmentSlots.includes(coveredEquipmentSlotId)
-                );
-                if (coveringItems.length === 0) this.addItemToDescription(coveredEquipmentSlot.equippedItem, "equipment");
-                break;
-            }
-        }
-    }
-
-    /**
-     * Displays the player's inventory.
-     * @param {boolean} moderatorView - Whether or not to use the identifier or prefab IDs of the player's inventory items. If this is false, the inventory item's name will be used instead.
-     * @returns {string} A string representation of the player's inventory.
-     */
-    viewInventory(moderatorView) {
-        const equipmentSlotOpener = `[ `;
-        const equipmentSlotCloser = ` ]`;
-        const inventorySlotOpener = `(`;
-        const inventorySlotCloser = `)`;
-        const indent = "  ";
-
-        const possessive = moderatorView ? `${this.name}'s` : `Your`;
-        let itemString = `__${possessive} inventory:__\n`;
-        this.inventory.forEach(equipmentSlot => {
-            itemString += `- \`${equipmentSlot.id}\`: `;
-            const equippedItem = equipmentSlot.equippedItem;
-            if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
-            else {
-                itemString += `${equipmentSlotOpener}${moderatorView ? equippedItem.getIdentifier() : equippedItem.name}${equipmentSlotCloser}\n`;
-                let descendantsCount = 1;
-                /** 
-                 * Generates a display of an inventory item's children.
-                 * @param {string} itemString - A string representation of the inventory item's name.
-                 * @param {InventoryItem} item - The inventory item whose child items are being listed.
-                 */
-                let listChildItems = function (itemString, item) {
-                    // If item is capable of holding other items, show what items it has inside.
-                    item.inventory.forEach(inventorySlot => {
-                        /** @type {number[]} */
-                        let parentItemIndexes = [];
-                        for (let i = 0; i < descendantsCount; i++)
-                            itemString += indent;
-                        itemString += `- \`${inventorySlot.id}\`: `;
-                        if (inventorySlot.items.length === 0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
-                        else {
-                            itemString += inventorySlotOpener;
-                            /** @type {string[]} */
-                            let inventorySlotItemNames = [];
-                            inventorySlot.items.forEach((inventoryItem, i) => {
-                                const childItem = inventoryItem;
-                                const quantityString = childItem.quantity === 1 ? `` : `${childItem.quantity} `;
-                                const childName = moderatorView ? childItem.getIdentifier()
-                                    : childItem.quantity > 1 && childItem.pluralName ? childItem.pluralName
-                                        : childItem.name;
-                                inventorySlotItemNames.push(`${quantityString}${childName}`);
-                                if (childItem.inventory.size !== 0) parentItemIndexes.push(i);
-                            });
-                            itemString += inventorySlotItemNames.join(') (');
-                            itemString += inventorySlotCloser;
-                            for (let i = 0; i < parentItemIndexes.length; i++) {
-                                itemString += `\n`;
-                                descendantsCount++;
-                                itemString = listChildItems(itemString, inventorySlot.items[parentItemIndexes[i]]);
-                                descendantsCount--;
-                            }
-                        }
-                        if (itemString[itemString.length - 1] !== '\n') itemString += '\n';
-                    });
-                    return itemString;
-                };
-                itemString = listChildItems(itemString, equippedItem);
-            }
-        });
-        return itemString.replace(/\n{2,}/g, '\n');
-    }
-
-    /**
-     * Crafts two ingredients into one or two products according to a recipe.
-     * @param {InventoryItem} item1 - The first ingredient.
-     * @param {InventoryItem} item2 - The second ingredient.
-     * @param {Recipe} recipe - The recipe that describes how these ingredients are crafted.
-     * @returns {CraftingResult} The resulting product(s).
-     */
-    craft(item1, item2, recipe) {
-        let product1 = recipe.products[0].prefab;
-        let product2 = recipe.products[1].prefab;
-        // First, check if either of the ingredients are also products.
-        // If they are, simply decrease their uses.
-        // If their uses would become 0, change the product to its next stage, if it has one.
-        /** @type {number} */
-        let item1Uses = null;
-        /** @type {number} */
-        let item2Uses = null;
-        if (product1 && item1.prefab.id === product1.id) {
-            if (item1.uses - 1 === 0) product1 = product1.nextStage;
-            else if (!isNaN(item1.uses)) item1Uses = item1.uses - 1;
-        }
-        else if (product2 && item1.prefab.id === product2.id) {
-            if (item1.uses - 1 === 0) product2 = product2.nextStage;
-            else if (!isNaN(item1.uses)) item2Uses = item1.uses - 1;
-        }
-        if (product1 && item2.prefab.id === product1.id) {
-            if (item2.uses - 1 === 0) product1 = product1.nextStage;
-            else if (!isNaN(item2.uses)) item1Uses = item2.uses - 1;
-        }
-        else if (product2 && item2.prefab.id === product2.id) {
-            if (item2.uses - 1 === 0) product2 = product2.nextStage;
-            else if (!isNaN(item2.uses)) item2Uses = item2.uses - 1;
-        }
-
-        if (!item1.prefab.discreet) this.removeItemFromDescription(item1, "hands");
-        if (!item2.prefab.discreet) this.removeItemFromDescription(item2, "hands");
-        itemManager.replaceInventoryItem(item1, product1);
-        itemManager.replaceInventoryItem(item2, product2);
-        if (item1Uses !== null)
-            item1.uses = item1Uses;
-        if (item2Uses !== null)
-            item2.uses = item2Uses;
-        if (product1 && !product1.discreet) this.addItemToDescription(item1, "hands");
-        if (product2 && !product2.discreet) this.addItemToDescription(item2, "hands");
-
-        return { product1: product1 ? item1 : null, product2: product2 ? item2 : null };
-    }
-
-    /**
-     * Reverses a crafting recipe to convert a single product into two ingredients.
-     * @param {InventoryItem} item - The product to uncraft.
-     * @param {Recipe} recipe - The recipe that describes how this product is crafted.
-     * @returns {UncraftingResult} The resulting ingredients.
-     */
-    uncraft(item, recipe) {
-        // If only one ingredient is discreet, the first ingredient should be the discreet one.
-        const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet || recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
-        let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
-        let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
-
-        if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
-        const rightHand = this.inventory.get("RIGHT HAND");
-        const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
+	 * Instantiates an inventory item in the player's inventory.
+     * @protected
+	 * @param {Prefab} prefab - The prefab to instantiate.
+	 * @param {number} quantity - The quantity of the prefab to instantiate.
+	 * @param {number} uses - The number of uses to instantiate the prefab with. Defaults to the prefab's number of uses.
+	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+	 * @param {InventoryItem} [container] - The container to instantiate the prefab into. Defaults to null.
+	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+	 * @returns The instantiated inventory item.
+	 */
+    instantiate(prefab, quantity, uses = prefab.uses, proceduralSelections = new Map(), container = null, inventorySlotId = "") {
+        const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
         const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
-        const ingredient2Instance = instantiateAction.performInstantiateInventoryItem(
-            ingredient2.prefab,
-            rightHand.equippedItem === null ? "RIGHT HAND" : "LEFT HAND",
-            null,
-            "",
-            1,
-            new Map(),
-            false
-        );
-        if (!ingredient1.prefab.discreet)
-            this.addItemToDescription(ingredient1Instance, "hands");
-        if (!ingredient2.prefab.discreet)
-            this.addItemToDescription(ingredient2Instance, "hands");
-
-        return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
+        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
     }
 
-    /**
-     * Returns the player's inventory item whose prefab ID matches the given ID, if it exists.
-     * @param {string} id - The prefab ID to search for.
-     * @returns {InventoryItem}
-     */
-    findItem(id) {
-        return this.getGame().inventoryItems.find(item =>
-            item.player.name === this.name &&
-            item.prefab !== null &&
-            item.quantity > 0 &&
-            item.prefab.id === id
-        );
-    }
+	/**
+	 * Returns the player's inventory item whose prefab ID matches the given ID, if it exists.
+	 * @param {string} id - The prefab ID to search for.
+	 * @returns {InventoryItem}
+	 */
+	findItem(id) {
+		return this.getGame().inventoryItems.find(item =>
+			item.player.name === this.name &&
+			item.prefab !== null &&
+			item.quantity > 0 &&
+			item.prefab.id === id
+		);
+	}
+
+	/**
+	 * Returns true if the player has an inventory item with the given prefab ID.
+	 * @param {string} id - The prefab ID to search for.
+	 * @returns {boolean}
+	 */
+	hasItem(id) {
+		return !!this.findItem(id);
+	}
+
+	/**
+	 * Gets the equipment slot in the player's inventory with the given ID. If it doesn't exist, returns undefined.
+	 * @param {string} equipmentSlotId - The equipment slot ID to search for.
+	 */
+	getEquipmentSlot(equipmentSlotId) {
+		return this.inventory.get(equipmentSlotId);
+	}
+
+	/**
+	 * Returns true if the player has an item with the given identifier equipped to the given equipment slot.
+	 * @param {string} identifier - The item identifier to search for.
+	 * @param {string} equipmentSlotId - The equipment slot ID it should be equipped to.
+	 */
+	hasEquippedItem(identifier, equipmentSlotId) {
+		const equippedItem = this.getEquipmentSlot(equipmentSlotId)?.equippedItem;
+		if (!equippedItem) return false;
+		return itemIdentifierMatches(equippedItem, identifier, true);
+	}
 
     /**
-     * Returns true if the player has an inventory item with the given prefab ID.
-     * @param {string} id - The prefab ID to search for. 
-     * @returns {boolean}
+     * Returns an array of CollatedItems for the given items.
+     * @param {InventoryItem[]} items
      */
-    hasItem(id) {
-        return !!this.findItem(id);
-    }
-
-    /**
-     * Gets the equipment slot in the player's inventory with the given ID. If it doesn't exist, returns undefined.
-     * @param {string} equipmentSlotId - The equipment slot ID to search for.
-     */
-    getEquipmentSlot(equipmentSlotId) {
-        return this.inventory.get(equipmentSlotId);
-    }
-
-    /**
-     * Returns true if the player has an item with the given identifier equipped to the given equipment slot.
-     * @param {string} identifier - The item identifier to search for.
-     * @param {string} equipmentSlotId - The equipment slot ID it should be equipped to.
-     */
-    hasEquippedItem(identifier, equipmentSlotId) {
-        const equippedItem = this.getEquipmentSlot(equipmentSlotId)?.equippedItem;
-        if (!equippedItem) return false;
-        return itemIdentifierMatches(equippedItem, identifier, true);
+    #collateItems(items) {
+		/** @type {InventoryItem[]} */
+		const childItems = [];
+		for (const item of items)
+			itemManager.getChildItems(childItems, item);
+		for (const childItem of childItems) {
+			if (!items.includes(childItem))
+				items.push(childItem);
+		}
+		return CollatedItem.collate(items);
     }
 
 	/**
@@ -1544,138 +1550,128 @@ export default class Player extends ItemContainer {
 	 * @param {[InventoryItem, InventoryItem]} itemsInHands - The two items in the player's hands.
 	 */
 	canCraft(recipe, itemsInHands) {
-		let items = [...itemsInHands];
-		/** @type {InventoryItem[]} */
-		const childItems = [];
-		for (const item of itemsInHands)
-			itemManager.getChildItems(childItems, item);
-		for (const childItem of childItems) {
-			if (!items.includes(childItem))
-				items.push(childItem);
-		}
-		items = getSortedItems(items);
-		return recipe.ingredientsMatch(items);
+		return recipe.ingredientsMatch(this.#collateItems([...itemsInHands]));
 	}
 
-    /**
-     * Kills the player.
-     * @param {Action} action - The action that caused the player to die.
-     */
-    die(action) {
-        this.location.removePlayer(this);
-        const whisperRemovalMessage = this.getGame().notificationGenerator.generateDieNotification(this, false);
+	/**
+	 * Kills the player.
+	 * @param {Action} action - The action that caused the player to die.
+	 */
+	die(action) {
+		this.location.removePlayer(this);
+		const whisperRemovalMessage = this.getGame().notificationGenerator.generateDieNotification(this, false);
 		this.removeFromWhispers(whisperRemovalMessage, action);
-        // Update various data.
-        this.alive = false;
-        this.location = null;
-        this.hidingSpot = "";
-        this.statusDisplays.length = 0;
-        this.stopMoving();
-        for (const status of this.status.values()) {
-            if (status.timer !== null)
-                status.timer.stop();
-        }
-        this.status.clear();
-        // Move player to dead list.
-        this.getGame().deadPlayers.set(this.name, this);
-        // Then remove them from living list.
-        this.getGame().livingPlayers.delete(this.name);
-    }
+		// Update various data.
+		this.alive = false;
+		this.location = null;
+		this.hidingSpot = "";
+		this.statusDisplays.length = 0;
+		this.stopMoving();
+		for (const status of this.status.values()) {
+			if (status.timer !== null)
+				status.timer.stop();
+		}
+		this.status.clear();
+		// Move player to dead list.
+		this.getGame().deadPlayers.set(this.name, this);
+		// Then remove them from living list.
+		this.getGame().livingPlayers.delete(this.name);
+	}
 
-    /**
-     * Removes the player from all whispers they're in.
-     * @param {string} narration - The text of the narration to send in the whisper channel when the player is removed.
-     * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
-     */
-    removeFromWhispers(narration, action) {
-        for (const whisper of this.getGame().whispers.values()) {
-            if (whisper.players.has(this.name))
-                whisper.removePlayer(this, narration, action);
-        }
-    }
+	/**
+	 * Removes the player from all whispers they're in.
+	 * @param {string} narration - The text of the narration to send in the whisper channel when the player is removed.
+	 * @param {Action} [action] - The action that caused the player to be removed. If a narration is supplied, this is required.
+	 */
+	removeFromWhispers(narration, action) {
+		for (const whisper of this.getGame().whispers.values()) {
+			if (whisper.players.has(this.name))
+				whisper.removePlayer(this, narration, action);
+		}
+	}
 
-    /**
-     * Sends a description to the player.
-     * @param {string} descriptionString - The already-parsed description to send.
-     * @param {GameEntity} container - The game entity the description belongs to.
-     * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
-     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
-     */
-    sendDescription(descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, interactables = []) {
-        if (descriptionString && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().communicationHandler.sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
-    }
+	/**
+	 * Sends a description to the player.
+	 * @param {string} descriptionString - The already-parsed description to send.
+	 * @param {GameEntity} container - The game entity the description belongs to.
+	 * @param {MessageDisplayType} [messageDisplayType] - The display type of the message to send. Defaults to PLAIN_TEXT.
+	 * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+	 */
+	sendDescription(descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, interactables = []) {
+		if (descriptionString && !this.isNPC && (this.isConscious() || container instanceof Status))
+			this.getGame().communicationHandler.sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
+	}
 
-    /**
-     * Sends an already-parsed room description to the player.
-     * @param {Room} room - The room the description is for.
-     * @param {string} roomDescriptionString - The already-parsed room description.
-     * @param {string} occupantsString - A list of occupants in the room.
-     * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
-     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
-     */
-    sendRoomDescription(room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
-        if (roomDescriptionString && !this.isNPC && this.isConscious())
-            this.getGame().communicationHandler.sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables);
-    }
+	/**
+	 * Sends an already-parsed room description to the player.
+	 * @param {Room} room - The room the description is for.
+	 * @param {string} roomDescriptionString - The already-parsed room description.
+	 * @param {string} occupantsString - A list of occupants in the room.
+	 * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
+	 * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+	 */
+	sendRoomDescription(room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
+		if (roomDescriptionString && !this.isNPC && this.isConscious())
+			this.getGame().communicationHandler.sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables);
+	}
 
-    /**
-     * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {Notification} notification - The notification to send.
-     */
-    notify(notification) {
-        if (this.isConscious() && !this.isNPC)
-            this.getGame().communicationHandler.notifyPlayer(notification);
-    }
+	/**
+	 * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
+	 * @param {Notification} notification - The notification to send.
+	 */
+	notify(notification) {
+		if (this.isConscious() && !this.isNPC)
+			this.getGame().communicationHandler.notifyPlayer(notification);
+	}
 
-    /**
-     * Sets the player as online and initiates a timer that will mark them as offline after 15 minutes of inactivity.
-     */
-    setOnline() {
-        if (this.isNPC) return;
-        this.online = true;
-        // Clear the existing timeout.
-        if (this.onlineInterval)
-            clearTimeout(this.onlineInterval);
-        // Set the player as offline after 15 minutes of inactivity.
-        let player = this;
-        this.onlineInterval = setTimeout(
-            () => player.setOffline(),
-            15 * 60000
-        );
-    }
+	/**
+	 * Sets the player as online and initiates a timer that will mark them as offline after 15 minutes of inactivity.
+	 */
+	setOnline() {
+		if (this.isNPC) return;
+		this.online = true;
+		// Clear the existing timeout.
+		if (this.onlineInterval)
+			clearTimeout(this.onlineInterval);
+		// Set the player as offline after 15 minutes of inactivity.
+		let player = this;
+		this.onlineInterval = setTimeout(
+			() => player.setOffline(),
+			15 * 60000
+		);
+	}
 
-    /**
-     * Sets the player as offline.
-     */
-    setOffline() {
-        if (this.isNPC) return;
-        this.online = false;
-        if (this.onlineInterval)
-            clearTimeout(this.onlineInterval);
-    }
+	/**
+	 * Sets the player as offline.
+	 */
+	setOffline() {
+		if (this.isNPC) return;
+		this.online = false;
+		if (this.onlineInterval)
+			clearTimeout(this.onlineInterval);
+	}
 
-    /** @returns {string} */
-    descriptionCell() {
-        return this.getGame().constants.playerSheetDescriptionColumn + this.row;
-    }
+	/** @returns {string} */
+	descriptionCell() {
+		return this.getGame().constants.playerSheetDescriptionColumn + this.row;
+	}
 
-    /**
-     * Converts the name of a stat to its abbreviated form in all lowercase.
-     * @param {string} statName 
-     */
-    static abbreviateStatName(statName) {
-        statName = statName.toLowerCase().trim();
-        if (statName === "strength")
-            return "str";
-        else if (statName === "perception" || statName === "intelligence" || statName === "int")
-            return "per";
-        else if (statName === "dexterity")
-            return "dex";
-        else if (statName === "speed")
-            return "spd";
-        else if (statName === "stamina")
-            return "sta";
-        else return statName;
-    }
+	/**
+	 * Converts the name of a stat to its abbreviated form in all lowercase.
+	 * @param {string} statName
+	 */
+	static abbreviateStatName(statName) {
+		statName = statName.toLowerCase().trim();
+		if (statName === "strength")
+			return "str";
+		else if (statName === "perception" || statName === "intelligence" || statName === "int")
+			return "per";
+		else if (statName === "dexterity")
+			return "dex";
+		else if (statName === "speed")
+			return "spd";
+		else if (statName === "stamina")
+			return "sta";
+		else return statName;
+	}
 }

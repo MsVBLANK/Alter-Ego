@@ -8,25 +8,21 @@ import type ActionDirective from "../ActionDirective.ts";
 export default abstract class Interactable {
 	/**
 	 * The type of interactive message component to create.
-	 * @readonly
      */
-	type: InteractableType;
+    readonly type: InteractableType;
 	/**
 	 * The action directive for this interactable.
-	 * @readonly
 	 * @type {ActionDirective}
 	 */
-	actionDirective: ActionDirective;
+    readonly actionDirective: ActionDirective;
 	/**
 	 * The customId of the component.
-	 * @readonly
 	 */
-	customId: string;
+    readonly customId: string;
 	/**
 	 * The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
-	 * @readonly
 	 */
-	priority: number;
+    readonly priority: number;
 
 	/**
 	 * @constructor
@@ -34,14 +30,14 @@ export default abstract class Interactable {
 	 * @param actionDirective - The action directive for this interactable.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
 	 */
-	constructor(type: InteractableType, actionDirective: ActionDirective, priority: number) {
+    protected constructor(type: InteractableType, actionDirective: ActionDirective, priority: number) {
 		this.type = type;
 		this.actionDirective = actionDirective;
 		this.customId = actionDirective.customId;
 		this.priority = priority;
 	}
 
-	/** 
+	/**
 	 * Sets the interactable as disabled.
 	 */
 	abstract disable(): void;

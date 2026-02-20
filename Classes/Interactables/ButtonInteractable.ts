@@ -10,19 +10,16 @@ import type ActionDirective from "../ActionDirective.ts";
 export default class ButtonInteractable extends Interactable {
 	/**
 	 * The label of the component.
-	 * @readonly
 	 */
-	label: string;
+    readonly label: string;
 	/**
 	 * The style to apply to the button.
-	 * @readonly
 	 */
-	style: ButtonStyle;
+    readonly style: ButtonStyle;
 	/**
 	 * The button component created from this interactable.
-	 * @readonly
 	 */
-	component: ButtonBuilder;
+    readonly component: ButtonBuilder;
 
 	/**
 	 * @constructor
@@ -38,7 +35,7 @@ export default class ButtonInteractable extends Interactable {
 		this.component = new ButtonBuilder().setCustomId(this.customId).setLabel(this.label).setStyle(this.style);
 	}
 
-	/** 
+	/**
 	 * Sets the interactable as disabled.
 	 */
 	disable() {

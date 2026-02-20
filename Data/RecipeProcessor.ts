@@ -19,7 +19,7 @@ export default abstract class RecipeProcessor extends ItemContainer {
      * @param row  - The row number of the entity in the sheet.
      * @param description - A description which can contain an item list.
      */
-    constructor(game: Game, row: number, description: string) {
+    protected constructor(game: Game, row: number, description: string) {
         super(game, row, description);
     }
 

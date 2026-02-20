@@ -18,11 +18,11 @@ export default abstract class ItemContainer extends GameEntity {
 
 	/**
 	 * @constructor
-	 * @param game - The game this entity belongs to. 
+	 * @param game - The game this entity belongs to.
 	 * @param row - The row number of this entity on the spreadsheet.
 	 * @param description - A description which can contain at least one item list.
 	 */
-	constructor(game: Game, row: number, description: string) {
+	protected constructor(game: Game, row: number, description: string) {
 		super(game, row);
 		this.description = new Description(description, this, game);
 	}

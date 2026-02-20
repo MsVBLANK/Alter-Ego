@@ -26,29 +26,25 @@ import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 export default class BotInteractableManager {
 	/**
 	 * The game this belongs to.
-	 * @readonly
 	 */
-	#game: Game;
+    readonly #game: Game;
 	/**
 	 * A cache of recently-created Interactables, indexed by their custom IDs.
 	 * This is used to look up Interactables when an interaction is received.
 	 */
-	#interactableCache: Collection<string, Interactable>;
+	readonly #interactableCache: Collection<string, Interactable>;
 	/**
 	 * The maximum number of Interactables to keep in the cache at once. If the cache exceeds this size, the oldest Interactable will be removed.
-	 * @readonly
 	 */
-	#interactableCacheSizeLimit = 500;
+	readonly #interactableCacheSizeLimit = 500;
 	/**
 	 * A cache of messages with Interactables, indexed by message ID. This is used to keep track of which messages have interactables on them, so that we can disable those interactables when they're no longer valid.
-	 * @readonly
 	 */
-	#interactableMessageCache: Collection<InteractableMessage, string[]>;
+    readonly #interactableMessageCache: Collection<InteractableMessage, string[]>;
 	/**
 	 * The maximum number of Interactable messages to keep in the cache at once. If the cache exceeds this size, the oldest message will be removed.
-	 * @readonly
 	 */
-	#interactableMessageCacheSizeLimit = 50;
+    readonly #interactableMessageCacheSizeLimit = 50;
 
 	/**
 	 * @constructor
@@ -62,7 +58,7 @@ export default class BotInteractableManager {
 
 	/**
 	 * Gets an interactable from the cache by its custom ID.
-	 * @param customId 
+	 * @param customId
 	 */
 	getInteractableByCustomId(customId: string) {
 		return this.#interactableCache.get(customId);
@@ -71,7 +67,7 @@ export default class BotInteractableManager {
 	/**
 	 * Adds an interactable to the cache, removing the oldest one if the cache size limit is exceeded.
 	 * Interactables are valid for 5 minutes after being added. They are automatically removed from the cache after this time.
-	 * @param interactable 
+	 * @param interactable
 	 */
 	addInteractable(interactable: Interactable) {
 		if (this.#interactableCache.size >= this.#interactableCacheSizeLimit)
@@ -83,7 +79,7 @@ export default class BotInteractableManager {
 
 	/**
 	 * Disables an interactable and removes it from the cache by its custom ID.
-	 * @param customId 
+	 * @param customId
 	 */
 	disableInteractable(customId: string) {
 		const interactable = this.#interactableCache.get(customId);
@@ -132,7 +128,7 @@ export default class BotInteractableManager {
 		if (!channel.isTextBased()) return;
 		return await channel.messages.fetch(interactableMessage.messageId);
 	}
-	
+
 	/**
 	 * Creates QueueMoveAction interactables for a list of exits and adds them to the cache.
 	 * @param exits - A list of exits to create interactables for.

@@ -11,19 +11,16 @@ import type ActionDirective from "../ActionDirective.ts";
 export default class StringSelectMenuInteractable extends Interactable {
 	/**
 	 * An array of options. Maximum size is 25.
-	 * @readonly
 	 */
-	options: StringSelectMenuOptionInteractable[];
+    readonly options: StringSelectMenuOptionInteractable[];
 	/**
 	 * The placeholder to apply for the string select menu.
-	 * @readonly
 	 */
-	placeholder: string;
+    readonly placeholder: string;
 	/**
 	 * The string select menu component created from this interactable.
-	 * @readonly
 	 */
-	component: StringSelectMenuBuilder;
+    readonly component: StringSelectMenuBuilder;
 
 	/**
 	 * @constructor
@@ -43,7 +40,7 @@ export default class StringSelectMenuInteractable extends Interactable {
 		if (this.placeholder) this.component.setPlaceholder(this.placeholder);
 	}
 
-	/** 
+	/**
 	 * Sets the interactable as disabled.
 	 */
 	disable() {

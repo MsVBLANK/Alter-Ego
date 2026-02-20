@@ -9,15 +9,13 @@ import type RoomItem from "./RoomItem.js";
 export default class InventorySlot<T extends ItemInstance | RoomItem | InventoryItem> {
 	/**
 	 * The ID of the slot. Must be unique relative to other slots held by the same item.
-	 * @readonly
 	 */
-	id: string;
+    readonly id: string;
 	/**
 	 * The name of the slot. Deprecated. Use `id` instead.
 	 * @deprecated
-	 * @readonly
 	 */
-	name: string;
+    readonly name: string;
 	/**
 	 * Maximum sum of sizes that can be stored in the slot.
 	 */
@@ -37,9 +35,8 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 	/**
 	 * The items stored in the slot. Deprecated. Use `items` instead.
 	 * @deprecated
-	 * @readonly
 	 */
-	item: Array<T>;
+    readonly item: Array<T>;
 
 	/**
 	 * @constructor
@@ -59,7 +56,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 		this.item = [];
 	}
 
-	/** 
+	/**
 	 * Inserts an item into this slot.
 	 * @param item - The item to insert.
 	 */
@@ -82,7 +79,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Removes an item from this slot.
-	 * @param item - The item to remove. 
+	 * @param item - The item to remove.
 	 * @param removedQuantity - The quantity of this item to remove.
 	 */
 	removeItem(item: T, removedQuantity: number) {
@@ -112,7 +109,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Returns true if the inventory slot's capacity is smaller than the given item.
-	 * @param item 
+	 * @param item
 	 */
 	capacityIsSmallerThan(item: ItemInstance) {
 		return item.prefab.size > this.capacity;
@@ -120,7 +117,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Returns true if the inventory slot will be over capacity if it takes the given item.
-	 * @param item 
+	 * @param item
 	 */
 	willBeOverFilledBy(item: ItemInstance) {
 		return this.takenSpace + item.prefab.size > this.capacity;

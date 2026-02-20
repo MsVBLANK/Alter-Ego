@@ -14,54 +14,47 @@ import type Game from "./Game.js";
 export default abstract class Action extends GameConstruct {
 	/**
 	 * The unique ID of this action.
-	 * @readonly
 	 */
-	id: string;
+    readonly id: string;
 	/**
 	 * The message that initiated the action.
-	 * @readonly
 	 */
-	message: UserMessage;
+    readonly message: UserMessage;
 	/**
 	 * The player performing the action.
-	 * @readonly
 	 */
-	player: Player;
+    readonly player: Player;
 	/**
 	 * The location where this action is being performed.
-	 * @readonly
 	 */
-	location: Room;
+    readonly location: Room;
 	/**
 	 * Whether or not the action was performed by someone other than the player themselves.
-	 * @readonly
 	 */
-	forced: boolean;
+    readonly forced: boolean;
 	/**
 	 * The whisper where this action is being performed, if applicable.
-	 * @readonly
 	 */
-	whisper: Whisper;
+    readonly whisper: Whisper;
 	/**
 	 * Whether the action has already been performed. If this is true, the action cannot be performed again.
 	 */
 	protected performed: boolean;
 	/**
 	 * A set of channel IDs this action has already been communicated in. This is used to ensure that actions are not communicated in the same place twice.
-	 * @private
 	 */
-	mirrors: Set<string>;
+	private mirrors: Set<string>;
 
 	/**
 	 * @constructor
 	 * @param game - The game this belongs to.
-	 * @param message - The message that initiated the action. 
+	 * @param message - The message that initiated the action.
 	 * @param player - The player performing the action.
 	 * @param location - The location where this action is being performed.
 	 * @param forced - Whether or not the action was performed by someone other than the player themselves.
 	 * @param whisper - The whisper where this action is being performed, if applicable.
 	 */
-	constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
+	protected constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
 		super(game);
 		this.message = message;
 		this.player = player;

@@ -14,9 +14,8 @@ import type RecipeItem from "./RecipeItem.js";
 export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * The ID of the prefab this item is an instance of.
-	 * @readonly
 	 */
-	prefabId: string;
+    readonly prefabId: string;
 	/**
 	 * The prefab this item is an instance of.
 	 */
@@ -86,7 +85,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	 * @param quantity - How many identical instances of this item are in the given container.
 	 * @param uses - The number of times this item can be used.
 	 */
-	constructor(game: Game, row: number, description: string, prefabId: string, identifier: string, containerType: string, containerName: string, quantity: number, uses: number) {
+	protected constructor(game: Game, row: number, description: string, prefabId: string, identifier: string, containerType: string, containerName: string, quantity: number, uses: number) {
 		super(game, row, description);
 		this.prefabId = prefabId;
 		this.identifier = identifier;
@@ -157,7 +156,7 @@ export default abstract class ItemInstance extends ItemContainer {
 
 	/**
 	 * Returns true if the item instance's container matches the given recipe item's container.
-	 * @param recipeItem 
+	 * @param recipeItem
 	 */
 	containerMatches(recipeItem: RecipeItem) {
 		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;

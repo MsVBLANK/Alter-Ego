@@ -10,9 +10,8 @@ import type ActionDirective from "../ActionDirective.ts";
 export default class StringSelectMenuOptionInteractable extends Interactable{
 	/**
 	 * The label of the component.
-	 * @readonly
 	 */
-	label: string;
+    readonly label: string;
 	/**
 	 * The value to apply for the string select menu option.
 	 */
@@ -23,9 +22,8 @@ export default class StringSelectMenuOptionInteractable extends Interactable{
 	description: string;
 	/**
 	 * The string select menu option component created from this interactable.
-	 * @readonly
 	 */
-	component: StringSelectMenuOptionBuilder;
+    readonly component: StringSelectMenuOptionBuilder;
 
 	/**
 	 * @constructor
@@ -44,7 +42,7 @@ export default class StringSelectMenuOptionInteractable extends Interactable{
 		if (this.description) this.component.setDescription(this.description);
 	}
 
-	/** 
+	/**
 	 * Sets the interactable as disabled.
 	 */
 	disable() {}

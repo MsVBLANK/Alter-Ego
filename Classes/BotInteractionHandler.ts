@@ -17,9 +17,8 @@ import type { Interaction, InteractionCallbackResponse } from "discord.js"
 export default class BotInteractionHandler {
 	/**
 	 * The game this belongs to.
-	 * @readonly
 	 */
-	#game: Game;
+    readonly #game: Game;
 
 	/**
 	 * @constructor

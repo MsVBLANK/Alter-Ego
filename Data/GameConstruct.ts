@@ -7,15 +7,14 @@ import type Game from "./Game.js";
 export default abstract class GameConstruct {
 	/**
 	 * The game this construct belongs to.
-	 * @readonly
 	 */
-	#game: Game;
+    readonly #game: Game;
 
 	/**
 	 * @constructor
 	 * @param game - The game this construct belongs to.
 	 */
-	constructor(game: Game) {
+	protected constructor(game: Game) {
 		this.#game = game;
 	}
 

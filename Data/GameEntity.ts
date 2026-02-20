@@ -14,10 +14,10 @@ export default abstract class GameEntity extends GameConstruct {
 
 	/**
 	 * @constructor
-	 * @param game - The game this entity belongs to. 
+	 * @param game - The game this entity belongs to.
 	 * @param row - The row number of this entity on the spreadsheet.
 	 */
-	constructor(game: Game, row: number) {
+	protected constructor(game: Game, row: number) {
 		super(game);
 		this.row = row;
 	}

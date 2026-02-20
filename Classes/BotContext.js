@@ -1,5 +1,5 @@
 import { ActivityType, Collection } from "discord.js";
-import PrettyPrinter from "./PrettyPrinter.js";
+import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
 

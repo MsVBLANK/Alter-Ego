@@ -135,11 +135,11 @@ expect.extend({
     toBeMessageWith
 });
 
-import { PolyPlugin } from "../Classes/PrettyPrinter.js";
+import { PolyPlugin } from "../Classes/PrettyPrinter.ts";
 const polyPlugin = new PolyPlugin()
 
 plugins.DOMElement.test = polyPlugin.test;
-plugins.DOMElement.serialize = polyPlugin.serialize;
+plugins.DOMElement.serialize = /** @type {typeof plugins.DOMElement.serialize} */ (polyPlugin.serialize);
 plugins.DOMCollection.test = () => false;
 plugins.DOMCollection.serialize = () => "";
 plugins.ReactElement.test = () => false;

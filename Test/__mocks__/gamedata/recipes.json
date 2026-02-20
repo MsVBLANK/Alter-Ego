@@ -492,5 +492,6 @@
   [ "1 BANANA MILKSHAKE [2]", "", "blender", "1m", "", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s> <s>A fine mist of aerosolized banana milkshake escapes.</s></desc>" ],
   [ "APPLE, ORANGE", "", "", "", "APPLE ORANGE SMOOTHIE [2]", "", "<desc><s>You do something very scary with your hands.</s> <s>The APPLE and ORANGE previously in your hands are now an APPLE ORANGE SMOOTHIE.</s></desc>" ],
   [ "POT, RAW EGG", "", "", "", "POT (RAW EGG)", "", "<desc><s>You put a single egg inside of the pot.</s></desc>" ],
-  [ "POT, ORANGE JUICE [1X]", "", "", "", "POT (ORANGE JUICE [1X])", "", "<desc><s>You put the orange juice inside of the pot.</s></desc>" ]
+  [ "POT, ORANGE JUICE [1X]", "", "", "", "POT (ORANGE JUICE [1X])", "", "<desc><s>You put the orange juice inside of the pot.</s></desc>" ],
+  [ "ORANGE JUICE [1X], TAMPON", "", "", "", "MILK [1X], TAMPON", "", "<desc><s>You transmute the ORANGE JUICE into MILK, with nothing but a TAMPON.</s></desc>" ]
 ]

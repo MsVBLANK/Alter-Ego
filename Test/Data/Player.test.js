@@ -81,5 +81,32 @@ describe('Player test', () => {
 			expect(orangeJuiceItem.uses).toBe(4);
 			expect(orangeJuiceItem.quantity).toBe(1);
 		});
+
+		test('Hand-crafting 4', () => {
+			const player = game.entityFinder.getPlayer('Kiara');
+			let tamponSlot = game.entityFinder.getPlayerHandHoldingItem(player, 'TAMPON');
+			const orangeJuiceSlot = game.entityFinder.getPlayerHandHoldingItem(player, 'ORANGE JUICE');
+			expect(tamponSlot).not.toBeUndefined();
+			expect(orangeJuiceSlot).not.toBeUndefined();
+			expect(tamponSlot.equippedItem).not.toBeUndefined();
+			expect(orangeJuiceSlot.equippedItem).not.toBeUndefined();
+			expect(tamponSlot.equippedItem.uses).toBe(NaN);
+			expect(orangeJuiceSlot.equippedItem.uses).toBe(4);
+			expect(tamponSlot.equippedItem.quantity).toBe(1);
+			expect(orangeJuiceSlot.equippedItem.quantity).toBe(1);
+			const recipe = game.entityFinder.getRecipes('crafting', '', 'tampon, orange juice', 'tampon, milk')[0];
+			expect(recipe).not.toBeUndefined();
+			player.craft(recipe);
+			tamponSlot = game.entityFinder.getPlayerHandHoldingItem(player, 'TAMPON');
+			expect(tamponSlot).not.toBeUndefined();
+			expect(tamponSlot.equippedItem).not.toBeUndefined();
+			expect(tamponSlot.equippedItem.uses).toBe(NaN);
+			expect(tamponSlot.equippedItem.quantity).toBe(1);
+			const milkSlot = game.entityFinder.getPlayerHandHoldingItem(player, 'MILK');
+			expect(milkSlot).not.toBeUndefined();
+			expect(milkSlot.equippedItem).not.toBeUndefined();
+			expect(milkSlot.equippedItem.uses).toBe(4);
+			expect(milkSlot.equippedItem.quantity).toBe(1);
+		});
 	});
 });

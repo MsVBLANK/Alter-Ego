@@ -1,5 +1,5 @@
 import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 import EndAction from './Actions/EndAction.js';
 import InflictAction from './Actions/InflictAction.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';

@@ -1,5 +1,5 @@
 import Game from "./Game.js";
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 /**
  * @import CollatedItem from "./CollatedItem.ts";
  * @import Prefab from "./Prefab.js";

@@ -1,11 +1,11 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import InventoryItem from "../InventoryItem.js";
 import { addPages, getSortedItems } from "../../Modules/helpers.ts";
 import { createPaginatedEmbed } from "../../Modules/discordUtils.js";
 /**
  * @typedef {{ recipe: Recipe, uncrafting: boolean }} DoableRecipe
  * @typedef {{ type: "crafting"|"uncrafting"|"processing", ingredients: string, products: string, fixtures: string, duration: string }} RecipeListEntry
- * @import ItemInstance from "../ItemInstance.js";
+ * @import ItemInstance from "../ItemInstance.ts";
  * @import Recipe from "../Recipe.js";
  * @import { MessageReaction, User } from "discord.js";
  */

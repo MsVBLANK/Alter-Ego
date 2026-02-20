@@ -1,9 +1,7 @@
-import Interactable from "./Interactable.js";
+import Interactable from "./Interactable.ts";
 import { InteractableType } from "../../Modules/enums.js";
 import { StringSelectMenuOptionBuilder } from "discord.js";
-/**
- * @import ActionDirective from "../ActionDirective.ts";
- */
+import type ActionDirective from "../ActionDirective.ts";
 
 /**
  * @class StringSelectMenuOptionInteractable
@@ -13,35 +11,31 @@ export default class StringSelectMenuOptionInteractable extends Interactable{
 	/**
 	 * The label of the component.
 	 * @readonly
-	 * @type {string}
 	 */
-	label;
+	label: string;
 	/**
 	 * The value to apply for the string select menu option.
-	 * @type {string}
 	 */
-	value;
+	value: string;
 	/**
 	 * The description to apply for the string select menu option.
-	 * @type {string}
 	 */
-	description;
+	description: string;
 	/**
 	 * The string select menu option component created from this interactable.
 	 * @readonly
-	 * @type {StringSelectMenuOptionBuilder}
 	 */
-	component;
+	component: StringSelectMenuOptionBuilder;
 
 	/**
 	 * @constructor
-	 * @param {ActionDirective} actionDirective - The action directive of the interactable.
-	 * @param {string} label - The label of the component.
-	 * @param {string} value - The value of the component.
-	 * @param {string} [description] - The description of the component. Optional.
-	 * @param {number} [priority] - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
+	 * @param actionDirective - The action directive of the interactable.
+	 * @param label - The label of the component.
+	 * @param value - The value of the component.
+	 * @param description - The description of the component. Optional.
+	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
 	 */
-	constructor(actionDirective, label, value, description, priority) {
+	constructor(actionDirective: ActionDirective, label: string, value: string, description?: string, priority: number = 1) {
 		super(InteractableType.STRING_SELECT_MENU_OPTION, actionDirective, priority);
 		this.label = label;
 		this.value = value;

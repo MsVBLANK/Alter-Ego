@@ -6,7 +6,7 @@ import DropAction from "../Data/Actions/DropAction.js";
 import StashAction from "../Data/Actions/StashAction.js";
 import UnstashAction from "../Data/Actions/UnstashAction.js";
 import type Game from "../Data/Game.js";
-import type Interactable from "./Interactables/Interactable.js";
+import type Interactable from "./Interactables/Interactable.ts";
 import type Player from "../Data/Player.js";
 import type { Interaction, InteractionCallbackResponse } from "discord.js"
 

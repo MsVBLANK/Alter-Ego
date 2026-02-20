@@ -5,7 +5,7 @@ import type Event from "./Data/Event.js";
 import type Fixture from "./Data/Fixture.js";
 import type Flag from "./Data/Flag.js";
 import type Game from "./Data/Game.js";
-import type GameEntity from "./Data/GameEntity.js";
+import type GameEntity from "./Data/GameEntity.ts";
 import type InventoryItem from "./Data/InventoryItem.js";
 import type Player from "./Data/Player.js";
 import type Puzzle from "./Data/Puzzle.js";
@@ -14,6 +14,7 @@ import type Room from "./Data/Room.js";
 import type RoomItem from "./Data/RoomItem.js";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
+import type Exit from "./Data/Exit.js";
 
 export { };
 
@@ -54,6 +55,11 @@ declare global {
 	 * Represents an inspectable game entity.
 	 */
 	type Inspectable = Room|Fixture|RoomItem|InventoryItem|Player;
+
+    /**
+     * Represents a game entity that can be used as a target for gestures.
+     */
+    type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.

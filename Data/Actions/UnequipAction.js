@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */
 /** @import InventoryItem from "../InventoryItem.js" */

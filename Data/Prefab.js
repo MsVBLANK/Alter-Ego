@@ -1,9 +1,9 @@
 ﻿import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 import { Collection } from 'discord.js';
 
 /** @import Game from './Game.js' */
-/** @import InventorySlot from './InventorySlot.js' */
+/** @import InventorySlot from './InventorySlot.ts' */
 /** @import Status from './Status.js' */
 
 /**

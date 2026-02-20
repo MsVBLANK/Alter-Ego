@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
 /** @import Fixture from "../Fixture.js" */
 

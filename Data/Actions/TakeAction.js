@@ -1,7 +1,7 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import AttemptAction from "./AttemptAction.js";
 import Fixture from "../Fixture.js";
-import InventorySlot from "../InventorySlot.js";
+import InventorySlot from "../InventorySlot.ts";
 import Puzzle from "../Puzzle.js";
 import RoomItem from "../RoomItem.js";
 import { getSortedItemsString } from "../../Modules/helpers.ts";
@@ -19,7 +19,7 @@ export default class TakeAction extends Action {
 	 * Performs a take action.
 	 * @param {RoomItem} item - The room item to take. 
 	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the item in.
-     * @param {Puzzle|Fixture|RoomItem} container - The item's current container.
+     * @param {RoomItemContainer} container - The item's current container.
      * @param {InventorySlot<RoomItem>} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
      * @param {boolean} [notify] - Whether or not to notify the player that they took the item. Defaults to true.
 	 */

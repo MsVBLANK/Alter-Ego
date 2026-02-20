@@ -11,7 +11,7 @@ import Status from "../Data/Status.js";
 import Whisper from "../Data/Whisper.js";
 import * as matchers from '../Modules/matchers.js';
 
-/** @import GameEntity from "../Data/GameEntity.js"; */
+/** @import GameEntity from "../Data/GameEntity.ts"; */
 /** @import EquipmentSlot from "../Data/EquipmentSlot.js"; */
 
 /**

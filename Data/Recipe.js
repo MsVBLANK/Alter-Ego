@@ -1,10 +1,10 @@
 import CollatedItem from './CollatedItem.ts';
 import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 
 /**
  * @import Game from './Game.js'
- * @import ItemInstance from './ItemInstance.js'
+ * @import ItemInstance from './ItemInstance.ts'
  * @import RecipeItem from './RecipeItem.js'
  * @import RoomItem from './RoomItem.js'
  */

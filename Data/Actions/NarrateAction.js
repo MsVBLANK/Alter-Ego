@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Narration from "../Narration.js";
 import SayAction from "./SayAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";

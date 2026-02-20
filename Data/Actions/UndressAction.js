@@ -1,6 +1,6 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import AttemptAction from "./AttemptAction.js";
-import InventorySlot from "../InventorySlot.js";
+import InventorySlot from "../InventorySlot.ts";
 import Puzzle from "../Puzzle.js";
 import DropAction from "./DropAction.js";
 import { getSortedItemsString } from "../../Modules/helpers.ts";

@@ -1,8 +1,8 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Die from "../Die.js";
 import Player from "../Player.js";
 
-/** @import ItemInstance from "../ItemInstance.js" */
+/** @import ItemInstance from "../ItemInstance.ts" */
 /** @import Puzzle from "../Puzzle.js" */
 
 /**

@@ -1,10 +1,8 @@
-import Interactable from "./Interactable.js";
-import StringSelectMenuOptionInteractable from "./StringSelectMenuOptionInteractable.js";
+import Interactable from "./Interactable.ts";
+import StringSelectMenuOptionInteractable from "./StringSelectMenuOptionInteractable.ts";
 import { InteractableType } from "../../Modules/enums.js";
 import { StringSelectMenuBuilder } from "discord.js";
-/**
- * @import ActionDirective from "../ActionDirective.ts";
- */
+import type ActionDirective from "../ActionDirective.ts";
 
 /**
  * @class StringSelectMenuInteractable
@@ -14,30 +12,27 @@ export default class StringSelectMenuInteractable extends Interactable {
 	/**
 	 * An array of options. Maximum size is 25.
 	 * @readonly
-	 * @type {StringSelectMenuOptionInteractable[]}
 	 */
-	options;
+	options: StringSelectMenuOptionInteractable[];
 	/**
 	 * The placeholder to apply for the string select menu.
 	 * @readonly
-	 * @type {string}
 	 */
-	placeholder;
+	placeholder: string;
 	/**
 	 * The string select menu component created from this interactable.
 	 * @readonly
-	 * @type {StringSelectMenuBuilder}
 	 */
-	component;
+	component: StringSelectMenuBuilder;
 
 	/**
 	 * @constructor
-	 * @param {ActionDirective} actionDirective - The action directive of the interactable.
-	 * @param {StringSelectMenuOptionInteractable[]} options - An array of options. Maximum size is 25.
-	 * @param {string} [placeholder] - The placeholder to apply for the string select menu. Optional.
-	 * @param {number} [priority] - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
+	 * @param actionDirective - The action directive of the interactable.
+	 * @param options - An array of options. Maximum size is 25.
+	 * @param placeholder - The placeholder to apply for the string select menu. Optional.
+	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
 	 */
-	constructor(actionDirective, options, placeholder, priority = 1) {
+	constructor(actionDirective: ActionDirective, options: StringSelectMenuOptionInteractable[], placeholder?: string, priority = 1) {
 		super(InteractableType.STRING_SELECT_MENU, actionDirective, priority);
 		this.options = [];
 		for (let i = 0; i < options.length && i < 25; i++)

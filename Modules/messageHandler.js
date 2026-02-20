@@ -8,7 +8,7 @@ import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';
 import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
 
-/** @import Interactable from '../Classes/Interactables/Interactable.js' */
+/** @import Interactable from '../Classes/Interactables/Interactable.ts' */
 /** @import Game from '../Data/Game.js' */
 /** @import Narration from '../Data/Narration.js' */
 /** @import Room from '../Data/Room.js' */

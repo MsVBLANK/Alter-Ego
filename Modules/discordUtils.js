@@ -1,5 +1,5 @@
-import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.js';
-import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.js';
+import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.ts';
+import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.ts';
 import { InteractableType, MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';
 import {
@@ -22,7 +22,7 @@ import {
 } from 'discord.js';
 
 /**
- * @import Interactable from "../Classes/Interactables/Interactable.js"
+ * @import Interactable from "../Classes/Interactables/Interactable.ts"
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";

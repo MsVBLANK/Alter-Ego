@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import InflictAction from "./InflictAction.js";
 
 /** @import HidingSpot from "../HidingSpot.js" */

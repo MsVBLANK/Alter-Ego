@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Description from "../Description.js";
 import Fixture from "../Fixture.js";
 import InventoryItem from "../InventoryItem.js";
@@ -16,7 +16,7 @@ import RoomItem from "../RoomItem.js";
 export default class InspectAction extends Action {
 	/**
 	 * Performs an inspect action.
-	 * @param {Room|Fixture|RoomItem|InventoryItem|Player} target - The entity to inspect.
+	 * @param {Inspectable} target - The entity to inspect.
 	 */
 	async performInspect(target) {
 		if (this.performed) return;

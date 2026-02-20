@@ -1,6 +1,6 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import { destroyRoomItem, destroyInventoryItem } from "../../Modules/itemManager.js";
-import ItemInstance from "../ItemInstance.js";
+import ItemInstance from "../ItemInstance.ts";
 
 /** @import InventoryItem from "../InventoryItem.js" */
 /** @import RoomItem from "../RoomItem.js" */

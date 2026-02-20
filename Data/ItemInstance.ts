@@ -1,108 +1,92 @@
-import InventorySlot from "./InventorySlot.js";
-import ItemContainer from "./ItemContainer.js";
+import InventorySlot from "./InventorySlot.ts";
+import ItemContainer from "./ItemContainer.ts";
 import { Collection } from "discord.js";
-
-/** @import Game from "./Game.js" */
-/** @import Prefab from "./Prefab.js" */
-/** @import Player from "./Player.js" */
-/** @import RecipeItem from "./RecipeItem.js" */
+import type Prefab from "./Prefab.js";
+import type Game from "./Game.js";
+import type Player from "./Player.js";
+import type RecipeItem from "./RecipeItem.js";
 
 /**
  * @class ItemInstance
  * @classdesc Represents an instance of a prefab that actually exists in the game.
  * @extends ItemContainer
  */
-export default class ItemInstance extends ItemContainer {
+export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * The ID of the prefab this item is an instance of.
 	 * @readonly
-	 * @type {string}
 	 */
-	prefabId;
+	prefabId: string;
 	/**
 	 * The prefab this item is an instance of.
-	 * @type {Prefab}
 	 */
-	prefab;
+	prefab: Prefab;
 	/**
 	 * The unique identifier given to the item if it is capable of containing other items.
-	 * @type {string}
 	 */
-	identifier;
+	identifier: string;
 	/**
 	 * The name of the prefab.
-	 * @type {string}
 	 */
-	name;
+	name: string;
 	/**
 	 * The pluralName of the prefab.
-	 * @type {string}
 	 */
-	pluralName;
+	pluralName: string;
 	/**
 	 * The singleContainingPhrase of the prefab.
-	 * @type {string}
 	 */
-	singleContainingPhrase;
+	singleContainingPhrase: string;
 	/**
 	 * The pluralContainingPhrase of the prefab.
-	 * @type {string}
 	 */
-	pluralContainingPhrase;
+	pluralContainingPhrase: string;
 	/**
 	 * The type of the item's container. Either "Fixture", "RoomItem", "Puzzle", or "InventoryItem".
-	 * @type {string}
 	 */
-	containerType;
+	containerType: string;
 	/**
 	 * The identifier of the container the item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
-	 * @type {string}
 	 */
-	containerName;
+	containerName: string;
 	/**
 	 * The item's actual container.
-	 * @type {ItemContainer}
 	 */
-	container;
+	container: ItemContainer;
 	/**
 	 * The ID of the {@link InventorySlot|inventory slot} the item can be found in.
-	 * @type {string}
 	 */
-	slot;
+	slot: string;
 	/**
 	 * How many identical instances of this item are in the given container.
-	 * @type {number}
 	 */
-	quantity;
+	quantity: number;
 	/**
 	 * The number of times this item can be used.
-	 * @type {number}
 	 */
-	uses;
+	uses: number;
 	/**
 	 * The total weight in kilograms of this item, including all of the child items it contains.
-	 * @type {number}
 	 */
-	weight;
+	weight: number;
 	/**
 	 * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
-	 * @type {Collection<string, InventorySlot<ItemInstance>>}
 	 */
-	inventory;
+	inventory: Collection<string, InventorySlot<ItemInstance>>;
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to.
-	 * @param {number} row - The row number of the item in the sheet.
-	 * @param {string} description - The description of the item. Can contain multiple item lists named after its inventory slots.
-	 * @param {string} prefabId - The ID of the prefab this item is an instance of.
-	 * @param {string} identifier - The unique identifier given to the item if it is capable of containing other items.
-	 * @param {string} containerType - The type of the item's container. Either "Fixture", "RoomItem", "Puzzle", or "InventoryItem".
-	 * @param {string} containerName - The identifier of the container the item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
-	 * @param {number} quantity - How many identical instances of this item are in the given container.
-	 * @param {number} uses - The number of times this item can be used.
+	 * @param game - The game this belongs to.
+	 * @param row - The row number of the item in the sheet.
+	 * @param description - The description of the item. Can contain multiple item lists named after its inventory slots.
+	 * @param prefabId - The ID of the prefab this item is an instance of.
+	 * @param identifier - The unique identifier given to the item if it is capable of containing other items.
+	 * @param containerType - The type of the item's container. Either "Fixture", "RoomItem", "Puzzle", or "InventoryItem".
+	 * @param containerName - The identifier of the container the item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
+	 * @param quantity - How many identical instances of this item are in the given container.
+	 * @param uses - The number of times this item can be used.
 	 */
-	constructor(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses) {
+	constructor(game: Game, row: number, description: string, prefabId: string, identifier: string, containerType: string, containerName: string, quantity: number, uses: number) {
 		super(game, row, description);
 		this.prefabId = prefabId;
 		this.identifier = identifier;
@@ -122,9 +106,9 @@ export default class ItemInstance extends ItemContainer {
 	}
 
 	/**
-	 * @param {Prefab} prefab 
+	 * Sets the item's prefab and updates all relevant properties based on the prefab's properties. Does not set the item's description.
 	 */
-	setPrefab(prefab) {
+	setPrefab(prefab: Prefab) {
 		this.prefab = prefab;
 		this.name = prefab.name ? prefab.name : "";
 		this.pluralName = prefab.pluralName ? prefab.pluralName : "";
@@ -135,23 +119,18 @@ export default class ItemInstance extends ItemContainer {
 
 	/**
 	 * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
-	 * @param {Player} [player] - The player who used this item, if applicable.
+	 * @param player - The player who used this item, if applicable.
 	 */
-	decreaseUses(player) {
-		this.uses--;
-	}
+	abstract decreaseUses(player?: Player): void;
 
 	/**
 	 * Adds the given amount of weight to the item's weight.
 	 * Also updates the weights of all items in its container chain.
-	 * @protected
-	 * @param {number} weight - The amount of weight to add.
+	 * @param weight - The amount of weight to add.
 	 */
-	addWeight(weight) {
-		/** @type {Set<number>} */
-		const containerChain = new Set();
-		/** @type {ItemContainer} */
-		let container = this;
+	protected addWeight(weight: number) {
+		const containerChain = new Set<number>();
+		let container = this as ItemContainer;
 		while (container instanceof ItemInstance) {
 			if (containerChain.has(container.row)) break;
 			container.weight += weight;
@@ -163,14 +142,11 @@ export default class ItemInstance extends ItemContainer {
 	/**
 	 * Subtracts the given amount of weight from the item's weight.
 	 * Also updates the weights of all items in its container chain.
-	 * @protected
-	 * @param {number} weight - The amount of weight to subtract.
+	 * @param weight - The amount of weight to subtract.
 	 */
-	subtractWeight(weight) {
-		/** @type {Set<number>} */
-		const containerChain = new Set();
-		/** @type {ItemContainer} */
-		let container = this;
+	protected subtractWeight(weight: number) {
+		const containerChain = new Set<number>();
+		let container = this as ItemContainer;
 		while (container instanceof ItemInstance) {
 			if (containerChain.has(container.row)) break;
 			container.weight -= weight;
@@ -181,9 +157,9 @@ export default class ItemInstance extends ItemContainer {
 
 	/**
 	 * Returns true if the item instance's container matches the given recipe item's container.
-	 * @param {RecipeItem} recipeItem 
+	 * @param recipeItem 
 	 */
-	containerMatches(recipeItem) {
+	containerMatches(recipeItem: RecipeItem) {
 		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
@@ -203,9 +179,9 @@ export default class ItemInstance extends ItemContainer {
 
 	/**
 	 * Gets a phrase to refer to the given inventory slot in narrations. If the item has only one inventory slot, returns an empty string.
-	 * @param {InventorySlot<ItemInstance>} inventorySlot
+	 * @param inventorySlot
 	 */
-	getSlotPhrase(inventorySlot) {
+	getSlotPhrase(inventorySlot: InventorySlot<ItemInstance>) {
 		return this.inventory.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
 	}
 }

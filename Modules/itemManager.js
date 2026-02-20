@@ -1,9 +1,9 @@
 import Fixture from '../Data/Fixture.js';
 import Puzzle from '../Data/Puzzle.js';
 import InventoryItem from '../Data/InventoryItem.js';
-import InventorySlot from '../Data/InventorySlot.js';
+import InventorySlot from '../Data/InventorySlot.ts';
 import RoomItem from '../Data/RoomItem.js';
-import ItemInstance from '../Data/ItemInstance.js';
+import ItemInstance from '../Data/ItemInstance.ts';
 import { generateProceduralOutput } from '../Modules/parser.js';
 
 /** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
@@ -15,7 +15,7 @@ import { generateProceduralOutput } from '../Modules/parser.js';
  * Instantiates a new room item in the specified location and container.
  * @param {Prefab} prefab - The prefab to instantiate as an item.
  * @param {Room} location - The room to instantiate the item in.
- * @param {Fixture|Puzzle|RoomItem} container - The container to instantiate the item in.
+ * @param {RoomItemContainer} container - The container to instantiate the item in.
  * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
  * @param {number} quantity - The quantity to instantiate.
  * @param {number} [uses] - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
@@ -405,7 +405,7 @@ export function insertRoomItems(location, items) {
         if (matchedItem) {
             if (!isNaN(matchedItem.quantity))
                 matchedItem.quantity += item.quantity;
-            /** @type {Fixture|Puzzle|RoomItem} */
+            /** @type {RoomItemContainer} */
             let itemContainer = null;
             if (item.container instanceof RoomItem) {
                 /** 

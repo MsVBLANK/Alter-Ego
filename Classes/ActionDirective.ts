@@ -1,4 +1,4 @@
-import Action from "../Data/Action.js";
+import Action from "../Data/Action.ts";
 import type Game from "../Data/Game.js";
 import type Player from "../Data/Player.js";
 import type Room from "../Data/Room.js";

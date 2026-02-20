@@ -3,7 +3,7 @@ import * as helpers from './helpers.ts';
 
 import { parse as parseScript } from 'acorn';
 
-/** @import GameEntity from '../Data/GameEntity.js' */
+/** @import GameEntity from '../Data/GameEntity.ts' */
 /** @import Player from '../Data/Player.js' */
 
 /** @type {import('acorn').Options} */

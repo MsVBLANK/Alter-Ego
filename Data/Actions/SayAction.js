@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import SolveAction from "./SolveAction.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.ts";

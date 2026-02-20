@@ -1,5 +1,5 @@
 import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 
 /** @import Game from './Game.js' */
 /** @import Room from './Room.js' */

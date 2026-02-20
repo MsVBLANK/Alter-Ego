@@ -11,8 +11,8 @@ import Puzzle from "../Data/Puzzle.js";
 import Description from "../Data/Description.js";
 import Prefab from "../Data/Prefab.js";
 import Fixture from "../Data/Fixture.js";
-import InventorySlot from "../Data/InventorySlot.js";
-import ItemInstance from "../Data/ItemInstance.js";
+import InventorySlot from "../Data/InventorySlot.ts";
+import ItemInstance from "../Data/ItemInstance.ts";
 import RoomItem from "../Data/RoomItem.js";
 import InventoryItem from "../Data/InventoryItem.js";
 

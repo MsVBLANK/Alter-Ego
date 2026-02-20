@@ -1,4 +1,4 @@
-﻿import GameEntity from "./GameEntity.js";
+﻿import GameEntity from "./GameEntity.ts";
 import InventoryItem from "./InventoryItem.js";
 
 /** @import Game from "./Game.js" */

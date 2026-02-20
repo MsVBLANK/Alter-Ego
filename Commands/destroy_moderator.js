@@ -6,7 +6,7 @@ import DestroyAction from "../Data/Actions/DestroyAction.js";
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
 /** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import InventorySlot from '../Data/InventorySlot.js' */
+/** @import InventorySlot from '../Data/InventorySlot.ts' */
 /** @import Player from '../Data/Player.js' */
 
 /** @type {CommandConfig} */
@@ -139,7 +139,7 @@ export async function execute(game, message, command, args) {
         }
 
         // Now decide what the container should be.
-        /** @type {Fixture|Puzzle|RoomItem} */
+        /** @type {RoomItemContainer} */
         let container = null;
         let slotName = "";
         if (fixture !== null && fixture.childPuzzle === null && containerItem === null)

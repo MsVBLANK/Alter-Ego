@@ -1,44 +1,40 @@
-import { InteractableType } from "../../Modules/enums.js";
-/**
- * @import ActionDirective from "../ActionDirective.ts";
- */
+import type { InteractableType } from "../../Modules/enums.js";
+import type ActionDirective from "../ActionDirective.ts";
 
 /**
  * @class Interactable
  * @classdesc Represents an interactive message component.
  */
-export default class Interactable {
+export default abstract class Interactable {
 	/**
 	 * The type of interactive message component to create.
 	 * @readonly
-	 * @type {InteractableType} */
-	type;
+     */
+	type: InteractableType;
 	/**
 	 * The action directive for this interactable.
 	 * @readonly
 	 * @type {ActionDirective}
 	 */
-	actionDirective;
+	actionDirective: ActionDirective;
 	/**
 	 * The customId of the component.
 	 * @readonly
-	 * @type {string}
 	 */
-	customId;
+	customId: string;
 	/**
 	 * The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
 	 * @readonly
-	 * @type {number}
 	 */
-	priority;
+	priority: number;
 
 	/**
 	 * @constructor
-	 * @param {InteractableType} type - The type of interactive message component to create.
-	 * @param {ActionDirective} actionDirective - The action directive for this interactable.
-	 * @param {number} priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
+	 * @param type - The type of interactive message component to create.
+	 * @param actionDirective - The action directive for this interactable.
+	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
 	 */
-	constructor(type, actionDirective, priority) {
+	constructor(type: InteractableType, actionDirective: ActionDirective, priority: number) {
 		this.type = type;
 		this.actionDirective = actionDirective;
 		this.customId = actionDirective.customId;
@@ -47,7 +43,6 @@ export default class Interactable {
 
 	/** 
 	 * Sets the interactable as disabled.
-	 * @abstract
 	 */
-	disable() {}
+	abstract disable(): void;
 }

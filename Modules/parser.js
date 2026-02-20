@@ -1,5 +1,5 @@
 import Description from '../Data/Description.js';
-import ItemContainer from '../Data/ItemContainer.js';
+import ItemContainer from '../Data/ItemContainer.ts';
 import Player from '../Data/Player.js';
 import { MessageDisplayType } from './enums.js';
 import { default as evaluateScript } from './scriptParser.js';
@@ -8,7 +8,7 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 
 export * as default from './parser.js';
 
-/** @import GameEntity from '../Data/GameEntity.js' */
+/** @import GameEntity from '../Data/GameEntity.ts' */
 /** @import InventoryItem from '../Data/InventoryItem.js' */
 /** @import RoomItem from '../Data/RoomItem.js' */
 

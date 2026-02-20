@@ -1,7 +1,7 @@
 import type CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.js";
 import type InventoryItem from "./InventoryItem.js";
-import ItemContainer from "./ItemContainer.js";
+import ItemContainer from "./ItemContainer.ts";
 import type Prefab from "./Prefab.js";
 import type Recipe from "./Recipe.js";
 import type RoomItem from "./RoomItem.js";

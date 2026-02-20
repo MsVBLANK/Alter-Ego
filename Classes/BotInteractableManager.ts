@@ -1,10 +1,10 @@
 import { ButtonStyle, Collection } from "discord.js";
-import ButtonInteractable from "./Interactables/ButtonInteractable.js";
-import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.js";
-import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.js";
+import ButtonInteractable from "./Interactables/ButtonInteractable.ts";
+import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.ts";
+import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.ts";
 import Fixture from "../Data/Fixture.js";
 import type Game from "../Data/Game.js";
-import type Interactable from "./Interactables/Interactable.js";
+import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.js";
 import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
@@ -245,7 +245,7 @@ export default class BotInteractableManager {
 	 * @param player - The player these interactables are being created for.
 	 * @param container - The fixture or room item the player is dropping the items into.
 	 */
-	async createDropActionInteractables(entities: InventoryItem[], player: Player, container: Fixture|RoomItem|Puzzle): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+	async createDropActionInteractables(entities: InventoryItem[], player: Player, container: RoomItemContainer): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
 		if (player.hasBehaviorAttribute("disable drop") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable drop")) return [];
 		if (container instanceof RoomItem && container.inventory.size > 1) {
 			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();

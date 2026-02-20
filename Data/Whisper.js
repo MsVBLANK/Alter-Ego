@@ -1,9 +1,9 @@
-﻿import GameConstruct from './GameConstruct.js';
+﻿import GameConstruct from './GameConstruct.ts';
 import Room from './Room.js';
 import { generatePlayerListString } from '../Modules/helpers.ts';
 import { Collection } from 'discord.js';
 
-/** @import Action from './Action.js' */
+/** @import Action from './Action.ts' */
 /** @import Game from './Game.js' */
 /** @import Player from './Player.js' */
 /** @import { TextChannel } from 'discord.js' */

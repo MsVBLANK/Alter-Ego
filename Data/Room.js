@@ -1,5 +1,5 @@
 import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 import { generatePlayerListString, sortPlayersByDisplayName } from '../Modules/helpers.ts';
 import { Collection } from 'discord.js';
 

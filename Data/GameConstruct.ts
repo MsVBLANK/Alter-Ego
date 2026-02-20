@@ -1,22 +1,21 @@
-/** @import Game from "./Game.js" */
+import type Game from "./Game.js";
 
 /**
  * @class GameConstruct
  * @classdesc Represents a construct that belongs to a game. Used as a base class for all other in-game constructs.
  */
-export default class GameConstruct {
+export default abstract class GameConstruct {
 	/**
 	 * The game this construct belongs to.
 	 * @readonly
-	 * @type {Game}
 	 */
-	#game;
+	#game: Game;
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this construct belongs to.
+	 * @param game - The game this construct belongs to.
 	 */
-	constructor(game) {
+	constructor(game: Game) {
 		this.#game = game;
 	}
 

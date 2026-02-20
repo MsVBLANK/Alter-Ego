@@ -1,8 +1,8 @@
 import Exit from "../Data/Exit.js";
 import Fixture from "../Data/Fixture.js";
 import InventoryItem from "../Data/InventoryItem.js";
-import InventorySlot from "../Data/InventorySlot.js";
-import ItemInstance from "../Data/ItemInstance.js";
+import InventorySlot from "../Data/InventorySlot.ts";
+import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.js";
 import Puzzle from "../Data/Puzzle.js";
 import Room from "../Data/Room.js";
@@ -15,7 +15,7 @@ import { generateListString } from "../Modules/helpers.ts";
 /** @import Gesture from "../Data/Gesture.js" */
 /** @import Event from "../Data/Event.js" */
 /** @import HidingSpot from "../Data/HidingSpot.js" */
-/** @import ItemContainer from "../Data/ItemContainer.js" */
+/** @import ItemContainer from "../Data/ItemContainer.ts" */
 /** @import Status from "../Data/Status.js" */
 /** @import Whisper from "../Data/Whisper.js" */
 
@@ -70,7 +70,7 @@ export default class GameLogHandler {
 	/**
 	 * Logs a gesture action.
 	 * @param {Gesture} gesture - The gesture that was performed.
-	 * @param {Exit|Fixture|RoomItem|Player|InventoryItem|null} target - The target of the gesture action.
+	 * @param {GestureTarget|null} target - The target of the gesture action.
 	 * @param {Player} player - The player who performed the action.
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
 	 */
@@ -185,7 +185,7 @@ export default class GameLogHandler {
 	 * Logs a take action.
 	 * @param {RoomItem} item - The item that was taken.
 	 * @param {Player} player - The player who performed the action.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the item was taken from.
+	 * @param {RoomItemContainer} container - The container the item was taken from.
 	 * @param {InventorySlot} inventorySlot - The inventory slot the item was taken from.
 	 * @param {boolean} successful - Whether or not the player was successful in taking the item.
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
@@ -217,7 +217,7 @@ export default class GameLogHandler {
 	 * Logs a drop action.
 	 * @param {InventoryItem} item - The item that was dropped.
 	 * @param {Player} player - The player who performed the action.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the item was dropped into.
+	 * @param {RoomItemContainer} container - The container the item was dropped into.
 	 * @param {InventorySlot} inventorySlot - The inventory slot the item was dropped into.
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
 	 */
@@ -297,7 +297,7 @@ export default class GameLogHandler {
 	 * Logs a dress action.
 	 * @param {InventoryItem[]} items - The items the player put on.
 	 * @param {Player} player - The player who performed the action.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player dressed from.
+	 * @param {RoomItemContainer} container - The container the player dressed from.
 	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the player dressed from, if applicable.
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
 	 */
@@ -311,7 +311,7 @@ export default class GameLogHandler {
 	 * Logs an undress action.
 	 * @param {InventoryItem[]} items - The items the player took off.
 	 * @param {Player} player - The player who performed the action.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player undressed into.
+	 * @param {RoomItemContainer} container - The container the player undressed into.
 	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the player undressed into, if applicable.
 	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
 	 */
@@ -326,7 +326,7 @@ export default class GameLogHandler {
 	 * Logs an instantiate action for a room item.
 	 * @param {RoomItem} item - The instantiated item. 
 	 * @param {number} quantity - The quantity of the item that was instantiated.
-	 * @param {Fixture|Puzzle|RoomItem} container - The item's container.
+	 * @param {RoomItemContainer} container - The item's container.
 	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the item belongs to.
 	 */
 	logInstantiateRoomItem(item, quantity, container, inventorySlot) {
@@ -371,7 +371,7 @@ export default class GameLogHandler {
 	 * Logs a destroy action for a room item.
 	 * @param {RoomItem} item - The destroyed item. 
 	 * @param {number} quantity - The quantity of the item that was destroyed.
-	 * @param {Fixture|Puzzle|RoomItem} container - The item's container.
+	 * @param {RoomItemContainer} container - The item's container.
 	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the item belongs to.
 	 */
 	logDestroyRoomItem(item, quantity, container, inventorySlot) {

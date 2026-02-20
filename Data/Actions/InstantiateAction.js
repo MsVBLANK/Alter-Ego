@@ -1,6 +1,6 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import { instantiateRoomItem, instantiateInventoryItem } from "../../Modules/itemManager.js";
-import ItemInstance from "../ItemInstance.js";
+import ItemInstance from "../ItemInstance.ts";
 
 /** @import Fixture from "../Fixture.js" */
 /** @import InventoryItem from "../InventoryItem.js" */
@@ -18,7 +18,7 @@ export default class InstantiateAction extends Action {
 	/**
 	 * Performs an instantiate action for a room item.
 	 * @param {Prefab} prefab - The prefab to instantiate as an item.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container to instantiate the item in.
+	 * @param {RoomItemContainer} container - The container to instantiate the item in.
 	 * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @param {number} quantity - The quantity to instantiate.
 	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.

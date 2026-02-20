@@ -1,5 +1,5 @@
-import Action from "../Action.js";
-import InventorySlot from "../InventorySlot.js";
+import Action from "../Action.ts";
+import InventorySlot from "../InventorySlot.ts";
 import InventoryItem from "../InventoryItem.js";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */

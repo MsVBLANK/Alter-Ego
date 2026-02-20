@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Gesture from "../Gesture.js";
 
 /** @import Exit from "../Exit.js" */
@@ -18,7 +18,7 @@ export default class GestureAction extends Action {
 	 * Performs a gesture action.
 	 * @param {Gesture} gesture - The gesture to perform.
 	 * @param {string} targetType - The type of entity to target.
-	 * @param {Exit|Fixture|RoomItem|Player|InventoryItem|null} target - The entity to target.
+	 * @param {GestureTarget|null} target - The entity to target.
 	 */
 	performGesture(gesture, targetType, target) {
 		if (this.performed) return;

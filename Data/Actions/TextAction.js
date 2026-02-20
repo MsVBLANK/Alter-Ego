@@ -1,5 +1,5 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
-import Action from "../Action.js";
+import Action from "../Action.ts";
 
 /** @import Player from "../Player.js" */
 

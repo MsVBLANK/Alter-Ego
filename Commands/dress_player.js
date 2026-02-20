@@ -1,6 +1,6 @@
 import DressAction from '../Data/Actions/DressAction.js';
 import Fixture from "../Data/Fixture.js";
-import InventorySlot from '../Data/InventorySlot.js';
+import InventorySlot from '../Data/InventorySlot.ts';
 import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";
 
@@ -54,7 +54,7 @@ export async function execute(game, message, command, args, player) {
     const input = args.join(' ');
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
 
-    /** @type {Fixture|Puzzle|RoomItem} */
+    /** @type {RoomItemContainer} */
     let container = null;
     /** @type {InventorySlot<RoomItem>} */
     let inventorySlot = null;

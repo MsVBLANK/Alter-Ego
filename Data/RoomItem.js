@@ -1,5 +1,5 @@
-import InventorySlot from './InventorySlot.js';
-import ItemInstance from './ItemInstance.js';
+import InventorySlot from './InventorySlot.ts';
+import ItemInstance from './ItemInstance.ts';
 import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import { Collection } from 'discord.js';

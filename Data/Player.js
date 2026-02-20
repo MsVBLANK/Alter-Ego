@@ -1,12 +1,12 @@
 import CollatedItem from './CollatedItem.ts';
 import Fixture from './Fixture.js';
 import Game from './Game.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 import Room from './Room.js';
 import RoomItem from './RoomItem.js';
 import RecipeProcessor from './RecipeProcessor.ts';
 import Puzzle from './Puzzle.js';
-import InventorySlot from './InventorySlot.js';
+import InventorySlot from './InventorySlot.ts';
 import Status from './Status.js';
 import CureAction from './Actions/CureAction.js';
 import DieAction from './Actions/DieAction.js';
@@ -21,8 +21,8 @@ import * as itemManager from '../Modules/itemManager.js';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 import { Collection } from 'discord.js';
 
-/** @import Interactable from '../Classes/Interactables/Interactable.js' */
-/** @import Action from './Action.js' */
+/** @import Interactable from '../Classes/Interactables/Interactable.ts' */
+/** @import Action from './Action.ts' */
 /** @import Exit from './Exit.js' */
 /** @import Prefab from './Prefab.js' */
 /** @import Recipe from './Recipe.js' */
@@ -1043,7 +1043,7 @@ export default class Player extends RecipeProcessor {
 	 * Takes an item and puts it in the player's inventory.
 	 * @param {RoomItem} item - The item to take.
 	 * @param {EquipmentSlot} handEquipmentSlot - The hand equipment slot to put the item in.
-	 * @param {Puzzle|Fixture|RoomItem|Room} container - The item's current container.
+	 * @param {RoomItemContainer} container - The item's current container.
 	 * @param {InventorySlot} inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
 	 */
 	take(item, handEquipmentSlot, container, inventorySlot) {

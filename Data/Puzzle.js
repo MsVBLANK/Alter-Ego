@@ -2,12 +2,12 @@ import Description from './Description.js';
 import Event from './Event.js';
 import Flag from './Flag.js';
 import Prefab from './Prefab.js';
-import ItemContainer from './ItemContainer.js';
+import ItemContainer from './ItemContainer.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 
 /** @import Fixture from './Fixture.js' */
 /** @import Game from './Game.js' */
-/** @import ItemInstance from './ItemInstance.js' */
+/** @import ItemInstance from './ItemInstance.ts' */
 /** @import Player from './Player.js' */
 /** @import Room from './Room.js' */
 

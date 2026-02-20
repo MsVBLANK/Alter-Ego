@@ -4,7 +4,7 @@ import Exit from '../Data/Exit.js';
 import Room from '../Data/Room.js';
 import Fixture from '../Data/Fixture.js';
 import Prefab from '../Data/Prefab.js';
-import InventorySlot from '../Data/InventorySlot.js';
+import InventorySlot from '../Data/InventorySlot.ts';
 import Recipe from '../Data/Recipe.js';
 import RoomItem from '../Data/RoomItem.js';
 import Puzzle from '../Data/Puzzle.js';
@@ -1216,7 +1216,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container is over capacity.`);
 			/** @type {Set<number>} */
 			const containerChain = new Set();
-			/** @type {RoomItem|Puzzle|Fixture} */
+			/** @type {RoomItemContainer} */
 			let container = item;
 			while (container instanceof RoomItem) {
 				if (containerChain.has(container.row)) return new Error(`Couldn't load room item on row ${item.row}. The item's container chain contains itself, resulting in an infinite loop.`);

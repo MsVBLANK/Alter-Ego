@@ -1,7 +1,7 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Die from "../Die.js";
 import InventoryItem from "../InventoryItem.js";
-import InventorySlot from "../InventorySlot.js";
+import InventorySlot from "../InventorySlot.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
 
 /** @import EquipmentSlot from "../EquipmentSlot.js" */

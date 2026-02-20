@@ -1,14 +1,14 @@
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 import Room from "./Room.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import Fixture from "./Fixture.js";
 import RoomItem from "./RoomItem.js";
 import Puzzle from "./Puzzle.js";
-/** @import Interactable from "../Classes/Interactables/Interactable.js"; */
+/** @import Interactable from "../Classes/Interactables/Interactable.ts"; */
 /** @import Exit from "./Exit.js"; */
 /** @import Game from "./Game.js"; */
-/** @import GameEntity from "./GameEntity.js"; */
+/** @import GameEntity from "./GameEntity.ts"; */
 /** @import Player from "./Player.js"; */
 
 /**

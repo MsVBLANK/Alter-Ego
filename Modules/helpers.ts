@@ -1,10 +1,10 @@
-import ItemInstance from '../Data/ItemInstance.js';
+import ItemInstance from '../Data/ItemInstance.ts';
 import { Duration } from 'luxon';
 import type Player from '../Data/Player.js';
 
 /** @import Player from "../Data/Player.js" */
 /** @import InventoryItem from "../Data/InventoryItem.js" */
-/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import ItemInstance from "../Data/ItemInstance.ts" */
 /** @import RoomItem from "../Data/RoomItem.js" */
 /** @import { DurationObjectUnits } from "luxon" */
 

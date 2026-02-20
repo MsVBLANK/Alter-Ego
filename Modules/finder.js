@@ -1,4 +1,4 @@
-/** @import GameEntity from "../Data/GameEntity.js" */
+/** @import GameEntity from "../Data/GameEntity.ts" */
 /** @import Player from "../Data/Player.js" */
 
 /** 

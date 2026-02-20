@@ -354,7 +354,7 @@ export default class Fixture extends RecipeProcessor {
 	 * @param {number} quantity - The quantity of the prefab to instantiate.
 	 * @param {number} uses - The number of uses to instantiate the prefab with. Defaults to the prefab's number of uses.
 	 * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
-	 * @param {Fixture|Puzzle|RoomItem} [container] - The container to instantiate the prefab into. Defaults to the fixture itself.
+	 * @param {RoomItemContainer} [container] - The container to instantiate the prefab into. Defaults to the fixture itself.
 	 * @param {string} [inventorySlotId] - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @returns The instantiated room item.
 	 */

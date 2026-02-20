@@ -8,7 +8,7 @@ import { itemIdentifierMatches } from "../Modules/matchers.js";
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Player from '../Data/Player.js' */
 /** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import InventorySlot from '../Data/InventorySlot.js' */
+/** @import InventorySlot from '../Data/InventorySlot.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

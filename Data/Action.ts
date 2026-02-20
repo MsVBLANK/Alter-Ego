@@ -1,10 +1,9 @@
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 import { randomUUID } from "crypto";
-
-/** @import Game from "./Game.js" */
-/** @import Player from "./Player.js" */
-/** @import Room from "./Room.js" */
-/** @import Whisper from "./Whisper.js" */
+import type Player from "./Player.js";
+import type Room from "./Room.js";
+import type Whisper from "./Whisper.js";
+import type Game from "./Game.js";
 
 /**
  * @class Action
@@ -12,97 +11,88 @@ import { randomUUID } from "crypto";
  * @extends GameConstruct
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/action.html
  */
-export default class Action extends GameConstruct {
+export default abstract class Action extends GameConstruct {
 	/**
 	 * The unique ID of this action.
 	 * @readonly
-	 * @type {string}
 	 */
-	id;
+	id: string;
 	/**
 	 * The message that initiated the action.
 	 * @readonly
-	 * @type {UserMessage}
 	 */
-	message;
+	message: UserMessage;
 	/**
 	 * The player performing the action.
 	 * @readonly
-	 * @type {Player}
 	 */
-	player;
+	player: Player;
 	/**
 	 * The location where this action is being performed.
 	 * @readonly
-	 * @type {Room}
 	 */
-	location;
+	location: Room;
 	/**
 	 * Whether or not the action was performed by someone other than the player themselves.
 	 * @readonly
-	 * @type {boolean}
 	 */
-	forced;
+	forced: boolean;
 	/**
 	 * The whisper where this action is being performed, if applicable.
 	 * @readonly
-	 * @type {Whisper}
 	 */
-	whisper;
+	whisper: Whisper;
 	/**
 	 * Whether the action has already been performed. If this is true, the action cannot be performed again.
-	 * @protected
-	 * @type {boolean}
 	 */
-	performed;
+	protected performed: boolean;
 	/**
 	 * A set of channel IDs this action has already been communicated in. This is used to ensure that actions are not communicated in the same place twice.
 	 * @private
-	 * @type {Set<string>}
 	 */
-	mirrors;
+	mirrors: Set<string>;
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to.
-	 * @param {UserMessage} message - The message that initiated the action. 
-	 * @param {Player} player - The player performing the action.
-	 * @param {Room} location - The location where this action is being performed.
-	 * @param {boolean} forced - Whether or not the action was performed by someone other than the player themselves.
-	 * @param {Whisper} [whisper] - The whisper where this action is being performed, if applicable.
+	 * @param game - The game this belongs to.
+	 * @param message - The message that initiated the action. 
+	 * @param player - The player performing the action.
+	 * @param location - The location where this action is being performed.
+	 * @param forced - Whether or not the action was performed by someone other than the player themselves.
+	 * @param whisper - The whisper where this action is being performed, if applicable.
 	 */
-	constructor(game, message, player, location, forced, whisper) {
+	constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
 		super(game);
 		this.message = message;
 		this.player = player;
 		this.location = location;
 		this.forced = forced;
 		this.whisper = whisper;
+        this.performed = false;
 		this.id = randomUUID();
 		this.mirrors = new Set();
 	}
 
 	/**
 	 * Marks the action as performed.
-	 * @protected
 	 */
-	perform() {
+	protected perform() {
 		this.performed = true;
 	}
 
 	/**
 	 * Returns true if the action has been communicated in the given channel.
-	 * @param {string} channelId
+	 * @param channelId
 	 */
-	hasBeenCommunicatedIn(channelId) {
+	hasBeenCommunicatedIn(channelId: string) {
 		return this.mirrors.has(channelId);
 	}
 
 	/**
 	 * Marks the action as having been mirrored in the given channel.
-	 * @param {string} channelId
+	 * @param channelId
 	 */
-	addToMirrors(channelId) {
+	addToMirrors(channelId: string) {
 		this.mirrors.add(channelId);
 	}
 }

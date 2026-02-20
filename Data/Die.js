@@ -1,4 +1,4 @@
-﻿import GameConstruct from './GameConstruct.js';
+﻿import GameConstruct from './GameConstruct.ts';
 import Status from './Status.js';
 
 /** @import Game from './Game.js' */

@@ -1,4 +1,4 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Room from "../Room.js";
 import MoveAction from "./MoveAction.js";
 import StartMoveAction from "./StartMoveAction.js";

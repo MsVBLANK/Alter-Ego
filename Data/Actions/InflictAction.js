@@ -1,5 +1,5 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import CureAction from "./CureAction.js";
 /** @import InventoryItem from "../InventoryItem.js" */
 /** @import Status from "../Status.js" */

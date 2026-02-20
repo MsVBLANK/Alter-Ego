@@ -1,6 +1,6 @@
 import Description from "../../Data/Description.js";
 import { parseDescription } from "../../Modules/parser.js";
-/** @import GameEntity from "../../Data/GameEntity.js"; */
+/** @import GameEntity from "../../Data/GameEntity.ts"; */
 /** @import Event from "../../Data/Event.js"; */
 /** @import RoomItem from "../../Data/RoomItem.js"; */
 /** @import Player from "../../Data/Player.js"; */

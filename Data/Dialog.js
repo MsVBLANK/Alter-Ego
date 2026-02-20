@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 
 /** @import Game from "./Game.js" */

@@ -1,10 +1,10 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 import Puzzle from "../Puzzle.js";
 
 /** @import Event from "../Event.js" */
 /** @import Flag from "../Flag.js" */
 /** @import InventoryItem from "../InventoryItem.js" */
-/** @import ItemInstance from "../ItemInstance.js" */
+/** @import ItemInstance from "../ItemInstance.ts" */
 /** @import Player from "../Player.js" */
 
 /**

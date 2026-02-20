@@ -1,4 +1,4 @@
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { default as evaluateScript } from '../Modules/scriptParser.js';
 

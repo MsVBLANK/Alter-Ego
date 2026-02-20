@@ -3,7 +3,7 @@ import DestroyAction from './Actions/DestroyAction.js';
 import InstantiateAction from './Actions/InstantiateAction.js';
 import { getSortedItems } from '../Modules/helpers.ts';
 import { getChildItems } from '../Modules/itemManager.js';
-import ItemInstance from './ItemInstance.js';
+import ItemInstance from './ItemInstance.ts';
 
 import Fixture from './Fixture.js';
 import type Prefab from './Prefab.js';

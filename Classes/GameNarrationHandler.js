@@ -12,8 +12,8 @@ import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts
 import { Collection } from "discord.js";
 import Notification from "../Data/Notification.js";
 
-/** @import Interactable from "./Interactables/Interactable.js" */
-/** @import Action from "../Data/Action.js" */
+/** @import Interactable from "./Interactables/Interactable.ts" */
+/** @import Action from "../Data/Action.ts" */
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Exit from "../Data/Exit.js" */
 /** @import Game from "../Data/Game.js" */
@@ -24,8 +24,8 @@ import Notification from "../Data/Notification.js";
 /** @import Recipe from "../Data/Recipe.js" */
 /** @import Event from "../Data/Event.js" */
 /** @import HidingSpot from "../Data/HidingSpot.js" */
-/** @import InventorySlot from "../Data/InventorySlot.js" */
-/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import InventorySlot from "../Data/InventorySlot.ts" */
+/** @import ItemInstance from "../Data/ItemInstance.ts" */
 /** @import Status from "../Data/Status.js" */
 /** @import Whisper from "../Data/Whisper.js" */
 /** @import { Attachment, Embed, GuildMember } from "discord.js" */
@@ -241,7 +241,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates an inspect action.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Room|Fixture|RoomItem|InventoryItem|Player} target - The target to inspect.
+	 * @param {Inspectable} target - The target to inspect.
 	 * @param {Player} player - The player performing the inspect action.
 	 */
 	narrateInspect(action, target, player) {
@@ -489,7 +489,7 @@ export default class GameNarrationHandler {
 	 * Narrates a drop action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem} item - The item to drop.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container to drop the item into.
+	 * @param {RoomItemContainer} container - The container to drop the item into.
 	 * @param {Player} player - The player performing the take action.
 	 * @param {boolean} [notify] - Whether or not to notify the player that they dropped the item. Defaults to true.
 	 */
@@ -610,7 +610,7 @@ export default class GameNarrationHandler {
 	 * Narrates a dress action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem[]} items - The items the player is putting on.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player is dressing from.
+	 * @param {RoomItemContainer} container - The container the player is dressing from.
 	 * @param {Player} player - The player performing the dress action.
 	 */
 	narrateDress(action, items, container, player) {
@@ -627,7 +627,7 @@ export default class GameNarrationHandler {
 	 * Narrates an undress action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem[]} items - The items the player is taking off.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player is undressing into.
+	 * @param {RoomItemContainer} container - The container the player is undressing into.
 	 * @param {Player} player - The player performing the undress action.
 	 */
 	narrateUndress(action, items, container, player) {

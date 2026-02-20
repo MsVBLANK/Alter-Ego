@@ -1,63 +1,55 @@
-/** @import InventoryItem from "./InventoryItem.js" */
-/** @import RoomItem from "./RoomItem.js" */
-/** @import ItemInstance from "./ItemInstance.js" */
+import type InventoryItem from "./InventoryItem.js";
+import type ItemInstance from "./ItemInstance.ts";
+import type RoomItem from "./RoomItem.js";
 
 /**
  * @class InventorySlot
  * @classdesc Represents a slot within an item that can contain other items.
- * @template {ItemInstance|RoomItem|InventoryItem} T
  */
-export default class InventorySlot {
+export default class InventorySlot<T extends ItemInstance | RoomItem | InventoryItem> {
 	/**
 	 * The ID of the slot. Must be unique relative to other slots held by the same item.
 	 * @readonly
-	 * @type {string}
 	 */
-	id;
+	id: string;
 	/**
 	 * The name of the slot. Deprecated. Use `id` instead.
 	 * @deprecated
 	 * @readonly
-	 * @type {string}
 	 */
-	name;
+	name: string;
 	/**
 	 * Maximum sum of sizes that can be stored in the slot.
-	 * @type {number}
 	 */
-	capacity;
+	capacity: number;
 	/**
 	 * The current sum of sizes stored in the slot.
-	 * @type {number}
 	 */
-	takenSpace;
+	takenSpace: number;
 	/**
 	 * The combined weight of all items stored in the slot.
-	 * @type {number}
 	 */
-	weight;
+	weight: number;
 	/**
 	 * The items stored in the slot.
-	 * @type {Array<T>}
 	 */
-	items;
+	items: Array<T>;
 	/**
 	 * The items stored in the slot. Deprecated. Use `items` instead.
 	 * @deprecated
 	 * @readonly
-	 * @type {Array<T>}
 	 */
-	item;
+	item: Array<T>;
 
 	/**
 	 * @constructor
-	 * @param {string} id - The ID of the slot. Must be unique relative to other slots held by the same item.
-	 * @param {number} capacity - Maximum sum of sizes that can be stored in the slot.
-	 * @param {number} takenSpace - The current sum of sizes stored in the slot.
-	 * @param {number} weight - The combined weight of all items stored in the slot.
-	 * @param {Array<T>} items - The items stored in the slot.
+	 * @param id - The ID of the slot. Must be unique relative to other slots held by the same item.
+	 * @param capacity - Maximum sum of sizes that can be stored in the slot.
+	 * @param takenSpace - The current sum of sizes stored in the slot.
+	 * @param weight - The combined weight of all items stored in the slot.
+	 * @param items - The items stored in the slot.
 	 */
-	constructor(id, capacity, takenSpace, weight, items) {
+	constructor(id: string, capacity: number, takenSpace: number, weight: number, items: Array<T>) {
 		this.id = id;
 		this.name = id;
 		this.capacity = capacity;
@@ -69,9 +61,9 @@ export default class InventorySlot {
 
 	/** 
 	 * Inserts an item into this slot.
-	 * @param {T} item - The item to insert.
+	 * @param item - The item to insert.
 	 */
-	insertItem(item) {
+	insertItem(item: T) {
 		let matchedItem = this.items.find(inventoryItem =>
 			inventoryItem.prefab !== null && item.prefab !== null &&
 			inventoryItem.prefab.id === item.prefab.id &&
@@ -90,10 +82,10 @@ export default class InventorySlot {
 
 	/**
 	 * Removes an item from this slot.
-	 * @param {T} item - The item to remove. 
-	 * @param {number} removedQuantity - The quantity of this item to remove.
+	 * @param item - The item to remove. 
+	 * @param removedQuantity - The quantity of this item to remove.
 	 */
-	removeItem(item, removedQuantity) {
+	removeItem(item: T, removedQuantity: number) {
 		for (let i = 0; i < this.items.length; i++) {
 			if (this.items[i].row === item.row && this.items[i].description.text === item.description.text) {
 				if (item.quantity === 0) this.items.splice(i, 1);
@@ -120,17 +112,17 @@ export default class InventorySlot {
 
 	/**
 	 * Returns true if the inventory slot's capacity is smaller than the given item.
-	 * @param {ItemInstance} item 
+	 * @param item 
 	 */
-	capacityIsSmallerThan(item) {
+	capacityIsSmallerThan(item: ItemInstance) {
 		return item.prefab.size > this.capacity;
 	}
 
 	/**
 	 * Returns true if the inventory slot will be over capacity if it takes the given item.
-	 * @param {ItemInstance} item 
+	 * @param item 
 	 */
-	willBeOverFilledBy(item) {
+	willBeOverFilledBy(item: ItemInstance) {
 		return this.takenSpace + item.prefab.size > this.capacity;
 	}
 

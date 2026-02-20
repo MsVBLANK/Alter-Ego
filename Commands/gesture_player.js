@@ -1,6 +1,6 @@
 ﻿import GestureAction from '../Data/Actions/GestureAction.js';
 import Fixture from '../Data/Fixture.js';
-import ItemInstance from '../Data/ItemInstance.js';
+import ItemInstance from '../Data/ItemInstance.ts';
 import Puzzle from '../Data/Puzzle.js';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 

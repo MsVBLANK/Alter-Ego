@@ -1,6 +1,6 @@
 ﻿import Description from './Description.js';
-import InventorySlot from './InventorySlot.js';
-import ItemInstance from './ItemInstance.js';
+import InventorySlot from './InventorySlot.ts';
+import ItemInstance from './ItemInstance.ts';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
@@ -166,7 +166,7 @@ export default class InventoryItem extends ItemInstance {
     /**
      * Returns the args for the Drop ActionDirective for this inventory item.
      * @param {'Fixture'|'RoomItem'|'Puzzle'} containerType - The type of container to drop the inventory item into.
-     * @param {Fixture|RoomItem|Puzzle} container - The container to drop the inventory item into.
+     * @param {RoomItemContainer} container - The container to drop the inventory item into.
      * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot to drop the inventory item into.
      */
     getDropActionDirectiveArgs(containerType, container, inventorySlot) {

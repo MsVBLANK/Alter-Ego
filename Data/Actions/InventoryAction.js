@@ -1,6 +1,6 @@
-import Action from "../Action.js";
+import Action from "../Action.ts";
 /**
- * @import Interactable from "../../Classes/Interactables/Interactable.js";
+ * @import Interactable from "../../Classes/Interactables/Interactable.ts";
  * @import InventoryItem from "../InventoryItem.js";
  */
 

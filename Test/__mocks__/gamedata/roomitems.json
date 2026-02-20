@@ -1835,5 +1835,6 @@
   [ "ORANGE", "", "video-room", "TRUE", "Fixture: BLENDER 4", "7", "1", "<desc><s>It's a regular orange.</s> <s>It looks perfectly ripe.</s> <s>It's still got the skin on it.</s></desc>" ],
   [ "BLENDER CUP OF MILK", "BLENDER CUP OF MILK 2", "video-room", "TRUE", "Fixture: BLENDER 5", "1", "", "<desc><s>It's a blender cup full of milk.</s> <s>Floating in the milk is <il></il>.</s></desc>" ],
   [ "BANANA CHUNK", "", "video-room", "TRUE", "Fixture: BLENDER 5", "3", "1", "<desc><s>It's a sliced chunk of banana.</s></desc>" ],
-  [ "BANANA MILKSHAKE", "", "video-room", "TRUE", "Fixture: BLENDER 6", "1", "1", "<desc><s>It's a banana milkshake.</s></desc>" ]
+  [ "BANANA MILKSHAKE", "", "video-room", "TRUE", "Fixture: BLENDER 6", "1", "1", "<desc><s>It's a banana milkshake.</s></desc>" ],
+  [ "ORANGE JUICE", "", "video-room", "TRUE", "Fixture: BLENDER 7", "1", "4", "<desc><s>This is a gallon-sized jug of orange juice.</s> <s>It's pulp-free.</s> <s>It's about <var v=\"this.uses\" />/6th full.</s></desc>" ]
 ]

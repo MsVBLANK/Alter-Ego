@@ -1,3 +1,5 @@
+import CollatedItem from '../../Data/CollatedItem.ts';
+
 describe('Fixture test', () => {
 	beforeAll(async () => {
 		if (!game.inProgress) await game.entityLoader.loadAll();
@@ -221,6 +223,31 @@ describe('Fixture test', () => {
 				const smoothie = items[0];
 				expect(smoothie.quantity).toBe(7);
 				expect(smoothie.uses).toBe(3);
+			}
+		});
+
+		test('Fixture process flow for BLENDER 7 of video-room', () => {
+			const fixture = game.entityFinder.getFixture('BLENDER 7', 'video-room');
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const orangeJuice = items[0];
+				expect(orangeJuice.quantity).toBe(1);
+				expect(orangeJuice.uses).toBe(4);
+			}
+			const recipeData = fixture.findRecipe();
+			expect(recipeData.recipe).not.toBeNull();
+			fixture.process.recipe = recipeData.recipe;
+			fixture.process.ingredients = recipeData.ingredients;
+			const spc = fixture.process.recipe.getSatisfactoryProcessCount(CollatedItem.collate(fixture.getContainedItems()));
+			fixture.destroyIngredients(fixture.process.recipe, fixture.process.ingredients, spc);
+			fixture.instantiateProducts(fixture.process.recipe, spc);
+			{
+				let items = fixture.getContainedItems();
+				expect(items.length).toBe(1);
+				const milk = items[0];
+				expect(milk.quantity).toBe(1);
+				expect(milk.uses).toBe(4);
 			}
 		});
 	});

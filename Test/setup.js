@@ -25,6 +25,11 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 
 });
 
+/** @import BotCommand from '../Classes/BotCommand.js' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
+
 import GuildContext from '../Classes/GuildContext.js';
 import GameSettings from '../Classes/GameSettings.js';
 import Game from '../Data/Game.js';
@@ -104,9 +109,13 @@ beforeAll(() => {
 
     // Initialize game and bot context with empty command collections.
     const game = new Game(guildContext, DEFAULT_GAME_SETTINGS);
+    /** @type {Collection<string, BotCommand>} */
     const botCommands = new Collection();
+    /** @type {Collection<string, ModeratorCommand>} */
     const moderatorCommands = new Collection();
+    /** @type {Collection<string, PlayerCommand>} */
     const playerCommands = new Collection();
+    /** @type {Collection<string, EligibleCommand>} */
     const eligibleCommands = new Collection();
 
     // Create BotContext singleton and attach to game.

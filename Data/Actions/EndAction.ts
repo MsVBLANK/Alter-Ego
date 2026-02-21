@@ -1,8 +1,5 @@
 import Action from "../Action.ts";
 import Event from "../Event.js";
-import type Flag from "../Flag.js";
-import type InventoryItem from "../InventoryItem.js";
-import type Puzzle from "../Puzzle.js";
 
 /**
  * Represents an end action.
@@ -16,7 +13,7 @@ export default class EndAction extends Action {
 	 * @param event - The event to end.
 	 * @param callee - The in-game entity that caused the command to be executed, if applicable.
 	 */
-	async performEnd(event: Event, callee?: Event | Flag | InventoryItem | Puzzle): Promise<void> {
+	async performEnd(event: Event, callee?: Callee): Promise<void> {
 		if (this.performed) return;
 		super.perform();
 		this.getGame().narrationHandler.narrateEnd(this, event);

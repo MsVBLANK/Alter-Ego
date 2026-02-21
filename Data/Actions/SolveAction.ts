@@ -1,8 +1,6 @@
 import Action from "../Action.ts";
 import Puzzle from "../Puzzle.js";
 import type Player from "../Player.js";
-import type Flag from "../Flag.js";
-import type InventoryItem from "../InventoryItem.js";
 import type ItemInstance from "../ItemInstance.ts";
 
 /**
@@ -20,7 +18,7 @@ export default class SolveAction extends Action {
 	 * @param customNarration - The custom text of the narration. Optional.
 	 * @param callee - The in-game entity that caused the command to be executed, if applicable.
 	 */
-	performSolve(puzzle: Puzzle, password: string, targetPlayer?: Player, customNarration?: string, callee?: Event | Flag | InventoryItem | Puzzle): void {
+	performSolve(puzzle: Puzzle, password: string, targetPlayer?: Player, customNarration?: string, callee?: Callee): void {
 		if (this.performed) return;
 		super.perform();
 		/**

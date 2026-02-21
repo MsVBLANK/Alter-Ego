@@ -110,7 +110,7 @@ declare global {
 	}
 
 	interface IBotCommand extends Command {
-		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Event | Flag | InventoryItem | Puzzle) => Promise<void>;
+		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
 	interface IModeratorCommand extends Command {

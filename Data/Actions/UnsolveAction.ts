@@ -1,7 +1,5 @@
 import Action from "../Action.ts";
 import Puzzle from "../Puzzle.js";
-import type Flag from "../Flag.js";
-import type InventoryItem from "../InventoryItem.js";
 
 /**
  * Represents an unsolve action.
@@ -15,7 +13,7 @@ export default class UnsolveAction extends Action {
 	 * @param customNarration - The custom text of the narration. Optional.
 	 * @param callee - The in-game entity that caused the command to be executed, if applicable.
 	 */
-	performUnsolve(puzzle: Puzzle, customNarration?: string, callee?: Event | Flag | InventoryItem | Puzzle): void {
+	performUnsolve(puzzle: Puzzle, customNarration?: string, callee?: Callee): void {
 		if (this.performed) return;
 		super.perform();
 		this.getGame().narrationHandler.narrateUnsolve(this, puzzle, this.player, customNarration);

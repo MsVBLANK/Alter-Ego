@@ -1,10 +1,10 @@
 import { ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
-import InspectAction from "../Data/Actions/InspectAction.js";
-import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
-import TakeAction from "../Data/Actions/TakeAction.js";
-import DropAction from "../Data/Actions/DropAction.js";
-import StashAction from "../Data/Actions/StashAction.js";
-import UnstashAction from "../Data/Actions/UnstashAction.js";
+import InspectAction from "../Data/Actions/InspectAction.ts";
+import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
+import TakeAction from "../Data/Actions/TakeAction.ts";
+import DropAction from "../Data/Actions/DropAction.ts";
+import StashAction from "../Data/Actions/StashAction.ts";
+import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import type Game from "../Data/Game.js";
 import type Interactable from "./Interactables/Interactable.ts";
 import type Player from "../Data/Player.js";

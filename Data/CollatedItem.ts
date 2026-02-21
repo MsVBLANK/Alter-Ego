@@ -1,6 +1,6 @@
 import RoomItem from './RoomItem.js';
-import DestroyAction from './Actions/DestroyAction.js';
-import InstantiateAction from './Actions/InstantiateAction.js';
+import DestroyAction from './Actions/DestroyAction.ts';
+import InstantiateAction from './Actions/InstantiateAction.ts';
 import { getSortedItems } from '../Modules/helpers.ts';
 import { getChildItems } from '../Modules/itemManager.js';
 import ItemInstance from './ItemInstance.ts';

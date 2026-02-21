@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import InflictAction from "./InflictAction.js";
+import InflictAction from "./InflictAction.ts";
 import type HidingSpot from "../HidingSpot.js";
 
 /**

@@ -1,7 +1,7 @@
 import Action from "../Action.ts";
 import EnterAction from "./EnterAction.ts";
 import ExitAction from "./ExitAction.ts";
-import SolveAction from "./SolveAction.js";
+import SolveAction from "./SolveAction.ts";
 import type Room from "../Room.js";
 import type Exit from "../Exit.js";
 

@@ -10,12 +10,12 @@ import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
 import RoomItem from "../Data/RoomItem.js";
 import ActionDirective from "./ActionDirective.ts";
-import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
-import InspectAction from "../Data/Actions/InspectAction.js";
-import TakeAction from "../Data/Actions/TakeAction.js";
-import DropAction from "../Data/Actions/DropAction.js";
-import StashAction from "../Data/Actions/StashAction.js";
-import UnstashAction from "../Data/Actions/UnstashAction.js";
+import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
+import InspectAction from "../Data/Actions/InspectAction.ts";
+import TakeAction from "../Data/Actions/TakeAction.ts";
+import DropAction from "../Data/Actions/DropAction.ts";
+import StashAction from "../Data/Actions/StashAction.ts";
+import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 
 /**

@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import SolveAction from "./SolveAction.js";
+import SolveAction from "./SolveAction.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.ts";
 import type Puzzle from "../Puzzle.js";

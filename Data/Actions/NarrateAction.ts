@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
 import Narration from "../Narration.js";
-import SayAction from "./SayAction.js";
+import SayAction from "./SayAction.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { ChannelType } from "discord.js";
 import type Player from "../Player.js";

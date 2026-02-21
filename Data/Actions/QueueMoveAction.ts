@@ -1,7 +1,7 @@
 import Action from "../Action.ts";
 import Room from "../Room.js";
 import MoveAction from "./MoveAction.ts";
-import StartMoveAction from "./StartMoveAction.js";
+import StartMoveAction from "./StartMoveAction.ts";
 import type Exit from "../Exit.js";
 
 /**

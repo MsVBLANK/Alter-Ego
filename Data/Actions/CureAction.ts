@@ -1,6 +1,6 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
-import InflictAction from "./InflictAction.js";
+import InflictAction from "./InflictAction.ts";
 import type InventoryItem from "../InventoryItem.js";
 import type Status from "../Status.js";
 

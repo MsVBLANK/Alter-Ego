@@ -1,7 +1,7 @@
-import InventorySlot from './InventorySlot.js';
-import ItemInstance from './ItemInstance.js';
-import DestroyAction from './Actions/DestroyAction.js';
-import InstantiateAction from './Actions/InstantiateAction.js';
+import InventorySlot from './InventorySlot.ts';
+import ItemInstance from './ItemInstance.ts';
+import DestroyAction from './Actions/DestroyAction.ts';
+import InstantiateAction from './Actions/InstantiateAction.ts';
 import { Collection } from 'discord.js';
 
 /** @import Fixture from './Fixture.js' */
@@ -34,7 +34,7 @@ export default class RoomItem extends ItemInstance {
     accessible;
     /**
      * The item's actual container.
-     * @type {Fixture|Puzzle|RoomItem}
+     * @type {RoomItemContainer}
      */
     container = null;
     /**
@@ -76,7 +76,7 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Sets the container.
-     * @param {Fixture|Puzzle|RoomItem} container
+     * @param {RoomItemContainer} container
      */
     setContainer(container) {
         this.container = container;
@@ -164,7 +164,7 @@ export default class RoomItem extends ItemInstance {
         return preposition;
     }
 
-    /** 
+    /**
      * Gets the highest-level container of this item.
      */
     getTopContainer() {
@@ -191,6 +191,11 @@ export default class RoomItem extends ItemInstance {
     /** Gets the entity's location. */
     getLocation() {
         return this.location;
+    }
+
+    /** Gets the item's container. */
+    getContainer() {
+        return this.container;
     }
 
     /**

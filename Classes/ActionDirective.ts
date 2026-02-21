@@ -1,4 +1,4 @@
-import Action from "../Data/Action.js";
+import Action from "../Data/Action.ts";
 import type Game from "../Data/Game.js";
 import type Player from "../Data/Player.js";
 import type Room from "../Data/Room.js";
@@ -12,14 +12,12 @@ import { subtle } from "crypto";
 export default class ActionDirective<T extends Action = Action> {
 	/**
 	 * The action this directive should create.
-	 * @readonly
 	 */
-	action: { new(...args: any[]): T };
+	readonly action: { new(...args: any[]): T };
 	/**
 	 * The raw arguments provided for this action.
-	 * @readonly
 	 */
-	#args: string[];
+	readonly #args: string[];
 	customId: string;
 
 	/**
@@ -52,7 +50,7 @@ export default class ActionDirective<T extends Action = Action> {
 	/**
 	 * Creates an instance of the given action.
 	 * @param game - The game this belongs to.
-	 * @param message - The message that initiated the action. 
+	 * @param message - The message that initiated the action.
 	 * @param player - The player performing the action.
 	 * @param location - The location where this action is being performed.
 	 * @param forced - Whether or not the action was performed by someone other than the player themselves.

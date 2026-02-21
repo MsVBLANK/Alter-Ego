@@ -1,11 +1,11 @@
-import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.ts";
 
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Fixture from "../Data/Fixture.js" */
 /** @import Game from "../Data/Game.js" */
 /** @import Player from "../Data/Player.js" */
 /** @import Exit from "../Data/Exit.js" */
-/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import ItemInstance from "../Data/ItemInstance.ts" */
 /** @import Puzzle from "../Data/Puzzle.js" */
 /** @import Recipe from "../Data/Recipe.js" */
 /** @import Room from "../Data/Room.js" */

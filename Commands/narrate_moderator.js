@@ -1,5 +1,5 @@
 import Dialog from '../Data/Dialog.js';
-import NarrateAction from '../Data/Actions/NarrateAction.js';
+import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import { MessageDisplayType } from '../Modules/enums.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -20,8 +20,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
 	return `${settings.commandPrefix}narrate ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
@@ -31,10 +31,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
 	if (args.length < 2)

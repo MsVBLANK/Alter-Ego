@@ -1,6 +1,6 @@
 import Game from "../Data/Game.js";
 import Gesture from "../Data/Gesture.js";
-import ItemInstance from "../Data/ItemInstance.js";
+import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";
 import Status from "../Data/Status.js";
@@ -9,7 +9,7 @@ import Status from "../Data/Status.js";
 /** @import Exit from "../Data/Exit.js" */
 /** @import Fixture from "../Data/Fixture.js" */
 /** @import Flag from "../Data/Flag.js" */
-/** @import GameEntity from "../Data/GameEntity.js" */
+/** @import GameEntity from "../Data/GameEntity.ts" */
 /** @import InventoryItem from "../Data/InventoryItem.js" */
 /** @import Prefab from "../Data/Prefab.js" */
 /** @import Puzzle from "../Data/Puzzle.js" */
@@ -166,7 +166,7 @@ export const entityIdContains = (entity, id, normalize = false) => {
 
 /**
  * Returns true if the entity's location's ID matches the given ID.
- * @param {Fixture|RoomItem|Puzzle|Player} entity - The entity whose location we want to match the ID against.
+ * @param {RoomItemContainer|Player} entity - The entity whose location we want to match the ID against.
  * @param {string} id - The ID to match.
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
@@ -177,7 +177,7 @@ export const entityLocationIdMatches = (entity, id, normalize = false) => {
 
 /**
  * Returns whether or not the entity's accessible property matches the given accessible state.
- * @param {Fixture|RoomItem|Puzzle} entity - The entity to match the accessible state against. 
+ * @param {RoomItemContainer} entity - The entity to match the accessible state against. 
  * @param {boolean} accessible - The accessible state to match against. 
  */
 export const entityAccessibleMatches = (entity, accessible) => {

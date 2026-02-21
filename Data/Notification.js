@@ -1,9 +1,9 @@
-import Interactable from "../Classes/Interactables/Interactable.js";
-import GameConstruct from "./GameConstruct.js";
+import Interactable from "../Classes/Interactables/Interactable.ts";
+import GameConstruct from "./GameConstruct.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { Attachment, Collection, Embed } from "discord.js";
 
-/** @import Action from "./Action.js"; */
+/** @import Action from "./Action.ts"; */
 /** @import Game from "./Game.js"; */
 /** @import Player from "./Player.js"; */
 

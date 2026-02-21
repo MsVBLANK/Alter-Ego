@@ -4,16 +4,16 @@ import InventoryItem from "../Data/InventoryItem.js";
 import Narration from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
-import DieAction from "../Data/Actions/DieAction.js";
-import NarrateAction from "../Data/Actions/NarrateAction.js";
+import DieAction from "../Data/Actions/DieAction.ts";
+import NarrateAction from "../Data/Actions/NarrateAction.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
-import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.js";
+import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts";
 import { Collection } from "discord.js";
 import Notification from "../Data/Notification.js";
 
-/** @import Interactable from "./Interactables/Interactable.js" */
-/** @import Action from "../Data/Action.js" */
+/** @import Interactable from "./Interactables/Interactable.ts" */
+/** @import Action from "../Data/Action.ts" */
 /** @import Dialog from "../Data/Dialog.js" */
 /** @import Exit from "../Data/Exit.js" */
 /** @import Game from "../Data/Game.js" */
@@ -24,8 +24,8 @@ import Notification from "../Data/Notification.js";
 /** @import Recipe from "../Data/Recipe.js" */
 /** @import Event from "../Data/Event.js" */
 /** @import HidingSpot from "../Data/HidingSpot.js" */
-/** @import InventorySlot from "../Data/InventorySlot.js" */
-/** @import ItemInstance from "../Data/ItemInstance.js" */
+/** @import InventorySlot from "../Data/InventorySlot.ts" */
+/** @import ItemInstance from "../Data/ItemInstance.ts" */
 /** @import Status from "../Data/Status.js" */
 /** @import Whisper from "../Data/Whisper.js" */
 /** @import { Attachment, Embed, GuildMember } from "discord.js" */
@@ -97,7 +97,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a say action in the specified room.
 	 * Does not send any notifications.
-	 * @param {Action} action - The action being narrated. 
+	 * @param {Action} action - The action being narrated.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 * @param {Room} location - The room to narrate the action in.
 	 * @param {string} narrationText - The text of the narration to send.
@@ -137,8 +137,8 @@ export default class GameNarrationHandler {
 	 * Narrates a start move action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {boolean} isRunning - Whether or not the player is running.
-	 * @param {Exit} exit - The exit the player is moving toward. 
-	 * @param {Player} player - The player performing the start move action. 
+	 * @param {Exit} exit - The exit the player is moving toward.
+	 * @param {Player} player - The player performing the start move action.
 	 */
 	narrateStartMove(action, isRunning, exit, player) {
 		const messageType = MessageDisplayType.MINOR;
@@ -241,7 +241,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates an inspect action.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Room|Fixture|RoomItem|InventoryItem|Player} target - The target to inspect.
+	 * @param {Inspectable} target - The target to inspect.
 	 * @param {Player} player - The player performing the inspect action.
 	 */
 	narrateInspect(action, target, player) {
@@ -489,7 +489,7 @@ export default class GameNarrationHandler {
 	 * Narrates a drop action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem} item - The item to drop.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container to drop the item into.
+	 * @param {RoomItemContainer} container - The container to drop the item into.
 	 * @param {Player} player - The player performing the take action.
 	 * @param {boolean} [notify] - Whether or not to notify the player that they dropped the item. Defaults to true.
 	 */
@@ -610,7 +610,7 @@ export default class GameNarrationHandler {
 	 * Narrates a dress action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem[]} items - The items the player is putting on.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player is dressing from.
+	 * @param {RoomItemContainer} container - The container the player is dressing from.
 	 * @param {Player} player - The player performing the dress action.
 	 */
 	narrateDress(action, items, container, player) {
@@ -627,7 +627,7 @@ export default class GameNarrationHandler {
 	 * Narrates an undress action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem[]} items - The items the player is taking off.
-	 * @param {Fixture|Puzzle|RoomItem} container - The container the player is undressing into.
+	 * @param {RoomItemContainer} container - The container the player is undressing into.
 	 * @param {Player} player - The player performing the undress action.
 	 */
 	narrateUndress(action, items, container, player) {
@@ -724,20 +724,22 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Fixture} fixture - The fixture being activated.
 	 * @param {Player} [player] - The player performing the activate action.
+	 * @param {boolean} [recipeInitiatedDescriptionSent] - Whether or not an initiated description for a recipe has already been sent. Defaults to false.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
-	narrateActivate(action, fixture, player, customNarration = "") {
-		const messageType = MessageDisplayType.STANDARD;
+	narrateActivate(action, fixture, player, recipeInitiatedDescriptionSent = false, customNarration = "") {
+		let messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
 		let narration = customNarration;
 		if (player && !customNarration) {
 			notification = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase, player, true);
 			narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase, player, false);
+			if (recipeInitiatedDescriptionSent) messageType = MessageDisplayType.MINOR;
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase);
 		if (notification) this.sendNotification(player, action, notification, messageType);
-		this.#sendNarration(messageType, action, player, narration, fixture.location);
+		this.#sendNarration(MessageDisplayType.STANDARD, action, player, narration, fixture.location);
 	}
 
 	/**
@@ -811,7 +813,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a die action.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Player} player - The player performing the die action. 
+	 * @param {Player} player - The player performing the die action.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateDie(action, player, customNarration) {
@@ -884,7 +886,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a player leaving a whisper.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Player} player - The player performing the action. 
+	 * @param {Player} player - The player performing the action.
 	 * @param {Whisper} whisper - The whisper the player is leaving.
 	 * @param {string} customNarration - The custom text of the narration.
 	 */

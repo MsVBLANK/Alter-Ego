@@ -1,7 +1,7 @@
-import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.js';
-import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.js';
+import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.ts';
+import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.ts';
 import { InteractableType, MessageDisplayType } from './enums.js';
-import { capitalizeFirstLetter } from './helpers.js';
+import { capitalizeFirstLetter } from './helpers.ts';
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -22,7 +22,7 @@ import {
 } from 'discord.js';
 
 /**
- * @import Interactable from "../Classes/Interactables/Interactable.js"
+ * @import Interactable from "../Classes/Interactables/Interactable.ts"
  * @import Game from "../Data/Game.js"
  * @import Player from "../Data/Player.js"
  * @import Room from "../Data/Room.js";
@@ -36,12 +36,12 @@ import {
  * @param {string} messageText - The text content of the message. 
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
- * @param {Interactable[]} interactables - An array of interactables.
+ * @param {Interactable[]} [interactables] - An array of interactables. Optional.
  */
 export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], interactables = []) {
     return {
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
-        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player),
+        components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player, [], interactables),
         flags: generateFlags(messageDisplayType),
         files: files
     };
@@ -90,13 +90,14 @@ function generateFlags(messageDisplayType) {
  * @param {string} messageText - The text content of the narration.
  * @param {Player} [player] - The player the narration is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional. 
+ * @param {Interactable[]} [interactables] - An array of interactables. Optional.
  */
-function createNarrateComponents(messageDisplayType, game, messageText, player, files) {
+function createNarrateComponents(messageDisplayType, game, messageText, player, files, interactables = []) {
     /** @type {MediaGalleryBuilder} */
     let mediaGalleryBuilder;
     [mediaGalleryBuilder, messageText] = getMediaGalleryComponents(messageText, files);
 
-    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder)[]} */
+    /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>)[]} */
     let components = [];
     switch (messageDisplayType) {
 		case MessageDisplayType.STANDARD:
@@ -122,6 +123,11 @@ function createNarrateComponents(messageDisplayType, game, messageText, player, 
             break;
 	}
     if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
+	if (interactables.length > 0) {
+        const actionRows = generateActionRows(interactables);
+        components = components.concat(actionRows);
+    }
+
     return components;
 }
 
@@ -295,26 +301,31 @@ function getMediaGalleryComponents(originalMessageText, fileURLs = []) {
  * @param {Interactable[]} interactables - An array of interactables. 
  */
 function generateActionRows(interactables) {
+    /** @typedef {{actionRow: ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>, priority: number}} ActionRowIntermediary */
+    /** @typedef {{button: ButtonBuilder, priority: number}} ButtonIntermediary */
+    
     const buttonInteractables = interactables.filter(interactable => interactable.type === InteractableType.BUTTON);
     const stringSelectInteractables = interactables.filter(interactable => interactable.type === InteractableType.STRING_SELECT_MENU);
 
-    /** @type {ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>[]} */
+    /** @type {ActionRowIntermediary[]} */
     const actionRows = [];
     /** @type {Set<string>} */
     const includedInteractables = new Set();
-    /** @type {ButtonBuilder[]} */
+    /** @type {ButtonIntermediary[]} */
     let buttons = [];
     for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
         const interactable = buttonInteractables[i];
         if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable) {
-            buttons.push(interactable.component);
+            buttons.push({ button: interactable.component, priority: interactable.priority });
             includedInteractables.add(interactable.customId);
         }
         if (i === buttonInteractables.length - 1 || buttons.length === 5) {
+            buttons.sort((a, b) => a.priority - b.priority);
             /** @type {ActionRowBuilder<ButtonBuilder>} */
             const actionRow = new ActionRowBuilder();
-            actionRow.addComponents(buttons);
-            actionRows.push(actionRow);
+            let priority = buttons.reduce((value, button) => value + button.priority, 0) / buttons.length;
+            actionRow.addComponents(buttons.map((button) => button.button));
+            actionRows.push({ actionRow: actionRow, priority: priority });
             buttons = [];
             if (actionRows.length === 5) break;
         }
@@ -326,10 +337,11 @@ function generateActionRows(interactables) {
             const actionRow = new ActionRowBuilder();
             actionRow.addComponents(interactable.component);
             includedInteractables.add(interactable.customId);
-            actionRows.push(actionRow);
+            actionRows.push({ actionRow: actionRow, priority: interactable.priority });
         }
     }
-    return actionRows;
+    actionRows.sort((a, b) => a.priority - b.priority);
+    return actionRows.map((actionRow) => actionRow.actionRow);
 }
 
 /**

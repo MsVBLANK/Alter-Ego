@@ -1,21 +1,22 @@
 import { ButtonStyle, Collection } from "discord.js";
-import ButtonInteractable from "./Interactables/ButtonInteractable.js";
-import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.js";
-import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.js";
+import ButtonInteractable from "./Interactables/ButtonInteractable.ts";
+import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.ts";
+import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.ts";
 import Fixture from "../Data/Fixture.js";
 import type Game from "../Data/Game.js";
-import type Interactable from "./Interactables/Interactable.js";
+import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.js";
 import type Exit from "../Data/Exit.js";
 import Player from "../Data/Player.js";
-import type Puzzle from "../Data/Puzzle.js";
 import RoomItem from "../Data/RoomItem.js";
 import ActionDirective from "./ActionDirective.ts";
-import QueueMoveAction from "../Data/Actions/QueueMoveAction.js";
-import InspectAction from "../Data/Actions/InspectAction.js";
-import TakeAction from "../Data/Actions/TakeAction.js";
+import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
+import InspectAction from "../Data/Actions/InspectAction.ts";
+import TakeAction from "../Data/Actions/TakeAction.ts";
+import DropAction from "../Data/Actions/DropAction.ts";
+import StashAction from "../Data/Actions/StashAction.ts";
+import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
-import DropAction from "../Data/Actions/DropAction.js";
 
 /**
  * @class BotInteractableManager
@@ -24,29 +25,25 @@ import DropAction from "../Data/Actions/DropAction.js";
 export default class BotInteractableManager {
 	/**
 	 * The game this belongs to.
-	 * @readonly
 	 */
-	#game: Game;
+    readonly #game: Game;
 	/**
 	 * A cache of recently-created Interactables, indexed by their custom IDs.
 	 * This is used to look up Interactables when an interaction is received.
 	 */
-	#interactableCache: Collection<string, Interactable>;
+	readonly #interactableCache: Collection<string, Interactable>;
 	/**
 	 * The maximum number of Interactables to keep in the cache at once. If the cache exceeds this size, the oldest Interactable will be removed.
-	 * @readonly
 	 */
-	#interactableCacheSizeLimit = 500;
+	readonly #interactableCacheSizeLimit = 500;
 	/**
 	 * A cache of messages with Interactables, indexed by message ID. This is used to keep track of which messages have interactables on them, so that we can disable those interactables when they're no longer valid.
-	 * @readonly
 	 */
-	#interactableMessageCache: Collection<InteractableMessage, string[]>;
+    readonly #interactableMessageCache: Collection<InteractableMessage, string[]>;
 	/**
 	 * The maximum number of Interactable messages to keep in the cache at once. If the cache exceeds this size, the oldest message will be removed.
-	 * @readonly
 	 */
-	#interactableMessageCacheSizeLimit = 50;
+    readonly #interactableMessageCacheSizeLimit = 50;
 
 	/**
 	 * @constructor
@@ -60,7 +57,7 @@ export default class BotInteractableManager {
 
 	/**
 	 * Gets an interactable from the cache by its custom ID.
-	 * @param customId 
+	 * @param customId
 	 */
 	getInteractableByCustomId(customId: string) {
 		return this.#interactableCache.get(customId);
@@ -69,7 +66,7 @@ export default class BotInteractableManager {
 	/**
 	 * Adds an interactable to the cache, removing the oldest one if the cache size limit is exceeded.
 	 * Interactables are valid for 5 minutes after being added. They are automatically removed from the cache after this time.
-	 * @param interactable 
+	 * @param interactable
 	 */
 	addInteractable(interactable: Interactable) {
 		if (this.#interactableCache.size >= this.#interactableCacheSizeLimit)
@@ -81,7 +78,7 @@ export default class BotInteractableManager {
 
 	/**
 	 * Disables an interactable and removes it from the cache by its custom ID.
-	 * @param customId 
+	 * @param customId
 	 */
 	disableInteractable(customId: string) {
 		const interactable = this.#interactableCache.get(customId);
@@ -130,7 +127,7 @@ export default class BotInteractableManager {
 		if (!channel.isTextBased()) return;
 		return await channel.messages.fetch(interactableMessage.messageId);
 	}
-	
+
 	/**
 	 * Creates QueueMoveAction interactables for a list of exits and adds them to the cache.
 	 * @param exits - A list of exits to create interactables for.
@@ -188,47 +185,62 @@ export default class BotInteractableManager {
 		const actionDirective = new ActionDirective(InspectAction.prototype, ["InspectAction Menu"]);
 		const customId = await actionDirective.generateCustomId(player);
 		actionDirective.setCustomId(customId);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect");
+		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect", 1);
 		this.addInteractable(menu);
 		return [menu];
 	}
 
 	/**
-	 * Creates StringSelectMenuInteractable for a list of takeable room items and adds it to the cache.
+	 * Creates Interactables for a list of takeable room items and adds them to the cache.
 	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
 	 * @param player - The player these interactables are being created for.
 	 */
-	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
-		const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
-		for (const entity of entities) {
-			const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+	async createTakeActionInteractable(entities: RoomItem[], player: Player): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable take") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable take")) return [];
+		if (entities.length > 2) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				if (menuOptions.has(customId)) continue;
+				actionDirective.setCustomId(customId);
+				const containerString = entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
+					` from ${entity.slot} of ${entity.container.name}`
+						: ` from ${entity.container.name}`;
+				const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Take ${entity.name}${containerString}`);
+				this.addInteractable(option);
+				menuOptions.set(customId, option);
+				if (menuOptions.size >= 25) break;
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(TakeAction.prototype, ["TakeAction Menu"]);
 			const customId = await actionDirective.generateCustomId(player);
-			if (menuOptions.has(customId)) continue;
 			actionDirective.setCustomId(customId);
-			const containerString = entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
-				` from ${entity.slot} of ${entity.container.name}`
-					: ` from ${entity.container.name}`
-			const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Take ${entity.name}${containerString}`);
-			this.addInteractable(option);
-			menuOptions.set(customId, option);
-			if (menuOptions.size >= 25) break;
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take", 2);
+			this.addInteractable(menu);
+			return [menu];
 		}
-		if (menuOptions.size === 0) return [];
-		const actionDirective = new ActionDirective(TakeAction.prototype, ["TakeAction Menu"]);
-		const customId = await actionDirective.generateCustomId(player);
-		actionDirective.setCustomId(customId);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take");
-		this.addInteractable(menu);
-		return [menu];
+		else {
+			const takeButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(TakeAction.prototype, entity.getTakeActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				actionDirective.setCustomId(customId);
+				const takeButton = new ButtonInteractable(actionDirective, `Take ${entity.name}`, ButtonStyle.Primary, 2);
+				this.addInteractable(takeButton);
+				takeButtons.push(takeButton);
+			}
+			return takeButtons;
+		}
 	}
 
 	/**
-	 * Creates Interactables for a list of droppable inventory items and adds it to the cache.
-	 * @param entities - A list of takeable room items to create StringSelectMenuOptionInteractables for.
+	 * Creates Interactables for a list of droppable inventory items and adds them to the cache.
+	 * @param entities - A list of takeable room items to create Interactables for.
 	 * @param player - The player these interactables are being created for.
 	 * @param container - The fixture or room item the player is dropping the items into.
 	 */
-	async createDropActionInteractables(entities: InventoryItem[], player: Player, container: Fixture|RoomItem|Puzzle): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+	async createDropActionInteractables(entities: InventoryItem[], player: Player, container: RoomItemContainer): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
 		if (player.hasBehaviorAttribute("disable drop") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable drop")) return [];
 		if (container instanceof RoomItem && container.inventory.size > 1) {
 			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
@@ -262,11 +274,192 @@ export default class BotInteractableManager {
 				const actionDirective = new ActionDirective(DropAction.prototype, entity.getDropActionDirectiveArgs(containerType, container, inventorySlot));
 				const customId = await actionDirective.generateCustomId(player);
 				actionDirective.setCustomId(customId);
-				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary);
+				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, 3);
 				this.addInteractable(dropButton);
 				dropButtons.push(dropButton);
 			}
 			return dropButtons;
 		}
 	}
+
+	/**
+	 * Creates Interactables for a list of stashable inventory items and adds them to the cache.
+	 * @param entities - A list of stashable inventory items to create Interactables for.
+	 * @param player - The player these interactables are being created for.
+	 * @param viableContainers - A map of viable stash containers to the inventory slots the item can be stashed into. This is used to determine which stash options to create for each item.
+	 */
+	async createStashActionInteractables(entities: InventoryItem[], player: Player, viableContainers: Map<InventoryItem, string[]>): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable stash") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable stash")) return [];
+		if (viableContainers.values().reduce((sum, inventorySlots) => sum + inventorySlots.length, 0) > 2) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				for (const [container, inventorySlots] of viableContainers.entries()) {
+					if (container.identifier === entity.identifier) continue;
+					for (const inventorySlotId of inventorySlots) {
+						const inventorySlot = container.inventory.get(inventorySlotId);
+						if (!inventorySlot || inventorySlot.willBeOverFilledBy(entity)) continue;
+						const actionDirective = new ActionDirective(StashAction.prototype, entity.getStashActionDirectiveArgs(container, inventorySlot));
+						const customId = await actionDirective.generateCustomId(player);
+						if (menuOptions.has(customId)) continue;
+						actionDirective.setCustomId(customId);
+						const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.name}` : container.name;
+						const option = new StringSelectMenuOptionInteractable(actionDirective, `${entity.name} ${container.getPreposition()} ${containerName}`, customId, `Stash ${entity.name} ${container.getPreposition()} ${inventorySlot.id} of ${container.name}`);
+						this.addInteractable(option);
+						menuOptions.set(customId, option);
+						if (menuOptions.size >= 25) break;
+					}
+				}
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(StashAction.prototype, ["StashAction Menu"]);
+			const customId = await actionDirective.generateCustomId(player);
+			actionDirective.setCustomId(customId);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Stash", 0);
+			this.addInteractable(menu);
+			return [menu];
+		}
+		else {
+			const stashButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				for (const [container, inventorySlots] of viableContainers.entries()) {
+					if (container.identifier === entity.identifier) continue;
+					for (const inventorySlotId of inventorySlots) {
+						const inventorySlot = container.inventory.get(inventorySlotId);
+						if (!inventorySlot || inventorySlot.willBeOverFilledBy(entity)) continue;
+						const actionDirective = new ActionDirective(StashAction.prototype, entity.getStashActionDirectiveArgs(container, inventorySlot));
+						const customId = await actionDirective.generateCustomId(player);
+						actionDirective.setCustomId(customId);
+						const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.name}` : container.name;
+						const stashButton = new ButtonInteractable(actionDirective, `Stash ${entity.name} ${container.getPreposition()} ${containerName}`, ButtonStyle.Primary, 0);
+						this.addInteractable(stashButton);
+						stashButtons.push(stashButton);
+					}
+				}
+			}
+			return stashButtons;
+		}
+	}
+
+	/**
+	 * Creates Interactables for a list of unstashable inventory items and adds them to the cache.
+	 * @param entities - A list of unstashable inventory items to create Interactables for.
+	 * @param player - The player these interactables are being created for.
+	 */
+	async createUnstashActionInteractables(entities: InventoryItem[], player: Player): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+		if (player.hasBehaviorAttribute("disable unstash") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable unstash")) return [];
+		const uniqueEntityNames = new Set(entities.map(entity => entity.name));
+		if (entities.length > 4 || uniqueEntityNames.size !== entities.length) {
+			const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(UnstashAction.prototype, entity.getUnstashActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				if (menuOptions.has(customId)) continue;
+				actionDirective.setCustomId(customId);
+				const containerString = entity.container !== null && entity.container.inventory.size > 1 ?
+					` from ${entity.slot} of ${entity.container.name}`
+						: ` from ${entity.container.name}`;
+				const option = new StringSelectMenuOptionInteractable(actionDirective, entity.name, customId, `Unstash ${entity.name}${containerString}`);
+				this.addInteractable(option);
+				menuOptions.set(customId, option);
+				if (menuOptions.size >= 25) break;
+			}
+			if (menuOptions.size === 0) return [];
+			const actionDirective = new ActionDirective(StashAction.prototype, ["UnstashAction Menu"]);
+			const customId = await actionDirective.generateCustomId(player);
+			actionDirective.setCustomId(customId);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unstash", 1);
+			this.addInteractable(menu);
+			return [menu];
+		}
+		else {
+			const unstashButtons: ButtonInteractable[] = [];
+			for (const entity of entities) {
+				const actionDirective = new ActionDirective(UnstashAction.prototype, entity.getUnstashActionDirectiveArgs());
+				const customId = await actionDirective.generateCustomId(player);
+				actionDirective.setCustomId(customId);
+				const unstashButton = new ButtonInteractable(actionDirective, `Unstash ${entity.name}`, ButtonStyle.Primary, 2);
+				this.addInteractable(unstashButton);
+				unstashButtons.push(unstashButton);
+			}
+			return unstashButtons;
+		}
+	}
+
+    /**
+     * Generates an array of take interactables based on what the player is currently able to take.
+     * @param container - The container the player can take items from.
+     * @param containedItems - The items in the container that the player is able to take.
+     * @param player - The player who can perform a take action.
+     */
+    async getTakeInteractables(container: RoomItemContainer, containedItems: RoomItem[], player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        let dropContainer = container;
+        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+        if (dropContainer.canCurrentlyContainItems())
+            interactables = interactables.concat(await this.createTakeActionInteractable(containedItems, player));
+        return interactables;
+    }
+
+    /**
+     * Generates an array of drop interactables based on what the player is currently able to drop.
+     * @param container - The container the player can drop items into.
+     * @param player - The player who can perform a drop action.
+     */
+    async getDropInteractables(container: RoomItemContainer, player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        let dropContainer = container;
+        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+        if (dropContainer.canCurrentlyContainItems()) {
+            if (dropContainer.isItemContainer()) {
+                const droppableEntities = this.#game.entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
+                if (droppableEntities.length !== 0) interactables = interactables.concat(await this.createDropActionInteractables(droppableEntities, player, container));
+            }
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of stash interactables based on what the player is currently able to stash.
+     * @param player - The player who can perform a stash action.
+     */
+    async getStashInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const playerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name);
+        const heldItems = this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem);
+        const playerContainerItems = playerItems.filter(item => item.inventory.size > 0);
+        if (heldItems.length > 0 && playerContainerItems.length > 0) {
+            const viableStashDestinations = new Map<InventoryItem, string[]>();
+            // Get stash interactables.
+            for (const heldItem of heldItems) {
+                for (const containerItem of playerContainerItems) {
+                    const viableInventorySlots: string[] = [];
+                    for (const inventorySlot of containerItem.inventory.values()) {
+                        if (inventorySlot.willBeOverFilledBy(heldItem)) continue;
+                        viableInventorySlots.push(inventorySlot.id);
+                    }
+                    if (viableInventorySlots.length > 0) viableStashDestinations.set(containerItem, viableInventorySlots);
+                }
+            }
+            interactables = interactables.concat(await this.createStashActionInteractables(heldItems, player, viableStashDestinations));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of unstash interactables based on what the player is currently able to unstash.
+     * @param player - The player who can perform an unstash action.
+     */
+    async getUnstashInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const playerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name);
+        const playerFreeHand = this.#game.entityFinder.getPlayerFreeHand(player);
+        const playerContainerItems = playerItems.filter(item => item.inventory.size > 0);
+        if (playerFreeHand && playerContainerItems.length > 0) {
+            const stashedItems = playerItems.filter(item => item.container !== null);
+            if (stashedItems.length > 0) {
+                interactables = interactables.concat(await this.createUnstashActionInteractables(stashedItems, player));
+            }
+        }
+        return interactables;
+    }
 }

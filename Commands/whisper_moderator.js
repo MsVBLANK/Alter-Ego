@@ -1,7 +1,7 @@
 import Dialog from '../Data/Dialog.js';
 import Whisper from '../Data/Whisper.js';
-import SayAction from '../Data/Actions/SayAction.js';
-import WhisperAction from '../Data/Actions/WhisperAction.js';
+import SayAction from '../Data/Actions/SayAction.ts';
+import WhisperAction from '../Data/Actions/WhisperAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
@@ -24,8 +24,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}whisper nestor jun\n`
@@ -35,10 +35,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     if (args.length < 2)
@@ -107,7 +107,7 @@ export async function execute(game, message, command, args) {
 }
 
 /**
- * 
+ *
  * @param {Game} game - The game the whisper is occurring in.
  * @param {UserMessage} message - The Discord message that triggered this.
  * @param {string} messageText - The text of the message to send.

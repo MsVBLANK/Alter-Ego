@@ -1,4 +1,4 @@
-import DieAction from "../../../Data/Actions/DieAction.js";
+import DieAction from "../../../Data/Actions/DieAction.ts";
 import Player from "../../../Data/Player.js";
 import { createMockMessage } from "../../__mocks__/libs/discord.js";
 

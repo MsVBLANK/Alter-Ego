@@ -1,14 +1,14 @@
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 import Room from "./Room.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import Fixture from "./Fixture.js";
 import RoomItem from "./RoomItem.js";
 import Puzzle from "./Puzzle.js";
-/** @import Interactable from "../Classes/Interactables/Interactable.js"; */
+/** @import Interactable from "../Classes/Interactables/Interactable.ts"; */
 /** @import Exit from "./Exit.js"; */
 /** @import Game from "./Game.js"; */
-/** @import GameEntity from "./GameEntity.js"; */
+/** @import GameEntity from "./GameEntity.ts"; */
 /** @import Player from "./Player.js"; */
 
 /**
@@ -90,7 +90,7 @@ export default class Description extends GameConstruct {
 
 	/**
 	 * Parses the description for the given player.
-	 * @param {Player} player 
+	 * @param {Player} player
 	 * @param {GameEntity} container
 	 */
 	parseFor(player, container = this.getContainer()) {
@@ -133,7 +133,8 @@ export default class Description extends GameConstruct {
 			const defaultDropFixture = this.getGame().entityFinder.getFixture(this.getGame().settings.defaultDropFixture, container.id);
 			if (defaultDropFixture) {
 				defaultDropFixtureString = defaultDropFixture.description.parseFor(player, defaultDropFixture);
-				potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(defaultDropFixtureString));
+				const potentialFloorEntities = Description.getPotentialGameEntities(defaultDropFixtureString);
+				inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialFloorEntities, defaultDropFixture, player)[0]);
 			}
 			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
@@ -151,15 +152,9 @@ export default class Description extends GameConstruct {
 			const selectableInteractableGameEntities = this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialGameEntities, container, player);
 			inspectableEntities = inspectableEntities.concat(selectableInteractableGameEntities[0]);
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createInspectActionInteractable(inspectableEntities, player));
-			const takeableEntities = selectableInteractableGameEntities[1];
-			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createTakeActionInteractable(takeableEntities, player));
-			if ((container instanceof Fixture || container instanceof RoomItem || container instanceof Puzzle)) {
-				let dropContainer = container;
-				if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
-				if (dropContainer.canCurrentlyContainItems()) {
-					const droppableEntities = this.getGame().entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
-					if (droppableEntities.length !== 0) interactables = interactables.concat(await this.getGame().botContext.interactableManager.createDropActionInteractables(droppableEntities, player, container));
-				}
+			if (container instanceof Fixture || container instanceof RoomItem || container instanceof Puzzle) {
+                interactables = interactables.concat((await this.getGame().botContext.interactableManager.getTakeInteractables(container, selectableInteractableGameEntities[1], player)));
+                interactables = interactables.concat((await this.getGame().botContext.interactableManager.getDropInteractables(container, player)));
 			}
 			player.sendDescription(parsedDescription, container, this.messageDisplayType ?? MessageDisplayType.PLAIN_TEXT, interactables);
 		}

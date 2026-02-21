@@ -1,6 +1,6 @@
 import PlayerCommand from "../../Classes/PlayerCommand.js";
 import { usage, execute, config } from '../../Commands/undress_player.js'
-import UndressAction from "../../Data/Actions/UndressAction.js";
+import UndressAction from "../../Data/Actions/UndressAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 
@@ -17,7 +17,7 @@ describe('undress_player command', () => {
     });
 
     const undress_player = new PlayerCommand(config, usage, execute);
-        
+
     test('valid invocation', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const fixture = game.entityFinder.getFixture("FLOOR", "suite-9");

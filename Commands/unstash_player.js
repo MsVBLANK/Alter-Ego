@@ -1,4 +1,4 @@
-import UnstashAction from '../Data/Actions/UnstashAction.js';
+import UnstashAction from '../Data/Actions/UnstashAction.ts';
 import InventoryItem from '../Data/InventoryItem.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -22,8 +22,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}unstash LAPTOP\n`
@@ -33,11 +33,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -49,7 +49,7 @@ export async function execute(game, message, command, args, player) {
     // First, check if the player has a free hand.
     const hand = game.entityFinder.getPlayerFreeHand(player);
     if (hand === undefined) return game.communicationHandler.reply(message, "You do not have a free hand to retrieve an item. Either drop an item you're currently holding or stash it in one of your equipped items.");
-    
+
     const input = args.join(' ');
     const parsedInput = input.toUpperCase().replace(/\'/g, "");
 

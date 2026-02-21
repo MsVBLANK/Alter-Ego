@@ -1,7 +1,7 @@
 import Game from "./Game.js";
-import GameConstruct from "./GameConstruct.js";
+import GameConstruct from "./GameConstruct.ts";
 /**
- * @import CollatedRoomItem from "./CollatedRoomItem.js";
+ * @import CollatedItem from "./CollatedItem.ts";
  * @import Prefab from "./Prefab.js";
  */
 
@@ -42,45 +42,86 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	containedItems;
 	/**
+	 * The recipe item that contains this one. If this recipe item is not contained in another one, this is `null`.
+	 * @type {RecipeItem}
+	 */
+	container;
+	/**
 	 * The quantity of the item to be used or created.
 	 * @readonly
 	 * @type {number}
 	 */
 	quantity;
 	/**
-	 * The variable name to use for this item when processing the recipe. Must be one letter in length.
+	 * The variable name to use for the quantity of this item when processing the recipe. Must be one letter in length.
 	 * @readonly
 	 * @type {string}
 	 */
-	variableName;
+	quantityVariableName;
+	/**
+	 * The number of uses the item requires or will be produced with.
+	 * @readonly
+	 * @type {number}
+	 */
+	uses;
+	/**
+	 * The variable name to use for the uses of this item when processing the recipe. Must be one letter in length.
+	 * @readonly
+	 * @type {string}
+	 */
+	usesVariableName;
+	/**
+	 * Whether or not the quantity of this recipe item is constant. If a quantity is given, but it is not accompanied by a variable, it is assumed to be constant.
+	 * @readonly
+	 * @type {boolean}
+	 */
+	quantityIsConstant;
+	/**
+	 * Whether or not the uses of this recipe item is constant. If a number of uses is given, but it is not accompanied by a variable, it is assumed to be constant.
+	 * @readonly
+	 * @type {boolean}
+	 */
+	usesIsConstant;
 	/**
      * A regular expression for parsing ingredients and products strings.
 	 * 
      * $1 - Quantity. Any number of digits.
 	 * 
-     * $2 - Variable name. Consists of one letter.
+     * $2 - Variable name for quantity. Consists of one letter.
 	 * 
      * $3 - Prefab ID.
 	 * 
-     * $4 - Contained items string. This should be split by comma and checked against this regex separately.
+	 * $4 - Number of uses. Any number of digits.
+	 * 
+	 * $5 - Variable name for uses. Consists of one letter.
+	 * 
+     * $6 - Contained items string. This should be split by plus-sign (+) and checked against this regex separately.
      * @readonly
      */
-    static itemRegex = /^(?:(\d+)([^\d\n\r])? )?([^\n\r\(]+)(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
+    static itemRegex = /^(?:(\d+)([^\d\n\r])? )?([^\n\r\(\[\]]+)(?: ?\[(\d+)([^\d\n\r])?\])?(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
 
 	/**
 	 * @constructor
 	 * @param {string} recipeItemString - A string representing a recipe item.
 	 * @param {Game} game - The game this belongs to.
+	 * @param {"processing" | "crafting"} type - The type of recipe this belongs to.
 	 */
-	constructor(recipeItemString, game) {
+	constructor(recipeItemString, game, type) {
 		super(game);
 		this.recipeItemString = recipeItemString.trim();
 		const matches = this.recipeItemString.match(RecipeItem.itemRegex);
-		this.quantity = matches && matches[1] ? parseInt(matches[1]) : 1;
-		this.variableName = matches && matches[2] && matches[2] ? matches[2].trim().toUpperCase() : '';
+		const quantityGiven = matches && matches[1];
+		this.quantity = quantityGiven ? parseInt(matches[1]) : 1;
+		this.quantityVariableName = matches && matches[2] ? matches[2].trim().toUpperCase() : '';
 		this.prefabId = matches && matches[3] ? Game.generateValidEntityName(matches[3]) : '';
-		this.containedItemsString = matches && matches[4] ? matches[4].trim() : null;
+		const usesGiven = matches && matches[4];
+		this.uses = usesGiven ? parseInt(matches[4]) : undefined;
+		this.usesVariableName = matches && matches[5] ? matches[5].trim().toUpperCase() : '';
+		this.containedItemsString = matches && matches[6] ? matches[6].trim() : null;
 		this.containedItems = [];
+		this.container = null;
+		this.quantityIsConstant = (type === "crafting" ? true : quantityGiven) && this.quantityVariableName === '';
+		this.usesIsConstant = (type === "crafting" ? true : usesGiven) && this.usesVariableName === '';
 	}
 
 	/**
@@ -91,6 +132,31 @@ export default class RecipeItem extends GameConstruct {
 	}
 
 	/**
+	 * @param {RecipeItem} container 
+	 */
+	setContainer(container) {
+		this.container = container;
+	}
+
+	/**
+	 * Returns true if the given item satisfies the quantity required of this recipe item.
+	 * @param {CollatedItem} item
+	 */
+	quantitySatisfiedBy(item) {
+		if (isNaN(item.quantity)) return true;
+		return item.quantity >= this.quantity;
+	}
+
+    /**
+	 * Returns true if the given item satisfies the uses required of this recipe item.
+	 * @param {CollatedItem} item
+	 */
+    usesSatisfiedBy(item) {
+        if (isNaN(item.uses) || this.uses === undefined) return true;
+        return item.uses >= this.uses;
+    }
+
+	/**
 	 * Calculates how many times the given ingredient use count satisfies the quantity of this recipe item.
 	 * @param {number} ingredientUseCount - How many times the ingredient is to be used.
 	 */
@@ -98,5 +164,30 @@ export default class RecipeItem extends GameConstruct {
 		const satisfiedQuantityCount = ingredientUseCount / this.quantity;
 		if (isNaN(satisfiedQuantityCount)) return NaN;
 		return Math.floor(satisfiedQuantityCount);
+	}
+
+    /**
+     * Calculates the number of uses to instantiate this recipe as a product with.
+     * @param {number} satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param {Map<string, number>} variableValues - The variable values captured from the actual ingredients.
+     */
+    calculateUses(satisfactoryProcessCount, variableValues) {
+        if (!isNaN(this.uses) && !this.usesIsConstant) {
+            if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return variableValues.get(this.usesVariableName);
+            else return this.uses * satisfactoryProcessCount;
+        }
+        else return this.uses;
+    }
+
+	/**
+	 * Returns a string to display this recipe item in a list of recipes list.
+	 */
+	getDisplayString() {
+		let displayString = "";
+		if (this.quantityIsConstant || this.quantityVariableName === "") displayString = this.prefab.toContainingPhrase(this.quantity);
+		else displayString = `${this.quantity}${this.quantityVariableName} ${this.prefab.pluralContainingPhrase}`;
+		const containedItemsString = this.containedItems.map(containedItem => containedItem.getDisplayString()).join(', ');
+		if (containedItemsString !== "") displayString += ` (${containedItemsString})`;
+		return displayString;
 	}
 }

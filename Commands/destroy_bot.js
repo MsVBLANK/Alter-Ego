@@ -1,4 +1,4 @@
-import DestroyAction from "../Data/Actions/DestroyAction.js";
+import DestroyAction from "../Data/Actions/DestroyAction.ts";
 import Game from "../Data/Game.js";
 import Fixture from "../Data/Fixture.js";
 import RoomItem from "../Data/RoomItem.js";
@@ -8,7 +8,7 @@ import { itemIdentifierMatches } from "../Modules/matchers.js";
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Player from '../Data/Player.js' */
 /** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import InventorySlot from '../Data/InventorySlot.js' */
+/** @import InventorySlot from '../Data/InventorySlot.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -29,8 +29,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `destroy volleyball at beach\n`
@@ -48,11 +48,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} [player] - The player who caused the command to be executed, if applicable. 
- * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} [player] - The player who caused the command to be executed, if applicable.
+ * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable.
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");
@@ -236,7 +236,7 @@ export async function execute(game, command, args, player, callee) {
                         containerItem = find;
                         newArgs = newArgs.slice(0, i);
                         break;
-                    }  
+                    }
                 }
             }
             // Check if a slot was specified.

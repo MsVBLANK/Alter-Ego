@@ -1,9 +1,9 @@
 import PlayerCommand from "../../Classes/PlayerCommand.js";
 import { usage, execute, config } from "../../Commands/use_player.js";
-import ActivateAction from "../../Data/Actions/ActivateAction.js";
-import AttemptAction from "../../Data/Actions/AttemptAction.js";
-import DeactivateAction from "../../Data/Actions/DeactivateAction.js";
-import UseAction from "../../Data/Actions/UseAction.js";
+import ActivateAction from "../../Data/Actions/ActivateAction.ts";
+import AttemptAction from "../../Data/Actions/AttemptAction.ts";
+import DeactivateAction from "../../Data/Actions/DeactivateAction.ts";
+import UseAction from "../../Data/Actions/UseAction.ts";
 import { createMockMessage, createMockUser } from "../__mocks__/libs/discord.js";
 import { sendQueuedMessages, clearQueue } from "../../Modules/messageHandler.js";
 

@@ -1,5 +1,5 @@
-import HideAction from '../Data/Actions/HideAction.js';
-import UnhideAction from '../Data/Actions/UnhideAction.js';
+import HideAction from '../Data/Actions/HideAction.ts';
+import UnhideAction from '../Data/Actions/UnhideAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
@@ -15,7 +15,7 @@ export const config = {
         + `For example, you will only be able to inspect and take items that are in the fixture you're hiding in.\n\n`
         + `Under normal circumstances, a whisper channel will be created for you to speak in. Most players will be unable to hear `
         + `what you say in this channel. However, if you want to speak so that everyone can hear you (while having your identity `
-        + `remain a secret), use the \`say\` command. If someone hides in the same hiding spot as you, you will be placed in a whisper channel together. ` 
+        + `remain a secret), use the \`say\` command. If someone hides in the same hiding spot as you, you will be placed in a whisper channel together. `
         + `If someone inspects or tries to hide in the fixture that you're hiding in, your position will be revealed.\n\n`
         + `If you wish to come out of hiding, use the \`unhide\` command.`,
     usableBy: "Player",
@@ -24,8 +24,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}hide DESK\n`
@@ -34,11 +34,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable hide");

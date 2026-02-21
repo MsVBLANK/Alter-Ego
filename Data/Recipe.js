@@ -1,11 +1,13 @@
+import CollatedItem from './CollatedItem.ts';
 import Description from './Description.js';
-import GameEntity from './GameEntity.js';
+import GameEntity from './GameEntity.ts';
 
-/** @import CollatedRoomItem from './CollatedRoomItem.js' */
-/** @import Game from './Game.js' */
-/** @import ItemInstance from './ItemInstance.js' */
-/** @import RecipeItem from './RecipeItem.js' */
-/** @import RoomItem from './RoomItem.js' */
+/**
+ * @import Game from './Game.js'
+ * @import ItemInstance from './ItemInstance.ts'
+ * @import RecipeItem from './RecipeItem.js'
+ * @import RoomItem from './RoomItem.js'
+ */
 
 /**
  * @class Recipe
@@ -95,15 +97,6 @@ export default class Recipe extends GameEntity {
      * @type {Description}
      */
     uncraftedDescription;
-    /**
-     * A regular expression for parsing ingredients and products strings.
-     * $1 - Quantity. Any number of digits.
-     * $2 - Variable name. Consists of one letter.
-     * $3 - Prefab ID.
-     * $4 - Contained items string. This should be split by comma and checked against this regex separately.
-     * @readonly
-     */
-    static itemRegex = /^(?:(\d*)([A-Z]) )?([^\n\r\(]+)(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
 
     /**
      * @constructor
@@ -162,7 +155,7 @@ export default class Recipe extends GameEntity {
      * Returns true if the given list of items matches the ingredients list exactly.
      * To be considered an exact match, all of the ingredient prefabs must match those of the given items,
      * and the given items must have a quantity greater than or equal to the required ingredient quantity.
-     * @param {CollatedRoomItem[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {(CollatedItem|ItemInstance)[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     ingredientsMatch(items) {
         if (items.length !== this.ingredientsFlat.length) return false;
@@ -170,7 +163,9 @@ export default class Recipe extends GameEntity {
             const ingredient = this.ingredientsFlat[i];
             if (item.prefab.id !== ingredient.prefab.id) return false;
             if (item.quantity < ingredient.quantity) return false;
-            item.setVariable(ingredient.variableName);
+			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
+			if (!item.containerMatches(ingredient)) return false;
+            if (item instanceof CollatedItem) item.setVariable(ingredient.quantityVariableName);
         }
         return true;
     }
@@ -178,17 +173,17 @@ export default class Recipe extends GameEntity {
     /**
      * Returns a subset of the given items which satisfy the recipe's ingredients list. 
      * If the given items do not satisfy the recipe's ingredients list, returns an empty array.
-     * @param {CollatedRoomItem[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     * @param {CollatedItem<RoomItem>[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
     getIngredientItems(items) {
-        /** @type {CollatedRoomItem[]} */
+        /** @type {CollatedItem<RoomItem>[]} */
         let ingredients = [];
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 // Check if this item has the same prefab as the current ingredient and has a sufficient quantity.
-                if (item.prefab.id === ingredient.prefab.id && item.quantity >= ingredient.quantity) {
+                if (item.prefab.id === ingredient.prefab.id && ingredient.quantitySatisfiedBy(item) && ingredient.usesSatisfiedBy(item) && item.containerMatches(ingredient)) {
                     ingredients.push(item);
-                    item.setVariable(ingredient.variableName);
+                    item.setVariable(ingredient.quantityVariableName);
                     break;
                 }
             }
@@ -199,21 +194,54 @@ export default class Recipe extends GameEntity {
 
     /**
      * Calculates how many times the given list of ingredients satisfies this recipe.
-     * @param {CollatedRoomItem[]} items
+     * @param {CollatedItem[]} items
      */
     getSatisfactoryProcessCount(items) {
         /** @type {number[]} */
         let satisfactoryItemsCounts = [];
         if (this.ingredientsFlat.length !== items.length) return 0;
+		const allIngredientQuantitiesAreConstant = this.ingredientsFlat.filter(ingredient => !ingredient.quantityIsConstant).length === 0;
         for (let [i, item] of items.entries()) {
             const ingredient = this.ingredientsFlat[i];
-            const ingredientIsAlsoProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id) !== undefined;
+            const ingredientIsAlsoProduct = this.isIngredientAndProduct(item);
             const ingredientUseCount = ingredientIsAlsoProduct ? item.uses : item.quantity;
             const itemSatisfiedQuantityCount = ingredient.getSatisfiedQuantityCount(ingredientUseCount);
-            if (item.prefab.id !== ingredient.prefab.id || itemSatisfiedQuantityCount === 0) return 0;
-            satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
+            if (item.prefab.id !== ingredient.prefab.id || !item.containerMatches(ingredient) || !ingredient.quantitySatisfiedBy(item) || !ingredient.usesSatisfiedBy(item) || !ingredient.quantityIsConstant && itemSatisfiedQuantityCount === 0) return 0;
+            if(!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
         }
         if (satisfactoryItemsCounts.length === 1 && isNaN(satisfactoryItemsCounts[0])) return 1;
+		if (allIngredientQuantitiesAreConstant) return 1;
         return Math.min(...satisfactoryItemsCounts.filter(satisfactoryItemsCount => !isNaN(satisfactoryItemsCount)));
+    }
+
+	/**
+	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
+	 * @param {CollatedItem | RecipeItem} item 
+	 */
+	isIngredientAndProduct(item) {
+        const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);
+        if (!matchedIngredient) return false;
+        const matchedProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id);
+        if (!matchedProduct) return false;
+        return matchedIngredient.container === matchedProduct.container && matchedIngredient.containedItemsString === matchedProduct.containedItemsString;
+	}
+
+    /**
+     * Gets a map of all values associated with the given items.
+     * @param {CollatedItem[]} items
+     */
+    getIngredientVariableValues(items) {
+        /** @type {Map<string, number>} */
+        const variableValues = new Map();
+        for (const ingredient of this.ingredientsFlat) {
+            for (const item of items) {
+                if (ingredient.prefab.id !== item.prefab.id) continue;
+                if (!ingredient.quantityIsConstant && ingredient.quantityVariableName !== "")
+                    variableValues.set(ingredient.quantityVariableName, Math.floor(item.quantity / ingredient.quantity));
+                if (!ingredient.usesIsConstant && ingredient.usesVariableName !== "")
+                    variableValues.set(ingredient.usesVariableName, Math.floor(item.uses / ingredient.uses));
+            }
+        }
+        return variableValues;
     }
 }

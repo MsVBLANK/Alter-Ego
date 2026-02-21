@@ -1,7 +1,7 @@
 import { existsSync } from 'fs';
 import { loadEnvFile } from 'node:process';
 
-export function loadDotEnv() {
+export function loadDotEnv(): void {
 	const dotenvPath = process.env.DOTENV_PATH ?? './.env';
 
 	// Load .env file if it exists.

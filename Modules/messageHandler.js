@@ -1,14 +1,14 @@
 import Dialog from '../Data/Dialog.js';
 import Player from '../Data/Player.js';
-import AnnounceAction from '../Data/Actions/AnnounceAction.js';
-import NarrateAction from '../Data/Actions/NarrateAction.js';
-import SayAction from '../Data/Actions/SayAction.js';
+import AnnounceAction from '../Data/Actions/AnnounceAction.ts';
+import NarrateAction from '../Data/Actions/NarrateAction.ts';
+import SayAction from '../Data/Actions/SayAction.ts';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
-import { capitalizeFirstLetter } from './helpers.js';
+import { capitalizeFirstLetter } from './helpers.ts';
 import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
 
-/** @import Interactable from '../Classes/Interactables/Interactable.js' */
+/** @import Interactable from '../Classes/Interactables/Interactable.ts' */
 /** @import Game from '../Data/Game.js' */
 /** @import Narration from '../Data/Narration.js' */
 /** @import Room from '../Data/Room.js' */
@@ -440,14 +440,7 @@ export async function sendWebhookMessage(webhook, content, username, avatarURL, 
  * @param {Game} game - The game whose message queue should have its messages sent.
  */
 export async function sendQueuedMessages(game) {
-    while (game.messageQueue.size() > 0) {
-        const message = game.messageQueue.dequeue();
-        try {
-            await message.fire();
-        } catch (error) {
-            console.error("Message Handler encountered exception sending message:", error);
-        }
-    }
+    await game.messageQueue.process();
 }
 
 /**

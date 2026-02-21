@@ -1,7 +1,7 @@
-import UnstashAction from '../../../Data/Actions/UnstashAction.js';
-import DropAction from "../../../Data/Actions/DropAction.js";
-import UnequipAction from "../../../Data/Actions/UnequipAction.js";
-import TakeAction from "../../../Data/Actions/TakeAction.js";
+import UnstashAction from '../../../Data/Actions/UnstashAction.ts';
+import DropAction from "../../../Data/Actions/DropAction.ts";
+import UnequipAction from "../../../Data/Actions/UnequipAction.ts";
+import TakeAction from "../../../Data/Actions/TakeAction.ts";
 import { clearQueue } from "../../../Modules/messageHandler.js";
 import { createMockMessage } from "../../__mocks__/libs/discord.js";
 
@@ -284,15 +284,15 @@ describe('TakeAction test', () => {
             expect(coffee.weight).toStrictEqual(coffeeData.weight);
             expect(coffee.inventory.size).toStrictEqual(coffeeData.inventory.size);
         }
-        
+
         // Test that all of the item row numbers were updated properly.
         for (let i = 0; i < game.roomItems.length; i++)
             expect(game.roomItems[i].row).toStrictEqual(i + 2);
-    
+
         // Test that all of the inventoryItem row numbers were updated properly.
         for (let i = 0; i < game.inventoryItems.length; i++)
             expect(game.inventoryItems[i].row).toStrictEqual(i + 2);
-    
+
         // Test that all of the inventoryItems and Player inventory items have the same row numbers.
         for (const slot of kyra.inventory.values()) {
             for (const item of slot.items) {

@@ -1,6 +1,6 @@
 ﻿import Description from './Description.js';
-import InventorySlot from './InventorySlot.js';
-import ItemInstance from './ItemInstance.js';
+import InventorySlot from './InventorySlot.ts';
+import ItemInstance from './ItemInstance.ts';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import { Collection } from 'discord.js';
@@ -151,6 +151,11 @@ export default class InventoryItem extends ItemInstance {
         return this.player.location;
     }
 
+    /** Gets the item's container. */
+    getContainer() {
+        return this.container;
+    }
+
     /**
      * Returns the args for the Inspect ActionDirective for this inventory item.
      */
@@ -161,7 +166,7 @@ export default class InventoryItem extends ItemInstance {
     /**
      * Returns the args for the Drop ActionDirective for this inventory item.
      * @param {'Fixture'|'RoomItem'|'Puzzle'} containerType - The type of container to drop the inventory item into.
-     * @param {Fixture|RoomItem|Puzzle} container - The container to drop the inventory item into.
+     * @param {RoomItemContainer} container - The container to drop the inventory item into.
      * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot to drop the inventory item into.
      */
     getDropActionDirectiveArgs(containerType, container, inventorySlot) {
@@ -169,6 +174,22 @@ export default class InventoryItem extends ItemInstance {
         if (container instanceof ItemInstance) containerName = container.getIdentifier();
         return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
     }
+
+	/**
+	 * Returns the args for the Stash ActionDirective for this inventory item.
+	 * @param {InventoryItem} container - The container to stash the inventory item into.
+	 * @param {InventorySlot<InventoryItem>} inventorySlot - The inventory slot to stash the inventory item into.
+	 */
+	getStashActionDirectiveArgs(container, inventorySlot) {
+		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
+	}
+
+	/**
+	 * Returns the args for the Unstash ActionDirective for this inventory item.
+	 */
+	getUnstashActionDirectiveArgs() {
+		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
+	}
 
     /**
      * Gets all of the items this entity contains.

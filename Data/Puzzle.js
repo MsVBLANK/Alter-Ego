@@ -2,12 +2,12 @@ import Description from './Description.js';
 import Event from './Event.js';
 import Flag from './Flag.js';
 import Prefab from './Prefab.js';
-import ItemContainer from './ItemContainer.js';
+import ItemContainer from './ItemContainer.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 
 /** @import Fixture from './Fixture.js' */
 /** @import Game from './Game.js' */
-/** @import ItemInstance from './ItemInstance.js' */
+/** @import ItemInstance from './ItemInstance.ts' */
 /** @import Player from './Player.js' */
 /** @import Room from './Room.js' */
 
@@ -256,7 +256,7 @@ export default class Puzzle extends ItemContainer {
      * Returns true if the puzzle is currently capable of being taken from/dropped into.
      */
     canCurrentlyContainItems() {
-        return this.isItemContainer() && (this.type === "weight" || this.type === "container" || this.accessible && this.solved);
+        return this.type === "weight" || this.type === "container" || this.accessible && this.solved;
     }
 
     /**

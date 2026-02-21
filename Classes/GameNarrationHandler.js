@@ -10,7 +10,7 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts";
 import { Collection } from "discord.js";
-import Notification from "../Data/Notification.js";
+import Notification from "../Data/Notification.ts";
 
 /** @import Interactable from "./Interactables/Interactable.ts" */
 /** @import Action from "../Data/Action.ts" */

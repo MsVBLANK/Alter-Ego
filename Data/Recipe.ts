@@ -1,118 +1,95 @@
 import CollatedItem from './CollatedItem.ts';
 import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
+import type RecipeItem from "./RecipeItem.js"
+import type { Duration } from "luxon"
+import type Game from "./Game.ts"
+import type ItemInstance from "./ItemInstance.ts"
+import type InventoryItem from "./InventoryItem.ts"
+import type RoomItem from "./RoomItem.js"
+import type Room from "./Room.js"
 
 /**
- * @import Game from './Game.js'
- * @import ItemInstance from './ItemInstance.ts'
- * @import RecipeItem from './RecipeItem.js'
- * @import RoomItem from './RoomItem.js'
- */
-
-/**
- * @class Recipe
- * @classdesc Allows players to transform items or inventory items into other items or inventory items.
- * @extends GameEntity
+ * Allows players to transform items or inventory items into other items or inventory items.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe.html
  */
 export default class Recipe extends GameEntity {
     /**
      * The IDs of the ingredients required to carry out the recipe.
-     * @readonly
-     * @type {string[]}
      */
-    ingredientsStrings;
+    readonly ingredientsStrings: string[];
     /**
      * The ingredients required to carry out the recipe.
-     * @type {RecipeItem[]}
      */
-    ingredients;
+    ingredients: RecipeItem[];
     /**
      * The ingredients required to carry out the recipe, as a flattened array.
-     * @type {RecipeItem[]}
      */
-    ingredientsFlat;
+    ingredientsFlat: RecipeItem[];
     /**
      * Whether the product can be transformed back into its ingredients.
-     * @readonly
-     * @type {boolean}
      */
-    uncraftable;
+    readonly uncraftable: boolean;
     /**
-     * Phrase that allows an object with the matching recipeTag to process this recipe. Deprecated. Use fixtureTag instead.
-     * @deprecated
-     * @readonly
-     * @type {string}
+     * Phrase that allows an object with the matching recipeTag to process this recipe.
+     *
+     * @deprecated Use fixtureTag instead.
      */
-    objectTag;
+    readonly objectTag: string;
     /**
      * Phrase that allows a fixture with the matching recipeTag to process this recipe.
-     * @readonly
-     * @type {string}
      */
-    fixtureTag;
+    readonly fixtureTag: string;
     /**
      * How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
-     * @readonly
-     * @type {string}
      */
-    durationString;
+    readonly durationString: string;
     /**
      * How long it takes to process the recipe, as a duration object.
-     * @readonly
-     * @type {import('luxon').Duration<true>}
      */
-    duration;
+    readonly duration: Duration<true>;
     /**
      * The IDs of the products produced by the recipe.
-     * @readonly
-     * @type {string[]}
      */
-    productsStrings;
+    readonly productsStrings: string[];
     /**
      * The products produced by the recipe.
-     * @type {RecipeItem[]}
      */
-    products;
+    products: RecipeItem[];
     /**
      * The products produced by the recipe, as a flattened array.
-     * @type {RecipeItem[]}
      */
-    productsFlat;
+    productsFlat: RecipeItem[];
     /**
      * The description that indicates when a recipe has begun being processed.
-     * @readonly
-     * @type {Description}
      */
-    initiatedDescription;
+    readonly initiatedDescription: Description;
     /**
      * The description that indicates when a recipe has finished being processed or crafted.
-     * @readonly
-     * @type {Description}
      */
-    completedDescription;
+    readonly completedDescription: Description;
     /**
      * The description that indicates when a recipe has been uncrafted.
-     * @readonly
-     * @type {Description}
      */
-    uncraftedDescription;
+    readonly uncraftedDescription: Description;
 
     /**
-     * @constructor
-     * @param {string[]} ingredientsStrings - The IDs of the ingredients required to carry out the recipe.
-     * @param {boolean} uncraftable - Whether the product can be transformed back into its ingredients.
-     * @param {string} fixtureTag - Phrase that allows a fixture with the matching recipeTag to process this recipe.
-     * @param {string} durationString - How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
-     * @param {import('luxon').Duration} duration - How long it takes to process the recipe, as a duration object.
-     * @param {string[]} productsStrings - The IDs of the products produced by the recipe.
-     * @param {string} initiatedDescription - The description that indicates when a recipe has begun being processed.
-     * @param {string} completedDescription - The description that indicates when a recipe has finished being processed or crafted.
-     * @param {string} uncraftedDescription - The description that indicates when a recipe has been uncrafted.
-     * @param {number} row - The row number of the recipe in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param ingredientsStrings - The IDs of the ingredients required to carry out the recipe.
+     * @param uncraftable - Whether the product can be transformed back into its ingredients.
+     * @param fixtureTag - Phrase that allows a fixture with the matching recipeTag to process this recipe.
+     * @param durationString - How long it takes to process the recipe. Accepted units: s, m, h, d, w, M, y.
+     * @param duration - How long it takes to process the recipe, as a duration object.
+     * @param productsStrings - The IDs of the products produced by the recipe.
+     * @param initiatedDescription - The description that indicates when a recipe has begun being processed.
+     * @param completedDescription - The description that indicates when a recipe has finished being processed or crafted.
+     * @param uncraftedDescription - The description that indicates when a recipe has been uncrafted.
+     * @param row - The row number of the recipe in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(ingredientsStrings, uncraftable, fixtureTag, durationString, duration, productsStrings, initiatedDescription, completedDescription, uncraftedDescription, row, game) {
+    constructor(ingredientsStrings: string[], uncraftable: boolean, fixtureTag: string, durationString: string,
+        duration: Duration, productsStrings: string[], initiatedDescription: string,
+        completedDescription: string, uncraftedDescription: string, row: number, game: Game) {
         super(game, row);
         this.ingredientsStrings = ingredientsStrings;
         this.ingredients = new Array(this.ingredientsStrings.length);
@@ -130,24 +107,15 @@ export default class Recipe extends GameEntity {
         this.uncraftedDescription = new Description(uncraftedDescription, this, game);
     }
 
-    /**
-     * @returns {string}
-     */
-    initiatedCell() {
+    initiatedCell(): string {
         return this.getGame().constants.recipeSheetInitiatedColumn + this.row;
     }
 
-    /**
-     * @returns {string}
-     */
-    completedCell() {
+    completedCell(): string {
         return this.getGame().constants.recipeSheetCompletedColumn + this.row;
     }
 
-    /**
-     * @returns {string}
-     */
-    uncraftedCell() {
+    uncraftedCell(): string {
         return this.getGame().constants.recipeSheetUncraftedColumn + this.row;
     }
 
@@ -155,9 +123,10 @@ export default class Recipe extends GameEntity {
      * Returns true if the given list of items matches the ingredients list exactly.
      * To be considered an exact match, all of the ingredient prefabs must match those of the given items,
      * and the given items must have a quantity greater than or equal to the required ingredient quantity.
-     * @param {(CollatedItem|ItemInstance)[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     *
+     * @param items - A list of items. This must be sorted alphabetically by prefab ID.
      */
-    ingredientsMatch(items) {
+    ingredientsMatch(items: (CollatedItem<InventoryItem | RoomItem> | ItemInstance)[]): boolean {
         if (items.length !== this.ingredientsFlat.length) return false;
         for (let [i, item] of items.entries()) {
             const ingredient = this.ingredientsFlat[i];
@@ -173,11 +142,11 @@ export default class Recipe extends GameEntity {
     /**
      * Returns a subset of the given items which satisfy the recipe's ingredients list.
      * If the given items do not satisfy the recipe's ingredients list, returns an empty array.
-     * @param {CollatedItem<RoomItem>[]} items - A list of items. This must be sorted alphabetically by prefab ID.
+     *
+     * @param items - A list of items. This must be sorted alphabetically by prefab ID.
      */
-    getIngredientItems(items) {
-        /** @type {CollatedItem<RoomItem>[]} */
-        let ingredients = [];
+    getIngredientItems(items: CollatedItem<RoomItem | InventoryItem>[]): CollatedItem<RoomItem | InventoryItem>[] {
+        let ingredients: CollatedItem<RoomItem | InventoryItem>[] = [];
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 // Check if this item has the same prefab as the current ingredient and has a sufficient quantity.
@@ -194,11 +163,9 @@ export default class Recipe extends GameEntity {
 
     /**
      * Calculates how many times the given list of ingredients satisfies this recipe.
-     * @param {CollatedItem[]} items
      */
-    getSatisfactoryProcessCount(items) {
-        /** @type {number[]} */
-        let satisfactoryItemsCounts = [];
+    getSatisfactoryProcessCount(items: CollatedItem<RoomItem | InventoryItem>[]): number {
+        let satisfactoryItemsCounts: number[] = [];
         if (this.ingredientsFlat.length !== items.length) return 0;
 		const allIngredientQuantitiesAreConstant = this.ingredientsFlat.filter(ingredient => !ingredient.quantityIsConstant).length === 0;
         for (let [i, item] of items.entries()) {
@@ -216,9 +183,8 @@ export default class Recipe extends GameEntity {
 
 	/**
 	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
-	 * @param {CollatedItem | RecipeItem} item
 	 */
-	isIngredientAndProduct(item) {
+	isIngredientAndProduct(item: CollatedItem<RoomItem | InventoryItem> | RecipeItem): boolean {
         const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);
         if (!matchedIngredient) return false;
         const matchedProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id);
@@ -228,11 +194,9 @@ export default class Recipe extends GameEntity {
 
     /**
      * Gets a map of all values associated with the given items.
-     * @param {CollatedItem[]} items
      */
-    getIngredientVariableValues(items) {
-        /** @type {Map<string, number>} */
-        const variableValues = new Map();
+    getIngredientVariableValues(items: CollatedItem<RoomItem | InventoryItem>[]): Map<string, number> {
+        const variableValues: Map<string, number> = new Map();
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 if (ingredient.prefab.id !== item.prefab.id) continue;

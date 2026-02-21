@@ -1,56 +1,47 @@
-import GameEntity from './GameEntity.ts';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-import { default as evaluateScript } from '../Modules/scriptParser.js';
-
-/** @import Game from './Game.js' */
-/** @import Player from './Player.js' */
+import GameEntity from "./GameEntity.ts"
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js"
+import { default as evaluateScript } from "../Modules/scriptParser.js"
+import type Game from "./Game.js"
+import type Player from "./Player.js"
 
 /**
- * @class Flag
- * @classdesc Represents a flag that can hold various forms of data for easy access elsewhere in the game.
- * @extends GameEntity
+ * Represents a flag that can hold various forms of data for easy access elsewhere in the game.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/flag.html
  */
 export default class Flag extends GameEntity {
 	/**
 	 * The unique identifier for this flag.
-	 * @readonly
-	 * @type {string}
 	 */
-	id;
+	readonly id: string;
 	/**
 	 * The current value of the flag.
-	 * @type {string | number | boolean}
 	 */
-	value;
+	value: string | number | boolean;
 	/**
 	 * A script which will determine the flag's value programmatically.
-	 * @type {string}
 	 */
-	valueScript;
+	valueScript: string;
 	/**
 	 * The string representation of the bot commands to be executed when the flag is set or cleared with specified values.
-	 * @readonly
-	 * @type {string}
 	 */
-	commandSetsString;
+	readonly commandSetsString: string;
 	/**
 	 * Sets of commands to be executed when the flag is set or cleared with specified values.
-	 * @type {FlagCommandSet[]}
 	 */
-	commandSets;
+	commandSets: FlagCommandSet[];
 
 	/**
-	 * @constructor
-	 * @param {string} id - The unique identifier for this flag.
-	 * @param {string | number | boolean} value - The current value of the flag.
-	 * @param {string} valueScript - A script which will determine the flag's value programmatically.
-	 * @param {string} commandSetsString - The string representation of the bot commands to be executed when the flag is set or cleared with specified values.
-	 * @param {FlagCommandSet[]} commandSets - Sets of commands to be executed when the flag is set or cleared with specified values.
-	 * @param {number} row - The row number of the flag in the sheet.
-	 * @param {Game} game - The game this belongs to.
+	 * @param id - The unique identifier for this flag.
+	 * @param value - The current value of the flag.
+	 * @param valueScript - A script which will determine the flag's value programmatically.
+	 * @param commandSetsString - The string representation of the bot commands to be executed when the flag is set or cleared with specified values.
+	 * @param commandSets - Sets of commands to be executed when the flag is set or cleared with specified values.
+	 * @param row - The row number of the flag in the sheet.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(id, value, valueScript, commandSetsString, commandSets, row, game) {
+	constructor(id: string, value: string | number | boolean, valueScript: string, commandSetsString: string,
+        commandSets: FlagCommandSet[], row: number, game: Game) {
 		super(game, row);
 		this.id = id;
 		this.value = value;
@@ -61,28 +52,28 @@ export default class Flag extends GameEntity {
 
 	/**
 	 * Evaluates the supplied valueScript to get the new value.
-	 * @param {string} [valueScript=this.valueScript] - The script to evaluate. Defaults to the flag's own valueScript if one isn't supplied.
-	 * @param {Player} [player] - The player to evaluate the script with. Optional.
-	 * @returns {string | number | boolean}
+     *
+	 * @param valueScript - The script to evaluate. Defaults to the flag's own valueScript if one isn't supplied.
+	 * @param player - The player to evaluate the script with. Optional.
 	 */
-	evaluate(valueScript = this.valueScript, player) {
+	evaluate(valueScript: string = this.valueScript, player?: Player): string | number | boolean {
 		return evaluateScript(valueScript, this, player);
 	}
 
 	/**
 	 * Sets the flag's value.
-	 * @param {string | number | boolean} value - The value to set. 
-	 * @param {boolean} doSetCommands - Whether or not to execute the flag's setCommands.
-	 * @param {Player} [player] - The player who caused the flag to be set, if applicable.
+     *
+	 * @param value - The value to set.
+	 * @param doSetCommands - Whether or not to execute the flag's setCommands.
+	 * @param player - The player who caused the flag to be set, if applicable.
 	 */
-	setValue(value, doSetCommands, player) {
+	setValue(value: string | number | boolean, doSetCommands: boolean, player?: Player): void {
 		this.value = value;
 		this.getGame().logHandler.logSetFlag(this);
 
 		if (doSetCommands === true) {
 			// Find commandSet.
-			/** @type {string[]} */
-			let commandSet = [];
+			let commandSet: string[] = [];
 			if (this.commandSets.length === 1 && this.commandSets[0].values.length === 0)
 				commandSet = this.commandSets[0].setCommands;
 			else {
@@ -105,10 +96,11 @@ export default class Flag extends GameEntity {
 
 	/**
 	 * Sets the flag's value to null.
-	 * @param {boolean} doClearedCommands - Whether or not to execute the flag's clearedCommands.
-	 * @param {Player} [player] - The player who caused the flag to be cleared, if applicable.
+     *
+	 * @param doClearedCommands - Whether or not to execute the flag's clearedCommands.
+	 * @param player - The player who caused the flag to be cleared, if applicable.
 	 */
-	clearValue(doClearedCommands, player) {
+	clearValue(doClearedCommands: boolean, player?: Player): void {
 		const originalValue = this.value;
 		this.value = null;
 		this.valueScript = '';
@@ -116,8 +108,7 @@ export default class Flag extends GameEntity {
 
 		if (doClearedCommands === true) {
 			// Find commandSet.
-			/** @type {string[]} */
-			let commandSet = [];
+			let commandSet: string[] = [];
 			if (this.commandSets.length === 1 && this.commandSets[0].values.length === 0)
 				commandSet = this.commandSets[0].clearedCommands;
 			else {

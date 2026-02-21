@@ -7,7 +7,7 @@ import Event from "../../Data/Event.ts";
 import Status from "../../Data/Status.js";
 import Player from "../../Data/Player.js";
 import InventoryItem from "../../Data/InventoryItem.js";
-import Gesture from "../../Data/Gesture.js";
+import Gesture from "../../Data/Gesture.ts";
 import Flag from "../../Data/Flag.ts";
 import Exit from "../../Data/Exit.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";

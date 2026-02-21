@@ -1,5 +1,5 @@
 import Game from "../Data/Game.ts";
-import Gesture from "../Data/Gesture.js";
+import Gesture from "../Data/Gesture.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.js";
 import Room from "../Data/Room.js";

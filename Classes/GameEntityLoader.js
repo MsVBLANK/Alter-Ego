@@ -13,7 +13,7 @@ import EquipmentSlot from '../Data/EquipmentSlot.ts';
 import InventoryItem from '../Data/InventoryItem.js';
 import Status from '../Data/Status.js';
 import Player from '../Data/Player.js';
-import Gesture from '../Data/Gesture.js';
+import Gesture from '../Data/Gesture.ts';
 import Flag from '../Data/Flag.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';
 import { getSheetValues } from '../Modules/sheets.js';

@@ -1,5 +1,5 @@
 import { createMockMessage } from "../__mocks__/libs/discord.js";
-import AnnounceAction from "../../Data/Actions/AnnounceAction.js";
+import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
 import Dialog from '../../Data/Dialog.js';
 import * as messageHandler from '../../Modules/messageHandler.js';
 

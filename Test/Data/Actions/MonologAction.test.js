@@ -1,4 +1,4 @@
-import MonologAction from "../../../Data/Actions/MonologAction.js";
+import MonologAction from "../../../Data/Actions/MonologAction.ts";
 import { sendQueuedMessages } from "../../../Modules/messageHandler.js";
 
 /**
@@ -81,7 +81,7 @@ describe('MonologAction test', () => {
 
 		kiara.location.removePlayer(kiara);
 		f1h1.addPlayer(kiara);
-		
+
 		luna.location.removePlayer(luna);
 		courtyard.addPlayer(luna);
 		asuka.location.removePlayer(asuka);

@@ -7,14 +7,12 @@ import type Recipe from "./Recipe.js";
 import type RoomItem from "./RoomItem.js";
 
 /**
- * @class RecipeProcessor
- * @classdesc Represents an item container that can process recipes.
- * @extends ItemContainer
+ * Represents an item container that can process recipes.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe-processor.html
  */
 export default abstract class RecipeProcessor extends ItemContainer {
     /**
-     * @constructor
      * @param game - The game this belongs to.
      * @param row  - The row number of the entity in the sheet.
      * @param description - A description which can contain an item list.
@@ -25,11 +23,12 @@ export default abstract class RecipeProcessor extends ItemContainer {
 
     /**
      * Destroys the given ingredients.
+     *
      * @param recipe - The recipe being processed.
      * @param ingredients - The ingredients to destroy.
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      */
-    destroyIngredients(recipe: Recipe, ingredients: CollatedItem<RoomItem>[]|CollatedItem<InventoryItem>[], satisfactoryProcessCount: number) {
+    destroyIngredients(recipe: Recipe, ingredients: CollatedItem<RoomItem>[]|CollatedItem<InventoryItem>[], satisfactoryProcessCount: number): void {
         if (satisfactoryProcessCount < 1) return;
 		for (const ingredient of ingredients) {
             if (recipe.isIngredientAndProduct(ingredient) && !ingredient.allItemsHaveInfiniteUses())
@@ -43,11 +42,12 @@ export default abstract class RecipeProcessor extends ItemContainer {
 
     /**
      * Instantiate the products for the current recipe.
+     *
      * @param recipe - The recipe being processed.
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      * @param variableValues - The variable values to use when instantiating the products.
      */
-    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map()) {
+    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map()): void {
         if (satisfactoryProcessCount < 1) return;
 		for (const product of recipe.products) {
 			if (recipe.isIngredientAndProduct(product))

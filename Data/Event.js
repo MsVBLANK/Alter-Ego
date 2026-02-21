@@ -1,7 +1,7 @@
 import Description from './Description.js';
 import GameEntity from './GameEntity.ts';
-import EndAction from './Actions/EndAction.js';
-import InflictAction from './Actions/InflictAction.js';
+import EndAction from './Actions/EndAction.ts';
+import InflictAction from './Actions/InflictAction.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 import Timer from '../Classes/Timer.js';
 import { DateTime } from 'luxon';
@@ -87,7 +87,7 @@ export default class Event extends GameEntity {
      * @type {string[]}
      */
     effectsStrings;
-    /** 
+    /**
      * The status effects to be inflicted on occupants of affected rooms every second that the event is ongoing.
      * @type {Status[]}
      */
@@ -97,9 +97,9 @@ export default class Event extends GameEntity {
      * @type {string[]}
      */
     refreshesStrings;
-    /** 
+    /**
      * The status effects whose durations will be reset to full for all occupants of affected rooms every second that the event is ongoing.
-     * @type {Status[]} 
+     * @type {Status[]}
      */
     refreshes;
     /**
@@ -114,12 +114,12 @@ export default class Event extends GameEntity {
      * @type {Description}
      */
     endedNarration;
-    /** 
+    /**
      * A timer counting down from the event's initial duration every second. When it reaches 0, the event ends, and this becomes `null`.
-     * @type {Timer | null} 
+     * @type {Timer | null}
      */
     timer;
-    /** 
+    /**
      * A timer that inflicts and refreshes status effects every second while the event is ongoing.
      * @type {Timer | null}
      */
@@ -281,7 +281,7 @@ export default class Event extends GameEntity {
 
     /**
      * Parses a triggerTime string and returns an object that stores the parsed time and the format used to parse it.
-     * @param {string} timeString - The string to parse. 
+     * @param {string} timeString - The string to parse.
      * @returns {ParsedTriggerTime}
      */
     static parseTriggerTime(timeString) {

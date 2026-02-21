@@ -1,5 +1,5 @@
-import ActivateAction from '../Data/Actions/ActivateAction.js';
-import DeactivateAction from '../Data/Actions/DeactivateAction.js';
+import ActivateAction from '../Data/Actions/ActivateAction.ts';
+import DeactivateAction from '../Data/Actions/DeactivateAction.ts';
 import Room from '../Data/Room.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -23,8 +23,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}fixture activate blender\n`
@@ -38,10 +38,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     let input = command + " " + args.join(" ");
@@ -117,7 +117,7 @@ export async function execute(game, message, command, args) {
 
     let narrate = false;
     if (announcement === "" && player !== null) narrate = true;
-    
+
     if (command === "activate") {
         const activateAction = new ActivateAction(game, message, player, fixture.location, true);
         activateAction.performActivate(fixture, narrate, announcement);

@@ -1,6 +1,6 @@
 import PlayerCommand from '../../Classes/PlayerCommand.js';
 import { usage, execute, config } from '../../Commands/knock_player.js'
-import KnockAction from '../../Data/Actions/KnockAction.js';
+import KnockAction from '../../Data/Actions/KnockAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -15,7 +15,7 @@ describe('knock_player command', () => {
     });
 
     const knock_player = new PlayerCommand(config, usage, execute);
-        
+
     test('with valid exit', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const room = game.entityFinder.getRoom("suite-9");

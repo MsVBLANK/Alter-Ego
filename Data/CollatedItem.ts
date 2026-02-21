@@ -15,10 +15,11 @@ import type Player from './Player.js';
 type ContainerOf<T extends RoomItem | InventoryItem> = T extends RoomItem ? RoomItemContainer : InventoryItem;
 
 /**
- * @class CollatedRoomItem
- * @classdesc Represents a list of room items that are instances of the same prefab in the same location and container.
+ * Represents a list of room items that are instances of the same prefab in the same location and container.
+ *
+ * @typeParam T - The type of the items collated together. Must be either a {@link RoomItem} or {@link InventoryItem}.
  */
-export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem | InventoryItem> {
+export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	/**
 	 * The items collated together.
 	 */
@@ -49,7 +50,6 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 	slot: string;
 	/**
 	 * The total quantity of the items collated together.
-	 * @type {number}
 	 */
 	quantity: number;
 	/**
@@ -62,7 +62,6 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 	variable: string;
 
 	/**
-	 * @constructor
 	 * @param items - The items to collate.
 	 */
 	constructor(items: T[]) {
@@ -79,9 +78,10 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 
 	/**
 	 * Returns an array of collated room items.
+     *
 	 * @param items - The room items to collate.
 	 */
-	static collate<T extends RoomItem | InventoryItem = RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
+	static collate<T extends RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
 		const childItems: T[] = [];
 		for (const item of items)
 			getChildItems(childItems, item);
@@ -103,40 +103,41 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 
 	/**
 	 * Sets the collated room item's variable for recipe processing.
+     *
 	 * @param variable - The variable to set.
 	 */
-	setVariable(variable: string) {
+	setVariable(variable: string): void {
 		this.variable = variable;
 	}
 
 	/**
 	 * Recalculates uses and quantity stats.
 	 */
-	#recalculate() {
+	#recalculate(): void {
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
 		this.uses = this.items.reduce((uses, item) => uses + (isNaN(item.uses) ? NaN : item.quantity * item.uses), 0);
 	}
 
 	/**
 	 * Returns true if the collated items' container matches the given recipe item's container.
-	 * @param recipeItem 
 	 */
-	containerMatches(recipeItem: RecipeItem) {
+	containerMatches(recipeItem: RecipeItem): boolean {
 		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
 	/**
 	 * Returns true if all of the collated items have infinite uses.
 	 */
-	allItemsHaveInfiniteUses() {
+	allItemsHaveInfiniteUses(): boolean {
 		return this.items.filter(item => !isNaN(item.uses)).length === 0;
 	}
 
 	/**
 	 * Decreases the collated room items' uses.
+     *
 	 * @param ingredientUseCount - The number of times to use the item.
 	 */
-	decreaseUses(ingredientUseCount: number) {
+	decreaseUses(ingredientUseCount: number): void {
 		// If all items have infinite uses, don't do anything.
 		if (this.allItemsHaveInfiniteUses()) return;
 		// Sort collated items by lowest number of uses to highest, sorting within use by lowest quantity to highest.
@@ -215,9 +216,10 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 
 	/**
 	 * Destroys the given quantity of this item.
+     *
 	 * @param ingredientDestroyCount - The quantity to destroy. Defaults to the item's total quantity.
 	 */
-	destroy(ingredientDestroyCount = this.quantity) {
+	destroy(ingredientDestroyCount: number = this.quantity): void {
 		// If the given quantity is finite but all items have an infinite quantity, don't do anything.
 		if (!isNaN(ingredientDestroyCount) && this.items.filter(item => !isNaN(item.quantity)).length === 0) return;
 		// Sort collated items by lowest quantity to highest.
@@ -257,10 +259,11 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 
 	/**
 	 * Destroys the given item.
+     *
 	 * @param item - The item to destroy.
 	 * @param quantity - The quantity to destroy. Defaults to the item's total quantity.
 	 */
-	#destroyItem(item: T, quantity = item.quantity) {
+	#destroyItem(item: T, quantity: number = item.quantity): void {
 		const destroyAction = new DestroyAction(item.getGame(), undefined, this.player, item.getLocation(), true);
         if (item instanceof RoomItem) destroyAction.performDestroyRoomItem(item, quantity, true);
         else if (item instanceof InventoryItem) destroyAction.performDestroyInventoryItem(item, quantity, true, false);
@@ -268,11 +271,12 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
 
 	/**
 	 * Instantiates the given prefab in the collated room item's container.
+     *
 	 * @param prefab - The prefab to instantiate.
 	 * @param quantity - The quantity to instantiate it with.
 	 * @param uses - The number of uses to instantiate it with. Defaults to the prefab's uses.
 	 */
-	instantiate(prefab: Prefab, quantity: number, uses = prefab.uses): T {
+	instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses): T {
 		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, this.player, this.location, true);
         if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem)
             return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T;

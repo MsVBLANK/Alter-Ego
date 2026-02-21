@@ -6,9 +6,8 @@ import type Whisper from "./Whisper.js";
 import type Game from "./Game.js";
 
 /**
- * @class Action
- * @classdesc Represents an action taken by a player.
- * @extends GameConstruct
+ * Represents an action taken by a player.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/action.html
  */
 export default abstract class Action extends GameConstruct {
@@ -46,7 +45,6 @@ export default abstract class Action extends GameConstruct {
 	private mirrors: Set<string>;
 
 	/**
-	 * @constructor
 	 * @param game - The game this belongs to.
 	 * @param message - The message that initiated the action.
 	 * @param player - The player performing the action.
@@ -69,23 +67,21 @@ export default abstract class Action extends GameConstruct {
 	/**
 	 * Marks the action as performed.
 	 */
-	protected perform() {
+	protected perform(): void {
 		this.performed = true;
 	}
 
 	/**
 	 * Returns true if the action has been communicated in the given channel.
-	 * @param channelId
 	 */
-	hasBeenCommunicatedIn(channelId: string) {
+	hasBeenCommunicatedIn(channelId: string): boolean {
 		return this.mirrors.has(channelId);
 	}
 
 	/**
 	 * Marks the action as having been mirrored in the given channel.
-	 * @param channelId
 	 */
-	addToMirrors(channelId: string) {
+	addToMirrors(channelId: string): void {
 		this.mirrors.add(channelId);
 	}
 }

@@ -1,6 +1,6 @@
 ﻿import GameConstruct from "./GameConstruct.ts";
 import Player from "./Player.js";
-import UnhideAction from "./Actions/UnhideAction.js";
+import UnhideAction from "./Actions/UnhideAction.ts";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { Attachment, Collection, Embed } from "discord.js";
@@ -162,7 +162,7 @@ export default class Narration extends GameConstruct {
         return `-# *(In ${hidingSpot ? hidingSpot.getContainingPhrase() : `a whisper`}${playerListPhrase}):*\n`;
     }
 
-    /** 
+    /**
      * Returns true if the narration's message display type is PLAYER.
      */
     isPlayerMessageType() {

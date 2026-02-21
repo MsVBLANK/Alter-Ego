@@ -8,13 +8,13 @@ import RecipeProcessor from './RecipeProcessor.ts';
 import Puzzle from './Puzzle.js';
 import InventorySlot from './InventorySlot.ts';
 import Status from './Status.js';
-import CureAction from './Actions/CureAction.js';
-import DieAction from './Actions/DieAction.js';
-import InflictAction from './Actions/InflictAction.js';
-import InstantiateAction from './Actions/InstantiateAction.js';
-import MoveAction from './Actions/MoveAction.js';
-import QueueMoveAction from './Actions/QueueMoveAction.js';
-import StopAction from './Actions/StopAction.js';
+import CureAction from './Actions/CureAction.ts';
+import DieAction from './Actions/DieAction.ts';
+import InflictAction from './Actions/InflictAction.ts';
+import InstantiateAction from './Actions/InstantiateAction.ts';
+import MoveAction from './Actions/MoveAction.ts';
+import QueueMoveAction from './Actions/QueueMoveAction.ts';
+import StopAction from './Actions/StopAction.ts';
 import Timer from '../Classes/Timer.js';
 import { MessageDisplayType } from '../Modules/enums.js';
 import * as itemManager from '../Modules/itemManager.js';
@@ -1434,7 +1434,7 @@ export default class Player extends RecipeProcessor {
 
 		return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };
 	}
-	
+
 	/**
 	 * Reverses a crafting recipe to convert a single product into two ingredients.
 	 * @param {InventoryItem} item - The product to uncraft.

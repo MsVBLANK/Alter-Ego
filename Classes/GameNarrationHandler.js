@@ -4,8 +4,8 @@ import InventoryItem from "../Data/InventoryItem.js";
 import Narration from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
-import DieAction from "../Data/Actions/DieAction.js";
-import NarrateAction from "../Data/Actions/NarrateAction.js";
+import DieAction from "../Data/Actions/DieAction.ts";
+import NarrateAction from "../Data/Actions/NarrateAction.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts";
@@ -97,7 +97,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a say action in the specified room.
 	 * Does not send any notifications.
-	 * @param {Action} action - The action being narrated. 
+	 * @param {Action} action - The action being narrated.
 	 * @param {Dialog} dialog - The dialog that was spoken.
 	 * @param {Room} location - The room to narrate the action in.
 	 * @param {string} narrationText - The text of the narration to send.
@@ -137,8 +137,8 @@ export default class GameNarrationHandler {
 	 * Narrates a start move action.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {boolean} isRunning - Whether or not the player is running.
-	 * @param {Exit} exit - The exit the player is moving toward. 
-	 * @param {Player} player - The player performing the start move action. 
+	 * @param {Exit} exit - The exit the player is moving toward.
+	 * @param {Player} player - The player performing the start move action.
 	 */
 	narrateStartMove(action, isRunning, exit, player) {
 		const messageType = MessageDisplayType.MINOR;
@@ -813,7 +813,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a die action.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Player} player - The player performing the die action. 
+	 * @param {Player} player - The player performing the die action.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
 	 */
 	narrateDie(action, player, customNarration) {
@@ -886,7 +886,7 @@ export default class GameNarrationHandler {
 	/**
 	 * Narrates a player leaving a whisper.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {Player} player - The player performing the action. 
+	 * @param {Player} player - The player performing the action.
 	 * @param {Whisper} whisper - The whisper the player is leaving.
 	 * @param {string} customNarration - The custom text of the narration.
 	 */

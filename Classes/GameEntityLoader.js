@@ -15,7 +15,7 @@ import Status from '../Data/Status.js';
 import Player from '../Data/Player.js';
 import Gesture from '../Data/Gesture.js';
 import Flag from '../Data/Flag.js';
-import InflictAction from '../Data/Actions/InflictAction.js';
+import InflictAction from '../Data/Actions/InflictAction.ts';
 import { getSheetValues } from '../Modules/sheets.js';
 import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
 import { ChannelType, Collection } from 'discord.js';

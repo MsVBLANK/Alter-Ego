@@ -9,7 +9,7 @@ import GameNarrationHandler from '../Classes/GameNarrationHandler.js';
 import GameNotificationGenerator from '../Classes/GameNotificationGenerator.js';
 import PriorityQueue from '../Classes/PriorityQueue.js';
 import Event from './Event.js';
-import TriggerAction from './Actions/TriggerAction.js';
+import TriggerAction from './Actions/TriggerAction.ts';
 import { sendQueuedMessages } from '../Modules/messageHandler.js';
 import { Collection } from 'discord.js';
 import { DateTime } from 'luxon';
@@ -41,9 +41,9 @@ export default class Game {
 	 * @type {GuildContext}
 	 */
 	guildContext;
-	/** 
+	/**
 	 * The bot managing the game.
-	 * @type {BotContext} 
+	 * @type {BotContext}
 	 */
 	botContext;
 	/**
@@ -51,8 +51,8 @@ export default class Game {
 	 * @type {GameSettings}
 	 */
 	settings;
-	/** 
-	 * A collection of constants used to refer to cell ranges on the spreadsheet. 
+	/**
+	 * A collection of constants used to refer to cell ranges on the spreadsheet.
 	 * @readonly
 	 * @type {GameConstants}
 	*/
@@ -109,13 +109,13 @@ export default class Game {
 	 * @type {boolean}
 	 */
 	canJoin;
-	/** 
+	/**
 	 * A timer used by the startgame command to announce when half of the time allotted for players to join the game has elapsed.
 	 * @type {NodeJS.Timeout}
 	 */
 	halfTimer;
 	/**
-	 * A timer used by the startgame command. When this expires, all of the players who joined the game are saved to the spreadsheet. 
+	 * A timer used by the startgame command. When this expires, all of the players who joined the game are saved to the spreadsheet.
 	 * @type {NodeJS.Timeout}
 	 * */
 	endTimer;

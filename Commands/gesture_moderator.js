@@ -1,4 +1,4 @@
-import GestureAction from '../Data/Actions/GestureAction.js';
+import GestureAction from '../Data/Actions/GestureAction.ts';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -22,8 +22,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}gesture Astrid smile\n`
@@ -35,10 +35,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     let showList = false;
@@ -48,7 +48,7 @@ export async function execute(game, message, command, args) {
     }
     if (!showList && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and a gesture. Usage:\n${usage(game.settings)}`);
-    
+
     const playerName = args[0] ?? '';
     const player = game.entityFinder.getLivingPlayer(playerName);
 
@@ -108,7 +108,7 @@ export async function execute(game, message, command, args) {
         if (player === undefined) return game.communicationHandler.reply(message, `Player "${playerName}" not found.`);
         args.splice(0, 1);
         let input = args.join(" ").toLowerCase().replace(/\'/g, "");
-        
+
         let gesture;
         let targetType = "";
         let target = null;

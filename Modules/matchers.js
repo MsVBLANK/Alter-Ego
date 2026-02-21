@@ -3,7 +3,7 @@ import Gesture from "../Data/Gesture.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.ts";
 import Room from "../Data/Room.ts";
-import Status from "../Data/Status.js";
+import Status from "../Data/Status.ts";
 
 /** @import Event from "../Data/Event.js" */
 /** @import Exit from "../Data/Exit.js" */

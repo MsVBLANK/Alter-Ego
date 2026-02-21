@@ -11,7 +11,7 @@ import Puzzle from '../Data/Puzzle.ts';
 import Event from '../Data/Event.ts';
 import EquipmentSlot from '../Data/EquipmentSlot.ts';
 import InventoryItem from '../Data/InventoryItem.ts';
-import Status from '../Data/Status.js';
+import Status from '../Data/Status.ts';
 import Player from '../Data/Player.ts';
 import Gesture from '../Data/Gesture.ts';
 import Flag from '../Data/Flag.ts';

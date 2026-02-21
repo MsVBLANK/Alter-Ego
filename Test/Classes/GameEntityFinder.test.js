@@ -4,7 +4,7 @@ import Fixture from "../../Data/Fixture.ts";
 import Prefab from "../../Data/Prefab.ts";
 import Puzzle from "../../Data/Puzzle.ts";
 import Event from "../../Data/Event.ts";
-import Status from "../../Data/Status.js";
+import Status from "../../Data/Status.ts";
 import Player from "../../Data/Player.ts";
 import InventoryItem from "../../Data/InventoryItem.ts";
 import Gesture from "../../Data/Gesture.ts";

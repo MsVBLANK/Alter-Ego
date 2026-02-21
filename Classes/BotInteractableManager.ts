@@ -384,4 +384,82 @@ export default class BotInteractableManager {
 			return unstashButtons;
 		}
 	}
+
+    /**
+     * Generates an array of take interactables based on what the player is currently able to take.
+     * @param container - The container the player can take items from.
+     * @param containedItems - The items in the container that the player is able to take.
+     * @param player - The player who can perform a take action.
+     */
+    async getTakeInteractables(container: RoomItemContainer, containedItems: RoomItem[], player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        let dropContainer = container;
+        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+        if (dropContainer.canCurrentlyContainItems())
+            interactables = interactables.concat(await this.createTakeActionInteractable(containedItems, player));
+        return interactables;
+    }
+
+    /**
+     * Generates an array of drop interactables based on what the player is currently able to drop.
+     * @param container - The container the player can drop items into.
+     * @param player - The player who can perform a drop action.
+     */
+    async getDropInteractables(container: RoomItemContainer, player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        let dropContainer = container;
+        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+        if (dropContainer.canCurrentlyContainItems()) {
+            if (dropContainer.isItemContainer()) {
+                const droppableEntities = this.#game.entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
+                if (droppableEntities.length !== 0) interactables = interactables.concat(await this.createDropActionInteractables(droppableEntities, player, container));
+            }
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of stash interactables based on what the player is currently able to stash.
+     * @param player - The player who can perform a stash action.
+     */
+    async getStashInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const playerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name);
+        const heldItems = this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem);
+        const playerContainerItems = playerItems.filter(item => item.inventory.size > 0);
+        if (heldItems.length > 0 && playerContainerItems.length > 0) {
+            const viableStashDestinations = new Map<InventoryItem, string[]>();
+            // Get stash interactables.
+            for (const heldItem of heldItems) {
+                for (const containerItem of playerContainerItems) {
+                    const viableInventorySlots: string[] = [];
+                    for (const inventorySlot of containerItem.inventory.values()) {
+                        if (inventorySlot.willBeOverFilledBy(heldItem)) continue;
+                        viableInventorySlots.push(inventorySlot.id);
+                    }
+                    if (viableInventorySlots.length > 0) viableStashDestinations.set(containerItem, viableInventorySlots);
+                }
+            }
+            interactables = interactables.concat(await this.createStashActionInteractables(heldItems, player, viableStashDestinations));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of unstash interactables based on what the player is currently able to unstash.
+     * @param player - The player who can perform an unstash action.
+     */
+    async getUnstashInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const playerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name);
+        const playerFreeHand = this.#game.entityFinder.getPlayerFreeHand(player);
+        const playerContainerItems = playerItems.filter(item => item.inventory.size > 0);
+        if (playerFreeHand && playerContainerItems.length > 0) {
+            const stashedItems = playerItems.filter(item => item.container !== null);
+            if (stashedItems.length > 0) {
+                interactables = interactables.concat(await this.createUnstashActionInteractables(stashedItems, player));
+            }
+        }
+        return interactables;
+    }
 }

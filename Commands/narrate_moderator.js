@@ -1,4 +1,4 @@
-import Dialog from '../Data/Dialog.js';
+import Dialog from '../Data/Dialog.ts';
 import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import { MessageDisplayType } from '../Modules/enums.js';
 

@@ -1,4 +1,4 @@
-import Dialog from '../Data/Dialog.js';
+import Dialog from '../Data/Dialog.ts';
 import Whisper from '../Data/Whisper.js';
 import SayAction from '../Data/Actions/SayAction.ts';
 import WhisperAction from '../Data/Actions/WhisperAction.ts';

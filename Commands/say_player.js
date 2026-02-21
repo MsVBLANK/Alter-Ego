@@ -1,4 +1,4 @@
-﻿import Dialog from "../Data/Dialog.js";
+﻿import Dialog from "../Data/Dialog.ts";
 import SayAction from "../Data/Actions/SayAction.ts";
 import { ChannelType } from "discord.js";
 

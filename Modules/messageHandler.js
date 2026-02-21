@@ -1,4 +1,4 @@
-import Dialog from '../Data/Dialog.js';
+import Dialog from '../Data/Dialog.ts';
 import Player from '../Data/Player.js';
 import AnnounceAction from '../Data/Actions/AnnounceAction.ts';
 import NarrateAction from '../Data/Actions/NarrateAction.ts';

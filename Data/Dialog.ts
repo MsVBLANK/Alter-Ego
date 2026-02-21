@@ -1,176 +1,145 @@
-import { Collection } from "discord.js";
+import {type Attachment, Collection, type Embed} from "discord.js";
 import GameConstruct from "./GameConstruct.ts";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
-
-/** @import Game from "./Game.js" */
-/** @import InventoryItem from "./InventoryItem.js" */
-/** @import Player from "./Player.js" */
-/** @import Room from "./Room.js" */
-/** @import Whisper from "./Whisper.js" */
-
-/** @import { Attachment } from "discord.js" */
-/** @import { Embed } from "discord.js" */
+import type Player from "./Player.js";
+import type Room from "./Room.js";
+import type Whisper from "./Whisper.js";
+import type InventoryItem from "./InventoryItem.js";
+import type Game from "./Game.js";
 
 /**
- * @class Dialog
- * @classdesc Represents dialog spoken aloud by a player.
- * @extends GameConstruct
+ * Represents dialog spoken aloud by a player.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/dialog.html
  */
 export default class Dialog extends GameConstruct {
 	/**
 	 * The message that the dialog originated with.
-	 * @type {UserMessage}
 	 */
-	message;
+	message: UserMessage;
 	/**
 	 * The player who spoke the dialog.
-	 * @type {Player}
 	 */
-	speaker;
+	speaker: Player;
 	/**
 	 * The room the dialog occurred in.
-	 * @type {Room}
 	 */
-	location;
+	location: Room;
 	/**
 	 * Whether or not the dialog was made by a player in the announcement channel.
-	 * @type {boolean}
 	 */
-	isAnnouncement;
+	isAnnouncement: boolean;
 	/**
 	 * The whisper the dialog occurred in.
 	 * If the dialog was not whispered, this is null.
-	 * @type {Whisper}
 	 */
-	whisper;
+	whisper: Whisper;
 	/**
 	 * The text content of the message.
-	 * @type {string}
 	 */
-	content;
+	content: string;
 	/**
 	 * The cleanContent of the message.
-	 * @type {string}
 	 */
-	cleanContent;
+	cleanContent: string;
 	/**
 	 * The cleanContent of the dialog, but only including alphanumeric characters, cast to lowercase.
-	 * @type {string}
 	 */
-	alphanumericContent;
+	alphanumericContent: string;
 	/**
 	 * A collection of attachments sent with the original message.
-	 * @type {Collection<string, Attachment>}
 	 */
-	attachments;
+	attachments: Collection<string, Attachment>;
 	/**
 	 * An array of embeds sent with the original message.
-	 * @type {Embed[]}
 	 */
-	embeds;
+	embeds: Embed[];
 	/**
 	 * The display name to represent the speaker.
-	 * @type {string}
 	 */
-	speakerDisplayName;
+	speakerDisplayName: string;
 	/**
 	 * The avatar URL to represent the speaker in a webhook.
-	 * @type {string}
 	 */
-	speakerDisplayIcon;
+	speakerDisplayIcon: string;
 	/**
 	 * The voice string that will be used to describe the player's voice to other players. By default, this is the player's voice string.
 	 * If the player's voice string is the name of another player, this will instead by the original voice string of the mimicked player.
-	 * @type {string}
 	 */
-	speakerVoiceString;
+	speakerVoiceString: string;
 	/**
 	 * The name that will be used to represent the player to other players with the `knows [Player]` behavior attribute. By default, this is the player's name.
 	 * If this is not the name of another player, and the speaker's voice string is different from their original voice string, this is "unknown".
-	 * @type {string}
 	 */
-	speakerRecognitionName;
+	speakerRecognitionName: string;
 	/**
 	 * Whether or not this dialog is considered out-of-character, and thus not true dialog.
-	 * @type {boolean}
 	 */
-	isOOCMessage;
+	isOOCMessage: boolean;
 	/**
 	 * Whether or not this dialog is being shouted.
 	 * If the contents of the message excluding emojis is in all capital letters, and the message contains at least two letters, it is considered shouted.
 	 * If this is an OOC message, this is false.
-	 * @type {boolean}
 	 */
-	isShouted;
+	isShouted: boolean;
 	/**
 	 * A collection of adjacent rooms. Excludes any rooms with the `soundproof` tag and any unoccupied rooms (unless they have the `audio monitoring` tag).
 	 * If the location itself has the `soundproof` tag, or this is an OOC message, this is empty.
-	 * @type {Collection<string, Room>}
 	 */
-	neighboringRooms;
+	neighboringRooms: Collection<string, Room>;
 	/**
 	 * A collection of rooms with at least one player that has the `receiver` behavior attribute. The key of each entry is the room's ID.
 	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
-	 * @type {Collection<string, Room>}
 	 */
-	receiverRooms;
+	receiverRooms: Collection<string, Room>;
 	/**
 	 * Whether or not the location has the `audio surveilled` tag.
 	 * If this is an OOC message, this is false.
-	 * @type {boolean}
 	 */
-	locationIsAudioSurveilled;
+	locationIsAudioSurveilled: boolean;
 	/**
 	 * Whether or not the location has the `video surveilled` tag.
 	 * If this is an OOC message, this is false.
-	 * @type {boolean}
 	 */
-	locationIsVideoSurveilled;
+	locationIsVideoSurveilled: boolean;
 	/**
 	 * A collection of rooms adjacent to the location with the `audio surveilled` tag.
 	 * Any rooms with the `soundproof` tag are excluded.
 	 * If this is an OOC message, this is empty.
-	 * @type {Collection<string, Room>}
 	 */
-	neighboringAudioSurveilledRooms;
+	neighboringAudioSurveilledRooms: Collection<string, Room>;
 	/**
 	 * A collection of rooms with the `audio surveilled` tag that also have at least one player that has the `receiver` behavior attribute.
 	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
-	 * @type {Collection<string, Room>}
 	 */
-	receiverAudioSurveilledRooms;
+	receiverAudioSurveilledRooms: Collection<string, Room>;
 	/**
 	 * A collection of occupied rooms with the `audio monitoring` tag.
 	 * If the location, its neighboring rooms, or the receiver rooms don't have the `audio surveilled` tag, or if this is an OOC message, this is empty.
-	 * @type {Collection<string, Room>}
 	 */
-	audioMonitoringRooms;
+	audioMonitoringRooms: Collection<string, Room>;
 	/**
 	 * A collection of inventory items that inflict the `receiver` behavior attribute. The key of each entry is the name of the player it belongs to.
 	 * If the player doesn't have the `sender` behavior attribute, or if this is an OOC message, this is empty.
-	 * @type {Collection<string, InventoryItem>}
 	 */
-	receivers;
+	receivers: Collection<string, InventoryItem>;
 	/**
 	 * Whether or not the speaker's display name is different from the name that they'll be recognized by.
-	 * @readonly
-	 * @type {boolean}
 	 */
-	speakerDisplayNameIsDifferent;
-	
+	readonly speakerDisplayNameIsDifferent: boolean;
+
 	/**
-	 * @constructor
-	 * @param {Game} game - The game the dialog occurred in.
-	 * @param {UserMessage} message - The message that this dialog originated with.
-	 * @param {Player} player - The player who spoke the dialog.
-	 * @param {Room} location - The room the dialog occurred in.
-	 * @param {string} [content] - The content of the dialog. Optional.
-	 * @param {boolean} [isAnnouncement] - Whether or not the dialog was made by a player in the announcement channel. Defaults to false.
-	 * @param {Whisper} [whisper] - The whisper the dialog occurred in. Defaults to null.
-	 * @param {string} [cleanContent] - The clean content of the dialog. Optional.
+	 * @param game - The game the dialog occurred in.
+	 * @param message - The message that this dialog originated with.
+	 * @param player - The player who spoke the dialog.
+	 * @param location - The room the dialog occurred in.
+	 * @param content - The content of the dialog. Optional.
+	 * @param isAnnouncement - Whether or not the dialog was made by a player in the announcement channel. Defaults to false.
+	 * @param whisper - The whisper the dialog occurred in. Defaults to null.
+	 * @param cleanContent - The clean content of the dialog. Optional.
 	 */
-	constructor(game, message, player, location, content = message.content, isAnnouncement = false, whisper = null, cleanContent = content) {
+	constructor(game: Game, message: UserMessage, player: Player, location: Room, content: string = message.content,
+        isAnnouncement: boolean = false, whisper: Whisper = null, cleanContent: string = content) {
 		super(game);
 		this.message = message;
 		this.speaker = player;
@@ -251,17 +220,19 @@ export default class Dialog extends GameConstruct {
 
 	/**
 	 * Returns true if this dialog is mimicking the given player.
-	 * @param {Player} player - The player to check. 
+     *
+	 * @param player - The player to check.
 	 */
-	isMimicking(player) {
+	isMimicking(player: Player): boolean {
 		return this.speaker.name !== player.name && this.speakerRecognitionName === player.name;
 	}
 
 	/**
 	 * Returns the prefix string to append before the rest of the message text in webhook messages. If the dialog was not whispered, returns an empty string.
-	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
+     *
+	 * @param playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
-	getWhisperPrefixStringForWebhook(playerCanSeeSpeaker) {
+	getWhisperPrefixStringForWebhook(playerCanSeeSpeaker: boolean): string {
 		const recipientPhrase = this.whisper?.players.size > 1 && playerCanSeeSpeaker ? ` to ${this.whisper.generatePlayerListStringExcluding(this.speaker)}` : ``;
 		const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper?.hidingSpotName, this.location.id);
 		const hidingSpotPhrase = hidingSpot && playerCanSeeSpeaker ? ` in ${hidingSpot.getContainingPhrase()}` : ``;
@@ -270,17 +241,19 @@ export default class Dialog extends GameConstruct {
 
 	/**
 	 * Returns the display name to use for the speaker in webhook messages. This depends on whether or not a given player can see the speaker.
-	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
+     *
+	 * @param playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
-	getDisplayNameForWebhook(playerCanSeeSpeaker) {
+	getDisplayNameForWebhook(playerCanSeeSpeaker: boolean): string {
 		return this.speaker.isHidden() && !playerCanSeeSpeaker ? `Someone in the room with ${this.speakerVoiceString}` : capitalizeFirstLetter(this.speakerDisplayName);
 	}
 
 	/**
 	 * Returns the display icon to use for the speaker in webhook messages. This depends on whether or not a given player can see the speaker.
-	 * @param {boolean} playerCanSeeSpeaker - Whether or not the given player can see the speaker.
+     *
+	 * @param playerCanSeeSpeaker - Whether or not the given player can see the speaker.
 	 */
-	getDisplayIconForWebhook(playerCanSeeSpeaker) {
+	getDisplayIconForWebhook(playerCanSeeSpeaker: boolean): string {
 		return this.speaker.isHidden() && !playerCanSeeSpeaker ? this.getGame().settings.hiddenIconURL : this.speakerDisplayIcon;
 	}
 }

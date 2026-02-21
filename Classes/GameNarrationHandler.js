@@ -1,6 +1,6 @@
 import Description from "../Data/Description.ts";
 import Fixture from "../Data/Fixture.ts";
-import InventoryItem from "../Data/InventoryItem.js";
+import InventoryItem from "../Data/InventoryItem.ts";
 import Narration from "../Data/Narration.js";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";

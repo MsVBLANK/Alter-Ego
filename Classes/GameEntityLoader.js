@@ -10,7 +10,7 @@ import RoomItem from '../Data/RoomItem.js';
 import Puzzle from '../Data/Puzzle.js';
 import Event from '../Data/Event.ts';
 import EquipmentSlot from '../Data/EquipmentSlot.ts';
-import InventoryItem from '../Data/InventoryItem.js';
+import InventoryItem from '../Data/InventoryItem.ts';
 import Status from '../Data/Status.js';
 import Player from '../Data/Player.js';
 import Gesture from '../Data/Gesture.ts';

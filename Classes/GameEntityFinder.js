@@ -2,7 +2,7 @@ import { Collection } from "discord.js";
 import Fixture from "../Data/Fixture.ts";
 import Game from "../Data/Game.ts";
 import Gesture from "../Data/Gesture.ts";
-import InventoryItem from "../Data/InventoryItem.js";
+import InventoryItem from "../Data/InventoryItem.ts";
 import Player from "../Data/Player.js";
 import Puzzle from "../Data/Puzzle.js";
 import Room from "../Data/Room.js";

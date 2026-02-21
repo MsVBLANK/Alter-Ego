@@ -1,6 +1,6 @@
 import CureAction from "../Data/Actions/CureAction.ts";
 import InflictAction from '../Data/Actions/InflictAction.ts';
-import InventoryItem from "../Data/InventoryItem.js";
+import InventoryItem from "../Data/InventoryItem.ts";
 
 /** @import Status from "../Data/Status.js" */
 /** @import GameSettings from '../Classes/GameSettings.js' */

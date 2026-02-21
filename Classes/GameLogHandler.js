@@ -1,6 +1,6 @@
 import Exit from "../Data/Exit.ts";
 import Fixture from "../Data/Fixture.ts";
-import InventoryItem from "../Data/InventoryItem.js";
+import InventoryItem from "../Data/InventoryItem.ts";
 import InventorySlot from "../Data/InventorySlot.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.js";

@@ -1,6 +1,6 @@
 import Fixture from '../Data/Fixture.ts';
 import Puzzle from '../Data/Puzzle.js';
-import InventoryItem from '../Data/InventoryItem.js';
+import InventoryItem from '../Data/InventoryItem.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
 import RoomItem from '../Data/RoomItem.js';
 import ItemInstance from '../Data/ItemInstance.ts';

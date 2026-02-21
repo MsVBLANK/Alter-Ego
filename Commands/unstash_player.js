@@ -1,5 +1,5 @@
 import UnstashAction from '../Data/Actions/UnstashAction.ts';
-import InventoryItem from '../Data/InventoryItem.js';
+import InventoryItem from '../Data/InventoryItem.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */

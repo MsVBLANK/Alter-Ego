@@ -16,8 +16,10 @@ type ContainerOf<T extends RoomItem | InventoryItem> = T extends RoomItem ? Room
 
 /**
  * Represents a list of room items that are instances of the same prefab in the same location and container.
+ *
+ * @typeParam T - The type of the items collated together. Must be either a {@link RoomItem} or {@link InventoryItem}.
  */
-export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem | InventoryItem> {
+export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	/**
 	 * The items collated together.
 	 */
@@ -79,7 +81,7 @@ export default class CollatedItem<T extends RoomItem | InventoryItem = RoomItem 
      *
 	 * @param items - The room items to collate.
 	 */
-	static collate<T extends RoomItem | InventoryItem = RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
+	static collate<T extends RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
 		const childItems: T[] = [];
 		for (const item of items)
 			getChildItems(childItems, item);

@@ -2,7 +2,7 @@ import Description from "../Data/Description.ts";
 import Fixture from "../Data/Fixture.ts";
 import InventoryItem from "../Data/InventoryItem.ts";
 import Narration from "../Data/Narration.ts";
-import Room from "../Data/Room.js";
+import Room from "../Data/Room.ts";
 import RoomItem from "../Data/RoomItem.js";
 import DieAction from "../Data/Actions/DieAction.ts";
 import NarrateAction from "../Data/Actions/NarrateAction.ts";

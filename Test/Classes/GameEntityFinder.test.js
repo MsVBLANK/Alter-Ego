@@ -1,4 +1,4 @@
-import Room from "../../Data/Room.js";
+import Room from "../../Data/Room.ts";
 import RoomItem from "../../Data/RoomItem.js";
 import Fixture from "../../Data/Fixture.ts";
 import Prefab from "../../Data/Prefab.ts";

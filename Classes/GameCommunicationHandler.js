@@ -1,6 +1,6 @@
 import Action from "../Data/Action.ts";
 import Player from "../Data/Player.ts";
-import Room from "../Data/Room.js";
+import Room from "../Data/Room.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";

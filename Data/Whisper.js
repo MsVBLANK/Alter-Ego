@@ -1,5 +1,5 @@
 ﻿import GameConstruct from './GameConstruct.ts';
-import Room from './Room.js';
+import Room from './Room.ts';
 import { generatePlayerListString } from '../Modules/helpers.ts';
 import { Collection } from 'discord.js';
 
@@ -61,7 +61,7 @@ export default class Whisper extends GameConstruct {
 
     /**
      * @constructor
-     * @param {Game} game - The game this whisper is occurring in. 
+     * @param {Game} game - The game this whisper is occurring in.
      * @param {Player[]} players - The players in the whisper.
      * @param {string} [hidingSpotName] - The name of the hiding spot the whisper belongs to. Optional.
      */
@@ -73,7 +73,7 @@ export default class Whisper extends GameConstruct {
         if (this.players.size > 0) {
             this.locationId = this.players.first().location.id;
             this.location = this.getGame().entityFinder.getRoom(this.locationId);
-        } 
+        }
         if (hidingSpotName) this.hidingSpotName = hidingSpotName;
         this.id = Whisper.generateValidId(this.players.map(player => player), this.location, this.hidingSpotName)
         const discordChannelNameCharacterLimit = 100;
@@ -147,7 +147,7 @@ export default class Whisper extends GameConstruct {
     }
 
     /**
-     * Generate an ID in all lowercase with 
+     * Generate an ID in all lowercase with
      * @param {Player[]} players - The players in the whisper.
      * @param {Room} location - The location of the whisper.
      * @param {string} [hidingSpotName] - The name of the hiding spot associated with the whisper, if applicable.

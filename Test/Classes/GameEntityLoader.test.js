@@ -7,7 +7,7 @@ import InventoryItem from "../../Data/InventoryItem.ts";
 import Player from "../../Data/Player.ts";
 import Prefab from "../../Data/Prefab.ts";
 import Puzzle from "../../Data/Puzzle.ts";
-import Room from "../../Data/Room.js";
+import Room from "../../Data/Room.ts";
 import RoomItem from "../../Data/RoomItem.js";
 import sheets from "../__mocks__/libs/sheets.js";
 

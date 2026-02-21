@@ -1,4 +1,4 @@
-import Room from "../Data/Room.js";
+import Room from "../Data/Room.ts";
 import Whisper from "../Data/Whisper.js";
 import { ChannelType, TextChannel } from "discord.js";
 
@@ -25,7 +25,7 @@ export default class GameEntityManager {
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		this.game = game;
@@ -175,7 +175,7 @@ export default class GameEntityManager {
 		this.game.flags.clear();
 	}
 
-	/** 
+	/**
 	 * Updates references to a given room throughout the game.
 	 * @protected
 	 * @param {Room} room - The room to reference.
@@ -206,7 +206,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given fixture throughout the game.
 	 * @protected
-	 * @param {Fixture} fixture - The fixture to reference. 
+	 * @param {Fixture} fixture - The fixture to reference.
 	 */
 	updateFixtureReferences(fixture) {
 		this.game.roomItems.forEach(roomItem => {
@@ -260,7 +260,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given event throughout the game.
 	 * @protected
-	 * @param {Event} event 
+	 * @param {Event} event
 	 */
 	updateEventReferences(event) {
 		this.game.puzzles.forEach(puzzle => {
@@ -274,7 +274,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given status effect throughout the game.
 	 * @protected
-	 * @param {Status} status 
+	 * @param {Status} status
 	 */
 	updateStatusEffectReferences(status) {
 		this.game.prefabs.forEach(prefab => {
@@ -308,7 +308,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given flag throughout the game.
 	 * @protected
-	 * @param {Flag} flag 
+	 * @param {Flag} flag
 	 */
 	updateFlagReferences(flag) {
 		this.game.puzzles.forEach(puzzle => {
@@ -348,7 +348,7 @@ export default class GameEntityManager {
 
 	/**
 	 * Deletes a whisper from the game.
-	 * @param {Whisper} whisper - The whisper to delete. 
+	 * @param {Whisper} whisper - The whisper to delete.
 	 */
 	async deleteWhisper(whisper) {
 		if (this.game.settings.autoDeleteWhisperChannels) await whisper.channel.delete();

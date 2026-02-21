@@ -5,7 +5,7 @@ import Gesture from "../Data/Gesture.ts";
 import InventoryItem from "../Data/InventoryItem.ts";
 import Player from "../Data/Player.ts";
 import Puzzle from "../Data/Puzzle.ts";
-import Room from "../Data/Room.js";
+import Room from "../Data/Room.ts";
 import RoomItem from "../Data/RoomItem.js";
 import Status from "../Data/Status.js";
 import Whisper from "../Data/Whisper.js";

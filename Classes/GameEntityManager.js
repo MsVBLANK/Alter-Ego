@@ -1,5 +1,5 @@
 import Room from "../Data/Room.ts";
-import Whisper from "../Data/Whisper.js";
+import Whisper from "../Data/Whisper.ts";
 import { ChannelType, TextChannel } from "discord.js";
 
 /** @import Event from "../Data/Event.js" */

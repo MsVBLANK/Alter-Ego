@@ -1,5 +1,5 @@
 import Dialog from '../Data/Dialog.ts';
-import Whisper from '../Data/Whisper.js';
+import Whisper from '../Data/Whisper.ts';
 import SayAction from '../Data/Actions/SayAction.ts';
 import WhisperAction from '../Data/Actions/WhisperAction.ts';
 

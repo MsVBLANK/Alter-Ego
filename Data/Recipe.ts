@@ -1,13 +1,12 @@
-import CollatedItem from './CollatedItem.ts';
-import Description from './Description.ts';
-import GameEntity from './GameEntity.ts';
+import CollatedItem from "./CollatedItem.ts"
+import Description from "./Description.ts"
+import GameEntity from "./GameEntity.ts"
 import type RecipeItem from "./RecipeItem.js"
 import type { Duration } from "luxon"
 import type Game from "./Game.ts"
 import type ItemInstance from "./ItemInstance.ts"
 import type InventoryItem from "./InventoryItem.ts"
 import type RoomItem from "./RoomItem.js"
-import type Room from "./Room.js"
 
 /**
  * Allows players to transform items or inventory items into other items or inventory items.

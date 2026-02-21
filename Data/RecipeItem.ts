@@ -1,87 +1,65 @@
 import Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
-/**
- * @import CollatedItem from "./CollatedItem.ts";
- * @import Prefab from "./Prefab.js";
- */
+import type Prefab from "./Prefab.ts"
+import type InventoryItem from "./InventoryItem.ts"
+import type CollatedItem from "./CollatedItem.ts"
+import type RoomItem from "./RoomItem.js"
 
 /**
- * @class RecipeItem
- * @classdesc Represents an ingredient or a product in a recipe.
- * @extends GameConstruct
+ * Represents an ingredient or a product in a recipe.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe-item.html
  */
 export default class RecipeItem extends GameConstruct {
 	/**
 	 * This recipe item, expressed as a user-entered string.
-	 * @readonly
-	 * @type {string}
 	 */
-	recipeItemString;
+	readonly recipeItemString: string;
 	/**
 	 * The prefab ID of this recipe item.
-	 * @readonly
-	 * @type {string}
 	 */
-	prefabId;
+	readonly prefabId: string;
 	/**
 	 * The prefab of this recipe item.
-	 * @type {Prefab}
 	 */
-	prefab;
+	prefab: Prefab;
 	/**
 	 * A list of contained items, as a comma-separated string.
-	 * @readonly
-	 * @type {string}
 	 */
-	containedItemsString;
+	readonly containedItemsString: string;
 	/**
 	 * An array of recipe items that are required to be contained inside of this recipe item if it is an ingredient,
 	 * or will be contained inside of it if it is a product.
-	 * @type {RecipeItem[]}
 	 */
-	containedItems;
+	containedItems: RecipeItem[];
 	/**
 	 * The recipe item that contains this one. If this recipe item is not contained in another one, this is `null`.
-	 * @type {RecipeItem}
 	 */
-	container;
+	container: RecipeItem | null;
 	/**
 	 * The quantity of the item to be used or created.
-	 * @readonly
-	 * @type {number}
 	 */
-	quantity;
+	readonly quantity: number;
 	/**
 	 * The variable name to use for the quantity of this item when processing the recipe. Must be one letter in length.
-	 * @readonly
-	 * @type {string}
 	 */
-	quantityVariableName;
+	readonly quantityVariableName: string;
 	/**
 	 * The number of uses the item requires or will be produced with.
-	 * @readonly
-	 * @type {number}
 	 */
-	uses;
+	readonly uses: number;
 	/**
 	 * The variable name to use for the uses of this item when processing the recipe. Must be one letter in length.
-	 * @readonly
-	 * @type {string}
 	 */
-	usesVariableName;
+	readonly usesVariableName: string;
 	/**
 	 * Whether or not the quantity of this recipe item is constant. If a quantity is given, but it is not accompanied by a variable, it is assumed to be constant.
-	 * @readonly
-	 * @type {boolean}
 	 */
-	quantityIsConstant;
+	readonly quantityIsConstant: boolean;
 	/**
 	 * Whether or not the uses of this recipe item is constant. If a number of uses is given, but it is not accompanied by a variable, it is assumed to be constant.
-	 * @readonly
-	 * @type {boolean}
 	 */
-	usesIsConstant;
+	readonly usesIsConstant: boolean;
 	/**
      * A regular expression for parsing ingredients and products strings.
 	 *
@@ -96,17 +74,15 @@ export default class RecipeItem extends GameConstruct {
 	 * $5 - Variable name for uses. Consists of one letter.
 	 *
      * $6 - Contained items string. This should be split by plus-sign (+) and checked against this regex separately.
-     * @readonly
      */
-    static itemRegex = /^(?:(\d+)([^\d\n\r])? )?([^\n\r\(\[\]]+)(?: ?\[(\d+)([^\d\n\r])?\])?(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
+    static readonly itemRegex = /^(?:(\d+)([^\d\n\r])? )?([^\n\r\(\[\]]+)(?: ?\[(\d+)([^\d\n\r])?\])?(?: ?\(([^\n\r\(\)]+)\) ?)?$/i;
 
 	/**
-	 * @constructor
-	 * @param {string} recipeItemString - A string representing a recipe item.
-	 * @param {Game} game - The game this belongs to.
-	 * @param {"processing" | "crafting"} type - The type of recipe this belongs to.
+	 * @param recipeItemString - A string representing a recipe item.
+	 * @param game - The game this belongs to.
+	 * @param type - The type of recipe this belongs to.
 	 */
-	constructor(recipeItemString, game, type) {
+	constructor(recipeItemString: string, game: Game, type: "processing" | "crafting") {
 		super(game);
 		this.recipeItemString = recipeItemString.trim();
 		const matches = this.recipeItemString.match(RecipeItem.itemRegex);
@@ -124,43 +100,36 @@ export default class RecipeItem extends GameConstruct {
 		this.usesIsConstant = (type === "crafting" ? true : usesGiven) && this.usesVariableName === '';
 	}
 
-	/**
-	 * @param {Prefab} prefab
-	 */
-	setPrefab(prefab) {
+	setPrefab(prefab: Prefab): void {
 		this.prefab = prefab;
 	}
 
-	/**
-	 * @param {RecipeItem} container
-	 */
-	setContainer(container) {
+	setContainer(container: RecipeItem): void {
 		this.container = container;
 	}
 
 	/**
 	 * Returns true if the given item satisfies the quantity required of this recipe item.
-	 * @param {CollatedItem} item
 	 */
-	quantitySatisfiedBy(item) {
+	quantitySatisfiedBy(item: CollatedItem<RoomItem | InventoryItem>): boolean {
 		if (isNaN(item.quantity)) return true;
 		return item.quantity >= this.quantity;
 	}
 
     /**
 	 * Returns true if the given item satisfies the uses required of this recipe item.
-	 * @param {CollatedItem} item
 	 */
-    usesSatisfiedBy(item) {
+    usesSatisfiedBy(item: CollatedItem<RoomItem | InventoryItem>): boolean {
         if (isNaN(item.uses) || this.uses === undefined) return true;
         return item.uses >= this.uses;
     }
 
 	/**
 	 * Calculates how many times the given ingredient use count satisfies the quantity of this recipe item.
-	 * @param {number} ingredientUseCount - How many times the ingredient is to be used.
+     *
+	 * @param ingredientUseCount - How many times the ingredient is to be used.
 	 */
-	getSatisfiedQuantityCount(ingredientUseCount) {
+	getSatisfiedQuantityCount(ingredientUseCount: number): number {
 		const satisfiedQuantityCount = ingredientUseCount / this.quantity;
 		if (isNaN(satisfiedQuantityCount)) return NaN;
 		return Math.floor(satisfiedQuantityCount);
@@ -168,10 +137,11 @@ export default class RecipeItem extends GameConstruct {
 
     /**
      * Calculates the number of uses to instantiate this recipe as a product with.
-     * @param {number} satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
-     * @param {Map<string, number>} variableValues - The variable values captured from the actual ingredients.
+     *
+     * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param variableValues - The variable values captured from the actual ingredients.
      */
-    calculateUses(satisfactoryProcessCount, variableValues) {
+    calculateUses(satisfactoryProcessCount: number, variableValues: Map<string, number>): number {
         if (!isNaN(this.uses) && !this.usesIsConstant) {
             if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return variableValues.get(this.usesVariableName);
             else return this.uses * satisfactoryProcessCount;
@@ -182,7 +152,7 @@ export default class RecipeItem extends GameConstruct {
 	/**
 	 * Returns a string to display this recipe item in a list of recipes list.
 	 */
-	getDisplayString() {
+	getDisplayString(): string {
 		let displayString = "";
 		if (this.quantityIsConstant || this.quantityVariableName === "") displayString = this.prefab.toContainingPhrase(this.quantity);
 		else displayString = `${this.quantity}${this.quantityVariableName} ${this.prefab.pluralContainingPhrase}`;

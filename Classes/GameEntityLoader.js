@@ -20,7 +20,7 @@ import { getSheetValues } from '../Modules/sheets.js';
 import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
-import RecipeItem from '../Data/RecipeItem.js';
+import RecipeItem from '../Data/RecipeItem.ts';
 
 /**
  * @class GameEntityLoader

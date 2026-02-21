@@ -8,7 +8,7 @@ import InventorySlot from '../Data/InventorySlot.ts';
 import Recipe from '../Data/Recipe.js';
 import RoomItem from '../Data/RoomItem.js';
 import Puzzle from '../Data/Puzzle.js';
-import Event from '../Data/Event.js';
+import Event from '../Data/Event.ts';
 import EquipmentSlot from '../Data/EquipmentSlot.ts';
 import InventoryItem from '../Data/InventoryItem.js';
 import Status from '../Data/Status.js';

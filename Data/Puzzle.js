@@ -1,5 +1,5 @@
 import Description from './Description.ts';
-import Event from './Event.js';
+import Event from './Event.ts';
 import Flag from './Flag.js';
 import Prefab from './Prefab.js';
 import ItemContainer from './ItemContainer.ts';

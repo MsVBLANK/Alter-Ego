@@ -1,6 +1,6 @@
 import Description from "../../Data/Description.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";
-import Event from "../../Data/Event.js";
+import Event from "../../Data/Event.ts";
 import Fixture from "../../Data/Fixture.js";
 import Game from "../../Data/Game.js";
 import InventoryItem from "../../Data/InventoryItem.js";

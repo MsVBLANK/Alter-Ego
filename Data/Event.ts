@@ -1,151 +1,127 @@
-import Description from './Description.ts';
-import GameEntity from './GameEntity.ts';
-import EndAction from './Actions/EndAction.ts';
-import InflictAction from './Actions/InflictAction.ts';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-import Timer from '../Classes/Timer.js';
-import { DateTime } from 'luxon';
-import { parse } from 'date-fns';
-
-/** @import Game from './Game.js' */
-/** @import Status from './Status.js' */
-/** @import { Duration } from 'luxon' */
+import Description from "./Description.ts"
+import GameEntity from "./GameEntity.ts"
+import EndAction from "./Actions/EndAction.ts"
+import InflictAction from "./Actions/InflictAction.ts"
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js"
+import Timer from "../Classes/Timer.js"
+import { DateTime, type Duration } from "luxon"
+import { parse } from "date-fns"
+import type Status from "./Status.js"
+import type Game from "./Game.js"
 
 /**
- * @class Event
- * @classdesc Represents a timed event in the game.
- * @extends GameEntity
+ * Represents a timed event in the game.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html
  */
 export default class Event extends GameEntity {
     /**
      * The unique ID of the event.
-     * @readonly
-     * @type {string}
      */
-    id;
+    readonly id: string;
     /**
      * The unique name of the event. Deprecated. Use `id` instead.
      * @deprecated
-     * @readonly
-     * @type {string}
      */
-    name;
+    readonly name: string;
     /**
      * Whether the event is ongoing.
-     * @type {boolean}
      */
-    ongoing;
+    ongoing: boolean;
     /**
      * The string representation of how long the event lasts after being triggered.
-     * @type {string}
      */
-    durationString;
+    durationString: string;
     /**
      * The duration object of the event.
-     * @type {Duration<true>}
      */
-    duration;
+    duration: Duration<true>;
     /**
      * The string representation of the remaining time of the event.
-     * @type {string}
      */
-    remainingString;
+    remainingString: string;
     /**
      * The remaining time of the event.
-     * @type {Duration<true>}
      */
-    remaining;
+    remaining: Duration<true>;
     /**
      * The string representations of what times the event will be automatically triggered.
+     *
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-strings
-     * @type {string[]}
      */
-    triggerTimesStrings;
+    triggerTimesStrings: string[];
     /**
      * The keyword or phrase assigned to the event that allows it to affect rooms.
-     * @type {string}
      */
-    roomTag;
+    roomTag: string;
     /**
      * Forward slash separated list of comma-separated bot commands to be executed when the event is triggered or ended.
-     * @type {string}
      */
-    commandsString;
+    commandsString: string;
     /**
      * The bot commands to be executed when the event is triggered.
-     * @type {string[]}
      */
-    triggeredCommands;
+    triggeredCommands: string[];
     /**
      * The bot commands to be executed when the event is ended.
-     * @type {string[]}
      */
-    endedCommands;
+    endedCommands: string[];
     /**
      * String representations of status effects to be inflicted on occupants of affected rooms every second that the event is ongoing.
-     * @type {string[]}
      */
-    effectsStrings;
+    effectsStrings: string[];
     /**
      * The status effects to be inflicted on occupants of affected rooms every second that the event is ongoing.
-     * @type {Status[]}
      */
-    effects;
+    effects: Status[];
     /**
      * String representations of status effects whose durations will be reset to full for all occupants of affected rooms every second that the event is ongoing.
-     * @type {string[]}
      */
-    refreshesStrings;
+    refreshesStrings: string[];
     /**
      * The status effects whose durations will be reset to full for all occupants of affected rooms every second that the event is ongoing.
-     * @type {Status[]}
      */
-    refreshes;
+    refreshes: Status[];
     /**
      * The narration to be sent to affected rooms when the event is triggered.
-     * @readonly
-     * @type {Description}
      */
-    triggeredNarration;
+    readonly triggeredNarration: Description;
     /**
      * The narration to be sent to affected rooms when the event is ended.
-     * @readonly
-     * @type {Description}
      */
-    endedNarration;
+    readonly endedNarration: Description;
     /**
      * A timer counting down from the event's initial duration every second. When it reaches 0, the event ends, and this becomes `null`.
-     * @type {Timer | null}
      */
-    timer;
+    timer: Timer | null;
     /**
      * A timer that inflicts and refreshes status effects every second while the event is ongoing.
-     * @type {Timer | null}
      */
-    effectsTimer;
+    effectsTimer: Timer | null;
 
     /**
-     * @constructor
-     * @param {string} id - The unique ID of the event.
-     * @param {boolean} ongoing - Whether the event is ongoing.
-     * @param {string} durationString - The string representation of how long the event lasts after being triggered.
-     * @param {Duration} duration - The duration object of the event.
-     * @param {string} remainingString - The string representation of the remaining time of the event.
-     * @param {Duration} remaining - The remaining time of the event.
-     * @param {string[]} triggerTimesStrings - The string representations of what times the event will be automatically triggered. Refer to this link for accepted formats: {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-string}
-     * @param {string} roomTag - The keyword or phrase assigned to the event that allows it to affect rooms.
-     * @param {string} commandsString - Forward slash separated list of comma-separated bot commands to be executed when the event is triggered or ended.
-     * @param {string[]} triggeredCommands - The bot commands to be executed when the event is triggered.
-     * @param {string[]} endedCommands - The bot commands to be executed when the event is ended.
-     * @param {string[]} effectsStrings - String representations of status effects to be inflicted on occupants of affected rooms every second that the event is ongoing.
-     * @param {string[]} refreshesStrings - String representations of status effects whose durations will be reset to full for all occupants of affected rooms every second that the event is ongoing.
-     * @param {string} triggeredNarration - The narration to be sent to affected rooms when the event is triggered.
-     * @param {string} endedNarration - The narration to be sent to affected rooms when the event is ended.
-     * @param {number} row - The row of the event in the event sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param id - The unique ID of the event.
+     * @param ongoing - Whether the event is ongoing.
+     * @param durationString - The string representation of how long the event lasts after being triggered.
+     * @param duration - The duration object of the event.
+     * @param remainingString - The string representation of the remaining time of the event.
+     * @param remaining - The remaining time of the event.
+     * @param triggerTimesStrings - The string representations of what times the event will be automatically triggered. Refer to this link for accepted formats: {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-string}
+     * @param roomTag - The keyword or phrase assigned to the event that allows it to affect rooms.
+     * @param commandsString - Forward slash separated list of comma-separated bot commands to be executed when the event is triggered or ended.
+     * @param triggeredCommands - The bot commands to be executed when the event is triggered.
+     * @param endedCommands - The bot commands to be executed when the event is ended.
+     * @param effectsStrings - String representations of status effects to be inflicted on occupants of affected rooms every second that the event is ongoing.
+     * @param refreshesStrings - String representations of status effects whose durations will be reset to full for all occupants of affected rooms every second that the event is ongoing.
+     * @param triggeredNarration - The narration to be sent to affected rooms when the event is triggered.
+     * @param endedNarration - The narration to be sent to affected rooms when the event is ended.
+     * @param row - The row of the event in the event sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(id, ongoing, durationString, duration, remainingString, remaining, triggerTimesStrings, roomTag, commandsString, triggeredCommands, endedCommands, effectsStrings, refreshesStrings, triggeredNarration, endedNarration, row, game) {
+    constructor(id: string, ongoing: boolean, durationString: string, duration: Duration, remainingString: string,
+        remaining: Duration, triggerTimesStrings: string[], roomTag: string, commandsString: string,
+        triggeredCommands: string[], endedCommands: string[], effectsStrings: string[], refreshesStrings: string[],
+        triggeredNarration: string, endedNarration: string, row: number, game: Game) {
         super(game, row);
         this.id = id;
         this.name = id;
@@ -171,7 +147,7 @@ export default class Event extends GameEntity {
     }
 
     /** A list of acceptable formats for triggerTimes. */
-    static formats = [
+    static formats: string[] = [
         "p",           "pp",          "HH:mm",            "hh:mm a",
         "ccc p",       "ccc pp",      "ccc HH:mm",        "ccc hh:mm a",
         "cccc p",      "cccc pp",     "cccc HH:mm",       "cccc hh:mm a",
@@ -189,7 +165,7 @@ export default class Event extends GameEntity {
     /**
      * Trigger the event.
      */
-    trigger() {
+    trigger(): void {
         // Mark it as ongoing.
         this.ongoing = true;
         // Begin the timer, if applicable.
@@ -202,14 +178,14 @@ export default class Event extends GameEntity {
     /**
      * Executes the event's triggered commands.
      */
-    executeTriggeredCommands() {
+    executeTriggeredCommands(): void {
         parseAndExecuteBotCommands(this.triggeredCommands, this.getGame(), this);
     }
 
     /**
      * End the event.
      */
-    end() {
+    end(): void {
         // Unmark it as ongoing.
         this.ongoing = false;
         // Stop the timer.
@@ -228,11 +204,11 @@ export default class Event extends GameEntity {
     /**
      * Executes the event's ended commands.
      */
-    executeEndedCommands() {
+    executeEndedCommands(): void {
         parseAndExecuteBotCommands(this.endedCommands, this.getGame(), this);
     }
 
-    startTimer() {
+    startTimer(): void {
         if (this.remaining === null)
             this.remaining = this.duration;
         let event = this;
@@ -249,7 +225,7 @@ export default class Event extends GameEntity {
         });
     }
 
-    startEffectsTimer() {
+    startEffectsTimer(): void {
         let event = this;
         this.effectsTimer = new Timer(1000, { start: true, loop: true }, function () {
             const rooms = event.getGame().entityFinder.getRooms(null, event.roomTag, true);
@@ -262,8 +238,7 @@ export default class Event extends GameEntity {
                         }
                     });
                     event.refreshes.forEach(refresh => {
-                        /** @type {Status} */
-                        let status = occupant.status.get(refresh.id);
+                        let status: Status = occupant.status.get(refresh.id);
                         if (status !== undefined && status.remaining !== null)
                             status.remaining = refresh.duration;
                     });
@@ -272,19 +247,19 @@ export default class Event extends GameEntity {
         });
     }
 
-    triggeredCell() {
+    triggeredCell(): string {
         return this.getGame().constants.eventSheetTriggeredColumn + this.row;
     }
-    endedCell() {
+    endedCell(): string {
         return this.getGame().constants.eventSheetEndedColumn + this.row;
     }
 
     /**
      * Parses a triggerTime string and returns an object that stores the parsed time and the format used to parse it.
-     * @param {string} timeString - The string to parse.
-     * @returns {ParsedTriggerTime}
+     *
+     * @param timeString - The string to parse.
      */
-    static parseTriggerTime(timeString) {
+    static parseTriggerTime(timeString: string): ParsedTriggerTime {
         for (const format of Event.formats) {
             let parsedTime = DateTime.fromJSDate(parse(timeString, format, new Date()));
             if (parsedTime.isValid) {

@@ -8,7 +8,7 @@ import GameLogHandler from '../Classes/GameLogHandler.js';
 import GameNarrationHandler from '../Classes/GameNarrationHandler.js';
 import GameNotificationGenerator from '../Classes/GameNotificationGenerator.js';
 import PriorityQueue from '../Classes/PriorityQueue.js';
-import Event from './Event.js';
+import Event from './Event.ts';
 import TriggerAction from './Actions/TriggerAction.ts';
 import { sendQueuedMessages } from '../Modules/messageHandler.js';
 import { Collection } from 'discord.js';

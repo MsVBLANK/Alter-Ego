@@ -3,7 +3,7 @@ import RoomItem from "../../Data/RoomItem.js";
 import Fixture from "../../Data/Fixture.js";
 import Prefab from "../../Data/Prefab.js";
 import Puzzle from "../../Data/Puzzle.js";
-import Event from "../../Data/Event.js";
+import Event from "../../Data/Event.ts";
 import Status from "../../Data/Status.js";
 import Player from "../../Data/Player.js";
 import InventoryItem from "../../Data/InventoryItem.js";

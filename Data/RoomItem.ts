@@ -1,64 +1,55 @@
-import InventorySlot from './InventorySlot.ts';
-import ItemInstance from './ItemInstance.ts';
-import DestroyAction from './Actions/DestroyAction.ts';
-import InstantiateAction from './Actions/InstantiateAction.ts';
-import { Collection } from 'discord.js';
-
-/** @import Fixture from './Fixture.js' */
-/** @import Game from './Game.js' */
-/** @import Player from './Player.js' */
-/** @import Puzzle from './Puzzle.js' */
-/** @import Room from './Room.js' */
+import InventorySlot from "./InventorySlot.ts"
+import ItemInstance from "./ItemInstance.ts"
+import DestroyAction from "./Actions/DestroyAction.ts"
+import InstantiateAction from "./Actions/InstantiateAction.ts"
+import { Collection } from "discord.js"
+import type Room from "./Room.ts"
+import type Game from "./Game.ts"
+import type Player from "./Player.ts"
 
 /**
- * @class RoomItem
- * @classdesc Represents an item in a room that a player can take with them.
- * @extends ItemInstance
+ * Represents an item in a room that a player can take with them.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room_item.html
  */
 export default class RoomItem extends ItemInstance {
     /**
      * The display name of the room the item can be found in.
-     * @type {string}
      */
-    locationDisplayName;
+    locationDisplayName: string;
     /**
      * The room the item can be found in.
-     * @type {Room}
      */
-    location;
+    location: Room;
     /**
      * Whether the item can be interacted with.
-     * @type {boolean}
      */
-    accessible;
+    accessible: boolean;
     /**
      * The item's actual container.
-     * @type {RoomItemContainer}
      */
-    container = null;
+    override container: RoomItemContainer = null;
     /**
      * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
-     * @override
-     * @type {Collection<string, InventorySlot<RoomItem>>}
      */
-    inventory = new Collection();
+    override inventory: Collection<string, InventorySlot<RoomItem>> = new Collection();
 
     /**
-     * @constructor
-     * @param {string} prefabId - The ID of the prefab this item is an instance of.
-     * @param {string} identifier - The unique identifier given to the item if it is capable of containing other items.
-     * @param {string} locationDisplayName - The display name of the room the item can be found in.
-     * @param {boolean} accessible - Whether the item can be interacted with.
-     * @param {string} containerType - The type of the item's container. Either "Fixture", "RoomItem", or "Puzzle".
-     * @param {string} containerName - The type and identifier/name of the container the item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
-     * @param {number} quantity - How many identical instances of this item are in the given container.
-     * @param {number} uses - The number of times this item can be used.
-     * @param {string} description - The description of the item. Can contain multiple item lists named after its inventory slots.
-     * @param {number} row - The row number of the item in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param prefabId - The ID of the prefab this item is an instance of.
+     * @param identifier - The unique identifier given to the item if it is capable of containing other items.
+     * @param locationDisplayName - The display name of the room the item can be found in.
+     * @param accessible - Whether the item can be interacted with.
+     * @param containerType - The type of the item's container. Either "Fixture", "RoomItem", or "Puzzle".
+     * @param containerName - The type and identifier/name of the container the item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
+     * @param quantity - How many identical instances of this item are in the given container.
+     * @param uses - The number of times this item can be used.
+     * @param description - The description of the item. Can contain multiple item lists named after its inventory slots.
+     * @param row - The row number of the item in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(prefabId, identifier, locationDisplayName, accessible, containerType, containerName, quantity, uses, description, row, game) {
+    constructor(prefabId: string, identifier: string, locationDisplayName: string, accessible: boolean,
+        containerType: string, containerName: string, quantity: number, uses: number, description: string, row: number,
+        game: Game) {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.locationDisplayName = locationDisplayName;
         this.location = null;
@@ -68,27 +59,24 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Sets the location.
-     * @param {Room} room
      */
-    setLocation(room) {
+    setLocation(room: Room): void {
         this.location = room;
     }
 
     /**
      * Sets the container.
-     * @param {RoomItemContainer} container
      */
-    setContainer(container) {
+    setContainer(container: RoomItemContainer): void {
         this.container = container;
     }
 
     /**
      * Creates instances of all of the prefab's {@link InventorySlot|inventory slots} and inserts them into this instance's inventory.
      */
-    initializeInventory() {
+    initializeInventory(): void {
         this.prefab.inventory.forEach(prefabInventorySlot => {
-            /** @type {RoomItem[]} */
-            const items = [];
+            const items: RoomItem[] = [];
             const inventorySlot = new InventorySlot(
                 prefabInventorySlot.id,
                 prefabInventorySlot.capacity,
@@ -102,10 +90,10 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
-     * @override
-     * @param {Player} [player] - The player who used this item, if applicable.
+     *
+     * @param player - The player who used this item, if applicable.
      */
-    decreaseUses(player) {
+    override decreaseUses(player?: Player): void {
         this.uses--;
         if (this.uses === 0) {
             const nextStage = this.prefab.nextStage;
@@ -123,10 +111,11 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Inserts an item into the specified slot.
-     * @param {RoomItem} item - The item to insert.
-     * @param {string} slotId - The ID of the inventory slot to insert it in.
+     *
+     * @param item - The item to insert.
+     * @param slotId - The ID of the inventory slot to insert it in.
      */
-    insertItem(item, slotId) {
+    insertItem(item: RoomItem, slotId: string): void {
         if (item.quantity !== 0) {
             const inventorySlot = this.inventory.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
@@ -136,11 +125,12 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Removes an item from the specified slot.
-     * @param {RoomItem} item - The item to remove.
-     * @param {string} slotId - The ID of the inventory slot to remove it from.
-     * @param {number} removedQuantity - The quantity of this item to remove.
+     *
+     * @param item - The item to remove.
+     * @param slotId - The ID of the inventory slot to remove it from.
+     * @param removedQuantity - The quantity of this item to remove.
      */
-    removeItem(item, slotId, removedQuantity) {
+    removeItem(item: RoomItem, slotId: string, removedQuantity: number): void {
         const inventorySlot = this.inventory.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
@@ -149,7 +139,7 @@ export default class RoomItem extends ItemInstance {
     /**
      * Gets a phrase to refer to the container in narrations.
      */
-    getContainerPhrase() {
+    getContainerPhrase(): string {
         let containerPhrase = "";
         if (this.container) containerPhrase = this.container.getContainingPhrase();
         return containerPhrase;
@@ -158,7 +148,7 @@ export default class RoomItem extends ItemInstance {
     /**
      * Gets the preposition of the container.
      */
-    getContainerPreposition() {
+    getContainerPreposition(): string {
         let preposition = "in";
         if (this.container) preposition = this.container.getPreposition();
         return preposition;
@@ -167,7 +157,7 @@ export default class RoomItem extends ItemInstance {
     /**
      * Gets the highest-level container of this item.
      */
-    getTopContainer() {
+    getTopContainer(): RoomItemContainer {
         let topContainer = this.container;
         while (topContainer !== null && topContainer instanceof RoomItem)
             topContainer = topContainer.container;
@@ -177,52 +167,52 @@ export default class RoomItem extends ItemInstance {
     /**
      * Sets the item as accessible.
      */
-    setAccessible() {
+    setAccessible(): void {
         this.accessible = true;
     }
 
     /**
      * Sets the item as inaccessible.
      */
-    setInaccessible() {
+    setInaccessible(): void {
         this.accessible = false;
     }
 
     /** Gets the entity's location. */
-    getLocation() {
+    getLocation(): Room {
         return this.location;
     }
 
     /** Gets the item's container. */
-    getContainer() {
+    getContainer(): RoomItemContainer {
         return this.container;
     }
 
     /**
      * Returns the args for the Inspect ActionDirective for this room item.
      */
-    getInspectActionDirectiveArgs() {
+    getInspectActionDirectiveArgs(): string[] {
         return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName];
     }
 
     /**
      * Returns the args for the Take ActionDirective for this room item.
      */
-    getTakeActionDirectiveArgs() {
+    getTakeActionDirectiveArgs(): string[] {
         return [this.getIdentifier(), this.location.id, this.containerType, this.containerName];
     }
 
     /**
      * Returns true if the room item is capable of containing items.
      */
-    isItemContainer() {
+    isItemContainer(): boolean {
         return this.inventory.size > 0;
     }
 
     /**
      * Returns true if the room item is currently capable of being taken from/dropped into.
      */
-    canCurrentlyContainItems() {
+    canCurrentlyContainItems(): boolean {
         let allInventorySlotsFilled = true;
         for (const inventorySlot of this.inventory.values()) {
             if (inventorySlot.takenSpace < inventorySlot.capacity) {
@@ -235,24 +225,22 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Gets all of the items this entity contains.
-     * @override
      */
-    getContainedItems() {
+    override getContainedItems(): RoomItem[] {
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'RoomItem', this.identifier);
     }
 
     /**
 	 * Gets all of the items that should appear in the given item list.
-	 * @override
-	 * @param {string} [itemListName] - The name of the item list. Only required if there is more than one item list.
-	 * @param {Player} [player] - The player the description is being sent to. Unused.
+     *
+	 * @param itemListName - The name of the item list. Only required if there is more than one item list.
+	 * @param player - The player the description is being sent to. Unused.
 	 */
-	getContainedItemsForItemList(itemListName, player) {
+	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'RoomItem', this.identifier, itemListName);
 	}
 
-    /** @returns {string} */
-    descriptionCell() {
+    descriptionCell(): string {
         return this.getGame().constants.roomItemSheetDescriptionColumn + this.row;
     }
 }

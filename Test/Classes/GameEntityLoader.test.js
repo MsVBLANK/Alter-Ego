@@ -8,7 +8,7 @@ import Player from "../../Data/Player.ts";
 import Prefab from "../../Data/Prefab.ts";
 import Puzzle from "../../Data/Puzzle.ts";
 import Room from "../../Data/Room.ts";
-import RoomItem from "../../Data/RoomItem.js";
+import RoomItem from "../../Data/RoomItem.ts";
 import sheets from "../__mocks__/libs/sheets.js";
 
 describe('GameEntityLoader test', () => {

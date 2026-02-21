@@ -6,7 +6,7 @@ import InventoryItem from "../Data/InventoryItem.ts";
 import Player from "../Data/Player.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.ts";
-import RoomItem from "../Data/RoomItem.js";
+import RoomItem from "../Data/RoomItem.ts";
 import Status from "../Data/Status.js";
 import Whisper from "../Data/Whisper.js";
 import * as matchers from '../Modules/matchers.js';

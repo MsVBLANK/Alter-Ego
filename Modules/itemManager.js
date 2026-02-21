@@ -2,7 +2,7 @@ import Fixture from '../Data/Fixture.ts';
 import Puzzle from '../Data/Puzzle.ts';
 import InventoryItem from '../Data/InventoryItem.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
-import RoomItem from '../Data/RoomItem.js';
+import RoomItem from '../Data/RoomItem.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
 import { generateProceduralOutput } from '../Modules/parser.js';
 

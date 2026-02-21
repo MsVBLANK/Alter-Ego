@@ -1,5 +1,5 @@
 import Fixture from "../Data/Fixture.ts";
-import RoomItem from "../Data/RoomItem.js";
+import RoomItem from "../Data/RoomItem.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import DestroyAction from "../Data/Actions/DestroyAction.ts";
 

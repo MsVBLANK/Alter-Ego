@@ -6,7 +6,7 @@ import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.ts";
-import RoomItem from "../Data/RoomItem.js";
+import RoomItem from "../Data/RoomItem.ts";
 import { generateListString } from "../Modules/helpers.ts";
 
 /** @import EquipmentSlot from "../Data/EquipmentSlot.js" */

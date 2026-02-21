@@ -1,6 +1,6 @@
 ﻿import TakeAction from '../Data/Actions/TakeAction.ts';
 import Fixture from '../Data/Fixture.ts';
-import RoomItem from '../Data/RoomItem.js';
+import RoomItem from '../Data/RoomItem.ts';
 import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */

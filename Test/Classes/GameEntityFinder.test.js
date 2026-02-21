@@ -1,5 +1,5 @@
 import Room from "../../Data/Room.ts";
-import RoomItem from "../../Data/RoomItem.js";
+import RoomItem from "../../Data/RoomItem.ts";
 import Fixture from "../../Data/Fixture.ts";
 import Prefab from "../../Data/Prefab.ts";
 import Puzzle from "../../Data/Puzzle.ts";

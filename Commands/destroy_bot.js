@@ -1,7 +1,7 @@
 import DestroyAction from "../Data/Actions/DestroyAction.ts";
 import Game from "../Data/Game.ts";
 import Fixture from "../Data/Fixture.ts";
-import RoomItem from "../Data/RoomItem.js";
+import RoomItem from "../Data/RoomItem.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.js";
 

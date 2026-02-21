@@ -6,7 +6,7 @@ import Fixture from '../Data/Fixture.ts';
 import Prefab from '../Data/Prefab.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
 import Recipe from '../Data/Recipe.ts';
-import RoomItem from '../Data/RoomItem.js';
+import RoomItem from '../Data/RoomItem.ts';
 import Puzzle from '../Data/Puzzle.ts';
 import Event from '../Data/Event.ts';
 import EquipmentSlot from '../Data/EquipmentSlot.ts';

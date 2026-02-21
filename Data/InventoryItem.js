@@ -1,4 +1,4 @@
-﻿import Description from './Description.js';
+﻿import Description from './Description.ts';
 import InventorySlot from './InventorySlot.ts';
 import ItemInstance from './ItemInstance.ts';
 import { replaceInventoryItem } from '../Modules/itemManager.js';
@@ -70,7 +70,7 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Sets the player.
-     * @param {Player} player 
+     * @param {Player} player
      */
     setPlayer(player) {
         this.player = player;
@@ -226,7 +226,7 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Returns true if the item is usable on the given player.
-     * @param {Player} player 
+     * @param {Player} player
      */
     usableOn(player) {
         let canEffect = false, canCure = false;

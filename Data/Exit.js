@@ -1,4 +1,4 @@
-import Description from './Description.js';
+import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 
 /** @import Game from './Game.js' */
@@ -11,7 +11,7 @@ import GameEntity from './GameEntity.ts';
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html
  */
 export default class Exit extends GameEntity {
-    /** 
+    /**
      * The name of the exit.
      * @type {string}
      */
@@ -137,7 +137,7 @@ export default class Exit extends GameEntity {
 
     /**
      * Returns true if the exit has the given tag.
-     * @param {string} tag 
+     * @param {string} tag
      */
     hasTag(tag) {
         return this.tags.has(tag);

@@ -1,4 +1,4 @@
-﻿import Description from './Description.js';
+﻿import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 
 /** @import Game from './Game.js' */
@@ -30,9 +30,9 @@ export default class Status extends GameEntity {
      * @type {import('luxon').Duration<true>}
      */
     duration;
-    /** 
+    /**
      * The amount of time remaining until the status expires. If the status has no duration, this is `null`.
-     * @type {import('luxon').Duration<true>} 
+     * @type {import('luxon').Duration<true>}
      */
     remaining;
     /**
@@ -135,9 +135,9 @@ export default class Status extends GameEntity {
      * @type {Description}
      */
     curedDescription;
-    /** 
+    /**
      * A timer counting down every second until the status expires.
-     * @type {Timer} 
+     * @type {Timer}
      */
     timer;
 
@@ -188,7 +188,7 @@ export default class Status extends GameEntity {
 
     /**
      * Sets the next stage.
-     * @param {Status} nextStage 
+     * @param {Status} nextStage
      */
     setNextStage(nextStage) {
         this.nextStage = nextStage;
@@ -196,7 +196,7 @@ export default class Status extends GameEntity {
 
     /**
      * Sets the duplicated status.
-     * @param {Status} duplicatedStatus 
+     * @param {Status} duplicatedStatus
      */
     setDuplicatedStatus(duplicatedStatus) {
         this.duplicatedStatus = duplicatedStatus;
@@ -204,7 +204,7 @@ export default class Status extends GameEntity {
 
     /**
      * Sets the cured condition.
-     * @param {Status} curedCondition 
+     * @param {Status} curedCondition
      */
     setCuredCondition(curedCondition) {
         this.curedCondition = curedCondition;
@@ -220,7 +220,7 @@ export default class Status extends GameEntity {
 
     /**
      * Generate an ID in all lowercase.
-     * @param {string} id 
+     * @param {string} id
      */
     static generateValidId(id) {
         return id?.toLowerCase().trim();

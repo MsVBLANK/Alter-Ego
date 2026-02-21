@@ -1,4 +1,4 @@
-import Description from './Description.js';
+import Description from './Description.ts';
 import GameEntity from "./GameEntity.ts";
 
 /** @import Exit from "./Exit.js" */
@@ -96,7 +96,7 @@ export default class Gesture extends GameEntity {
 
     /**
      * Generate an ID in all lowercase.
-     * @param {string} id 
+     * @param {string} id
      */
     static generateValidId(id) {
         return id?.toLowerCase().trim();

@@ -1,4 +1,4 @@
-import Description from "../Data/Description.js";
+import Description from "../Data/Description.ts";
 import Fixture from "../Data/Fixture.js";
 import InventoryItem from "../Data/InventoryItem.js";
 import Narration from "../Data/Narration.js";

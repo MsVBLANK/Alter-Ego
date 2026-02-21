@@ -1,4 +1,4 @@
-import Description from "../../Data/Description.js";
+import Description from "../../Data/Description.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.js";
 import Event from "../../Data/Event.js";
 import Fixture from "../../Data/Fixture.js";

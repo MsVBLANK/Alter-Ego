@@ -1,5 +1,5 @@
 import CollatedItem from './CollatedItem.ts';
-import Description from './Description.js';
+import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 
 /**
@@ -171,7 +171,7 @@ export default class Recipe extends GameEntity {
     }
 
     /**
-     * Returns a subset of the given items which satisfy the recipe's ingredients list. 
+     * Returns a subset of the given items which satisfy the recipe's ingredients list.
      * If the given items do not satisfy the recipe's ingredients list, returns an empty array.
      * @param {CollatedItem<RoomItem>[]} items - A list of items. This must be sorted alphabetically by prefab ID.
      */
@@ -216,7 +216,7 @@ export default class Recipe extends GameEntity {
 
 	/**
 	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
-	 * @param {CollatedItem | RecipeItem} item 
+	 * @param {CollatedItem | RecipeItem} item
 	 */
 	isIngredientAndProduct(item) {
         const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);

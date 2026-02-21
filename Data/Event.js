@@ -1,4 +1,4 @@
-import Description from './Description.js';
+import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 import EndAction from './Actions/EndAction.ts';
 import InflictAction from './Actions/InflictAction.ts';

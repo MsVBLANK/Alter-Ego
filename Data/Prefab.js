@@ -1,4 +1,4 @@
-﻿import Description from './Description.js';
+﻿import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 import { Collection } from 'discord.js';
 
@@ -99,7 +99,7 @@ export default class Prefab extends GameEntity {
      * @type {string[]}
      */
     effectsStrings;
-    /** 
+    /**
      * Status effects will be inflicted on the player when they use an inventory item instance of this prefab.
      * @type {Status[]}
      */
@@ -110,9 +110,9 @@ export default class Prefab extends GameEntity {
      * @type {string[]}
      */
     curesStrings;
-    /** 
+    /**
      * Status effects that the player will be cured of when they use an inventory item instance of this prefab.
-     * @type {Status[]} 
+     * @type {Status[]}
      */
     cures;
     /**
@@ -244,7 +244,7 @@ export default class Prefab extends GameEntity {
 
     /**
      * Sets the next stage.
-     * @param {Prefab} nextStage 
+     * @param {Prefab} nextStage
      */
     setNextStage(nextStage) {
         this.nextStage = nextStage;

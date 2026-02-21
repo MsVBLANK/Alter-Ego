@@ -1,4 +1,4 @@
-import Description from './Description.js';
+import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
 import { generatePlayerListString, sortPlayersByDisplayName } from '../Modules/helpers.ts';
 import { Collection } from 'discord.js';
@@ -158,7 +158,7 @@ export default class Room extends GameEntity {
 
     /**
      * Gets a list of the room's occupants excluding the given player, sorted alphabetically by display name.
-     * @param {Player} player - The player to exclude. 
+     * @param {Player} player - The player to exclude.
      * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
      */
     getOccupantsExcluding(player, list = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)) {
@@ -177,7 +177,7 @@ export default class Room extends GameEntity {
 
     /**
      * Generates a string representing the occupants of the room excluding the given player, sorted alphabetically by display name.
-     * @param {Player} player - The player to exclude. 
+     * @param {Player} player - The player to exclude.
      * @param {Player[]} [list] - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
      * @returns {string}
      */
@@ -227,7 +227,7 @@ export default class Room extends GameEntity {
 
     /**
      * Returns true if the room has the given tag.
-     * @param {string} tag 
+     * @param {string} tag
      */
     hasTag(tag) {
         return this.tags.has(tag);

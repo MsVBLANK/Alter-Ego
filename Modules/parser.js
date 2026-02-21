@@ -1,4 +1,4 @@
-import Description from '../Data/Description.js';
+import Description from '../Data/Description.ts';
 import ItemContainer from '../Data/ItemContainer.ts';
 import Player from '../Data/Player.js';
 import { MessageDisplayType } from './enums.js';
@@ -14,10 +14,10 @@ export * as default from './parser.js';
 
 class Clause {
     /**
-     * @param {any} node 
-     * @param {boolean} [isItem] 
-     * @param {number} [itemNo] 
-     * @param {number} [itemQuantity] 
+     * @param {any} node
+     * @param {boolean} [isItem]
+     * @param {number} [itemNo]
+     * @param {number} [itemQuantity]
      */
     constructor(node, isItem, itemNo, itemQuantity) {
         this.node = node;
@@ -39,8 +39,8 @@ class Clause {
 
     /**
      * Replaces the given first word with a new word.
-     * @param {string} word 
-     * @param {string} newWord 
+     * @param {string} word
+     * @param {string} newWord
      */
     replaceFirstWord(word, newWord) {
         this.set(this.text.substring(0, this.text.indexOf(` ${word} `)) + ` ${newWord} ` + this.text.substring(this.text.indexOf(` ${word} `) + ` ${word} `.length));
@@ -48,8 +48,8 @@ class Clause {
 
     /**
      * Replaces the given ending word with a new word.
-     * @param {string} word 
-     * @param {string} newWord 
+     * @param {string} word
+     * @param {string} newWord
      */
     replaceLastWord(word, newWord) {
         this.set(this.text.substring(0, this.text.lastIndexOf(` ${word} `)) + ` ${newWord} ` + this.text.substring(this.text.lastIndexOf(` ${word} `) + ` ${word} `.length));
@@ -78,10 +78,10 @@ class Clause {
 
 class Sentence {
     /**
-     * @param {Array<Clause>} clause 
-     * @param {number} itemCount 
-     * @param {Element} itemList 
-     * @param {string} itemListName 
+     * @param {Array<Clause>} clause
+     * @param {number} itemCount
+     * @param {Element} itemList
+     * @param {string} itemListName
      */
     constructor(clause, itemCount, itemList, itemListName) {
         this.clause = clause;
@@ -371,8 +371,8 @@ function keepProcedural(chance) {
 }
 
 /**
- * @param {Array<Possibility>} possibilityArr 
- * @param {number} statValue 
+ * @param {Array<Possibility>} possibilityArr
+ * @param {number} statValue
  * @returns {Array<Possibility>}
  */
 function calculateModifiedPossibilityArr(possibilityArr, statValue) {
@@ -407,7 +407,7 @@ function calculateModifiedPossibilityArr(possibilityArr, statValue) {
 }
 
 /**
- * @param {Array<Possibility>} possibilityArr 
+ * @param {Array<Possibility>} possibilityArr
  * @returns {number}
  */
 function choosePossibilityIndex(possibilityArr) {
@@ -423,7 +423,7 @@ function choosePossibilityIndex(possibilityArr) {
 }
 
 /**
- * @param {string} description 
+ * @param {string} description
  * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType}}
  */
 function createDescriptionDocumentFromString(description) {
@@ -445,13 +445,13 @@ function createDescriptionDocumentFromString(description) {
     // Get message display type.
     const messageDisplayTypeString = document?.getElementsByTagName('desc').item(0)?.getAttribute('type')?.toUpperCase();
     const messageDisplayType = getMessageDisplayType(messageDisplayTypeString);
-    
+
     return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType };
 }
 
 /**
  * Returns a message display type based on the given string.
- * @param {string} messageDisplayTypeString 
+ * @param {string} messageDisplayTypeString
  */
 function getMessageDisplayType(messageDisplayTypeString) {
     switch (messageDisplayTypeString) {
@@ -469,7 +469,7 @@ function getMessageDisplayType(messageDisplayTypeString) {
 }
 
 /**
- * @param {Element} sentenceNode 
+ * @param {Element} sentenceNode
  * @returns {Sentence}
  */
 function createSentence(sentenceNode) {
@@ -510,8 +510,8 @@ function createSentence(sentenceNode) {
 }
 
 /**
- * @param {Array<Clause>} clauses 
- * @param {Node} node 
+ * @param {Array<Clause>} clauses
+ * @param {Node} node
  * @returns {Array<Clause>}
  */
 function parseNodes(clauses, node) {
@@ -526,7 +526,7 @@ function parseNodes(clauses, node) {
 
 /**
  * Gets all s tag elements containing an il tag element.
- * @param {Document} document 
+ * @param {Document} document
  * @returns {Array<Element>}
  */
 function getItemListSentences(document) {
@@ -543,7 +543,7 @@ function getItemListSentences(document) {
 }
 
 /**
- * @param {Node} document 
+ * @param {Node} document
  * @returns {string}
  */
 export function stringify(document) {
@@ -553,8 +553,8 @@ export function stringify(document) {
 }
 
 /**
- * @param {Sentence} sentence 
- * @param {string} phrase 
+ * @param {Sentence} sentence
+ * @param {string} phrase
  * @param {number} itemQuantity
  * @returns {number} i - The index of the new Clause within the Sentence.
  */
@@ -604,8 +604,8 @@ function initializeNewClause(sentence, phrase, itemQuantity) {
 }
 
 /**
- * @param {Sentence} sentence 
- * @param {string} phrase 
+ * @param {Sentence} sentence
+ * @param {string} phrase
  * @param {number} [itemQuantity]
  * @returns {number} case - A number to indicate which condition was met for debugging purposes.
  */
@@ -719,7 +719,7 @@ function addClause(sentence, phrase, itemQuantity = 1) {
         else if (clause[i + 1].node === sentence.itemList.lastChild) {
             clause[i + 1].delete();
             sentence.deleteClause(i + 1);
-            // If the clause before or after the item list has "are" or "is" and that wouldn't be grammatically correct with the given item quantity, replace it. 
+            // If the clause before or after the item list has "are" or "is" and that wouldn't be grammatically correct with the given item quantity, replace it.
             if (clause[i - 1] && clause[i - 1].endsWith("are") && clause[i].itemQuantity === 1)
                 clause[i - 1].replaceLastWord("are", "is");
             else if (clause[i - 1] && clause[i - 1].endsWith("is") && clause[i].itemQuantity !== 1)
@@ -735,8 +735,8 @@ function addClause(sentence, phrase, itemQuantity = 1) {
 }
 
 /**
- * @param {Sentence} sentence 
- * @param {number} i 
+ * @param {Sentence} sentence
+ * @param {number} i
  * @returns {number} case - A number to indicate which condition was met for debugging purposes.
  */
 function removeClause(sentence, i) {
@@ -909,7 +909,7 @@ function removeClause(sentence, i) {
     }
     // BEFORE: "<desc><s>A few grab your attention though: <il>ROSE OF SHARON, PINK LACEFLOWER, and <item>a MIRACLE FLOWER</item></il>.</s></desc>"
     // REMOVE: "MIRACLE FLOWER"
-    // AFTER:  
+    // AFTER:
     else if (clause[i - 1] && !clause[i - 1].isItem && clause[i - 1].text.endsWith(", and ") && clause[i - 1].text.split(',').length - 1 === 2) {
         clause[i].delete();
         clause[i - 1].set(clause[i - 1].text.replace(", and ", "").replace(", ", " and "));

@@ -1,4 +1,4 @@
-import Description from './Description.js';
+import Description from './Description.ts';
 import Event from './Event.js';
 import Flag from './Flag.js';
 import Prefab from './Prefab.js';
@@ -19,25 +19,25 @@ import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
  */
 export default class Puzzle extends ItemContainer {
     /**
-     * The name of the puzzle. 
+     * The name of the puzzle.
      * @readonly
-     * @type {string} 
+     * @type {string}
      */
     name;
     /**
-     * Whether the puzzle is solved. 
-     * @type {boolean} 
+     * Whether the puzzle is solved.
+     * @type {boolean}
      */
     solved;
     /**
-     * String indicating which solution the puzzle has been solved with. 
-     * @type {string} 
+     * String indicating which solution the puzzle has been solved with.
+     * @type {string}
      */
     outcome;
     /**
      * Whether the puzzle requires a moderator to solve it.
-     * @readonly 
-     * @type {boolean} 
+     * @readonly
+     * @type {boolean}
      */
     requiresMod;
     /**
@@ -47,15 +47,15 @@ export default class Puzzle extends ItemContainer {
      */
     locationDisplayName;
     /**
-     * The location the puzzle is found in. 
-     * @type {Room} 
+     * The location the puzzle is found in.
+     * @type {Room}
      */
     location;
     /**
      * The name of the object associated with the puzzle. Deprecated. Use parentFixtureName instead.
      * @deprecated
      * @readonly
-     * @type {string} 
+     * @type {string}
      */
     parentObjectName;
     /**
@@ -79,58 +79,58 @@ export default class Puzzle extends ItemContainer {
      * The type of puzzle.
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type
      * @readonly
-     * @type {string} 
+     * @type {string}
      */
     type;
     /**
-     * Whether the puzzle can be interacted with. 
-     * @type {boolean} 
+     * Whether the puzzle can be interacted with.
+     * @type {boolean}
      */
     accessible;
     /**
-     * Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible. 
+     * Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible.
      * @readonly
-     * @type {PuzzleRequirement[]} 
+     * @type {PuzzleRequirement[]}
      */
     requirementsStrings;
-    /** 
+    /**
      * An array of game entities required for the puzzle to be solved when attempted.
      * @type {Array<Puzzle|Event|Prefab|Flag>}
      */
     requirements;
     /**
-     * The solutions to the puzzle. 
+     * The solutions to the puzzle.
      * @readonly
-     * @type {string[]} 
+     * @type {string[]}
      */
     solutions;
     /**
-     * The number of attempts the player has left to solve the puzzle. 
-     * @type {number} 
+     * The number of attempts the player has left to solve the puzzle.
+     * @type {number}
      */
     remainingAttempts;
     /**
      * The string representation of the bot commands to be executed when the puzzle is solved or unsolved with specified outcomes.
-     * @readonly 
-     * @type {string} 
+     * @readonly
+     * @type {string}
      */
     commandSetsString;
     /**
-     * Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes. 
+     * Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes.
      * @readonly
-     * @type {PuzzleCommandSet[]} 
+     * @type {PuzzleCommandSet[]}
      */
     commandSets;
     /**
-     * The description of the puzzle when it is solved by a player. 
+     * The description of the puzzle when it is solved by a player.
      * @readonly
-     * @type {Description} 
+     * @type {Description}
      */
     correctDescription;
     /**
-     * The description of the puzzle when it is already solved. Can contain an item list. 
+     * The description of the puzzle when it is already solved. Can contain an item list.
      * @readonly
-     * @type {Description} 
+     * @type {Description}
      */
     alreadySolvedDescription;
     /**
@@ -140,21 +140,21 @@ export default class Puzzle extends ItemContainer {
      */
     unsolvedDescription;
     /**
-     * The description of the puzzle when the incorrect answer is given. 
+     * The description of the puzzle when the incorrect answer is given.
      * @readonly
-     * @type {Description} 
+     * @type {Description}
      */
     incorrectDescription;
     /**
-     * The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0. 
+     * The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0.
      * @readonly
-     * @type {Description} 
+     * @type {Description}
      */
     noMoreAttemptsDescription;
     /**
-     * The description of the puzzle when a player attempts to solve it while all of the requirements are not met. 
+     * The description of the puzzle when a player attempts to solve it while all of the requirements are not met.
      * @readonly
-     * @type {Description} 
+     * @type {Description}
      */
     requirementsNotMetDescription;
 
@@ -225,7 +225,7 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Sets the parent fixture.
-     * @param {Fixture} fixture 
+     * @param {Fixture} fixture
      */
     setParentFixture(fixture) {
         this.parentFixture = fixture;
@@ -426,12 +426,12 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Checks if all of the puzzle's requirements are met.
-     * @param {Player} player - The player attempting the puzzle. 
-     * @param {ItemInstance} item - An item the player supplied in their attempt to solve the puzzle. 
+     * @param {Player} player - The player attempting the puzzle.
+     * @param {ItemInstance} item - An item the player supplied in their attempt to solve the puzzle.
      * @param {ItemInstance[]} requiredItems - An array of required items in the player's inventory. The array will be populated during execution.
      * @returns {boolean} Whether or not the puzzle's requirements have all been met.
      */
-    checkRequirementsMet(player, item, requiredItems) {	
+    checkRequirementsMet(player, item, requiredItems) {
         for (const requirement of this.requirements) {
             if (requirement instanceof Puzzle && !requirement.solved || requirement instanceof Event && !requirement.ongoing)
                 return false;

@@ -5,63 +5,48 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import Fixture from "./Fixture.js";
 import RoomItem from "./RoomItem.js";
 import Puzzle from "./Puzzle.js";
-/** @import Interactable from "../Classes/Interactables/Interactable.ts"; */
-/** @import Exit from "./Exit.js"; */
-/** @import Game from "./Game.js"; */
-/** @import GameEntity from "./GameEntity.ts"; */
-/** @import Player from "./Player.js"; */
+import type GameEntity from "./GameEntity.ts";
+import type Game from "./Game.js";
+import type Player from "./Player.js";
+import type Interactable from "../Classes/Interactables/Interactable.ts";
 
 /**
- * @class Description
- * @classdesc Represents a game entity's description.
- * @extends GameConstruct
+ * Represents a game entity's description.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/description.html
  */
 export default class Description extends GameConstruct {
 	/**
 	 * The game entity this description belongs to.
-	 * @readonly
-	 * @type {GameEntity}
 	 */
-	#container;
+	readonly #container: GameEntity;
 	/**
 	 * The text of the description as loaded from the spreadsheet.
-	 * @readonly
-	 * @type {string}
 	 */
-	text;
+	readonly text: string;
 	/**
 	 * The description's text parsed into a document.
-	 * @readonly
-	 * @type {Document}
 	 */
-	document;
+	readonly document: Document;
 	/**
 	 * An array of warnings for the parsed document.
-	 * @readonly
-	 * @type {string[]}
 	 */
-	#warnings;
+	readonly #warnings: string[];
 	/**
 	 * An array of errors for the parsed document.
-	 * @readonly
-	 * @type {string[]}
 	 */
-	#errors;
+	readonly #errors: string[];
 	/**
      * The display type of the message to send for this description.
-     * @readonly
-     * @type {MessageDisplayType}
      */
-    messageDisplayType;
+    readonly messageDisplayType: MessageDisplayType;
 
 	/**
-	 * @constructor
-	 * @param {string} text - The text of the description.
-	 * @param {GameEntity} container - The game entity this description belongs to.
-	 * @param {Game} game - The game this belongs to.
+	 * @param text - The text of the description.
+	 * @param container - The game entity this description belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(text, container, game) {
+	constructor(text: string, container: GameEntity, game: Game) {
 		super(game);
 		this.text = text;
 		this.#container = container;
@@ -72,42 +57,40 @@ export default class Description extends GameConstruct {
 		this.messageDisplayType = descriptionDocument.messageDisplayType;
 	}
 
-	getContainer() {
+	getContainer(): GameEntity {
 		return this.#container;
 	}
 
-	getWarnings() {
+	getWarnings(): string[] {
 		return this.#warnings;
 	}
 
-	getErrors() {
+	getErrors(): string[] {
 		return this.#errors;
 	}
 
-	toString() {
+	toString(): string {
 		return stringify(this.document);
 	}
 
 	/**
 	 * Parses the description for the given player.
-	 * @param {Player} player
-	 * @param {GameEntity} container
 	 */
-	parseFor(player, container = this.getContainer()) {
+	parseFor(player: Player, container: GameEntity = this.getContainer()): string {
 		if (this.text === "") return "";
 		return parseDescription(this, container, player);
 	}
 
 	/**
 	 * Gets all potential game entities in the given parsed description.
-	 * @param {string} parsedDescription - The parsed description that a player will receive.
-	 * @returns {string[]} A list of strings in all uppercase letters that may be referring to game entities.
+     *
+	 * @param parsedDescription - The parsed description that a player will receive.
+	 * @returns A list of strings in all uppercase letters that may be referring to game entities.
 	 */
-	static getPotentialGameEntities(parsedDescription) {
-		/** @type {Set<string>} */
-		let potentialGameEntities = new Set();
+	static getPotentialGameEntities(parsedDescription: string): string[] {
+		let potentialGameEntities: Set<string> = new Set();
 		const allCapsRegex = /([A-Z]{2,}(?:[A-Z \d]+))/g;
-		let match;
+		let match: string[];
 		while (match = allCapsRegex.exec(parsedDescription))
 			potentialGameEntities.add(match[0].trim());
 		return Array.from(potentialGameEntities);
@@ -115,17 +98,12 @@ export default class Description extends GameConstruct {
 
 	/**
 	 * Parses and sends the description to the given player with interactables.
-	 * @param {Player} player
-	 * @param {GameEntity} [container]
 	 */
-	async parseAndSendTo(player, container = this.getContainer()) {
+	async parseAndSendTo(player: Player, container: GameEntity = this.getContainer()): Promise<void> {
 		const parsedDescription = this.parseFor(player, container);
-		/** @type {string[]} */
-		let potentialGameEntities = [];
-		/** @type {Inspectable[]} */
-		let inspectableEntities = [];
-		/** @type {Interactable[]} */
-		let interactables = [];
+		let potentialGameEntities: string[] = [];
+		let inspectableEntities: Inspectable[] = [];
+		let interactables: Interactable[] = [];
 		if (container instanceof Room) {
 			inspectableEntities = inspectableEntities.concat(container.getOccupantsExcluding(player));
 			const occupantsString = this.getGame().notificationGenerator.generateRoomOccupantsNotification(player, container);

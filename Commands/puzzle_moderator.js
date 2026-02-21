@@ -1,6 +1,7 @@
 import AttemptAction from '../Data/Actions/AttemptAction.ts';
 import SolveAction from '../Data/Actions/SolveAction.ts';
 import UnsolveAction from '../Data/Actions/UnsolveAction.ts';
+import Room from "../Data/Room.js";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
@@ -95,13 +96,14 @@ export async function execute(game, message, command, args) {
     // If a player wasn't specified, check if a room name was.
     let room = null;
     if (player === null) {
-        const parsedInput = input.replace(/\'/g, "").replace(/ /g, "-").toLowerCase();
+        const parsedInput = Room.generateValidId(input);
         for (let i = args.length - 1; i >= 0; i--) {
-            room = game.entityFinder.getRoom(args.splice(i).join(" "));
+            room = game.entityFinder.getRoom(parsedInput);
             if (room) {
                 input = input.substring(0, parsedInput.indexOf(room.id) - 1);
                 break;
             }
+            args.splice(i).join(" ");
         }
         if (!room) room = null;
     }

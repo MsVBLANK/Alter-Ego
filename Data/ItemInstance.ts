@@ -7,9 +7,7 @@ import type Player from "./Player.js";
 import type RecipeItem from "./RecipeItem.js";
 
 /**
- * @class ItemInstance
- * @classdesc Represents an instance of a prefab that actually exists in the game.
- * @extends ItemContainer
+ * Represents an instance of a prefab that actually exists in the game.
  */
 export default abstract class ItemInstance extends ItemContainer {
 	/**
@@ -74,7 +72,6 @@ export default abstract class ItemInstance extends ItemContainer {
 	inventory: Collection<string, InventorySlot<ItemInstance>>;
 
 	/**
-	 * @constructor
 	 * @param game - The game this belongs to.
 	 * @param row - The row number of the item in the sheet.
 	 * @param description - The description of the item. Can contain multiple item lists named after its inventory slots.
@@ -100,14 +97,14 @@ export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * Gets the item's identifier, or its prefab ID if it doesn't have one.
 	 */
-	getIdentifier() {
+	getIdentifier(): string {
 		return this.identifier !== "" ? this.identifier : this.prefab ? this.prefab.id : "NULL";
 	}
 
 	/**
 	 * Sets the item's prefab and updates all relevant properties based on the prefab's properties. Does not set the item's description.
 	 */
-	setPrefab(prefab: Prefab) {
+	setPrefab(prefab: Prefab): void {
 		this.prefab = prefab;
 		this.name = prefab.name ? prefab.name : "";
 		this.pluralName = prefab.pluralName ? prefab.pluralName : "";
@@ -127,7 +124,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	 * Also updates the weights of all items in its container chain.
 	 * @param weight - The amount of weight to add.
 	 */
-	protected addWeight(weight: number) {
+	protected addWeight(weight: number): void {
 		const containerChain = new Set<number>();
 		let container = this as ItemContainer;
 		while (container instanceof ItemInstance) {
@@ -143,7 +140,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	 * Also updates the weights of all items in its container chain.
 	 * @param weight - The amount of weight to subtract.
 	 */
-	protected subtractWeight(weight: number) {
+	protected subtractWeight(weight: number): void {
 		const containerChain = new Set<number>();
 		let container = this as ItemContainer;
 		while (container instanceof ItemInstance) {
@@ -156,31 +153,29 @@ export default abstract class ItemInstance extends ItemContainer {
 
 	/**
 	 * Returns true if the item instance's container matches the given recipe item's container.
-	 * @param recipeItem
 	 */
-	containerMatches(recipeItem: RecipeItem) {
+	containerMatches(recipeItem: RecipeItem): boolean {
 		return recipeItem.container === null || this.container instanceof ItemInstance && this.container.prefab.id === recipeItem.container.prefab.id;
 	}
 
 	/**
 	 * Gets the item's single containing phrase.
 	 */
-	getContainingPhrase() {
+	getContainingPhrase(): string {
 		return this.singleContainingPhrase;
 	}
 
 	/**
 	 * Gets the preposition of the item's prefab. If no prefab exists, returns "in".
 	 */
-	getPreposition() {
+	getPreposition(): string {
 		return this.prefab ? this.prefab.preposition : "in";
 	}
 
 	/**
 	 * Gets a phrase to refer to the given inventory slot in narrations. If the item has only one inventory slot, returns an empty string.
-	 * @param inventorySlot
 	 */
-	getSlotPhrase(inventorySlot: InventorySlot<ItemInstance>) {
+	getSlotPhrase(inventorySlot: InventorySlot<ItemInstance>): string {
 		return this.inventory.size !== 1 ? `the ${inventorySlot.id} of ` : ``;
 	}
 }

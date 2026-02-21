@@ -1,5 +1,5 @@
 import {createMockMessage} from "../../__mocks__/libs/discord.js";
-import ActivateAction from "../../../Data/Actions/ActivateAction.js";
+import ActivateAction from "../../../Data/Actions/ActivateAction.ts";
 import Fixture from "../../../Data/Fixture.js";
 
 describe('ActivateAction test', () => {

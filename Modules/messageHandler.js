@@ -1,8 +1,8 @@
 import Dialog from '../Data/Dialog.js';
 import Player from '../Data/Player.js';
-import AnnounceAction from '../Data/Actions/AnnounceAction.js';
-import NarrateAction from '../Data/Actions/NarrateAction.js';
-import SayAction from '../Data/Actions/SayAction.js';
+import AnnounceAction from '../Data/Actions/AnnounceAction.ts';
+import NarrateAction from '../Data/Actions/NarrateAction.ts';
+import SayAction from '../Data/Actions/SayAction.ts';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';

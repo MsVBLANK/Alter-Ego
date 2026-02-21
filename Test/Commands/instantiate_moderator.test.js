@@ -1,6 +1,6 @@
 import ModeratorCommand from '../../Classes/ModeratorCommand.js';
 import { usage, execute, config } from '../../Commands/instantiate_moderator.js'
-import InstantiateAction from '../../Data/Actions/InstantiateAction.js';
+import InstantiateAction from '../../Data/Actions/InstantiateAction.ts';
 import { clearQueue } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -17,7 +17,7 @@ describe('instantiate_moderator command', () => {
     });
 
     const instantiate_moderator = new ModeratorCommand(config, usage, execute);
-        
+
     test('valid item into player hand', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const prefab = game.entityFinder.getPrefab("mug of coffee");

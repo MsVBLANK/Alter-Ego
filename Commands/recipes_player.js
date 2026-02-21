@@ -1,4 +1,4 @@
-import RecipesAction from '../Data/Actions/RecipesAction.js';
+import RecipesAction from '../Data/Actions/RecipesAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */
@@ -29,8 +29,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}recipes\n`
@@ -39,11 +39,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable recipes");
@@ -65,7 +65,7 @@ export async function execute(game, message, command, args, player) {
         }
         if (!item) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in your inventory.`);
 	}
-    
+
 	const action = new RecipesAction(game, message, player, player.location, false);
 	action.performRecipes(item);
 }

@@ -1,8 +1,8 @@
 import discord from "../__mocks__/libs/discord.js";
 import * as DialogClass from "../../Data/Dialog.js";
-import AnnounceAction from "../../Data/Actions/AnnounceAction.js";
-import SayAction from "../../Data/Actions/SayAction.js";
-import SolveAction from "../../Data/Actions/SolveAction.js";
+import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
+import SayAction from "../../Data/Actions/SayAction.ts";
+import SolveAction from "../../Data/Actions/SolveAction.ts";
 import * as messageHandler from "../../Modules/messageHandler.js";
 import { instantiateInventoryItem, destroyInventoryItem } from "../../Modules/itemManager.js";
 
@@ -16,160 +16,160 @@ import { instantiateInventoryItem, destroyInventoryItem } from "../../Modules/it
  */
 
 describe('messageHandler test', () => {
-    /** 
+    /**
      * Location: command-center
-     * 
+     *
      * Behavior Attributes: concealed, no channel, see room, hear room
-     * 
+     *
      * Knows: vivian, nero
      * @type {Player}
      */
     let kyra;
-    /** 
+    /**
      * Location: general-managers-office
-     * 
+     *
      * Behavior Attributes:
-     * 
+     *
      * Knows: kyra, nero
      * @type {Player}
      */
     let vivian;
-    /** 
+    /**
      * Location: floor-1-hall-2
-     * 
-     * Behavior Attributes: 
-     * 
+     *
+     * Behavior Attributes:
+     *
      * Knows: kiara
      * @type {Player}
      */
     let astrid;
-    /** 
+    /**
      * Location: break-room
-     * 
+     *
      * Behavior Attributes: sender, receiver
-     * 
+     *
      * Knows: vivian, kyra
      * @type {Player}
      */
     let nero;
-    /** 
+    /**
      * Location: subject to change
-     * 
-     * Behavior Attributes: 
-     * 
-     * Knows: 
+     *
+     * Behavior Attributes:
+     *
+     * Knows:
      * @type {Player}
      */
     let asuka;
-    /** 
+    /**
      * Location: subject to change
-     * 
+     *
      * Behavior Attributes:
-     * 
-     * Knows: 
+     *
+     * Knows:
      * @type {Player}
      */
     let luna;
-    /** 
+    /**
      * Location: floor-1-hall-1
-     * 
+     *
      * Behavior Attributes:
-     * 
+     *
      * Knows: astrid
      * @type {Player}
      */
     let kiara;
-    /** 
+    /**
      * Location: command-center
-     * 
-     * Behavior Attributes: 
-     * 
+     *
+     * Behavior Attributes:
+     *
      * Knows: everyone
      * @type {Player}
      */
     let amadeus;
-    /** 
-     * Location: general-managers-office 
-     * 
+    /**
+     * Location: general-managers-office
+     *
      * Behavior Attributes: hidden, sender, receiver
-     * 
-     * Knows: 
+     *
+     * Knows:
      * @type {Player}
      */
     let qm;
     /**
      * Tags: audio surveilled, audio monitoring
-     * 
+     *
      * Audio Monitored By: lobby, command-center
-     * 
+     *
      * Video Monitored By: lobby, command-center
-     * 
+     *
      * Occupants: nero
      * @type {Room}
      */
     let breakRoom;
-    /** 
+    /**
      * Tags: soundproof
-     * 
-     * Audio Monitored By: 
-     * 
-     * Video Monitored By: 
-     * 
+     *
+     * Audio Monitored By:
+     *
+     * Video Monitored By:
+     *
      * Occupants: vivian, qm (hidden in DESK)
      * @type {Room}
      */
     let gmOffice;
-    /** 
+    /**
      * Tags: video surveilled, audio surveilled
-     * 
+     *
      * Audio Monitored By: lobby, break-room, command-center
-     * 
+     *
      * Video Monitored By: lobby, command-center
-     * 
+     *
      * Occupants: kiara
      * @type {Room}
      */
     let f1h1;
     /**
-     * Tags: 
-     * 
-     * Audio Monitored By: 
-     * 
-     * Video Monitored By: 
-     * 
+     * Tags:
+     *
+     * Audio Monitored By:
+     *
+     * Video Monitored By:
+     *
      * Occupants: astrid
      * @type {Room}
      */
     let f1h2;
     /**
      * Tags: video monitoring, video surveilled, audio monitoring, audio surveilled
-     * 
+     *
      * Audio Monitored By: break-room, command-center
-     * 
+     *
      * Video Monitored By: command-center
-     * 
+     *
      * Occupants: subject to change
      * @type {Room}
      */
     let lobby;
-    /** 
+    /**
      * Tags: soundproof, video monitoring, video surveilled, audio monitoring, audio surveilled, secret
-     * 
-     * Audio Monitored By: lobby, break-room 
-     * 
+     *
+     * Audio Monitored By: lobby, break-room
+     *
      * Video Monitored By: lobby
-     * 
+     *
      * Occupants: kyra, amadeus
      * @type {Room}
      */
     let commandCenter;
-    /** 
-     * Tags: 
-     * 
-     * Audio Monitored By: 
-     * 
-     * Video Monitored By: 
-     * 
+    /**
+     * Tags:
+     *
+     * Audio Monitored By:
+     *
+     * Video Monitored By:
+     *
      * Occupants: subject to change
      * @type {Room}
      */
@@ -409,7 +409,7 @@ describe('messageHandler test', () => {
 
                 kiara.location.removePlayer(kiara);
                 f1h1.addPlayer(kiara);
-                
+
                 luna.location.removePlayer(luna);
                 courtyard.addPlayer(luna);
                 asuka.location.removePlayer(asuka);
@@ -658,7 +658,7 @@ describe('messageHandler test', () => {
 
                         asuka.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         test('luna is mimicking asuka', async () => {
                             luna.voiceString = "Asuka";
@@ -882,7 +882,7 @@ describe('messageHandler test', () => {
 
                         asuka.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         test('luna is mimicking asuka', async () => {
                             luna.voiceString = "Asuka";
@@ -1125,7 +1125,7 @@ describe('messageHandler test', () => {
 
                         astrid.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         test('kiara is mimicking astrid', async () => {
                             kiara.voiceString = "Astrid";
@@ -1366,7 +1366,7 @@ describe('messageHandler test', () => {
 
                         astrid.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         test('kiara is mimicking astrid', async () => {
                             kiara.voiceString = "Astrid";
@@ -1396,7 +1396,7 @@ describe('messageHandler test', () => {
 
                             expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Kiara says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);                            
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(blind);
                         });
@@ -1414,7 +1414,7 @@ describe('messageHandler test', () => {
 
                             expect(astrid.notificationChannel.messages.cache).toHaveSize(1);
                             expect(astridNotificationMessage.content).toBe(`Someone in the room says "( Bonjour!"`);
-                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);                            
+                            expect(astrid.spectateChannel.messages.cache).toHaveSize(0);
 
                             astrid.cure(blind);
                             kiara.voiceString = kiara.originalVoiceString;
@@ -1682,7 +1682,7 @@ describe('messageHandler test', () => {
 
                             kiara.cure(acuteHearing);
                         });
-                        
+
                         describe('player notification takes priority', async () => {
                             test('luna is mimicking astrid', async () => {
                                 luna.voiceString = "Astrid";
@@ -1943,7 +1943,7 @@ describe('messageHandler test', () => {
 
                             luna.cure(acuteHearing);
                         });
-                        
+
                         describe('player notification takes priority', async () => {
                             test('kiara is mimicking astrid', async () => {
                                 kiara.voiceString = "Astrid";
@@ -2197,7 +2197,7 @@ describe('messageHandler test', () => {
 
                         luna.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         describe('players are not hidden', () => {
                             test('amadeus is mimicking luna', async () => {
@@ -2359,7 +2359,7 @@ describe('messageHandler test', () => {
                             expect(occupant.spectateChannel.messages.cache).toHaveSize(0);
                         }
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         describe('players are not hidden', () => {
                             test('amadeus is mimicking luna', async () => {
@@ -2649,7 +2649,7 @@ describe('messageHandler test', () => {
 
                         amadeus.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         describe('players are not hidden', () => {
                             test('luna is mimicking amadeus', async () => {
@@ -2858,7 +2858,7 @@ describe('messageHandler test', () => {
                         await game.entityLoader.deleteWhisper(hidingSpot.whisper);
                         whisperAmadeusLuna = await game.entityLoader.createWhisper([amadeus, luna]);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         describe('players are not hidden', () => {
                             test('luna is mimicking amadeus', async () => {
@@ -2981,7 +2981,7 @@ describe('messageHandler test', () => {
 
                                 expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                                 expect(amadeusNotificationMessage.content).toBe(`Someone in the RECEPTION DESK whispers "( Oh, hello!"`);
-                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);                                
+                                expect(amadeus.spectateChannel.messages.cache).toHaveSize(0);
 
                                 amadeus.cure(blind);
                                 luna.voiceString = luna.originalVoiceString;
@@ -3699,7 +3699,7 @@ describe('messageHandler test', () => {
 
                         asuka.cure(asleep);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         beforeAll(() => {
                             luna.location.removePlayer(luna);
@@ -4047,7 +4047,7 @@ describe('messageHandler test', () => {
                         hidingSpot.removePlayer(nero);
                         nero.cure(hidden);
                     });
-                    
+
                     describe('player notification takes priority', async () => {
                         beforeAll(() => {
                             luna.location.removePlayer(luna);
@@ -4250,7 +4250,7 @@ describe('messageHandler test', () => {
                                 expect(spectateMessage.content).toBe('`[break-room]` A gentle voice coming from a receiver says "`Hello.`"');
                         }
                     }
-                    
+
                     destroyInventoryItem(receiverItem, 1, true);
                     luna.cure(receiver);
                 });
@@ -4377,7 +4377,7 @@ describe('messageHandler test', () => {
                     hidingSpot.removePlayer(nero);
                     nero.cure(hidden);
                 });
-                
+
                 describe('player receives notification', async () => {
                     test('nero is mimicking vivian', async () => {
                         nero.voiceString = "vivian";

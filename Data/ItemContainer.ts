@@ -6,9 +6,7 @@ import type Player from './Player.js';
 import type Prefab from './Prefab.js';
 
 /**
- * @class ItemContainer
- * @classdesc Represents a game entity that can contain items.
- * @extends GameEntity
+ * Represents a game entity that can contain items.
  */
 export default abstract class ItemContainer extends GameEntity {
 	/**
@@ -17,7 +15,6 @@ export default abstract class ItemContainer extends GameEntity {
 	description: Description;
 
 	/**
-	 * @constructor
 	 * @param game - The game this entity belongs to.
 	 * @param row - The row number of this entity on the spreadsheet.
 	 * @param description - A description which can contain at least one item list.
@@ -36,35 +33,42 @@ export default abstract class ItemContainer extends GameEntity {
 
 	/**
 	 * Adds an item to the specified item list in the container's description.
+     *
 	 * @deprecated
 	 * @param item - The item to add.
 	 * @param list - The item list to add the item to.
 	 * @param quantity - The quantity of the item to add. If none is provided, defaults to 1.
 	 */
-	addItemToDescription(item: ItemInstance, list?: string, quantity?: number) {
+	addItemToDescription(item: ItemInstance, list?: string, quantity?: number): void {
 		//this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
 	}
 
 	/**
 	 * Removes an item from the specified item list in the container's description.
+     *
 	 * @deprecated
 	 * @param item - The item to remove.
 	 * @param list - The item list to remove the item from.
 	 * @param quantity - The quantity of the item to remove. If none is provided, defaults to 1.
 	 */
-	removeItemFromDescription(item: ItemInstance, list?: string, quantity?: number) {
+	removeItemFromDescription(item: ItemInstance, list?: string, quantity?: number): void {
 		//this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
 	}
 
 	/**
      * Gets all of the items this entity contains.
+     *
+     * @remarks
 	 * Implementation differs for each type of ItemContainer.
      */
     abstract getContainedItems(): ItemInstance[];
 
 	/**
 	 * Gets all of the items that should appear in the given item list.
+     *
+     * @remarks
 	 * Implementation differs for each type of ItemContainer.
+     *
 	 * @param itemListName - The name of the item list. Only required for ItemContainers which can have multiple item lists.
 	 * @param player - The player the description is being sent to. Optional.
 	 */
@@ -72,6 +76,7 @@ export default abstract class ItemContainer extends GameEntity {
 
 	/**
 	 * Gets all of the items that should appear in the given item list and collates them. Items with the same prefab ID will be considered the same and have their quantities combined.
+     *
 	 * @param itemListName - The name of the item list. Only required for ItemContainers which can have multiple item lists.
 	 * @param player - The player the description is being sent to. Optional.
 	 * @returns A map of unique prefabs in the item list, and their collated quantities.
@@ -92,14 +97,14 @@ export default abstract class ItemContainer extends GameEntity {
 	/**
 	 * Returns true if this entity contains no items.
 	 */
-	containsNoItems() {
+	containsNoItems(): boolean {
 		return this.getContainedItems().length === 0;
 	}
 
 	/**
      * Gets the combined weight of all the items this entity contains.
      */
-    getContainedItemsWeight() {
+    getContainedItemsWeight(): number {
         const containedItems = this.getContainedItems();
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
     }

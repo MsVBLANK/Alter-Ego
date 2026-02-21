@@ -1,5 +1,5 @@
-import TakeAction from '../../../Data/Actions/TakeAction.js';
-import StashAction from '../../../Data/Actions/StashAction.js';
+import TakeAction from '../../../Data/Actions/TakeAction.ts';
+import StashAction from '../../../Data/Actions/StashAction.ts';
 import RoomItem from '../../../Data/RoomItem.js';
 import { clearQueue } from '../../../Modules/messageHandler.js';
 import { createMockMessage } from '../../__mocks__/libs/discord.js';

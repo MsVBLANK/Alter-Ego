@@ -3,8 +3,9 @@ import type ItemInstance from "./ItemInstance.ts";
 import type RoomItem from "./RoomItem.js";
 
 /**
- * @class InventorySlot
- * @classdesc Represents a slot within an item that can contain other items.
+ * Represents a slot within an item that can contain other items.
+ *
+ * @typeParam T - The type of item contained in the slot. Must be either an {@link ItemInstance}, {@link RoomItem} or {@link InventoryItem}.
  */
 export default class InventorySlot<T extends ItemInstance | RoomItem | InventoryItem> {
 	/**
@@ -39,7 +40,6 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
     readonly item: Array<T>;
 
 	/**
-	 * @constructor
 	 * @param id - The ID of the slot. Must be unique relative to other slots held by the same item.
 	 * @param capacity - Maximum sum of sizes that can be stored in the slot.
 	 * @param takenSpace - The current sum of sizes stored in the slot.
@@ -58,9 +58,10 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Inserts an item into this slot.
+     *
 	 * @param item - The item to insert.
 	 */
-	insertItem(item: T) {
+	insertItem(item: T): void {
 		let matchedItem = this.items.find(inventoryItem =>
 			inventoryItem.prefab !== null && item.prefab !== null &&
 			inventoryItem.prefab.id === item.prefab.id &&
@@ -79,10 +80,11 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Removes an item from this slot.
+     *
 	 * @param item - The item to remove.
 	 * @param removedQuantity - The quantity of this item to remove.
 	 */
-	removeItem(item: T, removedQuantity: number) {
+	removeItem(item: T, removedQuantity: number): void {
 		for (let i = 0; i < this.items.length; i++) {
 			if (this.items[i].row === item.row && this.items[i].description.text === item.description.text) {
 				if (item.quantity === 0) this.items.splice(i, 1);
@@ -96,37 +98,35 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 	/**
      * Gets all of the items this inventory slot contains.
      */
-    getContainedItems() {
+    getContainedItems(): T[] {
         return this.items;
     }
 
 	/**
 	 * Returns true if this inventory slot contains no items.
 	 */
-	containsNoItems() {
+	containsNoItems(): boolean {
 		return this.getContainedItems().length === 0;
 	}
 
 	/**
 	 * Returns true if the inventory slot's capacity is smaller than the given item.
-	 * @param item
 	 */
-	capacityIsSmallerThan(item: ItemInstance) {
+	capacityIsSmallerThan(item: ItemInstance): boolean {
 		return item.prefab.size > this.capacity;
 	}
 
 	/**
 	 * Returns true if the inventory slot will be over capacity if it takes the given item.
-	 * @param item
 	 */
-	willBeOverFilledBy(item: ItemInstance) {
+	willBeOverFilledBy(item: ItemInstance): boolean {
 		return this.takenSpace + item.prefab.size > this.capacity;
 	}
 
 	/**
      * Gets the combined weight of all the items this inventory slot contains.
      */
-    getContainedItemsWeight() {
+    getContainedItemsWeight(): number {
         return this.weight;
     }
 }

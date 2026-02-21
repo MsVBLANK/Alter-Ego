@@ -1,7 +1,7 @@
 import InventorySlot from './InventorySlot.ts';
 import ItemInstance from './ItemInstance.ts';
-import DestroyAction from './Actions/DestroyAction.js';
-import InstantiateAction from './Actions/InstantiateAction.js';
+import DestroyAction from './Actions/DestroyAction.ts';
+import InstantiateAction from './Actions/InstantiateAction.ts';
 import { Collection } from 'discord.js';
 
 /** @import Fixture from './Fixture.js' */
@@ -164,7 +164,7 @@ export default class RoomItem extends ItemInstance {
         return preposition;
     }
 
-    /** 
+    /**
      * Gets the highest-level container of this item.
      */
     getTopContainer() {

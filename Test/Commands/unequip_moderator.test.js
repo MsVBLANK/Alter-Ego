@@ -1,6 +1,6 @@
 import ModeratorCommand from '../../Classes/ModeratorCommand.js';
 import { usage, execute, config } from '../../Commands/unequip_moderator.js'
-import UnequipAction from '../../Data/Actions/UnequipAction.js';
+import UnequipAction from '../../Data/Actions/UnequipAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -16,7 +16,7 @@ describe('unequip_moderator command', () => {
     });
 
     const unequip_moderator = new ModeratorCommand(config, usage, execute);
-        
+
     test('given valid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const item = game.entityFinder.getInventoryItem("kyras glasses", "Kyra");

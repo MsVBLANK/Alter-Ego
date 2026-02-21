@@ -1,8 +1,8 @@
 import CollatedItem from './CollatedItem.ts';
 import HidingSpot from './HidingSpot.js';
 import RecipeProcessor from './RecipeProcessor.ts';
-import DeactivateAction from './Actions/DeactivateAction.js';
-import InstantiateAction from './Actions/InstantiateAction.js';
+import DeactivateAction from './Actions/DeactivateAction.ts';
+import InstantiateAction from './Actions/InstantiateAction.ts';
 import Timer from '../Classes/Timer.js';
 import { getChildItems } from '../Modules/itemManager.js';
 import { Duration } from 'luxon';

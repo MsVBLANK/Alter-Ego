@@ -1,4 +1,4 @@
-﻿import StashAction from '../Data/Actions/StashAction.js';
+﻿import StashAction from '../Data/Actions/StashAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */

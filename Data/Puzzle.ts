@@ -4,185 +4,151 @@ import Flag from './Flag.ts';
 import Prefab from './Prefab.ts';
 import ItemContainer from './ItemContainer.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-
-/** @import Fixture from './Fixture.js' */
-/** @import Game from './Game.js' */
-/** @import ItemInstance from './ItemInstance.ts' */
-/** @import Player from './Player.js' */
-/** @import Room from './Room.js' */
+import type Room from "./Room.js"
+import type Fixture from "./Fixture.ts"
+import type Game from "./Game.ts"
+import type RoomItem from "./RoomItem.js"
+import type Player from "./Player.ts"
+import type ItemInstance from "./ItemInstance.ts";
 
 /**
- * @class Puzzle
- * @classdesc Represents an interactable entity with correct, incorrect, and limited ways to engage with it.
- * @extends ItemContainer
+ * Represents an interactable entity with correct, incorrect, and limited ways to engage with it.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html
  */
 export default class Puzzle extends ItemContainer {
     /**
      * The name of the puzzle.
-     * @readonly
-     * @type {string}
      */
-    name;
+    readonly name: string;
     /**
      * Whether the puzzle is solved.
-     * @type {boolean}
      */
-    solved;
+    solved: boolean;
     /**
      * String indicating which solution the puzzle has been solved with.
-     * @type {string}
      */
-    outcome;
+    outcome: string;
     /**
      * Whether the puzzle requires a moderator to solve it.
-     * @readonly
-     * @type {boolean}
      */
-    requiresMod;
+    readonly requiresMod: boolean;
     /**
      * The display name of the location the puzzle is found in.
-     * @readonly
-     * @type {string}
      */
-    locationDisplayName;
+    readonly locationDisplayName: string;
     /**
      * The location the puzzle is found in.
-     * @type {Room}
      */
-    location;
+    location: Room;
     /**
-     * The name of the object associated with the puzzle. Deprecated. Use parentFixtureName instead.
-     * @deprecated
-     * @readonly
-     * @type {string}
+     * The name of the object associated with the puzzle.
+     *
+     * @deprecated Use parentFixtureName instead.
      */
-    parentObjectName;
+    readonly parentObjectName: string;
     /**
      * The name of the fixture associated with the puzzle.
-     * @readonly
-     * @type {string}
      */
-    parentFixtureName;
+    readonly parentFixtureName: string;
     /**
-     * The puzzle's parent object. Deprecated. Use parentFixture instead. If there isn't one, this is `null`.
-     * @deprecated
-     * @type {Fixture}
+     * The puzzle's parent object. If there isn't one, this is `null`.
+     *
+     * @deprecated Use parentFixture instead.
      */
-    parentObject;
+    readonly parentObject: Fixture | null;
     /**
      * The puzzle's parent fixture. If there isn't one, this is `null`.
-     * @type {Fixture}
      */
-    parentFixture;
+    parentFixture: Fixture | null;
     /**
      * The type of puzzle.
+     *
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type
-     * @readonly
-     * @type {string}
      */
-    type;
+    readonly type: string;
     /**
      * Whether the puzzle can be interacted with.
-     * @type {boolean}
      */
-    accessible;
+    accessible: boolean;
     /**
      * Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible.
-     * @readonly
-     * @type {PuzzleRequirement[]}
      */
-    requirementsStrings;
+    readonly requirementsStrings: PuzzleRequirement[];
     /**
      * An array of game entities required for the puzzle to be solved when attempted.
-     * @type {Array<Puzzle|Event|Prefab|Flag>}
      */
-    requirements;
+    requirements: Array<Puzzle | Event | Prefab | Flag>;
     /**
      * The solutions to the puzzle.
-     * @readonly
-     * @type {string[]}
      */
-    solutions;
+    readonly solutions: string[];
     /**
      * The number of attempts the player has left to solve the puzzle.
-     * @type {number}
      */
-    remainingAttempts;
+    remainingAttempts: number;
     /**
      * The string representation of the bot commands to be executed when the puzzle is solved or unsolved with specified outcomes.
-     * @readonly
-     * @type {string}
      */
-    commandSetsString;
+    readonly commandSetsString: string;
     /**
      * Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes.
-     * @readonly
-     * @type {PuzzleCommandSet[]}
      */
-    commandSets;
+    readonly commandSets: PuzzleCommandSet[];
     /**
      * The description of the puzzle when it is solved by a player.
-     * @readonly
-     * @type {Description}
      */
-    correctDescription;
+    readonly correctDescription: Description;
     /**
      * The description of the puzzle when it is already solved. Can contain an item list.
-     * @readonly
-     * @type {Description}
      */
-    alreadySolvedDescription;
+    readonly alreadySolvedDescription: Description;
     /**
      * The description of the puzzle when it is unsolved.
-     * @readonly
-     * @type {Description}
      */
-    unsolvedDescription;
+    readonly unsolvedDescription: Description;
     /**
      * The description of the puzzle when the incorrect answer is given.
-     * @readonly
-     * @type {Description}
      */
-    incorrectDescription;
+    readonly incorrectDescription: Description;
     /**
      * The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0.
-     * @readonly
-     * @type {Description}
      */
-    noMoreAttemptsDescription;
+    readonly noMoreAttemptsDescription: Description;
     /**
      * The description of the puzzle when a player attempts to solve it while all of the requirements are not met.
-     * @readonly
-     * @type {Description}
      */
-    requirementsNotMetDescription;
+    readonly requirementsNotMetDescription: Description;
 
     /**
-     * @constructor
-     * @param {string} name - The name of the puzzle.
-     * @param {boolean} solved - Whether the puzzle is solved.
-     * @param {string} outcome - String indicating which solution the puzzle has been solved with.
-     * @param {boolean} requiresMod - Whether the puzzle requires a moderator to solve it.
-     * @param {string} locationDisplayName - The display name of the location the puzzle is found in.
-     * @param {string} parentFixtureName - The name of the fixture associated with the puzzle.
-     * @param {string} type - The type of puzzle. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type}
-     * @param {boolean} accessible - Whether the puzzle can be interacted with.
-     * @param {PuzzleRequirement[]} requirementsStrings - Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible.
-     * @param {string[]} solutions - The solutions to the puzzle.
-     * @param {number} remainingAttempts - The number of attempts the player has left to solve the puzzle.
-     * @param {string} commandSetsString - The string representation of the bot commands to be executed when the puzzle is solved or unsolved with specified outcomes.
-     * @param {PuzzleCommandSet[]} commandSets - Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes.
-     * @param {string} correctDescription - The description of the puzzle when it is solved by a player.
-     * @param {string} alreadySolvedDescription - The description of the puzzle when it is already solved. Can contain an item list.
-     * @param {string} unsolvedDescription - The description of the puzzle when it is unsolved.
-     * @param {string} incorrectDescription - The description of the puzzle when the incorrect answer is given.
-     * @param {string} noMoreAttemptsDescription - The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0.
-     * @param {string} requirementsNotMetDescription - The description of the puzzle when a player attempts to solve it while all of the requirements are not met.
-     * @param {number} row - The row number of the puzzle in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param name - The name of the puzzle.
+     * @param solved - Whether the puzzle is solved.
+     * @param outcome - String indicating which solution the puzzle has been solved with.
+     * @param requiresMod - Whether the puzzle requires a moderator to solve it.
+     * @param locationDisplayName - The display name of the location the puzzle is found in.
+     * @param parentFixtureName - The name of the fixture associated with the puzzle.
+     * @param type - The type of puzzle. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type}
+     * @param accessible - Whether the puzzle can be interacted with.
+     * @param requirementsStrings - Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible.
+     * @param solutions - The solutions to the puzzle.
+     * @param remainingAttempts - The number of attempts the player has left to solve the puzzle.
+     * @param commandSetsString - The string representation of the bot commands to be executed when the puzzle is solved or unsolved with specified outcomes.
+     * @param commandSets - Sets of commands to be executed when the puzzle is solved or unsolved with specified outcomes.
+     * @param correctDescription - The description of the puzzle when it is solved by a player.
+     * @param alreadySolvedDescription - The description of the puzzle when it is already solved. Can contain an item list.
+     * @param unsolvedDescription - The description of the puzzle when it is unsolved.
+     * @param incorrectDescription - The description of the puzzle when the incorrect answer is given.
+     * @param noMoreAttemptsDescription - The description of the puzzle when the player attempts to solve it when the number of remainingAttempts is 0.
+     * @param requirementsNotMetDescription - The description of the puzzle when a player attempts to solve it while all of the requirements are not met.
+     * @param row - The row number of the puzzle in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(name, solved, outcome, requiresMod, locationDisplayName, parentFixtureName, type, accessible, requirementsStrings, solutions, remainingAttempts, commandSetsString, commandSets, correctDescription, alreadySolvedDescription, unsolvedDescription, incorrectDescription, noMoreAttemptsDescription, requirementsNotMetDescription, row, game) {
+    constructor(name: string, solved: boolean, outcome: string, requiresMod: boolean, locationDisplayName: string,
+        parentFixtureName: string, type: string, accessible: boolean, requirementsStrings: PuzzleRequirement[],
+        solutions: string[], remainingAttempts: number, commandSetsString: string, commandSets: PuzzleCommandSet[],
+        correctDescription: string, alreadySolvedDescription: string, unsolvedDescription: string,
+        incorrectDescription: string, noMoreAttemptsDescription: string, requirementsNotMetDescription: string,
+        row: number, game: Game) {
         super(game, row, alreadySolvedDescription);
         this.name = name;
         this.solved = solved;
@@ -211,85 +177,83 @@ export default class Puzzle extends ItemContainer {
     }
 
     /** Gets the entity's location. */
-    getLocation() {
+    getLocation(): Room {
         return this.location;
     }
 
     /**
      * Sets the location.
-     * @param {Room} room
      */
-    setLocation(room) {
+    setLocation(room: Room): void {
         this.location = room;
     }
 
     /**
      * Sets the parent fixture.
-     * @param {Fixture} fixture
      */
-    setParentFixture(fixture) {
+    setParentFixture(fixture: Fixture): void {
         this.parentFixture = fixture;
     }
 
     /**
      * Sets the puzzle as accessible.
      */
-    setAccessible() {
+    setAccessible(): void {
         this.accessible = true;
     }
 
     /**
      * Sets the puzzle as inaccessible.
      */
-    setInaccessible() {
+    setInaccessible(): void {
         this.accessible = false;
     }
 
     /**
      * Returns true if the puzzle is capable of containing items.
      */
-    isItemContainer() {
+    isItemContainer(): boolean {
         return this.parentFixture !== null && this.parentFixture.isItemContainer();
     }
 
     /**
      * Returns true if the puzzle is currently capable of being taken from/dropped into.
      */
-    canCurrentlyContainItems() {
+    canCurrentlyContainItems(): boolean {
         return this.type === "weight" || this.type === "container" || this.accessible && this.solved;
     }
 
     /**
      * Gets all of the items this entity contains.
-     * @override
      */
-    getContainedItems() {
+    override getContainedItems(): RoomItem[] {
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
     }
 
     /**
 	 * Gets all of the items that should appear in the puzzle's item list.
-	 * @override
-	 * @param {string} [itemListName] - The name of the item list. Unused.
-	 * @param {Player} [player] - The player the description is being sent to. Unused.
+     *
+	 * @param itemListName - The name of the item list. Unused.
+	 * @param player - The player the description is being sent to. Unused.
 	 */
-	getContainedItemsForItemList(itemListName, player) {
+	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
 		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
 	}
 
     /**
      * Sets the puzzle as solved.
      */
-    solve() {
+    solve(): void {
         // Mark it as solved.
         this.solved = true;
     }
 
     /**
      * Sets the puzzle's outcome.
-     * @param {string} outcome - The solution the puzzle was solved with.
+     *
+     * @param outcome - The solution the puzzle was solved with.
      */
-    setOutcome(outcome) {
+    setOutcome(outcome: string): void {
         if (this.solutions.length > 1) {
             if (outcome)
                 this.outcome = outcome;
@@ -299,10 +263,11 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Decrements the uses of the required items that were used to solve the puzzle.
-     * @param {Player} player - The player who solved the puzzle.
-     * @param {ItemInstance[]} [requiredItems] - The actual item instances that were required for this puzzle to be solved.
+     *
+     * @param player - The player who solved the puzzle.
+     * @param requiredItems - The actual item instances that were required for this puzzle to be solved.
      */
-    decrementRequiredItemUses(player, requiredItems = []) {
+    decrementRequiredItemUses(player: Player, requiredItems: ItemInstance[] = []): void {
         for (const requiredItem of requiredItems) {
             if (!isNaN(requiredItem.uses))
                 requiredItem.decreaseUses(player);
@@ -311,12 +276,12 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Executes the puzzle's solved commands.
-     * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's solved commands, if applicable.
+     *
+     * @param targetPlayer - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's solved commands, if applicable.
      */
-    executeSolvedCommands(targetPlayer = null) {
+    executeSolvedCommands(targetPlayer: Player = null): void {
         // Find commandSet.
-        /** @type {string[]} */
-        let commandSet = [];
+        let commandSet: string[] = [];
         if (this.solutions.length > 1) {
             for (let i = 0; i < this.commandSets.length; i++) {
                 let foundCommandSet = false;
@@ -338,26 +303,26 @@ export default class Puzzle extends ItemContainer {
     /**
      * Sets the puzzle as unsolved.
      */
-    unsolve() {
+    unsolve(): void {
         this.solved = false;
     }
 
     /**
      * Clears the puzzle's outcome.
      */
-    clearOutcome() {
+    clearOutcome(): void {
         if (this.solutions.length > 1 && this.type !== "channels")
             this.outcome = "";
     }
 
     /**
      * Executes the puzzle's unsolved commands.
-     * @param {Player} [targetPlayer] - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's unsolved commands, if applicable.
+     *
+     * @param targetPlayer - The player who will be treated as the initiating player in subsequent bot command executions called by this puzzle's unsolved commands, if applicable.
      */
-    executeUnsolvedCommands(targetPlayer = null) {
+    executeUnsolvedCommands(targetPlayer: Player = null): void {
         // Find commandSet.
-        /** @type {string[]} */
-        let commandSet = [];
+        let commandSet: string[] = [];
         if (this.solutions.length > 1) {
             for (let i = 0; i < this.commandSets.length; i++) {
                 let foundCommandSet = false;
@@ -379,59 +344,58 @@ export default class Puzzle extends ItemContainer {
     /**
      * A player fails to solve the puzzle. Decrements the number of remaining attempts, if applicable.
      */
-    fail() {
+    fail(): void {
         if (!isNaN(this.remainingAttempts))
             this.remainingAttempts--;
     }
 
     /**
      * Gets the alreadySolvedDescription.
-     * @override
-     * @returns {Description}
      */
-    getDescription() {
+    override getDescription(): Description {
         return this.alreadySolvedDescription;
     }
 
     /**
      * Adds an item to the specified item list in the puzzle's already solved description.
+     *
      * @deprecated
-     * @override
-     * @param {ItemInstance} item - The item to add.
-     * @param {string} [list] - The item list to add the item to.
-     * @param {number} [quantity] - The quantity of the item to add. If none is provided, defaults to 1.
+     * @param item - The item to add.
+     * @param list - The item list to add the item to.
+     * @param quantity - The quantity of the item to add. If none is provided, defaults to 1.
      */
-    addItemToDescription(item, list, quantity) {
+    override addItemToDescription(item: ItemInstance, list?: string, quantity?: number): void {
         //this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
     }
 
     /**
      * Removes an item from the specified item list in the puzzle's already solved description.
+     *
      * @deprecated
-     * @override
-     * @param {ItemInstance} item - The item to remove.
-     * @param {string} list - The item list to remove the item from.
-     * @param {number} [quantity] - The quantity of the item to remove. If none is provided, defaults to 1.
+     * @param item - The item to remove.
+     * @param list - The item list to remove the item from.
+     * @param quantity - The quantity of the item to remove. If none is provided, defaults to 1.
      */
-    removeItemFromDescription(item, list, quantity) {
+    override removeItemFromDescription(item: ItemInstance, list: string, quantity?: number): void {
         //this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
     }
 
     /**
      * Gets the name of the parent fixture preceded by "the". If no parent fixture exists, returns the puzzle's name preceded by "the" instead.
      */
-    getContainingPhrase() {
+    getContainingPhrase(): string {
         return this.parentFixture ? this.parentFixture.getContainingPhrase() : `the ${this.name}`;
     }
 
     /**
      * Checks if all of the puzzle's requirements are met.
-     * @param {Player} player - The player attempting the puzzle.
-     * @param {ItemInstance} item - An item the player supplied in their attempt to solve the puzzle.
-     * @param {ItemInstance[]} requiredItems - An array of required items in the player's inventory. The array will be populated during execution.
-     * @returns {boolean} Whether or not the puzzle's requirements have all been met.
+     *
+     * @param player - The player attempting the puzzle.
+     * @param item - An item the player supplied in their attempt to solve the puzzle.
+     * @param requiredItems - An array of required items in the player's inventory. The array will be populated during execution.
+     * @returns Whether or not the puzzle's requirements have all been met.
      */
-    checkRequirementsMet(player, item, requiredItems) {
+    checkRequirementsMet(player: Player, item: ItemInstance, requiredItems: ItemInstance[]): boolean {
         for (const requirement of this.requirements) {
             if (requirement instanceof Puzzle && !requirement.solved || requirement instanceof Event && !requirement.ongoing)
                 return false;
@@ -458,12 +422,12 @@ export default class Puzzle extends ItemContainer {
     /**
      * Returns the solution that is satisfied by a list of items contained in the puzzle.
      * If the list doesn't satisfy any solutions, returns undefined.
-     * @param {string} containedItemsListString - A comma-separated list of items contained inside of the puzzle.
+     *
+     * @param containedItemsListString - A comma-separated list of items contained inside of the puzzle.
      */
-    getSolutionSatisfiedByContainedItems(containedItemsListString) {
+    getSolutionSatisfiedByContainedItems(containedItemsListString: string): string {
         const containedItems = containedItemsListString.split(',');
-        /** @param {string} solution */
-        const itemsMatch = function (solution) {
+        const itemsMatch = function (solution: string): boolean {
             let requiredItems = solution.split('+');
             if (requiredItems.length !== containedItems.length) return false;
             for (let i = 0; i < requiredItems.length; i++)
@@ -485,9 +449,10 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Returns the solution that is satisfied by the given item. If the item doesn't satisfy any solutions, returns undefined.
-     * @param {ItemInstance} item - The item being used to attempt the puzzle.
+     *
+     * @param item - The item being used to attempt the puzzle.
      */
-    getSolutionSatisfiedByItem(item) {
+    getSolutionSatisfiedByItem(item: ItemInstance): string {
         for (const solution of this.solutions) {
             if ((solution.startsWith("Item:") || solution.startsWith("InventoryItem:") || solution.startsWith("Prefab:"))
             && item.prefab.id === solution.substring(solution.indexOf(':') + 1).trim()) {
@@ -500,37 +465,31 @@ export default class Puzzle extends ItemContainer {
     /**
      * Gets the preposition of the parent fixture, if applicable. If no parent fixture exists, returns "in".
      */
-    getPreposition() {
+    getPreposition(): string {
         return this.parentFixture ? this.parentFixture.getPreposition() : "in";
     }
 
-    /** @returns {string} */
-    correctCell() {
+    correctCell(): string {
         return this.getGame().constants.puzzleSheetCorrectColumn + this.row;
     }
 
-    /** @returns {string} */
-    alreadySolvedCell() {
+    alreadySolvedCell(): string {
         return this.getGame().constants.puzzleSheetAlreadySolvedColumn + this.row;
     }
 
-    /** @returns {string} */
-    unsolvedCell() {
+    unsolvedCell(): string {
         return this.getGame().constants.puzzleSheetUnsolvedColumn + this.row;
     }
 
-    /** @returns {string} */
-    incorrectCell() {
+    incorrectCell(): string {
         return this.getGame().constants.puzzleSheetIncorrectColumn + this.row;
     }
 
-    /** @returns {string} */
-    noMoreAttemptsCell() {
+    noMoreAttemptsCell(): string {
         return this.getGame().constants.puzzleSheetNoMoreAttemptsColumn + this.row;
     }
 
-    /** @returns {string} */
-    requirementsNotMetCell() {
+    requirementsNotMetCell(): string {
         return this.getGame().constants.puzzleSheetRequirementsNotMetColumn + this.row;
     }
 }

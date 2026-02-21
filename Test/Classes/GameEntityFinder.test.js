@@ -2,7 +2,7 @@ import Room from "../../Data/Room.js";
 import RoomItem from "../../Data/RoomItem.js";
 import Fixture from "../../Data/Fixture.ts";
 import Prefab from "../../Data/Prefab.ts";
-import Puzzle from "../../Data/Puzzle.js";
+import Puzzle from "../../Data/Puzzle.ts";
 import Event from "../../Data/Event.ts";
 import Status from "../../Data/Status.js";
 import Player from "../../Data/Player.ts";

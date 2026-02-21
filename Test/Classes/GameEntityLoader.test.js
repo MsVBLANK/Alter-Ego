@@ -6,7 +6,7 @@ import Game from "../../Data/Game.ts";
 import InventoryItem from "../../Data/InventoryItem.ts";
 import Player from "../../Data/Player.ts";
 import Prefab from "../../Data/Prefab.ts";
-import Puzzle from "../../Data/Puzzle.js";
+import Puzzle from "../../Data/Puzzle.ts";
 import Room from "../../Data/Room.js";
 import RoomItem from "../../Data/RoomItem.js";
 import sheets from "../__mocks__/libs/sheets.js";

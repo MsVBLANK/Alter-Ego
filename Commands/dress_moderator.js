@@ -2,7 +2,7 @@ import DressAction from '../Data/Actions/DressAction.ts';
 import Fixture from "../Data/Fixture.ts";
 import InventorySlot from '../Data/InventorySlot.ts';
 import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */

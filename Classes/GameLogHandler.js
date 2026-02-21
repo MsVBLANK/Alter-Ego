@@ -4,7 +4,7 @@ import InventoryItem from "../Data/InventoryItem.ts";
 import InventorySlot from "../Data/InventorySlot.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.ts";
-import Puzzle from "../Data/Puzzle.js";
+import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
 import { generateListString } from "../Modules/helpers.ts";

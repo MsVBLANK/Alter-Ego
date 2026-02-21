@@ -4,7 +4,7 @@ import InventoryItem from '../Data/InventoryItem.ts';
 import RoomItem from '../Data/RoomItem.js';
 import ItemInstance from '../Data/ItemInstance.ts';
 import Player from '../Data/Player.ts';
-import Puzzle from '../Data/Puzzle.js';
+import Puzzle from '../Data/Puzzle.ts';
 import Recipe from '../Data/Recipe.js';
 import { table } from 'table';
 

@@ -4,7 +4,7 @@ import Game from "../Data/Game.ts";
 import Gesture from "../Data/Gesture.ts";
 import InventoryItem from "../Data/InventoryItem.ts";
 import Player from "../Data/Player.ts";
-import Puzzle from "../Data/Puzzle.js";
+import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.js";
 import RoomItem from "../Data/RoomItem.js";
 import Status from "../Data/Status.js";

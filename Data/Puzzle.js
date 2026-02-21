@@ -1,7 +1,7 @@
 import Description from './Description.ts';
 import Event from './Event.ts';
 import Flag from './Flag.ts';
-import Prefab from './Prefab.js';
+import Prefab from './Prefab.ts';
 import ItemContainer from './ItemContainer.ts';
 import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
 

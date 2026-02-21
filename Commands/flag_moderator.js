@@ -1,5 +1,5 @@
 import Flag from '../Data/Flag.ts';
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 

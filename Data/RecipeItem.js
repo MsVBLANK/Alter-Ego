@@ -1,4 +1,4 @@
-import Game from "./Game.js";
+import Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
 /**
  * @import CollatedItem from "./CollatedItem.ts";
@@ -36,7 +36,7 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	containedItemsString;
 	/**
-	 * An array of recipe items that are required to be contained inside of this recipe item if it is an ingredient, 
+	 * An array of recipe items that are required to be contained inside of this recipe item if it is an ingredient,
 	 * or will be contained inside of it if it is a product.
 	 * @type {RecipeItem[]}
 	 */
@@ -84,17 +84,17 @@ export default class RecipeItem extends GameConstruct {
 	usesIsConstant;
 	/**
      * A regular expression for parsing ingredients and products strings.
-	 * 
+	 *
      * $1 - Quantity. Any number of digits.
-	 * 
+	 *
      * $2 - Variable name for quantity. Consists of one letter.
-	 * 
+	 *
      * $3 - Prefab ID.
-	 * 
+	 *
 	 * $4 - Number of uses. Any number of digits.
-	 * 
+	 *
 	 * $5 - Variable name for uses. Consists of one letter.
-	 * 
+	 *
      * $6 - Contained items string. This should be split by plus-sign (+) and checked against this regex separately.
      * @readonly
      */
@@ -125,14 +125,14 @@ export default class RecipeItem extends GameConstruct {
 	}
 
 	/**
-	 * @param {Prefab} prefab 
+	 * @param {Prefab} prefab
 	 */
 	setPrefab(prefab) {
 		this.prefab = prefab;
 	}
 
 	/**
-	 * @param {RecipeItem} container 
+	 * @param {RecipeItem} container
 	 */
 	setContainer(container) {
 		this.container = container;

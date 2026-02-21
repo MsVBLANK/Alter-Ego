@@ -2,7 +2,7 @@ import Description from "../../Data/Description.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";
 import Event from "../../Data/Event.ts";
 import Fixture from "../../Data/Fixture.ts";
-import Game from "../../Data/Game.js";
+import Game from "../../Data/Game.ts";
 import InventoryItem from "../../Data/InventoryItem.js";
 import Player from "../../Data/Player.js";
 import Prefab from "../../Data/Prefab.js";

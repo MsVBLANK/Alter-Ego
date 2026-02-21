@@ -1,6 +1,6 @@
 import CollatedItem from './CollatedItem.ts';
 import Fixture from './Fixture.ts';
-import Game from './Game.js';
+import Game from './Game.ts';
 import GameEntity from './GameEntity.ts';
 import Room from './Room.js';
 import RoomItem from './RoomItem.js';

@@ -1,4 +1,4 @@
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 import GameEntityManager from './GameEntityManager.js';
 import Exit from '../Data/Exit.ts';
 import Room from '../Data/Room.js';

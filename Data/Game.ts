@@ -1,253 +1,202 @@
-import BotContext from '../Classes/BotContext.js';
-import GameConstants from '../Classes/GameConstants.js';
-import GameCommunicationHandler from '../Classes/GameCommunicationHandler.js';
-import GameEntityFinder from '../Classes/GameEntityFinder.js';
-import GameEntityLoader from '../Classes/GameEntityLoader.js';
-import GameEntitySaver from '../Classes/GameEntitySaver.js';
-import GameLogHandler from '../Classes/GameLogHandler.js';
-import GameNarrationHandler from '../Classes/GameNarrationHandler.js';
-import GameNotificationGenerator from '../Classes/GameNotificationGenerator.js';
-import PriorityQueue from '../Classes/PriorityQueue.js';
-import Event from './Event.ts';
-import TriggerAction from './Actions/TriggerAction.ts';
-import { sendQueuedMessages } from '../Modules/messageHandler.js';
-import { Collection } from 'discord.js';
-import { DateTime } from 'luxon';
-
-/** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import GuildContext from '../Classes/GuildContext.js' */
-/** @import Room from './Room.js' */
-/** @import Fixture from './Fixture.js' */
-/** @import Prefab from './Prefab.js' */
-/** @import Recipe from './Recipe.js' */
-/** @import RoomItem from './RoomItem.js' */
-/** @import Puzzle from './Puzzle.js' */
-/** @import Status from './Status.js' */
-/** @import Player from './Player.js' */
-/** @import InventoryItem from './InventoryItem.js' */
-/** @import Gesture from './Gesture.js' */
-/** @import Flag from './Flag.js' */
-/** @import Whisper from './Whisper.js' */
+import BotContext from "../Classes/BotContext.js"
+import GameConstants from "../Classes/GameConstants.js"
+import GameCommunicationHandler from "../Classes/GameCommunicationHandler.js"
+import GameEntityFinder from "../Classes/GameEntityFinder.js"
+import GameEntityLoader from "../Classes/GameEntityLoader.js"
+import GameEntitySaver from "../Classes/GameEntitySaver.js"
+import GameLogHandler from "../Classes/GameLogHandler.js"
+import GameNarrationHandler from "../Classes/GameNarrationHandler.js"
+import GameNotificationGenerator from "../Classes/GameNotificationGenerator.js"
+import PriorityQueue from "../Classes/PriorityQueue.js"
+import Event from "./Event.ts"
+import TriggerAction from "./Actions/TriggerAction.ts"
+import { Collection } from "discord.js"
+import { DateTime } from "luxon"
+import type GuildContext from "../Classes/GuildContext.js"
+import type GameSettings from "../Classes/GameSettings.js"
+import type Room from "./Room.js"
+import type Fixture from "./Fixture.ts"
+import type Prefab from "./Prefab.js"
+import type Recipe from "./Recipe.js"
+import type RoomItem from "./RoomItem.js"
+import type Puzzle from "./Puzzle.js"
+import type Status from "./Status.js"
+import type Player from "./Player.js"
+import type InventoryItem from "./InventoryItem.js"
+import type Gesture from "./Gesture.js"
+import type Flag from "./Flag.ts"
+import type Whisper from "./Whisper.js"
 
 /**
- * @class Game
- * @classdesc Represents a game managed by the bot.
+ * Represents a game managed by the bot.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/game.html
  */
 export default class Game {
 	/**
 	 * The guild in which the game is occurring and all of the parts of the guild frequently accessed by the bot.
-	 * @readonly
-	 * @type {GuildContext}
 	 */
-	guildContext;
+	readonly guildContext: GuildContext;
 	/**
 	 * The bot managing the game.
-	 * @type {BotContext}
 	 */
-	botContext;
+	botContext: BotContext;
 	/**
 	 * All of the settings for the game.
-	 * @type {GameSettings}
 	 */
-	settings;
+	settings: GameSettings;
 	/**
 	 * A collection of constants used to refer to cell ranges on the spreadsheet.
-	 * @readonly
-	 * @type {GameConstants}
 	*/
-	constants;
+	readonly constants: GameConstants;
 	/**
 	 * An interface for the message handler. Contains a number of functions that ensure actions won't be communicated multiple times in the same channel.
-	 * @readonly
-	 * @type {GameCommunicationHandler}
 	 */
-	communicationHandler;
+	readonly communicationHandler: GameCommunicationHandler;
 	/**
 	 * A set of functions to get and find game entities.
-	 * @readonly
-	 * @type {GameEntityFinder}
 	 */
-	entityFinder;
+	readonly entityFinder: GameEntityFinder;
 	/**
 	 * A set of functions to load game entities from the sheet.
-	 * @readonly
-	 * @type {GameEntityLoader}
 	 */
-	entityLoader;
+	readonly entityLoader: GameEntityLoader;
 	/**
 	 * A set of functions to save game entities to the sheet.
-	 * @readonly
-	 * @type {GameEntitySaver}
 	 */
-	entitySaver;
+	readonly entitySaver: GameEntitySaver;
 	/**
 	 * A set of functions to send messages to the game's log channel.
-	 * @readonly
-	 * @type {GameLogHandler}
 	 */
-	logHandler;
+	readonly logHandler: GameLogHandler;
 	/**
 	 * A set of functions to generate notifications to send to players.
-	 * @readonly
-	 * @type {GameNotificationGenerator}
 	 */
-	notificationGenerator;
+	readonly notificationGenerator: GameNotificationGenerator;
 	/**
 	 * A set of functions to send narrations.
-	 * @readonly
-	 * @type {GameNarrationHandler}
 	 */
-	narrationHandler;
+	readonly narrationHandler: GameNarrationHandler;
 	/**
 	 * Whether or not the game is currently in progress.
-	 * @type {boolean}
 	 */
-	inProgress;
+	inProgress: boolean;
 	/**
 	 * Whether or not members with the eligible role can join the game with the play command.
-	 * @type {boolean}
 	 */
-	canJoin;
+	canJoin: boolean;
 	/**
 	 * A timer used by the startgame command to announce when half of the time allotted for players to join the game has elapsed.
-	 * @type {NodeJS.Timeout}
 	 */
-	halfTimer;
+	halfTimer: NodeJS.Timeout;
 	/**
 	 * A timer used by the startgame command. When this expires, all of the players who joined the game are saved to the spreadsheet.
-	 * @type {NodeJS.Timeout}
 	 * */
-	endTimer;
+	endTimer: NodeJS.Timeout;
 	/**
 	 * Whether or not there is currently at least one player with the `heated` status in the game.
-	 * @type {boolean}
 	 */
-	heated;
+	heated: boolean;
 	/**
 	 * Whether or not edit mode is currently enabled.
-	 * @type {boolean}
 	 */
-	editMode;
+	editMode: boolean;
 	/**
 	 * A set of data types that have been loaded with errors. The game is not playable if this set isn't empty.
-	 * @type {Set<string>}
 	 */
-	loadedEntitiesWithErrors;
+	loadedEntitiesWithErrors: Set<string>;
 	/**
 	 * A collection of all rooms in the game. The key for each room is its id.
-	 * @type {Collection<string, Room>}
 	 */
-	rooms;
+	rooms: Collection<string, Room>;
 	/**
 	 * An array of all fixtures in the game. Deprecated. Use fixtures instead.
 	 * @deprecated
-	 * @type {Fixture[]}
 	 */
-	objects;
+	objects: Fixture[];
 	/**
 	 * An array of all fixtures in the game.
-	 * @type {Fixture[]}
 	 */
-	fixtures;
+	fixtures: Fixture[];
 	/**
 	 * A collection of all prefabs in the game. The key for each prefab is its id.
-	 * @type {Collection<string, Prefab>}
 	 */
-	prefabs;
+	prefabs: Collection<string, Prefab>;
 	/**
 	 * An array of all recipes in the game.
-	 * @type {Recipe[]}
 	 */
-	recipes;
+	recipes: Recipe[];
 	/**
 	 * An array of all room items in the game. Deprecated. Use roomItems instead.
 	 * @deprecated
-	 * @type {RoomItem[]}
 	 */
-	items;
+	items: RoomItem[];
 	/**
 	 * An array of all room items in the game.
-	 * @type {RoomItem[]}
 	 */
-	roomItems;
+	roomItems: RoomItem[];
 	/**
 	 * An array of all puzzles in the game.
-	 * @type {Puzzle[]}
 	 */
-	puzzles;
+	puzzles: Puzzle[];
 	/**
 	 * A collection of all events in the game. The key for each prefab is its id.
-	 * @type {Collection<string, Event>}
 	 */
-	events;
+	events: Collection<string, Event>;
 	/**
 	 * A collection of all status effects in the game. The key for each prefab is its id.
-	 * @type {Collection<string, Status>}
 	 */
-	statusEffects;
+	statusEffects: Collection<string, Status>;
 	/**
 	 * A collection of all players in the game. The key for each player is their name.
-	 * @type {Collection<string, Player>}
 	 */
-	players;
+	players: Collection<string, Player>;
 	/**
 	 * A collection of all living players in the game. The key for each player is their name.
-	 * @type {Collection<string, Player>}
 	 */
-	livingPlayers;
+	livingPlayers: Collection<string, Player>;
 	/**
 	 * A collection of all dead players in the game. The key for each player is their name.
-	 * @type {Collection<string, Player>}
 	 */
-	deadPlayers;
+	deadPlayers: Collection<string, Player>;
 	/**
 	 * An array of all inventory items in the game.
-	 * @type {InventoryItem[]}
 	 */
-	inventoryItems;
+	inventoryItems: InventoryItem[];
 	/**
 	 * A collection of all gestures in the game. The key for each gesture is its id.
-	 * @type {Collection<string, Gesture>}
 	 */
-	gestures;
+	gestures: Collection<string, Gesture>;
 	/**
 	 * A collection of all flags in the game, where the key is the flag's ID.
-	 * @type {Collection<string, Flag>}
 	 */
-	flags;
+	flags: Collection<string, Flag>;
 	/**
 	 * A collection of all whispers in the game. The key for each whisper is its channel name. These are not saved to the sheet.
-	 * @type {Collection<string, Whisper>}
 	 */
-	whispers;
+	whispers: Collection<string, Whisper>;
 	/**
 	 * A queue of messages to be sent by the messageHandler.
-	 * @type {PriorityQueue}
 	 */
-	messageQueue;
+	messageQueue: PriorityQueue;
 	/**
 	 * A timeout which sends queued messages every quarter of a second.
-	 * @type {NodeJS.Timeout}
 	 */
-	#queuedMessageSendInterval;
+	#queuedMessageSendInterval: NodeJS.Timeout;
 	/**
 	 * A timeout that saves the game data to the spreadsheet periodically.
-	 * @type NodeJS.Timeout
 	 */
-	#autoSaveInterval;
+	#autoSaveInterval: NodeJS.Timeout;
 	/**
 	 * A timeout that checks for events that should be triggered every minute.
-	 * @type NodeJS.Timeout
 	 */
-	#eventTriggerInterval;
+	#eventTriggerInterval: NodeJS.Timeout;
 
 	/**
-	 * @constructor
 	 * @param {GuildContext} guildContext - The guild this game is occurring in.
 	 * @param {GameSettings} settings - The settings for the game.
 	 */
-	constructor(guildContext, settings) {
+	constructor(guildContext: GuildContext, settings: GameSettings) {
 		this.guildContext = guildContext;
 		this.settings = settings;
 		this.constants = new GameConstants();
@@ -314,16 +263,14 @@ export default class Game {
 		}, 60 * 1000);
 	}
 
-	setBotContext() {
+	setBotContext(): void {
 		this.botContext = BotContext.instance;
 	}
 
 	/**
 	 * Generate a name in all uppercase with no apostrophes or quotation marks.
-	 * @param {string} name
-	 * @returns {string}
 	 */
-	static generateValidEntityName(name) {
+	static generateValidEntityName(name: string): string {
 		return name?.toUpperCase().replace(/[\'"“”`]/g, '').trim();
 	}
 }

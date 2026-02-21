@@ -1,4 +1,4 @@
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 
 /**
  * Represents a construct that belongs to a game. Used as a base class for all other in-game constructs.

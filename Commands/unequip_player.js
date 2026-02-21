@@ -1,5 +1,5 @@
 import UnequipAction from '../Data/Actions/UnequipAction.ts';
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import InventoryItem from '../Data/InventoryItem.js' */

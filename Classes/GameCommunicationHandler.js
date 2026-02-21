@@ -1,5 +1,5 @@
 import Action from "../Data/Action.ts";
-import Player from "../Data/Player.js";
+import Player from "../Data/Player.ts";
 import Room from "../Data/Room.js";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
@@ -7,11 +7,11 @@ import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 import Interactable from "./Interactables/Interactable.ts";
 
-/** @import Dialog from "../Data/Dialog.js" */
-/** @import Game from "../Data/Game.js" */
+/** @import Dialog from "../Data/Dialog.ts" */
+/** @import Game from "../Data/Game.ts" */
 /** @import GameEntity from "../Data/GameEntity.ts" */
-/** @import Narration from "../Data/Narration.js" */
-/** @import Notification from "../Data/Notification.js" */
+/** @import Narration from "../Data/Narration.ts" */
+/** @import Notification from "../Data/Notification.ts" */
 /** @import { Snowflake } from "discord.js" */
 
 /**

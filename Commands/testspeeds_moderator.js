@@ -1,5 +1,5 @@
 import fs from 'fs';
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 import { EOL } from 'os';
 import { Collection } from 'discord.js';
 
@@ -21,8 +21,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}testspeeds players\n`
@@ -30,10 +30,10 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
  */
 export async function execute(game, message, command, args) {
     if (args.length === 0)
@@ -63,7 +63,7 @@ export async function execute(game, message, command, args) {
 
 /**
  * Calculates the time it takes for each player in the game to move from every exit in a room to every other exit and appends it to the file.
- * @param {Game} game - The game being tested. 
+ * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  */
 async function testplayers(game, fileName) {
@@ -104,7 +104,7 @@ async function testplayers(game, fileName) {
 
 /**
  * Calculates the time it takes for a hypothetical player of every possible speed stat value to move from every exit in a room to every other exit and appends it to the file.
- * @param {Game} game - The game being tested. 
+ * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  */
 async function testspeeds(game, fileName) {

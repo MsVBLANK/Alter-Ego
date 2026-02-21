@@ -1,4 +1,4 @@
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 import { appendRowsToSheet } from '../Modules/sheets.js';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";

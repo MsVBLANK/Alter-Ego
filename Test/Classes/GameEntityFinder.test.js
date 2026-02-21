@@ -5,7 +5,7 @@ import Prefab from "../../Data/Prefab.js";
 import Puzzle from "../../Data/Puzzle.js";
 import Event from "../../Data/Event.ts";
 import Status from "../../Data/Status.js";
-import Player from "../../Data/Player.js";
+import Player from "../../Data/Player.ts";
 import InventoryItem from "../../Data/InventoryItem.ts";
 import Gesture from "../../Data/Gesture.ts";
 import Flag from "../../Data/Flag.ts";

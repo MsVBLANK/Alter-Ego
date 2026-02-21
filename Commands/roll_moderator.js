@@ -1,5 +1,5 @@
 ﻿import Die from '../Data/Die.ts';
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */

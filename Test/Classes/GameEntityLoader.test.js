@@ -4,7 +4,7 @@ import Event from "../../Data/Event.ts";
 import Fixture from "../../Data/Fixture.ts";
 import Game from "../../Data/Game.ts";
 import InventoryItem from "../../Data/InventoryItem.ts";
-import Player from "../../Data/Player.js";
+import Player from "../../Data/Player.ts";
 import Prefab from "../../Data/Prefab.js";
 import Puzzle from "../../Data/Puzzle.js";
 import Room from "../../Data/Room.js";

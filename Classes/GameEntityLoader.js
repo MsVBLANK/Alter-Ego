@@ -12,7 +12,7 @@ import Event from '../Data/Event.ts';
 import EquipmentSlot from '../Data/EquipmentSlot.ts';
 import InventoryItem from '../Data/InventoryItem.ts';
 import Status from '../Data/Status.js';
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 import Gesture from '../Data/Gesture.ts';
 import Flag from '../Data/Flag.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';

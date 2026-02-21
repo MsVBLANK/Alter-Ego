@@ -3,7 +3,7 @@ import GameEntity from '../Data/GameEntity.ts';
 import InventoryItem from '../Data/InventoryItem.ts';
 import RoomItem from '../Data/RoomItem.js';
 import ItemInstance from '../Data/ItemInstance.ts';
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 import Puzzle from '../Data/Puzzle.js';
 import Recipe from '../Data/Recipe.js';
 import { table } from 'table';

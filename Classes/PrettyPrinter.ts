@@ -64,7 +64,7 @@ export class DMChannelPlugin implements AEPlugin<DMChannel> {
 	}
 
 	serialize(value: DMChannel) {
-		return `<DMChannel "${value.recipient.username || 'unknown'}">`;
+		return `<DMChannel "${value.recipient !== null ? value.recipient.username : 'unknown'}">`;
 	}
 }
 

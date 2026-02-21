@@ -1,6 +1,6 @@
 import Room from "../../Data/Room.js";
 import RoomItem from "../../Data/RoomItem.js";
-import Fixture from "../../Data/Fixture.js";
+import Fixture from "../../Data/Fixture.ts";
 import Prefab from "../../Data/Prefab.js";
 import Puzzle from "../../Data/Puzzle.js";
 import Event from "../../Data/Event.ts";

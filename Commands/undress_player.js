@@ -1,5 +1,5 @@
 import UndressAction from '../Data/Actions/UndressAction.ts';
-import Fixture from "../Data/Fixture.js";
+import Fixture from "../Data/Fixture.ts";
 import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";
 

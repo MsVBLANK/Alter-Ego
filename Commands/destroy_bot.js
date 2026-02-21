@@ -1,6 +1,6 @@
 import DestroyAction from "../Data/Actions/DestroyAction.ts";
 import Game from "../Data/Game.js";
-import Fixture from "../Data/Fixture.js";
+import Fixture from "../Data/Fixture.ts";
 import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";
 import { itemIdentifierMatches } from "../Modules/matchers.js";

@@ -2,7 +2,7 @@ import Game from '../Data/Game.js';
 import GameEntityManager from './GameEntityManager.js';
 import Exit from '../Data/Exit.ts';
 import Room from '../Data/Room.js';
-import Fixture from '../Data/Fixture.js';
+import Fixture from '../Data/Fixture.ts';
 import Prefab from '../Data/Prefab.js';
 import InventorySlot from '../Data/InventorySlot.ts';
 import Recipe from '../Data/Recipe.js';

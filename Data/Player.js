@@ -1,5 +1,5 @@
 import CollatedItem from './CollatedItem.ts';
-import Fixture from './Fixture.js';
+import Fixture from './Fixture.ts';
 import Game from './Game.js';
 import GameEntity from './GameEntity.ts';
 import Room from './Room.js';

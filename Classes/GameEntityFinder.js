@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import Fixture from "../Data/Fixture.js";
+import Fixture from "../Data/Fixture.ts";
 import Game from "../Data/Game.js";
 import Gesture from "../Data/Gesture.js";
 import InventoryItem from "../Data/InventoryItem.js";

@@ -1,5 +1,5 @@
 import DressAction from '../Data/Actions/DressAction.ts';
-import Fixture from "../Data/Fixture.js";
+import Fixture from "../Data/Fixture.ts";
 import InventorySlot from '../Data/InventorySlot.ts';
 import RoomItem from "../Data/RoomItem.js";
 import Puzzle from "../Data/Puzzle.js";

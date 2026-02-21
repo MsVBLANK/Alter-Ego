@@ -1,4 +1,4 @@
-import Fixture from '../Data/Fixture.js';
+import Fixture from '../Data/Fixture.ts';
 import Puzzle from '../Data/Puzzle.js';
 import InventoryItem from '../Data/InventoryItem.js';
 import InventorySlot from '../Data/InventorySlot.ts';
@@ -113,7 +113,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
 
 /**
  * Replaces an inventory item in-place with an instance of a different prefab.
- * @param {InventoryItem} item - The inventory item to replace. 
+ * @param {InventoryItem} item - The inventory item to replace.
  * @param {Prefab} [newPrefab] - The prefab to replace it with. If one isn't given, the inventory item is simply destroyed.
  */
 export function replaceInventoryItem(item, newPrefab) {
@@ -143,7 +143,7 @@ export function replaceInventoryItem(item, newPrefab) {
 
 /**
  * Destroys a room item.
- * @param {RoomItem} item - The item to destroy. 
+ * @param {RoomItem} item - The item to destroy.
  * @param {number} quantity - How many of this item to destroy.
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the items it contains as well.
  */
@@ -166,7 +166,7 @@ export function destroyRoomItem(item, quantity, getChildren) {
 
 /**
  * Destroys an inventory item.
- * @param {InventoryItem} item - The inventory item to destroy. 
+ * @param {InventoryItem} item - The inventory item to destroy.
  * @param {number} quantity - How many of this inventory item to destroy.
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the inventory items it contains as well.
  */
@@ -323,7 +323,7 @@ export function getChildItems(items, item) {
 
 /**
  * Sets the quantities of all child items to 0.
- * @param {ItemInstance} item - The item whose child items are to have their quantities updated. 
+ * @param {ItemInstance} item - The item whose child items are to have their quantities updated.
  */
 export function setChildItemQuantitiesZero(item) {
     /** @type {ItemInstance[]} */
@@ -385,8 +385,8 @@ export function putItemInHand(item, player, handEquipmentSlot) {
 
 /**
  * Inserts an array of items into the game at the correct position in the game's array of room items.
- * @param {Room} location - The room to insert items into. 
- * @param {RoomItem[]} items - The items to insert. 
+ * @param {Room} location - The room to insert items into.
+ * @param {RoomItem[]} items - The items to insert.
  */
 export function insertRoomItems(location, items) {
     const game = location.getGame();
@@ -408,9 +408,9 @@ export function insertRoomItems(location, items) {
             /** @type {RoomItemContainer} */
             let itemContainer = null;
             if (item.container instanceof RoomItem) {
-                /** 
+                /**
                  * @param {RoomItem} item1
-                 * @param {RoomItem} item2 
+                 * @param {RoomItem} item2
                  */
                 const containersMatch = function (item1, item2) {
                     if (item1.container instanceof RoomItem && item2.container instanceof RoomItem)

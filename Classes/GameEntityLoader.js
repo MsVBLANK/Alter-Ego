@@ -1,6 +1,6 @@
 import Game from '../Data/Game.js';
 import GameEntityManager from './GameEntityManager.js';
-import Exit from '../Data/Exit.js';
+import Exit from '../Data/Exit.ts';
 import Room from '../Data/Room.js';
 import Fixture from '../Data/Fixture.js';
 import Prefab from '../Data/Prefab.js';

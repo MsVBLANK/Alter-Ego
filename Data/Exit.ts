@@ -1,78 +1,67 @@
 import Description from './Description.ts';
 import GameEntity from './GameEntity.ts';
-
-/** @import Game from './Game.js' */
-/** @import Room from './Room.js' */
+import type Room from "./Room.js"
+import type Game from "./Game.js"
 
 /**
- * @class Exit
- * @classdesc Represents an exit in a room.
- * @extends GameEntity
+ * Represents an exit in a room.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html
  */
 export default class Exit extends GameEntity {
     /**
      * The name of the exit.
-     * @type {string}
      */
-    name;
+    name: string;
     /**
      * A phrase used to refer to the exit in narrations.
-     * @type {string}
      */
-    phrase;
+    phrase: string;
     /**
      * The tags associated with the exit.
+     *
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags
-     * @type {Set<string>}
      */
-    tags;
+    tags: Set<string>;
     /**
      * The position of the exit.
-     * @type {Pos}
      */
-    pos;
+    pos: Pos;
     /**
      * Whether or not the exit is unlocked.
-     * @type {boolean}
      */
-    unlocked;
+    unlocked: boolean;
     /**
      * The display name of the room that the exit leads to.
-     * @type {string}
      */
-    destDisplayName;
+    destDisplayName: string;
     /**
      * The room that the exit leads to.
-     * @type {Room}
      */
-    dest;
+    dest: Room;
     /**
      * The name of the exit in the destination room that this exit links to.
-     * @type {string}
      */
-    link;
+    link: string;
     /**
      * The description of the room when a player enters from this exit.
-     * @readonly
-     * @type {Description}
      */
-    description;
+    readonly description: Description;
 
     /**
-     * @constructor
-     * @param {string} name - The name of the exit.
-     * @param {string} phrase - A phrase used to refer to the exit in narrations.
-     * @param {Set<string>} tags - The tags associated with the exit. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags}
-     * @param {Pos} pos - The position of the exit.
-     * @param {boolean} unlocked - Whether or not the exit is unlocked.
-     * @param {string} destDisplayName - The display name of the room that the exit leads to.
-     * @param {string} link - The name of the exit in the destination room that this exit links to.
-     * @param {string} description - The description of the room when a player enters from this exit.
-     * @param {number} row - The row number of the exit in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param name - The name of the exit.
+     * @param phrase - A phrase used to refer to the exit in narrations.
+     * @param tags - The tags associated with the exit. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags}
+     * @param pos - The position of the exit.
+     * @param unlocked - Whether or not the exit is unlocked.
+     * @param destDisplayName - The display name of the room that the exit leads to.
+     * @param link - The name of the exit in the destination room that this exit links to.
+     * @param description - The description of the room when a player enters from this exit.
+     * @param row - The row number of the exit in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(name, phrase, tags, pos, unlocked, destDisplayName, link, description, row, game) {
+    constructor(name: string, phrase: string, tags: Set<string>, pos: Pos, unlocked: boolean, destDisplayName: string,
+        link: string, description: string, row: number, game: Game) {
         super(game, row);
         this.name = name;
         this.phrase = phrase;
@@ -87,23 +76,24 @@ export default class Exit extends GameEntity {
     /**
      * Unlocks the exit.
      */
-    unlock() {
+    unlock(): void {
         this.unlocked = true;
     }
 
     /**
      * Locks the exit.
      */
-    lock() {
+    lock(): void {
         this.unlocked = false;
     }
 
     /**
      * Sets the exit's destination.
-     * @param {Room} room - The room this exit should lead to.
-     * @param {Exit} exit - The exit in the destination room this exit should lead to.
+     *
+     * @param room - The room this exit should lead to.
+     * @param exit - The exit in the destination room this exit should lead to.
      */
-    setDest(room, exit) {
+    setDest(room: Room, exit: Exit): void {
         this.dest = room;
         this.destDisplayName = room.displayName;
         this.link = exit.name;
@@ -111,17 +101,19 @@ export default class Exit extends GameEntity {
 
     /**
      * Gets the args for moving to this exit for an action directive.
-     * @param {Room} currentLocation - The player's current location.
-     * @param {boolean} isRunning - Whether not the player is running.
+     *
+     * @param currentLocation - The player's current location.
+     * @param isRunning - Whether not the player is running.
+     * @returns [currentLocationId, isRunning, exitName]
      */
-    getQueueMoveActionDirectiveArgs(currentLocation, isRunning) {
+    getQueueMoveActionDirectiveArgs(currentLocation: Room, isRunning: boolean): [string, string, string] {
         return [currentLocation.id, String(isRunning), this.name];
     }
 
     /**
      * Gets a phrase to refer to the exit in narrations.
      */
-    getNamePhrase() {
+    getNamePhrase(): string {
         if (this.phrase !== "") return this.phrase;
         return this.name.match(/.*\d+$/) ? this.name : `the ${this.name}`;
     }
@@ -129,7 +121,7 @@ export default class Exit extends GameEntity {
     /**
      * Gets a phrase to refer to the door in narrations.
      */
-    getDoorPhrase() {
+    getDoorPhrase(): string {
         const namePhrase = this.getNamePhrase();
         const prefix = namePhrase.match(/.*\d+$/) || namePhrase.toLocaleUpperCase().includes("DOOR") || this.hasTag("not knockable") ? `` : `the door to `;
         return `${prefix}${namePhrase}`;
@@ -137,14 +129,12 @@ export default class Exit extends GameEntity {
 
     /**
      * Returns true if the exit has the given tag.
-     * @param {string} tag
      */
-    hasTag(tag) {
+    hasTag(tag: string): boolean {
         return this.tags.has(tag);
     }
 
-    /** @returns {string} */
-    descriptionCell() {
+    descriptionCell(): string {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
     }
 }

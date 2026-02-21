@@ -9,7 +9,7 @@ import Player from "../../Data/Player.js";
 import InventoryItem from "../../Data/InventoryItem.js";
 import Gesture from "../../Data/Gesture.js";
 import Flag from "../../Data/Flag.js";
-import Exit from "../../Data/Exit.js";
+import Exit from "../../Data/Exit.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";
 
 describe("GameEntityFinder test", () => {

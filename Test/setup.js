@@ -25,6 +25,11 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 
 });
 
+/** @import BotCommand from '../Classes/BotCommand.js' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
+
 import GuildContext from '../Classes/GuildContext.js';
 import GameSettings from '../Classes/GameSettings.js';
 import Game from '../Data/Game.js';
@@ -104,9 +109,13 @@ beforeAll(() => {
 
     // Initialize game and bot context with empty command collections.
     const game = new Game(guildContext, DEFAULT_GAME_SETTINGS);
+    /** @type {Collection<string, BotCommand>} */
     const botCommands = new Collection();
+    /** @type {Collection<string, ModeratorCommand>} */
     const moderatorCommands = new Collection();
+    /** @type {Collection<string, PlayerCommand>} */
     const playerCommands = new Collection();
+    /** @type {Collection<string, EligibleCommand>} */
     const eligibleCommands = new Collection();
 
     // Create BotContext singleton and attach to game.
@@ -135,11 +144,11 @@ expect.extend({
     toBeMessageWith
 });
 
-import { PolyPlugin } from "../Classes/PrettyPrinter.js";
+import { PolyPlugin } from "../Classes/PrettyPrinter.ts";
 const polyPlugin = new PolyPlugin()
 
 plugins.DOMElement.test = polyPlugin.test;
-plugins.DOMElement.serialize = polyPlugin.serialize;
+plugins.DOMElement.serialize = /** @type {typeof plugins.DOMElement.serialize} */ (polyPlugin.serialize);
 plugins.DOMCollection.test = () => false;
 plugins.DOMCollection.serialize = () => "";
 plugins.ReactElement.test = () => false;

@@ -9,7 +9,7 @@ import Recipe from '../Data/Recipe.js';
 import RoomItem from '../Data/RoomItem.js';
 import Puzzle from '../Data/Puzzle.js';
 import Event from '../Data/Event.js';
-import EquipmentSlot from '../Data/EquipmentSlot.js';
+import EquipmentSlot from '../Data/EquipmentSlot.ts';
 import InventoryItem from '../Data/InventoryItem.js';
 import Status from '../Data/Status.js';
 import Player from '../Data/Player.js';

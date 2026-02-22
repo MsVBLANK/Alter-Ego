@@ -111,7 +111,7 @@ export default class RecipeItem extends GameConstruct {
 	/**
 	 * Returns true if the given item satisfies the quantity required of this recipe item.
 	 */
-	quantitySatisfiedBy(item: CollatedItem<RoomItem | InventoryItem>): boolean {
+	quantitySatisfiedBy<T extends RoomItem | InventoryItem>(item: CollatedItem<T>): boolean {
 		if (isNaN(item.quantity)) return true;
 		return item.quantity >= this.quantity;
 	}
@@ -119,7 +119,7 @@ export default class RecipeItem extends GameConstruct {
     /**
 	 * Returns true if the given item satisfies the uses required of this recipe item.
 	 */
-    usesSatisfiedBy(item: CollatedItem<RoomItem | InventoryItem>): boolean {
+    usesSatisfiedBy<T extends RoomItem | InventoryItem>(item: CollatedItem<T>): boolean {
         if (isNaN(item.uses) || this.uses === undefined) return true;
         return item.uses >= this.uses;
     }

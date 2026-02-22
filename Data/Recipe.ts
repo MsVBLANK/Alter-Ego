@@ -125,7 +125,7 @@ export default class Recipe extends GameEntity {
      *
      * @param items - A list of items. This must be sorted alphabetically by prefab ID.
      */
-    ingredientsMatch(items: (CollatedItem<InventoryItem | RoomItem> | ItemInstance)[]): boolean {
+    ingredientsMatch<T extends RoomItem | InventoryItem>(items: (CollatedItem<T> | ItemInstance)[]): boolean {
         if (items.length !== this.ingredientsFlat.length) return false;
         for (let [i, item] of items.entries()) {
             const ingredient = this.ingredientsFlat[i];
@@ -144,8 +144,8 @@ export default class Recipe extends GameEntity {
      *
      * @param items - A list of items. This must be sorted alphabetically by prefab ID.
      */
-    getIngredientItems(items: CollatedItem<RoomItem | InventoryItem>[]): CollatedItem<RoomItem | InventoryItem>[] {
-        let ingredients: CollatedItem<RoomItem | InventoryItem>[] = [];
+    getIngredientItems<T extends RoomItem | InventoryItem>(items: CollatedItem<T>[]): CollatedItem<T>[] {
+        let ingredients: CollatedItem<T>[] = [];
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {
                 // Check if this item has the same prefab as the current ingredient and has a sufficient quantity.
@@ -163,7 +163,7 @@ export default class Recipe extends GameEntity {
     /**
      * Calculates how many times the given list of ingredients satisfies this recipe.
      */
-    getSatisfactoryProcessCount(items: CollatedItem<RoomItem | InventoryItem>[]): number {
+    getSatisfactoryProcessCount<T extends RoomItem | InventoryItem>(items: CollatedItem<T>[]): number {
         let satisfactoryItemsCounts: number[] = [];
         if (this.ingredientsFlat.length !== items.length) return 0;
 		const allIngredientQuantitiesAreConstant = this.ingredientsFlat.filter(ingredient => !ingredient.quantityIsConstant).length === 0;
@@ -183,7 +183,7 @@ export default class Recipe extends GameEntity {
 	/**
 	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
 	 */
-	isIngredientAndProduct(item: CollatedItem<RoomItem | InventoryItem> | RecipeItem): boolean {
+	isIngredientAndProduct<T extends RoomItem | InventoryItem>(item: CollatedItem<T> | RecipeItem): boolean {
         const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);
         if (!matchedIngredient) return false;
         const matchedProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id);
@@ -194,7 +194,7 @@ export default class Recipe extends GameEntity {
     /**
      * Gets a map of all values associated with the given items.
      */
-    getIngredientVariableValues(items: CollatedItem<RoomItem | InventoryItem>[]): Map<string, number> {
+    getIngredientVariableValues<T extends RoomItem | InventoryItem>(items: CollatedItem<T>[]): Map<string, number> {
         const variableValues: Map<string, number> = new Map();
         for (const ingredient of this.ingredientsFlat) {
             for (const item of items) {

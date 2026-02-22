@@ -29,6 +29,7 @@ import type Action from "./Action.ts"
 import type GameEntity from "./GameEntity.ts"
 import type Interactable from "../Classes/Interactables/Interactable.ts"
 import Notification from "./Notification.ts"
+import type ItemInstance from "./ItemInstance.ts"
 
 /**
  * @class Player
@@ -1007,9 +1008,9 @@ export default class Player extends RecipeProcessor {
      * @param container - The item's current container.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
      */
-    take (
+    take<T extends ItemInstance | RoomItem | InventoryItem>(
         item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer,
-        inventorySlot: InventorySlot<InventoryItem>): void {
+        inventorySlot: InventorySlot<T>): void {
         // Reduce quantity if the quantity is finite.
         if (!isNaN(item.quantity))
             item.quantity--

@@ -1,4 +1,4 @@
-import PriorityQueue from "../../Classes/PriorityQueue.js";
+import PriorityQueue from "../../Classes/PriorityQueue.ts";
 
 describe("PriorityQueue test", () => {
     beforeEach(() => {

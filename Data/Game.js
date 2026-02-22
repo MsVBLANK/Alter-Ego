@@ -7,7 +7,7 @@ import GameEntitySaver from '../Classes/GameEntitySaver.js';
 import GameLogHandler from '../Classes/GameLogHandler.js';
 import GameNarrationHandler from '../Classes/GameNarrationHandler.js';
 import GameNotificationGenerator from '../Classes/GameNotificationGenerator.js';
-import PriorityQueue from '../Classes/PriorityQueue.js';
+import PriorityQueue from '../Classes/PriorityQueue.ts';
 import Event from './Event.js';
 import TriggerAction from './Actions/TriggerAction.ts';
 import { sendQueuedMessages } from '../Modules/messageHandler.js';

@@ -20,42 +20,40 @@ import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel
  * @param {UserMessage} message - The message to process.
  */
 export function processIncomingMessage(game, message) {
-    if (message.channel.type !== ChannelType.GuildText) return;
-    const isInWhisperChannel = message.channel.parentId === game.guildContext.whisperCategoryId;
-    const isInAnnouncementChannel = message.channel.id === game.guildContext.announcementChannel.id;
-    const isInRoomChannel = game.guildContext.roomCategories.includes(message.channel.parentId);
-    if (!isInWhisperChannel && !isInAnnouncementChannel && !isInRoomChannel) return;
+	if (message.channel.type !== ChannelType.GuildText) return;
+	const isInWhisperChannel = message.channel.parentId === game.guildContext.whisperCategoryId;
+	const isInAnnouncementChannel = message.channel.id === game.guildContext.announcementChannel.id;
+	const isInRoomChannel = game.guildContext.roomCategories.includes(message.channel.parentId);
+	if (!isInWhisperChannel && !isInAnnouncementChannel && !isInRoomChannel) return;
 
-    game.communicationHandler.cacheDialog(message);
+	game.communicationHandler.cacheDialog(message);
 
-    const isModerator = message.member && message.member.roles.cache.has(game.guildContext.moderatorRole.id);
-    const room = game.entityFinder.getRoom(message.channel.name);
-    const whisper = game.entityFinder.getWhisperByChannelId(message.channel.id);
-    const player = game.entityFinder.getLivingPlayerById(message.author.id);
-    if (player) {
-        player.setOnline();
-        const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
-        if (playerNoSpeechStatusEffects.length > 0) {
-            game.communicationHandler.sendMessageToPlayer(player, game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
-            message.delete().catch();
-            return;
-        }
-        const location = isInAnnouncementChannel || isInWhisperChannel ? player.location : room;
-        const dialog = new Dialog(game, message, player, location, message.content, isInAnnouncementChannel, whisper, message.cleanContent);
-        if (dialog.isAnnouncement) {
-            const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            announceAction.performAnnounce(dialog);
-        }
-        else {
-            const sayAction = new SayAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
-            sayAction.performSay(dialog);
-        }
-    }
-    else if (isModerator && (room || whisper)) {
-        const location = whisper ? whisper.location : room;
-        const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
-        game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, message.member);
-    }
+	const isModerator = message.member && message.member.roles.cache.has(game.guildContext.moderatorRole.id);
+	const room = game.entityFinder.getRoom(message.channel.name);
+	const whisper = game.entityFinder.getWhisperByChannelId(message.channel.id);
+	const player = game.entityFinder.getLivingPlayerById(message.author.id);
+	if (player) {
+		player.setOnline();
+		const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects('no speech');
+		if (playerNoSpeechStatusEffects.length > 0) {
+			game.communicationHandler.sendMessageToPlayer(player, game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
+			message.delete().catch();
+			return;
+		}
+		const location = isInAnnouncementChannel || isInWhisperChannel ? player.location : room;
+		const dialog = new Dialog(game, message, player, location, message.content, isInAnnouncementChannel, whisper, message.cleanContent);
+		if (dialog.isAnnouncement) {
+			const announceAction = new AnnounceAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
+			announceAction.performAnnounce(dialog);
+		} else {
+			const sayAction = new SayAction(game, message, dialog.speaker, dialog.location, false, dialog.whisper);
+			sayAction.performSay(dialog);
+		}
+	} else if (isModerator && (room || whisper)) {
+		const location = whisper ? whisper.location : room;
+		const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
+		game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, message.member);
+	}
 }
 
 /**
@@ -69,34 +67,43 @@ export function processIncomingMessage(game, message) {
  * @param {string} [webhookUsername] - The username to use for the narrated webhook message, if applicable.
  */
 export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null, webhookUsername = narration.narratorDisplayName) {
-    if (messageText !== "") {
-        const files = narration.attachments.map((attachment) => attachment.url);
-        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
-        let messageCreateOptions;
-        if (sendWebhookMessage)
-            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, narration.embeds, files, player);
-        else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
+	if (messageText !== '') {
+		const files = narration.attachments.map(attachment => attachment.url);
+		const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+		let messageCreateOptions;
+		if (sendWebhookMessage)
+			messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(
+				messageDisplayType,
+				room.getGame(),
+				messageText,
+				webhookUsername,
+				narration.narratorDisplayIcon,
+				narration.embeds,
+				files,
+				player,
+			);
+		else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
-        room.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    if (sendWebhookMessage) {
-                        const webhook = await getOrCreateWebhook(room.channel);
-                        webhook.send(messageCreateOptions);
-                    }
-                    else await room.channel.send(messageCreateOptions);
-                },
-            },
-            "tell"
-        );
-        if (addSpectate) {
-            room.occupants.forEach((occupant) => {
-                if (doMirrorInSpectateChannel(occupant, player)) {
-                    sendNarrationSpectateMessage(occupant, messageText, messageDisplayType, files, messageCreateOptions);
-                }
-            });
-        }
-    }
+		room.getGame().messageQueue.enqueue(
+			{
+				fire: async () => {
+					if (sendWebhookMessage) {
+						const webhook = await getOrCreateWebhook(room.channel);
+						webhook.send(messageCreateOptions);
+					} else await room.channel.send(messageCreateOptions);
+				},
+				destination: room.channel.id,
+			},
+			'tell',
+		);
+		if (addSpectate) {
+			room.occupants.forEach(occupant => {
+				if (doMirrorInSpectateChannel(occupant, player)) {
+					sendNarrationSpectateMessage(occupant, messageText, messageDisplayType, files, messageCreateOptions);
+				}
+			});
+		}
+	}
 }
 
 /**
@@ -110,39 +117,58 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
  * @param {Player} [player] - The player whose action the narration is about, if applicable.
  */
 export function sendNarrationToWhisper(whisper, narration, messageText, messageTextWithSpectatePrefix, messageDisplayType, addSpectate = true, player = null) {
-    if (messageText !== "") {
-        const files = narration.attachments.map((attachment) => attachment.url);
-        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+	if (messageText !== '') {
+		const files = narration.attachments.map(attachment => attachment.url);
+		const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
 
-        whisper.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    if (whisper.deleted) return;
-                    let messageCreateOptions;
-                    if (sendWebhookMessage) {
-                        messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, narration.narratorDisplayName, narration.narratorDisplayIcon, narration.embeds, files, player);
-                        const webhook = await getOrCreateWebhook(whisper.channel);
-                        webhook.send(messageCreateOptions);
-                    }
-                    else {
-                        messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, player);
-                        await whisper.channel.send(messageCreateOptions);
-                    }
-                },
-            },
-            "tell"
-        );
-        if (addSpectate) {
-            whisper.players.forEach((player) => {
-                if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
-                    let messageCreateOptions;
-                    if (sendWebhookMessage) messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix, narration.narratorDisplayName, narration.narratorDisplayIcon, [], [], player);
-                    else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix);
-                    sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, messageCreateOptions);
-                }
-            });
-        }
-    }
+		whisper.getGame().messageQueue.enqueue(
+			{
+				fire: async () => {
+					if (whisper.deleted) return;
+					let messageCreateOptions;
+					if (sendWebhookMessage) {
+						messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(
+							messageDisplayType,
+							whisper.getGame(),
+							messageText,
+							narration.narratorDisplayName,
+							narration.narratorDisplayIcon,
+							narration.embeds,
+							files,
+							player,
+						);
+						const webhook = await getOrCreateWebhook(whisper.channel);
+						webhook.send(messageCreateOptions);
+					} else {
+						messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageText, player);
+						await whisper.channel.send(messageCreateOptions);
+					}
+				},
+				destination: whisper.channel.id,
+			},
+			'tell',
+		);
+		if (addSpectate) {
+			whisper.players.forEach(player => {
+				if (player.canSee() && player.isConscious() && player.spectateChannel !== null) {
+					let messageCreateOptions;
+					if (sendWebhookMessage)
+						messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(
+							messageDisplayType,
+							whisper.getGame(),
+							messageTextWithSpectatePrefix,
+							narration.narratorDisplayName,
+							narration.narratorDisplayIcon,
+							[],
+							[],
+							player,
+						);
+					else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, whisper.getGame(), messageTextWithSpectatePrefix);
+					sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, messageCreateOptions);
+				}
+			});
+		}
+	}
 }
 
 /**
@@ -155,22 +181,36 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
  * @param {Interactable[]} interactables - An array of interactables.
  */
 export function sendNotification(player, messageText, messageDisplayType, addSpectate = true, attachments = new Collection(), interactables = []) {
-    const files = attachments.map((attachment) => attachment.url);
+	const files = attachments.map(attachment => attachment.url);
 
-    if (!player.isNPC) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    const message = await player.notificationChannel.send(discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables));
-                    if (message && interactables.length > 0) player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
-                },
-            },
-            "tell"
-        );
-    }
-    if (addSpectate && player.spectateChannel !== null) {
-        sendNarrationSpectateMessage(player, messageText, messageDisplayType, files, discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files));
-    }
+	if (!player.isNPC) {
+		player.getGame().messageQueue.enqueue(
+			{
+				fire: async () => {
+					const message = await player.notificationChannel.send(
+						discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables),
+					);
+					if (message && interactables.length > 0)
+						player.getGame().botContext.interactableManager.addInteractableMessage(
+							player.notificationChannel.id,
+							message.id,
+							interactables.map(interactable => interactable.customId),
+						);
+				},
+				destination: player.notificationChannel.id,
+			},
+			'tell',
+		);
+	}
+	if (addSpectate && player.spectateChannel !== null) {
+		sendNarrationSpectateMessage(
+			player,
+			messageText,
+			messageDisplayType,
+			files,
+			discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files),
+		);
+	}
 }
 
 /**
@@ -184,35 +224,49 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
  * @param {Interactable[]} interactables - An array of interactables.
  */
 export function sendRoomDescription(player, location, descriptionText, occupantsString, defaultDropFixtureText, addSpectate = true, interactables = []) {
-    if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
-        if (!player.isNPC) {
-            location.getGame().messageQueue.enqueue(
-                {
-                    fire: async () => {
-                        const message = await player.notificationChannel.send({
-                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor, interactables),
-                            flags: MessageFlags.IsComponentsV2,
-                        });
-                        if (message && interactables.length > 0) player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
-                    },
-                },
-                "tell"
-            );
-        }
-        if (addSpectate && player.spectateChannel !== null) {
-            location.getGame().messageQueue.enqueue(
-                {
-                    fire: async () => {
-                        await player.spectateChannel.send({
-                            components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor),
-                            flags: MessageFlags.IsComponentsV2,
-                        });
-                    },
-                },
-                "spectator"
-            );
-        }
-    }
+	if (!player.isNPC || (addSpectate && player.spectateChannel !== null)) {
+		if (!player.isNPC) {
+			location.getGame().messageQueue.enqueue(
+				{
+					fire: async () => {
+						const message = await player.notificationChannel.send({
+							components: discordUtils.createRoomDescriptionComponents(
+								location,
+								descriptionText,
+								occupantsString,
+								defaultDropFixtureText,
+								location.getGame().settings.embedAccentColor,
+								interactables,
+							),
+							flags: MessageFlags.IsComponentsV2,
+						});
+						if (message && interactables.length > 0)
+							player.getGame().botContext.interactableManager.addInteractableMessage(
+								player.notificationChannel.id,
+								message.id,
+								interactables.map(interactable => interactable.customId),
+							);
+					},
+					destination: player.notificationChannel.id,
+				},
+				'tell',
+			);
+		}
+		if (addSpectate && player.spectateChannel !== null) {
+			location.getGame().messageQueue.enqueue(
+				{
+					fire: async () => {
+						await player.spectateChannel.send({
+							components: discordUtils.createRoomDescriptionComponents(location, descriptionText, occupantsString, defaultDropFixtureText, location.getGame().settings.embedAccentColor),
+							flags: MessageFlags.IsComponentsV2,
+						});
+					},
+					destination: player.spectateChannel.id,
+				},
+				'spectator',
+			);
+		}
+	}
 }
 
 /**
@@ -220,7 +274,7 @@ export function sendRoomDescription(player, location, descriptionText, occupants
  * @param {Message} message - The message to remove interactable components from.
  */
 export function removeInteractablesFromMessage(message) {
-    message.edit({ components: message.components.filter(component => component.type !== ComponentType.ActionRow)});
+	message.edit({ components: message.components.filter(component => component.type !== ComponentType.ActionRow) });
 }
 
 /**
@@ -230,29 +284,28 @@ export function removeInteractablesFromMessage(message) {
  * @param {Command} command - The command to display the help menu for.
  */
 export function sendCommandHelp(game, channel, command) {
-    const commandName = capitalizeFirstLetter(command.config.name.substring(0, command.config.name.indexOf('_')));
-    const title = `**${commandName} Command Help**`;
-    const description = command.config.description;
-    let aliasString = "";
-    for (const alias of command.config.aliases)
-        aliasString += `\`${game.settings.commandPrefix}${alias}\` `;
-    const usage = command.usage(game.settings);
-    const details = command.config.details;
-    const thumbnailURL = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-    const color = game.settings.embedAccentColor;
+	const commandName = capitalizeFirstLetter(command.config.name.substring(0, command.config.name.indexOf('_')));
+	const title = `**${commandName} Command Help**`;
+	const description = command.config.description;
+	let aliasString = '';
+	for (const alias of command.config.aliases) aliasString += `\`${game.settings.commandPrefix}${alias}\` `;
+	const usage = command.usage(game.settings);
+	const details = command.config.details;
+	const thumbnailURL = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
+	const color = game.settings.embedAccentColor;
 
-    game.messageQueue.enqueue(
-        {
-            fire: async () =>
-                {
-                    await channel.send({
-                        components: discordUtils.createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color),
-                        flags: MessageFlags.IsComponentsV2,
-                    });
-                }
-        },
-        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
-    );
+	game.messageQueue.enqueue(
+		{
+			fire: async () => {
+				await channel.send({
+					components: discordUtils.createCommandHelpComponents(title, description, aliasString, usage, details, thumbnailURL, color),
+					flags: MessageFlags.IsComponentsV2,
+				});
+			},
+			destination: channel.id,
+		},
+		channel.id === game.guildContext.commandChannel.id ? 'mod' : 'mechanic',
+	);
 }
 
 /**
@@ -261,14 +314,15 @@ export function sendCommandHelp(game, channel, command) {
  * @param {string} messageText - The message to send.
  */
 export function sendLogMessage(game, messageText) {
-    game.messageQueue.enqueue(
-        {
-            fire: async () => {
-                await game.guildContext.logChannel.send(messageText);
-            },
-        },
-        "log"
-    );
+	game.messageQueue.enqueue(
+		{
+			fire: async () => {
+				await game.guildContext.logChannel.send(messageText);
+			},
+			destination: game.guildContext.logChannel.id,
+		},
+		'log',
+	);
 }
 
 /**
@@ -278,14 +332,15 @@ export function sendLogMessage(game, messageText) {
  * @param {string} messageText - The message to send.
  */
 export function sendGameMechanicMessage(game, channel, messageText) {
-    game.messageQueue.enqueue(
-        {
-            fire: async () => {
-                await channel.send(messageText);
-            },
-        },
-        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
-    );
+	game.messageQueue.enqueue(
+		{
+			fire: async () => {
+				await channel.send(messageText);
+			},
+			destination: channel.id,
+		},
+		channel.id === game.guildContext.commandChannel.id ? 'mod' : 'mechanic',
+	);
 }
 
 /**
@@ -295,18 +350,19 @@ export function sendGameMechanicMessage(game, channel, messageText) {
  * @param {string} messageText - The text to send in response.
  */
 export function sendReply(game, message, messageText) {
-    game.messageQueue.enqueue(
-        {
-            fire: async () => {
-                if (message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id) {
-                    await message.reply(messageText);
-                } else {
-                    await message.author.send(messageText);
-                }
-            },
-        },
-        message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
-    );
+	game.messageQueue.enqueue(
+		{
+			fire: async () => {
+				if (message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id) {
+					await message.reply(messageText);
+				} else {
+					await message.author.send(messageText);
+				}
+			},
+			destination: message.channel.id,
+		},
+		message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id ? 'mod' : 'mechanic',
+	);
 }
 
 /**
@@ -317,20 +373,26 @@ export function sendReply(game, message, messageText) {
  * @param {string[]} [files] - A collection of attachments to send, if any.
  * @param {object} [messageCreateOptions] - The message create options to send. Optional.
  */
-export function sendNarrationSpectateMessage(player, messageText, messageDisplayType, files = [], messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files)) {
-    player.getGame().messageQueue.enqueue(
-        {
-            fire: async () => {
-                const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
-                if (sendWebhookMessage) {
-                    const webhook = await getOrCreateWebhook(player.spectateChannel);
-                    await webhook.send(messageCreateOptions);
-                }
-                else await player.spectateChannel.send(messageCreateOptions);
-            },
-        },
-        "spectator"
-    );
+export function sendNarrationSpectateMessage(
+	player,
+	messageText,
+	messageDisplayType,
+	files = [],
+	messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files),
+) {
+	player.getGame().messageQueue.enqueue(
+		{
+			fire: async () => {
+				const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+				if (sendWebhookMessage) {
+					const webhook = await getOrCreateWebhook(player.spectateChannel);
+					await webhook.send(messageCreateOptions);
+				} else await player.spectateChannel.send(messageCreateOptions);
+			},
+			destination: player.spectateChannel.id,
+		},
+		'spectator',
+	);
 }
 
 /**
@@ -346,28 +408,19 @@ export function sendNarrationSpectateMessage(player, messageText, messageDisplay
  * @param {Player} [speaker] - The player who initiated the webhook message. Optional.
  */
 export function sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, embeds = [], files = [], message, messageDisplayType = MessageDisplayType.PLAIN_TEXT, speaker) {
-    if (player.spectateChannel !== null) {
-        player.getGame().messageQueue.enqueue(
-            {
-                fire: async () => {
-                    const webhook = await getOrCreateWebhook(player.spectateChannel);
-                    const webhookMessage = await sendWebhookMessage(
-                        webhook,
-                        messageText,
-                        webhookUsername,
-                        webhookAvatarURL,
-                        embeds,
-                        files,
-                        player.getGame(),
-                        messageDisplayType,
-                        speaker
-                    );
-                    if (message) player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
-                },
-            },
-            "spectator"
-        );
-    }
+	if (player.spectateChannel !== null) {
+		player.getGame().messageQueue.enqueue(
+			{
+				fire: async () => {
+					const webhook = await getOrCreateWebhook(player.spectateChannel);
+					const webhookMessage = await sendWebhookMessage(webhook, messageText, webhookUsername, webhookAvatarURL, embeds, files, player.getGame(), messageDisplayType, speaker);
+					if (message) player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
+				},
+				destination: player.spectateChannel.id,
+			},
+			'spectator',
+		);
+	}
 }
 
 /**
@@ -377,20 +430,20 @@ export function sendWebhookSpectateMessage(player, messageText, webhookUsername,
  * @param {UserMessage} messageNew - The new message after being edited.
  */
 export function editSpectatorMessage(game, messageOld, messageNew) {
-    const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(messageOld);
-    if (!spectateMirrors) return;
-    spectateMirrors.forEach(async (mirror) => {
-        const webhook = await messageOld.client.fetchWebhook(mirror.webhookId);
-        if (webhook) {
-            let messageText = messageNew.content;
-            if (messageOld.channel.type === ChannelType.GuildText && messageOld.channel.parentId === game.guildContext.whisperCategoryId) {
-                const relatedMessage = await webhook.fetchMessage(mirror.messageId);
-                const regexGroups = relatedMessage.content.match(new RegExp(/((?:-# )?\*\(Whispered(?:.*)\):\*\n)(.*)/m));
-                if (regexGroups) messageText = regexGroups[1] + messageNew.content;
-            }
-            webhook.editMessage(mirror.messageId, { content: messageText });
-        }
-    });
+	const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(messageOld);
+	if (!spectateMirrors) return;
+	spectateMirrors.forEach(async mirror => {
+		const webhook = await messageOld.client.fetchWebhook(mirror.webhookId);
+		if (webhook) {
+			let messageText = messageNew.content;
+			if (messageOld.channel.type === ChannelType.GuildText && messageOld.channel.parentId === game.guildContext.whisperCategoryId) {
+				const relatedMessage = await webhook.fetchMessage(mirror.messageId);
+				const regexGroups = relatedMessage.content.match(new RegExp(/((?:-# )?\*\(Whispered(?:.*)\):\*\n)(.*)/m));
+				if (regexGroups) messageText = regexGroups[1] + messageNew.content;
+			}
+			webhook.editMessage(mirror.messageId, { content: messageText });
+		}
+	});
 }
 
 /**
@@ -399,12 +452,12 @@ export function editSpectatorMessage(game, messageOld, messageNew) {
  * @param {UserMessage|import('discord.js').PartialMessage} message - The message being deleted.
  */
 export function deleteSpectatorMessage(game, message) {
-    const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(message);
-    if (!spectateMirrors) return;
-    spectateMirrors.forEach(async (mirror) => {
-        const webhook = await message.client.fetchWebhook(mirror.webhookId);
-        webhook.deleteMessage(mirror.messageId);
-    });
+	const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(message);
+	if (!spectateMirrors) return;
+	spectateMirrors.forEach(async mirror => {
+		const webhook = await message.client.fetchWebhook(mirror.webhookId);
+		webhook.deleteMessage(mirror.messageId);
+	});
 }
 
 /**
@@ -412,11 +465,10 @@ export function deleteSpectatorMessage(game, message) {
  * @param {TextChannel} channel - The channel to get or create a webhook for.
  */
 export async function getOrCreateWebhook(channel) {
-    const webhooks = await channel.fetchWebhooks();
-    let webhook = webhooks.find(webhook => webhook.owner.id === channel.client.user.id);
-    if (webhook === undefined)
-        webhook = await channel.createWebhook({ name: channel.name });
-    return webhook;
+	const webhooks = await channel.fetchWebhooks();
+	let webhook = webhooks.find(webhook => webhook.owner.id === channel.client.user.id);
+	if (webhook === undefined) webhook = await channel.createWebhook({ name: channel.name });
+	return webhook;
 }
 
 /**
@@ -432,22 +484,22 @@ export async function getOrCreateWebhook(channel) {
  * @param {Player} [player] - The player who initiated the webhook message. Optional.
  */
 export async function sendWebhookMessage(webhook, content, username, avatarURL, embeds = [], files = [], game, messageDisplayType = MessageDisplayType.PLAIN_TEXT, player) {
-    const createdMessage = await webhook.send(discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, game, content, username, avatarURL, embeds, files, player));
-    return createdMessage;
+	const createdMessage = await webhook.send(discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, game, content, username, avatarURL, embeds, files, player));
+	return createdMessage;
 }
 
 /**
  * @param {Game} game - The game whose message queue should have its messages sent.
  */
 export async function sendQueuedMessages(game) {
-    await game.messageQueue.process();
+	await game.messageQueue.process();
 }
 
 /**
  * @param {Game} game - The game whose message queue should be emptied.
  */
 export function clearQueue(game) {
-    game.messageQueue.clear();
+	game.messageQueue.clear();
 }
 
 /**
@@ -456,9 +508,11 @@ export function clearQueue(game) {
  * @param {Player} performer - The player who performed the action.
  */
 function doMirrorInSpectateChannel(player, performer) {
-    return (performer === null || performer.name !== player.name)
-        && (!player.hasBehaviorAttribute("no channel") || player.hasBehaviorAttribute("see room"))
-        && player.canSee()
-        && player.isConscious()
-        && player.spectateChannel !== null
+	return (
+		(performer === null || performer.name !== player.name) &&
+		(!player.hasBehaviorAttribute('no channel') || player.hasBehaviorAttribute('see room')) &&
+		player.canSee() &&
+		player.isConscious() &&
+		player.spectateChannel !== null
+	);
 }

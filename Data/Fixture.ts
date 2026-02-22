@@ -339,7 +339,7 @@ export default class Fixture extends RecipeProcessor {
 	 * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
 	 * @returns The instantiated room item.
 	 */
-	protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
+	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
         proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = ""): RoomItem {
 		const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);

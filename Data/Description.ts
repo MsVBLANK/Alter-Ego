@@ -69,7 +69,7 @@ export default class Description extends GameConstruct {
 		return this.#errors;
 	}
 
-	toString(): string {
+	override toString(): string {
 		return stringify(this.document);
 	}
 

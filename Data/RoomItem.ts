@@ -1,11 +1,11 @@
-import InventorySlot from "./InventorySlot.ts"
-import ItemInstance from "./ItemInstance.ts"
-import DestroyAction from "./Actions/DestroyAction.ts"
-import InstantiateAction from "./Actions/InstantiateAction.ts"
-import { Collection } from "discord.js"
-import type Room from "./Room.ts"
-import type Game from "./Game.ts"
-import type Player from "./Player.ts"
+import { Collection } from "discord.js";
+import DestroyAction from "./Actions/DestroyAction.ts";
+import InstantiateAction from "./Actions/InstantiateAction.ts";
+import type Game from "./Game.ts";
+import InventorySlot from "./InventorySlot.ts";
+import ItemInstance from "./ItemInstance.ts";
+import type Player from "./Player.ts";
+import type Room from "./Room.ts";
 
 /**
  * Represents an item in a room that a player can take with them.

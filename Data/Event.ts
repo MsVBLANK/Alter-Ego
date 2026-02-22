@@ -1,13 +1,13 @@
-import Description from "./Description.ts"
-import GameEntity from "./GameEntity.ts"
-import EndAction from "./Actions/EndAction.ts"
-import InflictAction from "./Actions/InflictAction.ts"
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js"
-import Timer from "../Classes/Timer.js"
-import { DateTime, type Duration } from "luxon"
-import { parse } from "date-fns"
-import type Status from "./Status.js"
-import type Game from "./Game.js"
+import { parse } from "date-fns";
+import { DateTime, type Duration } from "luxon";
+import Timer from "../Classes/Timer.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import EndAction from "./Actions/EndAction.ts";
+import InflictAction from "./Actions/InflictAction.ts";
+import Description from "./Description.ts";
+import type Game from "./Game.js";
+import GameEntity from "./GameEntity.ts";
+import type Status from "./Status.js";
 
 /**
  * Represents a timed event in the game.

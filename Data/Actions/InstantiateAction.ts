@@ -1,9 +1,9 @@
+import { instantiateInventoryItem, instantiateRoomItem } from "../../Modules/itemManager.js";
 import Action from "../Action.ts";
-import { instantiateRoomItem, instantiateInventoryItem } from "../../Modules/itemManager.js";
+import type InventoryItem from "../InventoryItem.js";
 import ItemInstance from "../ItemInstance.ts";
 import type Prefab from "../Prefab.js";
 import type RoomItem from "../RoomItem.js";
-import type InventoryItem from "../InventoryItem.js";
 
 /**
  * Represents an instantiate action.

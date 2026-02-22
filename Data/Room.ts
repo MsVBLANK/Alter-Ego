@@ -1,10 +1,10 @@
-import Description from "./Description.ts"
-import GameEntity from "./GameEntity.ts"
-import { generatePlayerListString, sortPlayersByDisplayName } from "../Modules/helpers.ts"
-import { Collection, type TextChannel } from "discord.js"
-import type Exit from "./Exit.ts"
-import type Game from "./Game.ts"
-import Player from "./Player.ts"
+import { Collection, type TextChannel } from "discord.js";
+import { generatePlayerListString, sortPlayersByDisplayName } from "../Modules/helpers.ts";
+import Description from "./Description.ts";
+import type Exit from "./Exit.ts";
+import type Game from "./Game.ts";
+import GameEntity from "./GameEntity.ts";
+import Player from "./Player.ts";
 
 /**
  * Represents a room in the game.

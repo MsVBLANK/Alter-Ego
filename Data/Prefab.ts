@@ -1,10 +1,10 @@
-﻿import Description from './Description.ts';
-import GameEntity from './GameEntity.ts';
-import { Collection } from 'discord.js';
-import type Status from "./Status.js"
-import type InventorySlot from "./InventorySlot.ts"
-import type ItemInstance from "./ItemInstance.ts"
-import type Game from "./Game.ts"
+﻿import { Collection } from "discord.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import GameEntity from "./GameEntity.ts";
+import type InventorySlot from "./InventorySlot.ts";
+import type ItemInstance from "./ItemInstance.ts";
+import type Status from "./Status.js";
 
 /**
  * Represents the concept of an item.

@@ -1,11 +1,11 @@
-import {type Attachment, Collection, type Embed} from "discord.js";
-import GameConstruct from "./GameConstruct.ts";
+import { type Attachment, Collection, type Embed } from "discord.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
+import type Game from "./Game.js";
+import GameConstruct from "./GameConstruct.ts";
+import type InventoryItem from "./InventoryItem.js";
 import type Player from "./Player.js";
 import type Room from "./Room.js";
 import type Whisper from "./Whisper.js";
-import type InventoryItem from "./InventoryItem.js";
-import type Game from "./Game.js";
 
 /**
  * Represents dialog spoken aloud by a player.

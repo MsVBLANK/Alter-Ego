@@ -1,15 +1,15 @@
-import Description from './Description.ts';
-import Event from './Event.ts';
-import Flag from './Flag.ts';
-import Prefab from './Prefab.ts';
-import ItemContainer from './ItemContainer.ts';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-import type Room from "./Room.js"
-import type Fixture from "./Fixture.ts"
-import type Game from "./Game.ts"
-import type RoomItem from "./RoomItem.js"
-import type Player from "./Player.ts"
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import Description from "./Description.ts";
+import Event from "./Event.ts";
+import type Fixture from "./Fixture.ts";
+import Flag from "./Flag.ts";
+import type Game from "./Game.ts";
+import ItemContainer from "./ItemContainer.ts";
 import type ItemInstance from "./ItemInstance.ts";
+import type Player from "./Player.ts";
+import Prefab from "./Prefab.ts";
+import type Room from "./Room.js";
+import type RoomItem from "./RoomItem.js";
 
 /**
  * Represents an interactable entity with correct, incorrect, and limited ways to engage with it.

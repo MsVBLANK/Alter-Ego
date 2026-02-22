@@ -1,8 +1,8 @@
-﻿import Description from './Description.ts';
-import GameEntity from './GameEntity.ts';
-import type { Duration } from "luxon"
-import type Timer from "../Classes/Timer.js"
-import type Game from "./Game.ts"
+﻿import type { Duration } from "luxon";
+import type Timer from "../Classes/Timer.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import GameEntity from "./GameEntity.ts";
 
 /**
  * Also referred to as a StatusEffect. Represents a condition that can be applied to a player.

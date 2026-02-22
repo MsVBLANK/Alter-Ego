@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.js";
 import type EquipmentSlot from "../EquipmentSlot.js";
+import type InventoryItem from "../InventoryItem.js";
 import type Player from "../Player.js";
 
 /**

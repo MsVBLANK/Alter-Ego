@@ -1,12 +1,12 @@
-﻿import Description from "./Description.ts"
-import InventorySlot from "./InventorySlot.ts"
-import ItemInstance from "./ItemInstance.ts"
-import { replaceInventoryItem } from "../Modules/itemManager.js"
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js"
-import { Collection } from "discord.js"
-import type Player from "./Player.js"
-import type Game from "./Game.ts"
-import type RoomItem from "./RoomItem.js"
+﻿import { Collection } from "discord.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { replaceInventoryItem } from "../Modules/itemManager.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import InventorySlot from "./InventorySlot.ts";
+import ItemInstance from "./ItemInstance.ts";
+import type Player from "./Player.js";
+import type RoomItem from "./RoomItem.js";
 
 /**
  * Represents an item that is currently possessed by a player.

@@ -1,11 +1,11 @@
-import GameEntity from "./GameEntity.ts";
-import Whisper from "./Whisper.js";
 import { generatePlayerListString } from "../Modules/helpers.ts";
+import type Action from "./Action.ts";
 import type Fixture from "./Fixture.ts";
-import type Player from "./Player.js";
 import type Game from "./Game.ts";
-import type Action from "./Action.ts"
-import type Room from "./Room.js"
+import GameEntity from "./GameEntity.ts";
+import type Player from "./Player.js";
+import type Room from "./Room.js";
+import Whisper from "./Whisper.js";
 
 export default class HidingSpot extends GameEntity {
     /**

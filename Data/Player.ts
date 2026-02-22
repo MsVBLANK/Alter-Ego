@@ -1,35 +1,35 @@
-import CollatedItem from "./CollatedItem.ts"
-import Fixture from "./Fixture.ts"
-import Game from "./Game.ts"
-import Room from "./Room.js"
-import RoomItem from "./RoomItem.js"
-import RecipeProcessor from "./RecipeProcessor.ts"
-import Puzzle from "./Puzzle.js"
-import Status from "./Status.js"
-import CureAction from "./Actions/CureAction.ts"
-import DieAction from "./Actions/DieAction.ts"
-import InflictAction from "./Actions/InflictAction.ts"
-import InstantiateAction from "./Actions/InstantiateAction.ts"
-import MoveAction from "./Actions/MoveAction.ts"
-import QueueMoveAction from "./Actions/QueueMoveAction.ts"
-import StopAction from "./Actions/StopAction.ts"
-import Timer from "../Classes/Timer.js"
-import { MessageDisplayType } from "../Modules/enums.js"
-import * as itemManager from "../Modules/itemManager.js"
-import { itemIdentifierMatches } from "../Modules/matchers.js"
-import { Collection, GuildMember, type TextChannel } from "discord.js"
-import type EquipmentSlot from "./EquipmentSlot.ts"
-import type Exit from "./Exit.ts"
-import type { Duration } from "luxon"
-import type InventoryItem from "./InventoryItem.ts"
-import type InventorySlot from "./InventorySlot.ts"
-import type Recipe from "./Recipe.js"
-import type Prefab from "./Prefab.js"
-import type Action from "./Action.ts"
-import type GameEntity from "./GameEntity.ts"
-import type Interactable from "../Classes/Interactables/Interactable.ts"
-import Notification from "./Notification.ts"
-import type ItemInstance from "./ItemInstance.ts"
+import { Collection, GuildMember, type TextChannel } from "discord.js";
+import type { Duration } from "luxon";
+import type Interactable from "../Classes/Interactables/Interactable.ts";
+import Timer from "../Classes/Timer.js";
+import { MessageDisplayType } from "../Modules/enums.js";
+import * as itemManager from "../Modules/itemManager.js";
+import { itemIdentifierMatches } from "../Modules/matchers.js";
+import type Action from "./Action.ts";
+import CureAction from "./Actions/CureAction.ts";
+import DieAction from "./Actions/DieAction.ts";
+import InflictAction from "./Actions/InflictAction.ts";
+import InstantiateAction from "./Actions/InstantiateAction.ts";
+import MoveAction from "./Actions/MoveAction.ts";
+import QueueMoveAction from "./Actions/QueueMoveAction.ts";
+import StopAction from "./Actions/StopAction.ts";
+import CollatedItem from "./CollatedItem.ts";
+import type EquipmentSlot from "./EquipmentSlot.ts";
+import type Exit from "./Exit.ts";
+import Fixture from "./Fixture.ts";
+import Game from "./Game.ts";
+import type GameEntity from "./GameEntity.ts";
+import type InventoryItem from "./InventoryItem.ts";
+import type InventorySlot from "./InventorySlot.ts";
+import type ItemInstance from "./ItemInstance.ts";
+import Notification from "./Notification.ts";
+import type Prefab from "./Prefab.js";
+import Puzzle from "./Puzzle.js";
+import type Recipe from "./Recipe.js";
+import RecipeProcessor from "./RecipeProcessor.ts";
+import Room from "./Room.js";
+import RoomItem from "./RoomItem.js";
+import Status from "./Status.js";
 
 /**
  * @class Player

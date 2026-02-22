@@ -1,13 +1,13 @@
-﻿import GameConstruct from "./GameConstruct.ts";
-import Player from "./Player.js";
-import UnhideAction from "./Actions/UnhideAction.ts";
-import { capitalizeFirstLetter } from "../Modules/helpers.ts";
+﻿import { Attachment, Collection, Embed, type GuildMember } from "discord.js";
 import { MessageDisplayType } from "../Modules/enums.js";
-import { Attachment, Collection, Embed, type GuildMember } from "discord.js"
-import type Action from "./Action.ts"
-import type Room from "./Room.js"
-import type Whisper from "./Whisper.js"
-import type Game from "./Game.ts"
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
+import type Action from "./Action.ts";
+import UnhideAction from "./Actions/UnhideAction.ts";
+import type Game from "./Game.ts";
+import GameConstruct from "./GameConstruct.ts";
+import Player from "./Player.js";
+import type Room from "./Room.js";
+import type Whisper from "./Whisper.js";
 
 /**
  * Represents a narration in the game.

@@ -1,9 +1,9 @@
+import { Collection } from "discord.js";
+import type Game from "./Game.js";
 import InventorySlot from "./InventorySlot.ts";
 import ItemContainer from "./ItemContainer.ts";
-import { Collection } from "discord.js";
-import type Prefab from "./Prefab.js";
-import type Game from "./Game.js";
 import type Player from "./Player.js";
+import type Prefab from "./Prefab.js";
 import type RecipeItem from "./RecipeItem.js";
 
 /**

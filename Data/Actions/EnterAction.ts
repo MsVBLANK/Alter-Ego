@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
-import type Room from "../Room.js";
 import type Exit from "../Exit.js";
+import type Room from "../Room.js";
 
 /**
  * Represents an enter action.

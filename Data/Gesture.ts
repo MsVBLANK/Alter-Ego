@@ -1,7 +1,7 @@
-import Description from "./Description.ts"
-import GameEntity from "./GameEntity.ts"
-import type Status from "./Status.js"
-import type Game from "./Game.ts"
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import GameEntity from "./GameEntity.ts";
+import type Status from "./Status.js";
 
 /**
  * Represents a form of body language that a player can use to communicate non-verbally.

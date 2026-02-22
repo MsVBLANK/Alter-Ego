@@ -1,9 +1,9 @@
-import GameConstruct from "./GameConstruct.ts";
 import { randomUUID } from "crypto";
+import type Game from "./Game.js";
+import GameConstruct from "./GameConstruct.ts";
 import type Player from "./Player.js";
 import type Room from "./Room.js";
 import type Whisper from "./Whisper.js";
-import type Game from "./Game.js";
 
 /**
  * Represents an action taken by a player.

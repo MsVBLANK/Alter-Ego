@@ -1,31 +1,31 @@
-import BotContext from "../Classes/BotContext.js"
-import GameConstants from "../Classes/GameConstants.js"
-import GameCommunicationHandler from "../Classes/GameCommunicationHandler.js"
-import GameEntityFinder from "../Classes/GameEntityFinder.js"
-import GameEntityLoader from "../Classes/GameEntityLoader.js"
-import GameEntitySaver from "../Classes/GameEntitySaver.js"
-import GameLogHandler from "../Classes/GameLogHandler.js"
-import GameNarrationHandler from "../Classes/GameNarrationHandler.js"
-import GameNotificationGenerator from "../Classes/GameNotificationGenerator.js"
-import PriorityQueue from "../Classes/PriorityQueue.js"
-import Event from "./Event.ts"
-import TriggerAction from "./Actions/TriggerAction.ts"
-import { Collection } from "discord.js"
-import { DateTime } from "luxon"
-import type GuildContext from "../Classes/GuildContext.js"
-import type GameSettings from "../Classes/GameSettings.js"
-import type Room from "./Room.js"
-import type Fixture from "./Fixture.ts"
-import type Prefab from "./Prefab.js"
-import type Recipe from "./Recipe.js"
-import type RoomItem from "./RoomItem.js"
-import type Puzzle from "./Puzzle.js"
-import type Status from "./Status.js"
-import type Player from "./Player.js"
-import type InventoryItem from "./InventoryItem.js"
-import type Gesture from "./Gesture.js"
-import type Flag from "./Flag.ts"
-import type Whisper from "./Whisper.js"
+import { Collection } from "discord.js";
+import { DateTime } from "luxon";
+import BotContext from "../Classes/BotContext.js";
+import GameCommunicationHandler from "../Classes/GameCommunicationHandler.js";
+import GameConstants from "../Classes/GameConstants.js";
+import GameEntityFinder from "../Classes/GameEntityFinder.js";
+import GameEntityLoader from "../Classes/GameEntityLoader.js";
+import GameEntitySaver from "../Classes/GameEntitySaver.js";
+import GameLogHandler from "../Classes/GameLogHandler.js";
+import GameNarrationHandler from "../Classes/GameNarrationHandler.js";
+import GameNotificationGenerator from "../Classes/GameNotificationGenerator.js";
+import type GameSettings from "../Classes/GameSettings.js";
+import type GuildContext from "../Classes/GuildContext.js";
+import PriorityQueue from "../Classes/PriorityQueue.js";
+import TriggerAction from "./Actions/TriggerAction.ts";
+import Event from "./Event.ts";
+import type Fixture from "./Fixture.ts";
+import type Flag from "./Flag.ts";
+import type Gesture from "./Gesture.js";
+import type InventoryItem from "./InventoryItem.js";
+import type Player from "./Player.js";
+import type Prefab from "./Prefab.js";
+import type Puzzle from "./Puzzle.js";
+import type Recipe from "./Recipe.js";
+import type Room from "./Room.js";
+import type RoomItem from "./RoomItem.js";
+import type Status from "./Status.js";
+import type Whisper from "./Whisper.js";
 
 /**
  * Represents a game managed by the bot.

@@ -1,8 +1,8 @@
 import Action from "../Action.ts";
+import type Exit from "../Exit.js";
 import Room from "../Room.js";
 import MoveAction from "./MoveAction.ts";
 import StartMoveAction from "./StartMoveAction.ts";
-import type Exit from "../Exit.js";
 
 /**
  * Represents a queue move action.

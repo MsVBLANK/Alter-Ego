@@ -1,19 +1,19 @@
-import CollatedItem from "./CollatedItem.ts"
-import HidingSpot from "./HidingSpot.js"
-import RecipeProcessor from "./RecipeProcessor.ts"
-import DeactivateAction from "./Actions/DeactivateAction.ts"
-import InstantiateAction from "./Actions/InstantiateAction.ts"
-import Timer from "../Classes/Timer.js"
-import { getChildItems } from "../Modules/itemManager.js"
-import { Duration } from "luxon"
-import { MessageDisplayType } from "../Modules/enums.js"
-import type Room from "./Room.js"
-import type Puzzle from "./Puzzle.js"
-import type Game from "./Game.js"
-import type RoomItem from "./RoomItem.js"
-import type Player from "./Player.js"
-import type Prefab from "./Prefab.js"
-import type Recipe from "./Recipe.js"
+import { Duration } from "luxon";
+import Timer from "../Classes/Timer.js";
+import { MessageDisplayType } from "../Modules/enums.js";
+import { getChildItems } from "../Modules/itemManager.js";
+import DeactivateAction from "./Actions/DeactivateAction.ts";
+import InstantiateAction from "./Actions/InstantiateAction.ts";
+import CollatedItem from "./CollatedItem.ts";
+import type Game from "./Game.js";
+import HidingSpot from "./HidingSpot.js";
+import type Player from "./Player.js";
+import type Prefab from "./Prefab.js";
+import type Puzzle from "./Puzzle.js";
+import type Recipe from "./Recipe.js";
+import RecipeProcessor from "./RecipeProcessor.ts";
+import type Room from "./Room.js";
+import type RoomItem from "./RoomItem.js";
 
 /**
  * Represents a fixed structure in a room that cannot be taken or moved by a player.

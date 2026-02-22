@@ -1,9 +1,9 @@
+import type { Duration } from "luxon";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
-import CureAction from "./CureAction.ts";
-import type Status from "../Status.js";
 import type InventoryItem from "../InventoryItem.js";
-import type {Duration} from "luxon";
+import type Status from "../Status.js";
+import CureAction from "./CureAction.ts";
 
 /**
  * Represents an inflict action.

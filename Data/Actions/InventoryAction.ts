@@ -1,6 +1,5 @@
-import Action from "../Action.ts";
 import type Interactable from "../../Classes/Interactables/Interactable.ts";
-import type InventoryItem from "../InventoryItem.js";
+import Action from "../Action.ts";
 
 /**
  * Represents an inventory action.

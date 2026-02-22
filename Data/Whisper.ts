@@ -1,10 +1,10 @@
-﻿import GameConstruct from "./GameConstruct.ts"
-import Room from "./Room.ts"
-import { generatePlayerListString } from "../Modules/helpers.ts"
-import { Collection, type TextChannel } from "discord.js"
-import type Player from "./Player.ts"
-import type Game from "./Game.ts"
-import type Action from "./Action.ts"
+﻿import { Collection, type TextChannel } from "discord.js";
+import { generatePlayerListString } from "../Modules/helpers.ts";
+import type Action from "./Action.ts";
+import type Game from "./Game.ts";
+import GameConstruct from "./GameConstruct.ts";
+import type Player from "./Player.ts";
+import Room from "./Room.ts";
 
 /**
  * Represents a group of two or more players speaking quietly to each other such that no one else in the room can hear them.

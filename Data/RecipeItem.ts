@@ -1,9 +1,9 @@
+import type CollatedItem from "./CollatedItem.ts";
 import Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
-import type Prefab from "./Prefab.ts"
-import type InventoryItem from "./InventoryItem.ts"
-import type CollatedItem from "./CollatedItem.ts"
-import type RoomItem from "./RoomItem.js"
+import type InventoryItem from "./InventoryItem.ts";
+import type Prefab from "./Prefab.ts";
+import type RoomItem from "./RoomItem.js";
 
 /**
  * Represents an ingredient or a product in a recipe.

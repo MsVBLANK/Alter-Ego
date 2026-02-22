@@ -1,10 +1,10 @@
-import Interactable from "../Classes/Interactables/Interactable.ts"
-import GameConstruct from "./GameConstruct.ts"
-import { MessageDisplayType } from "../Modules/enums.js"
-import { Attachment, Collection, Embed } from "discord.js"
-import type Player from "./Player.js"
-import type Action from "./Action.ts"
-import type Game from "./Game.ts"
+import { Attachment, Collection, Embed } from "discord.js";
+import Interactable from "../Classes/Interactables/Interactable.ts";
+import { MessageDisplayType } from "../Modules/enums.js";
+import type Action from "./Action.ts";
+import type Game from "./Game.ts";
+import GameConstruct from "./GameConstruct.ts";
+import type Player from "./Player.js";
 
 /**
  * Represents a notification to send to a player in the game.

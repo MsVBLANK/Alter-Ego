@@ -67,18 +67,22 @@ export default class PriorityQueue {
 				}
 				this.channelQueues.get(message.destination).enqueue(message);
 			}
+			const promises = [];
 			for (const queue of this.channelQueues.values()) {
-				setTimeout(async () => {
-					while (queue.size() > 0) {
-						const message = queue.dequeue();
-						try {
-							await message.fire();
-						} catch (error) {
-							console.error('Message Handler encountered exception sending message:', error);
+				promises.push(
+					(async () => {
+						while (queue.size() > 0) {
+							const message = queue.dequeue();
+							try {
+								await message.fire();
+							} catch (error) {
+								console.error('Message Handler encountered exception sending message:', error);
+							}
 						}
-					}
-				}, 0);
+					})(),
+				);
 			}
+			await Promise.all(promises);
 		} finally {
 			this.firing = false;
 		}

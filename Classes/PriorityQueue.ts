@@ -18,6 +18,7 @@ export default class PriorityQueue {
 
 	constructor() {
 		this.priorityOrder = ['mod', 'tell', 'mechanic', 'log', 'spectator'];
+		this.channelQueues = new Collection();
 		this.queues = new Collection();
 		for (let i = 0; i < this.priorityOrder.length; i++) {
 			this.queues.set(this.priorityOrder[i], new StackQueue());

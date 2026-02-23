@@ -34,7 +34,7 @@ export function processIncomingMessage(game, message) {
     const player = game.entityFinder.getLivingPlayerById(message.author.id);
     if (player) {
         player.setOnline();
-        const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects('no speech');
+        const playerNoSpeechStatusEffects = player.getBehaviorAttributeStatusEffects("no speech");
         if (playerNoSpeechStatusEffects.length > 0) {
             game.communicationHandler.sendMessageToPlayer(player, game.notificationGenerator.generatePlayerNoSpeechNotification(playerNoSpeechStatusEffects[0].id), false, MessageDisplayType.ALERT);
             message.delete().catch();
@@ -74,7 +74,7 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
         const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
         let messageCreateOptions;
         if (sendWebhookMessage)
-            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon,  narration.embeds, files,  player);
+            messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, narration.embeds, files, player);
         else messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, player);
 
         room.getGame().messageQueue.enqueue(
@@ -234,7 +234,7 @@ export function sendRoomDescription(player, location, descriptionText, occupants
  * @param {Message} message - The message to remove interactable components from.
  */
 export function removeInteractablesFromMessage(message) {
-    message.edit({ components: message.components.filter(component => component.type !== ComponentType.ActionRow) });
+    message.edit({ components: message.components.filter(component => component.type !== ComponentType.ActionRow)});
 }
 
 /**
@@ -264,7 +264,7 @@ export function sendCommandHelp(game, channel, command) {
             },
             destination: channel.id,
         },
-        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic",
+        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
 }
 
@@ -281,7 +281,7 @@ export function sendLogMessage(game, messageText) {
             },
             destination: game.guildContext.logChannel.id,
         },
-        'log',
+        "log"
     );
 }
 
@@ -299,7 +299,7 @@ export function sendGameMechanicMessage(game, channel, messageText) {
             },
             destination: channel.id,
         },
-        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic",
+        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
 }
 
@@ -322,7 +322,7 @@ export function sendReply(game, message, messageText) {
             },
             destination: message.channel.id,
         },
-        message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic",
+        message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
 }
 
@@ -347,7 +347,7 @@ export function sendNarrationSpectateMessage(player, messageText, messageDisplay
             },
             destination: player.spectateChannel.id,
         },
-        "spectator",
+        "spectator"
     );
 }
 
@@ -374,7 +374,7 @@ export function sendWebhookSpectateMessage(player, messageText, webhookUsername,
                 },
                 destination: player.spectateChannel.id,
             },
-            "spectator",
+            "spectator"
         );
     }
 }

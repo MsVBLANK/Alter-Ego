@@ -1,10 +1,10 @@
+import Game from '../Data/Game.ts';
 import Player from '../Data/Player.ts';
 import { appendRowsToSheet } from '../Modules/sheets.js';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -71,8 +71,8 @@ export async function execute(game, message, command, args) {
         game
     );
 
-    game.players.set(player.name, player);
-    game.livingPlayers.set(player.name, player);
+    game.players.set(Game.generateValidEntityName(player.name), player);
+    game.livingPlayers.set(Game.generateValidEntityName(player.name), player);
     member.roles.add(game.guildContext.playerRole);
 
     const playerCells = [];

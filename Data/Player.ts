@@ -1548,9 +1548,9 @@ export default class Player extends RecipeProcessor {
         }
         this.status.clear();
         // Move player to dead list.
-        this.getGame().deadPlayers.set(this.name, this);
+        this.getGame().deadPlayers.set(Game.generateValidEntityName(this.name), this);
         // Then remove them from living list.
-        this.getGame().livingPlayers.delete(this.name);
+        this.getGame().livingPlayers.delete(Game.generateValidEntityName(this.name));
     }
 
     /**

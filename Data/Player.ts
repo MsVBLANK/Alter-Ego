@@ -658,7 +658,7 @@ export default class Player extends RecipeProcessor {
      * @param status - The status to inflict.
      * @param duration - A custom duration that overrides the status's default duration.
      */
-    inflict(status: Status, duration: Duration<true> = null) {
+    inflict(status: Status, duration: Duration<true> = null): void {
         const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible,
             status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId,
             status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text,

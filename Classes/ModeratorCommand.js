@@ -1,4 +1,4 @@
-/** @import Game from "../Data/Game.js" */
+/** @import Game from "../Data/Game.ts" */
 /** @import GameSettings from "./GameSettings.js" */
 
 /**

@@ -23,9 +23,9 @@ import {
 
 /**
  * @import Interactable from "../Classes/Interactables/Interactable.ts"
- * @import Game from "../Data/Game.js"
- * @import Player from "../Data/Player.js"
- * @import Room from "../Data/Room.js";
+ * @import Game from "../Data/Game.ts"
+ * @import Player from "../Data/Player.ts"
+ * @import Room from "../Data/Room.ts";
  * @typedef {import('discord.js').BitFieldResolvable<"SuppressEmbeds" | "SuppressNotifications" | "IsComponentsV2", MessageFlags.SuppressEmbeds | MessageFlags.SuppressNotifications | MessageFlags.IsComponentsV2>} Flags
  */
 

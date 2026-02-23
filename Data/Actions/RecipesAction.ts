@@ -2,9 +2,9 @@ import type { MessageReaction, User } from "discord.js";
 import { createPaginatedEmbed } from "../../Modules/discordUtils.js";
 import { addPages, getSortedItems } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
-import InventoryItem from "../InventoryItem.js";
+import InventoryItem from "../InventoryItem.ts";
 import type ItemInstance from "../ItemInstance.ts";
-import type Recipe from "../Recipe.js";
+import type Recipe from "../Recipe.ts";
 
 type DoableRecipe = { recipe: Recipe; uncrafting: boolean; };
 

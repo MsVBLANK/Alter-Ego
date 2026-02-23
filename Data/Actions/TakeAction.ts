@@ -1,10 +1,10 @@
 import { getSortedItemsString } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
-import type EquipmentSlot from "../EquipmentSlot.js";
-import Fixture from "../Fixture.js";
+import type EquipmentSlot from "../EquipmentSlot.ts";
+import Fixture from "../Fixture.ts";
 import InventorySlot from "../InventorySlot.ts";
-import Puzzle from "../Puzzle.js";
-import RoomItem from "../RoomItem.js";
+import Puzzle from "../Puzzle.ts";
+import RoomItem from "../RoomItem.ts";
 import AttemptAction from "./AttemptAction.ts";
 
 /**

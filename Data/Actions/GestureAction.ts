@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import Gesture from "../Gesture.js";
+import Gesture from "../Gesture.ts";
 
 /**
  * Represents a gesture action.

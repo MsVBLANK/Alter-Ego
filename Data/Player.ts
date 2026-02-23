@@ -21,15 +21,14 @@ import Game from "./Game.ts";
 import type GameEntity from "./GameEntity.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type InventorySlot from "./InventorySlot.ts";
-import type ItemInstance from "./ItemInstance.ts";
 import Notification from "./Notification.ts";
-import type Prefab from "./Prefab.js";
-import Puzzle from "./Puzzle.js";
-import type Recipe from "./Recipe.js";
+import type Prefab from "./Prefab.ts";
+import Puzzle from "./Puzzle.ts";
+import type Recipe from "./Recipe.ts";
 import RecipeProcessor from "./RecipeProcessor.ts";
-import Room from "./Room.js";
-import RoomItem from "./RoomItem.js";
-import Status from "./Status.js";
+import Room from "./Room.ts";
+import RoomItem from "./RoomItem.ts";
+import Status from "./Status.ts";
 
 /**
  * @class Player

@@ -2,7 +2,7 @@ import { registerRoomCategory, createCategory } from '../Modules/serverManager.t
 import { ChannelType } from 'discord.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

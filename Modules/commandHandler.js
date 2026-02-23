@@ -1,8 +1,8 @@
 ﻿import Puzzle from '../Data/Puzzle.ts';
 import { ChannelType } from 'discord.js';
 
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /**
  * Finds the right command file for the user and executes it.

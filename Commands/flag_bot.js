@@ -2,7 +2,7 @@ import Flag from "../Data/Flag.ts";
 import Game from "../Data/Game.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

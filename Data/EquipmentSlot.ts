@@ -1,6 +1,6 @@
-﻿import type Game from "./Game.js";
+﻿import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import InventoryItem from "./InventoryItem.js";
+import InventoryItem from "./InventoryItem.ts";
 
 /**
  * Represents a part of a player's body that they can equip inventory items to.

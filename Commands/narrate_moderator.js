@@ -3,7 +3,7 @@ import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import { MessageDisplayType } from '../Modules/enums.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

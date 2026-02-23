@@ -1,9 +1,9 @@
-import Description from "./Description.js";
-import type Game from "./Game.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type ItemInstance from "./ItemInstance.ts";
-import type Player from "./Player.js";
-import type Prefab from "./Prefab.js";
+import type Player from "./Player.ts";
+import type Prefab from "./Prefab.ts";
 
 /**
  * Represents a game entity that can contain items.

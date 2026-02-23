@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import type Dialog from "../Dialog.js";
+import type Dialog from "../Dialog.ts";
 
 /**
  * Represents an announce action.

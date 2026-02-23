@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
-import type Player from "../Player.js";
-import type Whisper from "../Whisper.js";
+import type Player from "../Player.ts";
+import type Whisper from "../Whisper.ts";
 
 /**
  * Represents a whisper action.

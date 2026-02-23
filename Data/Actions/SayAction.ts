@@ -1,10 +1,10 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
 import { capitalizeFirstLetter } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
-import type Dialog from "../Dialog.js";
-import type Player from "../Player.js";
-import type Puzzle from "../Puzzle.js";
-import type Room from "../Room.js";
+import type Dialog from "../Dialog.ts";
+import type Player from "../Player.ts";
+import type Puzzle from "../Puzzle.ts";
+import type Room from "../Room.ts";
 import SolveAction from "./SolveAction.ts";
 
 /**

@@ -6,8 +6,8 @@ import Puzzle from "../Data/Puzzle.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.js";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import Player from '../Data/Player.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 /** @import InventorySlot from '../Data/InventorySlot.ts' */
 
 /** @type {CommandConfig} */

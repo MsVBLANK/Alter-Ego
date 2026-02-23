@@ -2,7 +2,7 @@ import HideAction from '../Data/Actions/HideAction.ts';
 import UnhideAction from '../Data/Actions/UnhideAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

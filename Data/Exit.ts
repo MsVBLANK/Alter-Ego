@@ -1,7 +1,7 @@
 import Description from "./Description.ts";
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import type Room from "./Room.js";
+import type Room from "./Room.ts";
 
 /**
  * Represents an exit in a room.

@@ -5,15 +5,15 @@ import { getChildItems } from "../Modules/itemManager.js";
 import DeactivateAction from "./Actions/DeactivateAction.ts";
 import InstantiateAction from "./Actions/InstantiateAction.ts";
 import CollatedItem from "./CollatedItem.ts";
-import type Game from "./Game.js";
-import HidingSpot from "./HidingSpot.js";
-import type Player from "./Player.js";
-import type Prefab from "./Prefab.js";
-import type Puzzle from "./Puzzle.js";
-import type Recipe from "./Recipe.js";
+import type Game from "./Game.ts";
+import HidingSpot from "./HidingSpot.ts";
+import type Player from "./Player.ts";
+import type Prefab from "./Prefab.ts";
+import type Puzzle from "./Puzzle.ts";
+import type Recipe from "./Recipe.ts";
 import RecipeProcessor from "./RecipeProcessor.ts";
-import type Room from "./Room.js";
-import type RoomItem from "./RoomItem.js";
+import type Room from "./Room.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents a fixed structure in a room that cannot be taken or moved by a player.

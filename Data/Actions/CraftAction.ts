@@ -1,7 +1,7 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.js";
-import type Recipe from "../Recipe.js";
+import type InventoryItem from "../InventoryItem.ts";
+import type Recipe from "../Recipe.ts";
 
 /**
  * Represents a craft action.

@@ -16,16 +16,16 @@ import TriggerAction from "./Actions/TriggerAction.ts";
 import Event from "./Event.ts";
 import type Fixture from "./Fixture.ts";
 import type Flag from "./Flag.ts";
-import type Gesture from "./Gesture.js";
-import type InventoryItem from "./InventoryItem.js";
-import type Player from "./Player.js";
-import type Prefab from "./Prefab.js";
-import type Puzzle from "./Puzzle.js";
-import type Recipe from "./Recipe.js";
-import type Room from "./Room.js";
-import type RoomItem from "./RoomItem.js";
-import type Status from "./Status.js";
-import type Whisper from "./Whisper.js";
+import type Gesture from "./Gesture.ts";
+import type InventoryItem from "./InventoryItem.ts";
+import type Player from "./Player.ts";
+import type Prefab from "./Prefab.ts";
+import type Puzzle from "./Puzzle.ts";
+import type Recipe from "./Recipe.ts";
+import type Room from "./Room.ts";
+import type RoomItem from "./RoomItem.ts";
+import type Status from "./Status.ts";
+import type Whisper from "./Whisper.ts";
 
 /**
  * Represents a game managed by the bot.

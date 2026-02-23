@@ -1,8 +1,7 @@
-import { ChannelType } from "discord.js";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
-import Narration from "../Narration.js";
-import type Player from "../Player.js";
+import Narration from "../Narration.ts";
+import type Player from "../Player.ts";
 import SayAction from "./SayAction.ts";
 
 /**

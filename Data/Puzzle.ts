@@ -8,8 +8,8 @@ import ItemContainer from "./ItemContainer.ts";
 import type ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import Prefab from "./Prefab.ts";
-import type Room from "./Room.js";
-import type RoomItem from "./RoomItem.js";
+import type Room from "./Room.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents an interactable entity with correct, incorrect, and limited ways to engage with it.

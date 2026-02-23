@@ -12,7 +12,7 @@ import Whisper from "../Data/Whisper.ts";
 import * as matchers from '../Modules/matchers.js';
 
 /** @import GameEntity from "../Data/GameEntity.ts"; */
-/** @import EquipmentSlot from "../Data/EquipmentSlot.js"; */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.ts"; */
 
 /**
  * @class GameEntityFinder

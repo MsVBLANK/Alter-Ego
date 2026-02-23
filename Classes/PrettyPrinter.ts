@@ -2,19 +2,19 @@ import { Collection, Guild, GuildMember, TextChannel, DMChannel } from 'discord.
 import { format } from 'pretty-format';
 import { Duration } from 'luxon';
 import Timer from './Timer.js';
-import Status from '../Data/Status.js';
-import Gesture from '../Data/Gesture.js';
-import Player from '../Data/Player.js';
-import Room from '../Data/Room.js';
+import Status from '../Data/Status.ts';
+import Gesture from '../Data/Gesture.ts';
+import Player from '../Data/Player.ts';
+import Room from '../Data/Room.ts';
 import BotContext from './BotContext.js';
-import Puzzle from '../Data/Puzzle.js';
-import Description from '../Data/Description.js';
-import Prefab from '../Data/Prefab.js';
-import Fixture from '../Data/Fixture.js';
+import Puzzle from '../Data/Puzzle.ts';
+import Description from '../Data/Description.ts';
+import Prefab from '../Data/Prefab.ts';
+import Fixture from '../Data/Fixture.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
-import RoomItem from '../Data/RoomItem.js';
-import InventoryItem from '../Data/InventoryItem.js';
+import RoomItem from '../Data/RoomItem.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
 import type { NewPlugin, Config, Refs } from 'pretty-format';
 
 interface AEConfig extends Config {

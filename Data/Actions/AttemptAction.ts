@@ -1,8 +1,8 @@
 import Action from "../Action.ts";
-import Die from "../Die.js";
+import Die from "../Die.ts";
 import type ItemInstance from "../ItemInstance.ts";
-import Player from "../Player.js";
-import type Puzzle from "../Puzzle.js";
+import Player from "../Player.ts";
+import type Puzzle from "../Puzzle.ts";
 
 /**
  * Represents an attempt action.

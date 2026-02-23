@@ -1,10 +1,10 @@
 import type CollatedItem from "./CollatedItem.ts";
-import type Game from "./Game.js";
-import type InventoryItem from "./InventoryItem.js";
+import type Game from "./Game.ts";
+import type InventoryItem from "./InventoryItem.ts";
 import ItemContainer from "./ItemContainer.ts";
-import type Prefab from "./Prefab.js";
-import type Recipe from "./Recipe.js";
-import type RoomItem from "./RoomItem.js";
+import type Prefab from "./Prefab.ts";
+import type Recipe from "./Recipe.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents an item container that can process recipes.

@@ -5,9 +5,9 @@ import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
 import EndAction from "./Actions/EndAction.ts";
 import InflictAction from "./Actions/InflictAction.ts";
 import Description from "./Description.ts";
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import type Status from "./Status.js";
+import type Status from "./Status.ts";
 
 /**
  * Represents a timed event in the game.

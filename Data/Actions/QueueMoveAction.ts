@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
 import type Exit from "../Exit.js";
-import Room from "../Room.js";
+import Room from "../Room.ts";
 import MoveAction from "./MoveAction.ts";
 import StartMoveAction from "./StartMoveAction.ts";
 

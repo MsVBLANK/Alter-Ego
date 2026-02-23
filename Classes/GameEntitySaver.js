@@ -1,7 +1,7 @@
 import demodata from "../Defaults/default_demodata.json" with { type: 'json' };
 import { batchUpdateSheetValues } from "../Modules/sheets.js";
 
-/** @import Game from "../Data/Game.js" */
+/** @import Game from "../Data/Game.ts" */
 
 /**
  * @class GameEntityLoader

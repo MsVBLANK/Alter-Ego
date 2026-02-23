@@ -4,7 +4,7 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type InventorySlot from "./InventorySlot.ts";
 import type ItemInstance from "./ItemInstance.ts";
-import type Status from "./Status.js";
+import type Status from "./Status.ts";
 
 /**
  * Represents the concept of an item.

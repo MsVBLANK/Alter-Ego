@@ -2,7 +2,7 @@ import GestureAction from '../Data/Actions/GestureAction.ts';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

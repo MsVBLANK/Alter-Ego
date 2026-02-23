@@ -2,14 +2,14 @@ import Room from "../Data/Room.ts";
 import Whisper from "../Data/Whisper.ts";
 import { ChannelType, TextChannel } from "discord.js";
 
-/** @import Event from "../Data/Event.js" */
-/** @import Fixture from "../Data/Fixture.js" */
-/** @import Flag from "../Data/Flag.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import Player from "../Data/Player.js" */
-/** @import Prefab from "../Data/Prefab.js" */
-/** @import Puzzle from "../Data/Puzzle.js" */
-/** @import Status from "../Data/Status.js" */
+/** @import Event from "../Data/Event.ts" */
+/** @import Fixture from "../Data/Fixture.ts" */
+/** @import Flag from "../Data/Flag.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import Player from "../Data/Player.ts" */
+/** @import Prefab from "../Data/Prefab.ts" */
+/** @import Puzzle from "../Data/Puzzle.ts" */
+/** @import Status from "../Data/Status.ts" */
 
 /**
  * @class GameEntityManager

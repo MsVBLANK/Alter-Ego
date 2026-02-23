@@ -1,7 +1,7 @@
-﻿import type Game from "./Game.js";
+﻿import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
-import type Player from "./Player.js";
-import Status from "./Status.js";
+import type Player from "./Player.ts";
+import Status from "./Status.ts";
 
 /**
  * Represents a die that can be rolled for a semi-random number.

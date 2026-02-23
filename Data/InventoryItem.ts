@@ -5,8 +5,8 @@ import Description from "./Description.ts";
 import type Game from "./Game.ts";
 import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
-import type Player from "./Player.js";
-import type RoomItem from "./RoomItem.js";
+import type Player from "./Player.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents an item that is currently possessed by a player.

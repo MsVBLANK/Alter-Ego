@@ -1,9 +1,9 @@
 import Description from "../../Data/Description.ts";
 import { parseDescription } from "../../Modules/parser.js";
 /** @import GameEntity from "../../Data/GameEntity.ts"; */
-/** @import Event from "../../Data/Event.js"; */
-/** @import RoomItem from "../../Data/RoomItem.js"; */
-/** @import Player from "../../Data/Player.js"; */
+/** @import Event from "../../Data/Event.ts"; */
+/** @import RoomItem from "../../Data/RoomItem.ts"; */
+/** @import Player from "../../Data/Player.ts"; */
 
 describe('test parseDescription', () => {
 	/** @type {Player} */

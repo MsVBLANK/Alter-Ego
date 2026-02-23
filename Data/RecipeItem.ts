@@ -3,7 +3,7 @@ import Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type Prefab from "./Prefab.ts";
-import type RoomItem from "./RoomItem.js";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents an ingredient or a product in a recipe.

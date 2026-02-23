@@ -11,7 +11,7 @@ import GameNarrationHandler from "../Classes/GameNarrationHandler.js";
 import GameNotificationGenerator from "../Classes/GameNotificationGenerator.js";
 import type GameSettings from "../Classes/GameSettings.js";
 import type GuildContext from "../Classes/GuildContext.js";
-import PriorityQueue from "../Classes/PriorityQueue.js";
+import PriorityQueue from "../Classes/PriorityQueue.ts";
 import TriggerAction from "./Actions/TriggerAction.ts";
 import Event from "./Event.ts";
 import type Fixture from "./Fixture.ts";

@@ -124,16 +124,12 @@ beforeAll(() => {
     // Ensure presence update doesn't throw during tests.
     try { BotContext.instance.updatePresence(); } catch (e) { }
     globalThis.game = game;
-});
-
-beforeEach(() => {
-    game.messageQueue.firing = true;
+    game.messageQueue.manual = true;
 });
 
 afterEach(() => {
     vi.resetModules();
     vi.restoreAllMocks();
-    game.messageQueue.firing = true;
 });
 
 expect.extend({

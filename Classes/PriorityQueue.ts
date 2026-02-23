@@ -13,17 +13,20 @@ export default class PriorityQueue {
 	queues: Collection<PriorityQueuePriority, StackQueue<MessageQueueEntry>>;
 	/** Separate StackQueues to represent each different destination. */
 	channelQueues: Collection<string, StackQueue<MessageQueueEntry>>;
-	/** Whether or not the PriorityQueue is "Firing", that is, whether or not it is being fully dequeued by the Message Handler. */
-	firing: boolean;
+	/** Whether or not a channelQueue is "Firing", that is, whether or not it is being fully dequeued by the Message Handler. */
+	channelFiring: Collection<string, boolean>;
+	/** Whether or not the PriorityQueue is in manual mode, that is, whether or not `process()` must be explicitly called to process incoming messages. */
+	manual: boolean;
 
 	constructor() {
 		this.priorityOrder = ['mod', 'tell', 'mechanic', 'log', 'spectator'];
 		this.channelQueues = new Collection();
+		this.channelFiring = new Collection();
 		this.queues = new Collection();
+		this.manual = false;
 		for (let i = 0; i < this.priorityOrder.length; i++) {
 			this.queues.set(this.priorityOrder[i], new StackQueue());
 		}
-		this.firing = false;
 	}
 
 	/**
@@ -34,10 +37,7 @@ export default class PriorityQueue {
 	enqueue(message: MessageQueueEntry, priority: PriorityQueuePriority) {
 		if (this.queues.has(priority)) {
 			this.queues.get(priority).enqueue(message);
-			if (!this.firing) {
-				this.firing = true;
-				this.process();
-			}
+			if (!this.manual) this.process();
 		}
 	}
 
@@ -59,33 +59,34 @@ export default class PriorityQueue {
 	 * Fully dequeues and fires every entry in the PriorityQueue.
 	 */
 	async process() {
-		try {
-			while (this.size() > 0) {
-				const message = this.dequeue();
-				if (!this.channelQueues.has(message.destination)) {
-					this.channelQueues.set(message.destination, new StackQueue());
-				}
-				this.channelQueues.get(message.destination).enqueue(message);
+		const priorityQueue = this;
+		while (this.size() > 0) {
+			const message = this.dequeue();
+			if (!this.channelFiring.has(message.destination)) this.channelFiring.set(message.destination, false);
+			if (!this.channelQueues.has(message.destination)) {
+				this.channelQueues.set(message.destination, new StackQueue());
 			}
-			const promises = [];
-			for (const queue of this.channelQueues.values()) {
-				promises.push(
-					(async () => {
-						while (queue.size() > 0) {
-							const message = queue.dequeue();
-							try {
-								await message.fire();
-							} catch (error) {
-								console.error('Message Handler encountered exception sending message:', error);
-							}
-						}
-					})(),
-				);
-			}
-			await Promise.all(promises);
-		} finally {
-			this.firing = false;
+			this.channelQueues.get(message.destination).enqueue(message);
 		}
+		const promises = [];
+		for (const [key, queue] of this.channelQueues) {
+			promises.push(
+				(async (key: string) => {
+					if (priorityQueue.channelFiring.get(key) === true) return;
+					else priorityQueue.channelFiring.set(key, true);
+					while (queue.size() > 0) {
+						const message = queue.dequeue();
+						try {
+							await message.fire();
+						} catch (error) {
+							console.error('Message Handler encountered exception sending message:', error);
+						}
+					}
+					priorityQueue.channelFiring.set(key, false);
+				})(key),
+			);
+		}
+		await Promise.all(promises);
 	}
 
 	/**

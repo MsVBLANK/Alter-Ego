@@ -1,16 +1,16 @@
-import Description from "../Data/Description.js";
-import Fixture from "../Data/Fixture.js";
-import InventoryItem from "../Data/InventoryItem.js";
-import Narration from "../Data/Narration.js";
-import Room from "../Data/Room.js";
-import RoomItem from "../Data/RoomItem.js";
+import Description from "../Data/Description.ts";
+import Fixture from "../Data/Fixture.ts";
+import InventoryItem from "../Data/InventoryItem.ts";
+import Narration from "../Data/Narration.ts";
+import Room from "../Data/Room.ts";
+import RoomItem from "../Data/RoomItem.ts";
 import DieAction from "../Data/Actions/DieAction.ts";
 import NarrateAction from "../Data/Actions/NarrateAction.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { parseDescription } from "../Modules/parser.js";
 import { capitalizeFirstLetter, generateListString } from "../Modules/helpers.ts";
 import { Collection } from "discord.js";
-import Notification from "../Data/Notification.js";
+import Notification from "../Data/Notification.ts";
 
 /** @import Interactable from "./Interactables/Interactable.ts" */
 /** @import Action from "../Data/Action.ts" */

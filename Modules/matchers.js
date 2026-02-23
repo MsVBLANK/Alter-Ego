@@ -1,9 +1,9 @@
-import Game from "../Data/Game.js";
-import Gesture from "../Data/Gesture.js";
+import Game from "../Data/Game.ts";
+import Gesture from "../Data/Gesture.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
-import Player from "../Data/Player.js";
-import Room from "../Data/Room.js";
-import Status from "../Data/Status.js";
+import Player from "../Data/Player.ts";
+import Room from "../Data/Room.ts";
+import Status from "../Data/Status.ts";
 
 /** @import Event from "../Data/Event.js" */
 /** @import Exit from "../Data/Exit.js" */
@@ -68,7 +68,7 @@ export const roomTagMatches = (room, tag, normalize = false) => {
 };
 
 /**
- * Returns true if the room has at least 1 occupant. 
+ * Returns true if the room has at least 1 occupant.
  * @param {Room} room - The room for which to check for occupants.
  * @param {boolean} includeNPCs - Whether or not to count NPCs as occupants.
  */
@@ -177,8 +177,8 @@ export const entityLocationIdMatches = (entity, id, normalize = false) => {
 
 /**
  * Returns whether or not the entity's accessible property matches the given accessible state.
- * @param {RoomItemContainer} entity - The entity to match the accessible state against. 
- * @param {boolean} accessible - The accessible state to match against. 
+ * @param {RoomItemContainer} entity - The entity to match the accessible state against.
+ * @param {boolean} accessible - The accessible state to match against.
  */
 export const entityAccessibleMatches = (entity, accessible) => {
 	return entity.accessible === accessible;
@@ -186,7 +186,7 @@ export const entityAccessibleMatches = (entity, accessible) => {
 
 /**
  * Returns true if the fixture's recipe tag matches the given recipe tag.
- * @param {Fixture} fixture - The fixture to match the recipe tag against. 
+ * @param {Fixture} fixture - The fixture to match the recipe tag against.
  * @param {string} recipeTag - The recipe tag to match.
  * @param {boolean} [normalize] - Whether or not to normalize the recipe tag before matching. Defaults to false.
  */
@@ -199,7 +199,7 @@ export const fixtureRecipeTagMatches = (fixture, recipeTag, normalize = false) =
  * Returns true if the entity's effects strings include all of the given status effects.
  * @param {Prefab|Event} entity - The entity to match the effects against.
  * @param {string} effectsString - A comma-separated list of status effect IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false.
  */
 export const effectsMatches = (entity, effectsString, normalize = false) => {
 	let effects = effectsString.split(',');
@@ -211,7 +211,7 @@ export const effectsMatches = (entity, effectsString, normalize = false) => {
  * Returns true if the prefab's cures strings include all of the given status effects.
  * @param {Prefab} prefab - The prefab to match the cures against.
  * @param {string} curesString - A comma-separated list of status effect IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false.
  */
 export const prefabCuresMatches = (prefab, curesString, normalize = false) => {
 	let cures = curesString.split(',');
@@ -223,7 +223,7 @@ export const prefabCuresMatches = (prefab, curesString, normalize = false) => {
  * Returns true if the prefab's equipment slot IDs include all of the given equipment slot IDs.
  * @param {Prefab} prefab - The prefab to match the equipment slots against.
  * @param {string} equipmentSlotsString - A comma-separated list of equipment slot IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false.
  */
 export const prefabEquipmentSlotsMatches = (prefab, equipmentSlotsString, normalize = false) => {
 	let equipmentSlots = equipmentSlotsString.split(',');
@@ -247,7 +247,7 @@ export const recipeTypeMatches = (recipe, type, normalize = false) => {
 
 /**
  * Returns true if the recipe's fixture tag matches the given fixture tag.
- * @param {Recipe} recipe - The recipe to match the fixture tag against. 
+ * @param {Recipe} recipe - The recipe to match the fixture tag against.
  * @param {string} fixtureTag - The fixture tag to match.
  * @param {boolean} [normalize] - Whether or not to normalize the fixture tag before matching. Defaults to false.
  */
@@ -260,7 +260,7 @@ export const recipeFixtureTagMatches = (recipe, fixtureTag, normalize = false) =
  * Returns true if the recipe's ingredients prefab IDs include all of the given prefab IDs.
  * @param {Recipe} recipe - The recipe to match the ingredients against.
  * @param {string} ingredientsString - A comma-separated list of ingredient prefab IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the ingredients before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the ingredients before matching. Defaults to false.
  */
 export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = false) => {
 	let ingredients = ingredientsString.split(',');
@@ -272,7 +272,7 @@ export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = 
  * Returns true if the recipe's products prefab IDs include all of the given prefab IDs.
  * @param {Recipe} recipe - The recipe to match the products against.
  * @param {string} productsString - A comma-separated list of product prefab IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the products before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the products before matching. Defaults to false.
  */
 export const recipeProductsMatches = (recipe, productsString, normalize = false) => {
 	let products = productsString.split(',');
@@ -294,7 +294,7 @@ export const itemNameMatches = (item, name, normalize = false) => {
 /**
  * Returns true if the item's identifier matches the given identifier.
  * @param {ItemInstance} item - The item instance to match the identifier against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierMatches = (item, identifier, normalize = false) => {
@@ -305,7 +305,7 @@ export const itemIdentifierMatches = (item, identifier, normalize = false) => {
 /**
  * Returns true if the item's identifier or name matches the given identifier.
  * @param {ItemInstance} item - The item instance to match the identifier or name against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierOrNameMatches = (item, identifier, normalize = false) => {
@@ -316,7 +316,7 @@ export const itemIdentifierOrNameMatches = (item, identifier, normalize = false)
 /**
  * Returns true if the item's identifier or name contains the given identifier.
  * @param {ItemInstance} item - The item instance to match the identifier or name against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierOrNameContains = (item, identifier, normalize = false) => {
@@ -328,7 +328,7 @@ export const itemIdentifierOrNameContains = (item, identifier, normalize = false
 };
 
 /**
- * Returns true if the item's container's type matches the given type. 
+ * Returns true if the item's container's type matches the given type.
  * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the type against.
  * @param {string} type - The type to match.
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
@@ -360,7 +360,7 @@ export const itemContainerNameMatches = (item, name, normalize = false) => {
 /**
  * Returns true if the item's container's identifier matches the given identifier.
  * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the identifier against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierMatches = (item, identifier, normalize = false) => {
@@ -373,7 +373,7 @@ export const itemContainerIdentifierMatches = (item, identifier, normalize = fal
 /**
  * Returns true if the item's container's identifier or name matches the given identifier.
  * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the identifier or name against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize = false) => {
@@ -386,7 +386,7 @@ export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize
 /**
  * Returns true if the item's container's identifier or name matches the given identifier.
  * @param {RoomItem|InventoryItem} item - The item instance whose container we want to match the identifier or name against.
- * @param {string} identifier - The identifier to match. 
+ * @param {string} identifier - The identifier to match.
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierOrNameContains = (item, identifier, normalize = false) => {
@@ -409,8 +409,8 @@ export const itemContainerNamePropertyMatches = (item, containerName, normalize 
 
 /**
  * Returns true if the inventory slot ID the item instance is contained in matches the given slot ID.
- * @param {ItemInstance} item - The item instance to match the inventory slot ID against. 
- * @param {string} slotId - The inventory slot ID to match. 
+ * @param {ItemInstance} item - The item instance to match the inventory slot ID against.
+ * @param {string} slotId - The inventory slot ID to match.
  * @param {boolean} [normalize] - Whether or not to normalize the slot ID before matching. Defaults to false.
  */
 export const itemSlotMatches = (item, slotId, normalize = false) => {
@@ -431,8 +431,8 @@ export const puzzleTypeMatches = (puzzle, type, normalize = false) => {
 
 /**
  * Returns whether or not the event's ongoing property matches the given ongoing state.
- * @param {Event} event - The event to match the ongoing state against. 
- * @param {boolean} ongoing - The ongoing state to match against. 
+ * @param {Event} event - The event to match the ongoing state against.
+ * @param {boolean} ongoing - The ongoing state to match against.
  */
 export const eventOngoingMatches = (event, ongoing) => {
 	return event.ongoing === ongoing;
@@ -442,7 +442,7 @@ export const eventOngoingMatches = (event, ongoing) => {
  * Returns true if the event's refreshes strings include all of the given status effects.
  * @param {Event} event - The event to match the effects against.
  * @param {string} refreshesString - A comma-separated list of status effect IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false.
  */
 export const eventRefreshesMatches = (event, refreshesString, normalize = false) => {
 	let refreshes = refreshesString.split(',');
@@ -452,7 +452,7 @@ export const eventRefreshesMatches = (event, refreshesString, normalize = false)
 
 /**
  * Returns true if the event's room tag matches the given room tag.
- * @param {Event} event - The event to match the room tag against. 
+ * @param {Event} event - The event to match the room tag against.
  * @param {string} roomTag - The room tag to match.
  * @param {boolean} [normalize] - Whether or not to normalize the room tag before matching. Defaults to false.
  */
@@ -485,9 +485,9 @@ export const statusIdContains = (status, id, normalize = false) => {
 
 /**
  * Returns true if the status modifies all of the given stats.
- * @param {Status} status - The status to match the stats against. 
+ * @param {Status} status - The status to match the stats against.
  * @param {string} statsString - A comma-separated list of stats to match the stat modifiers against.
- * @param {boolean} [normalize] - Whether or not to normalize the stats before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the stats before matching. Defaults to false.
  */
 export const statusStatModifiersMatches = (status, statsString, normalize = false) => {
 	let stats = statsString.split(',');
@@ -500,7 +500,7 @@ export const statusStatModifiersMatches = (status, statsString, normalize = fals
  * Returns true if the status's behavior attributes include all of the given attributes.
  * @param {Status} status - The status to match the attributes against.
  * @param {string} attributesString - A comma-separated list of behavior attributes to match the status against.
- * @param {boolean} [normalize] - Whether or not to normalize the attributes before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the attributes before matching. Defaults to false.
  */
 export const statusAttributeMatches = (status, attributesString, normalize = false) => {
 	let attributes = attributesString.split(',');
@@ -555,7 +555,7 @@ export const playerNameOrDisplayNameContains = (player, name, normalize = false)
 /**
  * Returns whether or not the player's NPC state matches the given NPC state.
  * @param {Player} player - The player to match the NPC state against.
- * @param {boolean} isNPC - The NPC state to match. 
+ * @param {boolean} isNPC - The NPC state to match.
  */
 export const playerNPCMatches = (player, isNPC) => {
 	return player.isNPC === isNPC;
@@ -576,7 +576,7 @@ export const playerHidingSpotMatches = (player, hidingSpot, normalize = false) =
  * Returns true if the players's status strings include all of the given status effects.
  * @param {Player} player - The player to match the status effects against.
  * @param {string} statusString - A comma-separated list of status effect IDs to match.
- * @param {boolean} [normalize] - Whether or not to normalize the status effects before matching. Defaults to false. 
+ * @param {boolean} [normalize] - Whether or not to normalize the status effects before matching. Defaults to false.
  */
 export const playerStatusMatches = (player, statusString, normalize = false) => {
 	let statuses = statusString.split(',');
@@ -599,7 +599,7 @@ export const inventoryItemPlayerNameMatches = (inventoryItem, name, normalize = 
 /**
  * Returns true if the inventory item's equipment slot ID matches the given equipment slot ID.
  * @param {InventoryItem} inventoryItem - The inventory item whose equipment slot we want to match the equipment slot ID against.
- * @param {string} equipmentSlotId - The ID of the equipment slot to match. 
+ * @param {string} equipmentSlotId - The ID of the equipment slot to match.
  * @param {boolean} [normalize] - Whether or not to normalize the equipment slot ID before matching. Defaults to false.
  */
 export const inventoryItemEquipmentSlotMatches = (inventoryItem, equipmentSlotId, normalize = false) => {

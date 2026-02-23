@@ -1,165 +1,133 @@
-﻿import Description from './Description.js';
-import GameEntity from './GameEntity.ts';
-
-/** @import Game from './Game.js' */
-/** @import Timer from '../Classes/Timer.js' */
+﻿import type { Duration } from "luxon";
+import type Timer from "../Classes/Timer.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import GameEntity from "./GameEntity.ts";
 
 /**
- * @class Status
- * @classdesc Also referred to as a StatusEffect. Represents a condition that can be applied to a player.
- * @extends GameEntity
+ * Also referred to as a StatusEffect. Represents a condition that can be applied to a player.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html
  */
 export default class Status extends GameEntity {
     /**
      * The unique ID of the status.
-     * @readonly
-     * @type {string}
      */
-    id;
+    readonly id: string;
     /**
-     * The name of the status. Deprecated. Use `id` instead.
-     * @deprecated
-     * @readonly
-     * @type {string}
+     * The name of the status.
+     *
+     * @deprecated Use `id` instead.
      */
-    name;
+    readonly name: string;
     /**
      * The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y. If there is none, this is `null`.
-     * @readonly
-     * @type {import('luxon').Duration<true>}
      */
-    duration;
-    /** 
+    readonly duration: Duration<true>;
+    /**
      * The amount of time remaining until the status expires. If the status has no duration, this is `null`.
-     * @type {import('luxon').Duration<true>} 
      */
-    remaining;
+    remaining: Duration<true>;
     /**
      * Whether the status kills an inflicted player when it expires. If the status has a nextStage, this is never checked.
-     * @readonly
-     * @type {boolean}
      */
-    fatal;
+    readonly fatal: boolean;
     /**
      * Whether the status is visible to the player.
-     * @readonly
-     * @type {boolean}
      */
-    visible;
+    readonly visible: boolean;
     /**
      * The IDs of statuses that prevent this status from being inflicted.
-     * @readonly
-     * @type {string[]}
      */
-    overridersStrings;
+    readonly overridersStrings: string[];
     /**
      * Statuses that prevent this status from being inflicted.
-     * @type {Status[]}
      */
-    overriders;
+    readonly overriders: Status[];
     /**
      * The IDs of statuses that cure this status when they are inflicted.
-     * @readonly
-     * @type {string[]}
      */
-    curesStrings;
+    readonly curesStrings: string[];
     /**
      * Statuses that cure this status when they are inflicted.
-     * @type {Status[]}
      */
-    cures;
+    cures: Status[];
     /**
      * The ID of the status that will be inflicted on the player when this one expires.
-     * @readonly
-     * @type {string}
      */
-    nextStageId;
+    readonly nextStageId: string;
     /**
      * The status that will be inflicted on the player when this one expires.
-     * @type {Status}
      */
-    nextStage;
+    nextStage: Status;
     /**
      * The ID of the status that this Status will turn into if it is inflicted on a player who already has it.
-     * @readonly
-     * @type {string}
      */
-    duplicatedStatusId;
+    readonly duplicatedStatusId: string;
     /**
      * The status that this Status will turn into if it is inflicted on a player who already has it.
-     * @type {Status}
      */
-    duplicatedStatus;
+    duplicatedStatus: Status;
     /**
      * The ID of the status that will be inflicted on the player if this one is cured.
-     * @readonly
-     * @type {string}
      */
-    curedConditionId;
+    readonly curedConditionId: string;
     /**
      * The status that will be inflicted on the player if this one is cured.
-     * @type {Status}
      */
-    curedCondition;
+    curedCondition: Status;
     /**
      * Stat modifiers to apply to the player.
+     *
      * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers
-     * @readonly
-     * @type {StatModifier[]}
      */
-    statModifiers;
-    /**
-     * The behavior attributes this status applies to the player. Deprecated. Use behaviorAttributes instead.
-     * @deprecated
-     * @readonly
-     * @type {string[]}
-     */
-    attributes;
+    readonly statModifiers: StatModifier[];
     /**
      * The behavior attributes this status applies to the player.
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes
-     * @readonly
-     * @type {Set<string>}
+     *
+     * @deprecated Use behaviorAttributes instead.
      */
-    behaviorAttributes;
+    readonly attributes: string[];
+    /**
+     * The behavior attributes this status applies to the player.
+     *
+     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes
+     */
+    readonly behaviorAttributes: Set<string>;
     /**
      * The description of the status when a player is inflicted with it.
-     * @readonly
-     * @type {Description}
      */
-    inflictedDescription;
+    readonly inflictedDescription: Description;
     /**
      * The description of the status when a player is cured of it.
-     * @readonly
-     * @type {Description}
      */
-    curedDescription;
-    /** 
+    readonly curedDescription: Description;
+    /**
      * A timer counting down every second until the status expires.
-     * @type {Timer} 
      */
-    timer;
+    timer: Timer;
 
     /**
-     * @constructor
-     * @param {string} id - The unique ID of the status.
-     * @param {import('luxon').Duration} duration - The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
-     * @param {boolean} fatal - Whether the status kills an inflicted player when it expires. If the status has a nextStage, this is never checked.
-     * @param {boolean} visible - Whether the status is visible to the player.
-     * @param {string[]} overridersStrings - The IDs of statuses that prevent this status from being inflicted.
-     * @param {string[]} curesStrings - The IDs of statuses that cure this status when they are inflicted.
-     * @param {string} nextStageId - The ID of the status that will be inflicted on the player when this one expires.
-     * @param {string} duplicatedStatusId - The ID of the status that this Status will turn into if it is inflicted on a player who already has it.
-     * @param {string} curedConditionId - The ID of the status that will be inflicted on the player if this one is cured.
-     * @param {StatModifier[]} statModifiers - Stat modifiers to apply to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers}
-     * @param {Set<string>} behaviorAttributes - The behavior attributes this status applies to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes}
-     * @param {string} inflictedDescription - The description of the status when a player is inflicted with it.
-     * @param {string} curedDescription - The description of the status when a player is cured of it.
-     * @param {number} row - The row number of the status in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param id - The unique ID of the status.
+     * @param duration - The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
+     * @param fatal - Whether the status kills an inflicted player when it expires. If the status has a nextStage, this is never checked.
+     * @param visible - Whether the status is visible to the player.
+     * @param overridersStrings - The IDs of statuses that prevent this status from being inflicted.
+     * @param curesStrings - The IDs of statuses that cure this status when they are inflicted.
+     * @param nextStageId - The ID of the status that will be inflicted on the player when this one expires.
+     * @param duplicatedStatusId - The ID of the status that this Status will turn into if it is inflicted on a player who already has it.
+     * @param curedConditionId - The ID of the status that will be inflicted on the player if this one is cured.
+     * @param statModifiers - Stat modifiers to apply to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers}
+     * @param behaviorAttributes - The behavior attributes this status applies to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes}
+     * @param inflictedDescription - The description of the status when a player is inflicted with it.
+     * @param curedDescription - The description of the status when a player is cured of it.
+     * @param row - The row number of the status in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(id, duration, fatal, visible, overridersStrings, curesStrings, nextStageId, duplicatedStatusId, curedConditionId, statModifiers, behaviorAttributes, inflictedDescription, curedDescription, row, game) {
+    constructor(id: string, duration: Duration, fatal: boolean, visible: boolean,
+        overridersStrings: string[], curesStrings: string[], nextStageId: string, duplicatedStatusId: string,
+        curedConditionId: string, statModifiers: StatModifier[], behaviorAttributes: Set<string>,
+        inflictedDescription: string, curedDescription: string, row: number, game: Game) {
         super(game, row);
         this.id = id;
         this.name = id;
@@ -188,49 +156,44 @@ export default class Status extends GameEntity {
 
     /**
      * Sets the next stage.
-     * @param {Status} nextStage 
      */
-    setNextStage(nextStage) {
+    setNextStage(nextStage: Status): void {
         this.nextStage = nextStage;
     }
 
     /**
      * Sets the duplicated status.
-     * @param {Status} duplicatedStatus 
      */
-    setDuplicatedStatus(duplicatedStatus) {
+    setDuplicatedStatus(duplicatedStatus: Status): void {
         this.duplicatedStatus = duplicatedStatus;
     }
 
     /**
      * Sets the cured condition.
-     * @param {Status} curedCondition 
      */
-    setCuredCondition(curedCondition) {
+    setCuredCondition(curedCondition: Status): void {
         this.curedCondition = curedCondition;
     }
 
-    inflictedCell() {
+    inflictedCell(): string {
         return this.getGame().constants.statusSheetInflictedColumn + this.row;
     }
 
-    curedCell() {
+    curedCell(): string {
         return this.getGame().constants.statusSheetCuredColumn + this.row;
     }
 
     /**
      * Generate an ID in all lowercase.
-     * @param {string} id 
      */
-    static generateValidId(id) {
+    static generateValidId(id: string): string {
         return id?.toLowerCase().trim();
     }
 
     /**
      * Perform post-initialization processing on a status effect.
-     * @param {Status} status
      */
-    static postProcess(status) {
+    static postProcess(status: Status): void {
         status.overridersStrings.forEach((overriderString, i) => {
             const overrider = status.getGame().entityFinder.getStatusEffect(overriderString);
             if (overrider) status.overriders[i] = overrider;

@@ -28,7 +28,7 @@ export default abstract class RecipeProcessor extends ItemContainer {
      * @param ingredients - The ingredients to destroy.
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      */
-    destroyIngredients(recipe: Recipe, ingredients: CollatedItem<RoomItem>[]|CollatedItem<InventoryItem>[], satisfactoryProcessCount: number): void {
+    destroyIngredients<T extends RoomItem | InventoryItem>(recipe: Recipe, ingredients: CollatedItem<T>[], satisfactoryProcessCount: number): void {
         if (satisfactoryProcessCount < 1) return;
 		for (const ingredient of ingredients) {
             if (recipe.isIngredientAndProduct(ingredient) && !ingredient.allItemsHaveInfiniteUses())

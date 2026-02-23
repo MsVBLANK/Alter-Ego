@@ -1,7 +1,7 @@
 import Action from "../Action.ts";
-import Puzzle from "../Puzzle.js";
-import type Player from "../Player.js";
 import type ItemInstance from "../ItemInstance.ts";
+import type Player from "../Player.js";
+import Puzzle from "../Puzzle.js";
 
 /**
  * Represents a solve action.

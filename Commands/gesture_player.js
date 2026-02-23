@@ -1,7 +1,7 @@
 ﻿import GestureAction from '../Data/Actions/GestureAction.ts';
-import Fixture from '../Data/Fixture.js';
+import Fixture from '../Data/Fixture.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
-import Puzzle from '../Data/Puzzle.js';
+import Puzzle from '../Data/Puzzle.ts';
 import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */

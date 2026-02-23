@@ -1,4 +1,4 @@
-import RecipeItem from "../../Data/RecipeItem.js";
+import RecipeItem from "../../Data/RecipeItem.ts";
 
 describe('Recipe test', () => {
     beforeAll(async () => {

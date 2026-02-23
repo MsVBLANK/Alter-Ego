@@ -1,7 +1,7 @@
 import Action from "../Action.ts";
+import type EquipmentSlot from "../EquipmentSlot.js";
 import InventoryItem from "../InventoryItem.js";
 import InventorySlot from "../InventorySlot.ts";
-import type EquipmentSlot from "../EquipmentSlot.js";
 
 /**
  * Represents a stash action.

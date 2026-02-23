@@ -1,9 +1,9 @@
+import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
 import Die from "../Die.js";
+import type EquipmentSlot from "../EquipmentSlot.js";
 import InventoryItem from "../InventoryItem.js";
 import InventorySlot from "../InventorySlot.ts";
-import { MessageDisplayType } from "../../Modules/enums.js";
-import type EquipmentSlot from "../EquipmentSlot.js";
 import type Player from "../Player.js";
 
 /**

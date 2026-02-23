@@ -2,7 +2,7 @@
 
 import BotContext from './Classes/BotContext.js';
 import GuildContext from './Classes/GuildContext.js';
-import Game from './Data/Game.js';
+import Game from './Data/Game.ts';
 
 import BotCommand from './Classes/BotCommand.js';
 import ModeratorCommand from './Classes/ModeratorCommand.js';

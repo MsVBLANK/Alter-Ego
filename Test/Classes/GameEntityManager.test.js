@@ -1,6 +1,6 @@
-import Whisper from "../../Data/Whisper.js";
+import Whisper from "../../Data/Whisper.ts";
 
-/** @typedef {import("../../Data/Player.js").default} Player */
+/** @typedef {import("../../Data/Player.ts").default} Player */
 
 describe('GameEntityManager test', () => {
     describe('createWhisper tests', () => {

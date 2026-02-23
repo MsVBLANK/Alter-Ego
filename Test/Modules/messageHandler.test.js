@@ -1,5 +1,5 @@
 import discord from "../__mocks__/libs/discord.js";
-import * as DialogClass from "../../Data/Dialog.js";
+import * as DialogClass from "../../Data/Dialog.ts";
 import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
 import SayAction from "../../Data/Actions/SayAction.ts";
 import SolveAction from "../../Data/Actions/SolveAction.ts";

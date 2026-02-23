@@ -1,9 +1,9 @@
 import Action from "../Action.ts";
+import type Exit from "../Exit.js";
+import type Room from "../Room.js";
 import EnterAction from "./EnterAction.ts";
 import ExitAction from "./ExitAction.ts";
 import SolveAction from "./SolveAction.ts";
-import type Room from "../Room.js";
-import type Exit from "../Exit.js";
 
 /**
  * Represents a move action.

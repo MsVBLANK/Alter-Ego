@@ -1,123 +1,96 @@
-﻿import GameConstruct from "./GameConstruct.ts";
-import Player from "./Player.js";
-import UnhideAction from "./Actions/UnhideAction.ts";
-import { capitalizeFirstLetter } from "../Modules/helpers.ts";
+﻿import { Attachment, Collection, Embed, type GuildMember } from "discord.js";
 import { MessageDisplayType } from "../Modules/enums.js";
-import { Attachment, Collection, Embed } from "discord.js";
-
-/** @import Action from "./Action.ts" */
-/** @import Game from "./Game.js" */
-/** @import Room from "./Room.js" */
-/** @import Whisper from "./Whisper.js" */
-/** @import { GuildMember } from "discord.js" */
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
+import type Action from "./Action.ts";
+import UnhideAction from "./Actions/UnhideAction.ts";
+import type Game from "./Game.ts";
+import GameConstruct from "./GameConstruct.ts";
+import Player from "./Player.js";
+import type Room from "./Room.js";
+import type Whisper from "./Whisper.js";
 
 /**
- * @class Narration
- * @classdesc Represents a narration in the game.
- * @extends GameConstruct
+ * Represents a narration in the game.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/narration.html
  */
 export default class Narration extends GameConstruct {
     /**
      * The display type of the message to send for this narration.
-     * @readonly
-     * @type {MessageDisplayType}
      */
-    messageDisplayType;
+    readonly messageDisplayType: MessageDisplayType;
     /**
      * The action being narrated.
-     * @readonly
-     * @type {Action}
      */
-    action;
+    readonly action: Action;
     /**
      * The player whose action is being narrated.
-     * @readonly
-     * @type {Player}
      */
-    player;
+    readonly player: Player;
     /**
      * The room the narration is intended for.
-     * @readonly
-     * @type {Room}
      */
-    location;
+    readonly location: Room;
     /**
      * The whisper the narration is intended for. If the narration is not intended for a whisper, this is null.
-     * @readonly
-     * @type {Whisper}
      */
-    whisper;
+    readonly whisper: Whisper;
     /**
      * The text content for the narration.
-     * @type {string}
      */
-    content;
+    content: string;
     /**
      * The message that the narration originated with, if applicable. If the narration didn't originate with a message, this is null.
-     * @readonly
-     * @type {UserMessage}
      */
-    message;
+    readonly message: UserMessage;
     /**
 	 * A collection of attachments sent with the original message.
-	 * @type {Collection<string, Attachment>}
 	 */
-	attachments;
+	attachments: Collection<string, Attachment>;
 	/**
 	 * An array of embeds sent with the original message.
-	 * @type {Embed[]}
 	 */
-	embeds;
+	embeds: Embed[];
     /**
      * The player or guild member who wrote the narration, if applicable. If the narration didn't originate with a message, this is null.
-     * @readonly
-     * @type {Player|GuildMember}
      */
-    narrator;
+    readonly narrator: Player | GuildMember;
     /**
      * The display name to represent the narrator in a webhook.
-     * @readonly
-     * @type {string}
      */
-    narratorDisplayName;
+    readonly narratorDisplayName: string;
     /**
      * The avatar URL to represent the narrator in a webhook.
-     * @readonly
-     * @type {string}
      */
-    narratorDisplayIcon;
+    readonly narratorDisplayIcon: string;
     /**
 	 * Whether or not this narration is considered out-of-character, and thus not a true narration.
-	 * @type {boolean}
 	 */
-    isOOCMessage;
+    isOOCMessage: boolean;
     /**
      * Whether or not the location has the `video surveilled` tag.
      * If this is an OOC message, this is false.
-     * @type {boolean}
      */
-    locationIsVideoSurveilled;
+    locationIsVideoSurveilled: boolean;
     /**
 	 * A list of occupied rooms with the `video monitoring` tag.
 	 * If the location doesn't have the `video surveilled` tag, or if this is an OOC message, this is empty.
-	 * @type {Room[]}
 	 */
-    videoMonitoringRooms;
+    videoMonitoringRooms: Room[];
 
     /**
-     * @constructor
-     * @param {Game} game - The game this is for.
-     * @param {MessageDisplayType} messageDisplayType - The display type of the message to send for this narration.
-     * @param {Action} action - The action being narrated.
-     * @param {Player} player - The player whose action is being narrated.
-     * @param {Room} location - The room the narration is intended for.
-     * @param {string} content - The text content for the narration.
-     * @param {Whisper} [whisper] - The whisper the narration is intended for. Defaults to null.
-     * @param {UserMessage} [message] - The message that the narration originated with. Defaults to null.
-     * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Defaults to null.
+     * @param game - The game this is for.
+     * @param messageDisplayType - The display type of the message to send for this narration.
+     * @param action - The action being narrated.
+     * @param player - The player whose action is being narrated.
+     * @param location - The room the narration is intended for.
+     * @param content - The text content for the narration.
+     * @param whisper - The whisper the narration is intended for. Defaults to null.
+     * @param message - The message that the narration originated with. Defaults to null.
+     * @param narrator - The player or guild member who wrote the narration. Defaults to null.
      */
-    constructor(game, messageDisplayType, action, player, location, content, whisper = null, message = null, narrator = null) {
+    constructor(game: Game, messageDisplayType: MessageDisplayType, action: Action, player: Player, location: Room,
+        content: string, whisper: Whisper = null, message: UserMessage = null, narrator: Player | GuildMember = null) {
         super(game);
         this.messageDisplayType = messageDisplayType;
         this.action = action;
@@ -154,7 +127,7 @@ export default class Narration extends GameConstruct {
     /**
      * Returns the prefix string to append before the rest of the message text in spectate messages. If the narration didn't occur in a whisper, returns an empty string.
      */
-    getWhisperPrefixString() {
+    getWhisperPrefixString(): string {
         if (!this.whisper || this.action instanceof UnhideAction) return "";
         const hidingSpot = this.getGame().entityFinder.getFixture(this.whisper.hidingSpotName, this.location.id);
         const playerList = this.player ? this.whisper.generatePlayerListStringExcluding(this.player) : this.whisper.generatePlayerListString();
@@ -165,21 +138,21 @@ export default class Narration extends GameConstruct {
     /**
      * Returns true if the narration's message display type is PLAYER.
      */
-    isPlayerMessageType() {
+    isPlayerMessageType(): boolean {
         return this.messageDisplayType === MessageDisplayType.PLAYER;
     }
 
     /**
      * Returns true if the narration was sent by a moderator.
      */
-    isModeratorNarration() {
+    isModeratorNarration(): boolean {
         return this.narrator && !this.isPlayerMessageType();
     }
 
     /**
      * Returns true if the narration is only intended to be narrated in a hiding spot.
      */
-    isInHidingSpot() {
+    isInHidingSpot(): boolean {
         return (this.player && this.player.isHidden() || this.isModeratorNarration()) && this.whisper && !(this.action instanceof UnhideAction);
     }
 }

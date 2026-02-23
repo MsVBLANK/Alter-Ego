@@ -1,67 +1,55 @@
-﻿import Description from './Description.js';
-import InventorySlot from './InventorySlot.ts';
-import ItemInstance from './ItemInstance.ts';
-import { replaceInventoryItem } from '../Modules/itemManager.js';
-import { parseAndExecuteBotCommands } from '../Modules/commandHandler.js';
-import { Collection } from 'discord.js';
+﻿import { Collection } from "discord.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { replaceInventoryItem } from "../Modules/itemManager.js";
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
+import InventorySlot from "./InventorySlot.ts";
+import ItemInstance from "./ItemInstance.ts";
+import type Player from "./Player.js";
+import type RoomItem from "./RoomItem.js";
 
 /**
- * @import Game from "./Game.js";
- * @import Player from "./Player.js";
- * @import Fixture from './Fixture.js';
- * @import RoomItem from './RoomItem.js';
- * @import Puzzle from './Puzzle.js';
- */
-
-/**
- * @class InventoryItem
- * @classdesc Represents an item that is currently possessed by a player.
- * @extends ItemInstance
+ * Represents an item that is currently possessed by a player.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/inventory_item.html
  */
 export default class InventoryItem extends ItemInstance {
     /**
      * The name of the player who has this inventory item.
-     * @type {string}
      */
-    playerName;
+    playerName: string;
     /**
      * The player who has this inventory item.
-     * @type {Player}
      */
-    player;
+    player: Player;
     /**
      * The ID of the equipment slot the inventory item or its top-level container is equipped to.
-     * @type {string}
      */
-    equipmentSlot;
+    equipmentSlot: string;
     /**
      * The inventory item's actual container.
-     * @type {InventoryItem}
      */
-    container = null;
+    override container: InventoryItem = null;
     /**
      * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
-     * @override
-     * @type {Collection<string, InventorySlot<InventoryItem>>}
      */
-    inventory = new Collection();
+    override inventory: Collection<string, InventorySlot<InventoryItem>> = new Collection();
 
     /**
-     * @constructor
-     * @param {string} playerName - The name of the player who has this inventory item.
-     * @param {string} prefabId - The ID of the prefab this inventory item is an instance of.
-     * @param {string} identifier - The unique identifier given to the inventory item if it is capable of containing other inventory items.
-     * @param {string} equipmentSlot - The ID of the equipment slot the inventory item or its top-level container is equipped to.
-     * @param {string} containerType - The type of the item's container. The only acceptable option is "InventoryItem" or an empty string.
-     * @param {string} containerName - The identifier of the container the inventory item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
-     * @param {number} quantity - How many identical instances of this inventory item are in the given container.
-     * @param {number} uses - The number of times this inventory item can be used.
-     * @param {string} description - The description of the inventory item. Can contain multiple item lists named after its inventory slots.
-     * @param {number} row - The row number of the inventory inventory item in the sheet.
-     * @param {Game} game - The game this belongs to.
+     * @param playerName - The name of the player who has this inventory item.
+     * @param prefabId - The ID of the prefab this inventory item is an instance of.
+     * @param identifier - The unique identifier given to the inventory item if it is capable of containing other inventory items.
+     * @param equipmentSlot - The ID of the equipment slot the inventory item or its top-level container is equipped to.
+     * @param containerType - The type of the item's container. The only acceptable option is "InventoryItem" or an empty string.
+     * @param containerName - The identifier of the container the inventory item can be found in, and the ID of the {@link InventorySlot|inventory slot} it belongs to, separated by a forward slash.
+     * @param quantity - How many identical instances of this inventory item are in the given container.
+     * @param uses - The number of times this inventory item can be used.
+     * @param description - The description of the inventory item. Can contain multiple item lists named after its inventory slots.
+     * @param row - The row number of the inventory inventory item in the sheet.
+     * @param game - The game this belongs to.
      */
-    constructor(playerName, prefabId, identifier, equipmentSlot, containerType, containerName, quantity, uses, description, row, game) {
+    constructor(playerName: string, prefabId: string, identifier: string, equipmentSlot: string, containerType: string,
+        containerName: string, quantity: number, uses: number, description: string, row: number, game: Game) {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.playerName = playerName;
         this.equipmentSlot = equipmentSlot;
@@ -70,27 +58,24 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Sets the player.
-     * @param {Player} player 
      */
-    setPlayer(player) {
+    setPlayer(player: Player): void {
         this.player = player;
     }
 
     /**
      * Sets the container.
-     * @param {InventoryItem} container
      */
-    setContainer(container) {
+    setContainer(container: InventoryItem): void {
         this.container = container;
     }
 
     /**
      * Creates instances of all of the prefab's {@link InventorySlot|inventory slots} and inserts them into this instance's inventory.
      */
-    initializeInventory() {
+    initializeInventory(): void {
         this.prefab.inventory.forEach(prefabInventorySlot => {
-            /** @type {InventoryItem[]} */
-            const items = [];
+            const items: InventoryItem[] = [];
             const inventorySlot = new InventorySlot(
                 prefabInventorySlot.id,
                 prefabInventorySlot.capacity,
@@ -104,9 +89,8 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Decreases the number of uses this inventory item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
-     * @override
      */
-    decreaseUses() {
+    override decreaseUses(): void {
         this.uses--;
         if (this.uses === 0) {
             const nextStage = this.prefab.nextStage;
@@ -123,10 +107,11 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Inserts an inventory item into the specified slot.
-     * @param {InventoryItem} item - The item to insert.
-     * @param {string} slotId - The ID of the inventory slot to insert it in.
+     *
+     * @param item - The item to insert.
+     * @param slotId - The ID of the inventory slot to insert it in.
      */
-    insertItem(item, slotId) {
+    insertItem(item: InventoryItem, slotId: string): void {
         if (item.quantity !== 0) {
             const inventorySlot = this.inventory.get(slotId);
             if (inventorySlot) inventorySlot.insertItem(item);
@@ -136,11 +121,12 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Removes an inventory item from the specified slot.
-     * @param {InventoryItem} item - The item to remove.
-     * @param {string} slotId - The ID of the inventory slot to remove it from.
-     * @param {number} removedQuantity - The quantity of this item to remove.
+     *
+     * @param item - The item to remove.
+     * @param slotId - The ID of the inventory slot to remove it from.
+     * @param removedQuantity - The quantity of this item to remove.
      */
-    removeItem(item, slotId, removedQuantity) {
+    removeItem(item: InventoryItem, slotId: string, removedQuantity: number): void {
         const inventorySlot = this.inventory.get(slotId);
         if (inventorySlot) inventorySlot.removeItem(item, removedQuantity);
         if (!isNaN(item.quantity)) this.subtractWeight(item.weight * removedQuantity);
@@ -165,11 +151,13 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Returns the args for the Drop ActionDirective for this inventory item.
-     * @param {'Fixture'|'RoomItem'|'Puzzle'} containerType - The type of container to drop the inventory item into.
-     * @param {RoomItemContainer} container - The container to drop the inventory item into.
-     * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot to drop the inventory item into.
+     *
+     * @param containerType - The type of container to drop the inventory item into.
+     * @param container - The container to drop the inventory item into.
+     * @param inventorySlot - The inventory slot to drop the inventory item into.
      */
-    getDropActionDirectiveArgs(containerType, container, inventorySlot) {
+    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer,
+        inventorySlot: InventorySlot<RoomItem>): string[] {
         let containerName = container.name;
         if (container instanceof ItemInstance) containerName = container.getIdentifier();
         return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
@@ -177,35 +165,37 @@ export default class InventoryItem extends ItemInstance {
 
 	/**
 	 * Returns the args for the Stash ActionDirective for this inventory item.
-	 * @param {InventoryItem} container - The container to stash the inventory item into.
-	 * @param {InventorySlot<InventoryItem>} inventorySlot - The inventory slot to stash the inventory item into.
+     *
+	 * @param container - The container to stash the inventory item into.
+	 * @param inventorySlot - The inventory slot to stash the inventory item into.
 	 */
-	getStashActionDirectiveArgs(container, inventorySlot) {
+	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string] {
 		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
 	}
 
 	/**
 	 * Returns the args for the Unstash ActionDirective for this inventory item.
+     *
+     * @returns [identifier, containerName, equipmentSlot]
 	 */
-	getUnstashActionDirectiveArgs() {
+	getUnstashActionDirectiveArgs(): [string, string, string] {
 		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
 	}
 
     /**
      * Gets all of the items this entity contains.
-     * @override
      */
-    getContainedItems() {
+    override getContainedItems(): InventoryItem[] {
         return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier);
     }
 
     /**
 	 * Gets all of the items that should appear in the given item list.
-	 * @override
-	 * @param {string} [itemListName] - The name of the item list. Only required if there is more than one item list.
-	 * @param {Player} [player] - The player the description is being sent to. Optional.
+     *
+	 * @param itemListName - The name of the item list. Only required if there is more than one item list.
+	 * @param player - The player the description is being sent to. Optional.
 	 */
-	getContainedItemsForItemList(itemListName, player) {
+	override getContainedItemsForItemList(itemListName?: string, player?: Player): InventoryItem[] {
         if (player && player.name !== this.player.name) return [];
         return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier, itemListName);
 	}
@@ -213,22 +203,21 @@ export default class InventoryItem extends ItemInstance {
     /**
      * Executes the inventory item's equipped commands.
      */
-    executeEquippedCommands() {
+    executeEquippedCommands(): void {
         parseAndExecuteBotCommands(this.prefab.equippedCommands, this.getGame(), this, this.player);
     }
 
     /**
      * Executes the inventory item's unequipped commands.
      */
-    executeUnequippedCommands() {
+    executeUnequippedCommands(): void {
         parseAndExecuteBotCommands(this.prefab.unequippedCommands, this.getGame(), this, this.player);
     }
 
     /**
      * Returns true if the item is usable on the given player.
-     * @param {Player} player 
      */
-    usableOn(player) {
+    usableOn(player: Player): boolean {
         let canEffect = false, canCure = false;
 		for (const effect of this.prefab.effects) {
 			if (!player.hasStatus(effect.id) || effect.duplicatedStatus !== null)
@@ -245,7 +234,7 @@ export default class InventoryItem extends ItemInstance {
     /**
      * Returns true if the item is covered by an equipped inventory item. Also returns true if it's stashed.
      */
-    isCoveredByEquippedItem() {
+    isCoveredByEquippedItem(): boolean {
         if (this.container) return true;
         for (const equipmentSlot of this.player.inventory.values()) {
             if (equipmentSlot.equippedItem === null || equipmentSlot.id === "RIGHT HAND" || equipmentSlot.id === "LEFT HAND") continue;
@@ -256,14 +245,14 @@ export default class InventoryItem extends ItemInstance {
 
     /**
      * Sets the description.
-     * @param {Description} description - The description to set.
+     *
+     * @param description - The description to set.
      */
-    setDescription(description) {
+    setDescription(description: Description): void {
         this.description = new Description(description.text, this, this.getGame());
     }
 
-    /** @returns {string} */
-    descriptionCell() {
+    descriptionCell(): string {
         return this.getGame().constants.inventorySheetDescriptionColumn + this.row;
     }
 }

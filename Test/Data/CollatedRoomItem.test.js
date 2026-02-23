@@ -1,5 +1,5 @@
 import CollatedItem from "../../Data/CollatedItem.ts";
-import Fixture from "../../Data/Fixture.js";
+import Fixture from "../../Data/Fixture.ts";
 
 describe('CollatedItem test', () => {
 	beforeAll(async () => {

@@ -1,5 +1,5 @@
-import { MessageDisplayType } from '../../Modules/enums.js';
-import Action from '../Action.ts';
+import { MessageDisplayType } from "../../Modules/enums.js";
+import Action from "../Action.ts";
 import type InventoryItem from "../InventoryItem.js";
 import type Recipe from "../Recipe.js";
 

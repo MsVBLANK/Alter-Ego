@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
-import CureAction from "./CureAction.ts";
 import type HidingSpot from "../HidingSpot.js";
+import CureAction from "./CureAction.ts";
 
 /**
  * Represents an unhide action.

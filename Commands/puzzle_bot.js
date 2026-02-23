@@ -1,7 +1,7 @@
 import AttemptAction from "../Data/Actions/AttemptAction.ts";
 import SolveAction from "../Data/Actions/SolveAction.ts";
 import UnsolveAction from "../Data/Actions/UnsolveAction.ts";
-import Room from "../Data/Room.js";
+import Room from "../Data/Room.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.js' */

@@ -1,14 +1,14 @@
 import { Collection } from "discord.js";
-import Fixture from "../Data/Fixture.js";
-import Game from "../Data/Game.js";
-import Gesture from "../Data/Gesture.js";
-import InventoryItem from "../Data/InventoryItem.js";
-import Player from "../Data/Player.js";
-import Puzzle from "../Data/Puzzle.js";
-import Room from "../Data/Room.js";
-import RoomItem from "../Data/RoomItem.js";
-import Status from "../Data/Status.js";
-import Whisper from "../Data/Whisper.js";
+import Fixture from "../Data/Fixture.ts";
+import Game from "../Data/Game.ts";
+import Gesture from "../Data/Gesture.ts";
+import InventoryItem from "../Data/InventoryItem.ts";
+import Player from "../Data/Player.ts";
+import Puzzle from "../Data/Puzzle.ts";
+import Room from "../Data/Room.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Status from "../Data/Status.ts";
+import Whisper from "../Data/Whisper.ts";
 import * as matchers from '../Modules/matchers.js';
 
 /** @import GameEntity from "../Data/GameEntity.ts"; */

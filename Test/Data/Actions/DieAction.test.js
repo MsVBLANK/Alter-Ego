@@ -1,5 +1,5 @@
 import DieAction from "../../../Data/Actions/DieAction.ts";
-import Player from "../../../Data/Player.js";
+import Player from "../../../Data/Player.ts";
 import { createMockMessage } from "../../__mocks__/libs/discord.js";
 
 describe('DieAction test', () => {

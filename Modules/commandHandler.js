@@ -1,4 +1,4 @@
-﻿import Puzzle from '../Data/Puzzle.js';
+﻿import Puzzle from '../Data/Puzzle.ts';
 import { ChannelType } from 'discord.js';
 
 /** @import Game from '../Data/Game.js' */

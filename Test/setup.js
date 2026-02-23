@@ -32,7 +32,7 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 
 import GuildContext from '../Classes/GuildContext.js';
 import GameSettings from '../Classes/GameSettings.js';
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 import BotContext from '../Classes/BotContext.js';
 import { ChannelType, Collection } from 'discord.js';
 import {DEFAULT_GAME_SETTINGS} from "../Modules/settingsLoader.ts";

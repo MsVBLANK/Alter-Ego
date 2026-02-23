@@ -1,9 +1,9 @@
+import { Collection } from "discord.js";
+import type Game from "./Game.js";
 import InventorySlot from "./InventorySlot.ts";
 import ItemContainer from "./ItemContainer.ts";
-import { Collection } from "discord.js";
-import type Prefab from "./Prefab.js";
-import type Game from "./Game.js";
 import type Player from "./Player.js";
+import type Prefab from "./Prefab.js";
 import type RecipeItem from "./RecipeItem.js";
 
 /**
@@ -115,6 +115,7 @@ export default abstract class ItemInstance extends ItemContainer {
 
 	/**
 	 * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
+     *
 	 * @param player - The player who used this item, if applicable.
 	 */
 	abstract decreaseUses(player?: Player): void;
@@ -122,6 +123,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * Adds the given amount of weight to the item's weight.
 	 * Also updates the weights of all items in its container chain.
+     *
 	 * @param weight - The amount of weight to add.
 	 */
 	protected addWeight(weight: number): void {
@@ -138,6 +140,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * Subtracts the given amount of weight from the item's weight.
 	 * Also updates the weights of all items in its container chain.
+     *
 	 * @param weight - The amount of weight to subtract.
 	 */
 	protected subtractWeight(weight: number): void {

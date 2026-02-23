@@ -1,5 +1,5 @@
-import Action from "../Action.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
+import Action from "../Action.ts";
 import type Fixture from "../Fixture.js";
 
 /**

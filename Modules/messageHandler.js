@@ -1,5 +1,5 @@
-import Dialog from '../Data/Dialog.js';
-import Player from '../Data/Player.js';
+import Dialog from '../Data/Dialog.ts';
+import Player from '../Data/Player.ts';
 import AnnounceAction from '../Data/Actions/AnnounceAction.ts';
 import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import SayAction from '../Data/Actions/SayAction.ts';

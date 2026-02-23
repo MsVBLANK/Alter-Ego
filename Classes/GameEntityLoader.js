@@ -1,26 +1,26 @@
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 import GameEntityManager from './GameEntityManager.js';
-import Exit from '../Data/Exit.js';
-import Room from '../Data/Room.js';
-import Fixture from '../Data/Fixture.js';
-import Prefab from '../Data/Prefab.js';
+import Exit from '../Data/Exit.ts';
+import Room from '../Data/Room.ts';
+import Fixture from '../Data/Fixture.ts';
+import Prefab from '../Data/Prefab.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
-import Recipe from '../Data/Recipe.js';
-import RoomItem from '../Data/RoomItem.js';
-import Puzzle from '../Data/Puzzle.js';
-import Event from '../Data/Event.js';
-import EquipmentSlot from '../Data/EquipmentSlot.js';
-import InventoryItem from '../Data/InventoryItem.js';
-import Status from '../Data/Status.js';
-import Player from '../Data/Player.js';
-import Gesture from '../Data/Gesture.js';
-import Flag from '../Data/Flag.js';
+import Recipe from '../Data/Recipe.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import Puzzle from '../Data/Puzzle.ts';
+import Event from '../Data/Event.ts';
+import EquipmentSlot from '../Data/EquipmentSlot.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
+import Status from '../Data/Status.ts';
+import Player from '../Data/Player.ts';
+import Gesture from '../Data/Gesture.ts';
+import Flag from '../Data/Flag.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';
 import { getSheetValues } from '../Modules/sheets.js';
 import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
-import RecipeItem from '../Data/RecipeItem.js';
+import RecipeItem from '../Data/RecipeItem.ts';
 
 /**
  * @class GameEntityLoader

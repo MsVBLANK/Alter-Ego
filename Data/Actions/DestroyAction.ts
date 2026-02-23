@@ -1,8 +1,8 @@
+import { destroyInventoryItem, destroyRoomItem } from "../../Modules/itemManager.js";
 import Action from "../Action.ts";
-import { destroyRoomItem, destroyInventoryItem } from "../../Modules/itemManager.js";
+import type InventoryItem from "../InventoryItem.js";
 import ItemInstance from "../ItemInstance.ts";
 import type RoomItem from "../RoomItem.js";
-import type InventoryItem from "../InventoryItem.js";
 
 /** @import InventoryItem from "../InventoryItem.js" */
 /** @import RoomItem from "../RoomItem.js" */

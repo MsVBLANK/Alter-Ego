@@ -1,4 +1,4 @@
-import Event from "../Data/Event.js";
+import Event from "../Data/Event.ts";
 import MoveAction from "../Data/Actions/MoveAction.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */

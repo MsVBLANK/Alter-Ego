@@ -265,9 +265,10 @@ export default class Fixture extends RecipeProcessor {
 
     /**
      * Makes the fixture start processing recipes.
-     * @param {Player} [player] - The player who activated the fixture, if applicable.
+     *
+     * @param player - The player who activated the fixture, if applicable.
      */
-    activate(player: Player): void {
+    activate(player?: Player): void {
         this.activated = true;
 
         const result = this.findRecipe();

@@ -88,7 +88,7 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
                 },
                 destination: room.channel.id,
             },
-            "tell",
+            "tell"
         );
         if (addSpectate) {
             room.occupants.forEach(occupant => {
@@ -132,7 +132,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
                 },
                 destination: whisper.channel.id,
             },
-            "tell",
+            "tell"
         );
         if (addSpectate) {
             whisper.players.forEach(player => {
@@ -176,7 +176,7 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
                 },
                 destination: player.notificationChannel.id,
             },
-            "tell",
+            "tell"
         );
     }
     if (addSpectate && player.spectateChannel !== null) {

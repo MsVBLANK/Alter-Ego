@@ -126,7 +126,7 @@ export default class NarrateAction extends Action {
 	 */
 	#communicateNarrationToLocation(narration: Narration): void {
 		if (narration.isInHidingSpot()) return;
-		this.#communicateNarrationToPlayers(narration, narration.location.occupants);
+		this.#communicateNarrationToPlayers(narration, narration.location.occupants.filter(occupant => !occupant.isHidden() || occupant.hasBehaviorAttribute("see room")));
 		if (!narration.isModeratorNarration()) this.getGame().communicationHandler.narrateInRoom(narration, narration.content, false);
 	}
 
@@ -155,7 +155,7 @@ export default class NarrateAction extends Action {
 		for (const videoMonitoringRoom of narration.videoMonitoringRooms) {
 			const webhookUsername = this.#assembleVideoSurveilledWebhookUsername(narration, prefix, narration.narratorDisplayName);
 			this.#communicateNarrationToPlayers(narration, videoMonitoringRoom.occupants, webhookUsername, narration.narratorDisplayIcon, narrationText);
-			if (!narration.isModeratorNarration()) this.getGame().communicationHandler.narrateInRoom(narration, narrationText, false, videoMonitoringRoom, webhookUsername);
+			if (narration.location.id !== videoMonitoringRoom.id) this.getGame().communicationHandler.narrateInRoom(narration, narrationText, false, videoMonitoringRoom, webhookUsername);
 		}
 	}
 }

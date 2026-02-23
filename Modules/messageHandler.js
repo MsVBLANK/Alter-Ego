@@ -71,7 +71,7 @@ export function processIncomingMessage(game, message) {
 export function sendNarrationToRoom(room, narration, messageText, messageDisplayType, addSpectate = true, player = null, webhookUsername = narration.narratorDisplayName) {
     if (messageText !== "") {
         const files = narration.attachments.map(attachment => attachment.url);
-        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER;
+        const sendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER || narration.isModeratorNarration();
         let messageCreateOptions;
         if (sendWebhookMessage)
             messageCreateOptions = discordUtils.generateWebhookMessageDisplayCreateOptions(messageDisplayType, room.getGame(), messageText, webhookUsername, narration.narratorDisplayIcon, narration.embeds, files, player);

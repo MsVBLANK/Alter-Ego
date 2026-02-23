@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import Event from "../Event.js";
+import Event from "../Event.ts";
 
 /**
  * Represents a trigger action.

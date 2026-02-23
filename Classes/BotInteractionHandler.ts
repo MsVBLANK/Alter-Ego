@@ -5,9 +5,9 @@ import TakeAction from "../Data/Actions/TakeAction.ts";
 import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
 import UnstashAction from "../Data/Actions/UnstashAction.ts";
-import type Game from "../Data/Game.js";
+import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
-import type Player from "../Data/Player.js";
+import type Player from "../Data/Player.ts";
 import type { Interaction, InteractionCallbackResponse } from "discord.js"
 
 /**

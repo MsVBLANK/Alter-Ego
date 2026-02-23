@@ -4,7 +4,7 @@ import * as helpers from './helpers.ts';
 import { parse as parseScript } from 'acorn';
 
 /** @import GameEntity from '../Data/GameEntity.ts' */
-/** @import Player from '../Data/Player.js' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {import('acorn').Options} */
 const PARSER_OPTIONS = {

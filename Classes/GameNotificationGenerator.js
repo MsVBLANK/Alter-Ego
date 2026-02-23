@@ -1,14 +1,14 @@
 import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.ts";
 
-/** @import Dialog from "../Data/Dialog.js" */
-/** @import Fixture from "../Data/Fixture.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import Player from "../Data/Player.js" */
+/** @import Dialog from "../Data/Dialog.ts" */
+/** @import Fixture from "../Data/Fixture.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import Player from "../Data/Player.ts" */
 /** @import Exit from "../Data/Exit.js" */
 /** @import ItemInstance from "../Data/ItemInstance.ts" */
-/** @import Puzzle from "../Data/Puzzle.js" */
-/** @import Recipe from "../Data/Recipe.js" */
-/** @import Room from "../Data/Room.js" */
+/** @import Puzzle from "../Data/Puzzle.ts" */
+/** @import Recipe from "../Data/Recipe.ts" */
+/** @import Room from "../Data/Room.ts" */
 
 /**
  * @class GameNotificationGenerator

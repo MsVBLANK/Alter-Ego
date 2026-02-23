@@ -9,10 +9,10 @@ import { capitalizeFirstLetter } from './helpers.ts';
 import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
 
 /** @import Interactable from '../Classes/Interactables/Interactable.ts' */
-/** @import Game from '../Data/Game.js' */
-/** @import Narration from '../Data/Narration.js' */
-/** @import Room from '../Data/Room.js' */
-/** @import Whisper from '../Data/Whisper.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Narration from '../Data/Narration.ts' */
+/** @import Room from '../Data/Room.ts' */
+/** @import Whisper from '../Data/Whisper.ts' */
 
 /**
  * Processes a message sent in a guild during a game and directs it to the relevant handlers.

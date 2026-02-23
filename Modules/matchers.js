@@ -5,16 +5,16 @@ import Player from "../Data/Player.ts";
 import Room from "../Data/Room.ts";
 import Status from "../Data/Status.ts";
 
-/** @import Event from "../Data/Event.js" */
+/** @import Event from "../Data/Event.ts" */
 /** @import Exit from "../Data/Exit.js" */
-/** @import Fixture from "../Data/Fixture.js" */
-/** @import Flag from "../Data/Flag.js" */
+/** @import Fixture from "../Data/Fixture.ts" */
+/** @import Flag from "../Data/Flag.ts" */
 /** @import GameEntity from "../Data/GameEntity.ts" */
-/** @import InventoryItem from "../Data/InventoryItem.js" */
-/** @import Prefab from "../Data/Prefab.js" */
-/** @import Puzzle from "../Data/Puzzle.js" */
-/** @import Recipe from "../Data/Recipe.js" */
-/** @import RoomItem from "../Data/RoomItem.js" */
+/** @import InventoryItem from "../Data/InventoryItem.ts" */
+/** @import Prefab from "../Data/Prefab.ts" */
+/** @import Puzzle from "../Data/Puzzle.ts" */
+/** @import Recipe from "../Data/Recipe.ts" */
+/** @import RoomItem from "../Data/RoomItem.ts" */
 
 /**
  * Returns true if the entity's row number matches the given row number.

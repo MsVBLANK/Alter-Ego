@@ -7,11 +7,11 @@ import * as messageHandler from "../../Modules/messageHandler.js";
 import { instantiateInventoryItem, destroyInventoryItem } from "../../Modules/itemManager.js";
 
 /**
- * @import HidingSpot from "../../Data/HidingSpot.js"
- * @import Player from "../../Data/Player.js"
- * @import Room from "../../Data/Room.js"
- * @import Status from "../../Data/Status.js"
- * @import Whisper from "../../Data/Whisper.js"
+ * @import HidingSpot from "../../Data/HidingSpot.ts"
+ * @import Player from "../../Data/Player.ts"
+ * @import Room from "../../Data/Room.ts"
+ * @import Status from "../../Data/Status.ts"
+ * @import Whisper from "../../Data/Whisper.ts"
  * @import { Message, TextChannel } from "discord.js"
  */
 

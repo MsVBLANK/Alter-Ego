@@ -5,9 +5,9 @@ import type Action from "./Action.ts";
 import UnhideAction from "./Actions/UnhideAction.ts";
 import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
-import Player from "./Player.js";
-import type Room from "./Room.js";
-import type Whisper from "./Whisper.js";
+import Player from "./Player.ts";
+import type Room from "./Room.ts";
+import type Whisper from "./Whisper.ts";
 
 /**
  * Represents a narration in the game.

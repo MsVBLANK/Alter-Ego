@@ -1,11 +1,11 @@
 import { destroyInventoryItem, destroyRoomItem } from "../../Modules/itemManager.js";
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.js";
+import type InventoryItem from "../InventoryItem.ts";
 import ItemInstance from "../ItemInstance.ts";
-import type RoomItem from "../RoomItem.js";
+import type RoomItem from "../RoomItem.ts";
 
-/** @import InventoryItem from "../InventoryItem.js" */
-/** @import RoomItem from "../RoomItem.js" */
+/** @import InventoryItem from "../InventoryItem.ts" */
+/** @import RoomItem from "../RoomItem.ts" */
 
 /**
  * Represents a destroy action.

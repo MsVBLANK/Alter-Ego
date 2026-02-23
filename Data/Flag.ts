@@ -1,8 +1,8 @@
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
 import { default as evaluateScript } from "../Modules/scriptParser.js";
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import type Player from "./Player.js";
+import type Player from "./Player.ts";
 
 /**
  * Represents a flag that can hold various forms of data for easy access elsewhere in the game.

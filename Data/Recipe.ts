@@ -5,8 +5,8 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type ItemInstance from "./ItemInstance.ts";
-import type RecipeItem from "./RecipeItem.js";
-import type RoomItem from "./RoomItem.js";
+import type RecipeItem from "./RecipeItem.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Allows players to transform items or inventory items into other items or inventory items.

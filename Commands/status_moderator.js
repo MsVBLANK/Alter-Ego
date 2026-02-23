@@ -2,9 +2,9 @@ import CureAction from '../Data/Actions/CureAction.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import Status from "../Data/Status.js" */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
+/** @import Status from "../Data/Status.ts" */
 
 /** @type {CommandConfig} */
 export const config = {

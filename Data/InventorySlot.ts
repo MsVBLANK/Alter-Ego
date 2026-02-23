@@ -1,6 +1,6 @@
-import type InventoryItem from "./InventoryItem.js";
+import type InventoryItem from "./InventoryItem.ts";
 import type ItemInstance from "./ItemInstance.ts";
-import type RoomItem from "./RoomItem.js";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents a slot within an item that can contain other items.

@@ -1,11 +1,11 @@
 import ItemInstance from '../Data/ItemInstance.ts';
 import { Duration } from 'luxon';
-import type Player from '../Data/Player.js';
+import type Player from '../Data/Player.ts';
 
-/** @import Player from "../Data/Player.js" */
-/** @import InventoryItem from "../Data/InventoryItem.js" */
+/** @import Player from "../Data/Player.ts" */
+/** @import InventoryItem from "../Data/InventoryItem.ts" */
 /** @import ItemInstance from "../Data/ItemInstance.ts" */
-/** @import RoomItem from "../Data/RoomItem.js" */
+/** @import RoomItem from "../Data/RoomItem.ts" */
 /** @import { DurationObjectUnits } from "luxon" */
 
 /**

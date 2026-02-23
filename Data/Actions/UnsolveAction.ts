@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import Puzzle from "../Puzzle.js";
+import Puzzle from "../Puzzle.ts";
 
 /**
  * Represents an unsolve action.

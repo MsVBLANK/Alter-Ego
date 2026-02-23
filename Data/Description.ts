@@ -1,14 +1,14 @@
 import type Interactable from "../Classes/Interactables/Interactable.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
-import Fixture from "./Fixture.js";
-import type Game from "./Game.js";
+import Fixture from "./Fixture.ts";
+import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
 import type GameEntity from "./GameEntity.ts";
-import type Player from "./Player.js";
-import Puzzle from "./Puzzle.js";
-import Room from "./Room.js";
-import RoomItem from "./RoomItem.js";
+import type Player from "./Player.ts";
+import Puzzle from "./Puzzle.ts";
+import Room from "./Room.ts";
+import RoomItem from "./RoomItem.ts";
 
 /**
  * Represents a game entity's description.

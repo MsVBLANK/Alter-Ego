@@ -9,7 +9,7 @@ import Recipe from '../Data/Recipe.ts';
 import { table } from 'table';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

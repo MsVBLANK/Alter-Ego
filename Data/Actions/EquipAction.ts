@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
-import type EquipmentSlot from "../EquipmentSlot.js";
-import type InventoryItem from "../InventoryItem.js";
+import type EquipmentSlot from "../EquipmentSlot.ts";
+import type InventoryItem from "../InventoryItem.ts";
 
 /**
  * Represents an equip action.

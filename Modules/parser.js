@@ -9,8 +9,8 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 export * as default from './parser.js';
 
 /** @import GameEntity from '../Data/GameEntity.ts' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import RoomItem from '../Data/RoomItem.js' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
+/** @import RoomItem from '../Data/RoomItem.ts' */
 
 class Clause {
     /**

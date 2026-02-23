@@ -1,8 +1,8 @@
 import Action from "../Data/Action.ts";
-import type Game from "../Data/Game.js";
-import type Player from "../Data/Player.js";
-import type Room from "../Data/Room.js";
-import type Whisper from "../Data/Whisper.js";
+import type Game from "../Data/Game.ts";
+import type Player from "../Data/Player.ts";
+import type Room from "../Data/Room.ts";
+import type Whisper from "../Data/Whisper.ts";
 import { subtle } from "crypto";
 
 /**

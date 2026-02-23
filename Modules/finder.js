@@ -1,5 +1,5 @@
 /** @import GameEntity from "../Data/GameEntity.ts" */
-/** @import Player from "../Data/Player.js" */
+/** @import Player from "../Data/Player.ts" */
 
 /** 
  * Wrapper function for the limited scope of  the scriptParser module.

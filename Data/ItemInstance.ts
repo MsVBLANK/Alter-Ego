@@ -1,10 +1,10 @@
 import { Collection } from "discord.js";
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 import InventorySlot from "./InventorySlot.ts";
 import ItemContainer from "./ItemContainer.ts";
-import type Player from "./Player.js";
-import type Prefab from "./Prefab.js";
-import type RecipeItem from "./RecipeItem.js";
+import type Player from "./Player.ts";
+import type Prefab from "./Prefab.ts";
+import type RecipeItem from "./RecipeItem.ts";
 
 /**
  * Represents an instance of a prefab that actually exists in the game.

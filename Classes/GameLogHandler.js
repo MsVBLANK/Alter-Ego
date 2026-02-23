@@ -9,15 +9,15 @@ import Room from "../Data/Room.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import { generateListString } from "../Modules/helpers.ts";
 
-/** @import EquipmentSlot from "../Data/EquipmentSlot.js" */
-/** @import Flag from "../Data/Flag.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import Gesture from "../Data/Gesture.js" */
-/** @import Event from "../Data/Event.js" */
-/** @import HidingSpot from "../Data/HidingSpot.js" */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.ts" */
+/** @import Flag from "../Data/Flag.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import Gesture from "../Data/Gesture.ts" */
+/** @import Event from "../Data/Event.ts" */
+/** @import HidingSpot from "../Data/HidingSpot.ts" */
 /** @import ItemContainer from "../Data/ItemContainer.ts" */
-/** @import Status from "../Data/Status.js" */
-/** @import Whisper from "../Data/Whisper.js" */
+/** @import Status from "../Data/Status.ts" */
+/** @import Whisper from "../Data/Whisper.ts" */
 
 /**
  * @class GameLogHandler

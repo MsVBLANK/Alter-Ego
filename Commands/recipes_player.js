@@ -1,9 +1,9 @@
 import RecipesAction from '../Data/Actions/RecipesAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

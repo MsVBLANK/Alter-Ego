@@ -3,7 +3,7 @@ import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
 
-/** @import Game from "../Data/Game.js" */
+/** @import Game from "../Data/Game.ts" */
 /** @import BotCommand from "./BotCommand.js" */
 /** @import ModeratorCommand from "./ModeratorCommand.js" */
 /** @import PlayerCommand from "./PlayerCommand.js" */

@@ -3,9 +3,9 @@ import type Action from "./Action.ts";
 import type Fixture from "./Fixture.ts";
 import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import type Player from "./Player.js";
-import type Room from "./Room.js";
-import Whisper from "./Whisper.js";
+import type Player from "./Player.ts";
+import type Room from "./Room.ts";
+import Whisper from "./Whisper.ts";
 
 export default class HidingSpot extends GameEntity {
     /**

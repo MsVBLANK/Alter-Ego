@@ -2,8 +2,8 @@ import UnequipAction from '../Data/Actions/UnequipAction.ts';
 import Game from '../Data/Game.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

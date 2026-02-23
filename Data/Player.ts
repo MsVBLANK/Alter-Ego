@@ -382,7 +382,8 @@ export default class Player extends RecipeProcessor {
             pronouns.ref = "himself";
             pronouns.Ref = "Himself";
             pronouns.plural = false;
-        } else if (pronounString === "female") {
+        }
+        else if (pronounString === "female") {
             pronouns.sbj = "she";
             pronouns.Sbj = "She";
             pronouns.obj = "her";
@@ -394,7 +395,8 @@ export default class Player extends RecipeProcessor {
             pronouns.ref = "herself";
             pronouns.Ref = "Herself";
             pronouns.plural = false;
-        } else if (pronounString === "neutral") {
+        }
+        else if (pronounString === "neutral") {
             pronouns.sbj = "they";
             pronouns.Sbj = "They";
             pronouns.obj = "them";
@@ -470,8 +472,7 @@ export default class Player extends RecipeProcessor {
             let y = startingPos.y + Math.round(timeRatio * (exit.pos.y - startingPos.y));
             let z = startingPos.z + Math.round(timeRatio * (exit.pos.z - startingPos.z));
             // Calculate the distance the player has traveled in this time.
-            let distance = Math.sqrt(Math.pow(x - player.pos.x, 2) + Math.pow(z - player.pos.z, 2)) /
-                settings.pixelsPerMeter;
+            let distance = Math.sqrt(Math.pow(x - player.pos.x, 2) + Math.pow(z - player.pos.z, 2)) / settings.pixelsPerMeter;
             let rise = (y - player.pos.y) / settings.pixelsPerMeter;
             // Calculate the amount of stamina the player has lost traveling this distance.
             const staminaUseMultiplier = isRunning ? 3 : 1;
@@ -483,7 +484,8 @@ export default class Player extends RecipeProcessor {
                 lostStamina = uphill
                     ? 4 * staminaUseMultiplier * settings.staminaUseRate * distance
                     : staminaUseMultiplier * settings.staminaUseRate / 4 * -distance;
-            } else {
+            }
+            else {
                 const slope = rise / distance;
                 lostStamina = !isNaN(slope) ? staminaUseMultiplier *
                     (settings.staminaUseRate + slope * settings.staminaUseRate) * distance : staminaUseMultiplier *
@@ -499,8 +501,7 @@ export default class Player extends RecipeProcessor {
             if (player.stamina <= player.maxStamina / 2 && !player.#reachedHalfStamina) {
                 player.#reachedHalfStamina = true;
                 // The communication handler needs an action to prevent notification duplication, so create a dummy here.
-                const reachedHalfStaminaAction = new MoveAction(player.getGame(), undefined, player, player.location,
-                    true);
+                const reachedHalfStaminaAction = new MoveAction(player.getGame(), undefined, player, player.location, true);
                 player.getGame().narrationHandler.narrateReachedHalfStamina(reachedHalfStaminaAction, player);
             }
             // If player runs out of stamina, stop them in their tracks.
@@ -517,20 +518,18 @@ export default class Player extends RecipeProcessor {
             if (player.remainingTime <= 0 && player.stamina !== 0) {
                 clearInterval(player.moveTimer);
                 player.isMoving = false;
-                const exitPuzzle = player.getGame().
-                    entityFinder.
-                    getPuzzle(exit.name, player.location.id, "restricted exit", true);
+                const exitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
                 const exitPuzzlePassable = exitPuzzle && exitPuzzle.solutions.includes(player.name);
                 if (exit.unlocked || exitPuzzlePassable) {
                     const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
                     moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
                     player.moveQueue.splice(0, 1);
                     if (player.moveQueue.length > 0) {
-                        const queueMoveAction = new QueueMoveAction(player.getGame(), undefined, player,
-                            player.location, forced);
+                        const queueMoveAction = new QueueMoveAction(player.getGame(), undefined, player, player.location, forced);
                         queueMoveAction.performQueueMove(isRunning, player.moveQueue[0]);
                     }
-                } else {
+                }
+                else {
                     // The exit is locked.
                     const stopAction = new StopAction(player.getGame(), undefined, player, player.location, forced);
                     stopAction.performStop(true, exit);
@@ -585,7 +584,8 @@ export default class Player extends RecipeProcessor {
             rate = uphill ? 2 * rate / 3 : 4 * rate / 3;
             // To make it feel a little more realistic, multiply it by 2.
             time = distance / rate * 2 * 1000;
-        } else {
+        }
+        else {
             const slope = rise / distance;
             rate = !isNaN(slope) ? rate - slope * rate : rate;
             if (distance < rate) distance = 0;
@@ -674,8 +674,7 @@ export default class Player extends RecipeProcessor {
             statusInstance.timer = new Timer(1000, { start: true, loop: true }, function () {
                 if (player.getGame().inProgress && !player.getGame().editMode) {
                     let subtractedTime = 1000;
-                    if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate *
-                        subtractedTime;
+                    if (player.getGame().heated) subtractedTime = player.getGame().settings.heatedSlowdownRate * subtractedTime;
                     statusInstance.remaining = statusInstance.remaining.minus(subtractedTime);
                     player.statusDisplays = player.#generateStatusDisplays(true, true);
                 }
@@ -683,8 +682,7 @@ export default class Player extends RecipeProcessor {
                 if (statusInstance.remaining.as("milliseconds") <= 0) {
                     if (statusInstance.nextStage) {
                         const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
-                        const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location,
-                            true);
+                        const cureNextAction = new CureAction(player.getGame(), undefined, player, player.location, true);
                         cureNextAction.performCure(statusInstance.nextStage, false, false, true);
                         let inflictNextStage = true;
                         const playerStatusIds = player.status.map(statusEffect => statusEffect.id);
@@ -697,18 +695,18 @@ export default class Player extends RecipeProcessor {
                         }
                         if (inflictNextStage) {
                             cureAction.performCure(statusInstance, false, false, false);
-                            const nextStageAction = new InflictAction(player.getGame(), undefined, player,
-                                player.location, true);
+                            const nextStageAction = new InflictAction(player.getGame(), undefined, player, player.location, true);
                             nextStageAction.performInflict(statusInstance.nextStage, true, false, true);
                         }
-                    } else {
+                    }
+                    else {
                         if (statusInstance.fatal) {
                             statusInstance.timer.stop();
                             const action = new DieAction(player.getGame(), undefined, player, player.location, true);
                             action.performDie();
-                        } else {
-                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location,
-                                true);
+                        }
+                        else {
+                            const cureAction = new CureAction(player.getGame(), undefined, player, player.location, true);
                             cureAction.performCure(statusInstance, true, true, true);
                         }
                     }
@@ -924,8 +922,7 @@ export default class Player extends RecipeProcessor {
      * @param modifiers - The modifiers to apply.
      */
     #recalculateStat(stat: number, modifiers: StatModifier[]): number {
-        let assignModifiers = modifiers.filter(modifier => modifier.assignValue === true).
-            sort((a, b) => a.value - b.value);
+        let assignModifiers = modifiers.filter(modifier => modifier.assignValue === true).sort((a, b) => a.value - b.value);
         if (assignModifiers.length !== 0) return assignModifiers[0].value;
 
         for (let i = 0; i < modifiers.length; i++)
@@ -944,7 +941,8 @@ export default class Player extends RecipeProcessor {
         const statMax = 10;
         return Math.floor(
             Math.floor((stat - statMax / 3) / 2) + (this.getGame().settings.diceMax - this.getGame().settings.diceMin) /
-            this.getGame().settings.diceMax);
+            this.getGame().settings.diceMax
+        );
     }
 
     /**
@@ -972,12 +970,14 @@ export default class Player extends RecipeProcessor {
         const playerHands = this.getGame().entityFinder.getPlayerHands(this);
         if (itemListName === "equipment") {
             const playerHandsIDs = playerHands.map(equipmentSlot => equipmentSlot.id);
-            equipmentSlots = this.inventory.filter(
-                equipmentSlot => !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null &&
-                    !equipmentSlot.equippedItem.isCoveredByEquippedItem()).map(equipmentSlot => equipmentSlot);
-        } else if (itemListName === "hands")
-            equipmentSlots = playerHands.filter(
-                equipmentSlot => equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet);
+            equipmentSlots = this.inventory.filter(equipmentSlot =>
+                !playerHandsIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.isCoveredByEquippedItem())
+                .map(equipmentSlot => equipmentSlot);
+        }
+        else if (itemListName === "hands")
+            equipmentSlots = playerHands.filter(equipmentSlot =>
+                equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet
+            );
         return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
     }
 
@@ -1008,9 +1008,7 @@ export default class Player extends RecipeProcessor {
      * @param container - The item's current container.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
      */
-    take<T extends ItemInstance | RoomItem | InventoryItem>(
-        item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer,
-        inventorySlot: InventorySlot<T>): void {
+    take(item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): void {
         // Reduce quantity if the quantity is finite.
         if (!isNaN(item.quantity))
             item.quantity--;
@@ -1039,9 +1037,7 @@ export default class Player extends RecipeProcessor {
      * @param container - An inventory item belonging to the victim that the player will attempt to steal from.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} that the player will attempt to steal from.
      */
-    steal(
-        item: InventoryItem, handEquipmentSlot: EquipmentSlot, victim: Player, container: InventoryItem,
-        inventorySlot: InventorySlot<InventoryItem>): void {
+    steal(item: InventoryItem, handEquipmentSlot: EquipmentSlot, victim: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): void {
         // Remove the item from its container.
         itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
@@ -1061,9 +1057,7 @@ export default class Player extends RecipeProcessor {
      * @param container - The container to put the item in.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} to put the item in.
      */
-    drop(
-        item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: Puzzle | Fixture | RoomItem,
-        inventorySlot: InventorySlot<RoomItem>): void {
+    drop(item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: Puzzle | Fixture | RoomItem, inventorySlot: InventorySlot<RoomItem>): void {
         // Unequip the item from the player's hand.
         handEquipmentSlot.unequipItem(item);
 
@@ -1102,9 +1096,7 @@ export default class Player extends RecipeProcessor {
      * @param recipient - The player to give the inventory item to.
      * @param recipientHandEquipmentSlot - The hand equipment slot of the recipient to put the item in.
      */
-    give(
-        item: InventoryItem, handEquipmentSlot: EquipmentSlot, recipient: Player,
-        recipientHandEquipmentSlot: EquipmentSlot): void {
+    give(item: InventoryItem, handEquipmentSlot: EquipmentSlot, recipient: Player, recipientHandEquipmentSlot: EquipmentSlot): void {
         // Unequip the item from the player's hand.
         handEquipmentSlot.unequipItem(item);
 
@@ -1129,9 +1121,7 @@ export default class Player extends RecipeProcessor {
      * @param container - The container to stash the inventory item in.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} to stash the inventory item in.
      */
-    stash(
-        item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: InventoryItem,
-        inventorySlot: InventorySlot<InventoryItem>): void {
+    stash(item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): void {
         // Unequip the item from the player's hand.
         handEquipmentSlot.unequipItem(item);
 
@@ -1147,8 +1137,7 @@ export default class Player extends RecipeProcessor {
         container.addItemToDescription(createdItem, inventorySlot.id);
 
         // Create a list of all the child items.
-        /** @type {InventoryItem[]} */
-        let items = [];
+        let items: InventoryItem[] = [];
         items.push(createdItem);
         itemManager.getChildItems(items, createdItem);
         // Now that the item has been converted, we can update the quantities of child items.
@@ -1169,9 +1158,7 @@ export default class Player extends RecipeProcessor {
      * @param container - The inventory item's current container.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} the inventory item is currently in.
      */
-    unstash(
-        item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: InventoryItem,
-        inventorySlot: InventorySlot<InventoryItem>): void {
+    unstash(item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): void {
         // Remove the inventory item from its container.
         itemManager.removeStashedItem(item, container, inventorySlot, this.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
@@ -1200,8 +1187,7 @@ export default class Player extends RecipeProcessor {
         // Equip the item to the player's equipment slot.
         equipmentSlot.equipItem(createdItem);
         // Create a list of all the child items.
-        /** @type {InventoryItem[]} */
-        let items = [];
+        let items: InventoryItem[] = [];
         itemManager.getChildItems(items, createdItem);
         // Update the quantities of child items.
         itemManager.setChildItemQuantitiesZero(item);
@@ -1254,8 +1240,7 @@ export default class Player extends RecipeProcessor {
         // Check to make sure that this item isn't covered by something else the player has equipped.
         let isCovered = false;
         this.inventory.forEach(equipmentSlot => {
-            if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !==
-                "LEFT HAND") {
+            if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !== "LEFT HAND") {
                 for (const coveredEquipmentSlotId of equipmentSlot.equippedItem.prefab.coveredEquipmentSlots) {
                     if (coveredEquipmentSlotId === item.equipmentSlot) {
                         isCovered = true;
@@ -1355,9 +1340,7 @@ export default class Player extends RecipeProcessor {
             const equippedItem = equipmentSlot.equippedItem;
             if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
             else {
-                itemString += `${equipmentSlotOpener}${moderatorView
-                    ? equippedItem.getIdentifier()
-                    : equippedItem.name}${equipmentSlotCloser}\n`;
+                itemString += `${equipmentSlotOpener}${moderatorView ? equippedItem.getIdentifier() : equippedItem.name}${equipmentSlotCloser}\n`;
                 let descendantsCount = 1;
                 /**
                  * Generates a display of an inventory item's children.
@@ -1372,8 +1355,7 @@ export default class Player extends RecipeProcessor {
                         for (let i = 0; i < descendantsCount; i++)
                             itemString += indent;
                         itemString += `- \`${inventorySlot.id}\`: `;
-                        if (inventorySlot.items.length ===
-                            0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
+                        if (inventorySlot.items.length === 0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
                         else {
                             itemString += inventorySlotOpener;
                             let inventorySlotItemNames: string[] = [];
@@ -1412,11 +1394,7 @@ export default class Player extends RecipeProcessor {
      * @returns The resulting product(s).
      */
     craft(recipe: Recipe): CraftingResult {
-        let heldItems = this.getGame().
-            entityFinder.
-            getPlayerHands(this).
-            map(hand => hand.equippedItem).
-            filter(item => item !== null);
+        let heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
         const ingredients = [...heldItems];
         const ingredientsFlat = this.#collateItems(ingredients);
         const satisfactoryProcessCount = recipe.getSatisfactoryProcessCount(ingredientsFlat);
@@ -1424,16 +1402,9 @@ export default class Player extends RecipeProcessor {
         const variableValues = recipe.getIngredientVariableValues(ingredientsFlat);
         this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
         this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues);
-        heldItems = this.getGame().
-            entityFinder.
-            getPlayerHands(this).
-            map(hand => hand.equippedItem).
-            filter(item => item !== null);
+        heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
 
-        return {
-            product1: heldItems.length > 0 ? heldItems[0] : null,
-            product2: heldItems.length > 1 ? heldItems[1] : null,
-        };
+        return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };
     }
 
     /**
@@ -1447,12 +1418,8 @@ export default class Player extends RecipeProcessor {
         // If only one ingredient is discreet, the first ingredient should be the discreet one.
         const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet ||
             recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
-        let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet
-            ? recipe.ingredients[0]
-            : recipe.ingredients[1];
-        let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet
-            ? recipe.ingredients[1]
-            : recipe.ingredients[0];
+        let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
+        let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
 
         if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
         const rightHand = this.inventory.get("RIGHT HAND");
@@ -1466,17 +1433,14 @@ export default class Player extends RecipeProcessor {
             1,
             new Map(),
             ingredient2.prefab.uses,
-            false,
+            false
         );
         if (!ingredient1.prefab.discreet)
             this.addItemToDescription(ingredient1Instance, "hands");
         if (!ingredient2.prefab.discreet)
             this.addItemToDescription(ingredient2Instance, "hands");
 
-        return {
-            ingredient1: ingredient1Instance ? ingredient1Instance : null,
-            ingredient2: ingredient2Instance ? ingredient2Instance : null,
-        };
+        return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
     }
 
     /**
@@ -1490,16 +1454,10 @@ export default class Player extends RecipeProcessor {
      * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
      * @returns The instantiated inventory item.
      */
-    protected instantiate(
-        prefab: Prefab, quantity: number, uses: number = prefab.uses,
-        proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null,
-        inventorySlotId: string = ""): InventoryItem {
-        const equipmentSlotId = container === null
-            ? this.getGame().entityFinder.getPlayerFreeHand(this).id
-            : container.equipmentSlot;
+    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = ""): InventoryItem {
+        const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
         const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
-        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId,
-            quantity, proceduralSelections, uses, false);
+        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
     }
 
     /**
@@ -1617,14 +1575,9 @@ export default class Player extends RecipeProcessor {
      * @param messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
      * @param interactables - An array of interactables to send with the message.
      */
-    sendDescription(
-        descriptionString: string, container: GameEntity,
-        messageDisplayType: MessageDisplayType = MessageDisplayType.PLAIN_TEXT,
-        interactables: Interactable[] = []): void {
+    sendDescription(descriptionString: string, container: GameEntity, messageDisplayType: MessageDisplayType = MessageDisplayType.PLAIN_TEXT, interactables: Interactable[] = []): void {
         if (descriptionString && !this.isNPC && (this.isConscious() || container instanceof Status))
-            this.getGame().
-                communicationHandler.
-                sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
+            this.getGame().communicationHandler.sendDescriptionToPlayer(this, descriptionString, container, messageDisplayType, true, interactables);
     }
 
     /**
@@ -1636,14 +1589,9 @@ export default class Player extends RecipeProcessor {
      * @param defaultDropFixtureString - A string to describe the default drop fixture in this room.
      * @param interactables - An array of interactables to send with the message.
      */
-    sendRoomDescription(
-        room: Room, roomDescriptionString: string, occupantsString: string,
-        defaultDropFixtureString: string, interactables: Interactable[] = []): void {
+    sendRoomDescription(room: Room, roomDescriptionString: string, occupantsString: string, defaultDropFixtureString: string, interactables: Interactable[] = []): void {
         if (roomDescriptionString && !this.isNPC && this.isConscious())
-            this.getGame().
-                communicationHandler.
-                sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString,
-                    defaultDropFixtureString, interactables);
+            this.getGame().communicationHandler.sendRoomDescriptionToPlayer(this, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables);
     }
 
     /**
@@ -1668,7 +1616,7 @@ export default class Player extends RecipeProcessor {
         let player = this;
         this.#onlineInterval = setTimeout(
             () => player.setOffline(),
-            15 * 60000,
+            15 * 60000
         );
     }
 

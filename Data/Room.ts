@@ -75,8 +75,7 @@ export default class Room extends GameEntity {
      * @param row - The row number of the room in the sheet.
      * @param game - The game this belongs to.
      */
-    constructor(id: string, displayName: string, channel: TextChannel, tags: Set<string>, iconURL: string,
-        exits: Collection<string, Exit>, description: string, row: number, game: Game) {
+    constructor(id: string, displayName: string, channel: TextChannel, tags: Set<string>, iconURL: string, exits: Collection<string, Exit>, description: string, row: number, game: Game) {
         super(game, row);
         this.id = id;
         this.displayName = displayName;
@@ -164,8 +163,7 @@ export default class Room extends GameEntity {
      * @param player - The player to exclude.
      * @param list - A custom list of players. By default, this is the list of the room's occupants with hidden players and the given player excluded.
      */
-    generateOccupantsStringExcluding(player: Player,
-        list: Player[] = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)): string {
+    generateOccupantsStringExcluding(player: Player, list: Player[] = this.occupants.filter(occupant => !occupant.isHidden() && occupant.name !== player.name)): string {
         return generatePlayerListString(list);
     }
 

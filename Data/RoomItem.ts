@@ -47,9 +47,7 @@ export default class RoomItem extends ItemInstance {
      * @param row - The row number of the item in the sheet.
      * @param game - The game this belongs to.
      */
-    constructor(prefabId: string, identifier: string, locationDisplayName: string, accessible: boolean,
-        containerType: string, containerName: string, quantity: number, uses: number, description: string, row: number,
-        game: Game) {
+    constructor(prefabId: string, identifier: string, locationDisplayName: string, accessible: boolean, containerType: string, containerName: string, quantity: number, uses: number, description: string, row: number, game: Game) {
         super(game, row, description, prefabId, identifier, containerType, containerName, quantity, uses);
         this.locationDisplayName = locationDisplayName;
         this.location = null;

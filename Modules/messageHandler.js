@@ -86,7 +86,7 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
                     }
                     else await room.channel.send(messageCreateOptions);
                 },
-                destination: room.channel.id,
+                destination: room.channel.id
             },
             "tell"
         );
@@ -130,7 +130,7 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
                         await whisper.channel.send(messageCreateOptions);
                     }
                 },
-                destination: whisper.channel.id,
+                destination: whisper.channel.id
             },
             "tell"
         );
@@ -168,13 +168,9 @@ export function sendNotification(player, messageText, messageDisplayType, addSpe
                         discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, player.getGame(), messageText, player, files, interactables),
                     );
                     if (message && interactables.length > 0)
-                        player.getGame().botContext.interactableManager.addInteractableMessage(
-                            player.notificationChannel.id,
-                            message.id,
-                            interactables.map(interactable => interactable.customId),
-                        );
+                        player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
                 },
-                destination: player.notificationChannel.id,
+                destination: player.notificationChannel.id
             },
             "tell"
         );
@@ -207,7 +203,7 @@ export function sendRoomDescription(player, location, descriptionText, occupants
                         if (message && interactables.length > 0)
                             player.getGame().botContext.interactableManager.addInteractableMessage(player.notificationChannel.id, message.id, interactables.map(interactable => interactable.customId));
                     },
-                    destination: player.notificationChannel.id,
+                    destination: player.notificationChannel.id
                 },
                 "tell"
             );
@@ -221,7 +217,7 @@ export function sendRoomDescription(player, location, descriptionText, occupants
                             flags: MessageFlags.IsComponentsV2,
                         });
                     },
-                    destination: player.spectateChannel.id,
+                    destination: player.spectateChannel.id
                 },
                 "spectator"
             );
@@ -262,7 +258,7 @@ export function sendCommandHelp(game, channel, command) {
                     flags: MessageFlags.IsComponentsV2,
                 });
             },
-            destination: channel.id,
+            destination: channel.id
         },
         channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
@@ -279,7 +275,7 @@ export function sendLogMessage(game, messageText) {
             fire: async () => {
                 await game.guildContext.logChannel.send(messageText);
             },
-            destination: game.guildContext.logChannel.id,
+            destination: game.guildContext.logChannel.id
         },
         "log"
     );
@@ -297,7 +293,7 @@ export function sendGameMechanicMessage(game, channel, messageText) {
             fire: async () => {
                 await channel.send(messageText);
             },
-            destination: channel.id,
+            destination: channel.id
         },
         channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
@@ -320,7 +316,7 @@ export function sendReply(game, message, messageText) {
                     await message.author.send(messageText);
                 }
             },
-            destination: message.channel.id,
+            destination: message.channel.id
         },
         message.channel.type === ChannelType.GuildText && message.channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
     );
@@ -345,7 +341,7 @@ export function sendNarrationSpectateMessage(player, messageText, messageDisplay
                 }
                 else await player.spectateChannel.send(messageCreateOptions);
             },
-            destination: player.spectateChannel.id,
+            destination: player.spectateChannel.id
         },
         "spectator"
     );
@@ -372,7 +368,7 @@ export function sendWebhookSpectateMessage(player, messageText, webhookUsername,
                     const webhookMessage = await sendWebhookMessage(webhook, messageText, webhookUsername, webhookAvatarURL, embeds, files, player.getGame(), messageDisplayType, speaker);
                     if (message) player.getGame().communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
                 },
-                destination: player.spectateChannel.id,
+                destination: player.spectateChannel.id
             },
             "spectator"
         );

@@ -1,13 +1,13 @@
-import PriorityQueue from "../../Classes/PriorityQueue.js";
+import PriorityQueue from "../../Classes/PriorityQueue.ts";
 
 describe("PriorityQueue test", () => {
     beforeEach(() => {
         queue.clear();
-        queue.firing = true;
+        queue.manual = true;
     });
 
     const queue = new PriorityQueue();
-    const queueEntry = { fire: vi.fn(async () => { const error = new Error();  console.error("You shouldn't see this!!!", error.stack) }) };
+    const queueEntry = { fire: vi.fn(async () => { const error = new Error();  console.error("You shouldn't see this!!!", error.stack) }), destination: "1" };
 
     test("Usage Test", () => {
         for (const priority of queue.priorityOrder) {

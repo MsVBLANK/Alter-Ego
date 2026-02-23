@@ -142,6 +142,7 @@ declare global {
 	 */
 	interface MessageQueueEntry {
 		fire: () => Promise<void>;
+		destination: string;
 	}
 
 	/**

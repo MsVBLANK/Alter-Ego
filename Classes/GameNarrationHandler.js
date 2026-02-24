@@ -55,7 +55,7 @@ export default class GameNarrationHandler {
 	 * @param {MessageDisplayType} type - The type of narration to send.
 	 * @param {NarrateAction} narrateAction - The narrate action to send.
 	 * @param {string} narrationText - The text of the narration.
-	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration.
+	 * @param {User} [narrator] - The player or guild member who wrote the narration.
 	 */
 	sendNarrateAction(type, narrateAction, narrationText, narrator) {
 		const narration = new Narration(this.#game, type, narrateAction, narrateAction.player, narrateAction.location, narrationText, narrateAction.whisper, narrateAction.message, narrator);
@@ -70,7 +70,7 @@ export default class GameNarrationHandler {
 	 * @param {string} narrationText - The text of the narration.
 	 * @param {Room} [location] - The location in which the narration is occurring. Defaults to the player's location.
 	 * @param {Whisper} [whisper] - The whisper in which the narration is occurring, if applicable.
-	 * @param {Player|GuildMember} [narrator] - The player or guild member who wrote the narration. Optional.
+	 * @param {User} [narrator] - The player or guild member who wrote the narration. Optional.
 	 */
 	#sendNarration(type, action, player, narrationText, location = player.location, whisper, narrator) {
 		const narration = new Narration(this.#game, type, action, player, location, capitalizeFirstLetter(narrationText), whisper, action.message, narrator);

@@ -74,6 +74,12 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                     return false;
                 }
             }
+            const moderator = message.member ? game.entityLoader.getOrCreateModerator(message.member) : undefined;
+            if (!moderator) {
+                game.communicationHandler.reply(message, "You are not a moderator.");
+                return false;
+            }
+
             moderatorCommand.execute(game, message, commandAlias, args);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();

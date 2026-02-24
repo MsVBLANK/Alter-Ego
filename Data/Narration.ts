@@ -54,7 +54,7 @@ export default class Narration extends GameConstruct {
     /**
      * The player or guild member who wrote the narration, if applicable. If the narration didn't originate with a message, this is null.
      */
-    readonly narrator: Player | GuildMember;
+    readonly narrator: User;
     /**
      * The display name to represent the narrator in a webhook.
      */
@@ -90,7 +90,7 @@ export default class Narration extends GameConstruct {
      * @param narrator - The player or guild member who wrote the narration. Defaults to null.
      */
     constructor(game: Game, messageDisplayType: MessageDisplayType, action: Action, player: Player, location: Room,
-        content: string, whisper: Whisper = null, message: UserMessage = null, narrator: Player | GuildMember = null) {
+        content: string, whisper: Whisper = null, message: UserMessage = null, narrator: User = null) {
         super(game);
         this.messageDisplayType = messageDisplayType;
         this.action = action;
@@ -110,9 +110,7 @@ export default class Narration extends GameConstruct {
         this.narrator = narrator;
         if (this.narrator) {
             this.narratorDisplayName = capitalizeFirstLetter(this.narrator.displayName);
-            if (this.narrator instanceof Player)
-                this.narratorDisplayIcon = this.narrator.displayIcon ? this.narrator.displayIcon : this.narrator.member.displayAvatarURL();
-            else this.narratorDisplayIcon = this.narrator.displayAvatarURL();
+            this.narratorDisplayIcon = this.narrator.displayIcon ? this.narrator.displayIcon : this.narrator.member.displayAvatarURL();
             this.isOOCMessage = this.content.startsWith('(');
         }
         this.locationIsVideoSurveilled = false;

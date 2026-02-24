@@ -31,12 +31,11 @@ import RoomItem from "./RoomItem.ts";
 import Status from "./Status.ts";
 
 /**
- * @class Player
- * @classdesc Represents a player in the game.
- * @extends RecipeProcessor
+ * Represents a player in the game.
+ *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html
  */
-export default class Player extends RecipeProcessor {
+export default class Player extends RecipeProcessor implements User {
     /**
      * The Discord ID of the player, or the avatar URL for an NPC.
      */

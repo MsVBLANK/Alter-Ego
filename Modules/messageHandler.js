@@ -52,9 +52,10 @@ export function processIncomingMessage(game, message) {
         }
     }
     else if (isModerator && (room || whisper)) {
+        const moderator = game.entityLoader.getOrCreateModerator(message.member);
         const location = whisper ? whisper.location : room;
         const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
-        game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, message.member);
+        game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, moderator);
     }
 }
 

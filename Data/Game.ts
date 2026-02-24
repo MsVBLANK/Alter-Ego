@@ -26,6 +26,7 @@ import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
 import type Status from "./Status.ts";
 import type Whisper from "./Whisper.ts";
+import type Moderator from "./Moderator.ts";
 
 /**
  * Represents a game managed by the bot.
@@ -175,6 +176,11 @@ export default class Game {
 	 * A collection of all whispers in the game. The key for each whisper is its channel name. These are not saved to the sheet.
 	 */
 	whispers: Collection<string, Whisper>;
+    /**
+     * A collection of all moderators in the game, where the key is the moderator's Discord user ID.
+     * These are created the first time a user with the moderator role sends a message in the game server.
+     */
+    moderators: Collection<string, Moderator>;
 	/**
 	 * A queue of messages to be sent by the messageHandler.
 	 */
@@ -231,6 +237,7 @@ export default class Game {
 		this.gestures = new Collection();
 		this.flags = new Collection();
 		this.whispers = new Collection();
+        this.moderators = new Collection();
 		this.messageQueue = new PriorityQueue();
 
 		// Save data to the sheet periodically.

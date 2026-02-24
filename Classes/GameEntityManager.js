@@ -1,6 +1,7 @@
 import Room from "../Data/Room.ts";
 import Whisper from "../Data/Whisper.ts";
-import { ChannelType, TextChannel } from "discord.js";
+import { ChannelType, GuildMember, TextChannel } from "discord.js";
+import Moderator from "../Data/Moderator.ts";
 
 /** @import Event from "../Data/Event.ts" */
 /** @import Fixture from "../Data/Fixture.ts" */
@@ -385,4 +386,16 @@ export default class GameEntityManager {
 			}).catch();
 		});
 	}
+
+    /**
+     * Gets the moderator associated with the given member, or creates one if it doesn't already exist.
+     * @param {GuildMember} member
+     * @returns {Moderator}
+     */
+    getOrCreateModerator(member) {
+        if (this.game.moderators.has(member.id)) return this.game.moderators.get(member.id);
+        const moderator = new Moderator(member.id, member, this.game);
+        this.game.moderators.set(moderator.id, moderator);
+        return moderator;
+    }
 }

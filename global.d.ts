@@ -31,6 +31,20 @@ declare global {
 		url?: string;
 	}
 
+    /**
+     * Represents a user of the bot in a game context.
+     * @property id - The Discord ID of the user.
+     * @property member - The Discord member object of the user.
+     * @property displayName - The name that will be displayed for this user.
+     * @property displayIcon - An image URL that will be used as an avatar when the user's messages are mirrored in a webhook.
+     */
+    interface User {
+        id: string;
+        readonly member: GuildMember;
+        displayName: string;
+        displayIcon: string;
+    }
+
 	/**
 	 * Represents a Discord message handled by Alter Ego.
 	 */

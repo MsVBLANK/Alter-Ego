@@ -4,6 +4,7 @@ import { appendRowsToSheet } from '../Modules/sheets.js';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
 
 /** @type {CommandConfig} */
@@ -33,8 +34,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (game.inProgress && !game.editMode)
         return game.communicationHandler.reply(message, `You cannot add a player to the spreadsheet while edit mode is disabled. Please turn edit mode on before using this command.`);
 

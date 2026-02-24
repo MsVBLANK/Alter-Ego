@@ -80,7 +80,7 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                 return false;
             }
 
-            moderatorCommand.execute(game, message, commandAlias, args);
+            moderatorCommand.execute(game, message, commandAlias, args, moderator);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();
             entry = {

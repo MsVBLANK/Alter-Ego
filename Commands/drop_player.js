@@ -107,6 +107,9 @@ export async function execute(game, message, command, args, player) {
         for (let i = 0; i < items.length; i++) {
             if (items[i].name === parsedInput) return game.communicationHandler.reply(message, `You need to supply a preposition.`);
             if (parsedInput.endsWith(items[i].name) && parsedInput !== items[i].name) {
+                const parsedInputSubstring = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
+                if (!parsedInputSubstring.endsWith(items[i].getPreposition().toUpperCase()) && !parsedInputSubstring.endsWith("IN") && !parsedInputSubstring.endsWith(" OF"))
+                    continue;
                 const itemContainer = items[i].container;
                 if (fixture === null || fixture !== null && itemContainer !== null && (itemContainer.name === fixture.name || itemContainer instanceof Puzzle && itemContainer.parentFixture.name === fixture.name)) {
                     if (items[i].inventory.size === 0) return game.communicationHandler.reply(message, `${items[i].name} cannot hold items. Contact a moderator if you believe this is a mistake.`);

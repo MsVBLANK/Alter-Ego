@@ -48,11 +48,17 @@ export async function execute(game, message, command, args, moderator) {
         showList = true;
         args.splice(0, 1);
     }
-    if (!showList && args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!showList && !sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and a gesture. Usage:\n${usage(game.settings)}`);
+    if (!showList && sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify a gesture. Usage:\n${usage(game.settings)}`);
 
     const playerName = args[0] ?? '';
-    const player = game.entityFinder.getLivingPlayer(playerName);
+    let player = game.entityFinder.getLivingPlayer(playerName);
+    if (player) args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
 
     if (showList) {
         const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => player === undefined || !player.hasStatus(status.id)));
@@ -108,7 +114,6 @@ export async function execute(game, message, command, args, moderator) {
     }
     else {
         if (player === undefined) return game.communicationHandler.reply(message, `Player "${playerName}" not found.`);
-        args.splice(0, 1);
         let input = args.join(" ").toLowerCase().replace(/\'/g, "");
 
         let gesture;

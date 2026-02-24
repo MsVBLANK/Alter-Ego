@@ -39,11 +39,18 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-	if (args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+	if (!sentMessageInLatchChannel && args.length < 2)
 		return game.communicationHandler.reply(message, `You need to specify an NPC and something to narrate. Usage:\n${usage(game.settings)}`);
+    if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify something to narrate. Usage:\n${usage(game.settings)}`);
 
-	const player = game.entityFinder.getLivingPlayer(args[0]);
-	const input = args.slice(1).join(" ");
+	let player = game.entityFinder.getLivingPlayer(args[0]);
+    if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase()))
+        args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
+	const input = args.join(" ");
 	if (input.length >= 2000)
 		return game.communicationHandler.reply(message, `Your narration exceeds Discord's character limit. Please split it into multiple messages.`);
 

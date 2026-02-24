@@ -129,6 +129,33 @@ export default class GameCommunicationHandler {
 		return this.#dialogSpectateMirrorCache.get(message.id);
 	}
 
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInRoomChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return this.#game.guildContext.roomCategories.includes(message.channel.parentId);
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInWhisperChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.parentId === this.#game.guildContext.whisperCategoryId;
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInAnnouncementChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.id === this.#game.guildContext.announcementChannel.id;
+    }
+
 	/**
 	 * Replies to a message. This is usually done when a user has sent a message with an error.
 	 * @param {UserMessage} message - The message to reply to.

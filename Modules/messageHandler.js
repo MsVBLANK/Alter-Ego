@@ -53,6 +53,16 @@ export function processIncomingMessage(game, message) {
     }
     else if (isModerator && (room || whisper)) {
         const moderator = game.entityLoader.getOrCreateModerator(message.member);
+        if (moderator.sentMessageInLatchChannel(message)) {
+            const npc = moderator.getLatch();
+            const dialog = new Dialog(game, message, npc, npc.location, message.content, false, whisper, message.cleanContent);
+            game.communicationHandler.sendDialogAsWebhook(npc.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
+                const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true);
+                sayAction.performSay(dialog);
+                message.delete().catch();
+            });
+        }
+
         const location = whisper ? whisper.location : room;
         const narrateAction = new NarrateAction(game, message, undefined, location, false, whisper);
         game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAIN_TEXT, narrateAction, message.content, moderator);

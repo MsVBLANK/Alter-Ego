@@ -77,7 +77,8 @@ export default class RecipesAction extends Action {
 				const item = items.find(item => item.prefab.id === ingredient.prefab.id);
 				if (item) ingredients.push(item);
 			}
-			if (ingredients.some(ingredient => ingredient instanceof InventoryItem && inventoryItems.includes(ingredient)) && recipe.ingredientsMatch(getSortedItems(ingredients)))
+			if (ingredients.some(ingredient => ingredient instanceof InventoryItem && inventoryItems.includes(ingredient))
+                && recipe.ingredientsFlat.every(ingredient => ingredients.find(item => item.prefab.id === ingredient.prefab.id)))
 				doableRecipes.push({ recipe: recipe, uncrafting: false });
 		}
 		this.#craftingRecipesDescription = `These are recipes you can carry out using the \`${this.getGame().settings.commandPrefix}craft\` command. `

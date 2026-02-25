@@ -162,9 +162,13 @@ export default class AttemptAction extends Action {
 					this.#failPuzzle(puzzle);
 			}
 			else {
-				if (!puzzle.solutions.includes(password))
-					password = puzzle.outcome ? puzzle.outcome : "";
-				this.#solvePuzzle(puzzle, password, requiredItems, item);
+                if (password !== "" && !puzzle.solutions.includes(password))
+                    this.#failPuzzle(puzzle);
+                else {
+                    if (password === "")
+					    password = puzzle.outcome ? puzzle.outcome : "";
+				    this.#solvePuzzle(puzzle, password, requiredItems, item);
+                }
 			}
 		}
 		else if (puzzle.type === "weight") {

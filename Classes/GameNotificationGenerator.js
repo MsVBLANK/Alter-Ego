@@ -1072,7 +1072,7 @@ export default class GameNotificationGenerator {
 			verb = secondPerson ? `insert ${itemPhrase}` : `inserts ${itemPhrase}`;
 		}
 		else if (puzzle.type === "channels") {
-			if (puzzle.solved)
+			if (outcome !== "")
 				verb = secondPerson ? `change the channel to ${outcome} on` : `changes the channel to ${outcome} on`;
 			else
 				verb = secondPerson ? `turn on` : `turns on`;

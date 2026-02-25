@@ -97,8 +97,6 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     createdItem.container = container;
     createdItem.slot = inventorySlotId;
 
-    player.carryWeight += createdItem.weight * quantity;
-
     // Item is being stashed.
     const equipmentSlot = player.inventory.get(equipmentSlotId);
     if (container !== null) {
@@ -108,6 +106,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     }
     // Item is being equipped.
     else player.directEquip(createdItem, equipmentSlot);
+    player.updateCarryWeight();
     return createdItem;
 }
 
@@ -121,11 +120,9 @@ export function replaceInventoryItem(item, newPrefab) {
         destroyInventoryItem(item, item.quantity, true);
     }
     else {
-        item.player.carryWeight -= item.weight * item.quantity;
         item.setPrefab(newPrefab);
         item.identifier = generateIdentifier(newPrefab);
         item.uses = newPrefab.uses;
-        item.player.carryWeight += item.weight * item.quantity;
 
         // Destroy all child items.
         /** @type {InventoryItem[]} */
@@ -138,6 +135,7 @@ export function replaceInventoryItem(item, newPrefab) {
         item.initializeInventory();
         item.setDescription(newPrefab.description);
     }
+    item.player.updateCarryWeight();
     return item;
 }
 

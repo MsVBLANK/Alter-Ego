@@ -951,6 +951,13 @@ export default class Player extends RecipeProcessor implements User {
     }
 
     /**
+     * Sets the player's current carry weight. Calls getContainedItemsWeight and sets the carry weight to that value.
+     */
+    updateCarryWeight(): void {
+        this.carryWeight = this.getContainedItemsWeight();
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {
@@ -977,6 +984,11 @@ export default class Player extends RecipeProcessor implements User {
                 equipmentSlot.equippedItem !== null && !equipmentSlot.equippedItem.prefab.discreet
             );
         return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
+    }
+
+    override getContainedItemsWeight(): number {
+        const containedItems = this.inventory.map(equipmentSlot => equipmentSlot.equippedItem).filter(item => item !== null);
+        return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
     }
 
     /**
@@ -1019,7 +1031,7 @@ export default class Player extends RecipeProcessor implements User {
 
         // Put the item in the player's hand.
         const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
-        this.carryWeight += createdItem.weight;
+        this.updateCarryWeight();
 
         // Add the new item to the player's hands item list.
         if (!createdItem.prefab.discreet)
@@ -1040,8 +1052,8 @@ export default class Player extends RecipeProcessor implements User {
         itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
         const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
-        victim.carryWeight -= createdItem.weight;
-        this.carryWeight += createdItem.weight;
+        victim.updateCarryWeight();
+        this.updateCarryWeight();
 
         if (!createdItem.prefab.discreet)
             this.addItemToDescription(createdItem, "hands");
@@ -1079,7 +1091,7 @@ export default class Player extends RecipeProcessor implements User {
         item.quantity = 0;
         // Insert the new items into the game's list of room items.
         itemManager.insertRoomItems(this.location, items);
-        this.carryWeight -= item.weight;
+        this.updateCarryWeight();
 
         // Remove the item from the player's hands item list.
         if (!item.prefab.discreet)
@@ -1100,8 +1112,8 @@ export default class Player extends RecipeProcessor implements User {
 
         // Put the item in the recipient's hand.
         const createdItem = itemManager.putItemInHand(item, recipient, recipientHandEquipmentSlot);
-        this.carryWeight -= createdItem.weight;
-        recipient.carryWeight += createdItem.weight;
+        this.updateCarryWeight();
+        recipient.updateCarryWeight();
 
         if (!createdItem.prefab.discreet) {
             // Remove the item from the player's hands item list.
@@ -1401,6 +1413,7 @@ export default class Player extends RecipeProcessor implements User {
         this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
         this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues);
         heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
+        this.updateCarryWeight();
 
         return { product1: heldItems.length > 0 ? heldItems[0] : null, product2: heldItems.length > 1 ? heldItems[1] : null };
     }
@@ -1437,6 +1450,7 @@ export default class Player extends RecipeProcessor implements User {
             this.addItemToDescription(ingredient1Instance, "hands");
         if (!ingredient2.prefab.discreet)
             this.addItemToDescription(ingredient2Instance, "hands");
+        this.updateCarryWeight();
 
         return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
     }

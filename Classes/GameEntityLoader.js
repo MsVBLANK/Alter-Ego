@@ -2120,11 +2120,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				const playerEquipmentSlots = equipmentSlots.get(player.name);
 				if (playerEquipmentSlots) {
 					player.setInventory(playerEquipmentSlots);
-					// Calculate the player's carry weight.
-					player.carryWeight = player.inventory.reduce((weight, equipmentSlot) => {
-						const itemWeight = equipmentSlot.equippedItem !== null ? equipmentSlot.equippedItem.weight : 0;
-						return weight + itemWeight;
-					}, 0);
+					player.updateCarryWeight();
 				}
 			});
 			if (doErrorChecking) {

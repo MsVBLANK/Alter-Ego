@@ -529,26 +529,26 @@ const prettyObject = (object: any, level = 0) => {
 	return clone;
 };
 
-export class PolyPlugin implements AEPlugin<unknown> {
-	private find(value: unknown, plugins: readonly AEPlugin<any>[]): { plugin: AEPlugin<unknown>; value: unknown } | null {
-		for (const plugin of plugins) {
-			if (plugin.test(value)) {
-				return { plugin, value: value as any };
-			}
-		}
-		return null;
-	}
+const find = (value: unknown, plugins: readonly AEPlugin<any>[]): { plugin: AEPlugin<unknown>; value: unknown } | null => {
+	for (const plugin of plugins) {
+		if (plugin.test(value)) {
+			return { plugin, value: value as any };
+        }
+    }
+	return null;
+};
 
+export class PolyPlugin implements AEPlugin<unknown> {
 	test(value: unknown): value is unknown {
 		const processed = prettyObject(value);
-		const plugin = this.find(processed, plugins);
+		const plugin = find(processed, plugins);
 		if (plugin) return true;
 		return false;
 	}
 
 	serialize(value: any, config: AEConfig, indentation: string, depth: number, refs: Refs, printer: AEPrinter) {
 		const processed: typeof value = prettyObject(value);
-		const search = this.find(processed, plugins);
+		const search = find(processed, plugins);
 		if (search) return search.plugin.serialize(search.value, config, indentation, depth, refs, printer);
 		return '';
 	}

@@ -143,7 +143,7 @@ export default class RecipeItem extends GameConstruct {
      */
     calculateUses(satisfactoryProcessCount: number, variableValues: Map<string, number>): number {
         if (!isNaN(this.uses) && !this.usesIsConstant) {
-            if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return variableValues.get(this.usesVariableName);
+            if (this.usesVariableName !== "" && variableValues.has(this.usesVariableName)) return this.uses * variableValues.get(this.usesVariableName);
             else return this.uses * satisfactoryProcessCount;
         }
         else return this.uses;

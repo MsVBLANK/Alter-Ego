@@ -166,7 +166,8 @@ export default class Dialog extends GameConstruct {
 			if (this.speakerRecognitionName === this.speaker.name)
 				this.speakerRecognitionName = "unknown";
 		}
-		this.isOOCMessage = this.cleanContent.startsWith('(');
+        const OOCMessageRegex = /^[_*~|\-#\d.> ]*\(.*/;
+		this.isOOCMessage = OOCMessageRegex.test(this.cleanContent);
 		this.isShouted = false;
 		this.neighboringRooms = new Collection();
 		this.receiverRooms = new Collection();

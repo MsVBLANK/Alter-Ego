@@ -441,7 +441,7 @@ describe('messageHandler test', () => {
 
                 test('OOC message is not communicated to neighboring rooms', async () => {
                     astrid.inflict(acuteHearing);
-                    await sendPlayerMessage(kiara, "( HELLO?");
+                    await sendPlayerMessage(kiara, "- ( HELLO?");
                     for (const exit of kiara.location.exits.values()) {
                         expect(exit.dest.channel.messages.cache).toHaveSize(0);
                         for (const occupant of exit.dest.occupants) {
@@ -454,7 +454,7 @@ describe('messageHandler test', () => {
 
                 test('OOC message is not communicated to audio monitoring rooms', async () => {
                     const audioMonitoringRooms = [lobby, breakRoom, commandCenter];
-                    await sendPlayerMessage(kiara, "( HELLO?");
+                    await sendPlayerMessage(kiara, "* ( HELLO?");
                     for (const audioMonitoringRoom of audioMonitoringRooms) {
                         expect(audioMonitoringRoom.channel.messages.cache).toHaveSize(0);
                         for (const occupant of audioMonitoringRoom.occupants) {
@@ -466,7 +466,7 @@ describe('messageHandler test', () => {
 
                 test('OOC message is not communicated to receivers', async () => {
                     const receivers = [nero, qm];
-                    await sendPlayerMessage(nero, "( HELLO?");
+                    await sendPlayerMessage(nero, "1. ( HELLO?");
                     for (const receiver of receivers) {
                         expect(receiver.location.channel.messages.cache).toHaveSize(0);
                         for (const occupant of receiver.location.occupants) {
@@ -772,7 +772,7 @@ describe('messageHandler test', () => {
 
                 describe('OOC message for two players in room who do not recognize each other', () => {
                     test('OOC dialog is not communicated to spectate channels', async () => {
-                        await sendPlayerMessage(luna, "( Oh, hello!");
+                        await sendPlayerMessage(luna, "-# ( Oh, hello!");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of luna.location.occupants) {
@@ -1256,7 +1256,7 @@ describe('messageHandler test', () => {
                     });
 
                     test('OOC dialog is not communicated to spectate channels', async () => {
-                        await sendPlayerMessage(kiara, "( Bonjour!");
+                        await sendPlayerMessage(kiara, "*( Bonjour!*");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of kiara.location.occupants) {;
@@ -1510,7 +1510,7 @@ describe('messageHandler test', () => {
                         });
 
                         test('OOC whisper is not communicated to spectate channels or notification channel', async () => {
-                            await sendPlayerMessage(luna, "( Hello!", whisperLunaKiara.channel);
+                            await sendPlayerMessage(luna, "# ( Hello!", whisperLunaKiara.channel);
                             expect(performSaySpy).toHaveBeenCalledTimes(1);
                             expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
 
@@ -2351,7 +2351,7 @@ describe('messageHandler test', () => {
 
                 describe('OOC message for player in whisper does not recognize the other', () => {
                     test('OOC whispered dialog is not communicated to spectate channels', async () => {
-                        await sendPlayerMessage(amadeus, "( Hello.", whisperAmadeusLuna.channel);
+                        await sendPlayerMessage(amadeus, "||( Hello.||", whisperAmadeusLuna.channel);
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of amadeus.location.occupants) {
@@ -2803,7 +2803,7 @@ describe('messageHandler test', () => {
 
                 describe('OOC message for player in whisper does recognize the other', () => {
                     test('OOC whispered dialog is not communicated to spectate channels', async () => {
-                        await sendPlayerMessage(luna, "( Oh, hello!", whisperAmadeusLuna.channel);
+                        await sendPlayerMessage(luna, "~~( Oh, hello!~~", whisperAmadeusLuna.channel);
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(0);
                         for (const occupant of amadeus.location.occupants) {

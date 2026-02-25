@@ -127,10 +127,11 @@ export function capitalizeFirstLetter(string: string): string {
 
 /**
  * Returns true if the given string ends with a punctuation mark.
+ * Ignores formatting characters like *, _, ~, |, and ` that come after the punctuation mark.
  * @param string 
  */
 export function endsWithPunctuation(string: string): boolean {
-	return !!string.match(/[.!?]$/);
+	return !!string.match(/[.!?][_*~|`]*$/);
 }
 
 /**

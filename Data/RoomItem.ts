@@ -241,4 +241,12 @@ export default class RoomItem extends ItemInstance {
     descriptionCell(): string {
         return this.getGame().constants.roomItemSheetDescriptionColumn + this.row;
     }
+
+    getContainerIdentifier(): string {
+        return this.getIdentifier();
+    }
+
+    getContainerType(): string {
+        return "RoomItem";
+    }
 }

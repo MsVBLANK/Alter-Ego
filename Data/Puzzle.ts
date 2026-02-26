@@ -492,4 +492,12 @@ export default class Puzzle extends ItemContainer {
     requirementsNotMetCell(): string {
         return this.getGame().constants.puzzleSheetRequirementsNotMetColumn + this.row;
     }
+
+    getContainerIdentifier(): string {
+        return this.name;
+    }
+
+    getContainerType(): string {
+        return "Puzzle";
+    }
 }

@@ -3,6 +3,7 @@ import Fixture from "../Data/Fixture.ts";
 import Game from "../Data/Game.ts";
 import Gesture from "../Data/Gesture.ts";
 import InventoryItem from "../Data/InventoryItem.ts";
+import ItemContainer from "../Data/ItemContainer.ts";
 import Player from "../Data/Player.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.ts";
@@ -654,8 +655,11 @@ export default class GameEntityFinder {
 				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
 			else {
 				entity = this.getFixture(entityName, player.location.id);
-				const containerType = container instanceof RoomItem ? "RoomItem" : container instanceof Puzzle ? "Puzzle" : container instanceof Fixture ? "Fixture" : undefined;
-				const containerName = container instanceof RoomItem ? container.getIdentifier() : container instanceof Puzzle || container instanceof Fixture ? container.name : undefined;
+                let itemContainer = container;
+                if (container instanceof Fixture && container.childPuzzle !== null && container.childPuzzle.isItemContainer())
+                    itemContainer = container.childPuzzle;
+                const containerType = itemContainer instanceof ItemContainer ? itemContainer.getContainerType() : undefined;
+                const containerName = itemContainer instanceof ItemContainer ? itemContainer.getContainerIdentifier() : undefined;
 				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, false, 'combined')[0];
 			}
 			if (entity) inspectableEntities.push(entity);

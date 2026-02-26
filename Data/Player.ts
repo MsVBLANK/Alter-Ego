@@ -1646,6 +1646,14 @@ export default class Player extends RecipeProcessor implements User {
         return this.getGame().constants.playerSheetDescriptionColumn + this.row;
     }
 
+    getContainerIdentifier(): string {
+        return this.name;
+    }
+
+    getContainerType(): string {
+        return "Player";
+    }
+
     /**
      * Converts the name of a stat to its abbreviated form in all lowercase.
      */

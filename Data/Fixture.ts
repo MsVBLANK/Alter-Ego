@@ -430,4 +430,12 @@ export default class Fixture extends RecipeProcessor {
     descriptionCell(): string {
         return this.getGame().constants.fixtureSheetDescriptionColumn + this.row;
     }
+
+    getContainerIdentifier(): string {
+        return this.name;
+    }
+
+    getContainerType(): string {
+        return "Fixture";
+    }
 }

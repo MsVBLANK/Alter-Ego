@@ -794,7 +794,7 @@ export default class GameNarrationHandler {
             if (puzzle.correctDescription.text !== "") puzzle.correctDescription.parseAndSendTo(player, puzzle);
             else {
                 const notification = this.#game.notificationGenerator.generateSolvePuzzleNotification(player, true, puzzle, outcome, item);
-                this.sendNotification(player, action, notification, messageType);
+                if (notification !== "") this.sendNotification(player, action, notification, messageType);
             }
         }
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);
@@ -816,7 +816,7 @@ export default class GameNarrationHandler {
             if (puzzle.unsolvedDescription.text !== "") puzzle.unsolvedDescription.parseAndSendTo(player, puzzle);
             else {
                 const notification = this.#game.notificationGenerator.generateUnsolvePuzzleNotification(player, true, puzzle);
-                this.sendNotification(player, action, notification, messageType);
+                if (notification !== "") this.sendNotification(player, action, notification, messageType);
             }
         }
 		if (narration !== "") this.#sendNarration(messageType, action, player, narration, puzzle.location);

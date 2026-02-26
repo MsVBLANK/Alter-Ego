@@ -255,4 +255,12 @@ export default class InventoryItem extends ItemInstance {
     descriptionCell(): string {
         return this.getGame().constants.inventorySheetDescriptionColumn + this.row;
     }
+
+    getContainerIdentifier(): string {
+        return this.getIdentifier();
+    }
+
+    getContainerType(): string {
+        return "InventoryItem";
+    }
 }

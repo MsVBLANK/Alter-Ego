@@ -108,4 +108,7 @@ export default abstract class ItemContainer extends GameEntity {
         const containedItems = this.getContainedItems();
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
     }
+
+    abstract getContainerIdentifier(): string;
+    abstract getContainerType(): string;
 }

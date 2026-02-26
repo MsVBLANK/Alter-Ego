@@ -408,11 +408,12 @@ export default class BotInteractableManager {
     async getDropInteractables(container: RoomItemContainer, player: Player): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
         let dropContainer = container;
-        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
+        if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer())
+            dropContainer = dropContainer.childPuzzle;
         if (dropContainer.canCurrentlyContainItems()) {
             if (dropContainer.isItemContainer()) {
                 const droppableEntities = this.#game.entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
-                if (droppableEntities.length !== 0) interactables = interactables.concat(await this.createDropActionInteractables(droppableEntities, player, container));
+                if (droppableEntities.length !== 0) interactables = interactables.concat(await this.createDropActionInteractables(droppableEntities, player, dropContainer));
             }
         }
         return interactables;

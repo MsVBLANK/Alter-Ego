@@ -36,7 +36,7 @@ export async function execute(game, message, command, args, moderator) {
 
     const input = args.join(" ");
     const event = game.entityFinder.getEvent(input);
-    if (event === null) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
+    if (event === undefined) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
     if (!event.ongoing) return game.communicationHandler.reply(message, `${event.id} is not currently ongoing.`);
 
     const action = new EndAction(game, message, undefined, undefined, true);

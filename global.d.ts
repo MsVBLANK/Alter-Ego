@@ -1,19 +1,20 @@
 import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
-import type CollatedRoomItem from "./Data/CollatedRoomItem.js";
-import type Event from "./Data/Event.js";
-import type Fixture from "./Data/Fixture.js";
-import type Flag from "./Data/Flag.js";
-import type Game from "./Data/Game.js";
-import type GameEntity from "./Data/GameEntity.js";
-import type InventoryItem from "./Data/InventoryItem.js";
-import type Player from "./Data/Player.js";
-import type Puzzle from "./Data/Puzzle.js";
-import type Recipe from "./Data/Recipe.js";
-import type Room from "./Data/Room.js";
-import type RoomItem from "./Data/RoomItem.js";
+import type CollatedItem from "./Data/CollatedItem.ts";
+import type Event from "./Data/Event.ts";
+import type Fixture from "./Data/Fixture.ts";
+import type Flag from "./Data/Flag.ts";
+import type Game from "./Data/Game.ts";
+import type GameEntity from "./Data/GameEntity.ts";
+import type InventoryItem from "./Data/InventoryItem.ts";
+import type Player from "./Data/Player.ts";
+import type Puzzle from "./Data/Puzzle.ts";
+import type Recipe from "./Data/Recipe.ts";
+import type Room from "./Data/Room.ts";
+import type RoomItem from "./Data/RoomItem.ts";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
+import type Exit from "./Data/Exit.js";
 
 export { };
 
@@ -30,6 +31,20 @@ declare global {
 		url?: string;
 	}
 
+    /**
+     * Represents a user of the bot in a game context.
+     * @property id - The Discord ID of the user.
+     * @property member - The Discord member object of the user.
+     * @property displayName - The name that will be displayed for this user.
+     * @property displayIcon - An image URL that will be used as an avatar when the user's messages are mirrored in a webhook.
+     */
+    interface User {
+        id: string;
+        readonly member: GuildMember;
+        displayName: string;
+        displayIcon: string;
+    }
+
 	/**
 	 * Represents a Discord message handled by Alter Ego.
 	 */
@@ -45,10 +60,20 @@ declare global {
 	 */
 	type Callee = Event | Flag | InventoryItem | Puzzle;
 
+    /**
+     * Represents a container that can hold room items.
+     */
+    type RoomItemContainer = Fixture | Puzzle | RoomItem;
+
 	/**
 	 * Represents an inspectable game entity.
 	 */
 	type Inspectable = Room|Fixture|RoomItem|InventoryItem|Player;
+
+    /**
+     * Represents a game entity that can be used as a target for gestures.
+     */
+    type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.
@@ -99,7 +124,7 @@ declare global {
 	}
 
 	interface IBotCommand extends Command {
-		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Event | Flag | InventoryItem | Puzzle) => Promise<void>;
+		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
 	interface IModeratorCommand extends Command {
@@ -131,6 +156,7 @@ declare global {
 	 */
 	interface MessageQueueEntry {
 		fire: () => Promise<void>;
+		destination: string;
 	}
 
 	/**
@@ -174,7 +200,7 @@ declare global {
 	 */
 	interface Process {
 		recipe?: Recipe;
-		ingredients: CollatedRoomItem[];
+		ingredients: CollatedItem<RoomItem>[];
 		duration?: Duration;
 		timer?: any;
 	}
@@ -185,7 +211,7 @@ declare global {
 	 */
 	interface FindRecipeResult {
 		recipe: Recipe | null;
-		ingredients: CollatedRoomItem[];
+		ingredients: CollatedItem<RoomItem>[];
 	}
 
 	/**

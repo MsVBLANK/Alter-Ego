@@ -1,6 +1,6 @@
 import { createMockMessage } from "../__mocks__/libs/discord.js";
-import AnnounceAction from "../../Data/Actions/AnnounceAction.js";
-import Dialog from '../../Data/Dialog.js';
+import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
+import Dialog from '../../Data/Dialog.ts';
 import * as messageHandler from '../../Modules/messageHandler.js';
 
 describe('GameCommunicationHandler test', () => {

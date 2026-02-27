@@ -1,16 +1,19 @@
 import { Collection } from "discord.js";
-import Game from "../Data/Game.js";
-import Gesture from "../Data/Gesture.js";
-import InventoryItem from "../Data/InventoryItem.js";
-import Player from "../Data/Player.js";
-import Puzzle from "../Data/Puzzle.js";
-import Room from "../Data/Room.js";
-import RoomItem from "../Data/RoomItem.js";
-import Status from "../Data/Status.js";
-import Whisper from "../Data/Whisper.js";
+import Fixture from "../Data/Fixture.ts";
+import Game from "../Data/Game.ts";
+import Gesture from "../Data/Gesture.ts";
+import InventoryItem from "../Data/InventoryItem.ts";
+import ItemContainer from "../Data/ItemContainer.ts";
+import Player from "../Data/Player.ts";
+import Puzzle from "../Data/Puzzle.ts";
+import Room from "../Data/Room.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Status from "../Data/Status.ts";
+import Whisper from "../Data/Whisper.ts";
 import * as matchers from '../Modules/matchers.js';
 
-/** @import GameEntity from "../Data/GameEntity.js"; */
+/** @import GameEntity from "../Data/GameEntity.ts"; */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.ts"; */
 
 /**
  * @class GameEntityFinder
@@ -32,7 +35,7 @@ export default class GameEntityFinder {
 		this.game = game;
 	}
 
-	/** 
+	/**
 	 * Gets a room.
 	 * @param {string} id - The ID or displayName of the room.
 	 * @returns The room with the specified ID. If no such room exists, returns undefined.
@@ -54,8 +57,8 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a fixture.
-	 * @param {string} name - The name of the fixture. 
-	 * @param {string} [location] - The ID or displayName of the room the fixture is in. 
+	 * @param {string} name - The name of the fixture.
+	 * @param {string} [location] - The ID or displayName of the room the fixture is in.
 	 * @returns The fixture with the specified name and location, if applicable. If no such fixture exists, returns undefined.
 	 */
 	getFixture(name, location) {
@@ -77,7 +80,7 @@ export default class GameEntityFinder {
 	/**
 	 * Gets a room item.
 	 * @param {string} identifier - The room item's identifier or prefab ID.
-	 * @param {string} [location] - The ID or displayName of the room the item is in. 
+	 * @param {string} [location] - The ID or displayName of the room the item is in.
 	 * @param {string} [containerType] - The room item's container type.
 	 * @param {string} [containerName] - The room item's container name.
 	 * @returns The room item with the specified identifier, and location and container name if applicable. If no such item exists, returns undefined.
@@ -102,8 +105,8 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a puzzle.
-	 * @param {string} name - The name of the puzzle. 
-	 * @param {string} [location] - The ID or displayName of the room the puzzle is in. 
+	 * @param {string} name - The name of the puzzle.
+	 * @param {string} [location] - The ID or displayName of the room the puzzle is in.
 	 * @param {string} [type] - The type of the puzzle.
 	 * @param {boolean} [accessible] - Whether the puzzle is accessible or not.
 	 * @returns The puzzle with the specified name and location, if applicable. If no such puzzle exists, returns undefined.
@@ -141,7 +144,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a player.
-	 * @param {string} name - The player's name. 
+	 * @param {string} name - The player's name.
 	 * @returns The player with the specified name. If no such player exists, returns undefined.
 	 */
 	getPlayer(name) {
@@ -151,7 +154,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a living player.
-	 * @param {string} name - The player's name. 
+	 * @param {string} name - The player's name.
 	 * @returns The living player with the specified name. If no such player exists, returns undefined.
 	 */
 	getLivingPlayer(name) {
@@ -161,7 +164,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a living player by their Discord user ID.
-	 * @param {string} id - The ID to search for. 
+	 * @param {string} id - The ID to search for.
 	 * @returns The living player with the specified user ID. If no such player exists, returns undefined.
 	 */
 	getLivingPlayerById(id) {
@@ -173,7 +176,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a dead player.
-	 * @param {string} name - The player's name. 
+	 * @param {string} name - The player's name.
 	 * @returns The dead player with the specified name. If no such player exists, returns undefined.
 	 */
 	getDeadPlayer(name) {
@@ -188,6 +191,7 @@ export default class GameEntityFinder {
 	 */
 	getPlayerHands(player) {
 		if (!player) return [];
+		/** @type {EquipmentSlot[]} */
 		let hands = [];
 		if (player.inventory.has("RIGHT HAND")) hands.push(player.inventory.get("RIGHT HAND"));
 		if (player.inventory.has("LEFT HAND")) hands.push(player.inventory.get("LEFT HAND"));
@@ -276,7 +280,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets a flag.
-	 * @param {string} id - The flag's ID. 
+	 * @param {string} id - The flag's ID.
 	 * @returns The flag with the specified ID. If no such flag exists, returns undefined.
 	 */
 	getFlag(id) {
@@ -286,7 +290,7 @@ export default class GameEntityFinder {
 
 	/**
 	 * Gets the value of a flag.
-	 * @param {string} id - The flag's ID. 
+	 * @param {string} id - The flag's ID.
 	 * @param {boolean} [evaluate] - Whether or not to also evaluate the flag's value script and update its value. Does not execute the flag's set commands. Defaults to false.
 	 * @param {Player} [player] - The player to evaluate the flag's value script with. Optional.
 	 * @returns The value of the flag with the specified ID. If no such flag exists, returns undefined.
@@ -578,7 +582,7 @@ export default class GameEntityFinder {
 	/**
 	 * Gets all inventory items that match the given search queries.
 	 * @param {string} [identifier] - Filter the inventory items to only those whose identifier or prefab ID matches the given identifier in moderator contexts, or its name or plural name in player contexts.
-	 * @param {string} [player] - Filter the inventory items to only those belonging to the given player. 
+	 * @param {string} [player] - Filter the inventory items to only those belonging to the given player.
 	 * @param {string} [containerName] - Filter the inventory items to only those with the given container name. Does not include slot.
 	 * @param {string} [slotId] - Filter the inventory items to only those in the inventory slot with the given ID.
 	 * @param {string} [equipmentSlotId] - Filter the inventory items to only those belonging to the equipment slot with the given ID.
@@ -651,7 +655,12 @@ export default class GameEntityFinder {
 				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
 			else {
 				entity = this.getFixture(entityName, player.location.id);
-				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, undefined, undefined, undefined, false, 'player')[0];
+                let itemContainer = container;
+                if (container instanceof Fixture && container.childPuzzle !== null && container.childPuzzle.isItemContainer())
+                    itemContainer = container.childPuzzle;
+                const containerType = itemContainer instanceof ItemContainer ? itemContainer.getContainerType() : undefined;
+                const containerName = itemContainer instanceof ItemContainer ? itemContainer.getContainerIdentifier() : undefined;
+				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, false, 'combined')[0];
 			}
 			if (entity) inspectableEntities.push(entity);
 			if (entity && entity instanceof RoomItem) takeableEntities.push(entity);

@@ -1,18 +1,18 @@
-import Action from "../Data/Action.js";
-import Player from "../Data/Player.js";
-import Room from "../Data/Room.js";
+import Action from "../Data/Action.ts";
+import Player from "../Data/Player.ts";
+import Room from "../Data/Room.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
-import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
-import Interactable from "./Interactables/Interactable.js";
+import Interactable from "./Interactables/Interactable.ts";
 import crypto from 'crypto';
 
-/** @import Dialog from "../Data/Dialog.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import GameEntity from "../Data/GameEntity.js" */
-/** @import Narration from "../Data/Narration.js" */
-/** @import Notification from "../Data/Notification.js" */
+/** @import Dialog from "../Data/Dialog.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import GameEntity from "../Data/GameEntity.ts" */
+/** @import Narration from "../Data/Narration.ts" */
+/** @import Notification from "../Data/Notification.ts" */
 /** @import { Snowflake } from "discord.js" */
 
 /**
@@ -192,6 +192,33 @@ export default class GameCommunicationHandler {
 	getDialogSpectateMirrors(message) {
 		return this.#dialogSpectateMirrorCache.get(message.id);
 	}
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInRoomChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return this.#game.guildContext.roomCategories.includes(message.channel.parentId);
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInWhisperChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.parentId === this.#game.guildContext.whisperCategoryId;
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInAnnouncementChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.id === this.#game.guildContext.announcementChannel.id;
+    }
 
 	/**
 	 * Replies to a message. This is usually done when a user has sent a message with an error.

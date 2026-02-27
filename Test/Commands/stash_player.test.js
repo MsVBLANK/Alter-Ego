@@ -2,7 +2,7 @@ import PlayerCommand from "../../Classes/PlayerCommand.js";
 import { usage, execute, config } from '../../Commands/stash_player.js'
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
-import StashAction from '../../Data/Actions/StashAction.js';
+import StashAction from '../../Data/Actions/StashAction.ts';
 
 describe('stash_player command', () => {
     beforeAll(async () => {

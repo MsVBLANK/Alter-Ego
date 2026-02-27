@@ -1,9 +1,9 @@
-import MonologAction from "../../../Data/Actions/MonologAction.js";
+import MonologAction from "../../../Data/Actions/MonologAction.ts";
 import { sendQueuedMessages } from "../../../Modules/messageHandler.js";
 
 /**
- * @import Player from "../../../Data/Player.js"
- * @import Room from "../../../Data/Room.js"
+ * @import Player from "../../../Data/Player.ts"
+ * @import Room from "../../../Data/Room.ts"
  */
 
 describe('MonologAction test', () => {
@@ -81,7 +81,7 @@ describe('MonologAction test', () => {
 
 		kiara.location.removePlayer(kiara);
 		f1h1.addPlayer(kiara);
-		
+
 		luna.location.removePlayer(luna);
 		courtyard.addPlayer(luna);
 		asuka.location.removePlayer(asuka);

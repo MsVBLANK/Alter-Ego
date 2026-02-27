@@ -1,4 +1,4 @@
-import type Game from "../Data/Game.js";
+import type Game from "../Data/Game.ts";
 import "vitest";
 
 declare global {

@@ -1,6 +1,6 @@
 import PlayerCommand from '../../Classes/PlayerCommand.js';
 import { usage, execute, config } from '../../Commands/unequip_player.js'
-import UnequipAction from '../../Data/Actions/UnequipAction.js';
+import UnequipAction from '../../Data/Actions/UnequipAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -16,7 +16,7 @@ describe('unequip_player command', () => {
     });
 
     const unequip_player = new PlayerCommand(config, usage, execute);
-        
+
     test('given valid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const item = game.entityFinder.getInventoryItem("kyras glasses", "Kyra");

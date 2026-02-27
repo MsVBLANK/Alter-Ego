@@ -1,16 +1,16 @@
-import Room from "../../Data/Room.js";
-import RoomItem from "../../Data/RoomItem.js";
-import Fixture from "../../Data/Fixture.js";
-import Prefab from "../../Data/Prefab.js";
-import Puzzle from "../../Data/Puzzle.js";
-import Event from "../../Data/Event.js";
-import Status from "../../Data/Status.js";
-import Player from "../../Data/Player.js";
-import InventoryItem from "../../Data/InventoryItem.js";
-import Gesture from "../../Data/Gesture.js";
-import Flag from "../../Data/Flag.js";
-import Exit from "../../Data/Exit.js";
-import EquipmentSlot from "../../Data/EquipmentSlot.js";
+import Room from "../../Data/Room.ts";
+import RoomItem from "../../Data/RoomItem.ts";
+import Fixture from "../../Data/Fixture.ts";
+import Prefab from "../../Data/Prefab.ts";
+import Puzzle from "../../Data/Puzzle.ts";
+import Event from "../../Data/Event.ts";
+import Status from "../../Data/Status.ts";
+import Player from "../../Data/Player.ts";
+import InventoryItem from "../../Data/InventoryItem.ts";
+import Gesture from "../../Data/Gesture.ts";
+import Flag from "../../Data/Flag.ts";
+import Exit from "../../Data/Exit.ts";
+import EquipmentSlot from "../../Data/EquipmentSlot.ts";
 
 describe("GameEntityFinder test", () => {
     beforeAll(async () => {
@@ -827,7 +827,7 @@ describe("GameEntityFinder test", () => {
                 undefined,
                 "stovetop",
             );
-            expect(fixtures.length).toBe(9);
+            expect(fixtures.length).toBe(11);
             for (const fixture of fixtures) {
                 expect(fixture).toBeInstanceOf(Fixture);
                 expect(fixture.recipeTag).toBe("stovetop");

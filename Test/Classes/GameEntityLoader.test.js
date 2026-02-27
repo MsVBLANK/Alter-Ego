@@ -1,14 +1,14 @@
-import Description from "../../Data/Description.js";
-import EquipmentSlot from "../../Data/EquipmentSlot.js";
-import Event from "../../Data/Event.js";
-import Fixture from "../../Data/Fixture.js";
-import Game from "../../Data/Game.js";
-import InventoryItem from "../../Data/InventoryItem.js";
-import Player from "../../Data/Player.js";
-import Prefab from "../../Data/Prefab.js";
-import Puzzle from "../../Data/Puzzle.js";
-import Room from "../../Data/Room.js";
-import RoomItem from "../../Data/RoomItem.js";
+import Description from "../../Data/Description.ts";
+import EquipmentSlot from "../../Data/EquipmentSlot.ts";
+import Event from "../../Data/Event.ts";
+import Fixture from "../../Data/Fixture.ts";
+import Game from "../../Data/Game.ts";
+import InventoryItem from "../../Data/InventoryItem.ts";
+import Player from "../../Data/Player.ts";
+import Prefab from "../../Data/Prefab.ts";
+import Puzzle from "../../Data/Puzzle.ts";
+import Room from "../../Data/Room.ts";
+import RoomItem from "../../Data/RoomItem.ts";
 import sheets from "../__mocks__/libs/sheets.js";
 
 describe('GameEntityLoader test', () => {
@@ -59,7 +59,7 @@ describe('GameEntityLoader test', () => {
                 expect(eventStartEffectsTimerSpy).toHaveBeenCalled();
                 expect(playerSendDescriptionSpy).not.toHaveBeenCalled();
             });
-            
+
             test('startGame true', async () => {
                 const message = await game.entityLoader.loadAll(true);
                 expect(message).not.toContain('Error');
@@ -270,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1552);
+                expect(fixtureCount).toBe(1565);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -344,7 +344,7 @@ describe('GameEntityLoader test', () => {
                 if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
-                expect(prefabCount).toBe(1498);
+                expect(prefabCount).toBe(1501);
                 for (const prefab of game.prefabs.values()) {
                     const descriptionText = prefab.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -414,7 +414,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
-                expect(recipeCount).toBe(489);
+                expect(recipeCount).toBe(496);
             });
         });
     });
@@ -507,7 +507,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1809);
+                expect(roomItemCount).toBe(1838);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

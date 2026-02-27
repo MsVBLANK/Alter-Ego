@@ -1,8 +1,8 @@
-﻿import Puzzle from '../Data/Puzzle.js';
+﻿import Puzzle from '../Data/Puzzle.ts';
 import { ChannelType } from 'discord.js';
 
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /**
  * Finds the right command file for the user and executes it.
@@ -27,8 +27,8 @@ export async function executeCommand(commandStr, game, message, player, callee) 
         else if (member && !game.settings.debug && member.roles.cache.has(game.guildContext.eligibleRole.id)) isEligible = true;
     }
 
-    const commandSplit = commandStr.split(/[^\S\n]/).filter(arg => arg !== "");
-    const commandAlias = commandSplit[0].toLocaleLowerCase();
+    const commandSplit = commandStr?.split(/[^\S\n]/).filter(arg => arg !== "");
+    const commandAlias = commandSplit[0] ? commandSplit[0].toLocaleLowerCase() : "";
     const args = commandSplit.slice(1);
 
     // Find the command by the alias used.
@@ -74,7 +74,13 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                     return false;
                 }
             }
-            moderatorCommand.execute(game, message, commandAlias, args);
+            const moderator = message.member ? game.entityLoader.getOrCreateModerator(message.member) : undefined;
+            if (!moderator) {
+                game.communicationHandler.reply(message, "You are not a moderator.");
+                return false;
+            }
+
+            moderatorCommand.execute(game, message, commandAlias, args, moderator);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();
             entry = {

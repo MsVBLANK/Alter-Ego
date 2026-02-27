@@ -3,7 +3,7 @@ import {usage, execute, config} from "../../Commands/status_player.js";
 import {clearQueue, sendQueuedMessages} from "../../Modules/messageHandler.js";
 import {createMockMessage} from "../__mocks__/libs/discord.js";
 import GameCommunicationHandler from "../../Classes/GameCommunicationHandler.js";
-import Status from "../../Data/Status.js";
+import Status from "../../Data/Status.ts";
 import {Duration} from "luxon";
 import {createDisableStatus} from "../__mocks__/utility.ts";
 

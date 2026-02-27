@@ -1,10 +1,10 @@
-/** @import Event from "../Data/Event.js" */
-/** @import Flag from "../Data/Flag.js" */
-/** @import Game from "../Data/Game.js" */
+/** @import Event from "../Data/Event.ts" */
+/** @import Flag from "../Data/Flag.ts" */
+/** @import Game from "../Data/Game.ts" */
 /** @import GameSettings from "./GameSettings.js" */
-/** @import InventoryItem from "../Data/InventoryItem.js" */
-/** @import Player from "../Data/Player.js" */
-/** @import Puzzle from "../Data/Puzzle.js" */
+/** @import InventoryItem from "../Data/InventoryItem.ts" */
+/** @import Player from "../Data/Player.ts" */
+/** @import Puzzle from "../Data/Puzzle.ts" */
 
 /**
  * @class BotCommand

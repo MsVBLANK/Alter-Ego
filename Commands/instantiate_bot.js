@@ -1,9 +1,9 @@
-import InstantiateAction from "../Data/Actions/InstantiateAction.js";
-import RoomItem from "../Data/RoomItem.js";
+import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
+import RoomItem from "../Data/RoomItem.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -23,8 +23,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `instantiate raw fish on floor at beach\n`
@@ -41,11 +41,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} [player] - The player who caused the command to be executed, if applicable. 
- * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} [player] - The player who caused the command to be executed, if applicable.
+ * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable.
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");

@@ -1,6 +1,6 @@
 import ModeratorCommand from "../../Classes/ModeratorCommand.js";
 import { usage, execute, config } from '../../Commands/unstash_moderator.js'
-import UnstashAction from "../../Data/Actions/UnstashAction.js";
+import UnstashAction from "../../Data/Actions/UnstashAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 

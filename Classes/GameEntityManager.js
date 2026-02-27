@@ -1,15 +1,16 @@
-import Room from "../Data/Room.js";
-import Whisper from "../Data/Whisper.js";
-import { ChannelType, TextChannel } from "discord.js";
+import Room from "../Data/Room.ts";
+import Whisper from "../Data/Whisper.ts";
+import { ChannelType, GuildMember, TextChannel } from "discord.js";
+import Moderator from "../Data/Moderator.ts";
 
-/** @import Event from "../Data/Event.js" */
-/** @import Fixture from "../Data/Fixture.js" */
-/** @import Flag from "../Data/Flag.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import Player from "../Data/Player.js" */
-/** @import Prefab from "../Data/Prefab.js" */
-/** @import Puzzle from "../Data/Puzzle.js" */
-/** @import Status from "../Data/Status.js" */
+/** @import Event from "../Data/Event.ts" */
+/** @import Fixture from "../Data/Fixture.ts" */
+/** @import Flag from "../Data/Flag.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import Player from "../Data/Player.ts" */
+/** @import Prefab from "../Data/Prefab.ts" */
+/** @import Puzzle from "../Data/Puzzle.ts" */
+/** @import Status from "../Data/Status.ts" */
 
 /**
  * @class GameEntityManager
@@ -25,7 +26,7 @@ export default class GameEntityManager {
 
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		this.game = game;
@@ -175,7 +176,7 @@ export default class GameEntityManager {
 		this.game.flags.clear();
 	}
 
-	/** 
+	/**
 	 * Updates references to a given room throughout the game.
 	 * @protected
 	 * @param {Room} room - The room to reference.
@@ -206,7 +207,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given fixture throughout the game.
 	 * @protected
-	 * @param {Fixture} fixture - The fixture to reference. 
+	 * @param {Fixture} fixture - The fixture to reference.
 	 */
 	updateFixtureReferences(fixture) {
 		this.game.roomItems.forEach(roomItem => {
@@ -260,7 +261,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given event throughout the game.
 	 * @protected
-	 * @param {Event} event 
+	 * @param {Event} event
 	 */
 	updateEventReferences(event) {
 		this.game.puzzles.forEach(puzzle => {
@@ -274,7 +275,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given status effect throughout the game.
 	 * @protected
-	 * @param {Status} status 
+	 * @param {Status} status
 	 */
 	updateStatusEffectReferences(status) {
 		this.game.prefabs.forEach(prefab => {
@@ -308,7 +309,7 @@ export default class GameEntityManager {
 	/**
 	 * Updates references to a given flag throughout the game.
 	 * @protected
-	 * @param {Flag} flag 
+	 * @param {Flag} flag
 	 */
 	updateFlagReferences(flag) {
 		this.game.puzzles.forEach(puzzle => {
@@ -348,7 +349,7 @@ export default class GameEntityManager {
 
 	/**
 	 * Deletes a whisper from the game.
-	 * @param {Whisper} whisper - The whisper to delete. 
+	 * @param {Whisper} whisper - The whisper to delete.
 	 */
 	async deleteWhisper(whisper) {
 		if (this.game.settings.autoDeleteWhisperChannels) await whisper.channel.delete();
@@ -385,4 +386,16 @@ export default class GameEntityManager {
 			}).catch();
 		});
 	}
+
+    /**
+     * Gets the moderator associated with the given member, or creates one if it doesn't already exist.
+     * @param {GuildMember} member
+     * @returns {Moderator}
+     */
+    getOrCreateModerator(member) {
+        if (this.game.moderators.has(member.id)) return this.game.moderators.get(member.id);
+        const moderator = new Moderator(member.id, member, this.game);
+        this.game.moderators.set(moderator.id, moderator);
+        return moderator;
+    }
 }

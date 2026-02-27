@@ -1,10 +1,10 @@
-import CraftAction from '../Data/Actions/CraftAction.js';
+import CraftAction from '../Data/Actions/CraftAction.ts';
 import { itemNameMatches } from '../Modules/matchers.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -21,8 +21,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}craft DRAIN CLEANER and PLASTIC BOTTLE\n`
@@ -32,11 +32,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length < 3)
@@ -85,7 +85,7 @@ export async function execute(game, message, command, args, player) {
     const recipes = game.recipes.filter(recipe => recipe.ingredients.length === 2 && recipe.fixtureTag === "");
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].ingredients[0].prefab.id === items[0].prefab.id && recipes[i].ingredients[1].prefab.id === items[1].prefab.id) {
+        if (player.canCraft(recipes[i], [items[0], items[1]])) {
             recipe = recipes[i];
             break;
         }

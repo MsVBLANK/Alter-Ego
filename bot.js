@@ -2,7 +2,7 @@
 
 import BotContext from './Classes/BotContext.js';
 import GuildContext from './Classes/GuildContext.js';
-import Game from './Data/Game.js';
+import Game from './Data/Game.ts';
 
 import BotCommand from './Classes/BotCommand.js';
 import ModeratorCommand from './Classes/ModeratorCommand.js';
@@ -20,6 +20,10 @@ import { loadDotEnv } from "./Modules/envLoader.ts";
 import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
 import { loadCredentials } from "./Modules/credentialsLoader.ts";
+
+if (process.env.STACK_TRACE_LIMIT && Number.isInteger(parseInt(process.env.STACK_TRACE_LIMIT))) {
+    Error.stackTraceLimit = Math.min(Math.max(10, Math.round(parseInt(process.env.STACK_TRACE_LIMIT))), 200);
+}
 
 const client = new Client({
     partials: [

@@ -1,11 +1,12 @@
-import DressAction from '../Data/Actions/DressAction.js';
-import Fixture from "../Data/Fixture.js";
-import InventorySlot from '../Data/InventorySlot.js';
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import DressAction from '../Data/Actions/DressAction.ts';
+import Fixture from "../Data/Fixture.ts";
+import InventorySlot from '../Data/InventorySlot.ts';
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -22,8 +23,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}dress ezekiel wardrobe\n`
@@ -32,12 +33,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and a container with items. Usage:\n${usage(game.settings)}`);
 
@@ -52,7 +54,7 @@ export async function execute(game, message, command, args) {
     const input = args.join(' ');
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
 
-    /** @type {Fixture|Puzzle|RoomItem} */
+    /** @type {RoomItemContainer} */
     let container = null;
     /** @type {InventorySlot<RoomItem>} */
     let inventorySlot = null;

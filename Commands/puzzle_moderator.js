@@ -1,9 +1,11 @@
-import AttemptAction from '../Data/Actions/AttemptAction.js';
-import SolveAction from '../Data/Actions/SolveAction.js';
-import UnsolveAction from '../Data/Actions/UnsolveAction.js';
+import AttemptAction from '../Data/Actions/AttemptAction.ts';
+import SolveAction from '../Data/Actions/SolveAction.ts';
+import UnsolveAction from '../Data/Actions/UnsolveAction.ts';
+import Room from "../Data/Room.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -24,8 +26,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}puzzle solve button\n`
@@ -42,12 +44,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     let input = command + " " + args.join(" ");
     if (command === "puzzle") {
         if (args[0] === "solve") command = "solve";
@@ -77,33 +80,38 @@ export async function execute(game, message, command, args) {
             announcement += '.';
     }
 
-    // Find the prospective list of puzzles.
-    const puzzles = game.puzzles.filter(puzzle => input.toUpperCase().startsWith(puzzle.name + ' ') || input.toUpperCase() === puzzle.name);
-    if (puzzles.length > 0) {
-        input = input.substring(puzzles[0].name.length).trim();
-        args = input.split(" ");
-    }
-
     // Now find the player, who should be the last argument.
-    let player = game.entityFinder.getLivingPlayer(args[args.length - 1]);
+    let player = game.entityFinder.getLivingPlayer(args[args.length - 1]) ?? null;
     if (player) {
         args.splice(args.length - 1, 1);
         input = args.join(" ");
-    } else
-        player = null;
+    }
 
     // If a player wasn't specified, check if a room name was.
+    /** @type {Room} */
     let room = null;
     if (player === null) {
-        const parsedInput = input.replace(/\'/g, "").replace(/ /g, "-").toLowerCase();
         for (let i = args.length - 1; i >= 0; i--) {
-            room = game.entityFinder.getRoom(args.splice(i).join(" "));
+            const parsedInput = Room.generateValidId(args.slice(i).join(" "));
+            room = game.entityFinder.getRoom(parsedInput);
             if (room) {
-                input = input.substring(0, parsedInput.indexOf(room.id) - 1);
+                args.splice(i);
                 break;
             }
         }
         if (!room) room = null;
+    }
+    input = args.join(" ");
+
+    // Find the prospective list of puzzles.
+    let puzzles = game.puzzles.filter(puzzle => input.toUpperCase().startsWith(puzzle.name + ' ') || input.toUpperCase() === puzzle.name);
+    const locationId = player !== null ? player.location.id : room !== null ? room.id : undefined;
+    if (locationId) puzzles = puzzles.filter(puzzle => puzzle.location.id === locationId);
+    // Sort puzzles from longest name length to shortest, to give us the most precise match.
+    puzzles.sort((a, b) => b.name.length - a.name.length);
+    if (puzzles.length > 0) {
+        input = input.substring(puzzles[0].name.length).trim();
+        args = input.split(" ");
     }
 
     // Finally, find the puzzle.

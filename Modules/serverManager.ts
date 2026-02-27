@@ -1,6 +1,6 @@
 import {ChannelType, type Guild, type GuildBasedChannel} from 'discord.js';
 import {access, constants, readFile, writeFile, mkdir} from "node:fs/promises";
-import type Game from '../Data/Game.js';
+import type Game from '../Data/Game.ts';
 
 const SERVER_CONFIG_PATH = "./Configs/serverconfig.json";
 

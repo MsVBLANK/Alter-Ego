@@ -1,9 +1,10 @@
-import Dialog from '../Data/Dialog.js';
-import NarrateAction from '../Data/Actions/NarrateAction.js';
+import Dialog from '../Data/Dialog.ts';
+import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import { MessageDisplayType } from '../Modules/enums.js';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -20,8 +21,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
 	return `${settings.commandPrefix}narrate ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
@@ -31,17 +32,25 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
-	if (args.length < 2)
+export async function execute(game, message, command, args, moderator) {
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+	if (!sentMessageInLatchChannel && args.length < 2)
 		return game.communicationHandler.reply(message, `You need to specify an NPC and something to narrate. Usage:\n${usage(game.settings)}`);
+    if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify something to narrate. Usage:\n${usage(game.settings)}`);
 
-	const player = game.entityFinder.getLivingPlayer(args[0]);
-	const input = args.slice(1).join(" ");
+	let player = game.entityFinder.getLivingPlayer(args[0]);
+    if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase()))
+        args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
+	const input = args.join(" ");
 	if (input.length >= 2000)
 		return game.communicationHandler.reply(message, `Your narration exceeds Discord's character limit. Please split it into multiple messages.`);
 

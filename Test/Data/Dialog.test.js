@@ -1,5 +1,5 @@
 import { createMockMessage } from "../__mocks__/libs/discord.js";
-import Dialog from "../../Data/Dialog.js";
+import Dialog from "../../Data/Dialog.ts";
 
 describe('Dialog test', () => {
     beforeAll(async () => {

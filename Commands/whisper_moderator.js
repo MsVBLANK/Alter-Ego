@@ -1,11 +1,12 @@
-import Dialog from '../Data/Dialog.js';
-import Whisper from '../Data/Whisper.js';
-import SayAction from '../Data/Actions/SayAction.js';
-import WhisperAction from '../Data/Actions/WhisperAction.js';
+import Dialog from '../Data/Dialog.ts';
+import Whisper from '../Data/Whisper.ts';
+import SayAction from '../Data/Actions/SayAction.ts';
+import WhisperAction from '../Data/Actions/WhisperAction.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -24,8 +25,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}whisper nestor jun\n`
@@ -35,12 +36,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to choose at least two players. Usage:\n${usage(game.settings)}`);
 
@@ -107,7 +109,7 @@ export async function execute(game, message, command, args) {
 }
 
 /**
- * 
+ *
  * @param {Game} game - The game the whisper is occurring in.
  * @param {UserMessage} message - The Discord message that triggered this.
  * @param {string} messageText - The text of the message to send.

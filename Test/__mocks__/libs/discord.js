@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 
 /**
- * @import Player from "../../../Data/Player.js"
+ * @import Player from "../../../Data/Player.ts"
  */
 
 /** @type {import("discord.js").Collection} */

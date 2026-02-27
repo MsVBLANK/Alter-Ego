@@ -1,7 +1,8 @@
-import EndAction from '../Data/Actions/EndAction.js';
+import EndAction from '../Data/Actions/EndAction.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -14,8 +15,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}end rain\n`
@@ -23,18 +24,19 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length === 0)
         return game.communicationHandler.reply(message, `You need to specify an event. Usage:\n${usage(game.settings)}`);
 
     const input = args.join(" ");
     const event = game.entityFinder.getEvent(input);
-    if (event === null) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
+    if (event === undefined) return game.communicationHandler.reply(message, `Couldn't find event "${input}".`);
     if (!event.ongoing) return game.communicationHandler.reply(message, `${event.id} is not currently ongoing.`);
 
     const action = new EndAction(game, message, undefined, undefined, true);

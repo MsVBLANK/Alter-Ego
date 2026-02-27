@@ -80,6 +80,11 @@ export default class GameSettings {
 	 */
 	autoDeleteWhisperChannels;
 	/**
+	 * Whether or not players will be able to view all room channels.
+	 * @type {boolean}
+	 */
+	viewAllRoomChannels;
+	/**
 	 * The accent color that will be used in Discord Embeds.
 	 * @type {string}
 	 */
@@ -141,6 +146,7 @@ export default class GameSettings {
 	 * @param {string} defaultConcealedIconURL - The URL of an image that will be used as the display icon of a player with the `concealed` behavior attribute if a custom one isn't set.
 	 * @param {string} hiddenIconURL - The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
 	 * @param {boolean} autoDeleteWhisperChannels - Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
+	 * @param {boolean} viewAllRoomChannels - Whether or not players will be able to view all room channels.
 	 * @param {string} embedAccentColor - The accent color that will be used in Discord Embeds.
 	 * @param {string} standardMessageDisplayAccentColor - The accent color that will be used in standard-type message displays.
 	 * @param {string} warningMessageDisplayAccentColor - The accent color that will be used in warning-type message displays.
@@ -166,6 +172,7 @@ export default class GameSettings {
 		defaultConcealedIconURL,
 		hiddenIconURL,
 		autoDeleteWhisperChannels,
+		viewAllRoomChannels,
 		embedAccentColor,
 		standardMessageDisplayAccentColor,
 		warningMessageDisplayAccentColor,
@@ -190,6 +197,7 @@ export default class GameSettings {
 		this.defaultConcealedIconURL = defaultConcealedIconURL;
 		this.hiddenIconURL = hiddenIconURL;
 		this.autoDeleteWhisperChannels = autoDeleteWhisperChannels;
+		this.viewAllRoomChannels = viewAllRoomChannels;
 		this.embedAccentColor = embedAccentColor;
 		this.standardMessageDisplayAccentColor = standardMessageDisplayAccentColor;
 		this.warningMessageDisplayAccentColor = warningMessageDisplayAccentColor;

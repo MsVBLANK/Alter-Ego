@@ -27,6 +27,7 @@ export const DEFAULT_GAME_SETTINGS: GameSettings = {
     defaultConcealedIconURL: "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
     hiddenIconURL: "https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png",
     autoDeleteWhisperChannels: true,
+    viewAllRoomChannels: false,
     embedAccentColor: "1F8B4C",
     standardMessageDisplayAccentColor: "1F8B4C",
     warningMessageDisplayAccentColor: "FFC107",
@@ -117,6 +118,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
     const hiddenIconUrl = process.env.HIDDEN_ICON_URL ?? DEFAULT_GAME_SETTINGS.hiddenIconURL;
 
     const autoDeleteWhisperChannels = pushErrors(stringToBoolOrDefault(process.env.AUTO_DELETE_WHISPER_CHANNELS, DEFAULT_GAME_SETTINGS.autoDeleteWhisperChannels), errors);
+    const viewAllRoomChannels = pushErrors(stringToBoolOrDefault(process.env.viewAllRoomChannels, DEFAULT_GAME_SETTINGS.viewAllRoomChannels), errors);
 
     const colorRegex = /^[\dA-F]{6}$/i;
     let embedAccentColor = process.env.EMBED_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.embedAccentColor;
@@ -190,6 +192,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
         defaultConcealedIconUrl,
         hiddenIconUrl,
         autoDeleteWhisperChannels,
+        viewAllRoomChannels,
         embedAccentColor,
         standardMessageDisplayAccentColor,
         warningMessageDisplayAccentColor,

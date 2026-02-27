@@ -275,7 +275,7 @@ client.on('messageCreate', async message => {
         isCommand = await executeCommand(command, game, message);
     }
     if (message.channel.type !== ChannelType.DM && !isCommand && game.inProgress) {
-        processIncomingMessage(game, message);
+        await processIncomingMessage(game, message);
     }
 });
 

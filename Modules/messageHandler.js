@@ -19,14 +19,14 @@ import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel
  * @param {Game} game - The game the message is intended for.
  * @param {UserMessage} message - The message to process.
  */
-export function processIncomingMessage(game, message) {
+export async function processIncomingMessage(game, message) {
     if (message.channel.type !== ChannelType.GuildText) return;
     const isInWhisperChannel = message.channel.parentId === game.guildContext.whisperCategoryId;
     const isInAnnouncementChannel = message.channel.id === game.guildContext.announcementChannel.id;
     const isInRoomChannel = game.guildContext.roomCategories.includes(message.channel.parentId);
     if (!isInWhisperChannel && !isInAnnouncementChannel && !isInRoomChannel) return;
 
-    game.communicationHandler.cacheEmojis(message);
+    await game.communicationHandler.cacheEmojis(message);
     game.communicationHandler.cacheDialog(message);
 
     const isModerator = message.member && message.member.roles.cache.has(game.guildContext.moderatorRole.id);

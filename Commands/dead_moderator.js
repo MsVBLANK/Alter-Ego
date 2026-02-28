@@ -7,7 +7,8 @@ export const config = {
     details: "Lists all dead players.",
     usableBy: "Moderator",
     aliases: ["dead", "died"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

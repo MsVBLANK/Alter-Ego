@@ -8,7 +8,8 @@ export const config = {
     details: "Lists all events which are currently ongoing, along with the time remaining on each one, if applicable.",
     usableBy: "Moderator",
     aliases: ["ongoing", "events"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

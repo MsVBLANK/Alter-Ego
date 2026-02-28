@@ -11,7 +11,8 @@ export const config = {
     details: `Wakes you up when you're asleep. However, you may not be able to use this command without moderator assistance.`,
     usableBy: "Player",
     aliases: ["wake", "awaken", "wakeup"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

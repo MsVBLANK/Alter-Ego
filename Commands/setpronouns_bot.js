@@ -15,7 +15,8 @@ export const config = {
         + "then the player who triggered the command will have their pronouns set.",
     usableBy: "Bot",
     aliases: ["setpronouns"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

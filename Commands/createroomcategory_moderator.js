@@ -14,7 +14,8 @@ export const config = {
         + "this command, you will have to add its ID to the roomCategories setting manually.",
     usableBy: "Moderator",
     aliases: ["createroomcategory","register"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

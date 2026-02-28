@@ -13,7 +13,8 @@ export const config = {
         + "`subjective/objective/dependent possessive/independent possessive/reflexive/plural`.",
     usableBy: "Moderator",
     aliases: ["setpronouns"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

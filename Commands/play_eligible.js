@@ -12,7 +12,8 @@ export const config = {
     details: "Adds you to the list of players for the current game.",
     usableBy: "Eligible",
     aliases: ["play"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

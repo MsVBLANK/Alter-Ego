@@ -8,7 +8,8 @@ export const config = {
     details: "Lists all living players.",
     usableBy: "Moderator",
     aliases: ["living", "alive"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

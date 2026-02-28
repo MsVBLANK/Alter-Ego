@@ -25,7 +25,8 @@ export const config = {
         + `You can only put items in containers in the room that you're in. If you want to put an item in one of your inventory items, use the \`stash\` command.`,
     usableBy: "Player",
     aliases: ["drop", "discard", "put", "place", "d"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

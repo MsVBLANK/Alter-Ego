@@ -19,7 +19,8 @@ export const config = {
         + "player's name followed by \"'s\". If inspecting a different player's inventory items, a narration will not be sent.",
     usableBy: "Moderator",
     aliases: ["inspect", "investigate", "examine", "look", "x"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

@@ -11,7 +11,8 @@ export const config = {
         + "If an image is attached, it will be sent as well.",
     usableBy: "Moderator",
     aliases: ["text"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

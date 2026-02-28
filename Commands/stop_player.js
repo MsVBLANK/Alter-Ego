@@ -13,7 +13,8 @@ export const config = {
         + `queued movements.`,
     usableBy: "Player",
     aliases: ["stop", "st"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

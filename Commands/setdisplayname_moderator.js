@@ -12,7 +12,8 @@ export const config = {
         + "nickname in the server.",
     usableBy: "Moderator",
     aliases: ["setdisplayname", "sdn"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

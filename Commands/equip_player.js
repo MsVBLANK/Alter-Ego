@@ -19,7 +19,8 @@ export const config = {
         + `To equip many items at once, use the \`dress\` command. If you wish to remove one of your equipped items, use the \`unequip\` command.`,
     usableBy: "Player",
     aliases: ["equip", "wear", "e"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

@@ -10,7 +10,8 @@ export const config = {
         + "or .avif extension. To reset a room's icon, simply do not specify a new icon.",
     usableBy: "Moderator",
     aliases: ["setroomicon"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

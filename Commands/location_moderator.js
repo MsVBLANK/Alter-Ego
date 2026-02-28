@@ -8,7 +8,8 @@ export const config = {
     details: "Tells you the given player's location, with a link to the channel.",
     usableBy: "Moderator",
     aliases: ["location", "l"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

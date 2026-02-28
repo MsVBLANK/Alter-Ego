@@ -11,7 +11,8 @@ export const config = {
         + "extension. To reset a room's icon, simply do not specify a new icon.",
     usableBy: "Bot",
     aliases: ["setroomicon"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

@@ -19,7 +19,8 @@ export const config = {
         + `specify which of the container's slots you want to take it from, by entering the name of the slot followed by "of" before the container item's name.`,
     usableBy: "Player",
     aliases: ["take", "get", "grab", "t"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

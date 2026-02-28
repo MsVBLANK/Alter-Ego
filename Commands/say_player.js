@@ -17,7 +17,8 @@ export const config = {
         + `This command is only available to players with certain status effects. In most situations, you should send your message to the room channel directly.`,
     usableBy: "Player",
     aliases: ["say", "speak"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

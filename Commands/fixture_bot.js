@@ -20,7 +20,8 @@ export const config = {
         + 'the same name as the fixture whose state is supposed to be the same as the fixture, use the puzzle command to update it as well.',
     usableBy: "Bot",
     aliases: ["fixture", "object", "activate", "deactivate"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

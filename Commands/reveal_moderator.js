@@ -9,7 +9,8 @@ export const config = {
         + "All listed players must be dead.",
     usableBy: "Moderator",
     aliases: ["reveal"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

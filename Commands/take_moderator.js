@@ -15,7 +15,8 @@ export const config = {
         + "the item is contained in another item with multiple inventory slots (such as pockets), you can specify which slot to take it from.",
     usableBy: "Moderator",
     aliases: ["take", "get", "grab", "t"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

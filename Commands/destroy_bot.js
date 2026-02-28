@@ -25,7 +25,8 @@ export const config = {
         + "Note that using the \"all\" argument with a container will destroy all items in that container.",
     usableBy: "Bot",
     aliases: ["destroy", "ds"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

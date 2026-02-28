@@ -13,7 +13,8 @@ export const config = {
         + `capacity. To force them out of hiding, use the unhide command.`,
     usableBy: "Moderator",
     aliases: ["hide", "unhide"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

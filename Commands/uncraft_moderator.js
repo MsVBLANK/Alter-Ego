@@ -13,7 +13,8 @@ export const config = {
         + "If there is no crafting recipe that produces the supplied item which allows it to be uncrafted again, this command cannot be used.",
     usableBy: "Moderator",
     aliases: ["uncraft", "dismantle", "disassemble", "uc"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

@@ -12,7 +12,8 @@ export const config = {
         + 'Any data you edit manually, including descriptions, will require use of this command.',
     usableBy: "Moderator",
     aliases: ["load", "reload", "las", "lar"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

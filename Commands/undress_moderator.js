@@ -15,7 +15,8 @@ export const config = {
         + "inventory. This command will also drop any items in their hands.",
     usableBy: "Moderator",
     aliases: ["undress"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

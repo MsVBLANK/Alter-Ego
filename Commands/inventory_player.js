@@ -16,7 +16,8 @@ export const config = {
         + `that items that you have stashed in inventory slots can be stolen by other players, sometimes without you noticing.`,
     usableBy: "Player",
     aliases: ["inventory", "i"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

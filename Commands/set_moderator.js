@@ -16,7 +16,8 @@ export const config = {
         + 'with the same name spread across the map.',
     usableBy: "Moderator",
     aliases: ["set"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

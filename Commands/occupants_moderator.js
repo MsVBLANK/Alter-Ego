@@ -14,7 +14,8 @@ export const config = {
         + "Occupants with the `hidden` behavior attributes will also be listed alongside their hiding spots.",
     usableBy: "Moderator",
     aliases: ["occupants", "o"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

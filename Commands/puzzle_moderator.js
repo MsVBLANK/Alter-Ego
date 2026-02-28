@@ -20,7 +20,8 @@ export const config = {
         + 'spread across the map. This should generally only be used for puzzles which require moderator intervention.',
     usableBy: "Moderator",
     aliases: ["puzzle", "solve", "unsolve", "attempt"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

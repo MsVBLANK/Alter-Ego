@@ -13,7 +13,8 @@ export const config = {
         + 'The bot will not announce which exit the player leaves through or which entrance they enter from when a player is moved to a non-adjacent room.',
     usableBy: "Moderator",
     aliases: ["move", "go", "enter", "walk", "m"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

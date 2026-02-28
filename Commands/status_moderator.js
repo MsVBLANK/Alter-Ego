@@ -22,7 +22,8 @@ export const config = {
         + '-**view**: Views all of the status effects that a player is currently afflicted with, along with the time remaining on each one, if applicable.',
     usableBy: "Moderator",
     aliases: ["status", "inflict", "cure", "view"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

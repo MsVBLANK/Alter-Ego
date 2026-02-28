@@ -15,7 +15,8 @@ export const config = {
         + 'After making any needed modifications, use ".load all start" to begin the game.',
     usableBy: "Moderator",
     aliases: ["startgame", "start"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

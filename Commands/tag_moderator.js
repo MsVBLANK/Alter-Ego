@@ -12,7 +12,8 @@ export const config = {
         + "-**list**/**tags**: Displays the list of tags currently applied to the given room.",
     usableBy: "Moderator",
     aliases: ["tag", "addtag", "removetag", "tags"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

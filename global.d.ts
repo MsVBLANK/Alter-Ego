@@ -69,7 +69,7 @@ declare global {
 		usableBy: string;
 		aliases: string[];
 		requiresGame: boolean;
-        whitespaceSensitive?: boolean;
+		whitespaceSensitive: boolean;
 	}
 
 	/**

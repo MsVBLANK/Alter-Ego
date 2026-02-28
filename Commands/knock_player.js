@@ -12,7 +12,8 @@ export const config = {
         + `You can knock on a door even if it's locked. However, some exits don't have doors. If they don't, you will be unable to knock on them.`,
     usableBy: "Player",
     aliases: ["knock"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

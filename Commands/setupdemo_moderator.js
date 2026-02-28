@@ -20,7 +20,8 @@ export const config = {
         + "this command if the spreadsheet is currently blank.**",
     usableBy: "Moderator",
     aliases: ["setupdemo"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

@@ -14,7 +14,8 @@ export const config = {
         + "very large item (a sword, for example), people in the room with the player will see them doing so.",
     usableBy: "Moderator",
     aliases: ["stash", "store", "s"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

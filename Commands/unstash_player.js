@@ -18,7 +18,8 @@ export const config = {
         + `To store an item in one of your inventory items, use the \`stash\` command.`,
     usableBy: "Player",
     aliases: ["unstash", "retrieve", "r"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

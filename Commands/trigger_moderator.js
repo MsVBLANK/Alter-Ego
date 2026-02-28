@@ -10,7 +10,8 @@ export const config = {
     details: "Triggers the specified event. The event must not already be ongoing. If the event has any triggered commands, they will be run.",
     usableBy: "Moderator",
     aliases: ["trigger"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

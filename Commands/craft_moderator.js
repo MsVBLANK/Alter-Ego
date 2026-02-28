@@ -14,7 +14,8 @@ export const config = {
         + "Note that this command can also be used to use one item on another item, which may produce something new.",
     usableBy: "Moderator",
     aliases: ["craft", "combine", "mix", "c"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

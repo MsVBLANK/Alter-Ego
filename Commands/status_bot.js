@@ -24,7 +24,8 @@ export const config = {
         + 'then all players in the same room as the player who solved it will be cured.',
     usableBy: "Bot",
     aliases: ["status", "inflict", "cure"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

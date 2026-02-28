@@ -28,7 +28,8 @@ export const config = {
         + `but the recipe will still be carried out so long as all of the ingredients are in place.`,
     usableBy: "Player",
     aliases: ["recipes"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

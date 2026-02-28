@@ -14,7 +14,8 @@ export const config = {
         + "that exit leads to, and will be unable to enter through the exit from another room.",
     usableBy: "Bot",
     aliases: ["exit", "room", "lock", "unlock"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 } ;
 
 /**

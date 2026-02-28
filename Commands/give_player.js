@@ -13,7 +13,8 @@ export const config = {
         + `is given (a chainsaw, for example), it will be narrated in the room, so other players in the room will see you giving it to the recipient.`,
     usableBy: "Player",
     aliases: ["give"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

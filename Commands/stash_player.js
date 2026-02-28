@@ -18,7 +18,8 @@ export const config = {
         + `To retrieve a stashed item and put it in your hand, use the \`unstash\` command.`,
     usableBy: "Player",
     aliases: ["stash", "store", "s"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

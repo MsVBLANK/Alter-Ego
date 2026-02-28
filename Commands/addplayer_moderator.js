@@ -17,7 +17,8 @@ export const config = {
         + "must be loaded, otherwise the new player will not be created correctly, and their data may be overwritten.",
     usableBy: "Moderator",
     aliases: ["addplayer"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

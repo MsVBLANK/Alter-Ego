@@ -10,7 +10,8 @@ export const config = {
     details: "Lists all commands available to the user. If a command is specified, displays the help menu for that command.",
     usableBy: "Moderator",
     aliases: ["help"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

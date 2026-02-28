@@ -15,7 +15,8 @@ export const config = {
         + `If everyone leaves the room, the whisper channel will be deleted.`,
     usableBy: "Player",
     aliases: ["whisper", "w"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

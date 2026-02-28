@@ -10,7 +10,8 @@ export const config = {
         + "However, this command allows you to save at any time, even when edit mode is enabled.",
     usableBy: "Moderator",
     aliases: ["save"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

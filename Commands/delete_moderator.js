@@ -13,7 +13,8 @@ export const config = {
         + "the given user, they wil be deleted.",
     usableBy: "Moderator",
     aliases: ["delete"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: false
 };
 
 /**

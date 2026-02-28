@@ -23,7 +23,8 @@ export const config = {
         + 'spread across the map.',
     usableBy: "Bot",
     aliases: ["puzzle", "solve", "unsolve", "attempt"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: false
 };
 
 /**

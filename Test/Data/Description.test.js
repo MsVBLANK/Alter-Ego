@@ -64,5 +64,26 @@ describe('Description test', () => {
             const actualEntities = Description.getPotentialGameEntities(parsedDescription);
             expect(actualEntities).toStrictEqual(expectedEntities);
         });
+
+        test('getPotentialGameEntities test 8', () => {
+            const parsedDescription = `You look inside the top drawer. In it, you find AIPAD 9 and LOCKER KEY NINE.`;
+            const expectedEntities = ["AIPAD 9", "LOCKER KEY NINE"];
+            const actualEntities = Description.getPotentialGameEntities(parsedDescription);
+            expect(actualEntities).toStrictEqual(expectedEntities);
+        });
+
+        test('getPotentialGameEntities test 9', () => {
+            const parsedDescription = `You open the Protected folder. Inside, you find three files: INSTRUCTIONS.TXT, AISHA_BACKGROUND.TXT, and SSH.`;
+            const expectedEntities = ["INSTRUCTIONS.TXT", "AISHA_BACKGROUND.TXT", "SSH"];
+            const actualEntities = Description.getPotentialGameEntities(parsedDescription);
+            expect(actualEntities).toStrictEqual(expectedEntities);
+        });
+
+        test('getPotentialGameEntities test 10', () => {
+            const parsedDescription = `You see PANEL 9, PANEL 10, PANEL 11, PANEL 12, PANEL 13, PANEL 14, PANEL 15, PANEL 16, and PANEL A.`;
+            const expectedEntities = ["PANEL 9", "PANEL 10", "PANEL 11", "PANEL 12", "PANEL 13", "PANEL 14", "PANEL 15", "PANEL 16", "PANEL A"];
+            const actualEntities = Description.getPotentialGameEntities(parsedDescription);
+            expect(actualEntities).toStrictEqual(expectedEntities);
+        });
     });
 });

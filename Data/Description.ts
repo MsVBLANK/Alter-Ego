@@ -89,7 +89,7 @@ export default class Description extends GameConstruct {
 	 */
 	static getPotentialGameEntities(parsedDescription: string): string[] {
 		let potentialGameEntities: Set<string> = new Set();
-		const allCapsRegex = /((?:[B-Z]+)(?:(?: |\.)?(?:[\d]+|[A-Z]{2,}))+)/g;
+		const allCapsRegex = /((?:[A-Z]{2,}|[B-Z]+)(?:[ _\-\.]?(?:[\d]+|[A-Z](?![a-z])+))+)/g;
 		let match: string[];
 		while (match = allCapsRegex.exec(parsedDescription))
 			potentialGameEntities.add(match[0].trim());

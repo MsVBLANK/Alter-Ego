@@ -1,3 +1,4 @@
+import type Interactable from "../../Classes/Interactables/Interactable.ts";
 import { getSortedItemsString } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
 import type EquipmentSlot from "../EquipmentSlot.ts";
@@ -22,15 +23,18 @@ export default class TakeAction extends Action {
      * @param inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
      * @param notify - Whether or not to notify the player that they took the item. Defaults to true.
 	 */
-	performTake(item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer,
-        inventorySlot: InventorySlot<RoomItem>, notify: boolean = true): void {
+	async performTake(item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, notify: boolean = true): Promise<void> {
 		if (this.performed) return;
 		super.perform();
 		const successful = this.forced || this.player.carryWeight + item.weight <= this.player.maxCarryWeight;
-		this.getGame().narrationHandler.narrateTake(this, item, this.player, notify);
 		this.getGame().logHandler.logTake(item, this.player, container, inventorySlot, successful, this.forced);
-		if (!successful) return;
-		this.player.take(item, handEquipmentSlot, container, inventorySlot);
+		if (!successful) {
+            this.getGame().narrationHandler.narrateFailedTake(this, item, this.player, notify);
+            return;
+        }
+		const takenItem = this.player.take(item, handEquipmentSlot, container, inventorySlot);
+        const interactables = await this.#getInteractables();
+        this.getGame().narrationHandler.narrateTake(this, takenItem, container, this.player, notify, interactables);
 		// Container is a weight puzzle.
 		if (container instanceof Puzzle && container.type === "weight") {
 			const weight = container.getContainedItemsWeight();
@@ -45,6 +49,11 @@ export default class TakeAction extends Action {
 			attemptAction.performAttempt(container, undefined, containerItemsString, "take", "");
 		}
 	}
+
+    async #getInteractables(): Promise<Interactable[]> {
+        const interactables = await this.getGame().botContext.interactableManager.getStashInteractables(this.player);
+        return interactables;
+    }
 
 	/**
 	 * Finds the required room item to call performTake.

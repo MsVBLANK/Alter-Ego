@@ -111,13 +111,14 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Whisper} whisper - The whisper that was created.
 	 * @param {Player} player - The player performing the whisper action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateWhisper(action, whisper, player) {
+	narrateWhisper(action, whisper, player, interactables = []) {
 		const messageType = MessageDisplayType.MINOR;
 		const playerListString = whisper.generatePlayerListStringExcluding(player);
 		const notification = this.#game.notificationGenerator.generateWhisperNotification(player, true, playerListString);
 		const narration = this.#game.notificationGenerator.generateWhisperNotification(player, false, playerListString);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -139,13 +140,14 @@ export default class GameNarrationHandler {
 	 * @param {boolean} isRunning - Whether or not the player is running.
 	 * @param {Exit} exit - The exit the player is moving toward.
 	 * @param {Player} player - The player performing the start move action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateStartMove(action, isRunning, exit, player) {
+	narrateStartMove(action, isRunning, exit, player, interactables = []) {
 		const messageType = MessageDisplayType.MINOR;
 		const exitPhrase = exit.getNamePhrase();
 		const notification = this.#game.notificationGenerator.generateStartMoveNotification(player, true, isRunning, exitPhrase);
 		const narration = this.#game.notificationGenerator.generateStartMoveNotification(player, false, isRunning, exitPhrase);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -153,12 +155,13 @@ export default class GameNarrationHandler {
 	 * Narrates the player depleting half of their stamina.
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Player} player - The player who has depleted half of their stamina.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateReachedHalfStamina(action, player) {
+	narrateReachedHalfStamina(action, player, interactables = []) {
 		const messageType = MessageDisplayType.MINOR;
 		const notification = this.#game.notificationGenerator.generateHalfStaminaNotification(player, true);
 		const narration = this.#game.notificationGenerator.generateHalfStaminaNotification(player, false);
-		this.sendNotification(player, action, notification, MessageDisplayType.WARNING);
+		this.sendNotification(player, action, notification, MessageDisplayType.WARNING, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -227,14 +230,15 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the stop action.
 	 * @param {boolean} exitLocked - Whether or not the action was initiated because the destination exit was locked.
 	 * @param {Exit} [exit] - The exit the player tried to move to, if applicable.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateStop(action, player, exitLocked, exit) {
+	narrateStop(action, player, exitLocked, exit, interactables = []) {
 		const messageType = MessageDisplayType.MINOR;
 		const notification = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, true, exit.getDoorPhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, true);
 		const narration = exitLocked ? this.#game.notificationGenerator.generateExitLockedNotification(player, false, exit.getDoorPhrase())
 			: this.#game.notificationGenerator.generateStopNotification(player, false);
-		this.sendNotification(player, action, notification, exitLocked ? MessageDisplayType.WARNING : messageType);
+		this.sendNotification(player, action, notification, exitLocked ? MessageDisplayType.WARNING : messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -305,13 +309,14 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {Exit} exit - The exit to knock on.
 	 * @param {Player} player - The player performing the knock action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateKnock(action, exit, player) {
+	narrateKnock(action, exit, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const doorPhrase = exit.getDoorPhrase();
 		const notification = this.#game.notificationGenerator.generateKnockNotification(player, true, doorPhrase);
 		const roomNarration = this.#game.notificationGenerator.generateKnockNotification(player, false, doorPhrase);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, roomNarration);
 		const destination = exit.dest;
 		if (destination.id === player.location.id) return;
@@ -331,8 +336,9 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {HidingSpot} hidingSpot - The hiding spot the player is hiding in.
 	 * @param {Player} player - The player performing the hide action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateHide(action, hidingSpot, player) {
+	narrateHide(action, hidingSpot, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const hidingSpotPhrase = hidingSpot.getContainingPhrase();
 		let playerNotification = "";
@@ -344,7 +350,7 @@ export default class GameNarrationHandler {
 			if (hidingSpot.occupants.length > 0) playerNotification = this.#game.notificationGenerator.generateHidingSpotOccupiedNotification(hidingSpotPhrase, hiddenPlayersList);
 			else playerNotification = this.#game.notificationGenerator.generateHideNotification(player, true, hidingSpotPhrase);
 		}
-		this.sendNotification(player, action, playerNotification, messageType);
+		this.sendNotification(player, action, playerNotification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 		for (const occupant of hidingSpot.occupants) {
 			const occupantNotification = hidingSpot.occupants.length + 1 > hidingSpot.capacity ? this.#game.notificationGenerator.generateFoundInFullHidingSpotNotification(occupant, player)
@@ -358,13 +364,14 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {HidingSpot} hidingSpot - The hiding spot the player is coming out from.
 	 * @param {Player} player - The player performing the unhide action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateUnhide(action, hidingSpot, player) {
+	narrateUnhide(action, hidingSpot, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const hidingSpotPhrase = hidingSpot ? hidingSpot.getContainingPhrase() : "hiding";
 		const notification = this.#game.notificationGenerator.generateUnhideNotification(player, true, hidingSpotPhrase);
 		const narration = this.#game.notificationGenerator.generateUnhideNotification(player, false, hidingSpotPhrase);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -421,8 +428,9 @@ export default class GameNarrationHandler {
 	 * @param {Player} player - The player performing the use action.
 	 * @param {Player} target - The target player of the use action.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateUse(action, item, player, target, customNarration) {
+	narrateUse(action, item, player, target, customNarration, interactables = []) {
 		let notification = customNarration;
 		let narration = customNarration;
 		const messageType = customNarration ? MessageDisplayType.WARNING : MessageDisplayType.STANDARD;
@@ -431,23 +439,25 @@ export default class GameNarrationHandler {
 			notification = this.#game.notificationGenerator.generateUseNotification(player, true, item.singleContainingPhrase, item.prefab.secondPersonVerb, targetDisplayName);
 			narration = this.#game.notificationGenerator.generateUseNotification(player, false, item.singleContainingPhrase, item.prefab.thirdPersonVerb, targetDisplayName);
 		}
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
-	/**
-	 * Narrates a take action.
+    /**
+     * Narrates a take action.
 	 * @param {Action} action - The action that initiated this narration.
-	 * @param {RoomItem} item - The item to take.
+	 * @param {RoomItem} item - The item the player is attempting to take.
 	 * @param {Player} player - The player performing the take action.
-	 * @param {boolean} [notify] - Whether or not to notify the player that they took the item. Defaults to true.
-	 */
-	narrateTake(action, item, player, notify = true) {
-		const messageType = MessageDisplayType.STANDARD;
+	 * @param {boolean} [notify] - Whether or not to notify the player that they failed to take the item. Defaults to true.
+     */
+    narrateFailedTake(action, item, player, notify = true) {
+        const messageType = MessageDisplayType.STANDARD;
 		const containerPhrase = item.getContainerPhrase();
-		let notification = this.#game.notificationGenerator.generateTakeNotification(player, true, item.singleContainingPhrase, containerPhrase);
-		let narration = this.#game.notificationGenerator.generateTakeNotification(player, false, item.singleContainingPhrase, containerPhrase);
-		if (item.weight > player.maxCarryWeight) {
+        /** @type {string} */
+        let notification;
+        /** @type {string} */
+		let narration;
+        if (item.weight > player.maxCarryWeight) {
 			notification = this.#game.notificationGenerator.generateTakeTooHeavyNotification(player, true, item.singleContainingPhrase, containerPhrase);
 			narration = this.#game.notificationGenerator.generateTakeTooHeavyNotification(player, false, item.singleContainingPhrase, containerPhrase);
 		}
@@ -455,7 +465,26 @@ export default class GameNarrationHandler {
 			notification = this.#game.notificationGenerator.generateTakeTooMuchWeightNotification(player, true, item.singleContainingPhrase, containerPhrase);
 			narration = this.#game.notificationGenerator.generateTakeTooMuchWeightNotification(player, false, item.singleContainingPhrase, containerPhrase);
 		}
-		if (notify) this.sendNotification(player, action, notification, messageType);
+        if (notification && notify) this.sendNotification(player, action, notification, messageType);
+		if (!item.prefab.discreet)
+			this.#sendNarration(messageType, action, player, narration);
+    }
+
+	/**
+	 * Narrates a take action.
+	 * @param {Action} action - The action that initiated this narration.
+	 * @param {InventoryItem} item - The item that was taken.
+     * @param {RoomItemContainer} container - The container the item was taken from.
+	 * @param {Player} player - The player performing the take action.
+	 * @param {boolean} [notify] - Whether or not to notify the player that they took the item. Defaults to true.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
+	 */
+	narrateTake(action, item, container, player, notify = true, interactables = []) {
+		const messageType = MessageDisplayType.STANDARD;
+		const containerPhrase = container.getContainingPhrase();
+		const notification = this.#game.notificationGenerator.generateTakeNotification(player, true, item.singleContainingPhrase, containerPhrase);
+		const narration = this.#game.notificationGenerator.generateTakeNotification(player, false, item.singleContainingPhrase, containerPhrase);
+		if (notify) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		if (!item.prefab.discreet)
 			this.#sendNarration(messageType, action, player, narration);
 	}
@@ -469,12 +498,13 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} container - The container the item was stolen from.
 	 * @param {InventorySlot} inventorySlot - The inventory slot the item was stolen from.
 	 * @param {boolean} notifyVictim - Whether or not to notify the victim who was stolen from.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateSteal(action, item, thief, victim, container, inventorySlot, notifyVictim) {
+	narrateSteal(action, item, thief, victim, container, inventorySlot, notifyVictim, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const thiefNotification = this.#game.notificationGenerator.generateSuccessfulStealNotification(thief, true, item.singleContainingPhrase, slotPhrase, container.name, victim, notifyVictim);
-		this.sendNotification(thief, action, thiefNotification, messageType);
+		this.sendNotification(thief, action, thiefNotification, messageType, undefined, undefined, interactables);
 		if (notifyVictim) {
 			const victimNotification = this.#game.notificationGenerator.generateSuccessfulStolenFromNotification(thief.displayName, slotPhrase, item.singleContainingPhrase, container.name);
 			this.sendNotification(victim, action, victimNotification, messageType);
@@ -492,13 +522,14 @@ export default class GameNarrationHandler {
 	 * @param {RoomItemContainer} container - The container to drop the item into.
 	 * @param {Player} player - The player performing the take action.
 	 * @param {boolean} [notify] - Whether or not to notify the player that they dropped the item. Defaults to true.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateDrop(action, item, container, player, notify = true) {
+	narrateDrop(action, item, container, player, notify = true, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const containerPhrase = container.getContainingPhrase();
 		const notification = this.#game.notificationGenerator.generateDropNotification(player, true, item.singleContainingPhrase, preposition, containerPhrase);
-		if (notify) this.sendNotification(player, action, notification, messageType);
+		if (notify) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		if (!item.prefab.discreet) {
 			const narration = this.#game.notificationGenerator.generateDropNotification(player, false, item.singleContainingPhrase, preposition, containerPhrase)
 			this.#sendNarration(messageType, action, player, narration);
@@ -511,8 +542,9 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} item - The item to give.
 	 * @param {Player} player - The player performing the give action.
 	 * @param {Player} recipient - The player receiving the item.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the recipient alongside their notification. Optional.
 	 */
-	narrateGive(action, item, player, recipient) {
+	narrateGive(action, item, player, recipient, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		let playerNotification = this.#game.notificationGenerator.generateGiveNotification(player, true, item.singleContainingPhrase, recipient.displayName);
 		let recipientNotification = this.#game.notificationGenerator.generateReceiveNotification(item.singleContainingPhrase, player.displayName);
@@ -528,7 +560,7 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateGiveTooMuchWeightNotification(player, false, item.singleContainingPhrase, recipient);
 		}
 		this.sendNotification(player, action, playerNotification, messageType);
-		this.sendNotification(recipient, action, recipientNotification, messageType);
+		this.sendNotification(recipient, action, recipientNotification, messageType, undefined, undefined, interactables);
 		if (!item.prefab.discreet)
 			this.#sendNarration(messageType, action, player, narration);
 	}
@@ -540,13 +572,14 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} container - The container to stash the item in.
 	 * @param {InventorySlot} inventorySlot - The inventory slot to stash the item in.
 	 * @param {Player} player - The player performing the stash action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateStash(action, item, container, inventorySlot, player) {
+	narrateStash(action, item, container, inventorySlot, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const notification = this.#game.notificationGenerator.generateStashNotification(player, true, item.singleContainingPhrase, preposition, slotPhrase, container.name);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		if (!item.prefab.discreet) {
 			const narration = this.#game.notificationGenerator.generateStashNotification(player, false, item.singleContainingPhrase, preposition, slotPhrase, container.name)
 			this.#sendNarration(messageType, action, player, narration);
@@ -560,12 +593,13 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} container - The container to unstash the item from.
 	 * @param {InventorySlot} inventorySlot - The inventory slot to unstash the item from.
 	 * @param {Player} player - The player performing the unstash action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateUnstash(action, item, container, inventorySlot, player) {
+	narrateUnstash(action, item, container, inventorySlot, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const slotPhrase = container.getSlotPhrase(inventorySlot);
 		const notification = this.#game.notificationGenerator.generateUnstashNotification(player, true, item.singleContainingPhrase, slotPhrase, container.name);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		if (!item.prefab.discreet) {
 			const narration = this.#game.notificationGenerator.generateUnstashNotification(player, false, item.singleContainingPhrase, slotPhrase, container.name);
 			this.#sendNarration(messageType, action, player, narration);
@@ -578,12 +612,13 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} item - The item being equipped.
 	 * @param {Player} player - The player performing the equip action.
 	 * @param {boolean} [notify] - Whether or not to notify the player that they equipped the item. Defaults to true.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateEquip(action, item, player, notify = true) {
+	narrateEquip(action, item, player, notify = true, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		if (notify) {
 			const notification = this.#game.notificationGenerator.generateEquipNotification(player, true, item.singleContainingPhrase);
-			this.sendNotification(player, action, notification, messageType);
+			this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		}
 		const narration = this.#game.notificationGenerator.generateEquipNotification(player, false, item.singleContainingPhrase);
 		this.#sendNarration(messageType, action, player, narration);
@@ -595,12 +630,13 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem} item - The item being unequipped.
 	 * @param {Player} player - The player performing the unequip action.
 	 * @param {boolean} [notify] - Whether or not to notify the player that they unequipped the item. Defaults to true.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateUnequip(action, item, player, notify = true) {
+	narrateUnequip(action, item, player, notify = true, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		if (notify) {
 			const notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
-			this.sendNotification(player, action, notification, messageType);
+			this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		}
 		const narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		this.#sendNarration(messageType, action, player, narration);
@@ -612,14 +648,15 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem[]} items - The items the player is putting on.
 	 * @param {RoomItemContainer} container - The container the player is dressing from.
 	 * @param {Player} player - The player performing the dress action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateDress(action, items, container, player) {
+	narrateDress(action, items, container, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const itemPhrases = items.map(item => item.singleContainingPhrase);
 		const itemList = generateListString(itemPhrases);
 		const notification = this.#game.notificationGenerator.generateDressNotification(player, true, container.name, itemList);
 		const narration = this.#game.notificationGenerator.generateDressNotification(player, false, container.name, itemList);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -629,8 +666,9 @@ export default class GameNarrationHandler {
 	 * @param {InventoryItem[]} items - The items the player is taking off.
 	 * @param {RoomItemContainer} container - The container the player is undressing into.
 	 * @param {Player} player - The player performing the undress action.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateUndress(action, items, container, player) {
+	narrateUndress(action, items, container, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const preposition = container.getPreposition();
 		const containerPhrase = container.getContainingPhrase();
@@ -638,7 +676,7 @@ export default class GameNarrationHandler {
 		const itemList = generateListString(itemPhrases);
 		const notification = this.#game.notificationGenerator.generateUndressNotification(player, true, preposition, containerPhrase, itemList);
 		const narration = this.#game.notificationGenerator.generateUndressNotification(player, false, preposition, containerPhrase, itemList);
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -647,8 +685,9 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem} item - The item that is being instantiated.
 	 * @param {Player} player - The player the inventory item is being equipped to.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateInstantiateEquippedInventoryItem(action, item, player) {
+	narrateInstantiateEquippedInventoryItem(action, item, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		let notification = "";
 		let narration = "";
@@ -660,7 +699,7 @@ export default class GameNarrationHandler {
 			notification = this.#game.notificationGenerator.generateEquipNotification(player, true, item.singleContainingPhrase);
 			narration = this.#game.notificationGenerator.generateEquipNotification(player, false, item.singleContainingPhrase);
 		}
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -669,8 +708,9 @@ export default class GameNarrationHandler {
 	 * @param {Action} action - The action that initiated this narration.
 	 * @param {InventoryItem} item - The item that is being destroyed.
 	 * @param {Player} player - The player the inventory item belongs to.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateDestroyEquippedInventoryItem(action, item, player) {
+	narrateDestroyEquippedInventoryItem(action, item, player, interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		let notification = "";
 		let narration = "";
@@ -682,7 +722,7 @@ export default class GameNarrationHandler {
 			notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);
 			narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		}
-		this.sendNotification(player, action, notification, messageType);
+		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 	}
 
@@ -726,8 +766,9 @@ export default class GameNarrationHandler {
 	 * @param {Player} [player] - The player performing the activate action.
 	 * @param {boolean} [recipeInitiatedDescriptionSent] - Whether or not an initiated description for a recipe has already been sent. Defaults to false.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateActivate(action, fixture, player, recipeInitiatedDescriptionSent = false, customNarration = "") {
+	narrateActivate(action, fixture, player, recipeInitiatedDescriptionSent = false, customNarration = "", interactables = []) {
 		let messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
@@ -738,7 +779,7 @@ export default class GameNarrationHandler {
 			if (recipeInitiatedDescriptionSent) messageType = MessageDisplayType.MINOR;
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase);
-		if (notification) this.sendNotification(player, action, notification, messageType);
+		if (notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(MessageDisplayType.STANDARD, action, player, narration, fixture.location);
 	}
 
@@ -748,8 +789,9 @@ export default class GameNarrationHandler {
 	 * @param {Fixture} fixture - The fixture being deactivated.
 	 * @param {Player} [player] - The player performing the deactivate action.
 	 * @param {string} [customNarration] - The custom text of the narration. Optional.
+     * @param {Interactable[]} [interactables] - An array of interactables to send to the player alongside their notification. Optional.
 	 */
-	narrateDeactivate(action, fixture, player, customNarration = "") {
+	narrateDeactivate(action, fixture, player, customNarration = "", interactables = []) {
 		const messageType = MessageDisplayType.STANDARD;
 		const fixturePhrase = fixture.getContainingPhrase();
 		let notification = customNarration;
@@ -759,7 +801,7 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateDeactivateNotification(fixturePhrase, player, false);
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateDeactivateNotification(fixturePhrase);
-		if (notification) this.sendNotification(player, action, notification, messageType);
+		if (notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration, fixture.location);
 	}
 

@@ -225,7 +225,7 @@ export default class GameCommunicationHandler {
 	notifyPlayer(notification) {
 		if (!this.#actionHasBeenCommunicatedInChannel(notification.player.notificationChannel, notification.action)) {
 			this.#cacheChannelFor(notification.action, notification.player.notificationChannel.id);
-			this.sendMessageToPlayer(notification.player, notification.content, false, notification.messageDisplayType);
+			this.sendMessageToPlayer(notification.player, notification.content, false, notification.messageDisplayType, notification.attachments, notification.interactables);
 			if (notification.mirrorInSpectateChannel)
 				this.mirrorNarrationInSpectateChannel(notification.player, notification.action, notification.messageDisplayType, notification.content, notification.attachments.map(attachment => attachment.url));
 		}

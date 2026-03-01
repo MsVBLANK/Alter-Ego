@@ -440,6 +440,22 @@ export default class Player extends RecipeProcessor implements User {
     }
 
     /**
+     * Returns a custom ID for the given crafting recipe.
+     * @param item1 - The first item in the player's hands.
+     * @param item2 - The second item in the player's hands.
+     * @param recipe - The crafting recipe satisfied by these items.
+     */
+    getCraftActionDirectiveArgs(item1: InventoryItem, item2: InventoryItem, recipe: Recipe): string[] {
+        return [
+            item1.getIdentifier(),
+            item2.getIdentifier(),
+            "crafting",
+            recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
+            recipe.productsFlat.map(product => product.prefab.id).join(",")
+        ];
+    }
+
+    /**
      * Moves the player to the desired room.
      *
      * @param isRunning - Whether the player is running.

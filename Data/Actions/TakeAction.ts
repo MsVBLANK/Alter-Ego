@@ -51,7 +51,8 @@ export default class TakeAction extends Action {
 	}
 
     async #getInteractables(): Promise<Interactable[]> {
-        const interactables = await this.getGame().botContext.interactableManager.getStashInteractables(this.player);
+        let interactables = await this.getGame().botContext.interactableManager.getStashInteractables(this.player);
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getCraftInteractables(this.player));
         return interactables;
     }
 

@@ -7,6 +7,7 @@ import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.ts";
 import type Exit from "../Data/Exit.ts";
+import type Recipe from "../Data/Recipe.ts";
 import Player from "../Data/Player.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import ActionDirective from "./ActionDirective.ts";
@@ -16,7 +17,9 @@ import TakeAction from "../Data/Actions/TakeAction.ts";
 import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
 import UnstashAction from "../Data/Actions/UnstashAction.ts";
+import CraftAction from "../Data/Actions/CraftAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
+import { getSortedItems } from "../Modules/helpers.ts";
 
 /**
  * @class BotInteractableManager
@@ -386,6 +389,22 @@ export default class BotInteractableManager {
 	}
 
     /**
+     * Creates Interactables for a crafting recipe and adds them to the cache.
+     * @param recipe - The recipe that can be crafted.
+     * @param player - The player these interactables are being created for.
+     */
+    async createCraftActionInteractables(recipe: Recipe, player: Player): Promise<ButtonInteractable[]> {
+        if (player.hasBehaviorAttribute("disable craft") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable craft")) return [];
+        const heldItems = getSortedItems(this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem));
+        const actionDirective = new ActionDirective(CraftAction.prototype, player.getCraftActionDirectiveArgs(heldItems[0], heldItems[1], recipe));
+        const customId = await actionDirective.generateCustomId(player);
+        actionDirective.setCustomId(customId);
+        const craftButton = new ButtonInteractable(actionDirective, `Craft ${heldItems[0].name} and ${heldItems[1].name}`, ButtonStyle.Success, 2);
+        this.addInteractable(craftButton);
+        return [craftButton];
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -459,6 +478,23 @@ export default class BotInteractableManager {
             const stashedItems = playerItems.filter(item => item.container !== null);
             if (stashedItems.length > 0) {
                 interactables = interactables.concat(await this.createUnstashActionInteractables(stashedItems, player));
+            }
+        }
+        return interactables;
+    }
+
+    async getCraftInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const heldItems = this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem);
+        if (heldItems.length >= 2) {
+            const items = getSortedItems(heldItems);
+            const recipes = this.#game.entityFinder.getRecipes("crafting", undefined, items.map(item => item.prefab.id).join(", "));
+            if (recipes.length === 0) return [];
+            for (const recipe of recipes) {
+                if (player.canCraft(recipe, [items[0], items[1]])) {
+                    interactables = interactables.concat(await this.createCraftActionInteractables(recipe, player));
+                    break;
+                }
             }
         }
         return interactables;

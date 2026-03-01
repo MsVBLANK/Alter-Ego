@@ -18,6 +18,7 @@ export default class InventoryAction extends Action {
 		let interactables: Interactable[] = [];
         interactables = interactables.concat(await this.getGame().botContext.interactableManager.getStashInteractables(this.player));
         interactables = interactables.concat(await this.getGame().botContext.interactableManager.getUnstashInteractables(this.player));
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getCraftInteractables(this.player));
 
 		if (this.forced)
 			this.getGame().communicationHandler.sendToCommandChannel(inventoryString);

@@ -6,6 +6,7 @@ import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
 import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
+import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
@@ -158,6 +159,16 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof UnequipAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 3) {
+                action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 reply.resource.message.delete();
                 return true;
             }

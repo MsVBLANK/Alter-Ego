@@ -28,6 +28,7 @@ export default class InventoryAction extends Action {
         interactables = interactables.concat(await this.getGame().botContext.interactableManager.getUnstashInteractables(this.player));
         interactables = interactables.concat(await this.getGame().botContext.interactableManager.getCraftInteractables(this.player));
         interactables = interactables.concat(await this.getGame().botContext.interactableManager.getEquipInteractables(this.player));
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getUnequipInteractables(this.player));
         return interactables;
     }
 }

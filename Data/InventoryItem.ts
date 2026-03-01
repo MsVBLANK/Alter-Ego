@@ -194,6 +194,15 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Returns the args for the Unequip ActionDirective for this inventory item.
+     * 
+     * @returns [identifier, equipmentSlot] 
+     */
+    getUnequipActionDirectiveArgs(): [string, string] {
+        return [this.getIdentifier(), this.equipmentSlot];
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {

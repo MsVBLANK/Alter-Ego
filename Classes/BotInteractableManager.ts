@@ -19,6 +19,7 @@ import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
 import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
+import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { getSortedItems } from "../Modules/helpers.ts";
@@ -272,7 +273,7 @@ export default class BotInteractableManager {
 				const inventorySlot = container instanceof RoomItem ? container.inventory.first() : undefined;
 				if (inventorySlot && inventorySlot.willBeOverFilledBy(entity)) continue;
                 const actionDirective = await this.#createActionDirective(DropAction, entity.getDropActionDirectiveArgs(containerType, container, inventorySlot), player);
-				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, 3);
+				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, 4);
 				this.addInteractable(dropButton);
 				dropButtons.push(dropButton);
 			}
@@ -415,6 +416,29 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates StringSelectMenuInteractable for a list of unequippable inventory items and adds it to the cache.
+     * @param unequippableItems - A list of unequippable inventory items to create StringSelectMenuOptionInteractables for.
+     * @param player - The player these interactables are being created for.
+     */
+    async createUnequipActionInteractables(unequippableItems: InventoryItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
+        if (player.hasBehaviorAttribute("disable unequip") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable unequip")) return [];
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const item of unequippableItems) {
+            const actionDirective = await this.#createActionDirective(UnequipAction, item.getUnequipActionDirectiveArgs(), player);
+            if (menuOptions.has(actionDirective.customId)) continue;
+            const option = new StringSelectMenuOptionInteractable(actionDirective, item.name, actionDirective.customId, `Unequip ${item.name} from ${item.equipmentSlot}`);
+            this.addInteractable(option);
+            menuOptions.set(actionDirective.customId, option);
+            if (menuOptions.size >= 25) break;
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(UnequipAction, ["UnequipAction Menu"], player);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unequip", 3);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
      * Creates Interactables for a crafting recipe and adds them to the cache.
      * @param recipe - The recipe that can be crafted.
      * @param player - The player these interactables are being created for.
@@ -530,6 +554,22 @@ export default class BotInteractableManager {
                 if (viableEquipmentSlots.length > 0) equippableItems.set(heldItem, viableEquipmentSlots);
             }
             interactables = interactables.concat(await this.createEquipActionInteractables(equippableItems, player));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of unequip interactables based on what the player is currently able to unequip.
+     * @param player - The player who can perform an unequip action.
+     */
+    async getUnequipInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const playerFreeHand = this.#game.entityFinder.getPlayerFreeHand(player);
+        const handSlotIDs = this.#game.entityFinder.getPlayerHands(player).map(hand => hand.id);
+        let unequippableItems = player.inventory.filter(equipmentSlot => !handSlotIDs.includes(equipmentSlot.id) && equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem!);
+        unequippableItems = unequippableItems.filter(item => item.prefab.equippable);
+        if (playerFreeHand && unequippableItems.length > 0) {
+            interactables = interactables.concat(await this.createUnequipActionInteractables(unequippableItems, player));
         }
         return interactables;
     }

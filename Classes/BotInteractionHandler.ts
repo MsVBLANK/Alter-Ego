@@ -5,11 +5,12 @@ import TakeAction from "../Data/Actions/TakeAction.ts";
 import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
 import UnstashAction from "../Data/Actions/UnstashAction.ts";
+import EquipAction from "../Data/Actions/EquipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
 import type Player from "../Data/Player.ts";
-import type { Interaction, InteractionCallbackResponse } from "discord.js"
+import type { Interaction, InteractionCallbackResponse } from "discord.js";
 
 /**
  * @class InteractionHandler
@@ -147,6 +148,16 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof EquipAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 3) {
+                action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 reply.resource.message.delete();
                 return true;
             }

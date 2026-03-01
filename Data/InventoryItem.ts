@@ -2,6 +2,7 @@
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
 import { replaceInventoryItem } from "../Modules/itemManager.js";
 import Description from "./Description.ts";
+import type EquipmentSlot from "./EquipmentSlot.ts";
 import type Game from "./Game.ts";
 import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
@@ -181,6 +182,16 @@ export default class InventoryItem extends ItemInstance {
 	getUnstashActionDirectiveArgs(): [string, string, string] {
 		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
 	}
+
+    /**
+     * Returns the args for the Equip ActionDirective for this inventory item.
+     * 
+     * @param equipmentSlot - The equipment slot to equip the inventory item to.
+     * @returns [identifier, equipmentSlot, handEquipmentSlot]
+     */
+    getEquipActionDirectiveArgs(equipmentSlot: EquipmentSlot): [string, string, string] {
+        return [this.getIdentifier(), equipmentSlot.id, this.equipmentSlot];
+    }
 
     /**
      * Gets all of the items this entity contains.

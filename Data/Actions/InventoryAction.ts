@@ -14,15 +14,20 @@ export default class InventoryAction extends Action {
 		if (this.performed) return;
 		super.perform();
 		const inventoryString = this.player.viewInventory(this.forced);
-
-		let interactables: Interactable[] = [];
-        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getStashInteractables(this.player));
-        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getUnstashInteractables(this.player));
-        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getCraftInteractables(this.player));
+		const interactables = await this.#getInteractables();
 
 		if (this.forced)
 			this.getGame().communicationHandler.sendToCommandChannel(inventoryString);
 		else
 			this.getGame().communicationHandler.sendMessageToPlayer(this.player, inventoryString, true, undefined, undefined, interactables);
 	}
+
+    async #getInteractables(): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getStashInteractables(this.player));
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getUnstashInteractables(this.player));
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getCraftInteractables(this.player));
+        interactables = interactables.concat(await this.getGame().botContext.interactableManager.getEquipInteractables(this.player));
+        return interactables;
+    }
 }

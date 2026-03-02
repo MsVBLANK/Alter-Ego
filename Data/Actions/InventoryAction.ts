@@ -17,7 +17,7 @@ export default class InventoryAction extends Action {
 		const interactables = await this.#getInteractables();
 
 		if (this.forced)
-			this.getGame().communicationHandler.sendToCommandChannel(inventoryString);
+			this.getGame().communicationHandler.sendToCommandChannel(inventoryString, interactables);
 		else
 			this.getGame().communicationHandler.sendMessageToPlayer(this.player, inventoryString, true, undefined, undefined, interactables);
 	}
@@ -25,12 +25,12 @@ export default class InventoryAction extends Action {
     async #getInteractables(): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
         const interactableManager = this.getGame().botContext.interactableManager;
-        interactables = interactables.concat(await interactableManager.getStashInteractables(this.player));
-        interactables = interactables.concat(await interactableManager.getUnstashInteractables(this.player));
-        interactables = interactables.concat(await interactableManager.getCraftInteractables(this.player));
-        interactables = interactables.concat(await interactableManager.getUseInteractables(this.player));
-        interactables = interactables.concat(await interactableManager.getEquipInteractables(this.player));
-        interactables = interactables.concat(await interactableManager.getUnequipInteractables(this.player));
+        interactables = interactables.concat(await interactableManager.getStashInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getUnstashInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getCraftInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getUseInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getEquipInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getUnequipInteractables(this.player, this.user));
         return interactables;
     }
 }

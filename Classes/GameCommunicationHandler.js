@@ -173,9 +173,10 @@ export default class GameCommunicationHandler {
 	/**
 	 * Sends a message to the command channel.
 	 * @param {string} messageText - The text of the message to send.
+     * @param {Interactable[]} interactables - An array of interactables.
 	 */
-	sendToCommandChannel(messageText) {
-		messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText);
+	sendToCommandChannel(messageText, interactables = []) {
+		messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText, interactables);
 	}
 
 	/**

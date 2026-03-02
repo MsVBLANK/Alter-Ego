@@ -119,6 +119,7 @@ export async function execute(game, message, command, args, moderator) {
 async function sendMessageToWhisper (game, message, messageText, npc, whisper) {
     const dialog = new Dialog(game, message, npc, npc.location, messageText, false, whisper);
     const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, npc.displayName, npc.displayIcon);
+    dialog.setMessage(dialogMessage);
     const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
     sayAction.performSay(dialog);
 }

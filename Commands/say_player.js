@@ -47,6 +47,7 @@ export async function execute(game, message, command, args, player) {
     if (!input.startsWith("(")) {
         const dialog = new Dialog(game, message, player, player.location, input, false);
         const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(player.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
+        dialog.setMessage(dialogMessage);
         const sayAction = new SayAction(game, dialogMessage, player, player.location, false);
         sayAction.performSay(dialog);
         // The say command isn't deleted by the commandHandler because it has necessary data. Delete it now.

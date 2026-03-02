@@ -21,8 +21,9 @@ import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
+import UseAction from "../Data/Actions/UseAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
-import { getSortedItems } from "../Modules/helpers.ts";
+import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
 /**
  * @class BotInteractableManager
@@ -453,6 +454,30 @@ export default class BotInteractableManager {
     }
 
     /**
+	 * Creates Interactables for a list of usable inventory items and adds them to the cache.
+     * @param usableItems - An array of usable inventory items in the player's hands.
+	 * @param player - The player these interactables are being created for.
+	 */
+    async createUseActionInteractables(usableItems: InventoryItem[], player: Player): Promise<StringSelectMenuInteractable[]> {
+        if (player.hasBehaviorAttribute("disable use") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable use")) return [];
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const item of usableItems) {
+            const actionDirective = await this.#createActionDirective(UseAction, item.getUseActionDirectiveArgs(player), player);
+            if (menuOptions.has(actionDirective.customId)) continue;
+            const verb = item.prefab.secondPersonVerb ? capitalizeFirstLetter(item.prefab.secondPersonVerb) : "Use";
+            const option = new StringSelectMenuOptionInteractable(actionDirective, item.name, actionDirective.customId, `${verb} ${item.name}`);
+            this.addInteractable(option);
+            menuOptions.set(actionDirective.customId, option);
+            if (menuOptions.size >= 25) break;
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(UseAction, ["UseAction Menu"], player);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Use", 3);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -591,6 +616,20 @@ export default class BotInteractableManager {
                     break;
                 }
             }
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of use interactables based on what the player is currently able to use.
+     * @param player - The player who can perform a use action.
+     */
+    async getUseInteractables(player: Player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const heldItems = this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem);
+        const usableItems = heldItems.filter(item => item.uses !== 0 && item.prefab.usable && item.usableOn(player));
+        if (usableItems.length > 0) {
+            interactables = interactables.concat(await this.createUseActionInteractables(usableItems, player));
         }
         return interactables;
     }

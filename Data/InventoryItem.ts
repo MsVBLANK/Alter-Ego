@@ -203,6 +203,16 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Returns the args for the Use ActionDirective for this inventory item.
+     * 
+     * @param target - The player to use the inventory item on.
+     * @returns [identifier, targetName]
+     */
+    getUseActionDirectiveArgs(target: Player): [string, string] {
+        return [this.getIdentifier(), target.name];
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {

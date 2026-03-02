@@ -1,3 +1,4 @@
+import type Interactable from "../../Classes/Interactables/Interactable.ts";
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
 import InventoryItem from "../InventoryItem.ts";
@@ -16,17 +17,28 @@ export default class CraftAction extends Action {
 	 * @param item2 - The second ingredient.
 	 * @param recipe - The recipe that describes how these ingredients are crafted.
 	 */
-	performCraft(item1: InventoryItem, item2: InventoryItem, recipe: Recipe): void {
+	async performCraft(item1: InventoryItem, item2: InventoryItem, recipe: Recipe): Promise<void> {
 		if (this.performed) return;
 		super.perform();
 		const item1Id = item1.getIdentifier();
 		const item2Id = item2.getIdentifier();
 		const craftingResult = this.player.craft(recipe);
 		const completedDescription = recipe.completedDescription.parseFor(this.player, recipe);
-		this.player.sendDescription(completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
+        const createdItems = [craftingResult.product1, craftingResult.product2].filter(item => item !== null);
+        const interactables = await this.#getInteractables(createdItems);
+		this.player.sendDescription(completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
 		this.getGame().narrationHandler.narrateCraft(this, craftingResult, this.player);
 		this.getGame().logHandler.logCraft(item1Id, item2Id, craftingResult, this.player, this.forced);
 	}
+
+    async #getInteractables(createdItems: InventoryItem[]): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const interactableManager = this.getGame().botContext.interactableManager;
+        interactables = interactables.concat(await interactableManager.createInspectActionInteractable(createdItems, this.player))
+        interactables = interactables.concat(await interactableManager.getCraftInteractables(this.player));
+        interactables = interactables.concat(await interactableManager.getUseInteractables(this.player));
+        return interactables;
+    }
 
     /**
      * Finds the required inventory items and recipe to call performCraft.

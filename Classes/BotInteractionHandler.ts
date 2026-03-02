@@ -8,6 +8,7 @@ import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
+import UseAction from "../Data/Actions/UseAction.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
 import type Player from "../Data/Player.ts";
@@ -179,6 +180,16 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof UseAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 2) {
+                action.performUse(validatedArgs[0], validatedArgs[1]);
                 reply.resource.message.delete();
                 return true;
             }

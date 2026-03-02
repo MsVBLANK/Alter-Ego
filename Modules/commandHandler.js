@@ -2,6 +2,10 @@
 import { ChannelType } from 'discord.js';
 
 /** @import Game from '../Data/Game.ts' */
+/** @import BotCommand from '../Classes/BotCommand.js' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
 /** @import Player from '../Data/Player.ts' */
 
 /**
@@ -32,9 +36,13 @@ export async function executeCommand(commandStr, game, message, player, callee) 
     let args = commandSplit.slice(1);
 
     // Find the command by the alias used.
+    /** @type {BotCommand} */
     let botCommand;
+    /** @type {ModeratorCommand} */
     let moderatorCommand;
+    /** @type {PlayerCommand} */
     let playerCommand;
+    /** @type {EligibleCommand} */
     let eligibleCommand;
     if (isBot) botCommand = game.botContext.botCommands.find(command => command.config.aliases.includes(commandAlias));
     else if (isModerator) moderatorCommand = game.botContext.moderatorCommands.find(command => command.config.aliases.includes(commandAlias));
@@ -74,10 +82,15 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                     return false;
                 }
             }
+            const moderator = message.member ? game.entityLoader.getOrCreateModerator(message.member) : undefined;
+            if (!moderator) {
+                game.communicationHandler.reply(message, "You are not a moderator.");
+                return false;
+            }
             if (moderatorCommand.config.whitespaceSensitive) {
                 args = commandStr.split(" ").slice(1);
             }
-            moderatorCommand.execute(game, message, commandAlias, args);
+            moderatorCommand.execute(game, message, commandAlias, args, moderator);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();
             entry = {

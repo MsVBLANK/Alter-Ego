@@ -11,7 +11,7 @@ import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
-import type Player from "../Data/Player.ts";
+import Moderator from "../Data/Moderator.ts";
 import type { Interaction, InteractionCallbackResponse } from "discord.js";
 
 /**
@@ -45,26 +45,26 @@ export default class BotInteractionHandler {
 	 * @param interaction - The interaction that was created.
 	 */
 	interceptInteraction(interaction: Interaction) {
-		const player = this.#game.entityFinder.getLivingPlayerById(interaction.user.id);
-		if (!player) return;
+        const user = this.#game.entityFinder.getModeratorById(interaction.user.id) ?? this.#game.entityFinder.getLivingPlayerById(interaction.user.id);
+		if (!user) return;
 		if (interaction instanceof ButtonInteraction)
-			this.processButtonInteraction(interaction, player);
+			this.processButtonInteraction(interaction, user);
 		if (interaction instanceof StringSelectMenuInteraction)
-			this.processStringSelectMenuInteraction(interaction, player);
+			this.processStringSelectMenuInteraction(interaction, user);
 		return;
 	}
 
 	/**
 	 * Processes a button interaction and calls the correct function.
 	 * @param interaction - The interaction being executed.
-	 * @param player - The player who triggered the interaction.
+	 * @param user - The user who triggered the interaction.
 	 */
-	async processButtonInteraction(interaction: ButtonInteraction, player: Player) {
+	async processButtonInteraction(interaction: ButtonInteraction, user: User) {
 		const reply = await interaction.deferReply({ withResponse: true });
 		const customId = interaction.customId;
 		const interactable = this.getInteractable(customId);
 		let successfullyProcessedInteractable = false;
-		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, player);
+		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, user);
 		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
 		return;
 	}
@@ -72,15 +72,15 @@ export default class BotInteractionHandler {
 	/**
 	 * Processes a string select interaction and calls the correct function.
 	 * @param interaction - The interaction being executed.
-	 * @param player - The player who triggered the interaction.
+	 * @param user - The user who triggered the interaction.
 	 */
-	async processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, player: Player) {
+	async processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, user: User) {
 		const reply = await interaction.deferReply({ withResponse: true });
 		const selectedValue = interaction.values[0];
 		const customId = selectedValue;
 		const interactable = this.getInteractable(customId);
 		let successfullyProcessedInteractable = false;
-		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, player);
+		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, user);
 		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
 		return;
 	}
@@ -89,11 +89,13 @@ export default class BotInteractionHandler {
 	 * Process an interactable and calls the correct function.
 	 * @param reply - The reply that was sent.
 	 * @param interactable - The interactable to process.
-	 * @param player - The player who triggered the interaction.
+	 * @param user - The user who triggered the interaction.
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
-	processInteractable(reply: InteractionCallbackResponse<boolean>, interactable: Interactable, player: Player): boolean {
-		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, false);
+	processInteractable(reply: InteractionCallbackResponse<boolean>, interactable: Interactable, user: User): boolean {
+        const player = interactable.actionDirective.getPlayer();
+        const forced = user instanceof Moderator;
+		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
 		if (action instanceof QueueMoveAction) {
 			const args = interactable.actionDirective.getArgs();
 			const parsedArgs = action.parseInteractionArgs(args);

@@ -1,7 +1,8 @@
-import UncraftAction from '../Data/Actions/UncraftAction.js';
+import UncraftAction from '../Data/Actions/UncraftAction.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -18,8 +19,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}uncraft olavi shovel\n`
@@ -28,12 +29,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and an inventory item in their hand. Usage:\n${usage(game.settings)}`);
 
@@ -72,7 +74,7 @@ export async function execute(game, message, command, args) {
     const recipes = game.recipes.filter(recipe => recipe.uncraftable === true && recipe.products.length === 1);
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].products[0].id === item.prefab.id) {
+        if (recipes[i].products[0].prefab.id === item.prefab.id) {
             recipe = recipes[i];
             break;
         }

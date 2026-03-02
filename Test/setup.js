@@ -1,4 +1,5 @@
 import { beforeAll, afterEach, vi, expect } from 'vitest';
+import { plugins } from '@vitest/pretty-format';
 
 import credentials from './__mocks__/configs/credentials.js';
 import demodata from './__mocks__/configs/demodata.js';
@@ -24,9 +25,14 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 
 });
 
+/** @import BotCommand from '../Classes/BotCommand.js' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
+
 import GuildContext from '../Classes/GuildContext.js';
 import GameSettings from '../Classes/GameSettings.js';
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 import BotContext from '../Classes/BotContext.js';
 import { ChannelType, Collection } from 'discord.js';
 import {DEFAULT_GAME_SETTINGS} from "../Modules/settingsLoader.ts";
@@ -103,9 +109,13 @@ beforeAll(() => {
 
     // Initialize game and bot context with empty command collections.
     const game = new Game(guildContext, DEFAULT_GAME_SETTINGS);
+    /** @type {Collection<string, BotCommand>} */
     const botCommands = new Collection();
+    /** @type {Collection<string, ModeratorCommand>} */
     const moderatorCommands = new Collection();
+    /** @type {Collection<string, PlayerCommand>} */
     const playerCommands = new Collection();
+    /** @type {Collection<string, EligibleCommand>} */
     const eligibleCommands = new Collection();
 
     // Create BotContext singleton and attach to game.
@@ -114,6 +124,7 @@ beforeAll(() => {
     // Ensure presence update doesn't throw during tests.
     try { BotContext.instance.updatePresence(); } catch (e) { }
     globalThis.game = game;
+    game.messageQueue.manual = true;
 });
 
 afterEach(() => {
@@ -128,3 +139,15 @@ expect.extend({
     toBeWebhookMessage,
     toBeMessageWith
 });
+
+import { PolyPlugin } from "../Classes/PrettyPrinter.ts";
+const polyPlugin = new PolyPlugin()
+
+plugins.DOMElement.test = polyPlugin.test;
+plugins.DOMElement.serialize = /** @type {typeof plugins.DOMElement.serialize} */ (polyPlugin.serialize);
+plugins.DOMCollection.test = () => false;
+plugins.DOMCollection.serialize = () => "";
+plugins.ReactElement.test = () => false;
+plugins.ReactElement.serialize = () => "";
+plugins.ReactTestComponent.test = () => false;
+plugins.ReactTestComponent.serialize = () => "";

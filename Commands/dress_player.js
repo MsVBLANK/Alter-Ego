@@ -1,12 +1,12 @@
-import DressAction from '../Data/Actions/DressAction.js';
-import Fixture from "../Data/Fixture.js";
-import InventorySlot from '../Data/InventorySlot.js';
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import DressAction from '../Data/Actions/DressAction.ts';
+import Fixture from "../Data/Fixture.ts";
+import InventorySlot from '../Data/InventorySlot.ts';
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -25,8 +25,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}dress WARDROBE\n`
@@ -35,11 +35,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -55,7 +55,7 @@ export async function execute(game, message, command, args, player) {
     const input = args.join(' ');
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
 
-    /** @type {Fixture|Puzzle|RoomItem} */
+    /** @type {RoomItemContainer} */
     let container = null;
     /** @type {InventorySlot<RoomItem>} */
     let inventorySlot = null;
@@ -97,7 +97,7 @@ export async function execute(game, message, command, args, player) {
         }
     }
     if (container === null) return game.communicationHandler.reply(message, `Couldn't find a container in the room named "${input}".`);
-    
+
     let topContainer = container;
     while (topContainer !== null && topContainer instanceof RoomItem)
         topContainer = topContainer.container;
@@ -130,7 +130,7 @@ export async function execute(game, message, command, args, player) {
         containerItems = items.filter(item => item.containerType === 'RoomItem' && item.containerName.startsWith(`${container.identifier}/`) && item.prefab.equippable);
     if (containerItems.length === 0)
         return game.communicationHandler.reply(message, `${container.name} has no equippable items.`);
-    
+
     const action = new DressAction(game, message, player, player.location, false);
     action.performDress(containerItems, hand, container, inventorySlot);
 }

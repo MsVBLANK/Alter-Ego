@@ -1,9 +1,10 @@
-import ActivateAction from '../Data/Actions/ActivateAction.js';
-import DeactivateAction from '../Data/Actions/DeactivateAction.js';
-import Room from '../Data/Room.js';
+import ActivateAction from '../Data/Actions/ActivateAction.ts';
+import DeactivateAction from '../Data/Actions/DeactivateAction.ts';
+import Room from '../Data/Room.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -24,8 +25,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}fixture activate blender\n`
@@ -39,12 +40,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     let input = command + " " + args.join(" ");
     if (command === "fixture" || command === "object") {
         if (args[0] === "activate") command = "activate";
@@ -118,7 +120,7 @@ export async function execute(game, message, command, args) {
 
     let narrate = false;
     if (announcement === "" && player !== null) narrate = true;
-    
+
     if (command === "activate") {
         const activateAction = new ActivateAction(game, message, player, fixture.location, true);
         activateAction.performActivate(fixture, narrate, announcement);

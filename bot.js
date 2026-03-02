@@ -2,7 +2,7 @@
 
 import BotContext from './Classes/BotContext.js';
 import GuildContext from './Classes/GuildContext.js';
-import Game from './Data/Game.js';
+import Game from './Data/Game.ts';
 
 import BotCommand from './Classes/BotCommand.js';
 import ModeratorCommand from './Classes/ModeratorCommand.js';
@@ -14,12 +14,16 @@ import { default as autoUpdate } from './Modules/updateHandler.js';
 import { editSpectatorMessage, deleteSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.js';
 
-import { Client, Collection, ChannelType, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
+import { Client, Collection, ChannelType, Events, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
 import { readdir, readFileSync } from 'fs';
 import { loadDotEnv } from "./Modules/envLoader.ts";
 import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.ts";
 import GameSettings from "./Classes/GameSettings.js";
 import { loadCredentials } from "./Modules/credentialsLoader.ts";
+
+if (process.env.STACK_TRACE_LIMIT && Number.isInteger(parseInt(process.env.STACK_TRACE_LIMIT))) {
+    Error.stackTraceLimit = Math.min(Math.max(10, Math.round(parseInt(process.env.STACK_TRACE_LIMIT))), 200);
+}
 
 const client = new Client({
     partials: [
@@ -294,6 +298,11 @@ client.on('messageDelete', async (message) => {
             || message.channel.id === game.guildContext.announcementChannel.id)) {
         deleteSpectatorMessage(game, message);
     }
+});
+
+client.on(Events.InteractionCreate, async (interaction) => {
+    if (!initialized) return;
+    botContext.interactionHandler.interceptInteraction(interaction);
 });
 
 process.on('unhandledRejection', error => {

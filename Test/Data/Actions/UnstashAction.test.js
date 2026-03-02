@@ -1,4 +1,4 @@
-import UnstashAction from '../../../Data/Actions/UnstashAction.js';
+import UnstashAction from '../../../Data/Actions/UnstashAction.ts';
 import { clearQueue } from '../../../Modules/messageHandler.js';
 import { createMockMessage } from '../../__mocks__/libs/discord.js';
 
@@ -6,13 +6,13 @@ describe('UnstashAction test', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
     });
-    
+
     afterAll(async () => {
         clearQueue(game);
         vi.resetAllMocks();
         await game.entityLoader.loadInventoryItems(false);
     });
-    
+
     test('ported legacy test', async () => {
         const vivian = game.entityFinder.getLivingPlayer("Vivian");
         const hand = game.entityFinder.getPlayerFreeHand(vivian);
@@ -21,7 +21,7 @@ describe('UnstashAction test', () => {
         expect(quiver.weight).toStrictEqual(20);
         const unstashAction = new UnstashAction(game, createMockMessage(), vivian, vivian.location, false);
         unstashAction.performUnstash(toiletPaperPack, hand, toiletPaperPack.container, toiletPaperPack.container.inventory.get(toiletPaperPack.slot));
-        
+
         // Test that all of the data was converted properly.
         toiletPaperPack = hand.equippedItem;
         expect(toiletPaperPack).not.toBeNull();

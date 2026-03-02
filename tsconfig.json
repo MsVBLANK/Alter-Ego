@@ -28,12 +28,14 @@
         "rewriteRelativeImportExtensions": true,
         "erasableSyntaxOnly": true,
         // Type checking
-        "strict": false
+        "strict": false,
+        "noImplicitOverride": true,
     },
     "include": [
         "**/*"
     ],
     "exclude": [
-        "coverage"
+        "coverage",
+        "Tests"
     ]
 }

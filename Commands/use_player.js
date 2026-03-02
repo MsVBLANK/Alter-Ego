@@ -1,11 +1,11 @@
-import ActivateAction from '../Data/Actions/ActivateAction.js';
-import AttemptAction from '../Data/Actions/AttemptAction.js';
-import DeactivateAction from '../Data/Actions/DeactivateAction.js';
-import UseAction from '../Data/Actions/UseAction.js';
+import ActivateAction from '../Data/Actions/ActivateAction.ts';
+import AttemptAction from '../Data/Actions/AttemptAction.ts';
+import DeactivateAction from '../Data/Actions/DeactivateAction.ts';
+import UseAction from '../Data/Actions/UseAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -31,8 +31,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}use FIRST AID KIT\n`
@@ -50,11 +50,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)

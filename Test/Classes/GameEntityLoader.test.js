@@ -1,13 +1,14 @@
-import EquipmentSlot from "../../Data/EquipmentSlot.js";
-import Event from "../../Data/Event.js";
-import Fixture from "../../Data/Fixture.js";
-import Game from "../../Data/Game.js";
-import InventoryItem from "../../Data/InventoryItem.js";
-import Player from "../../Data/Player.js";
-import Prefab from "../../Data/Prefab.js";
-import Puzzle from "../../Data/Puzzle.js";
-import Room from "../../Data/Room.js";
-import RoomItem from "../../Data/RoomItem.js";
+import Description from "../../Data/Description.ts";
+import EquipmentSlot from "../../Data/EquipmentSlot.ts";
+import Event from "../../Data/Event.ts";
+import Fixture from "../../Data/Fixture.ts";
+import Game from "../../Data/Game.ts";
+import InventoryItem from "../../Data/InventoryItem.ts";
+import Player from "../../Data/Player.ts";
+import Prefab from "../../Data/Prefab.ts";
+import Puzzle from "../../Data/Puzzle.ts";
+import Room from "../../Data/Room.ts";
+import RoomItem from "../../Data/RoomItem.ts";
 import sheets from "../__mocks__/libs/sheets.js";
 
 describe('GameEntityLoader test', () => {
@@ -37,7 +38,7 @@ describe('GameEntityLoader test', () => {
                 updatePresenceSpy = vi.spyOn(game.botContext, 'updatePresence').mockImplementation(() => {});
                 eventStartTimerSpy = vi.spyOn(Event.prototype, 'startTimer').mockImplementation(async () => {});
                 eventStartEffectsTimerSpy = vi.spyOn(Event.prototype, 'startEffectsTimer').mockImplementation(() => {});
-                playerSendDescriptionSpy = vi.spyOn(Player.prototype, 'sendDescription').mockImplementation(() => {});
+                playerSendDescriptionSpy = vi.spyOn(Description.prototype, 'parseAndSendTo').mockImplementation(async () => {});
             });
 
             afterEach(() => {
@@ -58,7 +59,7 @@ describe('GameEntityLoader test', () => {
                 expect(eventStartEffectsTimerSpy).toHaveBeenCalled();
                 expect(playerSendDescriptionSpy).not.toHaveBeenCalled();
             });
-            
+
             test('startGame true', async () => {
                 const message = await game.entityLoader.loadAll(true);
                 expect(message).not.toContain('Error');
@@ -269,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1548);
+                expect(fixtureCount).toBe(1565);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -343,7 +344,7 @@ describe('GameEntityLoader test', () => {
                 if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
-                expect(prefabCount).toBe(1494);
+                expect(prefabCount).toBe(1501);
                 for (const prefab of game.prefabs.values()) {
                     const descriptionText = prefab.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -393,7 +394,7 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load recipe on row 3. Recipes with more than 2 ingredients must require a fixture tag.",
                     "Error: Couldn't load recipe on row 4. Recipes with more than 2 products must require a fixture tag.",
                     "Error: Couldn't load recipe on row 5. Recipes without a fixture tag cannot have a duration.",
-                    "Error: Couldn't load recipe on row 6. An invalid duration was given.",
+                    "Error: Couldn't load recipe on row 6. \"1x\" is not a valid duration.",
                     "Error: Couldn't load recipe on row 7. \"INVALID\" in products is not a prefab.",
                     "Error: Couldn't load recipe on row 8. Recipes with a fixture tag cannot be uncraftable.",
                     "Error: Couldn't load recipe on row 9. Recipes with more than one product cannot be uncraftable.",
@@ -413,7 +414,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
-                expect(recipeCount).toBe(488);
+                expect(recipeCount).toBe(496);
             });
         });
     });
@@ -484,7 +485,7 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load room item on row 11. The item's container is over capacity.",
                     "Error: Couldn't load room item on row 12. The item's container prefab on row 5 has no inventory slot \"INVALID SLOT\".",
                     "Error: Couldn't load room item on row 13. The item's container is a room item, but a prefab inventory slot ID was not given.",
-                    "Error: Couldn't load room item on row 15. The item's container is a room item, but the item container's prefab on row 292 has no inventory slots.",
+                    "Error: Couldn't load room item on row 15. The item's container is a room item, but the item container's prefab on row 293 has no inventory slots.",
                     "Error: Couldn't load room item on row 16. The item's container chain contains itself, resulting in an infinite loop.",
                     "Error: Couldn't load room item on row 17. The item's container chain contains itself, resulting in an infinite loop."
                 ];
@@ -506,7 +507,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1781);
+                expect(roomItemCount).toBe(1838);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

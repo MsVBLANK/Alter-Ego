@@ -1,12 +1,13 @@
 ﻿import fs from 'fs';
-import Player from '../Data/Player.js';
+import Player from '../Data/Player.ts';
 import { parseDescriptionWithErrors } from '../Modules/parser.js';
 import { EOL } from 'os';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -37,8 +38,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     const file = "./parsedText.xml";
     fs.writeFile(file, "", function (err) {
         if (err) return console.log(err);
@@ -74,7 +76,7 @@ export async function execute(game, message, command, args) {
         player.setPronouns(player.originalPronouns, player.pronounString);
         player.setPronouns(player.pronouns, player.pronounString);
     }
-    
+
     const result = await testparse(game, file, player);
     let warnings = [];
     for (let i = 0; i < result.warnings.length; i++) {

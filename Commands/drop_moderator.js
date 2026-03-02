@@ -1,12 +1,13 @@
-﻿import DropAction from '../Data/Actions/DropAction.js';
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+﻿import DropAction from '../Data/Actions/DropAction.ts';
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import EquipmentSlot from '../Data/EquipmentSlot.ts' */
+/** @import Game from '../Data/Game.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -24,8 +25,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}drop emily's knife\n`
@@ -36,12 +37,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and an item. Usage:\n${usage(game.settings)}`);
 
@@ -158,14 +160,14 @@ export async function execute(game, message, command, args) {
         if (defaultDropFixture === null || defaultDropFixture === undefined) return game.communicationHandler.reply(message, `There is no default drop object "${game.settings.defaultDropFixture}" in ${player.location.id}.`);
         container = defaultDropFixture;
     }
-        
+
     let topContainer = container;
     while (topContainer !== null && topContainer instanceof RoomItem)
         topContainer = topContainer.container;
 
     if (topContainer !== null) {
         let topContainerPreposition = "in";
-        if (topContainer instanceof Fixture && topContainer.preposition !== "") topContainerPreposition = topContainer.preposition; 
+        if (topContainer instanceof Fixture && topContainer.preposition !== "") topContainerPreposition = topContainer.preposition;
         if (topContainer instanceof Fixture && topContainer.autoDeactivate && topContainer.activated)
             return game.communicationHandler.reply(message, `Items cannot be put ${topContainerPreposition} ${topContainer.name} while it is turned on.`);
     }

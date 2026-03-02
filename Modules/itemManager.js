@@ -1,27 +1,28 @@
-import Fixture from '../Data/Fixture.js';
-import Puzzle from '../Data/Puzzle.js';
-import InventoryItem from '../Data/InventoryItem.js';
-import InventorySlot from '../Data/InventorySlot.js';
-import RoomItem from '../Data/RoomItem.js';
-import ItemInstance from '../Data/ItemInstance.js';
+import Fixture from '../Data/Fixture.ts';
+import Puzzle from '../Data/Puzzle.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
+import InventorySlot from '../Data/InventorySlot.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import ItemInstance from '../Data/ItemInstance.ts';
 import { generateProceduralOutput } from '../Modules/parser.js';
 
-/** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
-/** @import Prefab from '../Data/Prefab.js' */
-/** @import Room from '../Data/Room.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import EquipmentSlot from '../Data/EquipmentSlot.ts' */
+/** @import Prefab from '../Data/Prefab.ts' */
+/** @import Room from '../Data/Room.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /**
  * Instantiates a new room item in the specified location and container.
  * @param {Prefab} prefab - The prefab to instantiate as an item.
  * @param {Room} location - The room to instantiate the item in.
- * @param {Fixture|Puzzle|RoomItem} container - The container to instantiate the item in.
+ * @param {RoomItemContainer} container - The container to instantiate the item in.
  * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
  * @param {number} quantity - The quantity to instantiate.
- * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
+ * @param {number} [uses] - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
+ * @param {Map<string, string>} [proceduralSelections] - The manually selected procedural possibilities.
  * @param {Player} [player] - The player who caused this item to be instantiated, if applicable.
  */
-export function instantiateRoomItem(prefab, location, container, inventorySlotId, quantity, proceduralSelections, player) {
+export function instantiateRoomItem(prefab, location, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections = new Map(), player) {
     let containerType = "";
     let containerName = "";
     if (container instanceof Puzzle) {
@@ -45,7 +46,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
         containerType,
         containerName,
         quantity,
-        prefab.uses,
+        uses,
         generateProceduralOutput(prefab.description, proceduralSelections, player),
         0,
         prefab.getGame()
@@ -73,9 +74,10 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
  * @param {InventoryItem} container - The container to instantiate the item in.
  * @param {string} inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
  * @param {number} quantity - The quantity to instantiate.
+ * @param {number} [uses] - The number of uses to instantiate the inventory item with. Defaults to the prefab's uses.
  * @param {Map<string, string>} proceduralSelections - The manually selected procedural possibilities.
  */
-export function instantiateInventoryItem(prefab, player, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections) {
+export function instantiateInventoryItem(prefab, player, equipmentSlotId, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections = new Map()) {
     let createdItem = new InventoryItem(
         player.name,
         prefab.id,
@@ -84,7 +86,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
         container ? "InventoryItem" : "",
         container ? container.identifier + '/' + inventorySlotId : "",
         quantity,
-        prefab.uses,
+        uses,
         generateProceduralOutput(prefab.description, proceduralSelections, player),
         0,
         prefab.getGame()
@@ -95,8 +97,6 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     createdItem.container = container;
     createdItem.slot = inventorySlotId;
 
-    player.carryWeight += createdItem.weight * quantity;
-
     // Item is being stashed.
     const equipmentSlot = player.inventory.get(equipmentSlotId);
     if (container !== null) {
@@ -106,12 +106,13 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     }
     // Item is being equipped.
     else player.directEquip(createdItem, equipmentSlot);
+    player.updateCarryWeight();
     return createdItem;
 }
 
 /**
  * Replaces an inventory item in-place with an instance of a different prefab.
- * @param {InventoryItem} item - The inventory item to replace. 
+ * @param {InventoryItem} item - The inventory item to replace.
  * @param {Prefab} [newPrefab] - The prefab to replace it with. If one isn't given, the inventory item is simply destroyed.
  */
 export function replaceInventoryItem(item, newPrefab) {
@@ -119,11 +120,9 @@ export function replaceInventoryItem(item, newPrefab) {
         destroyInventoryItem(item, item.quantity, true);
     }
     else {
-        item.player.carryWeight -= item.weight * item.quantity;
         item.setPrefab(newPrefab);
         item.identifier = generateIdentifier(newPrefab);
         item.uses = newPrefab.uses;
-        item.player.carryWeight += item.weight * item.quantity;
 
         // Destroy all child items.
         /** @type {InventoryItem[]} */
@@ -136,12 +135,13 @@ export function replaceInventoryItem(item, newPrefab) {
         item.initializeInventory();
         item.setDescription(newPrefab.description);
     }
+    item.player.updateCarryWeight();
     return item;
 }
 
 /**
  * Destroys a room item.
- * @param {RoomItem} item - The item to destroy. 
+ * @param {RoomItem} item - The item to destroy.
  * @param {number} quantity - How many of this item to destroy.
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the items it contains as well.
  */
@@ -164,7 +164,7 @@ export function destroyRoomItem(item, quantity, getChildren) {
 
 /**
  * Destroys an inventory item.
- * @param {InventoryItem} item - The inventory item to destroy. 
+ * @param {InventoryItem} item - The inventory item to destroy.
  * @param {number} quantity - How many of this inventory item to destroy.
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the inventory items it contains as well.
  */
@@ -321,7 +321,7 @@ export function getChildItems(items, item) {
 
 /**
  * Sets the quantities of all child items to 0.
- * @param {ItemInstance} item - The item whose child items are to have their quantities updated. 
+ * @param {ItemInstance} item - The item whose child items are to have their quantities updated.
  */
 export function setChildItemQuantitiesZero(item) {
     /** @type {ItemInstance[]} */
@@ -383,8 +383,8 @@ export function putItemInHand(item, player, handEquipmentSlot) {
 
 /**
  * Inserts an array of items into the game at the correct position in the game's array of room items.
- * @param {Room} location - The room to insert items into. 
- * @param {RoomItem[]} items - The items to insert. 
+ * @param {Room} location - The room to insert items into.
+ * @param {RoomItem[]} items - The items to insert.
  */
 export function insertRoomItems(location, items) {
     const game = location.getGame();
@@ -397,18 +397,18 @@ export function insertRoomItems(location, items) {
             roomItem.accessible &&
             roomItem.containerName === item.containerName &&
             roomItem.slot === item.slot &&
-            (roomItem.uses === item.uses || isNaN(item.uses) && isNaN(item.uses)) &&
+            (roomItem.uses === item.uses || isNaN(roomItem.uses) && isNaN(item.uses)) &&
             roomItem.description.text === item.description.text
         );
         if (matchedItem) {
             if (!isNaN(matchedItem.quantity))
                 matchedItem.quantity += item.quantity;
-            /** @type {Fixture|Puzzle|RoomItem} */
+            /** @type {RoomItemContainer} */
             let itemContainer = null;
             if (item.container instanceof RoomItem) {
-                /** 
+                /**
                  * @param {RoomItem} item1
-                 * @param {RoomItem} item2 
+                 * @param {RoomItem} item2
                  */
                 const containersMatch = function (item1, item2) {
                     if (item1.container instanceof RoomItem && item2.container instanceof RoomItem)

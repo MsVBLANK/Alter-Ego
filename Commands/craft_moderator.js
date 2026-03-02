@@ -1,9 +1,10 @@
-import CraftAction from '../Data/Actions/CraftAction.js';
+import CraftAction from '../Data/Actions/CraftAction.ts';
 import { itemIdentifierMatches } from '../Modules/matchers.js';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -19,8 +20,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}craft chris drain cleaner and plastic bottle\n`
@@ -30,12 +31,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 4)
         return game.communicationHandler.reply(message, `You need to specify a player and two items separated by "with" or "and". Usage:\n${usage(game.settings)}`);
 
@@ -84,7 +86,7 @@ export async function execute(game, message, command, args) {
     const recipes = game.recipes.filter(recipe => recipe.ingredients.length === 2 && recipe.fixtureTag === "");
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].ingredients[0].id === items[0].prefab.id && recipes[i].ingredients[1].id === items[1].prefab.id) {
+        if (player.canCraft(recipes[i], [items[0], items[1]])) {
             recipe = recipes[i];
             break;
         }

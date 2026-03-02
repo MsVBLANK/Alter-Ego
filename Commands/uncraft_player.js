@@ -1,8 +1,8 @@
-import UncraftAction from '../Data/Actions/UncraftAction.js';
+import UncraftAction from '../Data/Actions/UncraftAction.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -23,8 +23,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}uncraft SHOVEL\n`
@@ -33,11 +33,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -77,7 +77,7 @@ export async function execute(game, message, command, args, player) {
     const recipes = game.recipes.filter(recipe => recipe.uncraftable === true && recipe.products.length === 1);
     let recipe = null;
     for (let i = 0; i < recipes.length; i++) {
-        if (recipes[i].products[0].id === item.prefab.id) {
+        if (recipes[i].products[0].prefab.id === item.prefab.id) {
             recipe = recipes[i];
             break;
         }

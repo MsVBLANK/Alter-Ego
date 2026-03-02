@@ -1,13 +1,14 @@
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
-import DestroyAction from "../Data/Actions/DestroyAction.js";
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
+import DestroyAction from "../Data/Actions/DestroyAction.ts";
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import InventorySlot from '../Data/InventorySlot.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
+/** @import InventorySlot from '../Data/InventorySlot.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -29,8 +30,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}destroy volleyball at beach\n`
@@ -48,12 +49,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `Not enough arguments given. Usage:\n${usage(game.settings)}`);
 
@@ -71,7 +73,7 @@ export async function execute(game, message, command, args) {
     if (room) {
         parsedInput = parsedInput.substring(0, undashedInput.lastIndexOf(" AT "));
     }
-    
+
     // Room was found. Look for the container in it.
     if (room !== undefined) {
         /** @type {RoomItem} */
@@ -140,7 +142,7 @@ export async function execute(game, message, command, args) {
         }
 
         // Now decide what the container should be.
-        /** @type {Fixture|Puzzle|RoomItem} */
+        /** @type {RoomItemContainer} */
         let container = null;
         let slotName = "";
         if (fixture !== null && fixture.childPuzzle === null && containerItem === null)

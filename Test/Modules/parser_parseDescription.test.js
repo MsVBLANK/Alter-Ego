@@ -1,9 +1,9 @@
-import Description from "../../Data/Description.js";
+import Description from "../../Data/Description.ts";
 import { parseDescription } from "../../Modules/parser.js";
-/** @import GameEntity from "../../Data/GameEntity.js"; */
-/** @import Event from "../../Data/Event.js"; */
-/** @import RoomItem from "../../Data/RoomItem.js"; */
-/** @import Player from "../../Data/Player.js"; */
+/** @import GameEntity from "../../Data/GameEntity.ts"; */
+/** @import Event from "../../Data/Event.ts"; */
+/** @import RoomItem from "../../Data/RoomItem.ts"; */
+/** @import Player from "../../Data/Player.ts"; */
 
 describe('test parseDescription', () => {
 	/** @type {Player} */
@@ -55,7 +55,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(description, null, nero);
 			expect(result).toBe(expected);
 		});
-		
+
 		test('single item list single item 0', () => {
 			const description = new Description(`<desc><s>You open the locker.</s> <s>Inside, you find <il><item>a pair of SWIM TRUNKS</item></il>.</s></desc>`, null, game);
 			const expected = `You open the locker. Inside, you find a pair of SWIM TRUNKS.`;
@@ -76,7 +76,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(description, null, nero);
 			expect(result).toBe(expected);
 		});
-		
+
 		test('multiple item lists single items 0', () => {
 			const description = new Description(`<desc><s>It's a pair of long, purple pants with a checker pattern.</s> <s>There are four pockets altogether.</s> <s>In the left pocket, you find <il name="LEFT POCKET"><item>a GUN</item></il>.</s> <s>In the right pocket, you find <il name="RIGHT POCKET"></il>.</s> <s>In the left back pocket, you find <il name="LEFT BACK POCKET"></il>.</s> <s>In the right back pocket, you find <il name="RIGHT BACK POCKET"><item>3 pairs of DICE</item></il>.</s></desc>`, null, game);
 			const expected = `It's a pair of long, purple pants with a checker pattern. There are four pockets altogether. In the left pocket, you find a GUN. In the right back pocket, you find 3 pairs of DICE.`;
@@ -99,7 +99,7 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, null, nero);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('joshua body perception 4', () => {
 				const expected = `You inspect Joshua's body. Nothing seems out of the ordinary except for a gash in his **NECK**.`;
 				const result = parseDescription(description, null, luna);
@@ -141,7 +141,7 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, null, nero);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('veronica perception 4 with conditional item', () => {
 				const expected = `You find Veronica's body lying face up. Her arms are extended straight out with her palms facing up. There's a bloody WOUND on her chest, and the blood has soaked her shirt. In her pockets, you find a CIGARETTE and a pair of NEEDLES.`;
 				const result = parseDescription(description, null, luna);
@@ -171,14 +171,14 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, null, evad);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('nemu tree ultimate gamer', () => {
 				const expected = `You take a look at the nemu tree. It's unlike anything you've ever seen before. It has purple wood and blue leaves.`;
 				const result = parseDescription(description, null, asuka);
 				expect(result).toBe(expected);
 			});
 		});
-		
+
 		describe('pool table', () => {
 			/** @type {Description} */
 			let description;
@@ -192,7 +192,7 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, null, kyra);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('pool table ultimate gamer', () => {
 				const expected = `You examine the pool table. It seems to have everything you need to play a game of pool: 2 POOL STICKS, CHALK, a TRIANGLE, and BALLS.`;
 				const result = parseDescription(description, null, asuka);
@@ -213,13 +213,13 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, null, asuka);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('photo album kiara', () => {
 				const expected = `You flip through the photo album. It's full of pictures of your parents and all of the places they've gone. There are no pictures of you.`;
 				const result = parseDescription(description, null, kiara);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('photo album astrid', () => {
 				const expected = `You flip through the photo album. It's full of pictures of Kiara's parents in various places, but there are no pictures of Kiara in here.`;
 				const result = parseDescription(description, null, astrid);
@@ -270,7 +270,7 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, item, nero);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('mountain dew uses 0', () => {
 				item.uses = 0;
 				const expected = `It's a bottle of Code Red Mountain Dew, which has a cherry flavor. For some reason, when you hold it, you get the urge to play video games. The drink and label are both red. It's empty.`;
@@ -299,14 +299,14 @@ describe('test parseDescription', () => {
 				const result = parseDescription(description, item, nero);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('sniper rifle uses 1', () => {
 				item.uses = 1;
 				const expected = `It's a long, black sniper rifle with an attached scope. It's the kind that you have to lodge into your shoulder to hold steadily. It's loaded with a 10-round box magazine. 1 shot is left.`;
 				const result = parseDescription(description, item, nero);
 				expect(result).toBe(expected);
 			});
-			
+
 			test('sniper rifle uses 0', () => {
 				item.uses = 0;
 				const expected = `It's a long, black sniper rifle with an attached scope. It's the kind that you have to lodge into your shoulder to hold steadily. It's loaded with a 10-round box magazine. Unfortunately, all the ammo has been depleted.`;
@@ -440,7 +440,7 @@ describe('test parseDescription', () => {
 			});
 		});
 	});
-		
+
 	describe('test formatting', () => {
 		test('greater than less than', () => {
 			const description = new Description(`<desc><s>It's a graph of an algebraic expression.</s> <s>In the corner, "x > -2 && x < 3" is written.</s></desc>`, null, game);
@@ -448,7 +448,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(description, null, nero);
 			expect(result).toBe(expected);
 		});
-		
+
 		test('less than greater than', () => {
 			const description = new Description(`<desc><s>It's a graph of an algebraic expression.</s> <s>In the corner, "x < 3 && x > -2" is written.</s></desc>`, null, game);
 			const expected = `It's a graph of an algebraic expression. In the corner, "x < 3 && x > -2" is written.`;
@@ -520,7 +520,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
-		
+
 		test('one item and a fixture', () => {
 			const container = game.entityFinder.getFixture('NIGHTSTAND', 'suite-1');
 			const expected = `It's a black nightstand made of a sturdy wood. Feels like teak, or perhaps mahogany. It has a TOP DRAWER and a BOTTOM DRAWER. On top of it is a PHONE and a small, dim lamp that would really only be useful for reading a book at night.`;
@@ -690,7 +690,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
-		
+
 		test('first word after item list "is" is changed to "are" when it contains 1 item with a quantity greater than 1', () => {
 			const monokumaMask = game.entityFinder.getRoomItem('MONOKUMA MASK', 'treasure-room');
 			monokumaMask.quantity = 2;

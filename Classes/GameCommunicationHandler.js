@@ -1,18 +1,18 @@
-import Action from "../Data/Action.js";
+import Action from "../Data/Action.ts";
+import Player from "../Data/Player.ts";
+import Room from "../Data/Room.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
-import Room from "../Data/Room.js";
 import * as messageHandler from "../Modules/messageHandler.js";
-import { parseDescription } from "../Modules/parser.js";
-import { capitalizeFirstLetter } from "../Modules/helpers.js";
+import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
+import Interactable from "./Interactables/Interactable.ts";
 
-/** @import Description from '../Data/Description.js' */
-/** @import Dialog from "../Data/Dialog.js" */
-/** @import Game from "../Data/Game.js" */
-/** @import GameEntity from "../Data/GameEntity.js" */
-/** @import Narration from "../Data/Narration.js" */
-/** @import Player from "../Data/Player.js" */
-/** @import { GuildMember, Snowflake, User } from "discord.js" */
+/** @import Dialog from "../Data/Dialog.ts" */
+/** @import Game from "../Data/Game.ts" */
+/** @import GameEntity from "../Data/GameEntity.ts" */
+/** @import Narration from "../Data/Narration.ts" */
+/** @import Notification from "../Data/Notification.ts" */
+/** @import { Snowflake } from "discord.js" */
 
 /**
  * @class GameCommunicationHandler
@@ -129,6 +129,33 @@ export default class GameCommunicationHandler {
 		return this.#dialogSpectateMirrorCache.get(message.id);
 	}
 
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInRoomChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return this.#game.guildContext.roomCategories.includes(message.channel.parentId);
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInWhisperChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.parentId === this.#game.guildContext.whisperCategoryId;
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param {UserMessage} message
+     */
+    wasSentInAnnouncementChannel(message) {
+        if (message.channel.type !== ChannelType.GuildText) return false;
+        return message.channel.id === this.#game.guildContext.announcementChannel.id;
+    }
+
 	/**
 	 * Replies to a message. This is usually done when a user has sent a message with an error.
 	 * @param {UserMessage} message - The message to reply to.
@@ -158,48 +185,49 @@ export default class GameCommunicationHandler {
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
 	 * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
 	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
+	 * @param {Interactable[]} interactables - An array of interactables.
 	 */
-	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, attachments) {
+	sendMessageToPlayer(player, messageText, mirrorInSpectateChannel = true, messageType = MessageDisplayType.PLAIN_TEXT, attachments, interactables = []) {
 		if (messageText !== "")
-			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, attachments)
+			messageHandler.sendNotification(player, messageText, messageType, mirrorInSpectateChannel, attachments, interactables)
 	}
 
 	/**
 	 * Sends a description to a player without any checks.
 	 * @param {Player} player - The player to send the notification to.
-	 * @param {Description} description - The description to parse and send.
+	 * @param {string} descriptionString - The already parsed description.
 	 * @param {GameEntity} container - The game entity the description belongs to.
 	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT. Does nothing when sending a room description.
 	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the room description in their spectate channel. Defaults to true.
+	 * @param {Interactable[]} interactables[] - An array of interactables to send with the message.
 	 */
-	sendDescriptionToPlayer(player, description, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true) {
-		if (container instanceof Room) {
-			const occupantsString = this.#game.notificationGenerator.generateRoomOccupantsNotification(player, container);
-			let defaultDropFixtureString = "";
-			const defaultDropFixture = this.#game.entityFinder.getFixture(this.#game.settings.defaultDropFixture, container.id);
-			if (defaultDropFixture)
-				defaultDropFixtureString = parseDescription(defaultDropFixture.description, defaultDropFixture, player);
-			defaultDropFixtureString = this.#game.notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.#game.settings.defaultDropFixture);
-			messageHandler.sendRoomDescription(player, container, parseDescription(description, container, player), occupantsString, defaultDropFixtureString, mirrorInSpectateChannel);
-		}
-		else
-			this.sendMessageToPlayer(player, parseDescription(description, container, player), mirrorInSpectateChannel, messageDisplayType);
+	sendDescriptionToPlayer(player, descriptionString, container, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, interactables = []) {
+		this.sendMessageToPlayer(player, descriptionString, mirrorInSpectateChannel, messageDisplayType, new Collection(), interactables);
+	}
+
+	/**
+     * Sends an already-parsed room description to the player.
+	 * @param {Player} player - The player to send the description to.
+	 * @param {Room} room - The room the description belongs to.
+     * @param {string} roomDescriptionString - The already parsed room description.
+     * @param {string} occupantsString - A list of occupants in the room.
+     * @param {string} defaultDropFixtureString - A string to describe the default drop fixture in this room.
+     * @param {Interactable[]} [interactables] - An array of interactables to send with the message.
+     */
+	sendRoomDescriptionToPlayer(player, room, roomDescriptionString, occupantsString, defaultDropFixtureString, interactables = []) {
+		messageHandler.sendRoomDescription(player, room, roomDescriptionString, occupantsString, defaultDropFixtureString, true, interactables);
 	}
 
 	/**
 	 * Sends a notification to a player.
-	 * @param {Player} player - The player to send the notification to.
-	 * @param {Action} action - The action that triggered the notification.
-	 * @param {string} notification - The text of the notification to send.
-	 * @param {MessageDisplayType} messageDisplayType - The display type of the message to send. Defaults to PLAIN_TEXT.
-	 * @param {boolean} [mirrorInSpectateChannel] - Whether or not to mirror the notification in their spectate channel. Defaults to true.
-	 * @param {Embed[]} [embeds] - An array of embeds to send in the message. Optional.
-	 * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
+	 * @param {Notification} notification - The text of the notification to send.
 	 */
-	notifyPlayer(player, action, notification, messageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel = true, embeds, attachments = new Collection()) {
-		if (!this.#actionHasBeenCommunicatedInChannel(player.notificationChannel, action)) {
-			this.#cacheChannelFor(action, player.notificationChannel.id);
-			player.notify(capitalizeFirstLetter(notification), mirrorInSpectateChannel, messageDisplayType, action);
+	notifyPlayer(notification) {
+		if (!this.#actionHasBeenCommunicatedInChannel(notification.player.notificationChannel, notification.action)) {
+			this.#cacheChannelFor(notification.action, notification.player.notificationChannel.id);
+			this.sendMessageToPlayer(notification.player, notification.content, false, notification.messageDisplayType, notification.attachments, notification.interactables);
+			if (notification.mirrorInSpectateChannel)
+				this.mirrorNarrationInSpectateChannel(notification.player, notification.action, notification.messageDisplayType, notification.content, notification.attachments.map(attachment => attachment.url));
 		}
 	}
 
@@ -217,7 +245,7 @@ export default class GameCommunicationHandler {
 		if (!this.#actionHasBeenCommunicatedInChannel(player.spectateChannel, action)) {
 			this.#cacheChannelFor(action, player.spectateChannel.id);
 			if (!dialog.isOOCMessage) messageHandler.sendWebhookSpectateMessage(player, messageText, webhookUsername, webhookAvatarURL, dialog.embeds, dialog.attachments.map(attachment => attachment.url), dialog.message);
-			if (notification) this.notifyPlayer(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
+			if (notification) this.#game.narrationHandler.sendNotification(player, action, notification, MessageDisplayType.PLAIN_TEXT, false);
 		}
 	}
 

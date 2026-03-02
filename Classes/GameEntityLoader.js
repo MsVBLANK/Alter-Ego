@@ -1,25 +1,26 @@
-import Game from '../Data/Game.js';
+import Game from '../Data/Game.ts';
 import GameEntityManager from './GameEntityManager.js';
-import Exit from '../Data/Exit.js';
-import Room from '../Data/Room.js';
-import Fixture from '../Data/Fixture.js';
-import Prefab from '../Data/Prefab.js';
-import InventorySlot from '../Data/InventorySlot.js';
-import Recipe from '../Data/Recipe.js';
-import RoomItem from '../Data/RoomItem.js';
-import Puzzle from '../Data/Puzzle.js';
-import Event from '../Data/Event.js';
-import EquipmentSlot from '../Data/EquipmentSlot.js';
-import InventoryItem from '../Data/InventoryItem.js';
-import Status from '../Data/Status.js';
-import Player from '../Data/Player.js';
-import Gesture from '../Data/Gesture.js';
-import Flag from '../Data/Flag.js';
-import InflictAction from '../Data/Actions/InflictAction.js';
+import Exit from '../Data/Exit.ts';
+import Room from '../Data/Room.ts';
+import Fixture from '../Data/Fixture.ts';
+import Prefab from '../Data/Prefab.ts';
+import InventorySlot from '../Data/InventorySlot.ts';
+import Recipe from '../Data/Recipe.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import Puzzle from '../Data/Puzzle.ts';
+import Event from '../Data/Event.ts';
+import EquipmentSlot from '../Data/EquipmentSlot.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
+import Status from '../Data/Status.ts';
+import Player from '../Data/Player.ts';
+import Gesture from '../Data/Gesture.ts';
+import Flag from '../Data/Flag.ts';
+import InflictAction from '../Data/Actions/InflictAction.ts';
 import { getSheetValues } from '../Modules/sheets.js';
-import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.js';
+import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
+import RecipeItem from '../Data/RecipeItem.ts';
 
 /**
  * @class GameEntityLoader
@@ -29,7 +30,7 @@ import { Duration } from 'luxon';
 export default class GameEntityLoader extends GameEntityManager {
 	/**
 	 * @constructor
-	 * @param {Game} game - The game this belongs to. 
+	 * @param {Game} game - The game this belongs to.
 	 */
 	constructor(game) {
 		super(game);
@@ -123,7 +124,7 @@ export default class GameEntityLoader extends GameEntityManager {
 						this.game.botContext.updatePresence();
 					if (sendPlayerRoomDescriptions) {
 						this.game.livingPlayers.forEach(player => {
-							player.sendDescription(player.location.description, player.location);
+							player.location.description.parseAndSendTo(player, player.location);
 						});
 					}
 				}
@@ -552,7 +553,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (exit.link === "" || exit.link === null || exit.link === undefined)
 				return new Error(`Couldn't load exit on row ${exit.row}. No linked exit was given.`);
 			const linkedExit = exit.dest.exits.get(exit.link);
-			if (!linkedExit) 
+			if (!linkedExit)
 				return new Error(`Couldn't load exit on row ${exit.row}. Room "${exit.dest.displayName}" does not have an exit that links back to it.`);
 		}
 	}
@@ -628,7 +629,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Fixture for errors.
-	 * @param {Fixture} fixture - The fixture to check. 
+	 * @param {Fixture} fixture - The fixture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFixture(fixture) {
@@ -812,7 +813,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Prefab for errors.
-	 * @param {Prefab} prefab - The prefab to check. 
+	 * @param {Prefab} prefab - The prefab to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPrefab(prefab) {
@@ -872,15 +873,15 @@ export default class GameEntityLoader extends GameEntityManager {
 				// Separate the ingredients and sort them in alphabetical order.
 				let ingredientsStrings = sheet[row][columnIngredients] ? sheet[row][columnIngredients].split(',') : [];
 				ingredientsStrings.sort((a, b) => {
-					const trimmedA = Game.generateValidEntityName(a);
-					const trimmedB = Game.generateValidEntityName(b);
+					const trimmedA = Game.generateValidEntityName(a).replace(RecipeItem.itemRegex, "$3");
+					const trimmedB = Game.generateValidEntityName(b).replace(RecipeItem.itemRegex, "$3");
 					if (trimmedA < trimmedB) return -1;
 					if (trimmedA > trimmedB) return 1;
 					return 0;
 				});
 				// For each ingredient, convert the string to a valid entity name.
 				for (let j = 0; j < ingredientsStrings.length; j++)
-					ingredientsStrings[j] = Game.generateValidEntityName(ingredientsStrings[j]);
+					ingredientsStrings[j] = ingredientsStrings[j].trim();
 				// Parse the duration.
 				const durationString = sheet[row][columnDuration] ? String(sheet[row][columnDuration]) : "";
 				const duration = durationString !== "" ? parseDuration(durationString) : null;
@@ -888,11 +889,13 @@ export default class GameEntityLoader extends GameEntityManager {
 				let productsStrings = sheet[row][columnProducts] ? sheet[row][columnProducts].split(',') : [];
 				// For each product, convert the string to a valid entity name.
 				for (let j = 0; j < productsStrings.length; j++)
-					productsStrings[j] = Game.generateValidEntityName(productsStrings[j]);
+					productsStrings[j] = productsStrings[j].trim();
+				const fixtureTag = sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : ""
 				let recipe = new Recipe(
 					ingredientsStrings,
 					sheet[row][columnUncraftable] ? sheet[row][columnUncraftable].trim() === "TRUE" : false,
-					sheet[row][columnFixtureTag] ? sheet[row][columnFixtureTag].trim() : "",
+					fixtureTag,
+					durationString,
 					duration,
 					productsStrings,
 					sheet[row][columnInitiatedDescription] ? sheet[row][columnInitiatedDescription].trim() : "",
@@ -902,12 +905,50 @@ export default class GameEntityLoader extends GameEntityManager {
 					this.game
 				);
 				recipe.ingredientsStrings.forEach((ingredientsString, i) => {
-					const prefab = this.game.entityFinder.getPrefab(ingredientsString);
-					if (prefab) recipe.ingredients[i] = prefab;
+					const ingredient = new RecipeItem(ingredientsString, this.game, fixtureTag ? "processing" : "crafting");
+					const prefab = this.game.entityFinder.getPrefab(ingredient.prefabId);
+					if (prefab) ingredient.setPrefab(prefab);
+					if (ingredient.containedItemsString) {
+						const containedItemsStrings = ingredient.containedItemsString.split('+');
+						for (const containedItemString of containedItemsStrings) {
+							const containedIngredient = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
+							const prefab = this.game.entityFinder.getPrefab(containedIngredient.prefabId);
+							if (prefab) containedIngredient.setPrefab(prefab);
+							containedIngredient.setContainer(ingredient);
+							ingredient.containedItems.push(containedIngredient);
+							recipe.ingredientsFlat.push(containedIngredient);
+						}
+					}
+					recipe.ingredients[i] = ingredient;
+					recipe.ingredientsFlat.push(ingredient);
 				});
 				recipe.productsStrings.forEach((productsString, i) => {
-					const prefab = this.game.entityFinder.getPrefab(productsString);
-					if (prefab) recipe.products[i] = prefab;
+					const product = new RecipeItem(productsString, this.game, fixtureTag ? "processing" : "crafting");
+					const prefab = this.game.entityFinder.getPrefab(product.prefabId);
+					if (prefab) product.setPrefab(prefab);
+					if (product.containedItemsString) {
+						const containedItemsStrings = product.containedItemsString.split('+');
+						for (const containedItemString of containedItemsStrings) {
+							const containedProduct = new RecipeItem(containedItemString, this.game, fixtureTag ? "processing" : "crafting");
+							const prefab = this.game.entityFinder.getPrefab(containedProduct.prefabId);
+							if (prefab) containedProduct.setPrefab(prefab);
+							containedProduct.setContainer(product);
+							product.containedItems.push(containedProduct);
+							recipe.productsFlat.push(containedProduct);
+						}
+					}
+					recipe.products[i] = product;
+					recipe.productsFlat.push(product);
+				});
+				recipe.ingredientsFlat.sort((a, b) => {
+					if (a.prefabId < b.prefabId) return -1;
+					if (a.prefabId > b.prefabId) return 1;
+					return 0;
+				});
+				recipe.productsFlat.sort((a, b) => {
+					if (a.prefabId < b.prefabId) return -1;
+					if (a.prefabId > b.prefabId) return 1;
+					return 0;
 				});
 				if (doErrorChecking) {
 					const error = this.checkRecipe(recipe);
@@ -927,32 +968,92 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Recipe for errors.
-	 * @param {Recipe} recipe - The recipe to check. 
+	 * @param {Recipe} recipe - The recipe to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRecipe(recipe) {
 		if (recipe.ingredients.length === 0)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. No ingredients were given.`);
-		for (let i = 0; i < recipe.ingredients.length; i++) {
-			if (!(recipe.ingredients[i] instanceof Prefab))
-				return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.ingredientsStrings[i]}" in ingredients is not a prefab.`);
+		/** @type {Set<string>} */
+		const ingredientVariables = new Set();
+		for (const ingredient of recipe.ingredientsFlat) {
+			if (ingredient.quantityVariableName !== '' && /^[A-Z]$/.test(ingredient.quantityVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.quantityVariableName}" in ingredients is not a valid variable name.`);
+			if (ingredient.usesVariableName !== '' && /^[A-Z]$/.test(ingredient.usesVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.usesVariableName}" in ingredients is not a valid variable name.`);
+			if (!(ingredient.prefab instanceof Prefab))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" in ingredients is not a prefab.`);
+			if (ingredient.quantity < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (!isNaN(ingredient.uses) && ingredient.uses < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" must have a number of uses greater than or equal to 1.`);
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.size === 0)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is not a container, but is expected to contain items.`);
+            if (ingredient.prefab.inventory.size > 1)
+                return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" has more than one inventory slot.`)
+			if (ingredient.containedItems.length > 0 && ingredient.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < ingredient.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
+			    return new Error(`Couldn't load recipe on row ${recipe.row}. "${ingredient.prefabId}" is too full.`)
+			ingredientVariables.add(ingredient.quantityVariableName);
+			ingredientVariables.add(ingredient.usesVariableName);
 		}
+		if (recipe.fixtureTag === "") {
+			for (const ingredient of recipe.ingredients) {
+				if (!(ingredient.quantity === 1 && ingredient.quantityIsConstant))
+    				return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level ingredients in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
+			for (const product of recipe.products) {
+				if (!(product.quantity === 1 && product.quantityIsConstant))
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Top-level products in hand-crafting recipes cannot have a quantity other than a constant of 1.`);
+			}
+		}
+		if (recipe.ingredients.filter(ingredient => ingredient.prefab.inventory.size > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as an ingredient.`);
 		if (recipe.ingredients.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 ingredients must require a fixture tag.`);
 		if (recipe.products.length > 2 && recipe.fixtureTag === "")
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than 2 products must require a fixture tag.`);
 		if (recipe.duration !== null && !validateDuration(recipe.duration))
-			return new Error(`Couldn't load recipe on row ${recipe.row}. An invalid duration was given.`);
+			return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.durationString}" is not a valid duration.`);
 		if (recipe.fixtureTag === "" && recipe.duration !== null)
 			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes without a fixture tag cannot have a duration.`);
-		for (let i = 0; i < recipe.products.length; i++) {
-			if (!(recipe.products[i] instanceof Prefab))
-				return new Error(`Couldn't load recipe on row ${recipe.row}. "${recipe.productsStrings[i]}" in products is not a prefab.`);
+		for (const product of recipe.productsFlat) {
+			if (product.quantityVariableName !== '' && /^[A-Z]$/.test(product.quantityVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.quantityVariableName}" in products is not a valid variable name.`);
+			if (product.usesVariableName !== '' && /^[A-Z]$/.test(product.usesVariableName) === false)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.usesVariableName}" in ingredients is not a valid variable name.`);
+			if (product.quantityVariableName !== '' && !ingredientVariables.has(product.quantityVariableName))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.quantityVariableName}" does not appear in ingredients.`);
+			if (product.usesVariableName !== '' && !ingredientVariables.has(product.usesVariableName))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. Variable "${product.usesVariableName}" does not appear in ingredients.`);
+			if (!(product.prefab instanceof Prefab))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" in products is not a prefab.`);
+			if (product.quantity < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a quantity greater than or equal to 1.`);
+			if (!isNaN(product.uses) && product.uses < 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" must have a number of uses greater than or equal to 1.`);
+			if (product.containedItems.length > 0 && product.prefab.inventory.size === 0)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is not a container, but is expected to contain items.`);
+			if (product.prefab.inventory.size > 1)
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" has more than one inventory slot.`)
+			if (product.containedItems.length > 0 && product.prefab.inventory.reduce((size, inventory) => size + inventory.capacity, 0) < product.containedItems.reduce((size, item) => size + (item.quantity * item.prefab.size), 0))
+				return new Error(`Couldn't load recipe on row ${recipe.row}. "${product.prefabId}" is too full.`)
 		}
+		if (recipe.products.filter(product => product.prefab.inventory.size > 0 && product.containedItems.length > 0).length > 1)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes cannot have more than one container as a product.`);
 		if (recipe.fixtureTag !== "" && recipe.uncraftable)
-			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with a fixture tag cannot be uncraftable.`);
 		if (recipe.products.length > 1 && recipe.uncraftable)
-			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than one product cannot be uncraftable.`)
+			return new Error(`Couldn't load recipe on row ${recipe.row}. Recipes with more than one product cannot be uncraftable.`);
+		if (recipe.fixtureTag === "") {
+			for (const ingredient of recipe.ingredients) {
+				if (ingredient.quantity !== 1)
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Ingredients in crafting-type recipes must have a quantity of 1.`);
+			}
+			for (const product of recipe.products) {
+				if (product.quantity !== 1)
+					return new Error(`Couldn't load recipe on row ${recipe.row}. Products in crafting-type recipes must have a quantity of 1.`);
+			}
+		}
 	}
 
 	/**
@@ -1071,7 +1172,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a RoomItem for errors.
-	 * @param {RoomItem} item - The room item to check. 
+	 * @param {RoomItem} item - The room item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkRoomItem(item) {
@@ -1115,7 +1216,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				return new Error(`Couldn't load room item on row ${item.row}. The item's container is over capacity.`);
 			/** @type {Set<number>} */
 			const containerChain = new Set();
-			/** @type {RoomItem|Puzzle|Fixture} */
+			/** @type {RoomItemContainer} */
 			let container = item;
 			while (container instanceof RoomItem) {
 				if (containerChain.has(container.row)) return new Error(`Couldn't load room item on row ${item.row}. The item's container chain contains itself, resulting in an infinite loop.`);
@@ -1273,7 +1374,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Puzzle for errors.
-	 * @param {Puzzle} puzzle - The puzzle to check. 
+	 * @param {Puzzle} puzzle - The puzzle to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkPuzzle(puzzle) {
@@ -1472,7 +1573,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an Event for errors.
-	 * @param {Event} event - The event to check. 
+	 * @param {Event} event - The event to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkEvent(event) {
@@ -1612,7 +1713,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Status Effect for errors.
-	 * @param {Status} status - The status effect to check. 
+	 * @param {Status} status - The status effect to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkStatusEffect(status) {
@@ -1810,7 +1911,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Player for errors.
-	 * @param {Player} player - The player to check. 
+	 * @param {Player} player - The player to check.
 	 * @returns {Promise<Error|void>} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	async checkPlayer(player) {
@@ -1858,7 +1959,6 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (!player.hasStatus(statusDisplay.id) && (statusDisplay.timeRemaining ? convertTimeStringToDurationUnits(statusDisplay.timeRemaining) !== undefined : true))
 				return new Error(`Couldn't load player on row ${player.row}. "${statusDisplay.id}" is not a status effect.`);
 		}
-		return;
 	}
 
 	/**
@@ -2020,11 +2120,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				const playerEquipmentSlots = equipmentSlots.get(player.name);
 				if (playerEquipmentSlots) {
 					player.setInventory(playerEquipmentSlots);
-					// Calculate the player's carry weight.
-					player.carryWeight = player.inventory.reduce((weight, equipmentSlot) => {
-						const itemWeight = equipmentSlot.equippedItem !== null ? equipmentSlot.equippedItem.weight : 0;
-						return weight + itemWeight;
-					}, 0);
+					player.updateCarryWeight();
 				}
 			});
 			if (doErrorChecking) {
@@ -2045,7 +2141,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks an InventoryItem for errors.
-	 * @param {InventoryItem} item - The inventory item to check. 
+	 * @param {InventoryItem} item - The inventory item to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkInventoryItem(item) {
@@ -2167,7 +2263,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Gesture for errors.
-	 * @param {Gesture} gesture - The gesture to check. 
+	 * @param {Gesture} gesture - The gesture to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkGesture(gesture) {
@@ -2210,7 +2306,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				/** @type {FlagCommandSet[]} */
 				let commandSets = [];
 				/**
-				 * @param {string} commandString 
+				 * @param {string} commandString
 				 * @returns {FlagCommandSet}
 				 */
 				let getCommands = function (commandString) {
@@ -2281,7 +2377,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Checks a Flag for errors.
-	 * @param {Flag} flag - The flag to check. 
+	 * @param {Flag} flag - The flag to check.
 	 * @returns {Error|void} An Error, if there is one. Otherwise, returns nothing.
 	 */
 	checkFlag(flag) {
@@ -2313,7 +2409,7 @@ export default class GameEntityLoader extends GameEntityManager {
 
 	/**
 	 * Prints an array or map of entities to the console.
-	 * @param {*[]|Map<*, *>} data 
+	 * @param {*[]|Map<*, *>} data
 	 */
 	#printData(data) {
 		if (data instanceof Array) {

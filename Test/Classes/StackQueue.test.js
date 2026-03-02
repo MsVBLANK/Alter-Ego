@@ -1,4 +1,4 @@
-import StackQueue from "../../Classes/StackQueue.js";
+import StackQueue from "../../Classes/StackQueue.ts";
 
 describe("StackQueue test", () => {
     beforeEach(() => {

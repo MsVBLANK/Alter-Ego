@@ -1,5 +1,5 @@
 import { Collection } from "discord.js";
-import PrettyPrinter from "../../Classes/PrettyPrinter.js";
+import PrettyPrinter from "../../Classes/PrettyPrinter.ts";
 import { Duration } from "luxon";
 
 describe("PrettyPrinter test", () => {

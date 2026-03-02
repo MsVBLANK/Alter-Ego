@@ -1,15 +1,16 @@
-import Fixture from '../Data/Fixture.js';
-import GameEntity from '../Data/GameEntity.js';
-import InventoryItem from '../Data/InventoryItem.js';
-import RoomItem from '../Data/RoomItem.js';
-import ItemInstance from '../Data/ItemInstance.js';
-import Player from '../Data/Player.js';
-import Puzzle from '../Data/Puzzle.js';
-import Recipe from '../Data/Recipe.js';
+import Fixture from '../Data/Fixture.ts';
+import GameEntity from '../Data/GameEntity.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import ItemInstance from '../Data/ItemInstance.ts';
+import Player from '../Data/Player.ts';
+import Puzzle from '../Data/Puzzle.ts';
+import Recipe from '../Data/Recipe.ts';
 import { table } from 'table';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -36,8 +37,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}find room dorm 201\n`
@@ -68,12 +69,13 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
 	let input = args.join(' ');
 
 	if (args.length === 0)
@@ -254,7 +256,7 @@ export async function execute(game, message, command, args) {
 					fields = Object.assign(fields, playerField, containerField);
 				else fields = Object.assign(fields, playerField, equipmentSlotField, containerField);
 			}
-			
+
 		}
 		else if (dataTypeMatch.groups.Gesture) {
 			if (!dataTypeMatch.groups.search) results = game.entityFinder.getGestures();
@@ -267,7 +269,7 @@ export async function execute(game, message, command, args) {
 			fields = { row: 'Row', id: 'ID' };
 		}
 		else return game.communicationHandler.reply(message, `Couldn't find a valid data type in "${originalInput}". Usage:\n${usage(game.settings)}`);
-		
+
 		if (results.length === 0)
 			return game.communicationHandler.sendToCommandChannel(`Found 0 results.`);
 		// Divide the results into pages.
@@ -328,7 +330,7 @@ function createPages(fields, results) {
 	const header = [];
 	const headerEntryLength = [];
 	const fieldCount = Object.keys(fields).length;
-	const cellCharacterLimit = 
+	const cellCharacterLimit =
 		fieldCount <= 2 ? 80
 		: fieldCount === 3 ? 37
 		: fieldCount === 4 ? 26
@@ -340,7 +342,7 @@ function createPages(fields, results) {
 	page.push(header);
 
 	const widestEntryLength = [...headerEntryLength];
-	
+
 	for (let i = 0, pageNo = 0; i < results.length; i++) {
 		// Create a new row.
 		const row = [];
@@ -355,9 +357,9 @@ function createPages(fields, results) {
 			else if (key === 'id' && result instanceof ItemInstance)
 				cellContents = result.getIdentifier();
 			else if (key === 'ingredients' && result instanceof Recipe)
-				cellContents = result.ingredients.map(ingredient => ingredient.id).join(',');
+				cellContents = result.ingredients.map(ingredient => ingredient.prefab.id).join(',');
 			else if (key === 'products' && result instanceof Recipe)
-				cellContents = result.products.map(product => product.id).join(',');
+				cellContents = result.products.map(product => product.prefab.id).join(',');
 			else
 				cellContents = String(result[key]);
 			// If the cellContents exceed the preset character limit, truncate it.

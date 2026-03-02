@@ -1,11 +1,11 @@
-﻿import TakeAction from '../Data/Actions/TakeAction.js';
-import Fixture from '../Data/Fixture.js';
-import RoomItem from '../Data/RoomItem.js';
-import Puzzle from "../Data/Puzzle.js";
+﻿import TakeAction from '../Data/Actions/TakeAction.ts';
+import Fixture from '../Data/Fixture.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -24,8 +24,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}take BUTCHERS KNIFE\n`
@@ -37,11 +37,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -124,12 +124,9 @@ export async function execute(game, message, command, args, player) {
         }
         else return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in the room.`);
     }
-    
-    let topContainer = container;
-    while (topContainer !== null && topContainer instanceof RoomItem)
-        topContainer = topContainer.container;
 
-    if (topContainer !== null && topContainer instanceof Fixture && topContainer.autoDeactivate && topContainer.activated)
+    let topContainer = item.getTopContainer();
+    if (topContainer !== null && topContainer instanceof Fixture && topContainer.isProcessingItems())
         return game.communicationHandler.reply(message, `You cannot take items from ${topContainer.name} while it is turned on.`);
     const hiddenStatus = player.getBehaviorAttributeStatusEffects("hidden");
     if (hiddenStatus.length > 0) {

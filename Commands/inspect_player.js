@@ -1,11 +1,11 @@
-﻿import InspectAction from '../Data/Actions/InspectAction.js';
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+﻿import InspectAction from '../Data/Actions/InspectAction.ts';
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -32,8 +32,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}inspect DESK\n`
@@ -49,11 +49,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} player - The player who issued the command. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} player - The player who issued the command.
  */
 export async function execute(game, message, command, args, player) {
     if (args.length === 0)
@@ -144,7 +144,7 @@ export async function execute(game, message, command, args, player) {
                     containerString = parsedInput.substring(`${items[i].name} IN `.length).trim();
                 else if (parsedInput.startsWith(`${items[i].pluralName} IN `))
                     containerString = parsedInput.substring(`${items[i].pluralName} IN `.length).trim();
-                
+
                 if (containerString !== "") {
                     // Slot name was specified.
                     if (parsedInput.endsWith(` OF ${itemContainer.name}`)) {

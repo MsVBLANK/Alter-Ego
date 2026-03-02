@@ -1,10 +1,11 @@
-import AttemptAction from "../Data/Actions/AttemptAction.js";
-import SolveAction from "../Data/Actions/SolveAction.js";
-import UnsolveAction from "../Data/Actions/UnsolveAction.js";
+import AttemptAction from "../Data/Actions/AttemptAction.ts";
+import SolveAction from "../Data/Actions/SolveAction.ts";
+import UnsolveAction from "../Data/Actions/UnsolveAction.ts";
+import Room from "../Data/Room.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -28,8 +29,8 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `puzzle solve button\n`
@@ -46,11 +47,11 @@ export function usage(settings) {
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} [player] - The player who caused the command to be executed, if applicable. 
- * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} [player] - The player who caused the command to be executed, if applicable.
+ * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable.
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");
@@ -85,13 +86,6 @@ export async function execute(game, command, args, player, callee) {
             announcement += '.';
     }
 
-    // Find the prospective list of puzzles.
-    const puzzles = game.puzzles.filter(puzzle => input.toUpperCase().startsWith(puzzle.name + ' ') || input.toUpperCase() === puzzle.name);
-    if (puzzles.length > 0) {
-        input = input.substring(puzzles[0].name.length).trim();
-        args = input.split(" ");
-    }
-
     // Now find the player, who should be the last argument.
     if (args[args.length - 1] === "player" && player !== null) {
         args.splice(args.length - 1, 1);
@@ -99,26 +93,38 @@ export async function execute(game, command, args, player, callee) {
         announcement = announcement.replace(/player/g, player.displayName);
     }
     else {
-        player = game.entityFinder.getLivingPlayer(args[args.length - 1]);
+        player = game.entityFinder.getLivingPlayer(args[args.length - 1]) ?? null;
         if (player) {
             args.splice(args.length - 1, 1);
             input = args.join(" ");
-        } else
-            player = null;
+        }
     }
 
     // If a player wasn't specified, check if a room name was.
+    /** @type {Room} */
     let room = null;
     if (player === null) {
-        const parsedInput = input.replace(/\'/g, "").replace(/ /g, "-").toLowerCase();
         for (let i = args.length - 1; i >= 0; i--) {
-            room = game.entityFinder.getRoom(args.splice(i).join(" "));
+            const parsedInput = Room.generateValidId(args.slice(i).join(" "));
+            room = game.entityFinder.getRoom(parsedInput);
             if (room) {
-                input = input.substring(0, parsedInput.indexOf(room.id) - 1);
+                args.splice(i);
                 break;
             }
         }
         if (!room) room = null;
+    }
+    input = args.join(" ");
+
+    // Find the prospective list of puzzles.
+    let puzzles = game.puzzles.filter(puzzle => input.toUpperCase().startsWith(puzzle.name + ' ') || input.toUpperCase() === puzzle.name);
+    const locationId = player !== null ? player.location.id : room !== null ? room.id : undefined;
+    if (locationId) puzzles = puzzles.filter(puzzle => puzzle.location.id === locationId);
+    // Sort puzzles from longest name length to shortest, to give us the most precise match.
+    puzzles.sort((a, b) => b.name.length - a.name.length);
+    if (puzzles.length > 0) {
+        input = input.substring(puzzles[0].name.length).trim();
+        args = input.split(" ");
     }
 
     // Finally, find the puzzle.

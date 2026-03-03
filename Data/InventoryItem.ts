@@ -213,6 +213,15 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
+     * Returns the args for the InstantiateInventoryItem ActionDirective for this equipment slot.
+     * @param inventorySlot - The inventory slot to instantiate the inventory item into.
+     * @returns ["II", equipmentSlot, identifier, inventorySlot.id]
+     */
+    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string] {
+        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined];
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {

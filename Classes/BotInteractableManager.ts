@@ -1,8 +1,12 @@
 import { ButtonStyle, Collection } from "discord.js";
+import type ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import ButtonInteractable from "./Interactables/ButtonInteractable.ts";
 import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.ts";
 import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.ts";
+import TextInputInteractable from "./Interactables/TextInputInteractable.ts";
+import ModalInteractable from "./Interactables/ModalInteractable.ts";
 import type Action from "../Data/Action.ts";
+import type EquipmentSlot from "../Data/EquipmentSlot.ts";
 import Fixture from "../Data/Fixture.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
@@ -22,6 +26,7 @@ import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
+import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
@@ -38,7 +43,7 @@ export default class BotInteractableManager {
 	 * A cache of recently-created Interactables, indexed by their custom IDs.
 	 * This is used to look up Interactables when an interaction is received.
 	 */
-	readonly #interactableCache: Collection<string, Interactable>;
+	readonly #interactableCache: Collection<string, ActionDirectiveInteractable>;
 	/**
 	 * The maximum number of Interactables to keep in the cache at once. If the cache exceeds this size, the oldest Interactable will be removed.
 	 */
@@ -75,7 +80,7 @@ export default class BotInteractableManager {
 	 * Interactables are valid for 5 minutes after being added. They are automatically removed from the cache after this time.
 	 * @param interactable
 	 */
-	addInteractable(interactable: Interactable) {
+	addInteractable(interactable: ActionDirectiveInteractable) {
 		if (this.#interactableCache.size >= this.#interactableCacheSizeLimit)
 			this.disableInteractable(this.#interactableCache.firstKey());
 		if (this.#interactableCache.has(interactable.customId))
@@ -489,6 +494,68 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for a list of equipment slots and player inventory slots that can be instantiated to and adds them to the cache.
+     * @param freeEquipmentSlots - An array of equipment slots with nothing equipped.
+     * @param viableContainers - A map of viable inventory items with inventory slots an item can be instantiated into.
+     * @param player - The player these interactables are being created for.
+     * @param user - The user these interactables are being created for.
+     */
+    async createInstantiateInventoryItemActionInteractables(freeEquipmentSlots: EquipmentSlot[], viableContainers: Map<InventoryItem, string[]>, player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const equipmentSlot of freeEquipmentSlots) {
+            if (menuOptions.size >= 25) break;
+            if (equipmentSlot.equippedItem !== null) continue;
+            const actionDirective = await this.#createActionDirective(InstantiateAction, equipmentSlot.getPartialInstantiateActionDirectiveArgs(), player, user);
+            if (menuOptions.has(actionDirective.customId)) continue;
+            const option = new StringSelectMenuOptionInteractable(actionDirective, `${equipmentSlot.id}`, actionDirective.customId, `Instantiate to ${equipmentSlot.id}`, 1, true);
+            this.addInteractable(option);
+            menuOptions.set(actionDirective.customId, option);
+        }
+        for (const [container, inventorySlots] of viableContainers.entries()) {
+            for (const inventorySlotId of inventorySlots) {
+                if (menuOptions.size >= 25) break;
+                const inventorySlot = container.inventory.get(inventorySlotId);
+                if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
+                const actionDirective = await this.#createActionDirective(InstantiateAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player, user);
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
+                const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+            }
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(InstantiateAction, ["InstantiateInventoryItemAction Menu"], player, user);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
+     * Creates a modal interactable for a list of args and adds it to the cache.
+     * This should only be called as a followup to createInstantiateInventoryItemActionInteractables to get the remaining required information.
+     * @param args - An array of partial instantiate inventory item action directive args. ["II", equipmentSlotId, containerIdentifier, inventorySlotId]
+     * @param player - The player these interactables are being created for.
+     * @param user - The user these interactables are being created for.
+     */
+    async createInstantiateInventoryItemActionModalInteractable(args: [string, string, string, string], player: Player, user: User): Promise<ModalInteractable> {
+        const equipmentSlotId = args[1];
+        const containerIdentifier = args[2];
+        const inventorySlotId = args[3];
+        const inputs: TextInputInteractable[] = [];
+        inputs.push(new TextInputInteractable("Instantiate Inventory Item Prefab ID", "Prefab ID"));
+        if (containerIdentifier)
+            inputs.push(new TextInputInteractable("Instantiate Inventory Item Quantity", "Quantity", "Number.", true, "1"));
+        inputs.push(new TextInputInteractable("Instantiate Inventory Item Uses", "Uses", "Number. If not provided, item will be instantiated with its default uses.", false));
+        inputs.push(new TextInputInteractable("Instantiate Inventory Item Procedural Selections", "Procedural Selections", "Example: (color=metal + character=upa)", false, undefined, undefined, 5));
+        const modalActionDirective = await this.#createActionDirective(InstantiateAction, args.concat(["Modal"]), player, user);
+        const description = containerIdentifier ? `Instantiate to ${inventorySlotId} of ${player.name}'s ${containerIdentifier}` : `Instantiate to ${player.name}'s ${equipmentSlotId}`;
+        const modal = new ModalInteractable(modalActionDirective, "Instantiate Inventory Item", inputs, 0, description);
+        this.addInteractable(modal);
+        return modal;
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -649,6 +716,30 @@ export default class BotInteractableManager {
         const usableItems = heldItems.filter(item => item.uses !== 0 && item.prefab.usable && item.usableOn(player));
         if (usableItems.length > 0) {
             interactables = interactables.concat(await this.createUseActionInteractables(usableItems, player, user));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of instantiate inventory item interactables based on the player's current inventory.
+     * @param player - The player to instantiate an inventory item to.
+     * @param user - The user these interactables are being created for.
+     */
+    async getInstantiateInventoryItemInteractables(player: Player, user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const freeEquipmentSlots = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem === null).map(equipmentSlot => equipmentSlot);
+        const playerContainerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.inventory.size > 0);
+        if (freeEquipmentSlots.length > 0 || playerContainerItems.length > 0) {
+            const viableStashDestinations = new Map<InventoryItem, string[]>();
+            for (const containerItem of playerContainerItems) {
+                const viableInventorySlots: string[] = [];
+                for (const inventorySlot of containerItem.inventory.values()) {
+                    if (inventorySlot.takenSpace >= inventorySlot.capacity) continue;
+                    viableInventorySlots.push(inventorySlot.id);
+                }
+                if (viableInventorySlots.length > 0) viableStashDestinations.set(containerItem, viableInventorySlots);
+            }
+            interactables = interactables.concat(await this.createInstantiateInventoryItemActionInteractables(freeEquipmentSlots, viableStashDestinations, player, user));
         }
         return interactables;
     }

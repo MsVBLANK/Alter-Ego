@@ -1,6 +1,6 @@
 import InstantiateAction from '../Data/Actions/InstantiateAction.ts';
 import RoomItem from '../Data/RoomItem.ts';
-import { instantiateRoomItem, instantiateInventoryItem } from '../Modules/itemManager.js';
+import { parseProceduralSelections } from '../Modules/stringDataExtractor.ts';
 
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -77,15 +77,14 @@ export async function execute(game, message, command, args, moderator) {
     else parsedInput = parsedInput.substring(0, undashedInput.lastIndexOf(` AT ${room.id.toUpperCase().replace(/-/g, " ")}`));
 
     // If a parenthetical expression is included, procedural options are being manually set.
-    const proceduralSelections = new Map();
+    /** @type {Map<string, string>} */
+    let proceduralSelections;
     if (parsedInput.indexOf('(') < parsedInput.indexOf(')')) {
-        const proceduralString = parsedInput.substring(parsedInput.indexOf('(') + 1, parsedInput.indexOf(')'));
-        const proceduralList = proceduralString.split('+');
-        for (let procedural of proceduralList) {
-            const proceduralAssignment = procedural.split('=');
-            if (proceduralAssignment.length !== 2)
-                return game.communicationHandler.reply(message, "Procedural options must be separated with `+`, and the name of the poss to select must be assigned to the name of its containing procedural with `=`.");
-            proceduralSelections.set(proceduralAssignment[0].toLowerCase().trim(), proceduralAssignment[1].toLowerCase().trim());
+        try {
+            proceduralSelections = parseProceduralSelections(parsedInput);
+        }
+        catch (error) {
+            return game.communicationHandler.reply(message, error.message);
         }
         parsedInput = parsedInput.substring(0, parsedInput.indexOf('(')) + parsedInput.substring(parsedInput.indexOf(')'));
     }

@@ -1,4 +1,4 @@
-import Interactable from "./Interactable.ts";
+import ActionDirectiveInteractable from "./ActionDirectiveInteractable.ts";
 import { InteractableType } from "../../Modules/enums.js";
 import { ButtonBuilder, ButtonStyle } from "discord.js";
 import type ActionDirective from "../ActionDirective.ts";
@@ -7,7 +7,7 @@ import type ActionDirective from "../ActionDirective.ts";
  * @class ButtonInteractable
  * @classdesc Represents a button message component.
  */
-export default class ButtonInteractable extends Interactable {
+export default class ButtonInteractable extends ActionDirectiveInteractable {
 	/**
 	 * The label of the component.
 	 */
@@ -27,9 +27,10 @@ export default class ButtonInteractable extends Interactable {
 	 * @param label - The label of the component.
 	 * @param style - The style to apply to the button, if applicable. Defaults to Primary.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 0 (highest priority).
+     * @param respondWithModal - Whether to respond to an interaction with a modal. Defaults to false.
 	 */
-	constructor(actionDirective: ActionDirective, label: string, style = ButtonStyle.Primary, priority = 0) {
-		super(InteractableType.BUTTON, actionDirective, priority);
+	constructor(actionDirective: ActionDirective, label: string, style = ButtonStyle.Primary, priority = 0, respondWithModal = false) {
+		super(InteractableType.BUTTON, actionDirective, priority, respondWithModal);
 		this.label = label;
 		this.style = style;
 		this.component = new ButtonBuilder().setCustomId(this.customId).setLabel(this.label).setStyle(this.style);

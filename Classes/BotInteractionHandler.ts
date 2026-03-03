@@ -1,4 +1,3 @@
-import { ButtonInteraction, StringSelectMenuInteraction } from "discord.js";
 import InspectAction from "../Data/Actions/InspectAction.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
 import TakeAction from "../Data/Actions/TakeAction.ts";
@@ -9,10 +8,13 @@ import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
+import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
+import type ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
-import type Interactable from "./Interactables/Interactable.ts";
 import Moderator from "../Data/Moderator.ts";
+import { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction } from "discord.js";
 import type { Interaction, InteractionCallbackResponse } from "discord.js";
+type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction;
 
 /**
  * @class InteractionHandler
@@ -36,7 +38,7 @@ export default class BotInteractionHandler {
 	 * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
 	 * @param customId
 	 */
-	getInteractable(customId: string): Interactable {
+	getInteractable(customId: string): ActionDirectiveInteractable {
 		return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
 	}
 
@@ -44,46 +46,70 @@ export default class BotInteractionHandler {
 	 * Intercepts an interaction event and directs it to the correct function.
 	 * @param interaction - The interaction that was created.
 	 */
-	interceptInteraction(interaction: Interaction) {
+	interceptInteraction(interaction: Interaction): void {
         const user = this.#game.entityFinder.getModeratorById(interaction.user.id) ?? this.#game.entityFinder.getLivingPlayerById(interaction.user.id);
 		if (!user) return;
 		if (interaction instanceof ButtonInteraction)
 			this.processButtonInteraction(interaction, user);
 		if (interaction instanceof StringSelectMenuInteraction)
 			this.processStringSelectMenuInteraction(interaction, user);
+        if (interaction instanceof ModalSubmitInteraction)
+            this.processModalSubmitInteraction(interaction, user);
 		return;
 	}
 
 	/**
-	 * Processes a button interaction and calls the correct function.
+	 * Processes a button interaction.
 	 * @param interaction - The interaction being executed.
 	 * @param user - The user who triggered the interaction.
 	 */
-	async processButtonInteraction(interaction: ButtonInteraction, user: User) {
-		const reply = await interaction.deferReply({ withResponse: true });
+	processButtonInteraction(interaction: ButtonInteraction, user: User): void {
 		const customId = interaction.customId;
-		const interactable = this.getInteractable(customId);
-		let successfullyProcessedInteractable = false;
-		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, user);
-		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
+		this.#processInteraction(customId, interaction, user);
 		return;
 	}
 
 	/**
-	 * Processes a string select interaction and calls the correct function.
+	 * Processes a string select interaction.
 	 * @param interaction - The interaction being executed.
 	 * @param user - The user who triggered the interaction.
 	 */
-	async processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, user: User) {
-		const reply = await interaction.deferReply({ withResponse: true });
+	processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, user: User): void {
 		const selectedValue = interaction.values[0];
 		const customId = selectedValue;
-		const interactable = this.getInteractable(customId);
-		let successfullyProcessedInteractable = false;
-		if (interactable) successfullyProcessedInteractable = this.processInteractable(reply, interactable, user);
-		if (!successfullyProcessedInteractable) this.replyToInteraction(`Interaction failed.`, interaction, false);
+		this.#processInteraction(customId, interaction, user);
 		return;
 	}
+
+    /**
+     * Processes a modal submit interaction.
+     * @param interaction - The interaction being executed.
+	 * @param user - The user who triggered the interaction.
+     */
+    processModalSubmitInteraction(interaction: ModalSubmitInteraction, user: User): void {
+        const customId = interaction.customId;
+		this.#processInteraction(customId, interaction, user);
+		return;
+    }
+
+    async #processInteraction(customId: string, interaction: BotInteraction, user: User): Promise<void> {
+        let reply: InteractionCallbackResponse<boolean>;
+        const interactable = this.getInteractable(customId);
+        let successfullyProcessedInteractable = false;
+        let errorMessage = `Interaction failed.`;
+        if (interactable) {
+            if (!interactable.respondWithModal) reply = await interaction.deferReply({ withResponse: true });
+            try {
+                successfullyProcessedInteractable = await this.#processInteractable(interactable, user, interaction, reply);
+            }
+            catch (error) {
+                successfullyProcessedInteractable = false;
+                errorMessage = error.message;
+            }
+        }
+		if (!successfullyProcessedInteractable) this.#replyToInteraction(errorMessage, interaction);
+		return;
+    }
 
 	/**
 	 * Process an interactable and calls the correct function.
@@ -92,7 +118,7 @@ export default class BotInteractionHandler {
 	 * @param user - The user who triggered the interaction.
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
-	processInteractable(reply: InteractionCallbackResponse<boolean>, interactable: Interactable, user: User): boolean {
+	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
         const player = interactable.actionDirective.getPlayer();
         const forced = user instanceof Moderator;
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
@@ -102,7 +128,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 2) {
 				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
-				reply.resource.message.delete();
+				if (reply) reply.resource.message.delete();
 				return true;
 			}
 		}
@@ -112,7 +138,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 1) {
 				action.performInspect(validatedArgs[0]);
-				reply.resource.message.delete();
+				if (reply) reply.resource.message.delete();
 				return true;
 			}
 		}
@@ -122,7 +148,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				reply.resource.message.delete();
+				if (reply) reply.resource.message.delete();
 				return true;
 			}
 		}
@@ -132,7 +158,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				reply.resource.message.delete();
+				if (reply) reply.resource.message.delete();
 				return true;
 			}
 		}
@@ -142,7 +168,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				reply.resource.message.delete();
+				if (reply) reply.resource.message.delete();
 				return true;
 			}
 		}
@@ -152,7 +178,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-                reply.resource.message.delete();
+                if (reply) reply.resource.message.delete();
                 return true;
             }
         }
@@ -162,7 +188,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                reply.resource.message.delete();
+                if (reply) reply.resource.message.delete();
                 return true;
             }
         }
@@ -172,7 +198,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                reply.resource.message.delete();
+                if (reply) reply.resource.message.delete();
                 return true;
             }
         }
@@ -182,7 +208,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                reply.resource.message.delete();
+                if (reply) reply.resource.message.delete();
                 return true;
             }
         }
@@ -192,8 +218,44 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 2) {
                 action.performUse(validatedArgs[0], validatedArgs[1]);
-                reply.resource.message.delete();
+                if (reply) reply.resource.message.delete();
                 return true;
+            }
+        }
+        if (action instanceof InstantiateAction) {
+            if (interaction instanceof ModalSubmitInteraction) {
+                const prefabId = interaction.fields.getTextInputValue("Instantiate Inventory Item Prefab ID");
+                let quantity: string;
+                if (interaction.fields.fields.has("Instantiate Inventory Item Quantity"))
+                    quantity = interaction.fields.getTextInputValue("Instantiate Inventory Item Quantity");
+                const uses = interaction.fields.getTextInputValue("Instantiate Inventory Item Uses");
+                const proceduralSelections = interaction.fields.getTextInputValue("Instantiate Inventory Item Procedural Selections");
+                const args = interactable.actionDirective.getArgs();
+                const parsedArgs = action.parseInstantiateInventoryItemInteractionArgs(args, prefabId, quantity, uses, proceduralSelections);
+                try {
+                    const validatedArgs = action.validateInstantiateInventoryItemInteractionArgs(parsedArgs);
+                    const prefab = validatedArgs[0];
+                    const quantity = validatedArgs[4];
+                    // If the prefab has inventory slots, instantiate the prefab quantity times so that it generates items with different identifiers.
+                    if (prefab.inventory.size > 0 && quantity > 1) {
+                        for (let i = 0; i < quantity; i++) {
+                            const instantiateAction = new InstantiateAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
+                            instantiateAction.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], 1, validatedArgs[5], validatedArgs[6]);
+                        }
+                    }
+                    else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
+                    this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
+                    return true;
+                } 
+                catch (error) { throw new Error(error.message); }
+            }
+            else {
+                const args = interactable.actionDirective.getArgs();
+                if (args.length === 4 && args[0] === "II") {
+                    const modal = await this.#game.botContext.interactableManager.createInstantiateInventoryItemActionModalInteractable(args as [string, string, string, string], player, user);
+                    await interaction.showModal(modal.component);
+                    return true;
+                }
             }
         }
 		return false;
@@ -203,15 +265,9 @@ export default class BotInteractionHandler {
 	 * Replies to an interaction.
 	 * @param response - The response to send.
 	 * @param interaction - The interaction to reply to.
-	 * @param deleteAfterTimeout - Whether or not to delete the reply after a set amount of time.
 	 */
-	replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction, deleteAfterTimeout = true) {
-		interaction.editReply({ content: response }).then(response => {
-			if (deleteAfterTimeout) {
-				setTimeout(() => {
-					response.delete();
-				}, 1);
-			}
-		});
+	#replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction): void {
+        if (interaction.replied || interaction.deferred) interaction.editReply({ content: response });
+        else interaction.reply({ content: response });
 	}
 }

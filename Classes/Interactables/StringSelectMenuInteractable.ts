@@ -1,4 +1,4 @@
-import Interactable from "./Interactable.ts";
+import ActionDirectiveInteractable from "./ActionDirectiveInteractable.ts";
 import StringSelectMenuOptionInteractable from "./StringSelectMenuOptionInteractable.ts";
 import { InteractableType } from "../../Modules/enums.js";
 import { StringSelectMenuBuilder } from "discord.js";
@@ -8,7 +8,7 @@ import type ActionDirective from "../ActionDirective.ts";
  * @class StringSelectMenuInteractable
  * @classdesc Represents a string select menu message component.
  */
-export default class StringSelectMenuInteractable extends Interactable {
+export default class StringSelectMenuInteractable extends ActionDirectiveInteractable {
 	/**
 	 * An array of options. Maximum size is 25.
 	 */
@@ -28,9 +28,10 @@ export default class StringSelectMenuInteractable extends Interactable {
 	 * @param options - An array of options. Maximum size is 25.
 	 * @param placeholder - The placeholder to apply for the string select menu. Optional.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
+     * @param respondWithModal - Whether to respond to an interaction with a modal. Defaults to false.
 	 */
-	constructor(actionDirective: ActionDirective, options: StringSelectMenuOptionInteractable[], placeholder?: string, priority = 1) {
-		super(InteractableType.STRING_SELECT_MENU, actionDirective, priority);
+	constructor(actionDirective: ActionDirective, options: StringSelectMenuOptionInteractable[], placeholder?: string, priority = 1, respondWithModal = false) {
+		super(InteractableType.STRING_SELECT_MENU, actionDirective, priority, respondWithModal);
 		this.options = [];
 		for (let i = 0; i < options.length && i < 25; i++)
 			this.options.push(options[i]);

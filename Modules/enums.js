@@ -13,5 +13,7 @@ export const MessageDisplayType = {
 export const InteractableType = {
     BUTTON: 0,
     STRING_SELECT_MENU: 1,
-    STRING_SELECT_MENU_OPTION: 2
+    STRING_SELECT_MENU_OPTION: 2,
+    MODAL: 3,
+    TEXT_INPUT: 4
 };

@@ -14,7 +14,7 @@ import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord
 /** @import GameEntity from "../Data/GameEntity.ts" */
 /** @import Narration from "../Data/Narration.ts" */
 /** @import Notification from "../Data/Notification.ts" */
-/** @import { Snowflake } from "discord.js" */
+/** @import { Message, Snowflake } from "discord.js" */
 
 /**
  * @class GameCommunicationHandler
@@ -104,33 +104,33 @@ export default class GameCommunicationHandler {
 		return action.hasBeenCommunicatedIn(channel.id);
 	}
 
-	/**
-	 * Adds the dialog message to the communication cache.
-	 * @param {UserMessage} message - The message that initiated the dialog.
-	 */
-	cacheDialog(message) {
-		this.#communicationCache.put(message.id, new CachedCommunication(message.id));
-	}
+    /**
+     * Adds the dialog or monolog message to the communication cache.
+     * @param {Message} message - The message that initiated the dialog.
+     */
+    cacheDialog(message) {
+        this.#communicationCache.put(message.id, new CachedCommunication(message.id));
+    }
 
-	/**
-	 * Adds a spectate mirror to the dialog cache for the given message.
-	 * @param {UserMessage} message - The message being mirrored.
-	 * @param {Snowflake} mirrorMessageId - The message ID of the spectate mirror.
-	 * @param {Snowflake} mirrorWebhookId - The ID of the webhook that sent the spectate mirror.
-	 */
-	cacheSpectateMirrorForDialog(message, mirrorMessageId, mirrorWebhookId) {
-		const cacheHit = this.getCachedCommunication(message);
-		if (cacheHit) cacheHit.spectated.push({ message: mirrorMessageId, webhook: mirrorWebhookId });
-	}
+    /**
+     * Adds a spectate mirror to the communication cache for the given dialog or monolog message.
+     * @param {Message} message - The message being mirrored.
+     * @param {Snowflake} mirrorMessageId - The message ID of the spectate mirror.
+     * @param {Snowflake | null} [mirrorWebhookId] - The ID of the webhook that sent the spectate mirror. Optional.
+     */
+    cacheSpectateMirrorForDialog(message, mirrorMessageId = null, mirrorWebhookId = null) {
+        const cacheHit = this.getCachedCommunication(message);
+        if (cacheHit) cacheHit.spectated.push({ message: mirrorMessageId, webhook: mirrorWebhookId });
+    }
 
-	/**
-	 * Returns the list of spectate mirrors for the given dialog message.
-	 * If the given dialog message isn't cached, returns undefined.
-	 * @param {UserMessage|import('discord.js').PartialMessage} message - The message that was mirrored.
-	 */
-	getCachedCommunication(message) {
-		return this.#communicationCache.get(message.id);
-	}
+    /**
+     * Returns the cache entry for the given message.
+     * If the given message isn't cached, returns undefined.
+     * @param {Message|import('discord.js').PartialMessage} message - The message that was mirrored.
+     */
+    getCachedCommunication(message) {
+        return this.#communicationCache.get(message.id);
+    }
 
     /**
      * Returns true if the given message was sent in a room channel.
@@ -180,6 +180,20 @@ export default class GameCommunicationHandler {
 	sendToCommandChannel(messageText) {
 		messageHandler.sendGameMechanicMessage(this.#game, this.#game.guildContext.commandChannel, messageText);
 	}
+
+    /**
+     * Sends and mirrors a message to a player without any checks.
+     * @param {Player} player - The player's spectate channel to send the message to.
+     * @param {string} messageText - The text of the message to send.
+     * @param {string} webhookUsername - The username to use for the mirrored webhook message.
+     * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
+     * @param {MessageDisplayType} [messageType] - The type of message to send. Defaults to PLAIN_TEXT.
+     * @param {Collection<string, Attachment>} [attachments] - The attachments to send. Optional.
+     */
+    sendAndMirrorNotificationToPlayer(player, messageText, webhookUsername, webhookAvatarURL, messageType = MessageDisplayType.PLAIN_TEXT, attachments) {
+        if (messageText !== "")
+            messageHandler.sendAndMirrorNotification(player, messageText, webhookUsername, webhookAvatarURL, messageType, attachments)
+    }
 
 	/**
 	 * Sends a message to a player without any checks.

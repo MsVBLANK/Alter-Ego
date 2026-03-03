@@ -4,8 +4,8 @@ import type { Snowflake } from "discord.js";
 export interface MirroredCommunication {
     /** The message ID of the mirrored message. */
     message: Snowflake
-    /** The webhook ID of the webhook used to mirror the message. */
-    webhook: Snowflake
+    /** The webhook ID of the webhook used to mirror the message. Optional, if the message is sent by the bot. */
+    webhook: Snowflake | null
 }
 
 /** Represents a cached communication. */

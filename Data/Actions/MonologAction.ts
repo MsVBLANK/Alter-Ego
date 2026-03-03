@@ -15,10 +15,8 @@ export default class MonologAction extends Action {
 	performMonolog(messageText: string): void {
 		if (this.performed) return;
 		super.perform();
-		this.getGame().communicationHandler.sendMessageToPlayer(this.player, messageText, false, MessageDisplayType.MONOLOG);
 		const webhookUsername = this.player.displayName !== this.player.name ? `${this.player.displayName} (${this.player.name})` : this.player.name;
 		const webhookAvatarURL = this.player.displayIcon ? this.player.displayIcon : this.player.member?.displayAvatarURL();
-		if (this.player.spectateChannel)
-			this.getGame().communicationHandler.mirrorWebhookMessageInSpectateChannel(this.player, this, webhookUsername, webhookAvatarURL, messageText, MessageDisplayType.MONOLOG);
+		this.getGame().communicationHandler.sendAndMirrorNotificationToPlayer(this.player, messageText, webhookUsername, webhookAvatarURL, MessageDisplayType.MONOLOG)
 	}
 }

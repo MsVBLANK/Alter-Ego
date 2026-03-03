@@ -164,6 +164,75 @@ export function sendNarrationToWhisper(whisper, narration, messageText, messageT
  * Sends a notification message to a player.
  * @param {Player} player - The player to send the message to.
  * @param {string} messageText - The message to send.
+ * @param {string} webhookUsername - The username to use for the mirrored webhook message.
+ * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
+ */
+export function sendAndMirrorNotification(player, messageText, webhookUsername, webhookAvatarURL, messageDisplayType, attachments = new Collection()) {
+    const files = attachments.map(attachment => attachment.url);
+
+    if (!player.isNPC) {
+        const game = player.getGame()
+        game.messageQueue.enqueue(
+            {
+                fire: async () => {
+                    const message = await player.notificationChannel.send(
+                        discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files),
+                    );
+                    if (messageDisplayType === MessageDisplayType.MONOLOG)
+                        game.communicationHandler.cacheDialog(message);
+                    mirrorNotification(player, message, messageText, webhookUsername, webhookAvatarURL, messageDisplayType, attachments);
+                },
+                destination: player.notificationChannel.id
+            },
+            "tell"
+        );
+    }
+}
+
+/**
+ * Private function to mirror a notification sent to a player.
+ * @param {Player} player - The player to send the message to.
+ * @param {Message} message - The message to mirror.
+ * @param {string} messageText - The message to send.
+ * @param {string} webhookUsername - The username to use for the mirrored webhook message.
+ * @param {string} webhookAvatarURL - The avatar URL to use for the mirrored webhook message.
+ * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
+ * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.
+ */
+
+function mirrorNotification(player, message, messageText, webhookUsername, webhookAvatarURL, messageDisplayType, attachments) {
+    const files = attachments.map(attachment => attachment.url);
+    const game = player.getGame()
+
+    game.messageQueue.enqueue(
+        {
+            fire: async () => {
+                const shouldSendWebhookMessage = messageDisplayType === MessageDisplayType.PLAYER || messageDisplayType === MessageDisplayType.MONOLOG;
+                if (shouldSendWebhookMessage) {
+                    const webhook = await getOrCreateWebhook(player.spectateChannel);
+                    const webhookMessage = await sendWebhookMessage(webhook, messageText, webhookUsername, webhookAvatarURL, null, files, game, messageDisplayType);
+                    if (messageDisplayType === MessageDisplayType.MONOLOG)
+                        game.communicationHandler.cacheSpectateMirrorForDialog(message, webhookMessage.id, webhook.id);
+                } else {
+                    const mirroredMessage = await player.spectateChannel.send(
+                        discordUtils.generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files)
+                    );
+                    if (messageDisplayType === MessageDisplayType.MONOLOG)
+                        game.communicationHandler.cacheSpectateMirrorForDialog(message, mirroredMessage.id);
+                }
+            },
+            destination: player.spectateChannel.id
+        },
+        "tell"
+    );
+}
+
+/**
+ * Sends a notification message to a player.
+ * @param {Player} player - The player to send the message to.
+ * @param {string} messageText - The message to send.
  * @param {MessageDisplayType} messageDisplayType - The display type of the message to send.
  * @param {boolean} [addSpectate] - Whether or not to mirror the message in spectate channels. Defaults to true.
  * @param {Collection<string, Attachment>} [attachments] - A collection of attachments to send, if any.

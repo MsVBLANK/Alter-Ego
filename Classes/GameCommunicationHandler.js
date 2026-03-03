@@ -4,8 +4,10 @@ import Room from "../Data/Room.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
-import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 import Interactable from "./Interactables/Interactable.ts";
+import CachedCommunication from "./CachedCommunication.ts";
+import LRUCache from "./LRUCache.ts";
+import { Attachment, ChannelType, Collection, Embed, TextChannel } from "discord.js";
 
 /** @import Dialog from "../Data/Dialog.ts" */
 /** @import Game from "../Data/Game.ts" */
@@ -36,16 +38,19 @@ export default class GameCommunicationHandler {
 	 */
 	#actionCacheSizeLimit = 20;
 	/**
-	 * A collection of mirrored dialog messages to allow edits to dialog messages to be reflected in spectate channels.
-	 * The key is the ID of the original message that's being mirrored.
-	 * @type {Collection<string, DialogSpectateMirror[]>}
+	 * An LRUCache of all communication (Player messages, NPC messages, monologues, and player/moderator narrations),
+	 * to allow edits to select communications, and for edits to these communications to propagate to spectate channels.
+	 * For player messages, the key is the original message ID.
+	 * For NPC messages and player/moderator narrations, the key is the room message ID.
+	 * For monologues, the key is the message ID of the monologue sent to DMs.
+	 * @type {LRUCache<string, CachedCommunication>}
 	 */
-	#dialogSpectateMirrorCache;
+	#communicationCache;
 	/**
-	 * The maximum size of the dialogSpectateMirrorCache.
+	 * The maximum size of the communicationCache.
 	 * @readonly
 	 */
-	#dialogSpectateMirrorCacheSizeLimit = 50;
+	#communicationCacheSizeLimit = 75;
 
 	/**
 	 * @constructor
@@ -54,7 +59,7 @@ export default class GameCommunicationHandler {
 	constructor(game) {
 		this.#game = game;
 		this.#actionCache = new Collection();
-		this.#dialogSpectateMirrorCache = new Collection();
+		this.#communicationCache = new LRUCache(this.#communicationCacheSizeLimit);
 	}
 
 	/**
@@ -100,13 +105,11 @@ export default class GameCommunicationHandler {
 	}
 
 	/**
-	 * Adds the message to the dialog cache.
+	 * Adds the dialog message to the communication cache.
 	 * @param {UserMessage} message - The message that initiated the dialog.
 	 */
 	cacheDialog(message) {
-		if (this.#dialogSpectateMirrorCache.size >= this.#dialogSpectateMirrorCacheSizeLimit)
-			this.#dialogSpectateMirrorCache.delete(this.#dialogSpectateMirrorCache.firstKey());
-		this.#dialogSpectateMirrorCache.set(message.id, []);
+		this.#communicationCache.put(message.id, new CachedCommunication(message.id));
 	}
 
 	/**
@@ -116,8 +119,8 @@ export default class GameCommunicationHandler {
 	 * @param {Snowflake} mirrorWebhookId - The ID of the webhook that sent the spectate mirror.
 	 */
 	cacheSpectateMirrorForDialog(message, mirrorMessageId, mirrorWebhookId) {
-		const spectateMirrors = this.getDialogSpectateMirrors(message);
-		if (spectateMirrors) spectateMirrors.push({ messageId: mirrorMessageId, webhookId: mirrorWebhookId });
+		const cacheHit = this.getCachedCommunication(message);
+		if (cacheHit) cacheHit.spectated.push({ message: mirrorMessageId, webhook: mirrorWebhookId });
 	}
 
 	/**
@@ -125,8 +128,8 @@ export default class GameCommunicationHandler {
 	 * If the given dialog message isn't cached, returns undefined.
 	 * @param {UserMessage|import('discord.js').PartialMessage} message - The message that was mirrored.
 	 */
-	getDialogSpectateMirrors(message) {
-		return this.#dialogSpectateMirrorCache.get(message.id);
+	getCachedCommunication(message) {
+		return this.#communicationCache.get(message.id);
 	}
 
     /**

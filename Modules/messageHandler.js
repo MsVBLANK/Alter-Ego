@@ -394,18 +394,18 @@ export function sendWebhookSpectateMessage(player, messageText, webhookUsername,
  * @param {UserMessage} messageNew - The new message after being edited.
  */
 export function editSpectatorMessage(game, messageOld, messageNew) {
-    const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(messageOld);
-    if (!spectateMirrors) return;
-    spectateMirrors.forEach(async mirror => {
-        const webhook = await messageOld.client.fetchWebhook(mirror.webhookId);
+    const cacheHit = game.communicationHandler.getCachedCommunication(messageOld);
+    if (!cacheHit) return;
+    cacheHit.spectated.forEach(async mirror => {
+        const webhook = await messageOld.client.fetchWebhook(mirror.webhook);
         if (webhook) {
             let messageText = messageNew.content;
             if (messageOld.channel.type === ChannelType.GuildText && messageOld.channel.parentId === game.guildContext.whisperCategoryId) {
-                const relatedMessage = await webhook.fetchMessage(mirror.messageId);
+                const relatedMessage = await webhook.fetchMessage(mirror.message);
                 const regexGroups = relatedMessage.content.match(new RegExp(/((?:-# )?\*\(Whispered(?:.*)\):\*\n)(.*)/m));
                 if (regexGroups) messageText = regexGroups[1] + messageNew.content;
             }
-            webhook.editMessage(mirror.messageId, { content: messageText });
+            webhook.editMessage(mirror.message, { content: messageText });
         }
     });
 }
@@ -416,11 +416,11 @@ export function editSpectatorMessage(game, messageOld, messageNew) {
  * @param {UserMessage|import('discord.js').PartialMessage} message - The message being deleted.
  */
 export function deleteSpectatorMessage(game, message) {
-    const spectateMirrors = game.communicationHandler.getDialogSpectateMirrors(message);
-    if (!spectateMirrors) return;
-    spectateMirrors.forEach(async mirror => {
-        const webhook = await message.client.fetchWebhook(mirror.webhookId);
-        webhook.deleteMessage(mirror.messageId);
+    const cacheHit = game.communicationHandler.getCachedCommunication(message);
+    if (!cacheHit) return;
+    cacheHit.spectated.forEach(async mirror => {
+        const webhook = await message.client.fetchWebhook(mirror.webhook);
+        webhook.deleteMessage(mirror.message);
     });
 }
 

@@ -54,7 +54,7 @@ export default class LRUCache<K, V> {
      * Move an LRUNode to the head of the LRUCache.
      * @param node - The LRUNode to move to the head.
      */
-    _moveToHead(node: LRUNode<K, V>) {
+    private moveToHead(node: LRUNode<K, V>) {
         if (node === this.head) return;
 
         const prev = node.prev;
@@ -76,7 +76,7 @@ export default class LRUCache<K, V> {
     /**
      * Evict an LRUNode at the tail of the LRUCache.
      */
-    _evictTail() {
+    private evictTail() {
         if (!this.tail) return;
         const key = this.tail.key;
         this.map.delete(key);
@@ -94,11 +94,11 @@ export default class LRUCache<K, V> {
      * Get a value assigned to the key. Returns undefined if no value exists for that key.
      * @param key - The key to get.
      */
-    get(key: K): V {
+    get(key: K): V | undefined {
         if (!this.map.has(key)) return undefined;
 
         const node = this.map.get(key);
-        this._moveToHead(node);
+        this.moveToHead(node);
         return node.value;
     }
 
@@ -113,14 +113,14 @@ export default class LRUCache<K, V> {
         if (this.map.has(key)) {
             const node = this.map.get(key);
             node.value = value;
-            this._moveToHead(node);
+            this.moveToHead(node);
         } else {
             const newNode = new LRUNode(key, value);
             this.map.set(key, newNode);
-            this._moveToHead(newNode);
+            this.moveToHead(newNode);
 
             if (this.map.size > this.capacity) {
-                this._evictTail();
+                this.evictTail();
             }
         }
     }

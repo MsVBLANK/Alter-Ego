@@ -15,14 +15,15 @@ export default class Timer {
     callback: Function;
     /** Whether or not the timer is running. */
     started: boolean;
-    /** @type {boolean} */
+    /** Whether or not the timer is stopped. */
     stopped: boolean;
     /** Internal timer object. */
     timer: NodeJS.Timeout | null;
-    /** @type {number|null} */
+    /** Start tick. */
     startTick: number | null;
-    /** @type {number|null} */
+    /** End tick. */
     endTick: number | null;
+
     /**
      * @param duration - Timer duration in milliseconds.
      * @param attributes - Timer attributes.

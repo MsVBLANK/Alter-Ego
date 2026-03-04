@@ -693,7 +693,7 @@ export default class GameNarrationHandler {
 		let narration = "";
 		if (item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") {
 			notification = this.#game.notificationGenerator.generateTakeNotification(player, true, item.singleContainingPhrase);
-			narration = this.#game.notificationGenerator.generateTakeNotification(player, false, item.singleContainingPhrase);
+			if (!item.prefab.discreet) narration = this.#game.notificationGenerator.generateTakeNotification(player, false, item.singleContainingPhrase);
 		}
 		else {
 			notification = this.#game.notificationGenerator.generateEquipNotification(player, true, item.singleContainingPhrase);
@@ -716,7 +716,7 @@ export default class GameNarrationHandler {
 		let narration = "";
 		if (item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") {
 			notification = this.#game.notificationGenerator.generateDropNotification(player, true, item.singleContainingPhrase);
-			narration = this.#game.notificationGenerator.generateDropNotification(player, false, item.singleContainingPhrase);
+			if (!item.prefab.discreet) narration = this.#game.notificationGenerator.generateDropNotification(player, false, item.singleContainingPhrase);
 		}
 		else {
 			notification = this.#game.notificationGenerator.generateUnequipNotification(player, true, item.name);

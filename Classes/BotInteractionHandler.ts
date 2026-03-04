@@ -119,6 +119,11 @@ export default class BotInteractionHandler {
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
 	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
+        if (this.#game.botContext.commandLog.length >= 10000) {
+            this.#game.botContext.commandLog.shift();
+        }
+        const timestamp = new Date();
+        const author = user.member.user.username
         const player = interactable.actionDirective.getPlayer();
         const forced = user instanceof Moderator;
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
@@ -129,6 +134,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 2) {
 				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
 				if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `QueueMoveAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
 				return true;
 			}
 		}
@@ -139,6 +145,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 1) {
 				action.performInspect(validatedArgs[0]);
 				if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `InspectAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
 				return true;
 			}
 		}
@@ -149,6 +156,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `TakeAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
 				return true;
 			}
 		}
@@ -159,6 +167,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `DropAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
 				return true;
 			}
 		}
@@ -169,6 +178,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `StashAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
 				return true;
 			}
 		}
@@ -179,6 +189,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
                 if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `UnstashAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
                 return true;
             }
         }
@@ -189,6 +200,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `EquipAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
                 return true;
             }
         }
@@ -199,6 +211,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `UnequipAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
                 return true;
             }
         }
@@ -209,6 +222,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `CraftAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
                 return true;
             }
         }
@@ -219,6 +233,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 2) {
                 action.performUse(validatedArgs[0], validatedArgs[1]);
                 if (reply) reply.resource.message.delete();
+                this.#game.botContext.commandLog.push({ author: author, content: `UseAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
                 return true;
             }
         }
@@ -245,6 +260,7 @@ export default class BotInteractionHandler {
                     }
                     else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
+                    this.#game.botContext.commandLog.push({ author: author, content: `InstantiateAction Interactable (Modal Submit): ${validatedArgs.join(",")}`, timestamp: timestamp });
                     return true;
                 } 
                 catch (error) { throw new Error(error.message); }
@@ -254,6 +270,7 @@ export default class BotInteractionHandler {
                 if (args.length === 4 && args[0] === "II") {
                     const modal = await this.#game.botContext.interactableManager.createInstantiateInventoryItemActionModalInteractable(args as [string, string, string, string], player, user);
                     await interaction.showModal(modal.component);
+                    this.#game.botContext.commandLog.push({ author: author, content: `InstantiateAction Interactable (Modal Open): ${args.join(",")}`, timestamp: timestamp });
                     return true;
                 }
             }

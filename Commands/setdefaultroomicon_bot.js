@@ -12,8 +12,7 @@ export const config = {
         + "The icon given must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension. To reset the default icon, simply do not specify a new icon.",
     usableBy: "Bot",
     aliases: ["setdefaultroomicon"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

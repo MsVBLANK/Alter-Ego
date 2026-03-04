@@ -13,8 +13,7 @@ export const config = {
         + "regardless of its size.",
     usableBy: "Moderator",
     aliases: ["equip", "wear", "e"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

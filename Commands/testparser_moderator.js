@@ -20,8 +20,7 @@ export const config = {
         + `If there are any errors in your descriptions, they will be listed alongside the resulting file.`,
     usableBy: "Moderator",
     aliases: ["testparser"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

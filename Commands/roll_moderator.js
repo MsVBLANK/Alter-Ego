@@ -18,8 +18,7 @@ export const config = {
         + "`dexterity`, `spd`, `speed`, `sta`, `stamina`.",
     usableBy: "Moderator",
     aliases: ["roll"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

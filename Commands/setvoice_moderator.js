@@ -18,8 +18,7 @@ export const config = {
         + `voice descriptor in the commands.`,
     usableBy: "Moderator",
     aliases: ["setvoice"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

@@ -11,8 +11,7 @@ export const config = {
         + 'The Player and Dead roles will be removed from all players.',
     usableBy: "Moderator",
     aliases: ["endgame"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

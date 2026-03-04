@@ -13,8 +13,7 @@ export const config = {
         + `If you are able to wake back up of your own volition, you can do so with the \`wake\` command.`,
     usableBy: "Player",
     aliases: ["sleep"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

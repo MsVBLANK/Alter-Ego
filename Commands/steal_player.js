@@ -24,8 +24,7 @@ export const config = {
         + `For example, if the player you're stealing from is asleep or unconscious, they won't notice you stealing their items no matter what.`,
     usableBy: "Player",
     aliases: ["steal", "pickpocket"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

@@ -27,8 +27,7 @@ export const config = {
         + `To see the description of the room you're in without having to leave and come back, you can enter "room".`,
     usableBy: "Player",
     aliases: ["inspect", "investigate", "examine", "look", "x"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

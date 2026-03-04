@@ -14,8 +14,7 @@ export const config = {
         + `not be able to send text messages to them.`,
     usableBy: "Player",
     aliases: ["text"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

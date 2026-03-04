@@ -20,8 +20,7 @@ export const config = {
         + `If you wish to come out of hiding, use the \`unhide\` command.`,
     usableBy: "Player",
     aliases: ["hide", "unhide"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

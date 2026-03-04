@@ -19,8 +19,7 @@ export const config = {
         + 'any normal player\'s. The image URL set in the player\'s Discord ID will be used for the player\'s avatar.',
     usableBy: "Moderator",
     aliases: ["say"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

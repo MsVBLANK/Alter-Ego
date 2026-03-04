@@ -22,8 +22,7 @@ export const config = {
         + "a new Issue on the [Alter Ego GitHub page](https://github.com/MolSnoo/Alter-Ego/issues).",
     usableBy: "Moderator",
     aliases: ["dumplog"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

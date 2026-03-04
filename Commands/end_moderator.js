@@ -11,8 +11,7 @@ export const config = {
     details: "Ends the specified event. The event must be ongoing. If the event has any ended commands, they will be run.",
     usableBy: "Moderator",
     aliases: ["end"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

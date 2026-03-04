@@ -9,8 +9,7 @@ export const config = {
     details: "Sets the given player's stamina to its maximum value. Note that this does not automatically cure the weary status effect.",
     usableBy: "Moderator",
     aliases: ["restore"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

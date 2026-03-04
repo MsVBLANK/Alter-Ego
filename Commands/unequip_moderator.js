@@ -14,8 +14,7 @@ export const config = {
         + "or not. People in the room will see the player unequip an item, regardless of its size.",
     usableBy: "Moderator",
     aliases: ["unequip", "remove", "u"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

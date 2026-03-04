@@ -12,8 +12,7 @@ export const config = {
         + "status effects that modify the stamina stat.",
     usableBy: "Moderator",
     aliases: ["stats"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

@@ -10,8 +10,7 @@ export const config = {
     details: "Lists the given player's inventory.",
     usableBy: "Moderator",
     aliases: ["inventory", "i"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

@@ -18,8 +18,7 @@ export const config = {
         + 'If the "stats" argument is given, then the move times will be calculated for hypothetical players with speed from 1-10.',
     usableBy: "Moderator",
     aliases: ["testspeeds"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

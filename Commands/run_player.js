@@ -22,8 +22,7 @@ export const config = {
         + `Note that if you are carrying any large items in your hands (for example, a sword), they will be mentioned when you exit or enter a room.`,
     usableBy: "Player",
     aliases: ["run"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

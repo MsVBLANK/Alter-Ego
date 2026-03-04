@@ -11,8 +11,7 @@ export const config = {
     details: "Knocks on a door for the given player",
     usableBy: "Moderator",
     aliases: ["knock"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

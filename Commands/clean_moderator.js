@@ -13,8 +13,7 @@ export const config = {
         + "after this command finishes executing, otherwise data may be overwritten on the sheet during gameplay.",
     usableBy: "Moderator",
     aliases: ["clean", "autoclean"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

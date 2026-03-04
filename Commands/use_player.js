@@ -26,8 +26,7 @@ export const config = {
         + `Other fixtures may require a puzzle to be solved before they do anything special.`,
     usableBy: "Player",
     aliases: ["use", "unlock", "lock", "type", "activate", "deactivate", "flip", "push", "press", "ingest", "consume", "swallow", "eat", "drink"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

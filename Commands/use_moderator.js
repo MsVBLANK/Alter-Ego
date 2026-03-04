@@ -15,8 +15,7 @@ export const config = {
         + "Note that you cannot solve puzzles using this command. To do that, use the puzzle command.",
     usableBy: "Moderator",
     aliases: ["use"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

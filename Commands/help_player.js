@@ -11,8 +11,7 @@ export const config = {
     details: "Lists all commands available to the user. If a command is specified, displays the help menu for that command.",
     usableBy: "Player",
     aliases: ["help"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

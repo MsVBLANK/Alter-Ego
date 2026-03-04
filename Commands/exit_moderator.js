@@ -16,8 +16,7 @@ export const config = {
         + "solve/unsolve it.",
     usableBy: "Moderator",
     aliases: ["exit", "room", "lock", "unlock"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 } ;
 
 /**

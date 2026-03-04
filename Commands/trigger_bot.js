@@ -13,8 +13,7 @@ export const config = {
         + "They will be run if they were passed by anything else, however.",
     usableBy: "Bot",
     aliases: ["trigger"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

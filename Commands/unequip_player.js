@@ -19,8 +19,7 @@ export const config = {
         + `To unequip many items at once, use the \`undress\` command. If you wish to equip an item again, use the \`equip\` command.`,
     usableBy: "Player",
     aliases: ["unequip", "remove", "u"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

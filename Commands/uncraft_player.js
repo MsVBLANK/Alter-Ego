@@ -18,8 +18,7 @@ export const config = {
         + `To see all of the items in your inventory that can be uncrafted, use the \`recipes\` command.`,
     usableBy: "Player",
     aliases: ["uncraft", "dismantle", "disassemble", "uc"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

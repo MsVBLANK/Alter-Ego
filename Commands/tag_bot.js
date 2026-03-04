@@ -13,8 +13,7 @@ export const config = {
         + "Note that unlike the moderator version of this command, you cannot add/remove multiple tags at once.",
     usableBy: "Bot",
     aliases: ["tag", "addtag", "removetag"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

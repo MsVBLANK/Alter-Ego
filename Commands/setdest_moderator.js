@@ -28,8 +28,7 @@ export const config = {
         + "To prevent this, this command should be used sparingly, and all affected exits should have their destinations reassigned.",
     usableBy: "Moderator",
     aliases: ["setdest"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

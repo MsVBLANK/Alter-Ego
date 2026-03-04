@@ -16,8 +16,7 @@ export const config = {
         + `a space-separated list of coordinates in the order **x y z** must be given.`,
     usableBy: "Bot",
     aliases: ["setpos"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

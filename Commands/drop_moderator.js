@@ -20,8 +20,7 @@ export const config = {
     + "Only objects and item in the same room as the player can be specified.",
     usableBy: "Moderator",
     aliases: ["drop", "discard", "put", "place", "d"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

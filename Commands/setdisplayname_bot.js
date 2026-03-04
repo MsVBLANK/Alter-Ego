@@ -14,8 +14,7 @@ export const config = {
         + "display name changed. To reset a player's display name to their real name, simply do not specify a new display name.",
     usableBy: "Bot",
     aliases: ["setdisplayname", "sdn"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

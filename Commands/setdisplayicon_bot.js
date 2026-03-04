@@ -15,8 +15,7 @@ export const config = {
         + "To reset a player's display icon to their Discord avatar, simply do not specify a new display icon.",
     usableBy: "Bot",
     aliases: ["setdisplayicon", "sdi"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

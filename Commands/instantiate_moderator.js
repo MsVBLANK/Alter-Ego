@@ -20,8 +20,7 @@ export const config = {
         + "The player will be notified of obtaining the item in this case, and the prefab's equipped commands will be run.",
     usableBy: "Moderator",
     aliases: ["instantiate", "create", "generate", "is", "gn"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

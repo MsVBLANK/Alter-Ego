@@ -9,8 +9,7 @@ export const config = {
     details: "Lists all players who are currently online.",
     usableBy: "Moderator",
     aliases: ["online"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

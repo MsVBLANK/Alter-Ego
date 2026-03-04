@@ -18,8 +18,7 @@ export const config = {
         + "room will be killed.",
     usableBy: "Bot",
     aliases: ["kill", "die"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

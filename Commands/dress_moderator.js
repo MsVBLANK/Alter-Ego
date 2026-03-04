@@ -19,8 +19,7 @@ export const config = {
         + "slot to dress from. Otherwise, the player will dress from all slots.",
     usableBy: "Moderator",
     aliases: ["dress", "redress"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

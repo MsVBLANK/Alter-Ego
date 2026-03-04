@@ -19,8 +19,7 @@ export const config = {
     + `voice descriptor in the commands.`,
     usableBy: "Bot",
     aliases: ["setvoice"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

@@ -32,8 +32,7 @@ export const config = {
 		+ 'directly after the preposition, if there is one. Keep in mind that it is not possible to filter by Equipment Slot and container at the same time.',
     usableBy: "Moderator",
     aliases: ["find", "search", "f"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

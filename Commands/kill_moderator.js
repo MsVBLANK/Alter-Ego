@@ -16,8 +16,7 @@ export const config = {
         + "and give them the Dead role.",
     usableBy: "Moderator",
     aliases: ["kill", "die"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

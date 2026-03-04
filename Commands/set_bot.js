@@ -17,8 +17,7 @@ export const config = {
         + 'with the same name spread across the map.',
     usableBy: "Bot",
     aliases: ["set"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

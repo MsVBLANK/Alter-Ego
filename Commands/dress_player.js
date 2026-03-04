@@ -20,8 +20,7 @@ export const config = {
         + `(for example, a backpack with several pockets), you can specify which slot to dress from. Otherwise, you will dress from all slots.`,
     usableBy: "Player",
     aliases: ["dress", "redress"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

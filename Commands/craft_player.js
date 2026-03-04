@@ -17,8 +17,7 @@ export const config = {
         + `can be reversed once performed using the \`uncraft\` command. For more information on both of these commands, use the \`help\` command.`,
     usableBy: "Player",
     aliases: ["craft", "combine", "mix", "c"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

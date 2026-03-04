@@ -19,8 +19,7 @@ export const config = {
         + `container identifier or prefab ID. For any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.`,
     usableBy: "Moderator",
     aliases: ["gesture", "g"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

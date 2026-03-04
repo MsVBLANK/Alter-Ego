@@ -20,8 +20,7 @@ export const config = {
         + `the items in the first slot it has. Keep in mind that the specified container must have a large enough capacity to hold all of the items in your inventory.`,
     usableBy: "Player",
     aliases: ["undress"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

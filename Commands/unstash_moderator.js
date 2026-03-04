@@ -15,8 +15,7 @@ export const config = {
         + "people in the room with the player will see them doing so.",
     usableBy: "Moderator",
     aliases: ["unstash", "retrieve", "r"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

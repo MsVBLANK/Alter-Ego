@@ -14,8 +14,7 @@ export const config = {
         + "be sure to load the updated spreadsheet data before disabling edit mode.",
     usableBy: "Moderator",
     aliases: ["editmode", "em"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

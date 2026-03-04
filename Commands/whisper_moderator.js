@@ -21,8 +21,7 @@ export const config = {
         + "NPC players can only speak in the whisper using this command and the list of players in the whisper.",
     usableBy: "Moderator",
     aliases: ["whisper", "w"],
-    requiresGame: true,
-    whitespaceSensitive: false
+    requiresGame: true
 };
 
 /**

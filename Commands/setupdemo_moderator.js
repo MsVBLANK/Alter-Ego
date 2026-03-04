@@ -21,8 +21,7 @@ export const config = {
         + "this command if the spreadsheet is currently blank.**",
     usableBy: "Moderator",
     aliases: ["setupdemo"],
-    requiresGame: false,
-    whitespaceSensitive: false
+    requiresGame: false
 };
 
 /**

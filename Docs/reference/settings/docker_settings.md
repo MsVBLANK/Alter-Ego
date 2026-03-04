@@ -71,7 +71,7 @@ when a player enters or inspects a Room if the Room does not have a unique icon 
 `.gif`. If this is left blank and the Room does not have a unique icon URL, then Alter Ego will use the server icon
 instead. If the server icon is not set, then no image will be sent in the MessageEmbed.
 
-### AUTODELETE_WHISPER_CHANNELS
+### AUTO_DELETE_WHISPER_CHANNELS
 
 This is a Boolean value that determines whether or not [Whisper](../data_structures/whisper.md) channels will be
 automatically deleted when all players have left the room. If this is `true`, they will be deleted. If this is `false`,

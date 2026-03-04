@@ -1,80 +1,73 @@
 import Exit from "../Data/Exit.ts";
 import Fixture from "../Data/Fixture.ts";
 import InventoryItem from "../Data/InventoryItem.ts";
-import InventorySlot from "../Data/InventorySlot.ts";
 import ItemInstance from "../Data/ItemInstance.ts";
 import Player from "../Data/Player.ts";
 import Puzzle from "../Data/Puzzle.ts";
 import Room from "../Data/Room.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import { generateListString } from "../Modules/helpers.ts";
-
-/** @import EquipmentSlot from "../Data/EquipmentSlot.ts" */
-/** @import Flag from "../Data/Flag.ts" */
-/** @import Game from "../Data/Game.ts" */
-/** @import Gesture from "../Data/Gesture.ts" */
-/** @import Event from "../Data/Event.ts" */
-/** @import HidingSpot from "../Data/HidingSpot.ts" */
-/** @import ItemContainer from "../Data/ItemContainer.ts" */
-/** @import Status from "../Data/Status.ts" */
-/** @import Whisper from "../Data/Whisper.ts" */
+import type EquipmentSlot from "../Data/EquipmentSlot.ts";
+import type Flag from "../Data/Flag.ts";
+import type Game from "../Data/Game.ts";
+import type Gesture from "../Data/Gesture.ts";
+import type Event from "../Data/Event.ts";
+import type HidingSpot from "../Data/HidingSpot.ts";
+import type InventorySlot from "../Data/InventorySlot.ts";
+import type Status from "../Data/Status.ts";
+import type Whisper from "../Data/Whisper.ts";
 
 /**
- * @class GameLogHandler
- * @classdesc A set of functions to send messages to the game's log channel.
+ * A set of functions to send messages to the game's log channel.
  */
 export default class GameLogHandler {
 	/**
 	 * The game this belongs to.
-	 * @readonly
-	 * @type {Game}
 	 */
-	game;
+	readonly #game: Game;
 
 	/**
-	 * @constructor
-	 * @param {Game} game - The game this belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(game) {
-		this.game = game;
+	constructor(game: Game) {
+		this.#game = game;
 	}
 
-	#getTime() {
+	#getTime(): string {
 		return new Date().toLocaleTimeString();
 	}
 
-	/** @param {boolean} forced */
-	#getForcedString(forced) {
+	#getForcedString(forced: boolean): string {
 		return forced ? `forcibly ` : ``;
 	}
 
 	/**
 	 * Sends the log message.
-	 * @param {string} logText - The text of the log message.
+	 * @param logText - The text of the log message.
 	 */
-	#sendLogMessage(logText) {
-		this.game.communicationHandler.sendLogMessage(logText);
+	#sendLogMessage(logText: string): void {
+		this.#game.communicationHandler.sendLogMessage(logText);
 	}
 
 	/**
 	 * Logs a whisper action.
-	 * @param {Whisper} whisper - The whisper that was created.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param whisper - The whisper that was created.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logWhisper(whisper, player, forced) {
+	logWhisper(whisper: Whisper, player: Player, forced: boolean) {
 		const playerListString = generateListString(whisper.players.filter(whisperPlayer => whisperPlayer.name !== player.name).map(player => player.name));
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}began whispering to ${playerListString} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a gesture action.
-	 * @param {Gesture} gesture - The gesture that was performed.
-	 * @param {GestureTarget|null} target - The target of the gesture action.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param gesture - The gesture that was performed.
+	 * @param target - The target of the gesture action.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logGesture(gesture, target, player, forced) {
+	logGesture(gesture: Gesture, target: GestureTarget | null, player: Player, forced: boolean) {
 		let targetString = "";
 		if (target instanceof ItemInstance) targetString = `to ${target.getIdentifier()} `;
 		else if (target instanceof Exit || target instanceof Fixture || target instanceof Player) targetString = `to ${target.name} `;
@@ -83,23 +76,23 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a move action.
-	 * @param {boolean} isRunning - Whether the player is running.
-	 * @param {Room} destination - The room the player moved to.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param isRunning - Whether the player is running.
+	 * @param destination - The room the player moved to.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logMove(isRunning, destination, player, forced) {
+	logMove(isRunning: boolean, destination: Room, player: Player, forced: boolean) {
 		const verb = isRunning ? `ran` : `moved`;
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}${verb} to ${destination.channel}`);
 	}
 
 	/**
 	 * Logs an inspect action.
-	 * @param {Room|Fixture|RoomItem|InventoryItem|Player} target - The target of the inspect action.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param target - The target of the inspect action.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logInspect(target, player, forced) {
+	logInspect(target: Room | Fixture | RoomItem | InventoryItem | Player, player: Player, forced: boolean) {
 		let targetString = "";
 		if (target instanceof Room) targetString = `the room`;
 		else if (target instanceof Fixture || target instanceof Player) targetString = `${target.name}`;
@@ -117,63 +110,63 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a knock action.
-	 * @param {Exit} exit - The exit that was knocked on.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param exit - The exit that was knocked on.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logKnock(exit, player, forced) {
+	logKnock(exit: Exit, player: Player, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}knocked on ${exit.name} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a hide action.
-	 * @param {HidingSpot} hidingSpot - The hiding spot the player hid in.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} successful - Whether or not the player was successful in hiding.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param hidingSpot - The hiding spot the player hid in.
+	 * @param player - The player who performed the action.
+	 * @param successful - Whether or not the player was successful in hiding.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logHide(hidingSpot, player, successful, forced) {
+	logHide(hidingSpot: HidingSpot, player: Player, successful: boolean, forced: boolean) {
 		const actionVerb = successful ? `hid` : `attempted and failed to hide`;
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}${actionVerb} in ${hidingSpot.name} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an unhide action.
-	 * @param {HidingSpot} hidingSpot - The hiding spot the player came out of.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param hidingSpot - The hiding spot the player came out of.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUnhide(hidingSpot, player, forced) {
+	logUnhide(hidingSpot: HidingSpot, player: Player, forced: boolean) {
 		const hidingSpotName = hidingSpot ? hidingSpot.name : "hiding";
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}came out of ${hidingSpotName} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an inflict action.
-	 * @param {Status} status - The status that was inflicted.
-	 * @param {Player} player - The player who performed the action.
+	 * @param status - The status that was inflicted.
+	 * @param player - The player who performed the action.
 	 */
-	logInflict(status, player) {
+	logInflict(status: Status, player: Player) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} became ${status.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a cure action.
-	 * @param {Status} status - The status that was cured.
-	 * @param {Player} player - The player who performed the action.
+	 * @param status - The status that was cured.
+	 * @param player - The player who performed the action.
 	 */
-	logCure(status, player) {
+	logCure(status: Status, player: Player) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} has been cured of ${status.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a use action.
-	 * @param {InventoryItem} item - The item that was used.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {Player} target - The player the item was used on.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was used.
+	 * @param player - The player who performed the action.
+	 * @param target - The player the item was used on.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUse(item, player, target, forced) {
+	logUse(item: InventoryItem, player: Player, target: Player, forced: boolean) {
 		const forcedString = this.#getForcedString(forced);
 		const itemName = item.getIdentifier();
 		const targetString = player.name === target.name ? `on ${target.name} ` : ``;
@@ -183,14 +176,14 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a take action.
-	 * @param {RoomItem} item - The item that was taken.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {RoomItemContainer} container - The container the item was taken from.
-	 * @param {InventorySlot} inventorySlot - The inventory slot the item was taken from.
-	 * @param {boolean} successful - Whether or not the player was successful in taking the item.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was taken.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the item was taken from.
+	 * @param inventorySlot - The inventory slot the item was taken from.
+	 * @param successful - Whether or not the player was successful in taking the item.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logTake(item, player, container, inventorySlot, successful, forced) {
+	logTake(item: RoomItem, player: Player, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, successful: boolean, forced: boolean) {
 		const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
 		const actionVerb = successful ? `took` : `attempted and failed to take`;
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}${actionVerb} ${item.getIdentifier()} from ${containerPhrase} in ${player.location.channel}`);
@@ -198,15 +191,15 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a steal action.
-	 * @param {InventoryItem} item - The item that was stolen.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {Player} victim - The player who was stolen from.
-	 * @param {InventoryItem} container - The container the item was stolen from.
-	 * @param {InventorySlot} inventorySlot - The inventory slot the item was stolen from.
-	 * @param {boolean} successful - Whether or not the player was successful in stealing.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was stolen.
+	 * @param player - The player who performed the action.
+	 * @param victim - The player who was stolen from.
+	 * @param container - The container the item was stolen from.
+	 * @param inventorySlot - The inventory slot the item was stolen from.
+	 * @param successful - Whether or not the player was successful in stealing.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logSteal(item, player, victim, container, inventorySlot, successful, forced) {
+	logSteal(item: InventoryItem, player: Player, victim: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>, successful: boolean, forced: boolean) {
 		const forcedString = this.#getForcedString(forced);
 		const actionVerb = successful ? `stole` : `attempted and failed to steal`;
 		const logText = `${this.#getTime()} - ${player.name} ${forcedString}${actionVerb} ${item.getIdentifier()} from ${inventorySlot.id} of ${victim.name}'s ${container.getIdentifier()} in ${player.location.channel}`;
@@ -215,13 +208,13 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a drop action.
-	 * @param {InventoryItem} item - The item that was dropped.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {RoomItemContainer} container - The container the item was dropped into.
-	 * @param {InventorySlot} inventorySlot - The inventory slot the item was dropped into.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was dropped.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the item was dropped into.
+	 * @param inventorySlot - The inventory slot the item was dropped into.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logDrop(item, player, container, inventorySlot, forced) {
+	logDrop(item: InventoryItem, player: Player, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, forced: boolean) {
 		const preposition = container.getPreposition() ? container.getPreposition() : "in";
 		const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}dropped ${item.getIdentifier()} ${preposition} ${containerPhrase} in ${player.location.channel}`);
@@ -229,26 +222,26 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a give action.
-	 * @param {InventoryItem} item - The item that was given.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {Player} recipient - The player who received the item.
-	 * @param {boolean} successful - Whether or not the player was successful in giving the item.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was given.
+	 * @param player - The player who performed the action.
+	 * @param recipient - The player who received the item.
+	 * @param successful - Whether or not the player was successful in giving the item.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logGive(item, player, recipient, successful, forced) {
+	logGive(item: InventoryItem, player: Player, recipient: Player, successful: boolean, forced: boolean) {
 		const actionVerb = successful ? `gave` : `attempted and failed to give`;
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}${actionVerb} ${item.getIdentifier()} to ${recipient.name} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a stash action.
-	 * @param {InventoryItem} item - The item that was stashed.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {InventoryItem} container - The container the item was stashed in.
-	 * @param {InventorySlot} inventorySlot - The inventory slot the item was stashed in.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was stashed.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the item was stashed in.
+	 * @param inventorySlot - The inventory slot the item was stashed in.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logStash(item, player, container, inventorySlot, forced) {
+	logStash(item: InventoryItem, player: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>, forced: boolean) {
 		const forcedString = this.#getForcedString(forced);
 		const itemIdentifier = item.getIdentifier();
 		const preposition = container.getPreposition() ? container.getPreposition() : "in";
@@ -258,13 +251,13 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an unstash action.
-	 * @param {InventoryItem} item - The item that was unstashed.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {InventoryItem} container - The container the item was unstashed from.
-	 * @param {InventorySlot} inventorySlot - The inventory slot the item was unstashed from.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was unstashed.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the item was unstashed from.
+	 * @param inventorySlot - The inventory slot the item was unstashed from.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUnstash(item, player, container, inventorySlot, forced) {
+	logUnstash(item: InventoryItem, player: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>, forced: boolean) {
 		const forcedString = this.#getForcedString(forced);
 		const itemIdentifier = item.getIdentifier();
 		const containerIdentifier = container.getIdentifier();
@@ -273,35 +266,35 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an equip action.
-	 * @param {InventoryItem} item - The item that was equipped.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {EquipmentSlot} equipmentSlot - The equipment slot the item was equipped to.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was equipped.
+	 * @param player - The player who performed the action.
+	 * @param equipmentSlot - The equipment slot the item was equipped to.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logEquip(item, player, equipmentSlot, forced) {
+	logEquip(item: InventoryItem, player: Player, equipmentSlot: EquipmentSlot, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}equipped ${item.getIdentifier()} to ${equipmentSlot.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an unequip action.
-	 * @param {InventoryItem} item - The item that was unequipped.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {EquipmentSlot} equipmentSlot - The equipment slot the item was unequipped from.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item - The item that was unequipped.
+	 * @param player - The player who performed the action.
+	 * @param equipmentSlot - The equipment slot the item was unequipped from.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUnequip(item, player, equipmentSlot, forced) {
+	logUnequip(item: InventoryItem, player: Player, equipmentSlot: EquipmentSlot, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}unequipped ${item.getIdentifier()} from ${equipmentSlot.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a dress action.
-	 * @param {InventoryItem[]} items - The items the player put on.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {RoomItemContainer} container - The container the player dressed from.
-	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the player dressed from, if applicable.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param items - The items the player put on.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the player dressed from.
+	 * @param inventorySlot - The inventory slot the player dressed from, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logDress(items, player, container, inventorySlot, forced) {
+	logDress(items: InventoryItem[], player: Player, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, forced: boolean) {
 		const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
 		const itemList = generateListString(items.map(item => item.getIdentifier()));
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}dressed from ${containerPhrase}, putting on ${itemList} in ${player.location.channel}`);
@@ -309,13 +302,13 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an undress action.
-	 * @param {InventoryItem[]} items - The items the player took off.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {RoomItemContainer} container - The container the player undressed into.
-	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the player undressed into, if applicable.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param items - The items the player took off.
+	 * @param player - The player who performed the action.
+	 * @param container - The container the player undressed into.
+	 * @param inventorySlot - The inventory slot the player undressed into, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUndress(items, player, container, inventorySlot, forced) {
+	logUndress(items: InventoryItem[], player: Player, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, forced: boolean) {
 		const preposition = container.getPreposition();
 		const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
 		const itemList = generateListString(items.map(item => item.getIdentifier()));
@@ -324,12 +317,12 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an instantiate action for a room item.
-	 * @param {RoomItem} item - The instantiated item.
-	 * @param {number} quantity - The quantity of the item that was instantiated.
-	 * @param {RoomItemContainer} container - The item's container.
-	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the item belongs to.
+	 * @param item - The instantiated item.
+	 * @param quantity - The quantity of the item that was instantiated.
+	 * @param container - The item's container.
+	 * @param inventorySlot - The inventory slot the item belongs to.
 	 */
-	logInstantiateRoomItem(item, quantity, container, inventorySlot) {
+	logInstantiateRoomItem(item: RoomItem, quantity: number, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>) {
 		const itemIdentifier = item.getIdentifier();
 		const preposition = item.getContainerPreposition();
 		let containerDisplay = "";
@@ -344,23 +337,23 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an instantiate action for an equipped inventory item.
-	 * @param {InventoryItem} item - The instantiated inventory item.
-	 * @param {Player} player - The player the item belongs to.
-	 * @param {EquipmentSlot} equipmentSlot - The equipment slot the inventory item was equipped to.
+	 * @param item - The instantiated inventory item.
+	 * @param player - The player the item belongs to.
+	 * @param equipmentSlot - The equipment slot the inventory item was equipped to.
 	 */
-	logInstantiateEquippedInventoryItem(item, player, equipmentSlot) {
+	logInstantiateEquippedInventoryItem(item: InventoryItem, player: Player, equipmentSlot: EquipmentSlot) {
 		this.#sendLogMessage(`${this.#getTime()} - Instantiated ${item.getIdentifier()} and equipped it to ${player.name}'s ${equipmentSlot.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an instantiate action for a stashed inventory item.
-	 * @param {InventoryItem} item - The instantiated inventory item.
-	 * @param {number} quantity - The quantity of the item that was instantiated.
-	 * @param {Player} player - The player the item belongs to.
-	 * @param {InventoryItem} container - The item's container.
-	 * @param {InventorySlot<InventoryItem>} inventorySlot - The inventory slot the item belongs to.
+	 * @param item - The instantiated inventory item.
+	 * @param quantity - The quantity of the item that was instantiated.
+	 * @param player - The player the item belongs to.
+	 * @param container - The item's container.
+	 * @param inventorySlot - The inventory slot the item belongs to.
 	 */
-	logInstantiateStashedInventoryItem(item, quantity, player, container, inventorySlot) {
+	logInstantiateStashedInventoryItem(item: InventoryItem, quantity: number, player: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>) {
 		const itemIdentifier = item.getIdentifier();
 		const preposition = container.prefab ? container.prefab.preposition : "in";
 		const containerDisplay = `${inventorySlot.id} of ${container.identifier} in ${player.name}'s inventory`;
@@ -369,12 +362,12 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a destroy action for a room item.
-	 * @param {RoomItem} item - The destroyed item.
-	 * @param {number} quantity - The quantity of the item that was destroyed.
-	 * @param {RoomItemContainer} container - The item's container.
-	 * @param {InventorySlot<RoomItem>} inventorySlot - The inventory slot the item belongs to.
+	 * @param item - The destroyed item.
+	 * @param quantity - The quantity of the item that was destroyed.
+	 * @param container - The item's container.
+	 * @param inventorySlot - The inventory slot the item belongs to.
 	 */
-	logDestroyRoomItem(item, quantity, container, inventorySlot) {
+	logDestroyRoomItem(item: RoomItem, quantity: number, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>) {
 		const itemIdentifier = item.getIdentifier();
 		const preposition = item.getContainerPreposition();
 		let containerDisplay = "";
@@ -389,23 +382,23 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a destroy action for an equipped inventory item.
-	 * @param {InventoryItem} item - The destroyed inventory item.
-	 * @param {Player} player - The player the item belongs to.
-	 * @param {EquipmentSlot} equipmentSlot - The equipment slot the inventory item was equipped to.
+	 * @param item - The destroyed inventory item.
+	 * @param player - The player the item belongs to.
+	 * @param equipmentSlot - The equipment slot the inventory item was equipped to.
 	 */
-	logDestroyEquippedInventoryItem(item, player, equipmentSlot) {
+	logDestroyEquippedInventoryItem(item: InventoryItem, player: Player, equipmentSlot: EquipmentSlot) {
 		this.#sendLogMessage(`${this.#getTime()} - Destroyed ${item.getIdentifier()} equipped to ${player.name}'s ${equipmentSlot.id} in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a destroy action for a stashed inventory item.
-	 * @param {InventoryItem} item - The destroyed inventory item.
-	 * @param {number} quantity - The quantity of the item that was destroyed.
-	 * @param {Player} player - The player the item belongs to.
-	 * @param {InventoryItem} container - The item's container.
-	 * @param {InventorySlot<InventoryItem>} inventorySlot - The inventory slot the item belongs to.
+	 * @param item - The destroyed inventory item.
+	 * @param quantity - The quantity of the item that was destroyed.
+	 * @param player - The player the item belongs to.
+	 * @param container - The item's container.
+	 * @param inventorySlot - The inventory slot the item belongs to.
 	 */
-	logDestroyStashedInventoryItem(item, quantity, player, container, inventorySlot) {
+	logDestroyStashedInventoryItem(item: InventoryItem, quantity: number, player: Player, container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>) {
 		const itemIdentifier = item.getIdentifier();
 		const preposition = container.prefab ? container.prefab.preposition : "in";
 		const containerDisplay = `${inventorySlot.id} of ${container.identifier} in ${player.name}'s inventory`;
@@ -414,13 +407,13 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a craft action.
-	 * @param {string} item1Id - The identifier of the first ingredient.
-	 * @param {string} item2Id - The identifier of the second ingredient.
-	 * @param {CraftingResult} craftingResult - The result of the craft action.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param item1Id - The identifier of the first ingredient.
+	 * @param item2Id - The identifier of the second ingredient.
+	 * @param craftingResult - The result of the craft action.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logCraft(item1Id, item2Id, craftingResult, player, forced) {
+	logCraft(item1Id: string, item2Id: string, craftingResult: CraftingResult, player: Player, forced: boolean) {
 		let productPhrase = "";
 		let product1Phrase = "";
 		let product2Phrase = "";
@@ -435,12 +428,12 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an uncraft action.
-	 * @param {string} itemId - The identifier of the product.
-	 * @param {UncraftingResult} uncraftingResult - The result of the uncraft action.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param itemId - The identifier of the product.
+	 * @param uncraftingResult - The result of the uncraft action.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUncraft(itemId, uncraftingResult, player, forced) {
+	logUncraft(itemId: string, uncraftingResult: UncraftingResult, player: Player, forced: boolean) {
 		let ingredientPhrase = "";
 		let ingredient1Phrase = "";
 		let ingredient2Phrase = "";
@@ -455,135 +448,135 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs an activate action.
-	 * @param {Fixture} fixture - The fixture that was activated.
-	 * @param {Player} [player] - The player who performed the action, if applicable.
-	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
+	 * @param fixture - The fixture that was activated.
+	 * @param player - The player who performed the action, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logActivate(fixture, player, forced) {
+	logActivate(fixture: Fixture, player?: Player, forced?: boolean) {
 		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}activated ${fixture.name}` : `${fixture.name} was activated`;
 		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${fixture.location.channel}`);
 	}
 
 	/**
 	 * Logs a deactivate action.
-	 * @param {Fixture} fixture - The fixture that was deactivated.
-	 * @param {Player} [player] - The player who performed the action, if applicable.
-	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
+	 * @param fixture - The fixture that was deactivated.
+	 * @param player - The player who performed the action, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logDeactivate(fixture, player, forced) {
+	logDeactivate(fixture: Fixture, player?: Player, forced?: boolean) {
 		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}deactivated ${fixture.name}` : `${fixture.name} was deactivated`;
 		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${fixture.location.channel}`);
 	}
 
 	/**
 	 * Logs a solve action or an attempt action that solves the puzzle.
-	 * @param {Puzzle} puzzle - The puzzle being solved.
-	 * @param {Player} [player] - The player who performed the action, if applicable.
-	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle being solved.
+	 * @param player - The player who performed the action, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logSolve(puzzle, player, forced) {
+	logSolve(puzzle: Puzzle, player?: Player, forced?: boolean) {
 		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}solved ${puzzle.name}` : `${puzzle.name} was solved`;
 		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${puzzle.location.channel}`);
 	}
 
 	/**
 	 * Logs an unsolve action or an attempt action that unsolves the puzzle.
-	 * @param {Puzzle} puzzle - The puzzle being unsolved.
-	 * @param {Player} [player] - The player who performed the action, if applicable.
-	 * @param {boolean} [forced] - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle being unsolved.
+	 * @param player - The player who performed the action, if applicable.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logUnsolve(puzzle, player, forced) {
+	logUnsolve(puzzle: Puzzle, player?: Player, forced?: boolean) {
 		const actionDescription = player ? `${player.name} ${this.#getForcedString(forced)}unsolved ${puzzle.name}` : `${puzzle.name} was unsolved`;
 		this.#sendLogMessage(`${this.#getTime()} - ${actionDescription} in ${puzzle.location.channel}`);
 	}
 
 	/**
 	 * Logs an attempt action where the puzzle was already solved.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle that was attempted.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logAttemptAlreadySolvedPuzzle(puzzle, player, forced) {
+	logAttemptAlreadySolvedPuzzle(puzzle: Puzzle, player: Player, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}attempted ${puzzle.name} while it was already solved in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an attempt action where the player failed to solve the puzzle.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle that was attempted.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logAttemptAndFailPuzzle(puzzle, player, forced) {
+	logAttemptAndFailPuzzle(puzzle: Puzzle, player: Player, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}attempted and failed to solve ${puzzle.name} in ${player.location.channel}`)
 	}
 
 	/**
 	 * Logs an attempt action where the puzzle has no remaining attempts.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle that was attempted.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logAttemptPuzzleWithNoRemainingAttempts(puzzle, player, forced) {
+	logAttemptPuzzleWithNoRemainingAttempts(puzzle: Puzzle, player: Player, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}attempted ${puzzle.name} with no remaining attempts in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an attempt action where the puzzle is inaccessible.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
-	 * @param {Player} player - The player who performed the action.
-	 * @param {boolean} forced - Whether or not the player was forced to perform the action.
+	 * @param puzzle - The puzzle that was attempted.
+	 * @param player - The player who performed the action.
+	 * @param forced - Whether or not the player was forced to perform the action.
 	 */
-	logAttemptInaccessiblePuzzle(puzzle, player, forced) {
+	logAttemptInaccessiblePuzzle(puzzle: Puzzle, player: Player, forced: boolean) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} ${this.#getForcedString(forced)}attempted ${puzzle.name} without meeting all of the requirements in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs a die action.
-	 * @param {Player} player - The player who died.
+	 * @param player - The player who died.
 	 */
-	logDie(player) {
+	logDie(player: Player) {
 		this.#sendLogMessage(`${this.#getTime()} - ${player.name} died in ${player.location.channel}`);
 	}
 
 	/**
 	 * Logs an exit being unlocked.
-	 * @param {Room} room - The room the exit is in.
-	 * @param {Exit} exit - The exit that was unlocked.
+	 * @param room - The room the exit is in.
+	 * @param exit - The exit that was unlocked.
 	 */
-	logUnlock(room, exit) {
+	logUnlock(room: Room, exit: Exit) {
 		this.#sendLogMessage(`${this.#getTime()} - ${exit.name} was unlocked in ${room.channel}`);
 	}
 
 	/**
 	 * Logs an exit being locked.
-	 * @param {Room} room - The room the exit is in.
-	 * @param {Exit} exit - The exit that was locked.
+	 * @param room - The room the exit is in.
+	 * @param exit - The exit that was locked.
 	 */
-	logLock(room, exit) {
+	logLock(room: Room, exit: Exit) {
 		this.#sendLogMessage(`${this.#getTime()} - ${exit.name} was locked in ${room.channel}`);
 	}
 
 	/**
 	 * Logs an event being triggered.
-	 * @param {Event} event - The event that was triggered.
+	 * @param event - The event that was triggered.
 	 */
-	logTrigger(event) {
+	logTrigger(event: Event) {
 		this.#sendLogMessage(`${this.#getTime()} - ${event.id} was triggered`);
 	}
 
 	/**
 	 * Logs an event being ended.
-	 * @param {Event} event - The event that was ended.
+	 * @param event - The event that was ended.
 	 */
-	logEnd(event) {
+	logEnd(event: Event) {
 		this.#sendLogMessage(`${this.#getTime()} - ${event.id} was ended`);
 	}
 
 	/**
 	 * Logs a flag being set.
-	 * @param {Flag} flag - The flag that was set.
+	 * @param flag - The flag that was set.
 	 */
-	logSetFlag(flag) {
+	logSetFlag(flag: Flag) {
 		const valueDisplay =
 			typeof flag.value === "string" ? `"${flag.value}"` :
 				typeof flag.value === "boolean" ? `\`${flag.value}\`` :
@@ -593,9 +586,9 @@ export default class GameLogHandler {
 
 	/**
 	 * Logs a flag being cleared.
-	 * @param {Flag} flag - The flag that was cleared.
+	 * @param flag - The flag that was cleared.
 	 */
-	logClearFlag(flag) {
+	logClearFlag(flag: Flag) {
 		this.#sendLogMessage(`${this.#getTime()} - ${flag.id} was cleared`);
 	}
 }

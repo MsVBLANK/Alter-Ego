@@ -1,42 +1,37 @@
 import Room from "../Data/Room.ts";
 import Whisper from "../Data/Whisper.ts";
-import { ChannelType, GuildMember, TextChannel } from "discord.js";
 import Moderator from "../Data/Moderator.ts";
-
-/** @import Event from "../Data/Event.ts" */
-/** @import Fixture from "../Data/Fixture.ts" */
-/** @import Flag from "../Data/Flag.ts" */
-/** @import Game from "../Data/Game.ts" */
-/** @import Player from "../Data/Player.ts" */
-/** @import Prefab from "../Data/Prefab.ts" */
-/** @import Puzzle from "../Data/Puzzle.ts" */
-/** @import Status from "../Data/Status.ts" */
+import { ChannelType } from "discord.js";
+import type Event from "../Data/Event.ts";
+import type Fixture from "../Data/Fixture.ts";
+import type Flag from "../Data/Flag.ts";
+import type Game from "../Data/Game.ts";
+import type Player from "../Data/Player.ts";
+import type Prefab from "../Data/Prefab.ts";
+import type Puzzle from "../Data/Puzzle.ts";
+import type Status from "../Data/Status.ts";
+import type { GuildMember, TextChannel } from "discord.js";
 
 /**
- * @class GameEntityManager
- * @classdesc A set of functions to manage game entities.
+ * A set of functions to manage game entities.
  */
-export default class GameEntityManager {
+export default abstract class GameEntityManager {
 	/**
 	 * The game this belongs to.
-	 * @readonly
-	 * @type {Game}
 	 */
-	game;
+	readonly game: Game;
 
 	/**
-	 * @constructor
-	 * @param {Game} game - The game this belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(game) {
+	protected constructor(game: Game) {
 		this.game = game;
 	}
 
 	/**
 	 * Clears all game data from memory.
-	 * @protected
 	 */
-	clearGame() {
+	protected clearGame(): void {
 		this.clearRooms();
 		this.clearFixtures();
 		this.clearPrefabs();
@@ -53,17 +48,15 @@ export default class GameEntityManager {
 
 	/**
 	 * Clears all room data from memory.
-	 * @protected
 	 */
-	clearRooms() {
+	protected clearRooms(): void {
 		this.game.rooms.clear();
 	}
 
 	/**
 	 * Clears all fixture data from memory.
-	 * @protected
 	 */
-	clearFixtures() {
+	protected clearFixtures(): void {
 		this.game.fixtures.forEach(fixture => {
 			if (fixture.recipeInterval !== null)
 				fixture.recipeInterval.stop();
@@ -79,41 +72,36 @@ export default class GameEntityManager {
 
 	/**
 	 * Clears all prefab data from memory.
-	 * @protected
 	 */
-	clearPrefabs() {
+	protected clearPrefabs(): void {
 		this.game.prefabs.clear();
 	}
 
 	/**
 	 * Clears all recipe data from memory.
-	 * @protected
 	 */
-	clearRecipes() {
+	protected clearRecipes(): void {
 		this.game.recipes.length = 0;
 	}
 
 	/**
 	 * Clears all room item data from memory.
-	 * @protected
 	 */
-	clearRoomItems() {
+	protected clearRoomItems(): void {
 		this.game.roomItems.length = 0;
 	}
 
 	/**
 	 * Clears all puzzle data from memory.
-	 * @protected
 	 */
-	clearPuzzles() {
+	protected clearPuzzles(): void {
 		this.game.puzzles.length = 0;
 	}
 
 	/**
 	 * Clears all event data from memory.
-	 * @protected
 	 */
-	clearEvents() {
+	protected clearEvents(): void {
 		this.game.events.forEach(event => {
 			if (event.timer !== null)
 				event.timer.stop();
@@ -125,17 +113,15 @@ export default class GameEntityManager {
 
 	/**
 	 * Clears all status effect data from memory.
-	 * @protected
 	 */
-	clearStatusEffects() {
+	protected clearStatusEffects(): void {
 		this.game.statusEffects.clear();
 	}
 
 	/**
 	 * Clears all player data from memory.
-	 * @protected
 	 */
-	clearPlayers() {
+	protected clearPlayers(): void {
 		this.game.players.forEach(player => {
 			player.status.values().forEach(status => {
 				if (status.timer !== null)
@@ -154,34 +140,30 @@ export default class GameEntityManager {
 
 	/**
 	 * Clears all inventory item data from memory.
-	 * @protected
 	 */
-	clearInventoryItems() {
+	protected clearInventoryItems(): void {
 		this.game.inventoryItems.length = 0;
 	}
 
 	/**
 	 * Clears all gesture data from memory.
-	 * @protected
 	 */
-	clearGestures() {
+	protected clearGestures(): void {
 		this.game.gestures.clear();
 	}
 
 	/**
 	 * Clears all flag data from memory.
-	 * @protected
 	 */
-	clearFlags() {
+	protected clearFlags(): void {
 		this.game.flags.clear();
 	}
 
 	/**
 	 * Updates references to a given room throughout the game.
-	 * @protected
-	 * @param {Room} room - The room to reference.
+	 * @param room - The room to reference.
 	 */
-	updateRoomReferences(room) {
+	protected updateRoomReferences(room: Room): void {
 		this.game.livingPlayers.forEach(player => {
 			if (Room.generateValidId(player.locationDisplayName) === room.id)
 				room.addPlayer(player);
@@ -206,10 +188,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given fixture throughout the game.
-	 * @protected
-	 * @param {Fixture} fixture - The fixture to reference.
+	 * @param fixture - The fixture to reference.
 	 */
-	updateFixtureReferences(fixture) {
+	protected updateFixtureReferences(fixture: Fixture): void {
 		this.game.roomItems.forEach(roomItem => {
 			if (roomItem.location?.id === fixture.location?.id && roomItem.containerType === "Fixture" && roomItem.containerName === fixture.name)
 				roomItem.setContainer(fixture);
@@ -222,10 +203,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given prefab throughout the game.
-	 * @protected
-	 * @param {Prefab} prefab - The prefab to reference.
+	 * @param prefab - The prefab to reference.
 	 */
-	updatePrefabReferences(prefab) {
+	protected updatePrefabReferences(prefab: Prefab): void {
 		this.game.roomItems.forEach(roomItem => {
 			if (roomItem.prefabId === prefab.id)
 				roomItem.setPrefab(prefab);
@@ -244,10 +224,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given puzzle throughout the game.
-	 * @protected
-	 * @param {Puzzle} puzzle - The puzzle to reference.
+	 * @param puzzle - The puzzle to reference.
 	 */
-	updatePuzzleReferences(puzzle) {
+	protected updatePuzzleReferences(puzzle: Puzzle): void {
 		this.game.fixtures.forEach(fixture => {
 			if (fixture.location?.id === puzzle.location?.id && fixture.childPuzzleName !== "" && fixture.childPuzzleName === puzzle.name)
 				fixture.setChildPuzzle(puzzle);
@@ -260,10 +239,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given event throughout the game.
-	 * @protected
-	 * @param {Event} event
+	 * @param event
 	 */
-	updateEventReferences(event) {
+	protected updateEventReferences(event: Event): void {
 		this.game.puzzles.forEach(puzzle => {
 			puzzle.requirementsStrings.forEach((requirementsString, i) => {
 				if (requirementsString.type === "Event" && requirementsString.entityId === event.id)
@@ -274,10 +252,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given status effect throughout the game.
-	 * @protected
-	 * @param {Status} status
+	 * @param status
 	 */
-	updateStatusEffectReferences(status) {
+	protected updateStatusEffectReferences(status: Status): void {
 		this.game.prefabs.forEach(prefab => {
 			prefab.effectsStrings.forEach((effectsString, i) => {
 				if (effectsString === status.id)
@@ -308,10 +285,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates references to a given flag throughout the game.
-	 * @protected
-	 * @param {Flag} flag
+	 * @param flag
 	 */
-	updateFlagReferences(flag) {
+	protected updateFlagReferences(flag: Flag): void {
 		this.game.puzzles.forEach(puzzle => {
 			puzzle.requirementsStrings.forEach((requirementsString, i) => {
 				if (requirementsString.type === "Flag" && requirementsString.entityId === flag.id)
@@ -322,11 +298,11 @@ export default class GameEntityManager {
 
 	/**
 	 * Creates a new whisper and adds it to the game's collection of whispers.
-	 * @param {Player[]} players - The players to add to the whisper.
-	 * @param {string} [hidingSpotName] - The name of the hiding spot the whisper belongs to. Optional.
+	 * @param players - The players to add to the whisper.
+	 * @param hidingSpotName - The name of the hiding spot the whisper belongs to. Optional.
 	 * @returns The created whisper.
 	 */
-	async createWhisper(players, hidingSpotName) {
+	async createWhisper(players: Player[], hidingSpotName?: string): Promise<Whisper> {
 		const whisper = new Whisper(this.game, players, hidingSpotName);
 		whisper.channel = await this.#createWhisperChannel(whisper);
 		this.game.whispers.set(whisper.id, whisper);
@@ -335,10 +311,10 @@ export default class GameEntityManager {
 
 	/**
 	 * Updates a whisper's key in the game's collection of whispers and edits its channel name.
-	 * @param {Whisper} whisper - The whisper to edit.
-	 * @param {string} newId - The whisper's new ID.
+	 * @param whisper - The whisper to edit.
+	 * @param newId - The whisper's new ID.
 	 */
-	updateWhisperId(whisper, newId) {
+	updateWhisperId(whisper: Whisper, newId: string): void {
 		const oldId = whisper.id;
 		whisper.id = newId;
 		this.game.whispers.set(whisper.id, whisper);
@@ -349,9 +325,9 @@ export default class GameEntityManager {
 
 	/**
 	 * Deletes a whisper from the game.
-	 * @param {Whisper} whisper - The whisper to delete.
+	 * @param whisper - The whisper to delete.
 	 */
-	async deleteWhisper(whisper) {
+	async deleteWhisper(whisper: Whisper): Promise<void> {
 		if (this.game.settings.autoDeleteWhisperChannels) await whisper.channel.delete();
 		else await whisper.channel.edit({ name: `archived-${whisper.location.id}`, lockPermissions: true });
 		whisper.players.clear();
@@ -360,10 +336,10 @@ export default class GameEntityManager {
 
 	/**
 	 * Creates a channel for a whisper.
-	 * @param {Whisper} whisper
-	 * @returns {Promise<TextChannel>} The created channel.
+	 * @param whisper
+	 * @returns The created channel.
 	 */
-	async #createWhisperChannel(whisper) {
+	async #createWhisperChannel(whisper: Whisper): Promise<TextChannel> {
 		return new Promise(resolve => {
 			this.game.guildContext.guild.channels.create({
 				name: whisper.channelName,
@@ -389,10 +365,9 @@ export default class GameEntityManager {
 
     /**
      * Gets the moderator associated with the given member, or creates one if it doesn't already exist.
-     * @param {GuildMember} member
-     * @returns {Moderator}
+     * @param member
      */
-    getOrCreateModerator(member) {
+    getOrCreateModerator(member: GuildMember): Moderator {
         if (this.game.moderators.has(member.id)) return this.game.moderators.get(member.id);
         const moderator = new Moderator(member.id, member, this.game);
         this.game.moderators.set(moderator.id, moderator);

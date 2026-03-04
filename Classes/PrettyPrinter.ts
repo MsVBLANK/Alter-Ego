@@ -6,7 +6,7 @@ import Status from '../Data/Status.ts';
 import Gesture from '../Data/Gesture.ts';
 import Player from '../Data/Player.ts';
 import Room from '../Data/Room.ts';
-import BotContext from './BotContext.js';
+import BotContext from './BotContext.ts';
 import Puzzle from '../Data/Puzzle.ts';
 import Description from '../Data/Description.ts';
 import Prefab from '../Data/Prefab.ts';

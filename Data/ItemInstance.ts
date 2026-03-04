@@ -100,6 +100,10 @@ export default abstract class ItemInstance extends ItemContainer {
 	getIdentifier(): string {
 		return this.identifier !== "" ? this.identifier : this.prefab ? this.prefab.id : "NULL";
 	}
+    
+    public get size(): number {
+        return this.prefab.size;
+    }
 
 	/**
 	 * Sets the item's prefab and updates all relevant properties based on the prefab's properties. Does not set the item's description.

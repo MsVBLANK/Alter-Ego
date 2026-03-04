@@ -334,7 +334,7 @@ export function generateProceduralOutput(description, proceduralSelections, play
                 possibilityChance = null;
             possibilityArr.push({ index: j, chance: possibilityChance });
         }
-        if (!winningPossibilityIndex) {
+        if (winningPossibilityIndex === undefined) {
             /** @type {number} */
             let statValue;
             const proceduralStat = Player.abbreviateStatName(procedurals[i].getAttribute('stat'));

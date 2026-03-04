@@ -2,6 +2,7 @@
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
 import { replaceInventoryItem } from "../Modules/itemManager.js";
 import Description from "./Description.ts";
+import type EquipmentSlot from "./EquipmentSlot.ts";
 import type Game from "./Game.ts";
 import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
@@ -181,6 +182,44 @@ export default class InventoryItem extends ItemInstance {
 	getUnstashActionDirectiveArgs(): [string, string, string] {
 		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
 	}
+
+    /**
+     * Returns the args for the Equip ActionDirective for this inventory item.
+     * 
+     * @param equipmentSlot - The equipment slot to equip the inventory item to.
+     * @returns [identifier, equipmentSlot, handEquipmentSlot]
+     */
+    getEquipActionDirectiveArgs(equipmentSlot: EquipmentSlot): [string, string, string] {
+        return [this.getIdentifier(), equipmentSlot.id, this.equipmentSlot];
+    }
+
+    /**
+     * Returns the args for the Unequip ActionDirective for this inventory item.
+     * 
+     * @returns [identifier, equipmentSlot] 
+     */
+    getUnequipActionDirectiveArgs(): [string, string] {
+        return [this.getIdentifier(), this.equipmentSlot];
+    }
+
+    /**
+     * Returns the args for the Use ActionDirective for this inventory item.
+     * 
+     * @param target - The player to use the inventory item on.
+     * @returns [identifier, targetName]
+     */
+    getUseActionDirectiveArgs(target: Player): [string, string] {
+        return [this.getIdentifier(), target.name];
+    }
+
+    /**
+     * Returns the args for the InstantiateInventoryItem ActionDirective for this equipment slot.
+     * @param inventorySlot - The inventory slot to instantiate the inventory item into.
+     * @returns ["II", equipmentSlot, identifier, inventorySlot.id]
+     */
+    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string] {
+        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined];
+    }
 
     /**
      * Gets all of the items this entity contains.

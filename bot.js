@@ -1,7 +1,7 @@
 'use strict';
 
-import BotContext from './Classes/BotContext.js';
-import GuildContext from './Classes/GuildContext.js';
+import BotContext from './Classes/BotContext.ts';
+import GuildContext from './Classes/GuildContext.ts';
 import Game from './Data/Game.ts';
 
 import BotCommand from './Classes/BotCommand.js';
@@ -244,7 +244,7 @@ client.on('clientReady', async () => {
     await checkVersion();
     await autoUpdate(gameSettings);
     game = new Game(guildContext, gameSettings);
-    botContext = new BotContext(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
+    botContext = BotContext.Instance(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
     game.setBotContext();
     botContext.updatePresence();
     if (doSendFirstBootMessage) await sendFirstBootMessage(gameSettings);

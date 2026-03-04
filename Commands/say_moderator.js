@@ -51,6 +51,7 @@ export async function execute(game, message, command, args, moderator) {
         if (!player.isNPC) return game.communicationHandler.reply(message, `You cannot speak for a player that isn't an NPC.`);
         const dialog = new Dialog(game, message, player, player.location, content, false);
         const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(player.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
+        dialog.setMessage(dialogMessage);
         const sayAction = new SayAction(game, dialogMessage, player, player.location, true);
         sayAction.performSay(dialog);
     }

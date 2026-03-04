@@ -55,16 +55,15 @@ export default class InflictAction extends Action {
 		}
 
 		// Apply the effects of behavior attributes.
+        let removeFromWhisperNarration: string;
 		if (status.id === "heated")
 			this.getGame().heated = true;
 		if (status.behaviorAttributes.has("no channel")) {
 			this.location.leaveChannel(this.player);
-			const narration = this.getGame().notificationGenerator.generateNoChannelLeaveWhisperNotification(this.player, status.id);
-			this.player.removeFromWhispers(narration, this);
+			removeFromWhisperNarration = this.getGame().notificationGenerator.generateNoChannelLeaveWhisperNotification(this.player, status.id);
 		}
 		if (status.behaviorAttributes.has("no hearing")) {
-			const narration = this.getGame().notificationGenerator.generateNoHearingLeaveWhisperNotification(this.player.displayName);
-			this.player.removeFromWhispers(narration, this);
+			removeFromWhisperNarration = this.getGame().notificationGenerator.generateNoHearingLeaveWhisperNotification(this.player.displayName);
 		}
 		if (status.behaviorAttributes.has("concealed")) {
 			const maskName = item ? item.singleContainingPhrase : "a MASK";
@@ -82,6 +81,7 @@ export default class InflictAction extends Action {
 			this.player.sendDescription(inflictedDescription, status, status.inflictedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		}
 		if (narrate) this.getGame().narrationHandler.narrateInflict(this, status, this.player);
+        if (removeFromWhisperNarration) this.player.removeFromWhispers(removeFromWhisperNarration, this);
 		this.getGame().logHandler.logInflict(status, this.player);
 		return true;
 	}

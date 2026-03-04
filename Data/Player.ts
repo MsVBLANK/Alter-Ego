@@ -440,6 +440,22 @@ export default class Player extends RecipeProcessor implements User {
     }
 
     /**
+     * Returns a custom ID for the given crafting recipe.
+     * @param item1 - The first item in the player's hands.
+     * @param item2 - The second item in the player's hands.
+     * @param recipe - The crafting recipe satisfied by these items.
+     */
+    getCraftActionDirectiveArgs(item1: InventoryItem, item2: InventoryItem, recipe: Recipe): string[] {
+        return [
+            item1.getIdentifier(),
+            item2.getIdentifier(),
+            "crafting",
+            recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
+            recipe.productsFlat.map(product => product.prefab.id).join(",")
+        ];
+    }
+
+    /**
      * Moves the player to the desired room.
      *
      * @param isRunning - Whether the player is running.
@@ -1017,8 +1033,9 @@ export default class Player extends RecipeProcessor implements User {
      * @param handEquipmentSlot - The hand equipment slot to put the item in.
      * @param container - The item's current container.
      * @param inventorySlot - The {@link InventorySlot|inventory slot} the item is currently in.
+     * @returns The inventory item that was put in the player's hand.
      */
-    take(item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): void {
+    take(item: RoomItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): InventoryItem {
         // Reduce quantity if the quantity is finite.
         if (!isNaN(item.quantity))
             item.quantity--;
@@ -1036,6 +1053,7 @@ export default class Player extends RecipeProcessor implements User {
         // Add the new item to the player's hands item list.
         if (!createdItem.prefab.discreet)
             this.addItemToDescription(createdItem, "hands");
+        return createdItem;
     }
 
     /**

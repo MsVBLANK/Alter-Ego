@@ -1,6 +1,7 @@
 import type Interactable from "../Classes/Interactables/Interactable.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { createDocument, parseDescription, stringify } from "../Modules/parser.js";
+import type Exit from "./Exit.ts";
 import Fixture from "./Fixture.ts";
 import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
@@ -89,7 +90,7 @@ export default class Description extends GameConstruct {
 	 */
 	static getPotentialGameEntities(parsedDescription: string): string[] {
 		let potentialGameEntities: Set<string> = new Set();
-		const allCapsRegex = /((?:[B-Z]+)(?:(?: |\.)?(?:[\d]+|[A-Z]{2,}))+)/g;
+		const allCapsRegex = /((?:[A-Z]{2,}|[B-Z]+)(?:[ _\-\.]?(?:[\d]+|[A-Z](?![a-z])+))+)/g;
 		let match: string[];
 		while (match = allCapsRegex.exec(parsedDescription))
 			potentialGameEntities.add(match[0].trim());
@@ -117,8 +118,7 @@ export default class Description extends GameConstruct {
 			defaultDropFixtureString = this.getGame().notificationGenerator.generateDefaultDropFixtureNotification(defaultDropFixtureString, defaultDropFixture, this.getGame().settings.defaultDropFixture);
 			potentialGameEntities = potentialGameEntities.concat(Description.getPotentialGameEntities(parsedDescription));
 			inspectableEntities = inspectableEntities.concat(this.getGame().entityFinder.getSelectableInteractableGameEntities(potentialGameEntities, container, player)[0]);
-			/** @type {Exit[]} */
-			const exits = [];
+			const exits: Exit[] = [];
 			for (const potentialGameEntity of potentialGameEntities)
 				if (container.exits.has(potentialGameEntity)) exits.push(container.exits.get(potentialGameEntity));
 			interactables = interactables.concat(await this.getGame().botContext.interactableManager.createQueueMoveActionInteractables(exits, player));

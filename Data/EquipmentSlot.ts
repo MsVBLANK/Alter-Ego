@@ -126,4 +126,13 @@ export default class EquipmentSlot extends GameEntity {
     containsNoItems(): boolean {
         return this.equippedItem === null;
     }
+
+    /**
+     * Returns the args for the InstantiateInventoryItem ActionDirective for this equipment slot.
+     * 
+     * @returns ["II", id, undefined, undefined]
+     */
+    getPartialInstantiateActionDirectiveArgs(): [string, string, string, string] {
+        return ["II", this.id, undefined, undefined];
+    }
 }

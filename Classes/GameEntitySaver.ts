@@ -1,43 +1,35 @@
 import demodata from "../Defaults/default_demodata.json" with { type: 'json' };
 import { batchUpdateSheetValues } from "../Modules/sheets.js";
-
-/** @import Game from "../Data/Game.ts" */
+import type Game from "../Data/Game.ts";
 
 /**
- * @class GameEntityLoader
- * @classdesc A set of functions to load and validate GameEntities.
- * @extends GameEntityManager
+ * A set of functions to load and validate GameEntities.
  */
 export default class GameEntitySaver {
 	/**
 	 * The game this belongs to.
-	 * @readonly
-	 * @type {Game}
 	 */
-	game;
+	readonly #game: Game;
 
 	/**
-	 * @constructor
-	 * @param {Game} game - The game this belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(game) {
-		this.game = game;
+	constructor(game: Game) {
+		this.#game = game;
 	}
 
 	/**
 	 * Saves the current game state to the spreadsheet.
-	 * @param {number} [deletedItemsCount] - The number of deleted rows from the Items sheet. Inserts that many blank rows after the remaining items. Defaults to 0.
-	 * @param {number} [deletedInventoryItemsCount] - The number of deleted rows from the Inventory Items sheet. Inserts that many blank rows after the remaining inventory items. Defaults to 0.
-	 * @returns {Promise<Error|void>} An Error, if there is one.
+	 * @param deletedItemsCount - The number of deleted rows from the Items sheet. Inserts that many blank rows after the remaining items. Defaults to 0.
+	 * @param deletedInventoryItemsCount - The number of deleted rows from the Inventory Items sheet. Inserts that many blank rows after the remaining inventory items. Defaults to 0.
+	 * @returns An Error, if there is one.
 	 */
-	async saveGame(deletedItemsCount = 0, deletedInventoryItemsCount = 0) {
+	async saveGame(deletedItemsCount: number = 0, deletedInventoryItemsCount: number = 0): Promise<Error | void> {
 		return new Promise(async (resolve, reject) => {
-			/** @type {ValueRange[]} */
-			let data = [];
+			let data: ValueRange[] = [];
 
-			/** @type {string[][]} */
-			let roomValues = [];
-			this.game.rooms.forEach(room => {
+			let roomValues: string[][] = [];
+			this.#game.rooms.forEach(room => {
 				room.exits.forEach(exit => {
 					const firstExit = room.exits.firstKey() === exit.name;
 					roomValues.push([
@@ -57,11 +49,10 @@ export default class GameEntitySaver {
 					]);
 				});
 			});
-			data.push({ range: this.game.constants.roomSheetDataCells, values: roomValues });
+			data.push({ range: this.#game.constants.roomSheetDataCells, values: roomValues });
 
-			/** @type {string[][]} */
-			let fixtureValues = [];
-			this.game.fixtures.forEach(fixture => {
+			let fixtureValues: string[][] = [];
+			this.#game.fixtures.forEach(fixture => {
 				fixtureValues.push([
 					fixture.name,
 					fixture.location.displayName,
@@ -76,11 +67,10 @@ export default class GameEntitySaver {
 					fixture.description.text
 				]);
 			});
-			data.push({ range: this.game.constants.fixtureSheetDataCells, values: fixtureValues });
+			data.push({ range: this.#game.constants.fixtureSheetDataCells, values: fixtureValues });
 
-			/** @type {string[][]} */
-			let itemValues = [];
-			this.game.roomItems.forEach((roomItem, i) => {
+			let itemValues: string[][] = [];
+			this.#game.roomItems.forEach((roomItem, i) => {
 				itemValues.push([
 					roomItem.prefab.id,
 					roomItem.identifier,
@@ -93,8 +83,8 @@ export default class GameEntitySaver {
 				]);
 				// If any items were deleted, row numbers may be incorrect. Fix them now.
 				if (deletedItemsCount > 0) {
-					if (i === 0) this.game.roomItems[i].row = 2;
-					else this.game.roomItems[i].row = this.game.roomItems[i - 1].row + 1;
+					if (i === 0) this.#game.roomItems[i].row = 2;
+					else this.#game.roomItems[i].row = this.#game.roomItems[i - 1].row + 1;
 				}
 			});
 			for (let i = 0; i < deletedItemsCount; i++)
@@ -108,13 +98,11 @@ export default class GameEntitySaver {
 					"",
 					""
 				]);
-			data.push({ range: this.game.constants.roomItemSheetDataCells, values: itemValues });
+			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: itemValues });
 
-			/** @type {string[][]} */
-			let puzzleValues = [];
-			this.game.puzzles.forEach(puzzle => {
-				/** @type {string[]} */
-				let requirementStrings = [];
+			let puzzleValues: string[][] = [];
+			this.#game.puzzles.forEach(puzzle => {
+				let requirementStrings: string[] = [];
 				puzzle.requirementsStrings.forEach(requirementString => {
 					if (requirementString.type === "") requirementStrings.push(requirementString.entityId);
 					else requirementStrings.push(`${requirementString.type}: ${requirementString.entityId}`);
@@ -140,11 +128,10 @@ export default class GameEntitySaver {
 					puzzle.requirementsNotMetDescription.text
 				]);
 			});
-			data.push({ range: this.game.constants.puzzleSheetDataCells, values: puzzleValues });
+			data.push({ range: this.#game.constants.puzzleSheetDataCells, values: puzzleValues });
 
-			/** @type {string[][]} */
-			let eventValues = [];
-			this.game.events.forEach(event => {
+			let eventValues: string[][] = [];
+			this.#game.events.forEach(event => {
 				eventValues.push([
 					event.id,
 					event.ongoing ? "TRUE" : "FALSE",
@@ -159,11 +146,10 @@ export default class GameEntitySaver {
 					event.endedNarration.text
 				]);
 			});
-			data.push({ range: this.game.constants.eventSheetDataCells, values: eventValues });
+			data.push({ range: this.#game.constants.eventSheetDataCells, values: eventValues });
 
-			/** @type {string[][]} */
-			let playerValues = [];
-			this.game.players.forEach(player => {
+			let playerValues: string[][] = [];
+			this.#game.players.forEach(player => {
 				playerValues.push([
 					player.id,
 					player.name,
@@ -182,11 +168,10 @@ export default class GameEntitySaver {
 					player.description.text
 				]);
 			});
-			data.push({ range: this.game.constants.playerSheetDataCells, values: playerValues });
+			data.push({ range: this.#game.constants.playerSheetDataCells, values: playerValues });
 
-			/** @type {string[][]} */
-			let inventoryValues = [];
-			this.game.inventoryItems.forEach((inventoryItem, i) => {
+			let inventoryValues: string[][] = [];
+			this.#game.inventoryItems.forEach((inventoryItem, i) => {
 				inventoryValues.push([
 					inventoryItem.player.name,
 					inventoryItem.prefab ? inventoryItem.prefab.id : "NULL",
@@ -199,8 +184,8 @@ export default class GameEntitySaver {
 				]);
 				// If any inventory items were deleted, row numbers may be incorrect. Fix them now.
 				if (deletedInventoryItemsCount > 0) {
-					if (i === 0) this.game.inventoryItems[i].row = 2;
-					else this.game.inventoryItems[i].row = this.game.inventoryItems[i - 1].row + 1;
+					if (i === 0) this.#game.inventoryItems[i].row = 2;
+					else this.#game.inventoryItems[i].row = this.#game.inventoryItems[i - 1].row + 1;
 				}
 			});
 			for (let i = 0; i < deletedInventoryItemsCount; i++)
@@ -214,11 +199,10 @@ export default class GameEntitySaver {
 					"",
 					""
 				]);
-			data.push({ range: this.game.constants.inventorySheetDataCells, values: inventoryValues });
+			data.push({ range: this.#game.constants.inventorySheetDataCells, values: inventoryValues });
 
-			/** @type {string[][]} */
-			let flagValues = [];
-			this.game.flags.forEach(flag => {
+			let flagValues: string[][] = [];
+			this.#game.flags.forEach(flag => {
 				flagValues.push([
 					flag.id,
 					flag.value === null ? "" : flag.value === true ? "TRUE" : flag.value === false ? "FALSE" : String(flag.value),
@@ -226,10 +210,10 @@ export default class GameEntitySaver {
 					flag.commandSetsString
 				]);
 			});
-			data.push({ range: this.game.constants.flagSheetDataCells, values: flagValues });
+			data.push({ range: this.#game.constants.flagSheetDataCells, values: flagValues });
 
 			try {
-				await batchUpdateSheetValues(data, this.game.settings.spreadsheetID);
+				await batchUpdateSheetValues(data, this.#game.settings.spreadsheetID);
 				resolve();
 			}
 			catch (err) {
@@ -240,12 +224,11 @@ export default class GameEntitySaver {
 
 	/**
 	 * Sets up a small demo environment on the spreadsheet. Overwrites anything that may already be on the spreadsheet.
-	 * @returns {Promise<string[][]>} A set of room data formatted as spreadsheet cells.
+	 * @returns A set of room data formatted as spreadsheet cells.
 	 */
-	async setupdemo() {
+	async setupdemo(): Promise<string[][]> {
 		return new Promise(async (resolve, reject) => {
-			/** @type {ValueRange[]} */
-			let data = [];
+			let data: ValueRange[] = [];
 
 			const roomValues = demodata.rooms;
 			const fixtureValues = demodata.objects;
@@ -257,27 +240,18 @@ export default class GameEntitySaver {
 			const statusValues = demodata.statusEffects;
 			const gestureValues = demodata.gestures;
 
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.roomSheetDataCells, values: roomValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.fixtureSheetDataCells, values: fixtureValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.prefabSheetDataCells, values: prefabValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.recipeSheetDataCells, values: recipeValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.roomItemSheetDataCells, values: itemValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.puzzleSheetDataCells, values: puzzleValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.eventSheetDataCells, values: eventValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.statusSheetDataCells, values: statusValues });
-			/** @type {ValueRange} */
-			data.push({ range: this.game.constants.gestureSheetDataCells, values: gestureValues });
+			data.push({ range: this.#game.constants.roomSheetDataCells, values: roomValues });
+			data.push({ range: this.#game.constants.fixtureSheetDataCells, values: fixtureValues });
+			data.push({ range: this.#game.constants.prefabSheetDataCells, values: prefabValues });
+			data.push({ range: this.#game.constants.recipeSheetDataCells, values: recipeValues });
+			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: itemValues });
+			data.push({ range: this.#game.constants.puzzleSheetDataCells, values: puzzleValues });
+			data.push({ range: this.#game.constants.eventSheetDataCells, values: eventValues });
+			data.push({ range: this.#game.constants.statusSheetDataCells, values: statusValues });
+			data.push({ range: this.#game.constants.gestureSheetDataCells, values: gestureValues });
 
 			try {
-				await batchUpdateSheetValues(data, this.game.settings.spreadsheetID);
+				await batchUpdateSheetValues(data, this.#game.settings.spreadsheetID);
 				resolve(roomValues);
 			}
 			catch (err) {

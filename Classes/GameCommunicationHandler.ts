@@ -12,7 +12,7 @@ import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { ChannelType, Collection } from "discord.js";
 import crypto from 'crypto';
-import type { ApplicationEmoji,Attachment, Embed, Snowflake, TextChannel } from "discord.js";
+import type { ApplicationEmoji, Attachment, Embed, Snowflake, TextChannel } from "discord.js";
 
 /**
  * An interface for the message handler. Contains a number of functions that ensure actions won't be communicated multiple times in the same channel.

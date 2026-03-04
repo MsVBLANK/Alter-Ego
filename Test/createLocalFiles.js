@@ -1,4 +1,4 @@
-import GameConstants from '../Classes/GameConstants.js';
+import GameConstants from '../Classes/GameConstants.ts';
 import { loadDotEnv } from '../Modules/envLoader.ts';
 import { loadCredentials } from '../Modules/credentialsLoader.ts';
 import { getSheetValues } from '../Modules/sheets.js';
@@ -10,7 +10,7 @@ async function main() {
 	if (!credentials || !credentials.google) return console.warn('No usable Google credentials found in Configs/credentials.json. Execution cannot proceed.');
 
 	// Fetch the master sheet and save it as JSON files for faster loading during testing.
-	const constants = new GameConstants();
+	const constants = GameConstants.Instance;
 	const masterTestSheetId = '1yFV7s2d7lGwK4pdit8_sib8ypNtXQviNx81TR2DjtRY';
 	const entityMappings = [
 		['roomSheetDataCells', './Test/__mocks__/gamedata/rooms.json'],

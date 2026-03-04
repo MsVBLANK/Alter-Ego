@@ -325,6 +325,16 @@ export default class GameEntityFinder {
 		return this.game.whispers.find(whisper => whisper.channel.id === channelId);
 	}
 
+    /**
+	 * Gets a moderator by their Discord user ID.
+	 * @param {string} id - The ID to search for.
+	 * @returns The moderator with the specified user ID. If no such moderator exists, returns undefined.
+	 */
+	getModeratorById(id) {
+		if (!id) return;
+        return this.game.moderators.get(id);
+	}
+
 	/**
 	 * Gets all rooms that match the given search queries.
 	 * @param {string} [id] - Filter the rooms to only those whose ID matches the given ID.

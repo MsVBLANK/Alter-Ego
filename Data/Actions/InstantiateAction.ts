@@ -1,9 +1,12 @@
-import { instantiateInventoryItem, instantiateRoomItem } from "../../Modules/itemManager.js";
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.ts";
+import EquipmentSlot from "../EquipmentSlot.ts";
+import InventoryItem from "../InventoryItem.ts";
+import type InventorySlot from "../InventorySlot.ts";
 import ItemInstance from "../ItemInstance.ts";
-import type Prefab from "../Prefab.ts";
+import Prefab from "../Prefab.ts";
 import type RoomItem from "../RoomItem.ts";
+import { parseProceduralSelections } from "../../Modules/stringDataExtractor.ts";
+import { instantiateInventoryItem, instantiateRoomItem } from "../../Modules/itemManager.js";
 
 /**
  * Represents an instantiate action.
@@ -22,8 +25,7 @@ export default class InstantiateAction extends Action {
 	 * @param uses - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
      * @returns The instantiated {@link RoomItem| room item}.
 	 */
-	performInstantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number,
-        proceduralSelections: Map<string, string>, uses: number = prefab.uses): RoomItem {
+	performInstantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses: number = prefab.uses): RoomItem {
 		if (this.performed) return;
 		super.perform();
 		const createdItem = instantiateRoomItem(prefab, this.location, container, inventorySlotId, quantity, uses, proceduralSelections, this.player);
@@ -45,8 +47,7 @@ export default class InstantiateAction extends Action {
 	 * @param notify - Whether or not to notify the player that the item was added to their inventory. Defaults to true.
      * @returns The instantiated {@link InventoryItem| inventory item}.
 	 */
-	performInstantiateInventoryItem(prefab: Prefab, equipmentSlotId: string, container: InventoryItem,
-        inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses?: number, notify: boolean = true): InventoryItem {
+	performInstantiateInventoryItem(prefab: Prefab, equipmentSlotId: string, container: InventoryItem, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses?: number, notify: boolean = true): InventoryItem {
 		if (this.performed) return;
 		super.perform();
 		const createdItem = instantiateInventoryItem(prefab, this.player, equipmentSlotId, container, inventorySlotId, quantity, uses, proceduralSelections);
@@ -60,4 +61,68 @@ export default class InstantiateAction extends Action {
 			this.getGame().logHandler.logInstantiateStashedInventoryItem(createdItem, quantity, this.player, container, inventorySlot);
 		return createdItem;
 	}
+
+    /**
+     * Finds the required entities to call performInstantiateInventoryItem
+     * 
+     * @param args - The base args as strings. 
+     * @param prefabId - The ID of the prefab to instantiate.
+     * @param quantityString - The quantity to instantiate the prefab with.
+     * @param usesString - The number of uses to instantiate the prefab with.
+     * @param proceduralSelectionsString - The procedural selections to instantiate the prefab with.
+     */
+    parseInstantiateInventoryItemInteractionArgs(args: string[], prefabId: string, quantityString: string, usesString: string, proceduralSelectionsString: string): [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number] {
+        const equipmentSlotId = args[1];
+        const equipmentSlot = this.player.getEquipmentSlot(equipmentSlotId);
+        const containerIdentifier = args[2];
+        const container = containerIdentifier ? this.getGame().entityFinder.getInventoryItem(containerIdentifier, this.player.name, undefined, equipmentSlotId) ?? null : undefined;
+        const inventorySlotId = args[3];
+        const inventorySlot = inventorySlotId ? container?.inventory?.get(inventorySlotId) ?? null : undefined;
+        const prefab = this.getGame().entityFinder.getPrefab(prefabId);
+        const quantity = quantityString ? parseInt(quantityString) : 1;
+        const uses = usesString ? parseInt(usesString) : undefined;
+        return [prefab, equipmentSlot, container, inventorySlot, quantity, proceduralSelectionsString, uses];
+    }
+
+    /**
+     * Validates the parsed args. The results can be passed directly into performInstantiateInventoryItem.
+     * 
+     * @param args - The args after being parsed.
+     */
+    validateInstantiateInventoryItemInteractionArgs(args: [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number]): [Prefab, string, InventoryItem, string, number, Map<string, string>, number] {
+        if (args.length !== 7) throw new Error("Insufficient arguments.");
+        if (!args[0] || !(args[0] instanceof Prefab)) throw new Error("Invalid prefab.");
+        const prefab = args[0];
+        if (!args[1] || !(args[1] instanceof EquipmentSlot)) throw new Error("Invalid equipment slot.");
+        const equipmentSlot = args[1];
+        if (args[2] !== undefined && (!(args[2] instanceof InventoryItem) || args[2].prefab === null || args[2].quantity === 0)) throw new Error("Invalid container.");
+        const container = args[2];
+        if (args[3] === null) throw new Error("Invalid inventory slot.");
+        const inventorySlot = args[3];
+        if (isNaN(args[4])) throw new Error("The given quantity is not a number.");
+        if (args[4] < 1) throw new Error("The given quantity must be greater than or equal to 1.");
+        const quantity = args[4];
+        let proceduralSelections: Map<string, string>;
+        if (args[5]) {
+            try {
+                proceduralSelections = parseProceduralSelections(args[5]);
+            } catch (error) { throw new Error(error.message); }
+        }
+        if (args[6] !== undefined && isNaN(args[6])) throw new Error("The given uses is not a number.");
+        if (args[6] !== undefined && args[6] < 1) throw new Error("The given uses must be greater than or equal to 1.");
+        const uses = args[6];
+
+        const equipItem = container === undefined;
+        if (equipItem) {
+            if (equipmentSlot.equippedItem !== null) throw new Error(`Cannot equip items to ${equipmentSlot.id} because ${equipmentSlot.equippedItem.getIdentifier()} is already equipped to it.`);
+            if (quantity !== 1) throw new Error(`Cannot instantiate more than 1 item to a player's equipment slot.`);
+        }
+        else {
+            if (container.player.name !== this.player.name) throw new Error(`${container.getIdentifier()} belongs to a different player.`);
+            if (container.inventory.size === 0) throw new Error(`${container.getIdentifier()} cannot contain items.`);
+            if (inventorySlot.capacityIsSmallerThan(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${this.player.name}'s ${container.getIdentifier()} because it is too large.`);
+            if (inventorySlot.willBeOverFilledBy(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${this.player.name}'s ${container.getIdentifier()} because there isn't enough space left.`);
+        }
+        return [prefab, equipmentSlot.id, container ?? null, inventorySlot?.id ?? null, quantity, proceduralSelections, uses];
+    }
 }

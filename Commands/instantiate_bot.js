@@ -1,5 +1,6 @@
 import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
 import RoomItem from "../Data/RoomItem.ts";
+import { parseProceduralSelections } from '../Modules/stringDataExtractor.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
@@ -79,15 +80,14 @@ export async function execute(game, command, args, player, callee) {
     else parsedInput = parsedInput.substring(0, undashedInput.lastIndexOf(` AT ${room.id.toUpperCase().replace(/-/g, " ")}`));
 
     // If a parenthetical expression is included, procedural options are being manually set.
-    const proceduralSelections = new Map();
+    /** @type {Map<string, string>} */
+    let proceduralSelections = new Map();
     if (parsedInput.indexOf('(') < parsedInput.indexOf(')')) {
-        const proceduralString = parsedInput.substring(parsedInput.indexOf('(') + 1, parsedInput.indexOf(')'));
-        const proceduralList = proceduralString.split('+');
-        for (let procedural of proceduralList) {
-            const proceduralAssignment = procedural.split('=');
-            if (proceduralAssignment.length !== 2)
-                return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Procedural options must be separated with \`+\`, and the name of the poss to select must be assigned to the name of its containing procedural with \`=\`.`);
-            proceduralSelections.set(proceduralAssignment[0].toLowerCase().trim(), proceduralAssignment[1].toLowerCase().trim());
+        try {
+            proceduralSelections = parseProceduralSelections(parsedInput);
+        }
+        catch (error) {
+            return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${error.message}`);
         }
         parsedInput = parsedInput.substring(0, parsedInput.indexOf('(')) + parsedInput.substring(parsedInput.indexOf(')'));
     }

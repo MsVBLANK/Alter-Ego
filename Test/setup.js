@@ -30,10 +30,10 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 /** @import PlayerCommand from '../Classes/PlayerCommand.js' */
 /** @import EligibleCommand from '../Classes/EligibleCommand.js' */
 
-import GuildContext from '../Classes/GuildContext.js';
+import GuildContext from '../Classes/GuildContext.ts';
 import GameSettings from '../Classes/GameSettings.js';
 import Game from '../Data/Game.ts';
-import BotContext from '../Classes/BotContext.js';
+import BotContext from '../Classes/BotContext.ts';
 import { ChannelType, Collection } from 'discord.js';
 import {DEFAULT_GAME_SETTINGS} from "../Modules/settingsLoader.ts";
 
@@ -119,7 +119,7 @@ beforeAll(() => {
     const eligibleCommands = new Collection();
 
     // Create BotContext singleton and attach to game.
-    new BotContext(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
+    BotContext.Instance(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
     game.setBotContext();
     // Ensure presence update doesn't throw during tests.
     try { BotContext.instance.updatePresence(); } catch (e) { }

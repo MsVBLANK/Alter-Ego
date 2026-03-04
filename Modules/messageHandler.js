@@ -57,6 +57,7 @@ export function processIncomingMessage(game, message) {
             const npc = moderator.getLatch();
             const dialog = new Dialog(game, message, npc, npc.location, message.content, false, whisper, message.cleanContent);
             game.communicationHandler.sendDialogAsWebhook(npc.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
+                dialog.setMessage(dialogMessage);
                 const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true);
                 sayAction.performSay(dialog);
                 message.delete().catch();
@@ -298,12 +299,16 @@ export function sendLogMessage(game, messageText) {
  * @param {Game} game - The game in which this mechanic is occurring.
  * @param {Messageable} channel - The channel to send the message to.
  * @param {string} messageText - The message to send.
+ * @param {Interactable[]} interactables - An array of interactables.
  */
-export function sendGameMechanicMessage(game, channel, messageText) {
+export function sendGameMechanicMessage(game, channel, messageText, interactables = []) {
+    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables) : messageText;
     game.messageQueue.enqueue(
         {
             fire: async () => {
-                await channel.send(messageText);
+                const message = await channel.send(messageCreateOptions);
+                if (message && interactables.length > 0)
+                    game.botContext.interactableManager.addInteractableMessage(channel.id, message.id, interactables.map(interactable => interactable.customId));
             },
             destination: channel.id
         },

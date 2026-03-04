@@ -1,100 +1,76 @@
-import { ActivityType, Collection } from "discord.js";
+import { ActivityType } from "discord.js";
 import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
-
-/** @import Game from "../Data/Game.ts" */
-/** @import BotCommand from "./BotCommand.js" */
-/** @import ModeratorCommand from "./ModeratorCommand.js" */
-/** @import PlayerCommand from "./PlayerCommand.js" */
-/** @import EligibleCommand from "./EligibleCommand.js" */
-/** @import { Client } from "discord.js" */
+import type Game from "../Data/Game.ts";
+import type BotCommand from "./BotCommand.js";
+import type ModeratorCommand from "./ModeratorCommand.js";
+import type PlayerCommand from "./PlayerCommand.js";
+import type EligibleCommand from "./EligibleCommand.js";
+import type { Client, Collection } from "discord.js";
 
 /**
- * @class BotContext
- * @classdesc Represents the bot as a singleton.
+ * Represents the bot as a singleton.
  */
 export default class BotContext {
 	/**
 	 * The single instance of the bot that can exist.
-	 * @type {BotContext}
 	 */
-	static instance;
+	static #instance: BotContext;
 	/** 
 	 * The Discord Client associated with the bot.
-	 * @readonly
-	 * @type {Client}
 	 */
-	client;
+	readonly client: Client;
 	/** 
 	 * All commands usable by the bot itself.
-	 * @readonly
-	 * @type {Collection<string, BotCommand>}
 	 */
-	botCommands;
+	readonly botCommands: Collection<string, BotCommand>;
 	/**
 	 * All commands usable by moderators.
-	 * @readonly
-	 * @type {Collection<string, ModeratorCommand>}
 	 */
-	moderatorCommands;
+	readonly moderatorCommands: Collection<string, ModeratorCommand>;
 	/**
 	 * All commands usable by players.
-	 * @readonly
-	 * @type {Collection<string, PlayerCommand>}
 	 */
-	playerCommands;
+	readonly playerCommands: Collection<string, PlayerCommand>;
 	/**
 	 * All commands usable by members with the eligible role.
-	 * @readonly
-	 * @type {Collection<string, EligibleCommand>}
 	 */
-	eligibleCommands;
+	readonly eligibleCommands: Collection<string, EligibleCommand>;
 	/**
 	 * The game the bot is managing.
-	 * @readonly
-	 * @type {Game}
 	 */
-	game;
+	readonly game: Game;
 	/**
 	 * An array of the most recently-issued commands. Used by the dumplog command for debugging purposes.
-	 * @type {Array<CommandLogEntry>}
 	 */
-	commandLog;
+	readonly commandLog: Array<CommandLogEntry>;
 	/**
 	 * A set of functions to cleanly display objects.
-	 * @type {PrettyPrinter}
 	 */
-	prettyPrinter;
+	readonly prettyPrinter: PrettyPrinter;
 	/**
 	 * A set of functions for creating and managing Interactables.
-	 * @type {BotInteractableManager}
 	 */
-	interactableManager;
+	readonly interactableManager: BotInteractableManager;
 	/**
 	 * A set of functions for handling Interactions.
-	 * @type {BotInteractionHandler}
 	 */
-	interactionHandler;
+	readonly interactionHandler: BotInteractionHandler;
 	/**
 	 * A timeout which updates the client user's presence every 30 seconds.
-	 * @type NodeJS.Timeout
 	 */
-	#presenceUpdateInterval;
+	readonly #presenceUpdateInterval: NodeJS.Timeout;
 
 	/**
-	 * @constructor
-	 * @param {Client} client - The Discord Client associated with the bot.
-	 * @param {Collection<string, BotCommand>} botCommands - All commands usable by the bot itself.
-	 * @param {Collection<string, ModeratorCommand>} moderatorCommands - All commands usable by moderators.
-	 * @param {Collection<string, PlayerCommand>} playerCommands - All commands usable by players.
-	 * @param {Collection<string, EligibleCommand>} eligibleCommands - All commands usable by members with the eligible role.
-	 * @param {Game} game - The game the bot is managing.
+	 * @param client - The Discord Client associated with the bot.
+	 * @param botCommands - All commands usable by the bot itself.
+	 * @param moderatorCommands - All commands usable by moderators.
+	 * @param playerCommands - All commands usable by players.
+	 * @param eligibleCommands - All commands usable by members with the eligible role.
+	 * @param game - The game the bot is managing.
 	 */
-	constructor(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game) {
-		if (BotContext.instance) {
-			return BotContext.instance;
-		}
+	private constructor(client: Client, botCommands: Collection<string, BotCommand>, moderatorCommands: Collection<string, ModeratorCommand>, playerCommands: Collection<string, PlayerCommand>, eligibleCommands: Collection<string, EligibleCommand>, game: Game) {
 		this.client = client;
 		this.botCommands = botCommands;
 		this.moderatorCommands = moderatorCommands;
@@ -109,9 +85,28 @@ export default class BotContext {
 			() => this.updatePresence(),
 			30 * 1000
 		);
-
-		BotContext.instance = this;
 	}
+
+    /**
+     * Gets the bot context, or creates it if it doesn't exist.
+     * @param client - The Discord Client associated with the bot.
+	 * @param botCommands - All commands usable by the bot itself.
+	 * @param moderatorCommands - All commands usable by moderators.
+	 * @param playerCommands - All commands usable by players.
+	 * @param eligibleCommands - All commands usable by members with the eligible role.
+	 * @param game - The game the bot is managing.
+     */
+    public static Instance(client: Client, botCommands: Collection<string, BotCommand>, moderatorCommands: Collection<string, ModeratorCommand>, playerCommands: Collection<string, PlayerCommand>, eligibleCommands: Collection<string, EligibleCommand>, game: Game): BotContext {
+        if (BotContext.#instance) return BotContext.#instance;
+        else return this.#instance = new this(client, botCommands, moderatorCommands, playerCommands, eligibleCommands, game);
+    }
+
+    /**
+     * The single instance of the bot that can exist.
+     */
+    public static get instance() {
+        return BotContext.#instance;
+    }
 
 	/**
 	 * Updates the client user's presence.
@@ -134,11 +129,10 @@ export default class BotContext {
 		const activityType = this.game.settings.debug ? this.game.settings.debugModeActivity.type
 			: this.game.inProgress && !this.game.canJoin ? this.game.settings.gameInProgressActivity.type
 			: this.game.settings.onlineActivity.type;
-		let url;
+		let url: string;
 		if (this.game.inProgress && !this.game.canJoin) url = this.game.settings.gameInProgressActivity.url;
 
-		/** @type import("discord.js").PresenceData */
-		const presence = {
+		const presence: import("discord.js").PresenceData = {
 			status: this.game.settings.debug ? "dnd" : "online",
 			activities: [
 				{
@@ -151,11 +145,7 @@ export default class BotContext {
 		this.client.user.setPresence(presence);
 	}
 
-	/** 
-	 * @param {string} type 
-	 * @returns {ActivityType}
-	 * */
-	static getActivityType(type) {
+	static getActivityType(type: string): ActivityType {
 		switch (type.toUpperCase()) {
 			case "PLAYING":
 				return ActivityType.Playing;

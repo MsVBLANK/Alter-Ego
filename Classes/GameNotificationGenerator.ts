@@ -1,49 +1,44 @@
 import { capitalizeFirstLetter, endsWithPunctuation } from "../Modules/helpers.ts";
-
-/** @import Dialog from "../Data/Dialog.ts" */
-/** @import Fixture from "../Data/Fixture.ts" */
-/** @import Game from "../Data/Game.ts" */
-/** @import Player from "../Data/Player.ts" */
-/** @import Exit from "../Data/Exit.js" */
-/** @import ItemInstance from "../Data/ItemInstance.ts" */
-/** @import Puzzle from "../Data/Puzzle.ts" */
-/** @import Recipe from "../Data/Recipe.ts" */
-/** @import Room from "../Data/Room.ts" */
+import type Dialog from "../Data/Dialog.ts";
+import type Fixture from "../Data/Fixture.ts";
+import type Game from "../Data/Game.ts";
+import type Player from "../Data/Player.ts";
+import type Exit from "../Data/Exit.js";
+import type ItemInstance from "../Data/ItemInstance.ts";
+import type Puzzle from "../Data/Puzzle.ts";
+import type Recipe from "../Data/Recipe.ts";
+import type Room from "../Data/Room.ts";
 
 /**
- * @class GameNotificationGenerator
- * @classdesc A set of functions to generate notification messages to send to players.
+ * A set of functions to generate notification messages to send to players.
  */
 export default class GameNotificationGenerator {
 	/**
 	 * The game this belongs to.
-	 * @readonly
-	 * @type {Game}
 	 */
-	#game;
+	readonly #game: Game;
 
 	/**
-	 * @constructor
-	 * @param {Game} game - The game this belongs to.
+	 * @param game - The game this belongs to.
 	 */
-	constructor(game) {
+	constructor(game: Game) {
 		this.#game = game;
 	}
 
 	/**
 	 * Generates a notification indicating the player cannot speak because they have a status effect with the `no speech` behavior attribute.
-	 * @param {string} statusId - The ID of the status effect that made the player unable to speak.
+	 * @param statusId - The ID of the status effect that made the player unable to speak.
 	 */
-	generatePlayerNoSpeechNotification(statusId) {
+	generatePlayerNoSpeechNotification(statusId: string) {
 		return `You are **${statusId}**, so you cannot speak.`;
 	}
 
 	/**
 	 * Generates a notification indicating that a player heard spoken dialog.
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} player - The player referred to in this notification.
+	 * @param dialog - The dialog that was spoken.
+	 * @param player - The player referred to in this notification.
 	 */
-	generateHearDialogNotification(dialog, player) {
+	generateHearDialogNotification(dialog: Dialog, player: Player) {
 		const playerAndSpeakerAreHidingTogether = dialog.speaker.isHidden() && player.isHidden() && dialog.speaker.hidingSpot === player.hidingSpot;
 		const playerCanSeeSpeaker = player.canSee() && (!dialog.speaker.isHidden() || playerAndSpeakerAreHidingTogether);
 		
@@ -63,10 +58,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player heard whispered dialog.
-	 * @param {Dialog} dialog - The dialog that was whispered.
-	 * @param {Player} player - The player referred to in this notification.
+	 * @param dialog - The dialog that was whispered.
+	 * @param player - The player referred to in this notification.
 	 */
-	generateHearWhisperNotification(dialog, player) {
+	generateHearWhisperNotification(dialog: Dialog, player: Player) {
 		const hidingSpot = dialog.getGame().entityFinder.getFixture(dialog.whisper?.hidingSpotName, dialog.location.id);
 		const hidingSpotPhrase = hidingSpot ? ` in ${hidingSpot.getContainingPhrase()}` : ``;
 		let speakerString = "";
@@ -85,10 +80,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player with the `acute hearing` behavior attribute overheard whispered dialog.
-	 * @param {Dialog} dialog - The dialog that was overheard.
-	 * @param {Player} player - The player referred to in this notification.
+	 * @param dialog - The dialog that was overheard.
+	 * @param player - The player referred to in this notification.
 	 */
-	generateAcuteHearingPlayerOverhearWhisperNotification(dialog, player) {
+	generateAcuteHearingPlayerOverhearWhisperNotification(dialog: Dialog, player: Player) {
 		const playerCanSeeSpeaker = player.canSee() && !dialog.speaker.isHidden();
 		let speakerString = "";
 		if (player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player))
@@ -104,10 +99,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player heard dialog from a neighboring room.
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} [player] - The player referred to in this notification. Optional.
+	 * @param dialog - The dialog that was spoken.
+	 * @param player - The player referred to in this notification. Optional.
 	 */
-	generateHearNeighboringRoomDialogNotification(dialog, player) {
+	generateHearNeighboringRoomDialogNotification(dialog: Dialog, player?: Player) {
 		let speakerString = "";
 		let locator = "";
 		if (player && player.knows(dialog.speakerRecognitionName) && !dialog.isMimicking(player)) {
@@ -123,21 +118,21 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player heard dialog from a room that neighbors a room with the `audio surveilled` tag.
-	 * @param {string} roomDisplayName - The displayed name of the audio surveilled room that neighbors the room the dialog was spoken in.
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} [player] - The player referred to in this notification. Optional.
+	 * @param roomDisplayName - The displayed name of the audio surveilled room that neighbors the room the dialog was spoken in.
+	 * @param dialog - The dialog that was spoken.
+	 * @param player - The player referred to in this notification. Optional.
 	 */
-	generateHearAudioSurveilledNeighboringRoomDialogNotification(roomDisplayName, dialog, player) {
+	generateHearAudioSurveilledNeighboringRoomDialogNotification(roomDisplayName: string, dialog: Dialog, player?: Player) {
 		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearNeighboringRoomDialogNotification(dialog, player))}`;
 	}
 
 	/**
 	 * Generates a notification indicating that a player heard dialog from a room with the `audio surveilled` tag.
-	 * @param {string} roomDisplayName - The displayed name of the audio surveilled room the dialog was spoken in.
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} [player] - The player referred to in this notification. Optional.
+	 * @param roomDisplayName - The displayed name of the audio surveilled room the dialog was spoken in.
+	 * @param dialog - The dialog that was spoken.
+	 * @param player - The player referred to in this notification. Optional.
 	 */
-	generateHearAudioSurveilledRoomDialogNotification(roomDisplayName, dialog, player) {
+	generateHearAudioSurveilledRoomDialogNotification(roomDisplayName: string, dialog: Dialog, player?: Player) {
 		const roomIsVisible = player && player.location.isVideoMonitoring() && dialog.locationIsVideoSurveilled;
 		const playerCanSeeSpeaker = player && player.canSee() && roomIsVisible && !dialog.speaker.isHidden();
 		let speakerString = "";
@@ -154,14 +149,14 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player heard dialog through a player with the `receiver` behavior attribute. 
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
-	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
-	 * @param {Player} [player] - The player referred to in this notification.
-	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person. Defaults to false.
-	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
+	 * @param dialog - The dialog that was spoken.
+	 * @param receiver - The player with the `receiver` behavior attribute.
+	 * @param receiverItemName - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person. Defaults to false.
+	 * @param playerCanSeeReceiver - Whether or not the player being referred to can see the receiver player. Defaults to true.
 	 */
-	generateHearReceiverDialogNotification(dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+	generateHearReceiverDialogNotification(dialog: Dialog, receiver: Player, receiverItemName: string = "receiver", player?: Player, secondPerson: boolean = false, playerCanSeeReceiver: boolean = true) {
 		const receiverOwnerName = secondPerson ? `your` : playerCanSeeReceiver ? `${receiver.displayName}'s` : `a`;
 		if (!secondPerson && !playerCanSeeReceiver) receiverItemName = "receiver";
 		let speakerString = "";
@@ -179,25 +174,25 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that a player heard dialog from a room with the `audio surveilled` tag that was transmitted to one of its occupants with the `receiver` behavior attribute.
-	 * @param {string} roomDisplayName - The displayed name of the audio surveilled room with a `receiver` player.
-	 * @param {Dialog} dialog - The dialog that was spoken.
-	 * @param {Player} receiver - The player with the `receiver` behavior attribute.
-	 * @param {string} [receiverItemName] - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
-	 * @param {Player} [player] - The player referred to in this notification.
-	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person.
-	 * @param {boolean} [playerCanSeeReceiver] - Whether or not the player being referred to can see the receiver player. Defaults to true.
+	 * @param roomDisplayName - The displayed name of the audio surveilled room with a `receiver` player.
+	 * @param dialog - The dialog that was spoken.
+	 * @param receiver - The player with the `receiver` behavior attribute.
+	 * @param receiverItemName - The name of the inventory item that gave the player the `receiver` behavior attribute. Defaults to "receiver".
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param playerCanSeeReceiver - Whether or not the player being referred to can see the receiver player. Defaults to true.
 	 */
-	generateHearAudioSurveilledReceiverDialogNotification(roomDisplayName, dialog, receiver, receiverItemName = "receiver", player, secondPerson = false, playerCanSeeReceiver = true) {
+	generateHearAudioSurveilledReceiverDialogNotification(roomDisplayName: string, dialog: Dialog, receiver: Player, receiverItemName: string = "receiver", player?: Player, secondPerson: boolean = false, playerCanSeeReceiver: boolean = true) {
 		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(this.generateHearReceiverDialogNotification(dialog, receiver, receiverItemName, player, secondPerson, playerCanSeeReceiver))}`;
 	}
 
 	/**
 	 * Generates a whisper action notification.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} playerListString - A list of the other players in the whisper.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param playerListString - A list of the other players in the whisper.
 	 */
-	generateWhisperNotification(player, secondPerson, playerListString) {
+	generateWhisperNotification(player: Player, secondPerson: boolean, playerListString: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `begin` : `begins`;
 		const whisperPhrase = playerListString ? ` to ${playerListString}` : ``;
@@ -206,11 +201,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a text action notification.
-	 * @param {string} messageText - The text content of the text message.
-	 * @param {string} senderName - The name of the sender.
-	 * @param {string} [recipientName] - The name of the recipient, if needed.
+	 * @param messageText - The text content of the text message.
+	 * @param senderName - The name of the sender.
+	 * @param recipientName - The name of the recipient, if needed.
 	 */
-	generateTextNotification(messageText, senderName, recipientName) {
+	generateTextNotification(messageText: string, senderName: string, recipientName?: string) {
 		if (messageText.length > 1900) messageText = messageText.substring(0, 1897) + "...";
 		const recipientDisplay = recipientName ? ` -> ${recipientName}` : ``;
 		return `\`[ ${senderName}${recipientDisplay} ]\` ${messageText}`;
@@ -218,12 +213,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player started moving toward an exit.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {boolean} isRunning - Whether or not the player is running.
-	 * @param {string} exitPhrase - The phrase of the exit the player is moving toward.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param isRunning - Whether or not the player is running.
+	 * @param exitPhrase - The phrase of the exit the player is moving toward.
 	 */
-	generateStartMoveNotification(player, secondPerson, isRunning, exitPhrase) {
+	generateStartMoveNotification(player: Player, secondPerson: boolean, isRunning: boolean, exitPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `start` : `starts`;
 		const action = isRunning ? `running` : `walking`;
@@ -232,10 +227,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player has depleted half of their stamina while moving.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
 	 */
-	generateHalfStaminaNotification(player, secondPerson) {
+	generateHalfStaminaNotification(player: Player, secondPerson: boolean) {
 		const subject = secondPerson ? `Your breathing` : `${capitalizeFirstLetter(player.displayName)}'s breathing`;
 		const sentence2 = secondPerson ? `You might want to stop moving and rest soon.` : `It seems like ${player.pronouns.sbj}${player.pronouns.plural ? `'re` : `'s`} starting to get tired.`;
 		return `${subject} is getting heavy. ${sentence2}`;
@@ -243,18 +238,18 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player has become weary.
-	 * @param {Player} player - The player referred to in this notification.
+	 * @param player - The player referred to in this notification.
 	 */
-	generateWearyNotification(player) {
+	generateWearyNotification(player: Player) {
 		return `${capitalizeFirstLetter(player.displayName)} stops moving. ${player.pronouns.Sbj} ${player.pronouns.plural ? `seem` : `seems`} weary.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player has stopped moving.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
 	 */
-	generateStopNotification(player, secondPerson) {
+	generateStopNotification(player: Player, secondPerson: boolean) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `stop` : `stops`;
 		return `${subject} ${verb} moving.`;
@@ -262,11 +257,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player cannot move to an exit because it is locked.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} doorPhrase - The door phrase of the locked exit.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param doorPhrase - The door phrase of the locked exit.
 	 */
-	generateExitLockedNotification(player, secondPerson, doorPhrase) {
+	generateExitLockedNotification(player: Player, secondPerson: boolean, doorPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		return `${subject} ${verb} to open ${doorPhrase}, but it seems to be locked.`;
@@ -274,12 +269,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player exited a room.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} exitPhrase - The phrase of the exit the player exited through.
-	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param exitPhrase - The phrase of the exit the player exited through.
+	 * @param appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
-	generateExitNotification(player, secondPerson, exitPhrase, appendString) {
+	generateExitNotification(player: Player, secondPerson: boolean, exitPhrase: string, appendString: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `exit` : `exits`;
 		const destinationPhrase = exitPhrase ? ` into ${exitPhrase}` : ``;
@@ -288,12 +283,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player with the free movement role exited a room.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} roomName - The display name of the room the player exited.
-	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param roomName - The display name of the room the player exited.
+	 * @param appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
-	generateSuddenExitNotification(player, secondPerson, roomName, appendString) {
+	generateSuddenExitNotification(player: Player, secondPerson: boolean, roomName: string, appendString: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `exit ${roomName}` : `suddenly disappears`;
 		const punctuation = secondPerson ? `.` : `!`;
@@ -302,12 +297,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player entered a room.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} entranceName - The name of the exit the player entered through.
-	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param entranceName - The name of the exit the player entered through.
+	 * @param appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
-	generateEnterNotification(player, secondPerson, entranceName, appendString) {
+	generateEnterNotification(player: Player, secondPerson: boolean, entranceName: string, appendString: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `enter` : `enters`;
 		const exitPhrase = entranceName ? ` from ${entranceName}` : ``;
@@ -316,12 +311,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player with the free movement role entered a room.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} roomName - The display name of the room the player entered.
-	 * @param {string} appendString - A string describing any non-discreet inventory items the player is carrying.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param roomName - The display name of the room the player entered.
+	 * @param appendString - A string describing any non-discreet inventory items the player is carrying.
 	 */
-	generateSuddenEnterNotification(player, secondPerson, roomName, appendString) {
+	generateSuddenEnterNotification(player: Player, secondPerson: boolean, roomName: string, appendString: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `enter ${roomName}` : `suddenly appears`;
 		const punctuation = secondPerson ? `.` : `!`;
@@ -337,10 +332,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification containing a list of occupants in the room. If any of the occupants are sleeping, includes them separately.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {Room} room - The room whose occupants are to be listed.
+	 * @param player - The player referred to in this notification.
+	 * @param room - The room whose occupants are to be listed.
 	 */
-	generateRoomOccupantsNotification(player, room) {
+	generateRoomOccupantsNotification(player: Player, room: Room) {
 		let occupantsList = room.generateOccupantsStringExcluding(player);
 		const maxLength = 1000;
 		let verb1 = `see`;
@@ -361,11 +356,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification about the default drop fixture.
-	 * @param {string} parsedFixtureDescription - The default drop fixture's parsed description.
-	 * @param {Fixture} fixture - The default drop fixture in a room.
-	 * @param {string} defaultDropFixture - The game's default drop fixture.
+	 * @param parsedFixtureDescription - The default drop fixture's parsed description.
+	 * @param fixture - The default drop fixture in a room.
+	 * @param defaultDropFixture - The game's default drop fixture.
 	 */
-	generateDefaultDropFixtureNotification(parsedFixtureDescription, fixture, defaultDropFixture) {
+	generateDefaultDropFixtureNotification(parsedFixtureDescription: string, fixture: Fixture, defaultDropFixture: string) {
 		const preposition = fixture ? fixture.getPreposition() : `about`;
 		const fixturePhrase = fixture ? fixture.getContainingPhrase() : `the ${defaultDropFixture.toLocaleLowerCase()}`;
 		if (parsedFixtureDescription === "")
@@ -375,10 +370,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected the room.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
 	 */
-	generateInspectRoomNotification(player, secondPerson) {
+	generateInspectRoomNotification(player: Player, secondPerson: boolean) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `look` : `looks`;
 		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
@@ -387,11 +382,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected a fixture.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} fixturePhrase - The phrase of the fixture.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param fixturePhrase - The phrase of the fixture.
 	 */
-	generateInspectFixtureNotification(player, secondPerson, fixturePhrase) {
+	generateInspectFixtureNotification(player: Player, secondPerson: boolean, fixturePhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${fixturePhrase}.`;
@@ -399,13 +394,13 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected a room item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} preposition - The preposition of the container.
-	 * @param {string} containerPhrase - The phrase of the container.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param preposition - The preposition of the container.
+	 * @param containerPhrase - The phrase of the container.
 	 */
-	generateInspectRoomItemNotification(player, secondPerson, itemPhrase, preposition, containerPhrase) {
+	generateInspectRoomItemNotification(player: Player, secondPerson: boolean, itemPhrase: string, preposition: string, containerPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${itemPhrase} ${preposition} ${containerPhrase}.`;
@@ -413,11 +408,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected an inventory item that they have stashed.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectPlayersOwnStashedInventoryItemNotification(player, secondPerson, itemPhrase) {
+	generateInspectPlayersOwnStashedInventoryItemNotification(player: Player, secondPerson: boolean, itemPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb1 = secondPerson ? `take out` : `takes out`;
 		const verb2 = secondPerson ? `inspect` : `begins inspecting`;
@@ -426,11 +421,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected an inventory item that they have equipped.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemName - The name of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemName - The name of the item.
 	 */
-	generateInspectPlayersOwnEquippedInventoryItemNotification(player, secondPerson, itemName) {
+	generateInspectPlayersOwnEquippedInventoryItemNotification(player: Player, secondPerson: boolean, itemName: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		const dpos = secondPerson ? `your` : `${player.pronouns.dpos}`;
@@ -439,12 +434,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player inspected an inventory item that belongs to another player.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Player} otherPlayer - The player the inventory item belongs to.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param otherPlayer - The player the inventory item belongs to.
+	 * @param itemPhrase - The single containing phrase of the item.
 	 */
-	generateInspectOtherPlayersInventoryItemNotification(player, secondPerson, otherPlayer, itemPhrase) {
+	generateInspectOtherPlayersInventoryItemNotification(player: Player, secondPerson: boolean, otherPlayer: Player, itemPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `inspect` : `begins inspecting`;
 		return `${subject} ${verb} ${otherPlayer.displayName}'s ${itemPhrase}.`;
@@ -452,28 +447,28 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating a hidden player was found in their hiding spot.
-	 * @param {string} playerDisplayName - The display name of the player who found them.
+	 * @param playerDisplayName - The display name of the player who found them.
 	 */
-	generateHiddenPlayerFoundNotification(playerDisplayName) {
+	generateHiddenPlayerFoundNotification(playerDisplayName: string) {
 		return `You've been found by ${playerDisplayName}!`;
 	}
 
 	/**
 	 * Generates a notification indicating the player found players hidden in a fixture.
-	 * @param {string} hiddenPlayersList - A list of hidden players.
-	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
+	 * @param hiddenPlayersList - A list of hidden players.
+	 * @param hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
 	 */
-	generateFoundHiddenPlayersNotification(hiddenPlayersList, hidingSpotPhrase) {
+	generateFoundHiddenPlayersNotification(hiddenPlayersList: string, hidingSpotPhrase: string) {
 		return `You find ${hiddenPlayersList} hiding in ${hidingSpotPhrase}!`;
 	}
 	
 	/**
 	 * Generates a notification indicating the player knocked on an exit.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} doorPhrase - The door phrase of the exit.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param doorPhrase - The door phrase of the exit.
 	 */
-	generateKnockNotification(player, secondPerson, doorPhrase) {
+	generateKnockNotification(player: Player, secondPerson: boolean, doorPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `knock` : `knocks`;
 		return `${subject} ${verb} on ${doorPhrase}.`;
@@ -481,36 +476,36 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating there was a knock originating from the other side of an exit.
-	 * @param {string} doorPhrase - The door phrase of the exit.
+	 * @param doorPhrase - The door phrase of the exit.
 	 */
-	generateKnockDestinationNotification(doorPhrase) {
+	generateKnockDestinationNotification(doorPhrase: string) {
 		return `There's a knock on ${doorPhrase}.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player can't hide in the hiding spot because it's already full.
-	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
-	 * @param {string} hiddenPlayersList - A list of hidden players.
+	 * @param hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
+	 * @param hiddenPlayersList - A list of hidden players.
 	 */
-	generateHidingSpotFullNotification(hidingSpotPhrase, hiddenPlayersList) {
+	generateHidingSpotFullNotification(hidingSpotPhrase: string, hiddenPlayersList: string) {
 		return `You attempt to hide in the ${hidingSpotPhrase}, but you find ${hiddenPlayersList} already there! There doesn't seem to be enough room for you.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player found other players while attempting to hide.
-	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
-	 * @param {string} hiddenPlayersList - A list of hidden players.
+	 * @param hidingSpotPhrase - The phrase of the hiding spot the players are hiding in.
+	 * @param hiddenPlayersList - A list of hidden players.
 	 */
-	generateHidingSpotOccupiedNotification(hidingSpotPhrase, hiddenPlayersList) {
+	generateHidingSpotOccupiedNotification(hidingSpotPhrase: string, hiddenPlayersList: string) {
 		return `When you hide in the ${hidingSpotPhrase}, you find ${hiddenPlayersList} already there!`;
 	}
 
 	/**
 	 * Generates a notification indicating someone found the player while hiding.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {Player} findingPlayer - The player that hid, who found the player in the process.
+	 * @param player - The player referred to in this notification.
+	 * @param findingPlayer - The player that hid, who found the player in the process.
 	 */
-	generateFoundInOccupiedHidingSpotNotification(player, findingPlayer) {
+	generateFoundInOccupiedHidingSpotNotification(player: Player, findingPlayer: Player) {
 		const foundNotification = player.canSee() ? `You're found by ${findingPlayer.displayName}` : `Someone finds you`;
 		const findingPlayerSbj = player.canSee() ? findingPlayer.pronouns.Sbj : `They`;
 		const verb = player.canSee() || !findingPlayer.pronouns.plural ? `hides` : `hide`;
@@ -519,10 +514,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating someone found the player while attempting to hide, but they couldn't hide because the hiding spot was full.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {Player} findingPlayer - The player attempting to hide, who found the player in the process.
+	 * @param player - The player referred to in this notification.
+	 * @param findingPlayer - The player attempting to hide, who found the player in the process.
 	 */
-	generateFoundInFullHidingSpotNotification(player, findingPlayer) {
+	generateFoundInFullHidingSpotNotification(player: Player, findingPlayer: Player) {
 		const foundNotification = player.canSee() ? `You're found by ${findingPlayer.displayName}` : `Someone finds you`;
 		const findingPlayerSbj = player.canSee() ? findingPlayer.pronouns.Sbj : `They`;
 		const verb = player.canSee() || !findingPlayer.pronouns.plural ? `tries` : `try`;
@@ -532,86 +527,86 @@ export default class GameNotificationGenerator {
 	/**
 	 * Generates a notification indicating the player can no longer whisper
 	 * because they were inflicted with a status effect with the `no channel` behavior attribute.
-	 * @param {Player} player - The player referred to in this notification. 
-	 * @param {string} statusId - The ID of the status effect that made the player unable to whisper.
+	 * @param player - The player referred to in this notification. 
+	 * @param statusId - The ID of the status effect that made the player unable to whisper.
 	 */
-	generateNoChannelLeaveWhisperNotification(player, statusId) {
+	generateNoChannelLeaveWhisperNotification(player: Player, statusId: string) {
 		return `${capitalizeFirstLetter(player.displayName)} can no longer whisper because ${player.originalPronouns.sbj} ${player.originalPronouns.plural ? `are` : `is`} ${statusId}.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player can no longer whisper
 	 * because they were inflicted with a status effect with the `no hearing` behavior attribute.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateNoHearingLeaveWhisperNotification(playerDisplayName) {
+	generateNoHearingLeaveWhisperNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} can no longer hear.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player can no longer whisper because they left the room.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateExitLeaveWhisperNotification(playerDisplayName) {
+	generateExitLeaveWhisperNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} leaves the room.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player was inflicted with a status effect with the ID `asleep`.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateFallAsleepNotification(playerDisplayName) {
+	generateFallAsleepNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} falls asleep.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player was inflicted with a status effect with the ID `blacked out`.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateBlackOutNotification(playerDisplayName) {
+	generateBlackOutNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} blacks out.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player was inflicted with a status effect with the `unconscious` behavior attribute.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateUnconsciousNotification(playerDisplayName) {
+	generateUnconsciousNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} goes unconscious.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player took off their mask.
-	 * @param {string} maskName - The name of the inventory item the player took off. 
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param maskName - The name of the inventory item the player took off. 
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateConcealedCuredNotification(maskName, playerDisplayName) {
+	generateConcealedCuredNotification(maskName: string, playerDisplayName: string) {
 		return `The ${maskName} comes off, revealing the individual to be ${playerDisplayName}.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player woke up.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateWakeUpNotification(playerDisplayName) {
+	generateWakeUpNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} wakes up.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player was cured of a status effect with the `unconscious` behavior attribute.
-	 * @param {string} playerDisplayName - The display name of the player.
+	 * @param playerDisplayName - The display name of the player.
 	 */
-	generateRegainConsciousnessNotification(playerDisplayName) {
+	generateRegainConsciousnessNotification(playerDisplayName: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} regains consciousness.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player hid in a fixture.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the player is hiding in.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param hidingSpotPhrase - The phrase of the hiding spot the player is hiding in.
 	 */
-	generateHideNotification(player, secondPerson, hidingSpotPhrase) {
+	generateHideNotification(player: Player, secondPerson: boolean, hidingSpotPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `hide` : `hides`;
 		return `${subject} ${verb} in ${hidingSpotPhrase}.`;
@@ -619,11 +614,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player came out of a hiding spot.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} hidingSpotPhrase - The phrase of the hiding spot the player is coming out from.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param hidingSpotPhrase - The phrase of the hiding spot the player is coming out from.
 	 */
-	generateUnhideNotification(player, secondPerson, hidingSpotPhrase) {
+	generateUnhideNotification(player: Player, secondPerson: boolean, hidingSpotPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `come out` : `comes out`;
 		return `${subject} ${verb} of ${hidingSpotPhrase}.`;
@@ -631,13 +626,13 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player used an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} [useVerb] - The prefab's use verb. Optional.
-	 * @param {string} [targetDisplayName] - The display name of the target player of the use action.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param useVerb - The prefab's use verb. Optional.
+	 * @param targetDisplayName - The display name of the target player of the use action.
 	 */
-	generateUseNotification(player, secondPerson, itemPhrase, useVerb, targetDisplayName) {
+	generateUseNotification(player: Player, secondPerson: boolean, itemPhrase: string, useVerb?: string, targetDisplayName?: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = useVerb ? useVerb : secondPerson ? `use` : `uses`;
 		const targetPhrase = targetDisplayName ? ` on ${targetDisplayName}` : ``;
@@ -646,12 +641,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player took an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} [containerPhrase] - The entire phrase of the container. Optional.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param containerPhrase - The entire phrase of the container. Optional.
 	 */
-	generateTakeNotification(player, secondPerson, itemPhrase, containerPhrase) {
+	generateTakeNotification(player: Player, secondPerson: boolean, itemPhrase: string, containerPhrase?: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take` : `takes`;
 		const containerAppendString = containerPhrase ? ` from ${containerPhrase}` : ``;
@@ -660,12 +655,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a string notification indicating the player couldn't take an item because it is too heavy.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} containerPhrase - The entire phrase of the container.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param containerPhrase - The entire phrase of the container.
 	 */
-	generateTakeTooHeavyNotification(player, secondPerson, itemPhrase, containerPhrase) {
+	generateTakeTooHeavyNotification(player: Player, secondPerson: boolean, itemPhrase: string, containerPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const obj = secondPerson ? `you` : player.pronouns.obj;
@@ -674,12 +669,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a string notification indicating the player couldn't take an item because they are carrying too much weight.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} containerPhrase - The entire phrase of the container.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param containerPhrase - The entire phrase of the container.
 	 */
-	generateTakeTooMuchWeightNotification(player, secondPerson, itemPhrase, containerPhrase) {
+	generateTakeTooMuchWeightNotification(player: Player, secondPerson: boolean, itemPhrase: string, containerPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const sbj = secondPerson ? `you` : player.pronouns.sbj;
@@ -689,25 +684,25 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player tried to steal from an empty inventory slot.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the player tried to steal from.
-	 * @param {string} containerName - The name of the container the player tried to steal from.
-	 * @param {string} victimDisplayName - The display name of the victim the player tried to steal from.
+	 * @param slotPhrase - A phrase to refer to the slot the player tried to steal from.
+	 * @param containerName - The name of the container the player tried to steal from.
+	 * @param victimDisplayName - The display name of the victim the player tried to steal from.
 	 */
-	generateStoleFromEmptyInventorySlotNotification(slotPhrase, containerName, victimDisplayName) {
+	generateStoleFromEmptyInventorySlotNotification(slotPhrase: string, containerName: string, victimDisplayName: string) {
 		return `You try to steal from ${slotPhrase}${victimDisplayName}'s ${containerName}, but it's empty.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player successfully stole an item from someone.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item was stolen from.
-	 * @param {string} containerName - The name of the container the item was stolen from.
-	 * @param {Player} victim - The victim who was stolen from.
-	 * @param {boolean} victimAware - Whether or not the victim noticed that they were stolen from.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param slotPhrase - A phrase to refer to the slot the item was stolen from.
+	 * @param containerName - The name of the container the item was stolen from.
+	 * @param victim - The victim who was stolen from.
+	 * @param victimAware - Whether or not the victim noticed that they were stolen from.
 	 */
-	generateSuccessfulStealNotification(player, secondPerson, itemPhrase, slotPhrase, containerName, victim, victimAware) {
+	generateSuccessfulStealNotification(player: Player, secondPerson: boolean, itemPhrase: string, slotPhrase: string, containerName: string, victim: Player, victimAware: boolean) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `steal` : `steals`;
 		const successDisplay = secondPerson ? `.`
@@ -718,46 +713,46 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player failed to steal an item from someone.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item they attempted to steal.
-	 * @param {string} containerName - The name of the container they attempted to steal from.
-	 * @param {Player} victim - The victim who they attempted to steal from.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param slotPhrase - A phrase to refer to the slot the item they attempted to steal.
+	 * @param containerName - The name of the container they attempted to steal from.
+	 * @param victim - The victim who they attempted to steal from.
 	 */
-	generateFailedStealNotification(itemPhrase, slotPhrase, containerName, victim) {
+	generateFailedStealNotification(itemPhrase: string, slotPhrase: string, containerName: string, victim: Player) {
 		return `You try to steal ${itemPhrase} from ${slotPhrase}${victim.displayName}'s ${containerName}, but ${victim.pronouns.sbj} ${victim.pronouns.plural ? `notice` : `notices`} before you can.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player was stolen from.
-	 * @param {string} thiefDisplayName - The display name of the thief who stole the item.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item was stolen from.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} containerName - The name of the container the item was stolen from.
+	 * @param thiefDisplayName - The display name of the thief who stole the item.
+	 * @param slotPhrase - A phrase to refer to the slot the item was stolen from.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param containerName - The name of the container the item was stolen from.
 	 */
-	generateSuccessfulStolenFromNotification(thiefDisplayName, slotPhrase, itemPhrase, containerName) {
+	generateSuccessfulStolenFromNotification(thiefDisplayName: string, slotPhrase: string, itemPhrase: string, containerName: string) {
 		return `${capitalizeFirstLetter(thiefDisplayName)} steals ${itemPhrase} from ${slotPhrase}your ${containerName}!`;
 	}
 
 	/**
 	 * Generates a notification indicating someone attempted to steal an item from the player.
-	 * @param {string} thiefDisplayName - The display name of the thief who stole the item.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item was stolen from.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} containerName - The name of the container the item was stolen from.
+	 * @param thiefDisplayName - The display name of the thief who stole the item.
+	 * @param slotPhrase - A phrase to refer to the slot the item was stolen from.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param containerName - The name of the container the item was stolen from.
 	 */
-	generateFailedStolenFromNotification(thiefDisplayName, slotPhrase, itemPhrase, containerName) {
+	generateFailedStolenFromNotification(thiefDisplayName: string, slotPhrase: string, itemPhrase: string, containerName: string) {
 		return `${capitalizeFirstLetter(thiefDisplayName)} attempts to steal ${itemPhrase} from ${slotPhrase}your${containerName}, but you notice in time!`;
 	}
 
 	/**
 	 * Generates a notification indicating the player dropped an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} [preposition] - The preposition of the container.
-	 * @param {string} [containerPhrase] - The entire phrase of the container. Optional.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param preposition - The preposition of the container.
+	 * @param containerPhrase - The entire phrase of the container. Optional.
 	 */
-	generateDropNotification(player, secondPerson, itemPhrase, preposition, containerPhrase) {
+	generateDropNotification(player: Player, secondPerson: boolean, itemPhrase: string, preposition?: string, containerPhrase?: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `discard` : `discards`;
 		if (containerPhrase) verb = secondPerson ? `put` : `puts`;
@@ -767,12 +762,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player gave an item to someone.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} recipientDisplayName - The display name of the recipient.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param recipientDisplayName - The display name of the recipient.
 	 */
-	generateGiveNotification(player, secondPerson, itemPhrase, recipientDisplayName) {
+	generateGiveNotification(player: Player, secondPerson: boolean, itemPhrase: string, recipientDisplayName: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `give` : `gives`;
 		return `${subject} ${verb} ${itemPhrase} to ${recipientDisplayName}.`;
@@ -780,12 +775,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player couldn't give an item to someone because it is too heavy.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {Player} recipient - The recipient of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param recipient - The recipient of the item.
 	 */
-	generateGiveTooHeavyNotification(player, secondPerson, itemPhrase, recipient) {
+	generateGiveTooHeavyNotification(player: Player, secondPerson: boolean, itemPhrase: string, recipient: Player) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		return `${subject} ${verb} to give ${recipient.displayName} ${itemPhrase}, but it is too heavy for ${recipient.pronouns.obj} to lift.`;
@@ -793,12 +788,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player couldn't give an item to someone because they are carrying too much weight.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {Player} recipient - The recipient of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param recipient - The recipient of the item.
 	 */
-	generateGiveTooMuchWeightNotification(player, secondPerson, itemPhrase, recipient) {
+	generateGiveTooMuchWeightNotification(player: Player, secondPerson: boolean, itemPhrase: string, recipient: Player) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `try` : `tries`;
 		const contraction = secondPerson || player.pronouns.plural ? `'re` : `'s`;
@@ -807,41 +802,41 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player received an item from someone.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} giverDisplayName - The display name of the giver.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param giverDisplayName - The display name of the giver.
 	 */
-	generateReceiveNotification(itemPhrase, giverDisplayName) {
+	generateReceiveNotification(itemPhrase: string, giverDisplayName: string) {
 		return `${capitalizeFirstLetter(giverDisplayName)} gives you ${itemPhrase}!`;
 	}
 
 	/**
 	 * Generates a notification indicating the player couldn't receive an item from someone because it is too heavy.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} giverDisplayName - The display name of the player giving them the item.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param giverDisplayName - The display name of the player giving them the item.
 	 */
-	generateReceiveTooHeavyNotification(itemPhrase, giverDisplayName) {
+	generateReceiveTooHeavyNotification(itemPhrase: string, giverDisplayName: string) {
 		return `${capitalizeFirstLetter(giverDisplayName)} tries to give you ${itemPhrase}, but it is too heavy for you to lift.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player couldn't receive an item to someone because they are carrying too much weight.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} giverDisplayName - The display name of the player giving them the item.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param giverDisplayName - The display name of the player giving them the item.
 	 */
-	generateReceiveTooMuchWeightNotification(itemPhrase, giverDisplayName) {
+	generateReceiveTooMuchWeightNotification(itemPhrase: string, giverDisplayName: string) {
 		return `${capitalizeFirstLetter(giverDisplayName)} tries to give you ${itemPhrase}, but you're carrying too much weight.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player stashed an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} preposition - The preposition of the container.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item is being stashed in.
-	 * @param {string} containerName - The name of the container the item is being stashed in.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param preposition - The preposition of the container.
+	 * @param slotPhrase - A phrase to refer to the slot the item is being stashed in.
+	 * @param containerName - The name of the container the item is being stashed in.
 	 */
-	generateStashNotification(player, secondPerson, itemPhrase, preposition, slotPhrase, containerName) {
+	generateStashNotification(player: Player, secondPerson: boolean, itemPhrase: string, preposition: string, slotPhrase: string, containerName: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `stash` : `stashes`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
@@ -850,13 +845,13 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player unstashed an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
-	 * @param {string} slotPhrase - A phrase to refer to the slot the item is being unstashed from.
-	 * @param {string} containerName - The name of the container the item is being unstashed from.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
+	 * @param slotPhrase - A phrase to refer to the slot the item is being unstashed from.
+	 * @param containerName - The name of the container the item is being unstashed from.
 	 */
-	generateUnstashNotification(player, secondPerson, itemPhrase, slotPhrase, containerName) {
+	generateUnstashNotification(player: Player, secondPerson: boolean, itemPhrase: string, slotPhrase: string, containerName: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take` : `takes`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
@@ -865,11 +860,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player equipped an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemPhrase - The single containing phrase of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemPhrase - The single containing phrase of the item.
 	 */
-	generateEquipNotification(player, secondPerson, itemPhrase) {
+	generateEquipNotification(player: Player, secondPerson: boolean, itemPhrase: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `put on` : `puts on`;
 		return `${subject} ${verb} ${itemPhrase}.`;
@@ -877,11 +872,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player unequipped an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} itemName - The name of the item.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param itemName - The name of the item.
 	 */
-	generateUnequipNotification(player, secondPerson, itemName) {
+	generateUnequipNotification(player: Player, secondPerson: boolean, itemName: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `take off` : `takes off`;
 		const dpos = secondPerson ? `your` : player.pronouns.dpos;
@@ -890,12 +885,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player dressed.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} containerName - The name of the container the player is dressing from.
-	 * @param {string} itemList - A list of items the player put on.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param containerName - The name of the container the player is dressing from.
+	 * @param itemList - A list of items the player put on.
 	 */
-	generateDressNotification(player, secondPerson, containerName, itemList) {
+	generateDressNotification(player: Player, secondPerson: boolean, containerName: string, itemList: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `dress` : `dresses`;
 		return `${subject} ${verb} from the ${containerName}, putting on ${itemList}.`;
@@ -903,13 +898,13 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player undressed.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {string} preposition - The preposition of the container.
-	 * @param {string} containerPhrase - The entire phrase of the container the player is undressing into.
-	 * @param {string} itemList - A list of items the player took off.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param preposition - The preposition of the container.
+	 * @param containerPhrase - The entire phrase of the container the player is undressing into.
+	 * @param itemList - A list of items the player took off.
 	 */
-	generateUndressNotification(player, secondPerson, preposition, containerPhrase, itemList) {
+	generateUndressNotification(player: Player, secondPerson: boolean, preposition: string, containerPhrase: string, itemList: string) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `undress` : `undresses`;
 		return `${subject} ${verb}, putting ${itemList} ${preposition} ${containerPhrase}.`;
@@ -917,11 +912,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player crafted an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {CraftingResult} craftingResult - The result of the craft action.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param craftingResult - The result of the craft action.
 	 */
-	generateCraftNotification(player, secondPerson, craftingResult) {
+	generateCraftNotification(player: Player, secondPerson: boolean, craftingResult: CraftingResult) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		const verb = secondPerson ? `craft` : `crafts`;
 		let productPhrase = "";
@@ -940,14 +935,14 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player uncrafted an item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Recipe} recipe - The recipe used to uncraft the item.
-	 * @param {string} originalItemPhrase - The original single containing phrase of the item.
-	 * @param {string} itemPhrase - The single containing phrase of the item, which may have changed from its original value.
-	 * @param {UncraftingResult} uncraftingResult - The result of the uncraft action.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param recipe - The recipe used to uncraft the item.
+	 * @param originalItemPhrase - The original single containing phrase of the item.
+	 * @param itemPhrase - The single containing phrase of the item, which may have changed from its original value.
+	 * @param uncraftingResult - The result of the uncraft action.
 	 */
-	generateUncraftNotification(player, secondPerson, recipe, originalItemPhrase, itemPhrase, uncraftingResult) {
+	generateUncraftNotification(player: Player, secondPerson: boolean, recipe: Recipe, originalItemPhrase: string, itemPhrase: string, uncraftingResult: UncraftingResult) {
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		// If only one ingredient is discreet, the first ingredient should be the discreet one.
         // This will result in more natural sounding notifications.
@@ -981,11 +976,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that the fixture was activated.
-	 * @param {string} fixturePhrase - The phrase of the fixture.
-	 * @param {Player} [player] - The player referred to in this notification, if applicable.
-	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person, if applicable.
+	 * @param fixturePhrase - The phrase of the fixture.
+	 * @param player - The player referred to in this notification, if applicable.
+	 * @param secondPerson - Whether or not the player should be referred to in second person, if applicable.
 	 */
-	generateActivateNotification(fixturePhrase, player, secondPerson) {
+	generateActivateNotification(fixturePhrase: string, player?: Player, secondPerson?: boolean) {
 		if (player) {
 			const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 			const verb = secondPerson ? `turn on` : `turns on`;
@@ -996,11 +991,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating that the fixture was deactivated.
-	 * @param {string} fixturePhrase - The phrase of the fixture.
-	 * @param {Player} [player] - The player referred to in this notification, if applicable.
-	 * @param {boolean} [secondPerson] - Whether or not the player should be referred to in second person, if applicable.
+	 * @param fixturePhrase - The phrase of the fixture.
+	 * @param player - The player referred to in this notification, if applicable.
+	 * @param secondPerson - Whether or not the player should be referred to in second person, if applicable.
 	 */
-	generateDeactivateNotification(fixturePhrase, player, secondPerson) {
+	generateDeactivateNotification(fixturePhrase: string, player?: Player, secondPerson?: boolean) {
 		if (player) {
 			const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 			const verb = secondPerson ? `turn off` : `turns off`;
@@ -1011,29 +1006,29 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates the default notification indicating that a puzzle was attempted.
-	 * @param {string} playerDisplayName - The display name of the player.
-	 * @param {string} puzzlePhrase - The containing phrase of the puzzle.
+	 * @param playerDisplayName - The display name of the player.
+	 * @param puzzlePhrase - The containing phrase of the puzzle.
 	 */
-	generateAttemptPuzzleDefaultNotification(playerDisplayName, puzzlePhrase) {
+	generateAttemptPuzzleDefaultNotification(playerDisplayName: string, puzzlePhrase: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} uses ${puzzlePhrase}.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player attempted a puzzle with no remaining attempts.
-	 * @param {string} playerDisplayName - The display name of the player.
-	 * @param {string} puzzlePhrase - The containing phrase of the puzzle.
+	 * @param playerDisplayName - The display name of the player.
+	 * @param puzzlePhrase - The containing phrase of the puzzle.
 	 */
-	generateAttemptPuzzleWithNoRemainingAttemptsNotification(playerDisplayName, puzzlePhrase) {
+	generateAttemptPuzzleWithNoRemainingAttemptsNotification(playerDisplayName: string, puzzlePhrase: string) {
 		return `${capitalizeFirstLetter(playerDisplayName)} attempts and fails to use ${puzzlePhrase}.`;
 	}
 
 	/**
 	 * Generates a notification indicating the player attempted a puzzle that takes an item as a solution without the required item.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param puzzle - The puzzle that was attempted.
 	 */
-	generateAttemptPuzzleWithoutItemSolutionNotification(player, secondPerson, puzzle) {
+	generateAttemptPuzzleWithoutItemSolutionNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let predicate = secondPerson ? `attempt to use` : `attempts to use`;
@@ -1049,13 +1044,13 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player solved a puzzle. Generates the notification automatically based on the puzzle's type.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Puzzle} puzzle - The puzzle that was solved.
-	 * @param {string} outcome - The puzzle's outcome. 
-	 * @param {ItemInstance} [item] - The item the puzzle was solved with, if applicable.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param puzzle - The puzzle that was solved.
+	 * @param outcome - The puzzle's outcome. 
+	 * @param item - The item the puzzle was solved with, if applicable.
 	 */
-	generateSolvePuzzleNotification(player, secondPerson, puzzle, outcome, item) {
+	generateSolvePuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, outcome: string, item?: ItemInstance) {
 		if (puzzle.type === "weight" || puzzle.type === "container" || puzzle.type === "restricted exit") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
@@ -1082,11 +1077,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player unsolved a puzzle. Chooses the notification automatically based on the puzzle's type.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Puzzle} puzzle - The puzzle that was unsolved.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param puzzle - The puzzle that was unsolved.
 	 */
-	generateUnsolvePuzzleNotification(player, secondPerson, puzzle) {
+	generateUnsolvePuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
@@ -1104,11 +1099,11 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player attempted a puzzle that was already solved. Generates the notification automatically based on the puzzle's type.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param puzzle - The puzzle that was attempted.
 	 */
-	generateAttemptAlreadySolvedPuzzleNotification(player, secondPerson, puzzle) {
+	generateAttemptAlreadySolvedPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
@@ -1127,12 +1122,12 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player attempted and failed to solve a puzzle. Chooses the notification automatically based on the puzzle's type.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
-	 * @param {Puzzle} puzzle - The puzzle that was attempted.
-	 * @param {ItemInstance} [item] - The item the puzzle was attempted with, if applicable.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
+	 * @param puzzle - The puzzle that was attempted.
+	 * @param item - The item the puzzle was attempted with, if applicable.
 	 */
-	generateAttemptAndFailPuzzleNotification(player, secondPerson, puzzle, item) {
+	generateAttemptAndFailPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, item?: ItemInstance) {
 		if (puzzle.type === "weight" || puzzle.type === "container") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
@@ -1160,10 +1155,10 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating the player has died.
-	 * @param {Player} player - The player referred to in this notification.
-	 * @param {boolean} secondPerson - Whether or not the player should be referred to in second person.
+	 * @param player - The player referred to in this notification.
+	 * @param secondPerson - Whether or not the player should be referred to in second person.
 	 */
-	generateDieNotification(player, secondPerson) {
+	generateDieNotification(player: Player, secondPerson: boolean) {
 		const message = secondPerson
 			? `You have died. When your body is discovered, you will be given the ${this.#game.guildContext.deadRole.name} role. Until then, your death must remain a secret to the server and to other players.`
 			: `${capitalizeFirstLetter(player.displayName)} dies.`;
@@ -1172,17 +1167,17 @@ export default class GameNotificationGenerator {
 
 	/**
 	 * Generates a notification indicating an exit was unlocked.
-	 * @param {Exit} exit - The exit that was unlocked.
+	 * @param exit - The exit that was unlocked.
 	 */
-	generateUnlockNotification(exit) {
+	generateUnlockNotification(exit: Exit) {
 		return `${capitalizeFirstLetter(exit.getDoorPhrase())} unlocks.`;
 	}
 
 	/**
 	 * Generates a notification indicating an exit was locked.
-	 * @param {Exit} exit - The exit that was locked.
+	 * @param exit - The exit that was locked.
 	 */
-	generateLockNotification(exit) {
+	generateLockNotification(exit: Exit) {
 		return `${capitalizeFirstLetter(exit.getDoorPhrase())} locks.`;
 	}
 }

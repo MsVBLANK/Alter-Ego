@@ -4,7 +4,7 @@ import {
     loadGameSettings,
     loadPlayerDefaults
 } from "../../Modules/settingsLoader.ts";
-import BotContext from "../../Classes/BotContext.js";
+import BotContext from "../../Classes/BotContext.ts";
 
 describe("settingsLoader tests", () => {
     beforeEach(() => {

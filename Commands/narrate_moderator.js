@@ -8,16 +8,16 @@ import { MessageDisplayType } from '../Modules/enums.js';
 
 /** @type {CommandConfig} */
 export const config = {
-	name: "narrate_moderator",
-	description: "Narrates an NPC's non-verbal actions.",
-	details: `Narrates non-verbal actions for an NPC. The name of an NPC must be specified. This narration will be sent to the room or hiding spot the NPC is currently in. `
-		+ `This behaves similarly to the \`gesture\` command, but it allows you to write more complex narrations. `
-		+ `Please note that you cannot send a narration that exceeds Discord's character limit, which is 2000 characters.\n\n`
-		+ `This command cannot be used to narrate actions for a non-NPC player. To do that, send a message in the room or whisper channel they're currently in. `
-		+ `This will be treated as a narration, but it will be clearly indicated as having been written by you.`,
-	usableBy: "Moderator",
-	aliases: ["narrate", "n"],
-	requiresGame: true
+    name: "narrate_moderator",
+    description: "Narrates an NPC's non-verbal actions.",
+    details: `Narrates non-verbal actions for an NPC. The name of an NPC must be specified. This narration will be sent to the room or hiding spot the NPC is currently in. `
+        + `This behaves similarly to the \`gesture\` command, but it allows you to write more complex narrations. `
+        + `Please note that you cannot send a narration that exceeds Discord's character limit, which is 2000 characters.\n\n`
+        + `This command cannot be used to narrate actions for a non-NPC player. To do that, send a message in the room or whisper channel they're currently in. `
+        + `This will be treated as a narration, but it will be clearly indicated as having been written by you.`,
+    usableBy: "Moderator",
+    aliases: ["narrate", "n"],
+    requiresGame: true
 };
 
 /**
@@ -25,10 +25,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-	return `${settings.commandPrefix}narrate ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
-		+ `${settings.commandPrefix}n unit_050 It sits up straight on the piano bench and prepares to play.\n`
-		+ `${settings.commandPrefix}narrate sid She is utterly perplexed by the $100 bill that's suddenly in the tip jar.\n`
-		+ `${settings.commandPrefix}n haru He walks over to the plushie rack and takes the used dog plushie. He puts it under the counter for safekeeping. Definitely not for easy access.`;
+    return `${settings.commandPrefix}narrate ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
+        + `${settings.commandPrefix}n unit_050 It sits up straight on the piano bench and prepares to play.\n`
+        + `${settings.commandPrefix}narrate sid She is utterly perplexed by the $100 bill that's suddenly in the tip jar.\n`
+        + `${settings.commandPrefix}n haru He walks over to the plushie rack and takes the used dog plushie. He puts it under the counter for safekeeping. Definitely not for easy access.`;
 }
 
 /**
@@ -40,25 +40,25 @@ export function usage(settings) {
  */
 export async function execute(game, message, command, args, moderator) {
     const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
-	if (!sentMessageInLatchChannel && args.length < 2)
-		return game.communicationHandler.reply(message, `You need to specify an NPC and something to narrate. Usage:\n${usage(game.settings)}`);
+    if (!sentMessageInLatchChannel && args.length < 2)
+        return game.communicationHandler.reply(message, `You need to specify an NPC and something to narrate. Usage:\n${usage(game.settings)}`);
     if (sentMessageInLatchChannel && args.length < 1)
         return game.communicationHandler.reply(message, `You need to specify something to narrate. Usage:\n${usage(game.settings)}`);
 
-	let player = game.entityFinder.getLivingPlayer(args[0]);
+    let player = game.entityFinder.getLivingPlayer(args[0]);
     if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase()))
         args.splice(0, 1);
     if (!player && sentMessageInLatchChannel)
         player = moderator.getLatch();
-	const input = args.join(" ");
-	if (input.length >= 2000)
-		return game.communicationHandler.reply(message, `Your narration exceeds Discord's character limit. Please split it into multiple messages.`);
+    const input = args.join(" ");
+    if (input.length >= 2000)
+        return game.communicationHandler.reply(message, `Your narration exceeds Discord's character limit. Please split it into multiple messages.`);
 
-	if (player) {
-		if (!player.isNPC) return game.communicationHandler.reply(message, `You cannot narrate for a player that isn't an NPC. Send a message directly to their room or whisper channel instead.`);
-		const narrateAction = new NarrateAction(game, message, player, player.location, true);
-		game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAYER, narrateAction, input, player);
-		game.communicationHandler.sendToCommandChannel(`Successfully narrated for ${player.name}.`);
-	}
-	else game.communicationHandler.reply(message, `Couldn't find an NPC in your input. Usage:\n${usage(game.settings)}`);
+    if (player) {
+        if (!player.isNPC) return game.communicationHandler.reply(message, `You cannot narrate for a player that isn't an NPC. Send a message directly to their room or whisper channel instead.`);
+        const narrateAction = new NarrateAction(game, message, player, player.location, true);
+        game.narrationHandler.sendNarrateAction(MessageDisplayType.PLAYER, narrateAction, input, player);
+        game.communicationHandler.sendToCommandChannel(`Successfully narrated for ${player.name}.`);
+    }
+    else game.communicationHandler.reply(message, `Couldn't find an NPC in your input. Usage:\n${usage(game.settings)}`);
 }

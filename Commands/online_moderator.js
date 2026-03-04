@@ -29,6 +29,6 @@ export function usage(settings) {
  */
 export async function execute(game, message, command, args, moderator) {
     const players = game.entityFinder.getLivingPlayers().filter(player => player.online).map(player => player.name).sort();
-	const playerList = players.join(", ");
+    const playerList = players.join(", ");
     game.communicationHandler.sendToCommandChannel(`Players online:\n${playerList}`);
 }

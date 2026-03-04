@@ -8,7 +8,7 @@ import InventoryItem from "../InventoryItem.ts";
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/equip-action.html
  */
 export default class EquipAction extends Action {
-	/**
+    /**
      * Performs an equip action.
      *
      * @param item - The inventory item to equip.
@@ -16,14 +16,14 @@ export default class EquipAction extends Action {
      * @param handEquipmentSlot - The hand equipment slot that the inventory item is currently in.
      * @param notify - Whether or not to notify the player that they equipped the inventory item. Defaults to true.
      */
-	performEquip(item: InventoryItem, equipmentSlot: EquipmentSlot, handEquipmentSlot: EquipmentSlot, notify: boolean = true): void {
-		if (this.performed) return;
-		super.perform();
-		this.getGame().narrationHandler.narrateEquip(this, item, this.player, notify);
-		this.getGame().logHandler.logEquip(item, this.player, equipmentSlot, this.forced);
-		this.player.equip(item, equipmentSlot, handEquipmentSlot);
-		equipmentSlot.equippedItem.executeEquippedCommands();
-	}
+    performEquip(item: InventoryItem, equipmentSlot: EquipmentSlot, handEquipmentSlot: EquipmentSlot, notify: boolean = true): void {
+        if (this.performed) return;
+        super.perform();
+        this.getGame().narrationHandler.narrateEquip(this, item, this.player, notify);
+        this.getGame().logHandler.logEquip(item, this.player, equipmentSlot, this.forced);
+        this.player.equip(item, equipmentSlot, handEquipmentSlot);
+        equipmentSlot.equippedItem.executeEquippedCommands();
+    }
 
     /**
      * Finds the required inventory item and equipment slot to call performEquip.

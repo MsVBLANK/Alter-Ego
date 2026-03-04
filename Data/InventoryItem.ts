@@ -164,24 +164,24 @@ export default class InventoryItem extends ItemInstance {
         return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
     }
 
-	/**
-	 * Returns the args for the Stash ActionDirective for this inventory item.
+    /**
+     * Returns the args for the Stash ActionDirective for this inventory item.
      *
-	 * @param container - The container to stash the inventory item into.
-	 * @param inventorySlot - The inventory slot to stash the inventory item into.
-	 */
-	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string] {
-		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
-	}
+     * @param container - The container to stash the inventory item into.
+     * @param inventorySlot - The inventory slot to stash the inventory item into.
+     */
+    getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string] {
+        return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
+    }
 
-	/**
-	 * Returns the args for the Unstash ActionDirective for this inventory item.
+    /**
+     * Returns the args for the Unstash ActionDirective for this inventory item.
      *
      * @returns [identifier, containerName, equipmentSlot]
-	 */
-	getUnstashActionDirectiveArgs(): [string, string, string] {
-		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
-	}
+     */
+    getUnstashActionDirectiveArgs(): [string, string, string] {
+        return [this.getIdentifier(), this.containerName, this.equipmentSlot];
+    }
 
     /**
      * Returns the args for the Equip ActionDirective for this inventory item.
@@ -229,15 +229,15 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
-	 * Gets all of the items that should appear in the given item list.
+     * Gets all of the items that should appear in the given item list.
      *
-	 * @param itemListName - The name of the item list. Only required if there is more than one item list.
-	 * @param player - The player the description is being sent to. Optional.
-	 */
-	override getContainedItemsForItemList(itemListName?: string, player?: Player): InventoryItem[] {
+     * @param itemListName - The name of the item list. Only required if there is more than one item list.
+     * @param player - The player the description is being sent to. Optional.
+     */
+    override getContainedItemsForItemList(itemListName?: string, player?: Player): InventoryItem[] {
         if (player && player.name !== this.player.name) return [];
         return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier, itemListName);
-	}
+    }
 
     /**
      * Executes the inventory item's equipped commands.
@@ -258,14 +258,14 @@ export default class InventoryItem extends ItemInstance {
      */
     usableOn(player: Player): boolean {
         let canEffect = false, canCure = false;
-		for (const effect of this.prefab.effects) {
-			if (!player.hasStatus(effect.id) || effect.duplicatedStatus !== null)
+        for (const effect of this.prefab.effects) {
+            if (!player.hasStatus(effect.id) || effect.duplicatedStatus !== null)
                 canEffect = true;
-		}
-		for (const cure of this.prefab.cures) {
-			if (player.hasStatus(cure.id))
+        }
+        for (const cure of this.prefab.cures) {
+            if (player.hasStatus(cure.id))
                 canCure = true;
-		}
+        }
         if (!canEffect && !canCure) return false;
         return true;
     }

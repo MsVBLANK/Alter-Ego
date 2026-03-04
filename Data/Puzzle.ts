@@ -231,14 +231,14 @@ export default class Puzzle extends ItemContainer {
     }
 
     /**
-	 * Gets all of the items that should appear in the puzzle's item list.
+     * Gets all of the items that should appear in the puzzle's item list.
      *
-	 * @param itemListName - The name of the item list. Unused.
-	 * @param player - The player the description is being sent to. Unused.
-	 */
-	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
-		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
-	}
+     * @param itemListName - The name of the item list. Unused.
+     * @param player - The player the description is being sent to. Unused.
+     */
+    override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'Puzzle', this.name);
+    }
 
     /**
      * Sets the puzzle as solved.

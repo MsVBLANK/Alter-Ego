@@ -229,14 +229,14 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
-	 * Gets all of the items that should appear in the given item list.
+     * Gets all of the items that should appear in the given item list.
      *
-	 * @param itemListName - The name of the item list. Only required if there is more than one item list.
-	 * @param player - The player the description is being sent to. Unused.
-	 */
-	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
+     * @param itemListName - The name of the item list. Only required if there is more than one item list.
+     * @param player - The player the description is being sent to. Unused.
+     */
+    override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'RoomItem', this.identifier, itemListName);
-	}
+    }
 
     descriptionCell(): string {
         return this.getGame().constants.roomItemSheetDescriptionColumn + this.row;

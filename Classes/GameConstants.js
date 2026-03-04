@@ -3,10 +3,10 @@
  * @classdesc A collection of constants used to refer to cell ranges on the spreadsheet.
  */
 export default class GameConstants {
-	/** @type {GameConstants} */
-	static instance;
-	
-	roomSheetDataCells = "Rooms!A2:M";
+    /** @type {GameConstants} */
+    static instance;
+    
+    roomSheetDataCells = "Rooms!A2:M";
     roomSheetSaveCells = "Rooms!D2:M";
     roomSheetDescriptionColumn = "Rooms!M";
     /** @deprecated */
@@ -47,11 +47,11 @@ export default class GameConstants {
     gestureSheetDataCells = "Gestures!A2:E";
     flagSheetDataCells = "Flags!A2:D";
     
-	constructor() {
-		if (GameConstants.instance) {
-			return GameConstants.instance;
-		}
+    constructor() {
+        if (GameConstants.instance) {
+            return GameConstants.instance;
+        }
 
-		GameConstants.instance = this;
-	}
+        GameConstants.instance = this;
+    }
 }

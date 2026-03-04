@@ -131,8 +131,8 @@ export default class Recipe extends GameEntity {
             const ingredient = this.ingredientsFlat[i];
             if (item.prefab.id !== ingredient.prefab.id) return false;
             if (item.quantity < ingredient.quantity) return false;
-			if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
-			if (!item.containerMatches(ingredient)) return false;
+            if (!isNaN(item.uses) && !isNaN(ingredient.uses) && item.uses < ingredient.uses) return false;
+            if (!item.containerMatches(ingredient)) return false;
             if (item instanceof CollatedItem) item.setVariable(ingredient.quantityVariableName);
         }
         return true;
@@ -166,7 +166,7 @@ export default class Recipe extends GameEntity {
     getSatisfactoryProcessCount<T extends RoomItem | InventoryItem>(items: CollatedItem<T>[]): number {
         let satisfactoryItemsCounts: number[] = [];
         if (this.ingredientsFlat.length !== items.length) return 0;
-		const allIngredientQuantitiesAreConstant = this.ingredientsFlat.filter(ingredient => !ingredient.quantityIsConstant).length === 0;
+        const allIngredientQuantitiesAreConstant = this.ingredientsFlat.filter(ingredient => !ingredient.quantityIsConstant).length === 0;
         for (let [i, item] of items.entries()) {
             const ingredient = this.ingredientsFlat[i];
             const ingredientIsAlsoProduct = this.isIngredientAndProduct(item);
@@ -176,20 +176,20 @@ export default class Recipe extends GameEntity {
             if(!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
         }
         if (satisfactoryItemsCounts.length === 1 && isNaN(satisfactoryItemsCounts[0])) return 1;
-		if (allIngredientQuantitiesAreConstant) return 1;
+        if (allIngredientQuantitiesAreConstant) return 1;
         return Math.min(...satisfactoryItemsCounts.filter(satisfactoryItemsCount => !isNaN(satisfactoryItemsCount)));
     }
 
-	/**
-	 * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
-	 */
-	isIngredientAndProduct<T extends RoomItem | InventoryItem>(item: CollatedItem<T> | RecipeItem): boolean {
+    /**
+     * Returns true if the given item is both an ingredient and a product. The given item must also match the container level (either top-level or contained).
+     */
+    isIngredientAndProduct<T extends RoomItem | InventoryItem>(item: CollatedItem<T> | RecipeItem): boolean {
         const matchedIngredient = this.ingredientsFlat.find(ingredient => ingredient.prefab.id === item.prefab.id);
         if (!matchedIngredient) return false;
         const matchedProduct = this.productsFlat.find(product => product.prefab.id === item.prefab.id);
         if (!matchedProduct) return false;
         return matchedIngredient.container === matchedProduct.container && matchedIngredient.containedItemsString === matchedProduct.containedItemsString;
-	}
+    }
 
     /**
      * Gets a map of all values associated with the given items.

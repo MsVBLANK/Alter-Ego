@@ -12,8 +12,8 @@ export default abstract class ModalComponentInteractable extends Interactable {
      */
     readonly description: string;
     /**
-	 * The component created from this interactable.
-	 */
+     * The component created from this interactable.
+     */
     readonly component: LabelBuilder;
 
     /**

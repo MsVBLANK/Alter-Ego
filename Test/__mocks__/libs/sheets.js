@@ -7,11 +7,11 @@ const dataMap = new Map();
  * @param {string[][]} values 
  */
 export function __setMock(sheetrange, values) {
-	dataMap.set(sheetrange, values);
+    dataMap.set(sheetrange, values);
 }
 
 export function __clearMock() {
-	dataMap.clear();
+    dataMap.clear();
 }
 
 /**
@@ -21,13 +21,13 @@ export function __clearMock() {
  * @returns {Promise<ValueRange>} The values of the specified range in {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values#ValueRange|ValueRange} format.
  */
 export async function getSheetValues(sheetrange, spreadsheetId) {
-	let values;
-	let filename = getGameDataFileName(sheetrange);
-	if (!dataMap.has(sheetrange) && filename) {
-		values = JSON.parse(readFileSync(`./Test/__mocks__/gamedata/${filename}`).toString());
-	}
-	else values = dataMap.get(sheetrange);
-	return { range: sheetrange, majorDimension: 'ROWS', values: values || [] };
+    let values;
+    let filename = getGameDataFileName(sheetrange);
+    if (!dataMap.has(sheetrange) && filename) {
+        values = JSON.parse(readFileSync(`./Test/__mocks__/gamedata/${filename}`).toString());
+    }
+    else values = dataMap.get(sheetrange);
+    return { range: sheetrange, majorDimension: 'ROWS', values: values || [] };
 }
 
 /**
@@ -37,7 +37,7 @@ export async function getSheetValues(sheetrange, spreadsheetId) {
  * @returns {Promise<any>} The specified range in the {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets#Spreadsheet|Spreadsheet}.
  */
 export async function getSheetWithProperties(sheetrange, spreadsheetId) {
-	return { range: sheetrange, spreadsheetId, data: dataMap.get(sheetrange) || [] };
+    return { range: sheetrange, spreadsheetId, data: dataMap.get(sheetrange) || [] };
 }
 
 /**
@@ -48,7 +48,7 @@ export async function getSheetWithProperties(sheetrange, spreadsheetId) {
  * @returns {Promise<any>} An {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/UpdateValuesResponse|UpdateValuesResponse}.
  */
 export async function updateSheetValues(sheetrange, data, spreadsheetId) {
-	return { status: 'mocked' };
+    return { status: 'mocked' };
 }
 
 /**
@@ -58,7 +58,7 @@ export async function updateSheetValues(sheetrange, data, spreadsheetId) {
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/batchUpdate#response-body}
  */
 export async function batchUpdateSheetValues(data, spreadsheetId) {
-	return { status: 'mocked' };
+    return { status: 'mocked' };
 }
 
 /**
@@ -68,7 +68,7 @@ export async function batchUpdateSheetValues(data, spreadsheetId) {
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets/batchUpdate#response-body}
  */
 export async function batchUpdateSheet(requests, spreadsheetId) {
-	return { status: 'mocked' };
+    return { status: 'mocked' };
 }
 
 /**
@@ -79,7 +79,7 @@ export async function batchUpdateSheet(requests, spreadsheetId) {
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append#response-body}
  */
 export async function appendRowsToSheet(sheetrange, data, spreadsheetId) {
-	return { status: 'mocked' };
+    return { status: 'mocked' };
 }
 
 /** 
@@ -87,41 +87,41 @@ export async function appendRowsToSheet(sheetrange, data, spreadsheetId) {
  * @param {string} sheetrange - The range to append rows to in {@link https://developers.google.com/workspace/sheets/api/guides/concepts#cell|A1 notation}.
 */
 function getGameDataFileName(sheetrange) {
-	switch (sheetrange) {
-		case game.constants.roomSheetDataCells:
-			return "rooms.json";
-		case game.constants.fixtureSheetDataCells:
-			return "fixtures.json";
-		case game.constants.prefabSheetDataCells:
-			return "prefabs.json";
-		case game.constants.recipeSheetDataCells:
-			return "recipes.json";
-		case game.constants.roomItemSheetDataCells:
-			return "roomitems.json";
-		case game.constants.puzzleSheetDataCells:
-			return "puzzles.json";
-		case game.constants.eventSheetDataCells:
-			return "events.json";
-		case game.constants.statusSheetDataCells:
-			return "statuseffects.json";
-		case game.constants.playerSheetDataCells:
-			return "players.json";
-		case game.constants.inventorySheetDataCells:
-			return "inventoryitems.json";
-		case game.constants.gestureSheetDataCells:
-			return "gestures.json";
-		case game.constants.flagSheetDataCells:
-			return "flags.json";
-	}
+    switch (sheetrange) {
+        case game.constants.roomSheetDataCells:
+            return "rooms.json";
+        case game.constants.fixtureSheetDataCells:
+            return "fixtures.json";
+        case game.constants.prefabSheetDataCells:
+            return "prefabs.json";
+        case game.constants.recipeSheetDataCells:
+            return "recipes.json";
+        case game.constants.roomItemSheetDataCells:
+            return "roomitems.json";
+        case game.constants.puzzleSheetDataCells:
+            return "puzzles.json";
+        case game.constants.eventSheetDataCells:
+            return "events.json";
+        case game.constants.statusSheetDataCells:
+            return "statuseffects.json";
+        case game.constants.playerSheetDataCells:
+            return "players.json";
+        case game.constants.inventorySheetDataCells:
+            return "inventoryitems.json";
+        case game.constants.gestureSheetDataCells:
+            return "gestures.json";
+        case game.constants.flagSheetDataCells:
+            return "flags.json";
+    }
 }
 
 export default {
-	__setMock,
-	__clearMock,
-	getSheetValues,
-	getSheetWithProperties,
-	updateSheetValues,
-	batchUpdateSheetValues,
-	batchUpdateSheet,
-	appendRowsToSheet,
+    __setMock,
+    __clearMock,
+    getSheetValues,
+    getSheetWithProperties,
+    updateSheetValues,
+    batchUpdateSheetValues,
+    batchUpdateSheet,
+    appendRowsToSheet,
 };

@@ -49,7 +49,7 @@ export async function execute(game, message, command, args, player) {
     const status = player.getBehaviorAttributeStatusEffects("disable recipes");
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
-	/** @type {InventoryItem} */
+    /** @type {InventoryItem} */
     let item;
     if (args.length > 0) {
         const input = args.join(" ");
@@ -64,8 +64,8 @@ export async function execute(game, message, command, args, player) {
             }
         }
         if (!item) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in your inventory.`);
-	}
+    }
 
-	const action = new RecipesAction(game, message, player, player.location, false);
-	action.performRecipes(item);
+    const action = new RecipesAction(game, message, player, player.location, false);
+    action.performRecipes(item);
 }

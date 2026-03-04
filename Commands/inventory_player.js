@@ -41,5 +41,5 @@ export async function execute(game, message, command, args, player) {
     if (status.length > 0) return game.communicationHandler.reply(message, `You cannot do that because you are **${status[0].id}**.`);
 
     const action = new InventoryAction(game, message, player, player.location, false);
-	action.performInventory();
+    action.performInventory();
 }

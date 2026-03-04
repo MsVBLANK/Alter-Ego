@@ -9,7 +9,7 @@ export const config = {
     name: "uncraft_moderator",
     description: "Separates an item in a player's inventory into its component parts.",
     details: "Separates an item in one of the given player's hands into its component parts, assuming they can be separated. "
-		+ "This reverses the process of a crafting recipe, using the product of the recipe as an ingredient, and creating its ingredients as products. "
+        + "This reverses the process of a crafting recipe, using the product of the recipe as an ingredient, and creating its ingredients as products. "
         + "This will produce two items, so they will need a free hand in order for this command to be usable. "
         + "If there is no crafting recipe that produces the supplied item which allows it to be uncrafted again, this command cannot be used.",
     usableBy: "Moderator",
@@ -38,7 +38,7 @@ export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and an inventory item in their hand. Usage:\n${usage(game.settings)}`);
 
-	const player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    const player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
     args.splice(0, 1);
 
@@ -80,7 +80,7 @@ export async function execute(game, message, command, args, moderator) {
     }
     if (recipe === null) return game.communicationHandler.reply(message, `Couldn't find an uncraftable recipe that produces ${item.prefab.id}.`);
 
-	if (!rightEmpty && !leftEmpty) {
+    if (!rightEmpty && !leftEmpty) {
         return game.communicationHandler.reply(message, `${player.name} does not have an empty hand to uncraft ${item.prefab.id}.`);
     }
 
@@ -88,5 +88,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new UncraftAction(game, message, player, player.location, true);
     action.performUncraft(item, recipe);
-	game.communicationHandler.sendToCommandChannel(`Successfully uncrafted ${itemIdentifier} for ${player.name}.`);
+    game.communicationHandler.sendToCommandChannel(`Successfully uncrafted ${itemIdentifier} for ${player.name}.`);
 }

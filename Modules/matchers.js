@@ -22,7 +22,7 @@ import Status from "../Data/Status.ts";
  * @param {number} row - The row number to match.
  */
 export const entityRowMatches = (entity, row) => {
-	return entity.row === row;
+    return entity.row === row;
 };
 
 /**
@@ -31,7 +31,7 @@ export const entityRowMatches = (entity, row) => {
  * @param {number} row - The row number to match.
  */
 export const entityRowDiffers = (entity, row) => {
-	return entity.row !== row;
+    return entity.row !== row;
 };
 
 /**
@@ -41,8 +41,8 @@ export const entityRowDiffers = (entity, row) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const roomIdMatches = (room, id, normalize = false) => {
-	if (normalize) Room.generateValidId(id);
-	return room.id === id;
+    if (normalize) Room.generateValidId(id);
+    return room.id === id;
 };
 
 /**
@@ -52,8 +52,8 @@ export const roomIdMatches = (room, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const roomIdContains = (room, id, normalize = false) => {
-	if (normalize) Room.generateValidId(id);
-	return room.id.includes(id);
+    if (normalize) Room.generateValidId(id);
+    return room.id.includes(id);
 };
 
 /**
@@ -63,8 +63,8 @@ export const roomIdContains = (room, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the tag before matching. Defaults to false.
  */
 export const roomTagMatches = (room, tag, normalize = false) => {
-	if (normalize) tag = tag.trim();
-	return room.tags.has(tag);
+    if (normalize) tag = tag.trim();
+    return room.tags.has(tag);
 };
 
 /**
@@ -73,9 +73,9 @@ export const roomTagMatches = (room, tag, normalize = false) => {
  * @param {boolean} includeNPCs - Whether or not to count NPCs as occupants.
  */
 export const roomOccupiedMatches = (room, includeNPCs) => {
-	if (room.occupants.length === 0) return false;
-	if (!includeNPCs) return room.occupants.filter(occupant => !occupant.isNPC).length > 0;
-	else return room.occupants.length > 0;
+    if (room.occupants.length === 0) return false;
+    if (!includeNPCs) return room.occupants.filter(occupant => !occupant.isNPC).length > 0;
+    else return room.occupants.length > 0;
 };
 
 /**
@@ -85,8 +85,8 @@ export const roomOccupiedMatches = (room, includeNPCs) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const exitNameMatches = (exit, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return exit.name === name;
+    if (normalize) name = Game.generateValidEntityName(name);
+    return exit.name === name;
 }
 
 /**
@@ -96,8 +96,8 @@ export const exitNameMatches = (exit, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const exitNameContains = (exit, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return exit.name.includes(name);
+    if (normalize) name = Game.generateValidEntityName(name);
+    return exit.name.includes(name);
 }
 
 /**
@@ -107,8 +107,8 @@ export const exitNameContains = (exit, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const exitDestMatches = (exit, id, normalize = false) => {
-	if (normalize) id = Room.generateValidId(id);
-	return exit.dest.id === id;
+    if (normalize) id = Room.generateValidId(id);
+    return exit.dest.id === id;
 }
 
 /**
@@ -117,7 +117,7 @@ export const exitDestMatches = (exit, id, normalize = false) => {
  * @param {boolean} lock - Whether or not the door should be locked.
  */
 export const exitLockedMatches = (exit, lock) => {
-	return lock !== exit.unlocked;
+    return lock !== exit.unlocked;
 }
 
 /**
@@ -127,8 +127,8 @@ export const exitLockedMatches = (exit, lock) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const entityNameMatches = (entity, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return entity.name === name;
+    if (normalize) name = Game.generateValidEntityName(name);
+    return entity.name === name;
 };
 
 /**
@@ -138,8 +138,8 @@ export const entityNameMatches = (entity, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const entityNameContains = (entity, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return entity.name.includes(name);
+    if (normalize) name = Game.generateValidEntityName(name);
+    return entity.name.includes(name);
 };
 
 /**
@@ -149,8 +149,8 @@ export const entityNameContains = (entity, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const entityIdMatches = (entity, id, normalize = false) => {
-	if (normalize) id = Game.generateValidEntityName(id);
-	return entity.id === id;
+    if (normalize) id = Game.generateValidEntityName(id);
+    return entity.id === id;
 };
 
 /**
@@ -160,8 +160,8 @@ export const entityIdMatches = (entity, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const entityIdContains = (entity, id, normalize = false) => {
-	if (normalize) id = Game.generateValidEntityName(id);
-	return entity.id.includes(id);
+    if (normalize) id = Game.generateValidEntityName(id);
+    return entity.id.includes(id);
 };
 
 /**
@@ -171,8 +171,8 @@ export const entityIdContains = (entity, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const entityLocationIdMatches = (entity, id, normalize = false) => {
-	if (normalize) id = Room.generateValidId(id);
-	return entity.location.id === id;
+    if (normalize) id = Room.generateValidId(id);
+    return entity.location.id === id;
 };
 
 /**
@@ -181,7 +181,7 @@ export const entityLocationIdMatches = (entity, id, normalize = false) => {
  * @param {boolean} accessible - The accessible state to match against.
  */
 export const entityAccessibleMatches = (entity, accessible) => {
-	return entity.accessible === accessible;
+    return entity.accessible === accessible;
 };
 
 /**
@@ -191,8 +191,8 @@ export const entityAccessibleMatches = (entity, accessible) => {
  * @param {boolean} [normalize] - Whether or not to normalize the recipe tag before matching. Defaults to false.
  */
 export const fixtureRecipeTagMatches = (fixture, recipeTag, normalize = false) => {
-	if (normalize) recipeTag = recipeTag.trim();
-	return fixture.recipeTag === recipeTag;
+    if (normalize) recipeTag = recipeTag.trim();
+    return fixture.recipeTag === recipeTag;
 };
 
 /**
@@ -202,9 +202,9 @@ export const fixtureRecipeTagMatches = (fixture, recipeTag, normalize = false) =
  * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false.
  */
 export const effectsMatches = (entity, effectsString, normalize = false) => {
-	let effects = effectsString.split(',');
-	if (normalize) effects.forEach((effect, i) => effects[i] = Status.generateValidId(effect));
-	return effects.every(effect => entity.effectsStrings.includes(effect));
+    let effects = effectsString.split(',');
+    if (normalize) effects.forEach((effect, i) => effects[i] = Status.generateValidId(effect));
+    return effects.every(effect => entity.effectsStrings.includes(effect));
 };
 
 /**
@@ -214,9 +214,9 @@ export const effectsMatches = (entity, effectsString, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false.
  */
 export const prefabCuresMatches = (prefab, curesString, normalize = false) => {
-	let cures = curesString.split(',');
-	if (normalize) cures.forEach((cure, i) => cures[i] = Status.generateValidId(cure));
-	return cures.every(cure => prefab.curesStrings.includes(cure));
+    let cures = curesString.split(',');
+    if (normalize) cures.forEach((cure, i) => cures[i] = Status.generateValidId(cure));
+    return cures.every(cure => prefab.curesStrings.includes(cure));
 };
 
 /**
@@ -226,9 +226,9 @@ export const prefabCuresMatches = (prefab, curesString, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the effects before matching. Defaults to false.
  */
 export const prefabEquipmentSlotsMatches = (prefab, equipmentSlotsString, normalize = false) => {
-	let equipmentSlots = equipmentSlotsString.split(',');
-	if (normalize) equipmentSlots.forEach((equipmentSlot, i) => equipmentSlots[i] = Game.generateValidEntityName(equipmentSlot));
-	return equipmentSlots.every(equipmentSlot => prefab.equipmentSlots.includes(equipmentSlot));
+    let equipmentSlots = equipmentSlotsString.split(',');
+    if (normalize) equipmentSlots.forEach((equipmentSlot, i) => equipmentSlots[i] = Game.generateValidEntityName(equipmentSlot));
+    return equipmentSlots.every(equipmentSlot => prefab.equipmentSlots.includes(equipmentSlot));
 };
 
 /**
@@ -238,8 +238,8 @@ export const prefabEquipmentSlotsMatches = (prefab, equipmentSlotsString, normal
  * @param {boolean} [normalize] - Whether or not to normalize the type before matching. Defaults to false.
  */
 export const recipeTypeMatches = (recipe, type, normalize = false) => {
-	if (normalize) type = type.toLowerCase().trim();
-	return type === "processing" && recipe.fixtureTag !== "" ? true
+    if (normalize) type = type.toLowerCase().trim();
+    return type === "processing" && recipe.fixtureTag !== "" ? true
         : type === "crafting" && recipe.fixtureTag === "" ? true
         : type === "uncraftable" && recipe.uncraftable ? true
         : false;
@@ -252,8 +252,8 @@ export const recipeTypeMatches = (recipe, type, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the fixture tag before matching. Defaults to false.
  */
 export const recipeFixtureTagMatches = (recipe, fixtureTag, normalize = false) => {
-	if (normalize) fixtureTag = fixtureTag.trim();
-	return recipe.fixtureTag === fixtureTag;
+    if (normalize) fixtureTag = fixtureTag.trim();
+    return recipe.fixtureTag === fixtureTag;
 };
 
 /**
@@ -263,9 +263,9 @@ export const recipeFixtureTagMatches = (recipe, fixtureTag, normalize = false) =
  * @param {boolean} [normalize] - Whether or not to normalize the ingredients before matching. Defaults to false.
  */
 export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = false) => {
-	let ingredients = ingredientsString.split(',');
-	if (normalize) ingredients.forEach((ingredient, i) => ingredients[i] = Game.generateValidEntityName(ingredient));
-	return ingredients.every(ingredient => recipe.ingredientsFlat.map(recipeIngredient => recipeIngredient.prefab.id).includes(ingredient));
+    let ingredients = ingredientsString.split(',');
+    if (normalize) ingredients.forEach((ingredient, i) => ingredients[i] = Game.generateValidEntityName(ingredient));
+    return ingredients.every(ingredient => recipe.ingredientsFlat.map(recipeIngredient => recipeIngredient.prefab.id).includes(ingredient));
 };
 
 /**
@@ -275,9 +275,9 @@ export const recipeIngredientsMatches = (recipe, ingredientsString, normalize = 
  * @param {boolean} [normalize] - Whether or not to normalize the products before matching. Defaults to false.
  */
 export const recipeProductsMatches = (recipe, productsString, normalize = false) => {
-	let products = productsString.split(',');
-	if (normalize) products.forEach((product, i) => products[i] = Game.generateValidEntityName(product));
-	return products.every(product => recipe.productsFlat.map(recipeProduct => recipeProduct.prefab.id).includes(product));
+    let products = productsString.split(',');
+    if (normalize) products.forEach((product, i) => products[i] = Game.generateValidEntityName(product));
+    return products.every(product => recipe.productsFlat.map(recipeProduct => recipeProduct.prefab.id).includes(product));
 };
 
 /**
@@ -287,8 +287,8 @@ export const recipeProductsMatches = (recipe, productsString, normalize = false)
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const itemNameMatches = (item, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return item.name === name || item.pluralName === name;
+    if (normalize) name = Game.generateValidEntityName(name);
+    return item.name === name || item.pluralName === name;
 };
 
 /**
@@ -298,8 +298,8 @@ export const itemNameMatches = (item, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierMatches = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	return item.identifier !== "" && item.identifier === identifier || item.prefab && item.prefab.id === identifier;
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    return item.identifier !== "" && item.identifier === identifier || item.prefab && item.prefab.id === identifier;
 };
 
 /**
@@ -309,8 +309,8 @@ export const itemIdentifierMatches = (item, identifier, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierOrNameMatches = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	return itemIdentifierMatches(item, identifier) || itemNameMatches(item, identifier);
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    return itemIdentifierMatches(item, identifier) || itemNameMatches(item, identifier);
 };
 
 /**
@@ -320,11 +320,11 @@ export const itemIdentifierOrNameMatches = (item, identifier, normalize = false)
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemIdentifierOrNameContains = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	return item.identifier !== "" && item.identifier.includes(identifier)
-		|| item.prefab && item.prefab.id.includes(identifier)
-		|| item.name.includes(identifier)
-		|| item.pluralName !== "" && item.pluralName.includes(identifier);
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    return item.identifier !== "" && item.identifier.includes(identifier)
+        || item.prefab && item.prefab.id.includes(identifier)
+        || item.name.includes(identifier)
+        || item.pluralName !== "" && item.pluralName.includes(identifier);
 };
 
 /**
@@ -334,14 +334,14 @@ export const itemIdentifierOrNameContains = (item, identifier, normalize = false
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const itemContainerTypeMatches = (item, type, normalize = false) => {
-	if (normalize) {
-		type = Game.generateValidEntityName(type);
-		if (type === "FIXTURE" || type === "OBJECT") type = "Fixture";
-		else if (type === "ROOMITEM" || type === "ITEM") type = "RoomItem";
-		else if (type === "PUZZLE") type = "Puzzle";
-		else if (type === "INVENTORYITEM") type = "InventoryItem";
-	}
-	return item.containerType === type;
+    if (normalize) {
+        type = Game.generateValidEntityName(type);
+        if (type === "FIXTURE" || type === "OBJECT") type = "Fixture";
+        else if (type === "ROOMITEM" || type === "ITEM") type = "RoomItem";
+        else if (type === "PUZZLE") type = "Puzzle";
+        else if (type === "INVENTORYITEM") type = "InventoryItem";
+    }
+    return item.containerType === type;
 };
 
 /**
@@ -351,10 +351,10 @@ export const itemContainerTypeMatches = (item, type, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const itemContainerNameMatches = (item, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	if (!item.container) return false;
-	if (item.container instanceof ItemInstance) return item.container.name === name || item.container.pluralName === name;
-	return item.container.name === name;
+    if (normalize) name = Game.generateValidEntityName(name);
+    if (!item.container) return false;
+    if (item.container instanceof ItemInstance) return item.container.name === name || item.container.pluralName === name;
+    return item.container.name === name;
 };
 
 /**
@@ -364,10 +364,10 @@ export const itemContainerNameMatches = (item, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierMatches = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	if (!item.container) return false;
-	if (item.container instanceof ItemInstance) return item.container.identifier !== "" && item.container.identifier === identifier || item.container.prefab && item.container.prefab.id === identifier;
-	return itemContainerNameMatches(item, identifier);
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    if (!item.container) return false;
+    if (item.container instanceof ItemInstance) return item.container.identifier !== "" && item.container.identifier === identifier || item.container.prefab && item.container.prefab.id === identifier;
+    return itemContainerNameMatches(item, identifier);
 };
 
 /**
@@ -377,10 +377,10 @@ export const itemContainerIdentifierMatches = (item, identifier, normalize = fal
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	if (!item.container) return false;
-	if (item.container instanceof ItemInstance) return itemContainerIdentifierMatches(item, identifier) || itemContainerNameMatches(item, identifier);
-	return itemContainerNameMatches(item, identifier);
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    if (!item.container) return false;
+    if (item.container instanceof ItemInstance) return itemContainerIdentifierMatches(item, identifier) || itemContainerNameMatches(item, identifier);
+    return itemContainerNameMatches(item, identifier);
 };
 
 /**
@@ -390,10 +390,10 @@ export const itemContainerIdentifierOrNameMatches = (item, identifier, normalize
  * @param {boolean} [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
  */
 export const itemContainerIdentifierOrNameContains = (item, identifier, normalize = false) => {
-	if (normalize) identifier = Game.generateValidEntityName(identifier);
-	if (!item.container) return false;
-	if (item.container instanceof ItemInstance) return itemIdentifierOrNameContains(item.container, identifier);
-	return entityNameContains(item.container, identifier);
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    if (!item.container) return false;
+    if (item.container instanceof ItemInstance) return itemIdentifierOrNameContains(item.container, identifier);
+    return entityNameContains(item.container, identifier);
 };
 
 /**
@@ -403,8 +403,8 @@ export const itemContainerIdentifierOrNameContains = (item, identifier, normaliz
  * @param {boolean} [normalize] - Whether or not to normalize the container name before matching. Defaults to false.
  */
 export const itemContainerNamePropertyMatches = (item, containerName, normalize = false) => {
-	if (normalize) containerName = Game.generateValidEntityName(containerName);
-	return Game.generateValidEntityName(item.containerName) === containerName;
+    if (normalize) containerName = Game.generateValidEntityName(containerName);
+    return Game.generateValidEntityName(item.containerName) === containerName;
 };
 
 /**
@@ -414,8 +414,8 @@ export const itemContainerNamePropertyMatches = (item, containerName, normalize 
  * @param {boolean} [normalize] - Whether or not to normalize the slot ID before matching. Defaults to false.
  */
 export const itemSlotMatches = (item, slotId, normalize = false) => {
-	if (normalize) slotId = Game.generateValidEntityName(slotId);
-	return item.slot === slotId;
+    if (normalize) slotId = Game.generateValidEntityName(slotId);
+    return item.slot === slotId;
 };
 
 /**
@@ -425,8 +425,8 @@ export const itemSlotMatches = (item, slotId, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the slot ID before matching. Defaults to false.
  */
 export const puzzleTypeMatches = (puzzle, type, normalize = false) => {
-	if (normalize) type = type.trim();
-	return puzzle.type === type;
+    if (normalize) type = type.trim();
+    return puzzle.type === type;
 };
 
 /**
@@ -435,7 +435,7 @@ export const puzzleTypeMatches = (puzzle, type, normalize = false) => {
  * @param {boolean} ongoing - The ongoing state to match against.
  */
 export const eventOngoingMatches = (event, ongoing) => {
-	return event.ongoing === ongoing;
+    return event.ongoing === ongoing;
 };
 
 /**
@@ -445,9 +445,9 @@ export const eventOngoingMatches = (event, ongoing) => {
  * @param {boolean} [normalize] - Whether or not to normalize the cures before matching. Defaults to false.
  */
 export const eventRefreshesMatches = (event, refreshesString, normalize = false) => {
-	let refreshes = refreshesString.split(',');
-	if (normalize) refreshes.forEach((refresh, i) => refreshes[i] = Status.generateValidId(refresh));
-	return refreshes.every(refresh => event.refreshesStrings.includes(refresh));
+    let refreshes = refreshesString.split(',');
+    if (normalize) refreshes.forEach((refresh, i) => refreshes[i] = Status.generateValidId(refresh));
+    return refreshes.every(refresh => event.refreshesStrings.includes(refresh));
 };
 
 /**
@@ -457,8 +457,8 @@ export const eventRefreshesMatches = (event, refreshesString, normalize = false)
  * @param {boolean} [normalize] - Whether or not to normalize the room tag before matching. Defaults to false.
  */
 export const eventRoomTagMatches = (event, roomTag, normalize = false) => {
-	if (normalize) roomTag = roomTag.trim();
-	return event.roomTag === roomTag;
+    if (normalize) roomTag = roomTag.trim();
+    return event.roomTag === roomTag;
 };
 
 /**
@@ -468,8 +468,8 @@ export const eventRoomTagMatches = (event, roomTag, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const statusIdMatches = (status, id, normalize = false) => {
-	if (normalize) id = Status.generateValidId(id);
-	return status.id === id;
+    if (normalize) id = Status.generateValidId(id);
+    return status.id === id;
 };
 
 /**
@@ -479,8 +479,8 @@ export const statusIdMatches = (status, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const statusIdContains = (status, id, normalize = false) => {
-	if (normalize) id = Status.generateValidId(id);
-	return status.id.includes(id);
+    if (normalize) id = Status.generateValidId(id);
+    return status.id.includes(id);
 };
 
 /**
@@ -490,10 +490,10 @@ export const statusIdContains = (status, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the stats before matching. Defaults to false.
  */
 export const statusStatModifiersMatches = (status, statsString, normalize = false) => {
-	let stats = statsString.split(',');
-	if (normalize) stats.forEach((stat, i) => stats[i] = Player.abbreviateStatName(stat));
-	const statModifiers = status.statModifiers.map(statModifier => statModifier.stat);
-	return stats.every(stat => statModifiers.includes(stat));
+    let stats = statsString.split(',');
+    if (normalize) stats.forEach((stat, i) => stats[i] = Player.abbreviateStatName(stat));
+    const statModifiers = status.statModifiers.map(statModifier => statModifier.stat);
+    return stats.every(stat => statModifiers.includes(stat));
 };
 
 /**
@@ -503,9 +503,9 @@ export const statusStatModifiersMatches = (status, statsString, normalize = fals
  * @param {boolean} [normalize] - Whether or not to normalize the attributes before matching. Defaults to false.
  */
 export const statusAttributeMatches = (status, attributesString, normalize = false) => {
-	let attributes = attributesString.split(',');
-	if (normalize) attributes.forEach((attribute, i) => attributes[i] = attribute.trim());
-	return attributes.every(attribute => status.behaviorAttributes.has(attribute));
+    let attributes = attributesString.split(',');
+    if (normalize) attributes.forEach((attribute, i) => attributes[i] = attribute.trim());
+    return attributes.every(attribute => status.behaviorAttributes.has(attribute));
 };
 
 /**
@@ -515,8 +515,8 @@ export const statusAttributeMatches = (status, attributesString, normalize = fal
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const playerNameMatches = (player, name, normalize = false) => {
-	if (normalize) name = name.toLowerCase().trim();
-	return player.name.toLowerCase() === name;
+    if (normalize) name = name.toLowerCase().trim();
+    return player.name.toLowerCase() === name;
 };
 
 /**
@@ -526,8 +526,8 @@ export const playerNameMatches = (player, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const playerNameOrDisplayNameMatches = (player, name, normalize = false) => {
-	if (normalize) name = name.toLowerCase().trim();
-	return playerNameMatches(player, name) || player.displayName.toLowerCase() === name;
+    if (normalize) name = name.toLowerCase().trim();
+    return playerNameMatches(player, name) || player.displayName.toLowerCase() === name;
 };
 
 /**
@@ -537,8 +537,8 @@ export const playerNameOrDisplayNameMatches = (player, name, normalize = false) 
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const playerNameContains = (player, name, normalize = false) => {
-	if (normalize) name = name.toLowerCase().trim();
-	return player.name.toLowerCase().includes(name);
+    if (normalize) name = name.toLowerCase().trim();
+    return player.name.toLowerCase().includes(name);
 };
 
 /**
@@ -548,8 +548,8 @@ export const playerNameContains = (player, name, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const playerNameOrDisplayNameContains = (player, name, normalize = false) => {
-	if (normalize) name = name.toLowerCase().trim();
-	return playerNameContains(player, name) || player.displayName.toLowerCase().includes(name);
+    if (normalize) name = name.toLowerCase().trim();
+    return playerNameContains(player, name) || player.displayName.toLowerCase().includes(name);
 };
 
 /**
@@ -558,7 +558,7 @@ export const playerNameOrDisplayNameContains = (player, name, normalize = false)
  * @param {boolean} isNPC - The NPC state to match.
  */
 export const playerNPCMatches = (player, isNPC) => {
-	return player.isNPC === isNPC;
+    return player.isNPC === isNPC;
 };
 
 /**
@@ -568,8 +568,8 @@ export const playerNPCMatches = (player, isNPC) => {
  * @param {boolean} [normalize] - Whether or not to normalize the hiding spot before matching. Defaults to false.
  */
 export const playerHidingSpotMatches = (player, hidingSpot, normalize = false) => {
-	if (normalize) hidingSpot = Game.generateValidEntityName(hidingSpot);
-	return player.hidingSpot === hidingSpot;
+    if (normalize) hidingSpot = Game.generateValidEntityName(hidingSpot);
+    return player.hidingSpot === hidingSpot;
 };
 
 /**
@@ -579,10 +579,10 @@ export const playerHidingSpotMatches = (player, hidingSpot, normalize = false) =
  * @param {boolean} [normalize] - Whether or not to normalize the status effects before matching. Defaults to false.
  */
 export const playerStatusMatches = (player, statusString, normalize = false) => {
-	let statuses = statusString.split(',');
-	if (normalize) statuses.forEach((status, i) => statuses[i] = Status.generateValidId(status));
-	const playerStatuses = new Set(player.status.map(status => status.id));
-	return statuses.every(status => playerStatuses.has(status));
+    let statuses = statusString.split(',');
+    if (normalize) statuses.forEach((status, i) => statuses[i] = Status.generateValidId(status));
+    const playerStatuses = new Set(player.status.map(status => status.id));
+    return statuses.every(status => playerStatuses.has(status));
 };
 
 /**
@@ -592,8 +592,8 @@ export const playerStatusMatches = (player, statusString, normalize = false) => 
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
 export const inventoryItemPlayerNameMatches = (inventoryItem, name, normalize = false) => {
-	if (normalize) name = Game.generateValidEntityName(name);
-	return Game.generateValidEntityName(inventoryItem.player.name) === name;
+    if (normalize) name = Game.generateValidEntityName(name);
+    return Game.generateValidEntityName(inventoryItem.player.name) === name;
 };
 
 /**
@@ -603,8 +603,8 @@ export const inventoryItemPlayerNameMatches = (inventoryItem, name, normalize = 
  * @param {boolean} [normalize] - Whether or not to normalize the equipment slot ID before matching. Defaults to false.
  */
 export const inventoryItemEquipmentSlotMatches = (inventoryItem, equipmentSlotId, normalize = false) => {
-	if (normalize) equipmentSlotId = Game.generateValidEntityName(equipmentSlotId);
-	return inventoryItem.equipmentSlot === equipmentSlotId;
+    if (normalize) equipmentSlotId = Game.generateValidEntityName(equipmentSlotId);
+    return inventoryItem.equipmentSlot === equipmentSlotId;
 };
 
 /**
@@ -614,8 +614,8 @@ export const inventoryItemEquipmentSlotMatches = (inventoryItem, equipmentSlotId
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const gestureIdMatches = (gesture, id, normalize = false) => {
-	if (normalize) id = Gesture.generateValidId(id);
-	return gesture.id === id;
+    if (normalize) id = Gesture.generateValidId(id);
+    return gesture.id === id;
 };
 
 /**
@@ -625,6 +625,6 @@ export const gestureIdMatches = (gesture, id, normalize = false) => {
  * @param {boolean} [normalize] - Whether or not to normalize the ID before matching. Defaults to false.
  */
 export const gestureIdContains = (gesture, id, normalize = false) => {
-	if (normalize) id = Gesture.generateValidId(id);
-	return gesture.id.includes(id);
+    if (normalize) id = Gesture.generateValidId(id);
+    return gesture.id.includes(id);
 };

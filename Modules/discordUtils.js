@@ -100,30 +100,30 @@ function createNarrateComponents(messageDisplayType, game, messageText, player, 
     /** @type {(TextDisplayBuilder | ContainerBuilder | MediaGalleryBuilder | ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>)[]} */
     let components = [];
     switch (messageDisplayType) {
-		case MessageDisplayType.STANDARD:
-			components = createStandardNarrationComponents(game, messageText);
+        case MessageDisplayType.STANDARD:
+            components = createStandardNarrationComponents(game, messageText);
             break;
         case MessageDisplayType.WARNING:
             components = createWarningNarrationComponents(game, messageText);
             break;
-		case MessageDisplayType.ALERT:
-			components = createAlertNarrationComponents(game, messageText);
+        case MessageDisplayType.ALERT:
+            components = createAlertNarrationComponents(game, messageText);
             break;
-		case MessageDisplayType.MINOR:
-			components = createMinorNarrationComponents(game, messageText);
+        case MessageDisplayType.MINOR:
+            components = createMinorNarrationComponents(game, messageText);
             break;
-		case MessageDisplayType.PLAYER:
-			components = createPlayerNarrationComponents(game, messageText, player);
+        case MessageDisplayType.PLAYER:
+            components = createPlayerNarrationComponents(game, messageText, player);
             break;
         case MessageDisplayType.MONOLOG:
             components = createMonologNarrationComponents(game, messageText, player);
             break;
-		default:
-			components = createStandardNarrationComponents(game, messageText);
+        default:
+            components = createStandardNarrationComponents(game, messageText);
             break;
-	}
+    }
     if (mediaGalleryBuilder.items.length !== 0) components.push(mediaGalleryBuilder);
-	if (interactables.length > 0) {
+    if (interactables.length > 0) {
         const actionRows = generateActionRows(interactables);
         components = components.concat(actionRows);
     }
@@ -137,13 +137,13 @@ function createNarrateComponents(messageDisplayType, game, messageText, player, 
  * @param {string} messageText - The text content of the narration.
  */
 function createStandardNarrationComponents(game, messageText) {
-	return [
-		new ContainerBuilder()
+    return [
+        new ContainerBuilder()
             .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
-	];
+    ];
 }
 
 /**
@@ -152,13 +152,13 @@ function createStandardNarrationComponents(game, messageText) {
  * @param {string} messageText - The text content of the narration.
  */
 function createWarningNarrationComponents(game, messageText) {
-	return [
-		new ContainerBuilder()
+    return [
+        new ContainerBuilder()
             .setAccentColor(Number(`0x${game.settings.warningMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
-	];
+    ];
 }
 
 /**
@@ -167,13 +167,13 @@ function createWarningNarrationComponents(game, messageText) {
  * @param {string} messageText - The text content of the narration.
  */
 function createAlertNarrationComponents(game, messageText) {
-	return [
-		new ContainerBuilder()
+    return [
+        new ContainerBuilder()
             .setAccentColor(Number(`0x${game.settings.alertMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
-	];
+    ];
 }
 
 /**
@@ -189,9 +189,9 @@ function createMinorNarrationComponents(game, messageText) {
         if (!messageLines[i].startsWith(smallHeader)) messageLines[i] = `${smallHeader}${messageLines[i]}`;
         if (!messageLines[i].startsWith(indent)) messageLines[i] = `${indent}${messageLines[i]}`;
     }
-	return [
-		new TextDisplayBuilder().setContent(messageLines.join('\n'))
-	];
+    return [
+        new TextDisplayBuilder().setContent(messageLines.join('\n'))
+    ];
 }
 
 /**
@@ -201,13 +201,13 @@ function createMinorNarrationComponents(game, messageText) {
  * @param {Player} player - The player the narration is about.
  */
 function createPlayerNarrationComponents(game, messageText, player) {
-	return [
-		new ContainerBuilder()
+    return [
+        new ContainerBuilder()
             .setAccentColor(Number(`0x${game.settings.standardMessageDisplayAccentColor}`))
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
-	];
+    ];
 }
 
 /**
@@ -218,11 +218,11 @@ function createPlayerNarrationComponents(game, messageText, player) {
  */
 function createMonologNarrationComponents(game, messageText, player) {
     return [
-		new ContainerBuilder()
+        new ContainerBuilder()
             .addTextDisplayComponents(
                 new TextDisplayBuilder().setContent(messageText),
         )
-	];
+    ];
 }
 
 /**
@@ -401,14 +401,14 @@ export function createCommandHelpComponents(title, description, aliasString, usa
  * @param {(entryIndex: any) => string} getFieldValue - A function to generate the value of each field in the embed.
  */
 export function createPaginatedEmbed(game, page, pages, authorName, authorIcon, description, getFieldName, getFieldValue) {
-	let embed = new EmbedBuilder()
-		.setColor(Number(`0x${game.settings.embedAccentColor}`))
-		.setAuthor({ name: authorName, iconURL: authorIcon })
-		.setDescription(description)
-		.setFooter({ text: `Page ${page + 1}/${pages.length}` });
-	let fields = [];
-	for (let entryIndex = 0; entryIndex < pages[page].length; entryIndex++)
-		fields.push({ name: getFieldName(entryIndex), value: getFieldValue(entryIndex) });
-	embed.addFields(fields);
-	return embed;
+    let embed = new EmbedBuilder()
+        .setColor(Number(`0x${game.settings.embedAccentColor}`))
+        .setAuthor({ name: authorName, iconURL: authorIcon })
+        .setDescription(description)
+        .setFooter({ text: `Page ${page + 1}/${pages.length}` });
+    let fields = [];
+    for (let entryIndex = 0; entryIndex < pages[page].length; entryIndex++)
+        fields.push({ name: getFieldName(entryIndex), value: getFieldValue(entryIndex) });
+    embed.addFields(fields);
+    return embed;
 }

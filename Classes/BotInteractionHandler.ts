@@ -21,75 +21,75 @@ type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitI
  * @classdesc A set of functions for handling Interactions.
  */
 export default class BotInteractionHandler {
-	/**
-	 * The game this belongs to.
-	 */
+    /**
+     * The game this belongs to.
+     */
     readonly #game: Game;
 
-	/**
-	 * @constructor
-	 * @param game - The game this belongs to.
-	 */
-	constructor(game: Game) {
-		this.#game = game;
-	}
+    /**
+     * @constructor
+     * @param game - The game this belongs to.
+     */
+    constructor(game: Game) {
+        this.#game = game;
+    }
 
-	/**
-	 * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
-	 * @param customId
-	 */
-	getInteractable(customId: string): ActionDirectiveInteractable {
-		return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
-	}
+    /**
+     * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
+     * @param customId
+     */
+    getInteractable(customId: string): ActionDirectiveInteractable {
+        return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
+    }
 
-	/**
-	 * Intercepts an interaction event and directs it to the correct function.
-	 * @param interaction - The interaction that was created.
-	 */
-	interceptInteraction(interaction: Interaction): void {
+    /**
+     * Intercepts an interaction event and directs it to the correct function.
+     * @param interaction - The interaction that was created.
+     */
+    interceptInteraction(interaction: Interaction): void {
         const user = this.#game.entityFinder.getModeratorById(interaction.user.id) ?? this.#game.entityFinder.getLivingPlayerById(interaction.user.id);
-		if (!user) return;
-		if (interaction instanceof ButtonInteraction)
-			this.processButtonInteraction(interaction, user);
-		if (interaction instanceof StringSelectMenuInteraction)
-			this.processStringSelectMenuInteraction(interaction, user);
+        if (!user) return;
+        if (interaction instanceof ButtonInteraction)
+            this.processButtonInteraction(interaction, user);
+        if (interaction instanceof StringSelectMenuInteraction)
+            this.processStringSelectMenuInteraction(interaction, user);
         if (interaction instanceof ModalSubmitInteraction)
             this.processModalSubmitInteraction(interaction, user);
-		return;
-	}
+        return;
+    }
 
-	/**
-	 * Processes a button interaction.
-	 * @param interaction - The interaction being executed.
-	 * @param user - The user who triggered the interaction.
-	 */
-	processButtonInteraction(interaction: ButtonInteraction, user: User): void {
-		const customId = interaction.customId;
-		this.#processInteraction(customId, interaction, user);
-		return;
-	}
+    /**
+     * Processes a button interaction.
+     * @param interaction - The interaction being executed.
+     * @param user - The user who triggered the interaction.
+     */
+    processButtonInteraction(interaction: ButtonInteraction, user: User): void {
+        const customId = interaction.customId;
+        this.#processInteraction(customId, interaction, user);
+        return;
+    }
 
-	/**
-	 * Processes a string select interaction.
-	 * @param interaction - The interaction being executed.
-	 * @param user - The user who triggered the interaction.
-	 */
-	processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, user: User): void {
-		const selectedValue = interaction.values[0];
-		const customId = selectedValue;
-		this.#processInteraction(customId, interaction, user);
-		return;
-	}
+    /**
+     * Processes a string select interaction.
+     * @param interaction - The interaction being executed.
+     * @param user - The user who triggered the interaction.
+     */
+    processStringSelectMenuInteraction(interaction: StringSelectMenuInteraction, user: User): void {
+        const selectedValue = interaction.values[0];
+        const customId = selectedValue;
+        this.#processInteraction(customId, interaction, user);
+        return;
+    }
 
     /**
      * Processes a modal submit interaction.
      * @param interaction - The interaction being executed.
-	 * @param user - The user who triggered the interaction.
+     * @param user - The user who triggered the interaction.
      */
     processModalSubmitInteraction(interaction: ModalSubmitInteraction, user: User): void {
         const customId = interaction.customId;
-		this.#processInteraction(customId, interaction, user);
-		return;
+        this.#processInteraction(customId, interaction, user);
+        return;
     }
 
     async #processInteraction(customId: string, interaction: BotInteraction, user: User): Promise<void> {
@@ -107,71 +107,71 @@ export default class BotInteractionHandler {
                 errorMessage = error.message;
             }
         }
-		if (!successfullyProcessedInteractable) this.#replyToInteraction(errorMessage, interaction);
-		return;
+        if (!successfullyProcessedInteractable) this.#replyToInteraction(errorMessage, interaction);
+        return;
     }
 
-	/**
-	 * Process an interactable and calls the correct function.
-	 * @param reply - The reply that was sent.
-	 * @param interactable - The interactable to process.
-	 * @param user - The user who triggered the interaction.
-	 * @returns Whether the interactable successfully performed an action or not.
-	 */
-	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
+    /**
+     * Process an interactable and calls the correct function.
+     * @param reply - The reply that was sent.
+     * @param interactable - The interactable to process.
+     * @param user - The user who triggered the interaction.
+     * @returns Whether the interactable successfully performed an action or not.
+     */
+    async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
         const player = interactable.actionDirective.getPlayer();
         const forced = user instanceof Moderator;
-		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
-		if (action instanceof QueueMoveAction) {
-			const args = interactable.actionDirective.getArgs();
-			const parsedArgs = action.parseInteractionArgs(args);
-			const validatedArgs = action.validateInteractionArgs(parsedArgs);
-			if (validatedArgs.length === 2) {
-				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
-				if (reply) reply.resource.message.delete();
-				return true;
-			}
-		}
-		if (action instanceof InspectAction) {
-			const args = interactable.actionDirective.getArgs();
-			const parsedArgs = action.parseInteractionArgs(args);
-			const validatedArgs = action.validateInteractionArgs(parsedArgs);
-			if (validatedArgs.length === 1) {
-				action.performInspect(validatedArgs[0]);
-				if (reply) reply.resource.message.delete();
-				return true;
-			}
-		}
-		if (action instanceof TakeAction) {
-			const args = interactable.actionDirective.getArgs();
-			const parsedArgs = action.parseInteractionArgs(args);
-			const validatedArgs = action.validateInteractionArgs(parsedArgs);
-			if (validatedArgs.length === 4) {
-				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
-				return true;
-			}
-		}
-		if (action instanceof DropAction) {
-			const args = interactable.actionDirective.getArgs();
-			const parsedArgs = action.parseInteractionArgs(args);
-			const validatedArgs = action.validateInteractionArgs(parsedArgs);
-			if (validatedArgs.length === 4) {
-				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
-				return true;
-			}
-		}
-		if (action instanceof StashAction) {
-			const args = interactable.actionDirective.getArgs();
-			const parsedArgs = action.parseInteractionArgs(args);
-			const validatedArgs = action.validateInteractionArgs(parsedArgs);
-			if (validatedArgs.length === 4) {
-				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
-				return true;
-			}
-		}
+        const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
+        if (action instanceof QueueMoveAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 2) {
+                action.performQueueMove(validatedArgs[0], validatedArgs[1]);
+                if (reply) reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof InspectAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 1) {
+                action.performInspect(validatedArgs[0]);
+                if (reply) reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof TakeAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 4) {
+                action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                if (reply) reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof DropAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 4) {
+                action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                if (reply) reply.resource.message.delete();
+                return true;
+            }
+        }
+        if (action instanceof StashAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 4) {
+                action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+                if (reply) reply.resource.message.delete();
+                return true;
+            }
+        }
         if (action instanceof UnstashAction) {
             const args = interactable.actionDirective.getArgs();
             const parsedArgs = action.parseInteractionArgs(args);
@@ -258,16 +258,16 @@ export default class BotInteractionHandler {
                 }
             }
         }
-		return false;
-	}
+        return false;
+    }
 
-	/**
-	 * Replies to an interaction.
-	 * @param response - The response to send.
-	 * @param interaction - The interaction to reply to.
-	 */
-	#replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction): void {
+    /**
+     * Replies to an interaction.
+     * @param response - The response to send.
+     * @param interaction - The interaction to reply to.
+     */
+    #replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction): void {
         if (interaction.replied || interaction.deferred) interaction.editReply({ content: response });
         else interaction.reply({ content: response });
-	}
+    }
 }

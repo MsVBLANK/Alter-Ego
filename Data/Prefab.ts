@@ -201,16 +201,16 @@ export default class Prefab extends GameEntity {
     }
 
     /**
-	 * Outputs a string to insert into an item list in a description.
-	 * If the given quantity is 1, returns the prefab's single containing phrase.
-	 * If the quantity is not 1, returns the prefab's quantity followed by its plural containing phrase.
-	 * If the quantity is infinite, returns only the prefab's plural containing phrase.
-	 */
-	toContainingPhrase(quantity: number): string {
-		if (isNaN(quantity)) return this.pluralContainingPhrase;
-		else if (quantity !== 1) return `${quantity} ${this.pluralContainingPhrase}`;
-		else return this.singleContainingPhrase;
-	}
+     * Outputs a string to insert into an item list in a description.
+     * If the given quantity is 1, returns the prefab's single containing phrase.
+     * If the quantity is not 1, returns the prefab's quantity followed by its plural containing phrase.
+     * If the quantity is infinite, returns only the prefab's plural containing phrase.
+     */
+    toContainingPhrase(quantity: number): string {
+        if (isNaN(quantity)) return this.pluralContainingPhrase;
+        else if (quantity !== 1) return `${quantity} ${this.pluralContainingPhrase}`;
+        else return this.singleContainingPhrase;
+    }
 
     /**
      * Returns true if the prefab contains no items.

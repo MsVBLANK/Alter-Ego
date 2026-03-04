@@ -59,7 +59,7 @@ export default class TextInputInteractable extends ModalComponentInteractable {
     }
 
     /**
-	 * Sets the interactable as disabled.
-	 */
+     * Sets the interactable as disabled.
+     */
     disable() {}
 }

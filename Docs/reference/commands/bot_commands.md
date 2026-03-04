@@ -297,7 +297,7 @@ Replaces the destination for the specified room's exit. Given the following init
     room-1   |EXIT A|room-2  | EXIT B
     ---------------------------------
     room-2   |EXIT B|room-1  | EXIT A
-    	 |EXIT C|room-3  | EXIT D
+         |EXIT C|room-3  | EXIT D
     ---------------------------------
     room-3   |EXIT D|room-2  | EXIT C
 

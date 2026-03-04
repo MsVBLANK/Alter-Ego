@@ -36,5 +36,5 @@ export async function execute(game, message, command, args, moderator) {
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
 
     const action = new InventoryAction(game, message, player, player.location, true);
-	action.performInventory();
+    action.performInventory();
 }

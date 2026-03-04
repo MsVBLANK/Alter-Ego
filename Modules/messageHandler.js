@@ -302,7 +302,7 @@ export function sendLogMessage(game, messageText) {
  * @param {Interactable[]} interactables - An array of interactables.
  */
 export function sendGameMechanicMessage(game, channel, messageText, interactables = []) {
-    const messageCreateOptions = discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables);
+    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables) : messageText;
     game.messageQueue.enqueue(
         {
             fire: async () => {

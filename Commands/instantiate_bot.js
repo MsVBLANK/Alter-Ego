@@ -81,7 +81,7 @@ export async function execute(game, command, args, player, callee) {
 
     // If a parenthetical expression is included, procedural options are being manually set.
     /** @type {Map<string, string>} */
-    let proceduralSelections;
+    let proceduralSelections = new Map();
     if (parsedInput.indexOf('(') < parsedInput.indexOf(')')) {
         try {
             proceduralSelections = parseProceduralSelections(parsedInput);

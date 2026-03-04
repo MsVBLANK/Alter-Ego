@@ -3,10 +3,10 @@ import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
 import type Game from "../Data/Game.ts";
-import type BotCommand from "./BotCommand.js";
-import type ModeratorCommand from "./ModeratorCommand.js";
-import type PlayerCommand from "./PlayerCommand.js";
-import type EligibleCommand from "./EligibleCommand.js";
+import type BotCommand from "./BotCommand.ts";
+import type ModeratorCommand from "./ModeratorCommand.ts";
+import type PlayerCommand from "./PlayerCommand.ts";
+import type EligibleCommand from "./EligibleCommand.ts";
 import type { Client, Collection } from "discord.js";
 
 /**

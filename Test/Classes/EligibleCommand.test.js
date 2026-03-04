@@ -1,5 +1,5 @@
 import { isAsyncFunction } from "util/types";
-import EligibleCommand from "../../Classes/EligibleCommand.js";
+import EligibleCommand from "../../Classes/EligibleCommand.ts";
 
 describe("EligibleCommand test", () => {
     test("Construct Eligible Command", async () => {

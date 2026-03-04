@@ -2,10 +2,10 @@
 import { ChannelType } from 'discord.js';
 
 /** @import Game from '../Data/Game.ts' */
-/** @import BotCommand from '../Classes/BotCommand.js' */
-/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
-/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
-/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
+/** @import BotCommand from '../Classes/BotCommand.ts' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.ts' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.ts' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.ts' */
 /** @import Player from '../Data/Player.ts' */
 
 /**

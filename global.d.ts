@@ -120,24 +120,24 @@ declare global {
 	 * @property {CommandConfig} config - The specific configuration of the command.
 	 * @property {(settings: GameSettings) => string} usage - Examples of the command's usage.
 	 */
-	interface Command {
+	interface ICommand {
 		config: CommandConfig;
 		usage: (settings: GameSettings) => string;
 	}
 
-	interface IBotCommand extends Command {
+	interface IBotCommand extends ICommand {
 		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
-	interface IModeratorCommand extends Command {
+	interface IModeratorCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 
-	interface IPlayerCommand extends Command {
+	interface IPlayerCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[], player: Player) => Promise<void>;
 	}
 
-	interface IEligibleCommand extends Command {
+	interface IEligibleCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 

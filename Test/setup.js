@@ -25,10 +25,10 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 
 });
 
-/** @import BotCommand from '../Classes/BotCommand.js' */
-/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
-/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
-/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
+/** @import BotCommand from '../Classes/BotCommand.ts' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.ts' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.ts' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.ts' */
 
 import GuildContext from '../Classes/GuildContext.ts';
 import GameSettings from '../Classes/GameSettings.js';

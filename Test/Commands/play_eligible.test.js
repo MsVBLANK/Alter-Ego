@@ -1,4 +1,4 @@
-import EligibleCommand from '../../Classes/EligibleCommand.js';
+import EligibleCommand from '../../Classes/EligibleCommand.ts';
 import { usage, execute, config } from '../../Commands/play_eligible.js'
 import { clearQueue } from '../../Modules/messageHandler.js';
 

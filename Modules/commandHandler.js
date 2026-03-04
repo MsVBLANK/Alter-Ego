@@ -2,6 +2,10 @@
 import { ChannelType } from 'discord.js';
 
 /** @import Game from '../Data/Game.ts' */
+/** @import BotCommand from '../Classes/BotCommand.js' */
+/** @import ModeratorCommand from '../Classes/ModeratorCommand.js' */
+/** @import PlayerCommand from '../Classes/PlayerCommand.js' */
+/** @import EligibleCommand from '../Classes/EligibleCommand.js' */
 /** @import Player from '../Data/Player.ts' */
 
 /**
@@ -29,12 +33,16 @@ export async function executeCommand(commandStr, game, message, player, callee) 
 
     const commandSplit = commandStr?.split(/[^\S\n]/).filter(arg => arg !== "");
     const commandAlias = commandSplit[0] ? commandSplit[0].toLocaleLowerCase() : "";
-    const args = commandSplit.slice(1);
+    let args = commandSplit.slice(1);
 
     // Find the command by the alias used.
+    /** @type {BotCommand} */
     let botCommand;
+    /** @type {ModeratorCommand} */
     let moderatorCommand;
+    /** @type {PlayerCommand} */
     let playerCommand;
+    /** @type {EligibleCommand} */
     let eligibleCommand;
     if (isBot) botCommand = game.botContext.botCommands.find(command => command.config.aliases.includes(commandAlias));
     else if (isModerator) moderatorCommand = game.botContext.moderatorCommands.find(command => command.config.aliases.includes(commandAlias));
@@ -79,7 +87,9 @@ export async function executeCommand(commandStr, game, message, player, callee) 
                 game.communicationHandler.reply(message, "You are not a moderator.");
                 return false;
             }
-
+            if (moderatorCommand.config.whitespaceSensitive) {
+                args = commandStr.split(" ").slice(1);
+            }
             moderatorCommand.execute(game, message, commandAlias, args, moderator);
             if (message.channel.id !== game.guildContext.commandChannel.id)
                 message.delete();
@@ -123,6 +133,10 @@ export async function executeCommand(commandStr, game, message, player, callee) 
             }
 
             player.setOnline();
+            
+            if (playerCommand.config.whitespaceSensitive) {
+                args = commandStr.split(" ").slice(1);
+            }
 
             playerCommand.execute(game, message, commandAlias, args, player).then(() => {
                 if (!game.settings.debug && commandName !== "say" && message.channel.type !== ChannelType.DM)

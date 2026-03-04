@@ -1,16 +1,16 @@
 import { Collection } from "discord.js";
 import { DateTime } from "luxon";
-import BotContext from "../Classes/BotContext.js";
-import GameCommunicationHandler from "../Classes/GameCommunicationHandler.js";
-import GameConstants from "../Classes/GameConstants.js";
+import BotContext from "../Classes/BotContext.ts";
+import GameCommunicationHandler from "../Classes/GameCommunicationHandler.ts";
+import GameConstants from "../Classes/GameConstants.ts";
 import GameEntityFinder from "../Classes/GameEntityFinder.js";
 import GameEntityLoader from "../Classes/GameEntityLoader.js";
-import GameEntitySaver from "../Classes/GameEntitySaver.js";
-import GameLogHandler from "../Classes/GameLogHandler.js";
-import GameNarrationHandler from "../Classes/GameNarrationHandler.js";
-import GameNotificationGenerator from "../Classes/GameNotificationGenerator.js";
+import GameEntitySaver from "../Classes/GameEntitySaver.ts";
+import GameLogHandler from "../Classes/GameLogHandler.ts";
+import GameNarrationHandler from "../Classes/GameNarrationHandler.ts";
+import GameNotificationGenerator from "../Classes/GameNotificationGenerator.ts";
 import type GameSettings from "../Classes/GameSettings.js";
-import type GuildContext from "../Classes/GuildContext.js";
+import type GuildContext from "../Classes/GuildContext.ts";
 import PriorityQueue from "../Classes/PriorityQueue.ts";
 import TriggerAction from "./Actions/TriggerAction.ts";
 import Event from "./Event.ts";
@@ -205,7 +205,7 @@ export default class Game {
 	constructor(guildContext: GuildContext, settings: GameSettings) {
 		this.guildContext = guildContext;
 		this.settings = settings;
-		this.constants = new GameConstants();
+		this.constants = GameConstants.Instance;
 		this.communicationHandler = new GameCommunicationHandler(this);
 		this.entityFinder = new GameEntityFinder(this);
 		this.entityLoader = new GameEntityLoader(this);

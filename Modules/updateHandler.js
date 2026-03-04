@@ -1,4 +1,4 @@
-import GameConstants from '../Classes/GameConstants.js';
+import GameConstants from '../Classes/GameConstants.ts';
 import GameSettings from '../Classes/GameSettings.js';
 import { batchUpdateSheet, batchUpdateSheetValues, getSheetWithProperties } from './sheets.js';
 import { generateListString } from './helpers.ts';
@@ -10,7 +10,7 @@ import fs from 'fs';
  * @param {GameSettings} settings 
  */
 export default async function autoUpdate(settings) {
-    const constants = new GameConstants();
+    const constants = GameConstants.Instance;
     await v1_9Update(settings, constants);
     await v1_10Update(settings, constants);
     await v2_0Update(settings, constants);
@@ -386,20 +386,6 @@ async function v2_0Update(settings, constants) {
  * @param {GameConstants} constants
  */
 async function v1_10Update(settings, constants) {
-    // Update constants file. This shouldn't be necessary if Docker is used.
-    if (constants.recipeSheetDataCells === "Recipes!A2:F" ||
-        constants.recipeSheetInitiatedColumn === "Recipes!E" ||
-        constants.recipeSheetCompletedColumn === "Recipes!F" ||
-        constants.recipeSheetUncraftedColumn === undefined
-    ) {
-        constants.recipeSheetDataCells = "Recipes!A2:H";
-        constants.recipeSheetInitiatedColumn = "Recipes!F";
-        constants.recipeSheetCompletedColumn = "Recipes!G";
-        constants.recipeSheetUncraftedColumn = "Recipes!H";
-        let json = JSON.stringify(constants);
-        await fs.writeFileSync('Configs/constants.json', json, 'utf8');
-        console.log("Updated constants file with new Recipes sheet coordinates.");
-    }
     // Updated Recipes sheet with the new columns.
     const response = await getSheetWithProperties("Recipes!A1:H1", settings.spreadsheetID);
     const sheetProperties = response.data.sheets[0] ? response.data.sheets[0].properties : {};
@@ -464,16 +450,6 @@ async function v1_10Update(settings, constants) {
  * @param {GameConstants} constants
  */
 async function v1_9Update(settings, constants) {
-    // Update constants file. This shouldn't be necessary if Docker is used.
-    if (constants.playerSheetDataCells === "Players!A3:N" ||
-        constants.playerSheetDescriptionColumn === "Players!N"
-    ) {
-        constants.playerSheetDataCells = "Players!A3:O";
-        constants.playerSheetDescriptionColumn = "Players!O";
-        let json = JSON.stringify(constants);
-        fs.writeFileSync('Configs/constants.json', json, 'utf8');
-        console.log("Updated constants file with new Players sheet coordinates.");
-    }
     // Update Players sheet with the new voice column.
     const response = await getSheetWithProperties("Players!A1:O1", settings.spreadsheetID);
     const sheetProperties = response.data.sheets[0] ? response.data.sheets[0].properties : {};

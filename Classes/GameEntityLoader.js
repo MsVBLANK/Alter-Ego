@@ -1,5 +1,5 @@
 import Game from '../Data/Game.ts';
-import GameEntityManager from './GameEntityManager.js';
+import GameEntityManager from './GameEntityManager.ts';
 import Exit from '../Data/Exit.ts';
 import Room from '../Data/Room.ts';
 import Fixture from '../Data/Fixture.ts';

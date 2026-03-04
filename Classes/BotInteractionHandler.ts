@@ -134,7 +134,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 2) {
 				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
 				if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `QueueMoveAction Interactable: ${validatedArgs.join(",")}`, timestamp: timestamp });
+                this.#logInteraction("QueueMoveAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -145,7 +145,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 1) {
 				action.performInspect(validatedArgs[0]);
 				if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `InspectAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("InspectAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -156,7 +156,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `TakeAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("TakeAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -167,7 +167,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `DropAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("DropAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -178,7 +178,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `StashAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("StashAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -189,7 +189,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
                 if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `UnstashAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("UnstashAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -200,7 +200,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `EquipAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("EquipAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -211,7 +211,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `UnequipAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("UnequipAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -222,7 +222,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `CraftAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("CraftAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -233,7 +233,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 2) {
                 action.performUse(validatedArgs[0], validatedArgs[1]);
                 if (reply) reply.resource.message.delete();
-                this.#game.botContext.commandLog.push({ author: author, content: `UseAction Interactable: ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                this.#logInteraction("UseAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -260,7 +260,7 @@ export default class BotInteractionHandler {
                     }
                     else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
-                    this.#game.botContext.commandLog.push({ author: author, content: `InstantiateAction Interactable (Modal Submit): ${validatedArgs.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+                    this.#logInteraction("InstantiateAction", author, timestamp, validatedArgs);
                     return true;
                 } 
                 catch (error) { throw new Error(error.message); }
@@ -286,4 +286,15 @@ export default class BotInteractionHandler {
         if (interaction.replied || interaction.deferred) interaction.editReply({ content: response });
         else interaction.reply({ content: response });
 	}
+
+    /**
+     * Logs the occurance of an interaction.
+     * @param type - The action type of the corresponding interaction.
+     * @param author - The author of the interaction.
+     * @param timestamp - The timestamp of the interaction.
+     * @param args - The array of validated arguments for the interaction.
+     */
+    #logInteraction(type: string, author: string, timestamp: Date, args: any[]): void {
+        this.#game.botContext.commandLog.push({ author: author, content: `${type} Interactable: ${args.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+    }
 }

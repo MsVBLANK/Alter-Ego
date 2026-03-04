@@ -1,5 +1,5 @@
 import { Duration } from "luxon";
-import Timer from "../Classes/Timer.js";
+import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { getChildItems } from "../Modules/itemManager.js";
 import DeactivateAction from "./Actions/DeactivateAction.ts";

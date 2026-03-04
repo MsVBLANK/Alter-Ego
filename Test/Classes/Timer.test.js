@@ -1,4 +1,4 @@
-import Timer from "../../Classes/Timer.js";
+import Timer from "../../Classes/Timer.ts";
 import { Duration } from "luxon";
 
 describe("Timer Test Suite", () => {

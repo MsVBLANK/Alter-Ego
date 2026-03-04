@@ -1,4 +1,5 @@
 import { Duration } from 'luxon';
+import type { DurationUnit } from 'luxon';
 
 /**
  * @class Timer
@@ -6,52 +7,28 @@ import { Duration } from 'luxon';
  * @constructor
  */
 export default class Timer {
+    /** Timer duration in milliseconds. */
+    timerDuration: number;
+    /** Timer attributes. */
+    attributes: TimerAttributes;
+    /** Timer callback function. */
+    callback: Function;
+    /** Whether or not the timer is running. */
+    started: boolean;
+    /** @type {boolean} */
+    stopped: boolean;
+    /** Internal timer object. */
+    timer: NodeJS.Timeout | null;
+    /** @type {number|null} */
+    startTick: number | null;
+    /** @type {number|null} */
+    endTick: number | null;
     /**
-     * Timer duration in milliseconds.
-     * @type {number}
+     * @param duration - Timer duration in milliseconds.
+     * @param attributes - Timer attributes.
+     * @param callback - Timer callback function.
      */
-    timerDuration;
-    /**
-     * Timer attributes.
-     * @type {TimerAttributes}
-     */
-    attributes;
-    /**
-     * Timer callback function.
-     * @type {Function}
-     */
-    callback;
-    /**
-     * Whether or not the timer is running.
-     * @type {boolean}
-     */
-    started;
-    /**
-     * Whether or not the timer is stopped.
-     * @type {boolean}
-     */
-    stopped;
-    /**
-     * Internal timer object.
-     * @type {NodeJS.Timeout|null}
-     */
-    timer;
-    /**
-     * Start tick.
-     * @type {number|null}
-     */
-    startTick;
-    /**
-     * End tick.
-     * @type {number|null}
-     */
-    endTick;
-    /**
-     * @param {number|Duration} duration - Timer duration in milliseconds.
-     * @param {TimerAttributes} attributes - Timer attributes.
-     * @param {Function} [callback] - Timer callback function.
-     */
-    constructor(duration, attributes, callback) {
+    constructor(duration: number | Duration, attributes: TimerAttributes, callback: Function) {
         if (Duration.isDuration(duration))
             this.timerDuration = duration.as('milliseconds');
         else 
@@ -70,9 +47,9 @@ export default class Timer {
 
     /**
      * Starts the timer.
-     * @returns {boolean} Success status.
+     * @returns Success status.
      */
-    start() {
+    start(): boolean {
         if (this.started || !this.callback) return false;
 
         if (this.stopped) {
@@ -86,7 +63,7 @@ export default class Timer {
             return true;
         }
 
-        this._handleTimerStart();
+        this.#handleTimerStart();
         this.updateStartEndTickFromDuration(this.timerDuration);
         this.started = true;
 
@@ -95,9 +72,9 @@ export default class Timer {
 
     /**
      * Stops the timer.
-     * @returns {boolean} Success status.
+     * @returns Success status.
      */
-    stop() {
+    stop(): boolean {
         if (!this.started) return false;
 
         this.clearTimer();
@@ -110,9 +87,9 @@ export default class Timer {
 
     /**
      * Clears the internal timer.
-     * @returns {boolean} Success status.
+     * @returns Success status.
      */
-    clearTimer() {
+    clearTimer(): boolean {
         if (this.timer) {
             if (this.attributes.loop) {
                 clearInterval(this.timer);
@@ -127,10 +104,10 @@ export default class Timer {
 
     /**
      * Update start and end ticks based on duration.
-     * @param {number} duration - Duration in milliseconds.
-     * @returns {boolean} Success status.
+     * @param duration - Duration in milliseconds.
+     * @returns Success status.
      */
-    updateStartEndTickFromDuration(duration) {
+    updateStartEndTickFromDuration(duration: number): boolean {
         this.startTick = Date.now();
         this.endTick = this.startTick + duration;
         return true;
@@ -138,13 +115,13 @@ export default class Timer {
 
     /**
      * Set or get the timer duration.
-     * @param {number|Duration} [duration] - New duration.
-     * @param {import('luxon').DurationUnits} [unit] - Time unit if duration is a number.
-     * @returns {boolean|void} Returns true if setting, nothing if getting.
+     * @param [duration] - New duration.
+     * @param [unit] - Time unit if duration is a number.
+     * @returns Returns true if setting, nothing if getting.
      */
-    duration(duration, unit) {
+    duration(duration: number | Duration | undefined = undefined, unit: DurationUnit | undefined = undefined): boolean | void {
         if (arguments.length > 0) {
-            let ms;
+            let ms: number | Duration;
 
             if (typeof duration === "number") {
                 // Convert based on unit if provided.
@@ -163,24 +140,24 @@ export default class Timer {
             }
 
             this.timerDuration = ms;
-            this._handleRunningDurationChange();
+            this.#handleRunningDurationChange();
             return true;
         }
     }
 
     /**
      * Get the current duration.
-     * @returns {number} Duration in milliseconds.
+     * @returns Duration in milliseconds.
      */
-    getDuration() {
+    getDuration(): number {
         return this.timerDuration;
     }
 
     /**
      * Get the remaining duration.
-     * @returns {number} Remaining time in milliseconds.
+     * @returns Remaining time in milliseconds.
      */
-    getRemainingDuration() {
+    getRemainingDuration(): number {
         if (this.startTick && this.endTick) {
             return this.stopped ? this.endTick - this.startTick : this.endTick - Date.now();
         }
@@ -189,25 +166,22 @@ export default class Timer {
 
     /**
      * Check if timer is stopped.
-     * @returns {boolean} True if stopped.
+     * @returns True if stopped.
      */
-    isStopped() {
+    isStopped(): boolean {
         return this.stopped;
     }
 
     /**
      * Check if timer is started.
-     * @returns {boolean} True if started.
+     * @returns True if started.
      */
-    isStarted() {
+    isStarted(): boolean {
         return this.started;
     }
 
-    /**
-     * Internal method to handle timer start.
-     * @private
-     */
-    _handleTimerStart() {
+    /** Internal method to handle timer start. */
+    #handleTimerStart() {
         if (!this.callback) return;
 
         if (this.attributes.loop) {
@@ -223,16 +197,13 @@ export default class Timer {
         }
     }
 
-    /**
-     * Internal method to handle duration changes while running.
-     * @private
-     */
-    _handleRunningDurationChange() {
+    /** Internal method to handle duration changes while running. */
+    #handleRunningDurationChange() {
         if (this.started) {
             setTimeout(() => {
                 if (this.started) {
                     this.clearTimer();
-                    this._handleTimerStart();
+                    this.#handleTimerStart();
                 }
             }, this.getRemainingDuration());
         }

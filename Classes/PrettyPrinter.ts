@@ -1,7 +1,7 @@
 import { Collection, Guild, GuildMember, TextChannel, DMChannel } from 'discord.js';
 import { format } from 'pretty-format';
 import { Duration } from 'luxon';
-import Timer from './Timer.js';
+import Timer from './Timer.ts';
 import Status from '../Data/Status.ts';
 import Gesture from '../Data/Gesture.ts';
 import Player from '../Data/Player.ts';

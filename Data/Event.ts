@@ -1,6 +1,6 @@
 import { parse } from "date-fns";
 import { DateTime, type Duration } from "luxon";
-import Timer from "../Classes/Timer.js";
+import Timer from "../Classes/Timer.ts";
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
 import EndAction from "./Actions/EndAction.ts";
 import InflictAction from "./Actions/InflictAction.ts";

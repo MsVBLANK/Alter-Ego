@@ -29,7 +29,7 @@ export default class Timer {
      * @param attributes - Timer attributes.
      * @param callback - Timer callback function.
      */
-    constructor(duration: number | Duration, attributes: TimerAttributes, callback: Function) {
+    constructor(duration: number | Duration, attributes: TimerAttributes, callback?: Function) {
         if (Duration.isDuration(duration))
             this.timerDuration = duration.as('milliseconds');
         else 

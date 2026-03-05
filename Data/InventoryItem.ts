@@ -1,5 +1,5 @@
 ﻿import { Collection } from "discord.js";
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
 import { replaceInventoryItem } from "../Modules/itemManager.js";
 import Description from "./Description.ts";
 import type EquipmentSlot from "./EquipmentSlot.ts";

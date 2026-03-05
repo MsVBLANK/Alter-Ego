@@ -119,9 +119,6 @@ export default class BotInteractionHandler {
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
 	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
-        if (this.#game.botContext.commandLog.length >= 10000) {
-            this.#game.botContext.commandLog.shift();
-        }
         const timestamp = new Date();
         const player = interactable.actionDirective.getPlayer();
         const author = user instanceof Moderator ? `${player.name} (${user.member.user.username})` : player.name
@@ -288,13 +285,13 @@ export default class BotInteractionHandler {
 	}
 
     /**
-     * Logs the occurance of an interaction.
+     * Logs the occurrence of an interaction.
      * @param type - The action type of the corresponding interaction.
      * @param author - The author of the interaction.
      * @param timestamp - The timestamp of the interaction.
      * @param args - The array of validated arguments for the interaction.
      */
     #logInteraction(type: string, author: string, timestamp: Date, args: any[]): void {
-        this.#game.botContext.commandLog.push({ author: author, content: `${type} Interactable: ${args.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+        this.#game.botContext.logCommand(author, `${type} Interactable: ${args.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp);
     }
 }

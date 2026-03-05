@@ -44,7 +44,11 @@ export default class BotContext {
 	/**
 	 * An array of the most recently-issued commands. Used by the dumplog command for debugging purposes.
 	 */
-	readonly commandLog: Array<CommandLogEntry>;
+	readonly #commandLog: Array<CommandLogEntry>;
+    /**
+     * The maximum number of commands to keep in the command log at once. If the log exceeds this size, the oldest command will be removed.
+     */
+    readonly #commandLogSizeLimit = 10000;
 	/**
 	 * A set of functions to cleanly display objects.
 	 */
@@ -77,7 +81,7 @@ export default class BotContext {
 		this.playerCommands = playerCommands;
 		this.eligibleCommands = eligibleCommands;
 		this.game = game;
-		this.commandLog = [];
+		this.#commandLog = [];
 		this.prettyPrinter = new PrettyPrinter();
 		this.interactableManager = new BotInteractableManager(this.game);
 		this.interactionHandler = new BotInteractionHandler(this.game);
@@ -106,6 +110,29 @@ export default class BotContext {
      */
     public static get instance() {
         return BotContext.#instance;
+    }
+
+    /** 
+     * An array of the most recently-issued commands. Used by the dumplog command for debugging purposes.
+     */
+    public get commandLog() {
+        return this.#commandLog;
+    }
+
+    /**
+     * Adds a command to the command log. If the log is at maximum capacity, removes the oldest one.
+     * @param authorName - The name of the user who issued the command.
+     * @param commandStr - The full text of the command that was issued.
+     * @param timestamp - The timestamp at which the command was issued.
+     */
+    public logCommand(authorName: string, commandStr: string, timestamp: Date): void {
+        if (this.#commandLog.length >= this.#commandLogSizeLimit)
+            this.#commandLog.shift();
+        this.#commandLog.push({
+            timestamp: timestamp,
+            author: authorName,
+            content: commandStr
+        });
     }
 
     /**

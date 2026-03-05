@@ -16,6 +16,7 @@ import Puzzle from '../Data/Puzzle.ts';
  * @returns Whether the command was successfully executed.
  */
 export async function executeCommand(commandStr: string, game: Game, message?: UserMessage, player?: Player, callee?: Callee): Promise<boolean> {
+    const timestamp = new Date();
     const commandType = getCommandType(game, message);
     if (!commandType) return false;
 
@@ -28,7 +29,7 @@ export async function executeCommand(commandStr: string, game: Game, message?: U
     // Execute the command based on who issued it.
     if (command instanceof BotCommand) {
         command.execute(game, commandAlias, args, player, callee);
-        logCommand(game, game.botContext.client.user.username, commandStr);
+        game.botContext.logCommand(game.botContext.client.user.username, commandStr, timestamp);
         return true;
     }
     else if (command instanceof ModeratorCommand && game.botContext.commandIssuedInValidChannel(command, message)) {
@@ -54,7 +55,7 @@ export async function executeCommand(commandStr: string, game: Game, message?: U
         command.execute(game, message, commandAlias, args, moderator);
         if (message.channel.id !== game.guildContext.commandChannel.id)
             message.delete();
-        logCommand(game, message.author.username, message.content);
+        game.botContext.logCommand(message.author.username, message.content, timestamp);
         return true;
     }
     else if (command instanceof PlayerCommand && game.botContext.commandIssuedInValidChannel(command, message)) {
@@ -94,7 +95,7 @@ export async function executeCommand(commandStr: string, game: Game, message?: U
             if (!game.settings.debug && commandName !== "say" && !game.guildContext.sentInDMChannel(message))
                 message.delete().catch();
         });
-        logCommand(game, player.name, message.content);
+        game.botContext.logCommand(player.name, message.content, timestamp);
         return true;
     }
     else if (command instanceof EligibleCommand && game.botContext.commandIssuedInValidChannel(command, message)) {
@@ -106,7 +107,7 @@ export async function executeCommand(commandStr: string, game: Game, message?: U
             if (!game.settings.debug && !game.guildContext.sentInDMChannel(message))
                 message.delete().catch();
         });
-        logCommand(game, message.author.username, message.content);
+        game.botContext.logCommand(message.author.username, message.content, timestamp);
         return true;
     }
 
@@ -170,21 +171,4 @@ function getCommandType(game: Game, message: UserMessage): "Bot" | "Moderator" |
         else if (!game.settings.debug && game.guildContext.hasEligibleRole(member)) return "Eligible";
         return undefined;
     }
-}
-
-/**
- * Adds a command 
- * @param game - The game in which the command was executed.
- * @param authorName - The name of the author who issued the command.
- * @param commandStr - The full text of the command.
- */
-function logCommand(game: Game, authorName: string, commandStr: string) {
-    // If the commandLog is at its maximum capacity, remove the oldest entry.
-    if (game.botContext.commandLog.length >= 10000)
-        game.botContext.commandLog.shift();
-    game.botContext.commandLog.push({
-        timestamp: new Date(),
-        author: authorName,
-        content: commandStr
-    });
 }

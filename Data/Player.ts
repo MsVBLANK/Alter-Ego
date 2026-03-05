@@ -1,7 +1,7 @@
 import { Collection, GuildMember, type TextChannel } from "discord.js";
 import type { Duration } from "luxon";
 import type Interactable from "../Classes/Interactables/Interactable.ts";
-import Timer from "../Classes/Timer.js";
+import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as itemManager from "../Modules/itemManager.js";
 import { itemIdentifierMatches } from "../Modules/matchers.js";

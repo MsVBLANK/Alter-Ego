@@ -1,4 +1,4 @@
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
 import Description from "./Description.ts";
 import Event from "./Event.ts";
 import type Fixture from "./Fixture.ts";
@@ -354,30 +354,6 @@ export default class Puzzle extends ItemContainer {
      */
     override getDescription(): Description {
         return this.alreadySolvedDescription;
-    }
-
-    /**
-     * Adds an item to the specified item list in the puzzle's already solved description.
-     *
-     * @deprecated
-     * @param item - The item to add.
-     * @param list - The item list to add the item to.
-     * @param quantity - The quantity of the item to add. If none is provided, defaults to 1.
-     */
-    override addItemToDescription(item: ItemInstance, list?: string, quantity?: number): void {
-        //this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
-    }
-
-    /**
-     * Removes an item from the specified item list in the puzzle's already solved description.
-     *
-     * @deprecated
-     * @param item - The item to remove.
-     * @param list - The item list to remove the item from.
-     * @param quantity - The quantity of the item to remove. If none is provided, defaults to 1.
-     */
-    override removeItemFromDescription(item: ItemInstance, list: string, quantity?: number): void {
-        //this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
     }
 
     /**

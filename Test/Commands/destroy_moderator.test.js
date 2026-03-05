@@ -1,4 +1,4 @@
-import ModeratorCommand from '../../Classes/ModeratorCommand.js';
+import ModeratorCommand from '../../Classes/ModeratorCommand.ts';
 import { usage, execute, config } from '../../Commands/destroy_moderator.js'
 import DestroyAction from '../../Data/Actions/DestroyAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';

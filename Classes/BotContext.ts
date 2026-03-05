@@ -3,10 +3,10 @@ import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
 import type Game from "../Data/Game.ts";
-import type BotCommand from "./BotCommand.js";
-import type ModeratorCommand from "./ModeratorCommand.js";
-import type PlayerCommand from "./PlayerCommand.js";
-import type EligibleCommand from "./EligibleCommand.js";
+import BotCommand from "./BotCommand.ts";
+import ModeratorCommand from "./ModeratorCommand.ts";
+import PlayerCommand from "./PlayerCommand.ts";
+import EligibleCommand from "./EligibleCommand.ts";
 import type { Client, Collection } from "discord.js";
 
 /**
@@ -106,6 +106,35 @@ export default class BotContext {
      */
     public static get instance() {
         return BotContext.#instance;
+    }
+
+    /**
+     * Gets a command by its type and alias. If the command does not exist, returns undefined.
+     * @param type - The type of command.
+     * @param alias - The alias to look up.
+     */
+    getCommand(type: "Bot" | "Moderator" | "Player" | "Eligible", alias: string): BotCommand | ModeratorCommand | PlayerCommand | EligibleCommand {
+        if (type === "Bot") return this.botCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Moderator") return this.moderatorCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Player") return this.playerCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Eligible") return this.eligibleCommands.find(command => command.config.aliases.includes(alias));
+        return undefined;
+    }
+
+    /**
+     * Returns true if the command was issued in a valid channel for its type.
+     * @param command - The command that was issued.
+     * @param message - The message in which the command was sent.
+     */
+    commandIssuedInValidChannel(command: ModeratorCommand | PlayerCommand | EligibleCommand, message: UserMessage): boolean {
+        const guild = this.game.guildContext;
+        if (command instanceof ModeratorCommand)
+            return guild.sentInCommandChannel(message) || guild.sentInRoomChannel(message) || command.config.name === "delete";
+        if (command instanceof PlayerCommand)
+            return guild.sentInDMChannel(message) || guild.sentInRoomChannel(message);
+        if (command instanceof EligibleCommand)
+            return guild.sentInDMChannel(message) || this.game.settings.debug && guild.sentInTestingChannel(message) || !this.game.settings.debug && guild.sentInGeneralChannel(message);
+        return false;
     }
 
 	/**

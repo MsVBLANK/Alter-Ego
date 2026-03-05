@@ -1,5 +1,5 @@
 import { isAsyncFunction } from "util/types";
-import BotCommand from "../../Classes/BotCommand.js";
+import BotCommand from "../../Classes/BotCommand.ts";
 
 describe("BotCommand test", () => {
     test("Construct Bot Command", async () => {

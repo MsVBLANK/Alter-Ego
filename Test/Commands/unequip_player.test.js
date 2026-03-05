@@ -1,4 +1,4 @@
-import PlayerCommand from '../../Classes/PlayerCommand.js';
+import PlayerCommand from '../../Classes/PlayerCommand.ts';
 import { usage, execute, config } from '../../Commands/unequip_player.js'
 import UnequipAction from '../../Data/Actions/UnequipAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';

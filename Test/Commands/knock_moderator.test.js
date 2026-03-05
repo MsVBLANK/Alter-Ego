@@ -1,4 +1,4 @@
-import ModeratorCommand from '../../Classes/ModeratorCommand.js';
+import ModeratorCommand from '../../Classes/ModeratorCommand.ts';
 import { usage, execute, config } from '../../Commands/knock_moderator.js'
 import KnockAction from '../../Data/Actions/KnockAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';

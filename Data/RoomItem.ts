@@ -98,8 +98,6 @@ export default class RoomItem extends ItemInstance {
             const container = this.container;
             const slot = this.slot;
             const quantity = this.quantity;
-            container.removeItemFromDescription(this, slot);
-            container.addItemToDescription(this, slot);
             const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
             destroyAction.performDestroyRoomItem(this, this.quantity, true);
             const instantiateAction = new InstantiateAction(this.getGame(), undefined, player, this.location, true);

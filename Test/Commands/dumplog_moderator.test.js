@@ -1,4 +1,4 @@
-import ModeratorCommand from "../../Classes/ModeratorCommand.js";
+import ModeratorCommand from "../../Classes/ModeratorCommand.ts";
 import { usage, execute, config } from "../../Commands/dumplog_moderator.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 

@@ -1,5 +1,5 @@
 import { isAsyncFunction } from "util/types";
-import ModeratorCommand from "../../Classes/ModeratorCommand.js";
+import ModeratorCommand from "../../Classes/ModeratorCommand.ts";
 
 describe("ModeratorCommand test", () => {
     test("Construct Moderator Command", async () => {

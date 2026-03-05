@@ -1,4 +1,4 @@
-import ModeratorCommand from "../../Classes/ModeratorCommand.js";
+import ModeratorCommand from "../../Classes/ModeratorCommand.ts";
 import { usage, execute, config } from '../../Commands/unstash_moderator.js'
 import UnstashAction from "../../Data/Actions/UnstashAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";

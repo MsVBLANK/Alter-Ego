@@ -1,5 +1,6 @@
 import type Interactable from "./Interactables/Interactable.ts";
 import type Action from "../Data/Action.ts";
+import type Command from "./Command.ts";
 import type Dialog from "../Data/Dialog.ts";
 import type Game from "../Data/Game.ts";
 import type GameEntity from "../Data/GameEntity.ts";

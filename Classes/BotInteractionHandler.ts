@@ -119,7 +119,12 @@ export default class BotInteractionHandler {
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
 	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
+        if (this.#game.botContext.commandLog.length >= 10000) {
+            this.#game.botContext.commandLog.shift();
+        }
+        const timestamp = new Date();
         const player = interactable.actionDirective.getPlayer();
+        const author = user instanceof Moderator ? `${player.name} (${user.member.user.username})` : player.name
         const forced = user instanceof Moderator;
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
 		if (action instanceof QueueMoveAction) {
@@ -129,6 +134,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 2) {
 				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
 				if (reply) reply.resource.message.delete();
+                this.#logInteraction("QueueMoveAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -139,6 +145,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 1) {
 				action.performInspect(validatedArgs[0]);
 				if (reply) reply.resource.message.delete();
+                this.#logInteraction("InspectAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -149,6 +156,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#logInteraction("TakeAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -159,6 +167,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#logInteraction("DropAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -169,6 +178,7 @@ export default class BotInteractionHandler {
 			if (validatedArgs.length === 4) {
 				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
 				if (reply) reply.resource.message.delete();
+                this.#logInteraction("StashAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
@@ -179,6 +189,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
                 if (reply) reply.resource.message.delete();
+                this.#logInteraction("UnstashAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -189,6 +200,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#logInteraction("EquipAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -199,6 +211,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#logInteraction("UnequipAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -209,6 +222,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 3) {
                 action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 if (reply) reply.resource.message.delete();
+                this.#logInteraction("CraftAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -219,6 +233,7 @@ export default class BotInteractionHandler {
             if (validatedArgs.length === 2) {
                 action.performUse(validatedArgs[0], validatedArgs[1]);
                 if (reply) reply.resource.message.delete();
+                this.#logInteraction("UseAction", author, timestamp, validatedArgs);
                 return true;
             }
         }
@@ -245,6 +260,7 @@ export default class BotInteractionHandler {
                     }
                     else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
+                    this.#logInteraction("InstantiateAction", author, timestamp, validatedArgs);
                     return true;
                 } 
                 catch (error) { throw new Error(error.message); }
@@ -270,4 +286,15 @@ export default class BotInteractionHandler {
         if (interaction.replied || interaction.deferred) interaction.editReply({ content: response });
         else interaction.reply({ content: response });
 	}
+
+    /**
+     * Logs the occurance of an interaction.
+     * @param type - The action type of the corresponding interaction.
+     * @param author - The author of the interaction.
+     * @param timestamp - The timestamp of the interaction.
+     * @param args - The array of validated arguments for the interaction.
+     */
+    #logInteraction(type: string, author: string, timestamp: Date, args: any[]): void {
+        this.#game.botContext.commandLog.push({ author: author, content: `${type} Interactable: ${args.map((value) => this.#game.botContext.prettyPrinter.miniString(value)).join(",")}`, timestamp: timestamp });
+    }
 }

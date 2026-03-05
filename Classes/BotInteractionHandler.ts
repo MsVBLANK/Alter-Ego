@@ -9,6 +9,7 @@ import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
+import DestroyAction from "../Data/Actions/DestroyAction.ts";
 import type ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
 import Moderator from "../Data/Moderator.ts";
@@ -270,6 +271,18 @@ export default class BotInteractionHandler {
                     return true;
                 }
             }
+        }
+        if (action instanceof DestroyAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseDestroyInventoryItemInteractionArgs(args);
+            try {
+                const validatedArgs = action.validateDestroyInventoryItemInteractionArgs(parsedArgs);
+                action.performDestroyInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                this.#replyToInteraction("Successfully destroyed inventory item.", interaction);
+                this.#logInteraction("DestroyAction", author, timestamp, validatedArgs);
+                return true;
+            }
+            catch (error) { throw new Error(error.message); }
         }
 		return false;
 	}

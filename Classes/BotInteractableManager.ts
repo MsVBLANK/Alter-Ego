@@ -27,6 +27,7 @@ import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
+import DestroyAction from "../Data/Actions/DestroyAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
@@ -556,6 +557,36 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for a list of destroyable inventory items and adds them to the cache.
+     * @param destroyableItems - A list of destroyable inventory items to create Interactables for.
+     * @param player - The player these interactables are being created for.
+     * @param user - The user these interactables are being created for.
+     */
+    async createDestroyInventoryItemActionInteractables(destroyableItems: InventoryItem[], player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const item of destroyableItems) {
+            const actionDirective = await this.#createActionDirective(DestroyAction, item.getDestroyActionDirectiveArgs(), player, user);
+            if (menuOptions.has(actionDirective.customId)) continue;
+            let containerString: string;
+            if (item.container !== null) {
+                containerString = `${item.container.getPreposition()} `;
+                if (item.container.inventory.size > 1) containerString += `${item.slot} of `;
+                containerString += `${item.container.getIdentifier()}`;
+            }
+            else containerString = `equipped to ${item.equipmentSlot}`;
+            const option = new StringSelectMenuOptionInteractable(actionDirective, item.getIdentifier(), actionDirective.customId, `Destroy ${item.getIdentifier()} ${containerString}`);
+            this.addInteractable(option);
+            menuOptions.set(actionDirective.customId, option);
+            if (menuOptions.size >= 25) break;
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(DestroyAction, ["DestroyInventoryItemAction Menu"], player, user);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -740,6 +771,21 @@ export default class BotInteractableManager {
                 if (viableInventorySlots.length > 0) viableStashDestinations.set(containerItem, viableInventorySlots);
             }
             interactables = interactables.concat(await this.createInstantiateInventoryItemActionInteractables(freeEquipmentSlots, viableStashDestinations, player, user));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of destroy inventory item interactables based on the player's current inventory.
+     * @param player - The player to destroy inventory items for.
+     * @param user - The user these interactables are being created for.
+     */
+    async getDestroyInventoryItemInteractables(player: Player, user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const equippedItems = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
+        const stashedItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.container !== null);
+        if (equippedItems.length > 0 || stashedItems.length > 0) {
+            interactables = interactables.concat(await this.createDestroyInventoryItemActionInteractables(equippedItems.concat(stashedItems), player, user));
         }
         return interactables;
     }

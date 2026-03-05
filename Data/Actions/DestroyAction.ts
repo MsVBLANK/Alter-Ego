@@ -1,6 +1,6 @@
 import { destroyInventoryItem, destroyRoomItem } from "../../Modules/itemManager.js";
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.ts";
+import InventoryItem from "../InventoryItem.ts";
 import ItemInstance from "../ItemInstance.ts";
 import type RoomItem from "../RoomItem.ts";
 
@@ -49,4 +49,28 @@ export default class DestroyAction extends Action {
 			this.getGame().logHandler.logDestroyStashedInventoryItem(item, quantity, this.player, item.container, inventorySlot);
 		destroyInventoryItem(item, quantity, destroyChildren);
 	}
+
+    /**
+     * Finds the required entities to call performDestroyInventoryItem.
+     * 
+     * @param args - The args as strings.
+     */
+    parseDestroyInventoryItemInteractionArgs(args: string[]): [InventoryItem] {
+        const item = this.getGame().entityFinder.getInventoryItem(args[1], this.player.name, args[2], args[3]);
+        return [item];
+    }
+
+    /**
+     * Validates the parsed args. The results can be passed directly into performDestroyInventoryItem.
+     * 
+     * @param args - The args after being parsed.
+     */
+    validateDestroyInventoryItemInteractionArgs(args: [InventoryItem]): [InventoryItem, number, boolean] {
+        if (args.length !== 1) throw new Error("Insufficient arguments.");
+        if (!args[0] || !(args[0] instanceof InventoryItem) || args[0].prefab === null) throw new Error("Invalid inventory item.");
+        const item = args[0];
+        if (item.quantity === 0) throw new Error("The inventory item already has a quantity of 0.");
+        if (item.player.name !== this.player.name) throw new Error(`${item.getIdentifier()} belongs to a different player.`);
+        return [item, item.quantity, true];
+    }
 }

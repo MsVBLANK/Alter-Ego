@@ -98,11 +98,7 @@ export default class InventoryItem extends ItemInstance {
             const container = this.container !== null ? this.container : this.player;
             const slot = this.container !== null ? this.slot :
                 this.equipmentSlot === "RIGHT HAND" || this.equipmentSlot === "LEFT HAND" ? "hands" : "equipment";
-            if (nextStage && !this.prefab.discreet)
-                container.removeItemFromDescription(this, slot);
             replaceInventoryItem(this, nextStage);
-            if (nextStage && !nextStage.discreet)
-                container.addItemToDescription(this, slot);
         }
     }
 

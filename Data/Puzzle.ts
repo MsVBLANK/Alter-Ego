@@ -357,30 +357,6 @@ export default class Puzzle extends ItemContainer {
     }
 
     /**
-     * Adds an item to the specified item list in the puzzle's already solved description.
-     *
-     * @deprecated
-     * @param item - The item to add.
-     * @param list - The item list to add the item to.
-     * @param quantity - The quantity of the item to add. If none is provided, defaults to 1.
-     */
-    override addItemToDescription(item: ItemInstance, list?: string, quantity?: number): void {
-        //this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
-    }
-
-    /**
-     * Removes an item from the specified item list in the puzzle's already solved description.
-     *
-     * @deprecated
-     * @param item - The item to remove.
-     * @param list - The item list to remove the item from.
-     * @param quantity - The quantity of the item to remove. If none is provided, defaults to 1.
-     */
-    override removeItemFromDescription(item: ItemInstance, list: string, quantity?: number): void {
-        //this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
-    }
-
-    /**
      * Gets the name of the parent fixture preceded by "the". If no parent fixture exists, returns the puzzle's name preceded by "the" instead.
      */
     getContainingPhrase(): string {

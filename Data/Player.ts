@@ -1040,19 +1040,12 @@ export default class Player extends RecipeProcessor implements User {
         if (!isNaN(item.quantity))
             item.quantity--;
 
-        // Update the container's description.
-        if (container instanceof Puzzle || container instanceof Fixture || container instanceof RoomItem)
-            container.removeItemFromDescription(item, inventorySlot ? inventorySlot.id : "");
         if (container instanceof RoomItem)
             container.removeItem(item, inventorySlot.id, 1);
 
         // Put the item in the player's hand.
         const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
         this.updateCarryWeight();
-
-        // Add the new item to the player's hands item list.
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
         return createdItem;
     }
 
@@ -1069,12 +1062,9 @@ export default class Player extends RecipeProcessor implements User {
         // Remove the item from its container.
         itemManager.removeStashedItem(item, container, inventorySlot, victim.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
-        const createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
+        itemManager.putItemInHand(item, this, handEquipmentSlot);
         victim.updateCarryWeight();
         this.updateCarryWeight();
-
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
     }
 
     /**
@@ -1095,8 +1085,6 @@ export default class Player extends RecipeProcessor implements User {
         createdItem.container = container;
         createdItem.slot = inventorySlotId;
 
-        // Update the container's description.
-        container.addItemToDescription(item, inventorySlotId);
         if (container instanceof RoomItem)
             container.insertItem(createdItem, inventorySlot.id);
 
@@ -1110,10 +1098,6 @@ export default class Player extends RecipeProcessor implements User {
         // Insert the new items into the game's list of room items.
         itemManager.insertRoomItems(this.location, items);
         this.updateCarryWeight();
-
-        // Remove the item from the player's hands item list.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
     }
 
     /**
@@ -1132,13 +1116,6 @@ export default class Player extends RecipeProcessor implements User {
         const createdItem = itemManager.putItemInHand(item, recipient, recipientHandEquipmentSlot);
         this.updateCarryWeight();
         recipient.updateCarryWeight();
-
-        if (!createdItem.prefab.discreet) {
-            // Remove the item from the player's hands item list.
-            this.removeItemFromDescription(createdItem, "hands");
-            // Add the item to the recipient's hands item list.
-            recipient.addItemToDescription(createdItem, "hands");
-        }
     }
 
     /**
@@ -1162,7 +1139,6 @@ export default class Player extends RecipeProcessor implements User {
 
         // Update container.
         container.insertItem(createdItem, inventorySlot.id);
-        container.addItemToDescription(createdItem, inventorySlot.id);
 
         // Create a list of all the child items.
         let items: InventoryItem[] = [];
@@ -1172,10 +1148,6 @@ export default class Player extends RecipeProcessor implements User {
         itemManager.setChildItemQuantitiesZero(item);
         // Insert the new inventory items into the game's list of inventory items.
         itemManager.insertInventoryItems(this, items, equipmentSlot);
-
-        // Remove the item from the player's hands item list.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
     }
 
     /**
@@ -1191,10 +1163,6 @@ export default class Player extends RecipeProcessor implements User {
         itemManager.removeStashedItem(item, container, inventorySlot, this.inventory.get(item.equipmentSlot));
         // Put the item in the player's hand.
         itemManager.putItemInHand(item, this, handEquipmentSlot);
-
-        // Add the new item to the player's hands item list.
-        if (!item.prefab.discreet)
-            this.addItemToDescription(item, "hands");
     }
 
     /**
@@ -1222,11 +1190,6 @@ export default class Player extends RecipeProcessor implements User {
         item.quantity = 0;
         // Insert the newly created item in the game's list of inventory items.
         itemManager.insertInventoryItems(this, items, equipmentSlot);
-
-        // Update the player's description.
-        if (!item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-        this.#coverEquippedItems(createdItem);
     }
 
     /**
@@ -1239,47 +1202,9 @@ export default class Player extends RecipeProcessor implements User {
     directEquip(item: InventoryItem, equipmentSlot: EquipmentSlot): void {
         item.row = equipmentSlot.row;
         equipmentSlot.equipItem(item);
-
-        if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
-            this.addItemToDescription(item, "hands");
-        else {
-            this.#coverEquippedItems(item);
+        const handSlotIDs = this.getGame().entityFinder.getPlayerHands(this).map(equipmentSlot => equipmentSlot.id);
+        if (!handSlotIDs.includes(equipmentSlot.id))
             item.executeEquippedCommands();
-        }
-    }
-
-    /**
-     * Removes equipped items that the given item covers from the player's description.
-     *
-     * @param item - The equipped item that covers other items.
-     */
-    #coverEquippedItems(item: InventoryItem): void {
-        for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
-            if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
-                // Preserve quantity.
-                const quantity = coveredEquipmentSlot.equippedItem.quantity;
-                coveredEquipmentSlot.equippedItem.quantity = 0;
-                this.removeItemFromDescription(coveredEquipmentSlot.equippedItem, "equipment");
-                coveredEquipmentSlot.equippedItem.quantity = quantity;
-            }
-        }
-
-        // Check to make sure that this item isn't covered by something else the player has equipped.
-        let isCovered = false;
-        this.inventory.forEach(equipmentSlot => {
-            if (equipmentSlot.equippedItem !== null && equipmentSlot.id !== "RIGHT HAND" && equipmentSlot.id !== "LEFT HAND") {
-                for (const coveredEquipmentSlotId of equipmentSlot.equippedItem.prefab.coveredEquipmentSlots) {
-                    if (coveredEquipmentSlotId === item.equipmentSlot) {
-                        isCovered = true;
-                        break;
-                    }
-                }
-            }
-        });
-        // If it's not covered, add mention of this item to the player's equipment item list.
-        if (!isCovered)
-            this.addItemToDescription(item, "equipment");
     }
 
     /**
@@ -1293,13 +1218,8 @@ export default class Player extends RecipeProcessor implements User {
         equipmentSlot.unequipItem(item);
 
         // Put the item in the player's hand.
-        let createdItem = itemManager.putItemInHand(item, this, handEquipmentSlot);
+        itemManager.putItemInHand(item, this, handEquipmentSlot);
         item.quantity = 0;
-
-        // Update the player's description.
-        if (!createdItem.prefab.discreet)
-            this.addItemToDescription(createdItem, "hands");
-        this.#uncoverEquippedItems(createdItem);
     }
 
     /**
@@ -1311,41 +1231,9 @@ export default class Player extends RecipeProcessor implements User {
     directUnequip(item: InventoryItem): void {
         const equipmentSlot = this.inventory.get(item.equipmentSlot);
         equipmentSlot.unequipItem(item);
-
-        if ((item.equipmentSlot === "RIGHT HAND" || item.equipmentSlot === "LEFT HAND") && !item.prefab.discreet)
-            this.removeItemFromDescription(item, "hands");
-        else {
-            this.#uncoverEquippedItems(item);
+        const handSlotIDs = this.getGame().entityFinder.getPlayerHands(this).map(equipmentSlot => equipmentSlot.id);
+        if (!handSlotIDs.includes(equipmentSlot.id))
             item.executeUnequippedCommands();
-        }
-    }
-
-    /**
-     * Adds any equipped items that were previously covered by the newly unequipped item back to the player's description.
-     *
-     * @param item - The now unequipped item that covered other items.
-     */
-    #uncoverEquippedItems(item: InventoryItem): void {
-        this.removeItemFromDescription(item, "equipment");
-        // Find any items that were covered by this item and add them to the equipment item list.
-        for (const coveredEquipmentSlotId of item.prefab.coveredEquipmentSlots) {
-            const coveredEquipmentSlot = this.inventory.get(coveredEquipmentSlotId);
-            if (coveredEquipmentSlot && coveredEquipmentSlot.equippedItem !== null) {
-                // Before adding this item to the equipment item slot, make sure it isn't covered by something else.
-                const coveringItems = this.getGame().inventoryItems.filter(item =>
-                    item.player.name === this.name &&
-                    item.prefab !== null &&
-                    item.equipmentSlot !== "RIGHT HAND" &&
-                    item.equipmentSlot !== "LEFT HAND" &&
-                    item.containerName === "" &&
-                    item.container === null &&
-                    item.prefab.coveredEquipmentSlots.includes(coveredEquipmentSlotId),
-                );
-                if (coveringItems.length === 0) this.addItemToDescription(coveredEquipmentSlot.equippedItem,
-                    "equipment");
-                break;
-            }
-        }
     }
 
     /**
@@ -1450,7 +1338,6 @@ export default class Player extends RecipeProcessor implements User {
         let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
         let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
 
-        if (!item.prefab.discreet) this.removeItemFromDescription(item, "hands");
         const rightHand = this.inventory.get("RIGHT HAND");
         const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
         const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
@@ -1464,10 +1351,6 @@ export default class Player extends RecipeProcessor implements User {
             ingredient2.prefab.uses,
             false
         );
-        if (!ingredient1.prefab.discreet)
-            this.addItemToDescription(ingredient1Instance, "hands");
-        if (!ingredient2.prefab.discreet)
-            this.addItemToDescription(ingredient2Instance, "hands");
         this.updateCarryWeight();
 
         return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };

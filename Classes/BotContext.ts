@@ -156,7 +156,7 @@ export default class BotContext {
     commandIssuedInValidChannel(command: ModeratorCommand | PlayerCommand | EligibleCommand, message: UserMessage): boolean {
         const guild = this.game.guildContext;
         if (command instanceof ModeratorCommand)
-            return guild.sentInCommandChannel(message) || guild.sentInRoomChannel(message) || command.config.name === "delete";
+            return guild.sentInCommandChannel(message) || guild.sentInRoomChannel(message) || command.config.name === "delete_moderator";
         if (command instanceof PlayerCommand)
             return guild.sentInDMChannel(message) || guild.sentInRoomChannel(message);
         if (command instanceof EligibleCommand)

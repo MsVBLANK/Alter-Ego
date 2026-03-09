@@ -1,4 +1,4 @@
-import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
+import type { ActivitiesOptions, ActivityType, ButtonInteraction, GuildMember, Message, ModalSubmitInteraction, OmitPartialGroupDMChannel, Snowflake, StringSelectMenuInteraction } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
 import type CollatedItem from "./Data/CollatedItem.ts";
 import type Event from "./Data/Event.ts";
@@ -74,6 +74,10 @@ declare global {
      * Represents a game entity that can be used as a target for gestures.
      */
     type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
+    /**
+     * Represents an interaction that the bot can accept.
+     */
+    type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.

@@ -10,12 +10,13 @@ import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
 import DestroyAction from "../Data/Actions/DestroyAction.ts";
-import type ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
+import ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
+import type Interactable from "./Interactables/Interactable.ts";
 import Moderator from "../Data/Moderator.ts";
+import PaginationInteractable from "./Interactables/PaginationInteractable.ts";
 import { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction } from "discord.js";
 import type { Interaction, InteractionCallbackResponse } from "discord.js";
-type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction;
 
 /**
  * @class InteractionHandler
@@ -39,7 +40,7 @@ export default class BotInteractionHandler {
 	 * Gets an interactable from the cache by the customId. If it doesn't exist, returns undefined.
 	 * @param customId
 	 */
-	getInteractable(customId: string): ActionDirectiveInteractable {
+	getInteractable(customId: string): Interactable {
 		return this.#game.botContext.interactableManager.getInteractableByCustomId(customId);
 	}
 
@@ -93,15 +94,24 @@ export default class BotInteractionHandler {
 		return;
     }
 
+    /**
+     * Processes an interaction and calls the correct function.
+     * @param customId - The custom ID of the component that was interacted with.
+     * @param interaction - The interaction being executed.
+     * @param user - The user who triggered the interaction.
+     */
     async #processInteraction(customId: string, interaction: BotInteraction, user: User): Promise<void> {
         let reply: InteractionCallbackResponse<boolean>;
         const interactable = this.getInteractable(customId);
         let successfullyProcessedInteractable = false;
         let errorMessage = `Interaction failed.`;
         if (interactable) {
-            if (!interactable.respondWithModal) reply = await interaction.deferReply({ withResponse: true });
+            if (interactable instanceof ActionDirectiveInteractable && !interactable.respondWithModal) reply = await interaction.deferReply({ withResponse: true });
             try {
-                successfullyProcessedInteractable = await this.#processInteractable(interactable, user, interaction, reply);
+                if (interactable instanceof ActionDirectiveInteractable)
+                    successfullyProcessedInteractable = await this.#processActionDirectiveInteractable(interactable, user, interaction, reply);
+                else
+                    successfullyProcessedInteractable = await this.#processStandardInteractable(interactable, user, interaction, reply);
             }
             catch (error) {
                 successfullyProcessedInteractable = false;
@@ -114,12 +124,13 @@ export default class BotInteractionHandler {
 
 	/**
 	 * Process an interactable and calls the correct function.
+     * @param interactable - The interactable to process.
+     * @param user - The user who triggered the interaction.
+     * @param interaction - The interaction being executed.
 	 * @param reply - The reply that was sent.
-	 * @param interactable - The interactable to process.
-	 * @param user - The user who triggered the interaction.
 	 * @returns Whether the interactable successfully performed an action or not.
 	 */
-	async #processInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
+	async #processActionDirectiveInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
         const timestamp = new Date();
         const player = interactable.actionDirective.getPlayer();
         const author = user instanceof Moderator ? `${player.name} (${user.member.user.username})` : player.name
@@ -286,6 +297,23 @@ export default class BotInteractionHandler {
         }
 		return false;
 	}
+
+    /**
+     * Processes a standard interactable, i.e. an interactable that doesn't contain an action directive.
+     * @param interactable - The interactable to process.
+     * @param user - The user who triggered the interaction.
+     * @param interaction - The interaction being executed.
+	 * @param reply - The reply that was sent.
+     * @returns Whether the interactable successfully performed an action or not.
+     */
+    async #processStandardInteractable(interactable: Interactable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
+        if (!interaction.message) return false;
+        if (interactable instanceof PaginationInteractable) {
+            interactable.callback(interaction);
+            if (reply) reply.resource.message.delete();
+        }
+       return true;
+    }
 
 	/**
 	 * Replies to an interaction.

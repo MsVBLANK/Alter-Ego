@@ -5,7 +5,7 @@ import SayAction from '../Data/Actions/SayAction.ts';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';
-import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
+import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType, EmbedBuilder } from 'discord.js';
 
 /** @import Command from '../Classes/Command.ts' */
 /** @import Interactable from '../Classes/Interactables/Interactable.ts' */
@@ -301,9 +301,10 @@ export function sendLogMessage(game, messageText) {
  * @param {Messageable} channel - The channel to send the message to.
  * @param {string} messageText - The message to send.
  * @param {Interactable[]} interactables - An array of interactables.
+ * @param {(Embed|EmbedBuilder)[]} embeds - The embeds to send. 
  */
-export function sendGameMechanicMessage(game, channel, messageText, interactables = []) {
-    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables) : messageText;
+export function sendGameMechanicMessage(game, channel, messageText, interactables = [], embeds = []) {
+    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables, embeds) : messageText;
     game.messageQueue.enqueue(
         {
             fire: async () => {

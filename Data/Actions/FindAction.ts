@@ -1,4 +1,4 @@
-import type { MessageReaction, User } from "discord.js";
+import type { ButtonInteraction } from "discord.js";
 import Action from "../Action.ts";
 import type Event from "../Event.ts";
 import Fixture from "../Fixture.ts";
@@ -13,6 +13,7 @@ import Recipe from "../Recipe.ts";
 import type Room from "../Room.ts";
 import RoomItem from "../RoomItem.ts";
 import type Status from "../Status.ts";
+import type Interactable from "../../Classes/Interactables/Interactable.ts";
 import { table } from "table";
 
 type FindableGameEntity = Room | Fixture | Prefab | Recipe | RoomItem | Puzzle | Event | Status | Player | InventoryItem | Gesture | Flag;
@@ -402,38 +403,24 @@ export default class FindAction extends Action {
         let pageString = pages.length > 1 ? ` Showing page ${page + 1}/${pages.length}.\n` : '\n';
         let resultsDisplay = '```' + table(pages[page]) + '```';
 
-        this.getGame().guildContext.commandChannel.send(resultCountString + pageString + resultsDisplay).then(response => {
-            if (pages.length > 1) {
-                response.react('⏪').then(() => {
-                    response.react('⏩');
-
-                    const backwardsFilter = (reaction: MessageReaction, user: User) => reaction.emoji.name === '⏪' && user.id === this.message.author.id;
-                    const forwardsFilter = (reaction: MessageReaction, user: User) => reaction.emoji.name === '⏩' && user.id === this.message.author.id;
-
-                    const backwards = response.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-                    const forwards = response.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-                    backwards.on("collect", () => {
-                        const reaction = response.reactions.cache.find(reaction => reaction.emoji.name === '⏪');
-                        if (reaction) reaction.users.cache.forEach(user => { if (user.id !== this.getGame().botContext.client.user.id) reaction.users.remove(user.id); });
-                        if (page === 0) return;
-                        page--;
-                        pageString = ` Showing page ${page + 1}/${pages.length}.\n`;
-                        resultsDisplay = '```' + table(pages[page]) + '```';
-                        response.edit(resultCountString + pageString + resultsDisplay);
-                    });
-
-                    forwards.on("collect", () => {
-                        const reaction = response.reactions.cache.find(reaction => reaction.emoji.name === '⏩');
-                        if (reaction) reaction.users.cache.forEach(user => { if (user.id !== this.getGame().botContext.client.user.id) reaction.users.remove(user.id); });
-                        if (page === pages.length - 1) return;
-                        page++;
-                        pageString = ` Showing page ${page + 1}/${pages.length}.\n`;
-                        resultsDisplay = '```' + table(pages[page]) + '```';
-                        response.edit(resultCountString + pageString + resultsDisplay);
-                    });
-                });
-            }
-        });
+        let interactables: Interactable[] = [];
+        if (pages.length > 1) {
+            const prevPageCallback = (interaction: ButtonInteraction) => {
+                if (page > 0)
+                    page--;
+                pageString = ` Showing page ${page + 1}/${pages.length}.\n`;
+                resultsDisplay = '```' + table(pages[page]) + '```';
+                interaction.update(resultCountString + pageString + resultsDisplay);
+            };
+            const nextPageCallback = (interaction: ButtonInteraction) => {
+                if (page < pages.length - 1)
+                    page++;
+                pageString = ` Showing page ${page + 1}/${pages.length}.\n`;
+                resultsDisplay = '```' + table(pages[page]) + '```';
+                interaction.update(resultCountString + pageString + resultsDisplay);
+            };
+            interactables = interactables.concat(this.getGame().botContext.interactableManager.createPaginationInteractables(this, prevPageCallback, nextPageCallback));
+        }
+        this.getGame().communicationHandler.sendToChannel(this.getGame().guildContext.commandChannel, resultCountString + pageString + resultsDisplay, [], interactables);
     }
 }

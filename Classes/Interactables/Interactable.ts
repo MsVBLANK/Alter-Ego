@@ -1,5 +1,5 @@
+import type { ComponentBuilder, ModalBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import type { InteractableType } from "../../Modules/enums.js";
-import type ActionDirective from "../ActionDirective.ts";
 
 /**
  * @class Interactable
@@ -23,6 +23,10 @@ export default abstract class Interactable {
      * A reply to an interaction cannot be deferred if a modal is to be sent, so this will be checked by the interaction handler.
      */
     readonly respondWithModal: boolean;
+    /**
+     * The modal component created from this interactable.
+     */
+    abstract readonly component: ComponentBuilder|StringSelectMenuOptionBuilder|ModalBuilder;
 
 	/**
 	 * @constructor

@@ -12,7 +12,7 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { ChannelType, Collection } from "discord.js";
-import type { Attachment, Embed, Snowflake, TextChannel } from "discord.js";
+import type { Attachment, Embed, EmbedBuilder, Snowflake, TextChannel } from "discord.js";
 
 /**
  * An interface for the message handler. Contains a number of functions that ensure actions won't be communicated multiple times in the same channel.
@@ -326,6 +326,17 @@ export default class GameCommunicationHandler {
 	sendCommandHelp(message: UserMessage, command: Command) {
 		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
 		messageHandler.sendCommandHelp(this.#game, channel, command);
+	}
+
+    /**
+	 * Sends a message to the given channel as a game mechanic message.
+     * @param channel - The channel to send the message to.
+	 * @param messageText - The text of the message to send.
+     * @param embeds - The embeds to send.
+     * @param interactables - An array of interactables.
+	 */
+	sendToChannel(channel: Messageable, messageText: string = "", embeds: (Embed|EmbedBuilder)[] = [], interactables: Interactable[] = []) {
+        messageHandler.sendGameMechanicMessage(this.#game, channel, messageText, interactables, embeds);
 	}
 
 	/**

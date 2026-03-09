@@ -1,6 +1,7 @@
 import { ButtonStyle, Collection } from "discord.js";
-import type ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import ButtonInteractable from "./Interactables/ButtonInteractable.ts";
+import PageNextInteractable from "./Interactables/PageNextInteractable.ts";
+import PagePrevInteractable from "./Interactables/PagePrevInteractable.ts";
 import StringSelectMenuInteractable from "./Interactables/StringSelectMenuInteractable.ts";
 import StringSelectMenuOptionInteractable from "./Interactables/StringSelectMenuOptionInteractable.ts";
 import TextInputInteractable from "./Interactables/TextInputInteractable.ts";
@@ -44,7 +45,7 @@ export default class BotInteractableManager {
 	 * A cache of recently-created Interactables, indexed by their custom IDs.
 	 * This is used to look up Interactables when an interaction is received.
 	 */
-	readonly #interactableCache: Collection<string, ActionDirectiveInteractable>;
+	readonly #interactableCache: Collection<string, Interactable>;
 	/**
 	 * The maximum number of Interactables to keep in the cache at once. If the cache exceeds this size, the oldest Interactable will be removed.
 	 */
@@ -57,6 +58,10 @@ export default class BotInteractableManager {
 	 * The maximum number of Interactable messages to keep in the cache at once. If the cache exceeds this size, the oldest message will be removed.
 	 */
     readonly #interactableMessageCacheSizeLimit = 50;
+    /**
+     * The maximum amount of time that interactables are valid for.
+     */
+    readonly interactableValidTime = 5 * 60 * 1000;
 
 	/**
 	 * @constructor
@@ -81,7 +86,7 @@ export default class BotInteractableManager {
 	 * Interactables are valid for 5 minutes after being added. They are automatically removed from the cache after this time.
 	 * @param interactable
 	 */
-	addInteractable(interactable: ActionDirectiveInteractable) {
+	addInteractable(interactable: Interactable) {
 		if (this.#interactableCache.size >= this.#interactableCacheSizeLimit)
 			this.disableInteractable(this.#interactableCache.firstKey());
 		if (this.#interactableCache.has(interactable.customId))
@@ -112,7 +117,7 @@ export default class BotInteractableManager {
 		if (this.#interactableMessageCache.size >= this.#interactableMessageCacheSizeLimit)
 			this.disableInteractableMessage(this.#interactableMessageCache.firstKey());
 		this.#interactableMessageCache.set(key, interactableCustomIds);
-		setTimeout(() => this.disableInteractableMessage(key), 5 * 60 * 1000);
+		setTimeout(() => this.disableInteractableMessage(key), this.interactableValidTime);
 	}
 
 	/**
@@ -153,6 +158,20 @@ export default class BotInteractableManager {
         const customId = await actionDirective.generateCustomId(user);
         actionDirective.setCustomId(customId);
         return actionDirective;
+    }
+
+    /**
+     * Creates Pagination interactables for a given action.
+     * @param action - The action these interactables are associated with.
+     * @param prevPageCallback - The function to execute when the prev button is pressed.
+     * @param nextPageCallback - The function to execute when the next button is pressed.
+     */
+    createPaginationInteractables(action: Action, prevPageCallback: (interaction: BotInteraction) => void, nextPageCallback: (interaction: BotInteraction) => void) {
+        const pagePrevButton = new PagePrevInteractable(`${action.id} Prev Page`, prevPageCallback);
+        this.addInteractable(pagePrevButton);
+        const pageNextButton = new PageNextInteractable(`${action.id} Next Page`, nextPageCallback);
+        this.addInteractable(pageNextButton);
+        return [pagePrevButton, pageNextButton];
     }
 
 	/**

@@ -231,7 +231,10 @@ function addItemsToItemList(document, sentence, container, player) {
                 itemAlreadyExists = true;
                 break;
             }
-            else if (!isNaN(quantity) && clause.isItem && (clauseText === singleContainingPhrase || pluralContainingPhrase && clauseText.includes(pluralContainingPhrase))) {
+            else if (!isNaN(quantity) && clause.isItem
+                && (clauseText === singleContainingPhrase
+                    // Ensure that the clause is exactly a set of digits followed by the plural containing phrase, and nothing else.
+                    || pluralContainingPhrase && clauseText.endsWith(pluralContainingPhrase) && clauseText.substring(0, clauseText.lastIndexOf(pluralContainingPhrase)).trim().match(/^\d+$/))) {
                 itemAlreadyExists = true;
                 if (clauseText === singleContainingPhrase)
                     clause.set(`${1 + quantity} ${prefab.pluralContainingPhrase}`);

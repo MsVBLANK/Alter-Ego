@@ -320,11 +320,10 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Sends the help menu for a command.
-	 * @param message - The message that sent the help command.
+	 * @param channel - The channel to send the help menu to.
 	 * @param command - The command to send the help menu for.
 	 */
-	sendCommandHelp(message: UserMessage, command: Command) {
-		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
+	sendCommandHelp(channel: Messageable, command: Command) {
 		messageHandler.sendCommandHelp(this.#game, channel, command);
 	}
 

@@ -396,8 +396,8 @@ export function createCommandHelpComponents(title, description, aliasString, usa
  * @param {string} authorName - The title of the embed.
  * @param {string} authorIcon - The thumbnail URL to display for the embed.
  * @param {string} description - The description of the embed.
- * @param {(entryIndex: any) => string} getFieldName - A function to generate the name of each field in the embed.
- * @param {(entryIndex: any) => string} getFieldValue - A function to generate the value of each field in the embed.
+ * @param {(entryIndex: number) => string} getFieldName - A function to generate the name of each field in the embed.
+ * @param {(entryIndex: number) => string} getFieldValue - A function to generate the value of each field in the embed.
  */
 export function createPaginatedEmbed(game, page, pages, authorName, authorIcon, description, getFieldName, getFieldValue) {
 	let embed = new EmbedBuilder()

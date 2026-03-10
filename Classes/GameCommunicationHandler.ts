@@ -352,9 +352,10 @@ export default class GameCommunicationHandler {
 	 * @param channel - The channel to send the webhook message to.
 	 * @param webhookUsername - A custom username to use for the webhook that will send the spectate message. Optional.
 	 * @param webhookAvatarURL - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
+     * @param isDialogMirror - Whether the sent webhook message is mirroring the given dialog message. Defaults to false.
 	 * @returns The created webhook message.
 	 */
-	async sendDialogAsWebhook(channel: TextChannel, dialog: Dialog, webhookUsername: string = dialog.speakerDisplayName, webhookAvatarURL: string = dialog.speakerDisplayIcon) {
+	async sendDialogAsWebhook(channel: TextChannel, dialog: Dialog, webhookUsername: string = dialog.speakerDisplayName, webhookAvatarURL: string = dialog.speakerDisplayIcon, isDialogMirror = false) {
 		const webhook = await messageHandler.getOrCreateWebhook(channel);
 		const webhookMessage = await messageHandler.sendWebhookMessage(
 			webhook,
@@ -367,6 +368,7 @@ export default class GameCommunicationHandler {
 			MessageDisplayType.PLAIN_TEXT,
 			dialog.speaker
 		);
+        if (isDialogMirror && dialog.message) this.cacheSpectateMirrorForDialog(dialog.message, webhookMessage.id, webhook.id);
 		return webhookMessage;
 	}
 }

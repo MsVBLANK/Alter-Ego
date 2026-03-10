@@ -57,9 +57,10 @@ export function processIncomingMessage(game, message) {
         if (moderator.sentMessageInLatchChannel(message) && !message.content.startsWith("(")) {
             const npc = moderator.getLatch();
             const dialog = new Dialog(game, message, npc, npc.location, message.content, false, whisper, message.cleanContent);
-            game.communicationHandler.sendDialogAsWebhook(npc.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
+            const channel = whisper ? whisper.channel : npc.location.channel;
+            game.communicationHandler.sendDialogAsWebhook(channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
                 dialog.setMessage(dialogMessage);
-                const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true);
+                const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
                 sayAction.performSay(dialog);
                 message.delete().catch();
             });
@@ -96,7 +97,8 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
                 fire: async () => {
                     if (sendWebhookMessage) {
                         const webhook = await getOrCreateWebhook(room.channel);
-                        webhook.send(messageCreateOptions);
+                        const webhookMessage = await webhook.send(messageCreateOptions);
+                        if (narration.message && webhookMessage) room.getGame().communicationHandler.cacheSpectateMirrorForDialog(narration.message, webhookMessage.id, webhook.id);
                     }
                     else await room.channel.send(messageCreateOptions);
                 },

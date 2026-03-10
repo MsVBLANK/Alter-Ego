@@ -182,6 +182,8 @@ export default class Dialog extends GameConstruct {
         if (!this.isOOCMessage) {
             const contentWithoutEmotes = this.cleanContent.replace(/<?:.*?:\d*>?/g, '');
             this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
+            this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
+            this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
             this.neighboringRooms = new Collection();
             if (!this.location.tags.has("soundproof")) {
                 for (const exit of this.location.exits.values()) {
@@ -190,7 +192,7 @@ export default class Dialog extends GameConstruct {
                     if (this.neighboringRooms.has(neighboringRoom.id)) continue;
                     if (!neighboringRoom.tags.has("soundproof") && neighboringRoom.id !== this.location.id && (neighboringRoom.occupants.length > 0 || neighboringRoom.isAudioSurveilled())) {
                         this.neighboringRooms.set(neighboringRoom.id, neighboringRoom);
-                        if (neighboringRoom.isAudioSurveilled())
+                        if (!this.locationIsAudioSurveilled && neighboringRoom.isAudioSurveilled())
                             this.neighboringAudioSurveilledRooms.set(neighboringRoom.id, neighboringRoom);
                     }
                 }
@@ -212,8 +214,6 @@ export default class Dialog extends GameConstruct {
                     }
                 }
             }
-            this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
-            this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
             if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0)
                 this.audioMonitoringRooms = game.rooms.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
         }

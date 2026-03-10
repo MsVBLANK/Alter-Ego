@@ -11,7 +11,6 @@ import DieAction from "./Actions/DieAction.ts";
 import InflictAction from "./Actions/InflictAction.ts";
 import InstantiateAction from "./Actions/InstantiateAction.ts";
 import MoveAction from "./Actions/MoveAction.ts";
-import QueueMoveAction from "./Actions/QueueMoveAction.ts";
 import StopAction from "./Actions/StopAction.ts";
 import CollatedItem from "./CollatedItem.ts";
 import type EquipmentSlot from "./EquipmentSlot.ts";
@@ -466,9 +465,7 @@ export default class Player extends RecipeProcessor implements User {
      * @param time - The number of milliseconds it will take to move to the destination.
      * @param forced - Whether or not the player was forced to move to the destination.
      */
-    move(
-        isRunning: boolean, currentRoom: Room, destinationRoom: Room, exit: Exit, entrance: Exit, time: number,
-        forced: boolean): void {
+    move(isRunning: boolean, currentRoom: Room, destinationRoom: Room, exit: Exit, entrance: Exit, time: number, forced: boolean): void {
         this.remainingTime = time;
         this.isMoving = true;
         const startingPos: Pos = { x: this.pos.x, y: this.pos.y, z: this.pos.z };
@@ -537,11 +534,6 @@ export default class Player extends RecipeProcessor implements User {
                 if (exit.unlocked || exitPuzzlePassable) {
                     const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
                     moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);
-                    player.moveQueue.splice(0, 1);
-                    if (player.moveQueue.length > 0) {
-                        const queueMoveAction = new QueueMoveAction(player.getGame(), undefined, player, player.location, forced);
-                        queueMoveAction.performQueueMove(isRunning, player.moveQueue[0]);
-                    }
                 }
                 else {
                     // The exit is locked.

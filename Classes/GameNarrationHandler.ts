@@ -202,7 +202,7 @@ export default class GameNarrationHandler {
 	 * @param entrance - The exit the player will enter the destination room from.
 	 * @param isMovingFreely - Whether or not the player is performing free movement.
 	 */
-	narrateEnter(action: Action, player: Player, destinationRoom: Room, entrance: Exit, isMovingFreely: boolean) {
+	async narrateEnter(action: Action, player: Player, destinationRoom: Room, entrance: Exit, isMovingFreely: boolean) {
 		const messageType = MessageDisplayType.STANDARD;
 		const entrancePhrase = entrance?.getNamePhrase();
 		const appendString = player.createMoveAppendString();
@@ -215,7 +215,7 @@ export default class GameNarrationHandler {
 		}
 		else {
 			const description = entrance ? entrance.description : destinationRoom.description;
-			description.parseAndSendTo(player, destinationRoom);
+			await description.parseAndSendTo(player, destinationRoom);
 		}
 	}
 

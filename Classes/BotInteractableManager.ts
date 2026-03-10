@@ -101,7 +101,6 @@ export default class BotInteractableManager {
 	disableInteractable(customId: string) {
 		const interactable = this.#interactableCache.get(customId);
 		if (interactable) {
-			interactable.disable();
 			this.#interactableCache.delete(customId);
 		}
 	}
@@ -616,7 +615,7 @@ export default class BotInteractableManager {
         let interactables: Interactable[] = [];
         let dropContainer = container;
         if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
-        if (dropContainer.canCurrentlyContainItems())
+        if (dropContainer.canCurrentlyContainItems(false))
             interactables = interactables.concat(await this.createTakeActionInteractable(containedItems, player, user));
         return interactables;
     }

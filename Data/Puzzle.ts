@@ -218,8 +218,9 @@ export default class Puzzle extends ItemContainer {
 
     /**
      * Returns true if the puzzle is currently capable of being taken from/dropped into.
+     * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true. Does nothing for puzzles.
      */
-    canCurrentlyContainItems(): boolean {
+    canCurrentlyContainItems(requireEmptySpace = true): boolean {
         return this.type === "weight" || this.type === "container" || this.accessible && this.solved;
     }
 

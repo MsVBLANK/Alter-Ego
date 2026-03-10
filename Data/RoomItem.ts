@@ -207,8 +207,9 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Returns true if the room item is currently capable of being taken from/dropped into.
+     * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true.
      */
-    canCurrentlyContainItems(): boolean {
+    canCurrentlyContainItems(requireEmptySpace = true): boolean {
         let allInventorySlotsFilled = true;
         for (const inventorySlot of this.inventory.values()) {
             if (inventorySlot.takenSpace < inventorySlot.capacity) {
@@ -216,7 +217,7 @@ export default class RoomItem extends ItemInstance {
                 break;
             }
         }
-        return this.isItemContainer() && !allInventorySlotsFilled;
+        return this.isItemContainer() && !requireEmptySpace || !allInventorySlotsFilled;
     }
 
     /**

@@ -171,8 +171,9 @@ export default class Fixture extends RecipeProcessor {
 
     /**
      * Returns true if the fixture is currently capable of being taken from/dropped into.
+     * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true. Does nothing for fixtures.
      */
-    canCurrentlyContainItems(): boolean {
+    canCurrentlyContainItems(requireEmptySpace = true): boolean {
         return !this.isProcessingItems() && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
     }
 

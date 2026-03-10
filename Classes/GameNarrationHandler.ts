@@ -695,7 +695,7 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateEquipNotification(player, false, item.singleContainingPhrase);
 		}
 		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
-		this.#sendNarration(messageType, action, player, narration);
+		if (narration) this.#sendNarration(messageType, action, player, narration);
 	}
 
 	/**
@@ -718,7 +718,7 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateUnequipNotification(player, false, item.name);
 		}
 		this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
-		this.#sendNarration(messageType, action, player, narration);
+		if (narration) this.#sendNarration(messageType, action, player, narration);
 	}
 
 	/**

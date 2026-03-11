@@ -8,8 +8,8 @@ import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
-import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
-import DestroyAction from "../Data/Actions/DestroyAction.ts";
+import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
+import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
@@ -246,7 +246,7 @@ export default class BotInteractionHandler {
                 return true;
             }
         }
-        if (action instanceof InstantiateAction) {
+        if (action instanceof InstantiateInventoryItemAction) {
             if (interaction instanceof ModalSubmitInteraction) {
                 const prefabId = interaction.fields.getTextInputValue("Instantiate Inventory Item Prefab ID");
                 let quantity: string;
@@ -255,15 +255,15 @@ export default class BotInteractionHandler {
                 const uses = interaction.fields.getTextInputValue("Instantiate Inventory Item Uses");
                 const proceduralSelections = interaction.fields.getTextInputValue("Instantiate Inventory Item Procedural Selections");
                 const args = interactable.actionDirective.getArgs();
-                const parsedArgs = action.parseInstantiateInventoryItemInteractionArgs(args, prefabId, quantity, uses, proceduralSelections);
+                const parsedArgs = action.parseInteractionArgs(args, prefabId, quantity, uses, proceduralSelections);
                 try {
-                    const validatedArgs = action.validateInstantiateInventoryItemInteractionArgs(parsedArgs);
+                    const validatedArgs = action.validateInteractionArgs(parsedArgs);
                     const prefab = validatedArgs[0];
                     const quantity = validatedArgs[4];
                     // If the prefab has inventory slots, instantiate the prefab quantity times so that it generates items with different identifiers.
                     if (prefab.inventory.size > 0 && quantity > 1) {
                         for (let i = 0; i < quantity; i++) {
-                            const instantiateAction = new InstantiateAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
+                            const instantiateAction = new InstantiateInventoryItemAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
                             instantiateAction.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], 1, validatedArgs[5], validatedArgs[6]);
                         }
                     }
@@ -283,11 +283,11 @@ export default class BotInteractionHandler {
                 }
             }
         }
-        if (action instanceof DestroyAction) {
+        if (action instanceof DestroyInventoryItemAction) {
             const args = interactable.actionDirective.getArgs();
-            const parsedArgs = action.parseDestroyInventoryItemInteractionArgs(args);
+            const parsedArgs = action.parseInteractionArgs(args);
             try {
-                const validatedArgs = action.validateDestroyInventoryItemInteractionArgs(parsedArgs);
+                const validatedArgs = action.validateInteractionArgs(parsedArgs);
                 action.performDestroyInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 this.#replyToInteraction("Successfully destroyed inventory item.", interaction);
                 this.#logInteraction("DestroyAction", author, timestamp, validatedArgs);

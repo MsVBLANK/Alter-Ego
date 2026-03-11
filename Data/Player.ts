@@ -9,7 +9,7 @@ import type Action from "./Action.ts";
 import CureAction from "./Actions/CureAction.ts";
 import DieAction from "./Actions/DieAction.ts";
 import InflictAction from "./Actions/InflictAction.ts";
-import InstantiateAction from "./Actions/InstantiateAction.ts";
+import InstantiateInventoryItemAction from "./Actions/InstantiateInventoryItemAction.ts";
 import MoveAction from "./Actions/MoveAction.ts";
 import StopAction from "./Actions/StopAction.ts";
 import CollatedItem from "./CollatedItem.ts";
@@ -1332,7 +1332,7 @@ export default class Player extends RecipeProcessor implements User {
 
         const rightHand = this.inventory.get("RIGHT HAND");
         const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
-        const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
+        const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, this, this.location, true);
         const ingredient2Instance = instantiateAction.performInstantiateInventoryItem(
             ingredient2.prefab,
             rightHand.equippedItem === null ? "RIGHT HAND" : "LEFT HAND",
@@ -1361,7 +1361,7 @@ export default class Player extends RecipeProcessor implements User {
      */
     protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = ""): InventoryItem {
         const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
-        const instantiateAction = new InstantiateAction(this.getGame(), undefined, this, this.location, true);
+        const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, this, this.location, true);
         return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
     }
 

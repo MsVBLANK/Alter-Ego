@@ -27,8 +27,8 @@ import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
-import InstantiateAction from "../Data/Actions/InstantiateAction.ts";
-import DestroyAction from "../Data/Actions/DestroyAction.ts";
+import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
+import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
@@ -524,7 +524,7 @@ export default class BotInteractableManager {
         for (const equipmentSlot of freeEquipmentSlots) {
             if (menuOptions.size >= 25) break;
             if (equipmentSlot.equippedItem !== null) continue;
-            const actionDirective = await this.#createActionDirective(InstantiateAction, equipmentSlot.getPartialInstantiateActionDirectiveArgs(), player, user);
+            const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, equipmentSlot.getPartialInstantiateActionDirectiveArgs(), player, user);
             if (menuOptions.has(actionDirective.customId)) continue;
             const option = new StringSelectMenuOptionInteractable(actionDirective, `${equipmentSlot.id}`, actionDirective.customId, `Instantiate to ${equipmentSlot.id}`, 1, true);
             this.addInteractable(option);
@@ -535,7 +535,7 @@ export default class BotInteractableManager {
                 if (menuOptions.size >= 25) break;
                 const inventorySlot = container.inventory.get(inventorySlotId);
                 if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
-                const actionDirective = await this.#createActionDirective(InstantiateAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player, user);
+                const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player, user);
                 if (menuOptions.has(actionDirective.customId)) continue;
                 const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
                 const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
@@ -544,7 +544,7 @@ export default class BotInteractableManager {
             }
         }
         if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(InstantiateAction, ["InstantiateInventoryItemAction Menu"], player, user);
+        const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, ["InstantiateInventoryItemAction Menu"], player, user);
         const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
         this.addInteractable(menu);
         return [menu];
@@ -567,7 +567,7 @@ export default class BotInteractableManager {
             inputs.push(new TextInputInteractable("Instantiate Inventory Item Quantity", "Quantity", "Number.", true, "1"));
         inputs.push(new TextInputInteractable("Instantiate Inventory Item Uses", "Uses", "Number. If not provided, item will be instantiated with its default uses.", false));
         inputs.push(new TextInputInteractable("Instantiate Inventory Item Procedural Selections", "Procedural Selections", "Example: (color=metal + character=upa)", false, undefined, undefined, 5));
-        const modalActionDirective = await this.#createActionDirective(InstantiateAction, args.concat(["Modal"]), player, user);
+        const modalActionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, args.concat(["Modal"]), player, user);
         const description = containerIdentifier ? `Instantiate to ${inventorySlotId} of ${player.name}'s ${containerIdentifier}` : `Instantiate to ${player.name}'s ${equipmentSlotId}`;
         const modal = new ModalInteractable(modalActionDirective, "Instantiate Inventory Item", inputs, 0, description);
         this.addInteractable(modal);
@@ -583,7 +583,7 @@ export default class BotInteractableManager {
     async createDestroyInventoryItemActionInteractables(destroyableItems: InventoryItem[], player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
         const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
         for (const item of destroyableItems) {
-            const actionDirective = await this.#createActionDirective(DestroyAction, item.getDestroyActionDirectiveArgs(), player, user);
+            const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, item.getDestroyActionDirectiveArgs(), player, user);
             if (menuOptions.has(actionDirective.customId)) continue;
             let containerString: string;
             if (item.container !== null) {
@@ -598,7 +598,7 @@ export default class BotInteractableManager {
             if (menuOptions.size >= 25) break;
         }
         if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(DestroyAction, ["DestroyInventoryItemAction Menu"], player, user);
+        const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, ["DestroyInventoryItemAction Menu"], player, user);
         const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
         this.addInteractable(menu);
         return [menu];

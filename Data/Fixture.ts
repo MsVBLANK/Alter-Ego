@@ -3,7 +3,7 @@ import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import { getChildItems } from "../Modules/itemManager.js";
 import DeactivateAction from "./Actions/DeactivateAction.ts";
-import InstantiateAction from "./Actions/InstantiateAction.ts";
+import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.ts";
 import HidingSpot from "./HidingSpot.ts";
@@ -343,7 +343,7 @@ export default class Fixture extends RecipeProcessor {
 	 */
 	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
         proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = ""): RoomItem {
-		const instantiateAction = new InstantiateAction(this.getGame(), undefined, undefined, this.location, true);
+		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, undefined, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
 	}
 

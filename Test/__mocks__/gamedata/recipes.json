@@ -494,5 +494,6 @@
   [ "POT, RAW EGG", "", "", "", "POT (RAW EGG)", "", "<desc><s>You put a single egg inside of the pot.</s></desc>" ],
   [ "POT, ORANGE JUICE [1X]", "", "", "", "POT (ORANGE JUICE [1X])", "", "<desc><s>You put the orange juice inside of the pot.</s></desc>" ],
   [ "ORANGE JUICE [1X], TAMPON", "", "", "", "MILK [1X], TAMPON", "", "<desc><s>You transmute the ORANGE JUICE into MILK, with nothing but a TAMPON.</s></desc>" ],
-  [ "ORANGE JUICE [1X]", "", "blender", "1m", "MILK [1X]", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s> <s>It has transmuted ORANGE JUICE into MILK.</s></desc>" ]
+  [ "ORANGE JUICE [1X]", "", "blender", "1m", "MILK [1X]", "<desc><s>You turn on the BLENDER.</s> <s>It begins blending the ingredients you put in.</s></desc>", "<desc><s>The BLENDER stops.</s> <s>It has transmuted ORANGE JUICE into MILK.</s></desc>" ],
+  [ "FRYING PAN (FROZEN STEAK)", "", "stovetop", "1s", "DIRTY PAN (COOKED STEAK)", "<desc><s>With the frozen STEAK in a pan, you turn on <var v=\"this.name\" />.</s> <s>Something scary begins to happen.</s></desc>", "<desc><s>Something scary has happened.</s> <s>Your STEAK is already done!</s></desc>" ]
 ]

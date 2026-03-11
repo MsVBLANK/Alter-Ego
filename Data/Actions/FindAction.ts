@@ -430,8 +430,10 @@ export default class FindAction extends Action {
     async #getInteractables<T = FindableGameEntity>(results: T[]): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
         const interactableManager = this.getGame().botContext.interactableManager;
-        if (results.every(result => result instanceof Fixture || result instanceof RoomItem || result instanceof Puzzle))
+        if (results.every(result => result instanceof Fixture || result instanceof RoomItem || result instanceof Puzzle)) {
+            interactables = interactables.concat(await interactableManager.getInstantiateRoomItemInteractables(results, this.user));
             interactables = interactables.concat(await interactableManager.getDestroyRoomItemInteractables(results, this.user));
+        }
         else if (results.every(result => result instanceof InventoryItem)) {
             interactables = interactables.concat(await interactableManager.getInstantiateInventoryItemInteractables(undefined, this.user, [], results));
             interactables = interactables.concat(await interactableManager.createDestroyInventoryItemActionInteractables(results, undefined, this.user));

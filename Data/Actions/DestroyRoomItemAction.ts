@@ -44,7 +44,7 @@ export default class DestroyRoomItemAction extends Action {
         const item = args[0];
         if (item.quantity === 0) throw new Error("Invalid room item.");
         if (!item.container.isItemContainer()) throw new Error(`${item.container.getContainerIdentifier()} cannot contain items.`);
-        if (!item.container.canCurrentlyContainItems(false)) throw new Error(`Items ${item.container.getPreposition()} ${item.container.getContainerIdentifier()} cannot be destroyed right now.`);
+        if (!item.container.canCurrentlyContainItems(false, this.forced)) throw new Error(`Items ${item.container.getPreposition()} ${item.container.getContainerIdentifier()} cannot be destroyed right now.`);
         return [item, item.quantity, true];
     }
 }

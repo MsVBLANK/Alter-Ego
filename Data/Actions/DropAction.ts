@@ -74,7 +74,7 @@ export default class DropAction extends Action {
 		if (this.player.hasBehaviorAttribute("disable all") && !this.player.hasBehaviorAttribute("enable drop")) return [];
 		if (!args[1] || args[1].equippedItem === null) return [];
 		const hand = args[1];
-		if (!args[2] || !args[2].canCurrentlyContainItems()) return [];
+		if (!args[2] || !args[2].canCurrentlyContainItems(true, this.forced)) return [];
 		if (args[2].getLocation().id !== this.player.location.id) return [];
 		const container = args[2];
 		if (this.player.isHidden() && this.player.hidingSpot !== "") {

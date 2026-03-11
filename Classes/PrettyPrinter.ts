@@ -336,7 +336,7 @@ export class RoomItemPlugin implements AEPlugin<RoomItem> {
 					container = ' inside ???';
 				}
 			}
-			return `<RoomItem of prefab "${value.getIdentifier()}"${container} in room ${value.location.id}>`;
+			return `<${value.quantity}x${isNaN(value.uses) ? "" : ` [${value.uses}x]`} RoomItem of prefab "${value.getIdentifier()}"${container} in room ${value.location.id}>`;
 		} else {
 			this.processing.add(value);
 			let serialized = printer(value, config, indentation, depth, refs);
@@ -376,7 +376,7 @@ export class InventoryItemPlugin implements AEPlugin<InventoryItem> {
 					container = ' inside ???';
 				}
 			}
-			return `<InventoryItem of prefab "${value.getIdentifier()}"${container} on player ${value.player.name}>`;
+			return `<${value.quantity}x${isNaN(value.uses) ? "" : ` [${value.uses}x]`} InventoryItem of prefab "${value.getIdentifier()}"${container} on player ${value.player.name}>`;
 		} else {
 			this.processing.add(value);
 			let serialized = printer(value, config, indentation, depth, refs);

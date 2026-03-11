@@ -1,5 +1,4 @@
 import GestureAction from '../Data/Actions/GestureAction.ts';
-import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -61,56 +60,8 @@ export async function execute(game, message, command, args, moderator) {
         player = moderator.getLatch();
 
     if (showList) {
-        const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => player === undefined || !player.hasStatus(status.id)));
-        const pages = [];
-        let page = 0;
-
-        // Divide the fields into pages.
-        for (let i = 0, pageNo = 0; i < fields.length; i++) {
-            // Divide the menu into groups of 10.
-            if (i % 15 === 0) {
-                pages.push([]);
-                if (i !== 0) pageNo++;
-            }
-            pages[pageNo].push(fields[i]);
-        }
-
-        const embedAuthorName = `Gestures List`;
-        const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-        const playerAppendString = player ? ` ${player.name} can currently perform` : ``;
-        const embedDescription = `These are all of the gestures${playerAppendString}.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
-        const fieldName = (entryIndex) => pages[page][entryIndex].id;
-        const fieldValue = (entryIndex) => pages[page][entryIndex].description;
-        let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-        game.guildContext.commandChannel.send({ embeds: [embed] }).then(msg => {
-            msg.react('⏪').then(() => {
-                msg.react('⏩');
-
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
-
-                const backwards = msg.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-                const forwards = msg.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-                backwards.on("collect", () => {
-                    const reaction = msg.reactions.cache.find(reaction => reaction.emoji.name === '⏪');
-                    if (reaction) reaction.users.cache.forEach(user => { if (user.id !== game.botContext.client.user.id) reaction.users.remove(user.id); });
-                    if (page === 0) return;
-                    page--;
-                    embed = embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-
-                forwards.on("collect", () => {
-                    const reaction = msg.reactions.cache.find(reaction => reaction.emoji.name === '⏩');
-                    if (reaction) reaction.users.cache.forEach(user => { if (user.id !== game.botContext.client.user.id) reaction.users.remove(user.id); });
-                    if (page === pages.length - 1) return;
-                    page++;
-                    embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-            });
-        });
+        const action = new GestureAction(game, message, player, player?.location, true);
+        action.performGestureList();
     }
     else {
         if (player === undefined) return game.communicationHandler.reply(message, `Player "${playerName}" not found.`);

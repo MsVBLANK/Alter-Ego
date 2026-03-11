@@ -1,5 +1,6 @@
 import type Interactable from "./Interactables/Interactable.ts";
 import type Action from "../Data/Action.ts";
+import type Command from "./Command.ts";
 import type Dialog from "../Data/Dialog.ts";
 import type Game from "../Data/Game.ts";
 import type GameEntity from "../Data/GameEntity.ts";
@@ -11,7 +12,7 @@ import { MessageDisplayType } from "../Modules/enums.js";
 import * as messageHandler from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter } from "../Modules/helpers.ts";
 import { ChannelType, Collection } from "discord.js";
-import type { Attachment, Embed, Snowflake, TextChannel } from "discord.js";
+import type { Attachment, Embed, EmbedBuilder, Snowflake, TextChannel } from "discord.js";
 
 /**
  * An interface for the message handler. Contains a number of functions that ensure actions won't be communicated multiple times in the same channel.
@@ -319,12 +320,22 @@ export default class GameCommunicationHandler {
 
 	/**
 	 * Sends the help menu for a command.
-	 * @param message - The message that sent the help command.
+	 * @param channel - The channel to send the help menu to.
 	 * @param command - The command to send the help menu for.
 	 */
-	sendCommandHelp(message: UserMessage, command: Command) {
-		const channel = command.config.usableBy === "Moderator" ? this.#game.guildContext.commandChannel : message.author.dmChannel;
+	sendCommandHelp(channel: Messageable, command: Command) {
 		messageHandler.sendCommandHelp(this.#game, channel, command);
+	}
+
+    /**
+	 * Sends a message to the given channel as a game mechanic message.
+     * @param channel - The channel to send the message to.
+	 * @param messageText - The text of the message to send.
+     * @param embeds - The embeds to send.
+     * @param interactables - An array of interactables.
+	 */
+	sendToChannel(channel: Messageable, messageText: string = "", embeds: (Embed|EmbedBuilder)[] = [], interactables: Interactable[] = []) {
+        messageHandler.sendGameMechanicMessage(this.#game, channel, messageText, interactables, embeds);
 	}
 
 	/**
@@ -341,9 +352,10 @@ export default class GameCommunicationHandler {
 	 * @param channel - The channel to send the webhook message to.
 	 * @param webhookUsername - A custom username to use for the webhook that will send the spectate message. Optional.
 	 * @param webhookAvatarURL - A custom avatar URL to use for the webhook that will send the spectate message. Optional.
+     * @param isDialogMirror - Whether the sent webhook message is mirroring the given dialog message. Defaults to false.
 	 * @returns The created webhook message.
 	 */
-	async sendDialogAsWebhook(channel: TextChannel, dialog: Dialog, webhookUsername: string = dialog.speakerDisplayName, webhookAvatarURL: string = dialog.speakerDisplayIcon) {
+	async sendDialogAsWebhook(channel: TextChannel, dialog: Dialog, webhookUsername: string = dialog.speakerDisplayName, webhookAvatarURL: string = dialog.speakerDisplayIcon, isDialogMirror = false) {
 		const webhook = await messageHandler.getOrCreateWebhook(channel);
 		const webhookMessage = await messageHandler.sendWebhookMessage(
 			webhook,
@@ -356,6 +368,7 @@ export default class GameCommunicationHandler {
 			MessageDisplayType.PLAIN_TEXT,
 			dialog.speaker
 		);
+        if (isDialogMirror && dialog.message) this.cacheSpectateMirrorForDialog(dialog.message, webhookMessage.id, webhook.id);
 		return webhookMessage;
 	}
 }

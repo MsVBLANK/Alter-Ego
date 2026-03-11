@@ -5,8 +5,9 @@ import SayAction from '../Data/Actions/SayAction.ts';
 import * as discordUtils from './discordUtils.js';
 import { MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';
-import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType } from 'discord.js';
+import { Message, MessageFlags, ChannelType, Attachment, Collection, TextChannel, Embed, Webhook, ComponentType, EmbedBuilder } from 'discord.js';
 
+/** @import Command from '../Classes/Command.ts' */
 /** @import Interactable from '../Classes/Interactables/Interactable.ts' */
 /** @import Game from '../Data/Game.ts' */
 /** @import Narration from '../Data/Narration.ts' */
@@ -56,9 +57,10 @@ export function processIncomingMessage(game, message) {
         if (moderator.sentMessageInLatchChannel(message) && !message.content.startsWith("(")) {
             const npc = moderator.getLatch();
             const dialog = new Dialog(game, message, npc, npc.location, message.content, false, whisper, message.cleanContent);
-            game.communicationHandler.sendDialogAsWebhook(npc.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
+            const channel = whisper ? whisper.channel : npc.location.channel;
+            game.communicationHandler.sendDialogAsWebhook(channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
                 dialog.setMessage(dialogMessage);
-                const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true);
+                const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
                 sayAction.performSay(dialog);
                 message.delete().catch();
             });
@@ -95,7 +97,8 @@ export function sendNarrationToRoom(room, narration, messageText, messageDisplay
                 fire: async () => {
                     if (sendWebhookMessage) {
                         const webhook = await getOrCreateWebhook(room.channel);
-                        webhook.send(messageCreateOptions);
+                        const webhookMessage = await webhook.send(messageCreateOptions);
+                        if (narration.message && webhookMessage) room.getGame().communicationHandler.cacheSpectateMirrorForDialog(narration.message, webhookMessage.id, webhook.id);
                     }
                     else await room.channel.send(messageCreateOptions);
                 },
@@ -300,9 +303,10 @@ export function sendLogMessage(game, messageText) {
  * @param {Messageable} channel - The channel to send the message to.
  * @param {string} messageText - The message to send.
  * @param {Interactable[]} interactables - An array of interactables.
+ * @param {(Embed|EmbedBuilder)[]} embeds - The embeds to send. 
  */
-export function sendGameMechanicMessage(game, channel, messageText, interactables = []) {
-    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables) : messageText;
+export function sendGameMechanicMessage(game, channel, messageText, interactables = [], embeds = []) {
+    const messageCreateOptions = interactables.length > 0 ? discordUtils.generateMessageDisplayCreateOptions(MessageDisplayType.PLAIN_TEXT, game, messageText, undefined, undefined, interactables, embeds) : messageText;
     game.messageQueue.enqueue(
         {
             fire: async () => {

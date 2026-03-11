@@ -1,7 +1,9 @@
 import { getSortedItems } from "../Modules/helpers.ts";
 import { getChildItems } from "../Modules/itemManager.js";
-import DestroyAction from "./Actions/DestroyAction.ts";
-import InstantiateAction from "./Actions/InstantiateAction.ts";
+import DestroyInventoryItemAction from "./Actions/DestroyInventoryItemAction.ts";
+import DestroyRoomItemAction from "./Actions/DestroyRoomItemAction.ts";
+import InstantiateInventoryItemAction from "./Actions/InstantiateInventoryItemAction.ts";
+import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 
 import Fixture from "./Fixture.ts";
 import InventoryItem from "./InventoryItem.ts";
@@ -265,9 +267,14 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	 * @param quantity - The quantity to destroy. Defaults to the item's total quantity.
 	 */
 	#destroyItem(item: T, quantity: number = item.quantity): void {
-		const destroyAction = new DestroyAction(item.getGame(), undefined, this.player, item.getLocation(), true);
-        if (item instanceof RoomItem) destroyAction.performDestroyRoomItem(item, quantity, true);
-        else if (item instanceof InventoryItem) destroyAction.performDestroyInventoryItem(item, quantity, true, false);
+        if (item instanceof RoomItem) {
+            const destroyAction = new DestroyRoomItemAction(item.getGame(), undefined, this.player, item.getLocation(), true);
+            destroyAction.performDestroyRoomItem(item, quantity, true);
+        }
+        else if (item instanceof InventoryItem) {
+            const destroyAction = new DestroyInventoryItemAction(item.getGame(), undefined, this.player, item.getLocation(), true);
+            destroyAction.performDestroyInventoryItem(item, quantity, true, false);
+        }
 	}
 
 	/**
@@ -278,10 +285,13 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	 * @param uses - The number of uses to instantiate it with. Defaults to the prefab's uses.
 	 */
 	instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses): T {
-		const instantiateAction = new InstantiateAction(prefab.getGame(), undefined, this.player, this.location, true);
-        if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem)
+        if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem) {
+            const instantiateAction = new InstantiateRoomItemAction(prefab.getGame(), undefined, this.player, this.location, true);
             return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T;
-        else if (this.container instanceof InventoryItem || this.container === null)
+        }
+        else if (this.container instanceof InventoryItem || this.container === null) {
+            const instantiateAction = new InstantiateInventoryItemAction(prefab.getGame(), undefined, this.player, this.location, true);
             return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T;
+        }
 	}
 }

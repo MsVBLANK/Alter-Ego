@@ -1,4 +1,4 @@
-import type { MessageReaction, User } from "discord.js";
+import type { ButtonInteraction } from "discord.js";
 import { createPaginatedEmbed } from "../../Modules/discordUtils.js";
 import { addPages, getSortedItems } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
@@ -166,38 +166,27 @@ export default class RecipesAction extends Action {
 			(pageIsProcessingType ? `**Using Fixture(s):** ${pages[page][entryIndex].fixtures}\n` : '') +
 			(pageIsProcessingType ? `**Duration:** ${pages[page][entryIndex].duration}` : '');
 		let embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-		this.message.author.send({ embeds: [embed] }).then(response => {
-			response.react('⏪').then(() => {
-				response.react('⏩');
-
-				const backwardsFilter = (reaction: MessageReaction, user: User) => reaction.emoji.name === '⏪' && user.id === this.message.author.id;
-				const forwardsFilter = (reaction: MessageReaction, user: User) => reaction.emoji.name === '⏩' && user.id === this.message.author.id;
-
-				const backwards = response.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-				const forwards = response.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-				backwards.on("collect", () => {
-					if (page === 0) return;
-					page--;
-					pageIsProcessingType = pages[page][0].type === "processing";
-					pageIsUncraftingType = pages[page][0].type === "uncrafting";
-					fieldDescription = pageIsProcessingType ? this.#processingRecipesDescription : pageIsUncraftingType ? this.#uncraftingRecipesDescription : this.#craftingRecipesDescription;
-					fieldDescription += `\n\n${this.#syntaxNote}`
-					embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-					response.edit({ embeds: [embed] });
-				});
-
-				forwards.on("collect", () => {
-					if (page === pages.length - 1) return;
-					page++;
-					pageIsProcessingType = pages[page][0].type === "processing";
-					pageIsUncraftingType = pages[page][0].type === "uncrafting";
-					fieldDescription = pageIsProcessingType ? this.#processingRecipesDescription : pageIsUncraftingType ? this.#uncraftingRecipesDescription : this.#craftingRecipesDescription;
-					fieldDescription += `\n\n${this.#syntaxNote}`
-					embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
-					response.edit({ embeds: [embed] });
-				});
-			});
-		});
+        const prevPageCallback = (interaction: ButtonInteraction) => {
+            if (page > 0)
+                page--;
+            pageIsProcessingType = pages[page][0].type === "processing";
+            pageIsUncraftingType = pages[page][0].type === "uncrafting";
+            fieldDescription = pageIsProcessingType ? this.#processingRecipesDescription : pageIsUncraftingType ? this.#uncraftingRecipesDescription : this.#craftingRecipesDescription;
+            fieldDescription += `\n\n${this.#syntaxNote}`
+            embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
+            interaction.update({ embeds: [embed] });
+        };
+        const nextPageCallback = (interaction: ButtonInteraction) => {
+            if (page < pages.length - 1)
+                page++;
+            pageIsProcessingType = pages[page][0].type === "processing";
+            pageIsUncraftingType = pages[page][0].type === "uncrafting";
+            fieldDescription = pageIsProcessingType ? this.#processingRecipesDescription : pageIsUncraftingType ? this.#uncraftingRecipesDescription : this.#craftingRecipesDescription;
+            fieldDescription += `\n\n${this.#syntaxNote}`
+            embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, fieldDescription, fieldName, fieldValue);
+            interaction.update({ embeds: [embed] });
+        };
+        let interactables = this.getGame().botContext.interactableManager.createPaginationInteractables(this, prevPageCallback, nextPageCallback);
+        this.getGame().communicationHandler.sendToChannel(this.player.notificationChannel, "", [embed], interactables);
 	}
 }

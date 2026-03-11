@@ -1,5 +1,5 @@
 import { isAsyncFunction } from "util/types";
-import PlayerCommand from "../../Classes/PlayerCommand.js";
+import PlayerCommand from "../../Classes/PlayerCommand.ts";
 
 describe("PlayerCommand test", () => {
     test("Construct Player Command", async () => {

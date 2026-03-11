@@ -32,8 +32,8 @@ export default class SayAction extends Action {
 		// If the dialog is an OOC message or took place in a whisper, the rest of the functions don't need to be called.
 		if (dialog.isOOCMessage || dialog.whisper) return;
 		this.#solveVoicePuzzles(dialog.location, dialog);
+        this.#communicateDialogToAudioMonitoringRooms(dialog);
 		this.#communicateDialogToNeighboringRooms(dialog);
-		this.#communicateDialogToAudioMonitoringRooms(dialog);
 		this.#communicateDialogToReceivers(dialog);
 	}
 
@@ -152,7 +152,7 @@ export default class SayAction extends Action {
 		if (dialog.isOOCMessage) return;
 		if (location.isAudioMonitoring() && location.isVideoMonitoring() && dialog.locationIsAudioSurveilled && dialog.locationIsVideoSurveilled) {
 			const webhookUsername = this.#assembleAudioSurveilledWebhookUsername(dialog, `[${dialog.location.getSurveilledDisplayName(location.isVideoMonitoring())}]`);
-			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, webhookUsername, dialog.getDisplayIconForWebhook(false));
+			this.getGame().communicationHandler.sendDialogAsWebhook(location.channel, dialog, webhookUsername, dialog.getDisplayIconForWebhook(false), true);
 		}
 		else if (location.occupants.length > 0)
 			this.getGame().narrationHandler.narrateSay(this, dialog, location, narrationText);

@@ -1,4 +1,5 @@
-﻿import { getChildItems } from '../Modules/itemManager.js';
+﻿import Room from '../Data/Room.ts';
+import { getChildItems } from '../Modules/itemManager.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
@@ -76,16 +77,18 @@ export async function execute(game, command, args, player, callee) {
     }
 
     // Check if a room name was specified.
+    /** @type {Room} */
     let room = null;
-    const parsedInput = input.replace(/\'/g, "").replace(/ /g, "-").toLowerCase();
     for (let i = args.length - 1; i >= 0; i--) {
-        room = game.entityFinder.getRoom(args.splice(i).join(" "));
+        const parsedInput = Room.generateValidId(args.slice(i).join(" "));
+        room = game.entityFinder.getRoom(parsedInput);
         if (room) {
-            input = input.substring(0, parsedInput.lastIndexOf(room.id) - 1);
+            args.splice(i);
             break;
         }
     }
     if (!room) room = null;
+    input = args.join(" ");
 
     let fixture = null;
     let puzzle = null;

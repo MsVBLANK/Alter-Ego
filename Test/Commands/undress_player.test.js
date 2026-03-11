@@ -1,4 +1,4 @@
-import PlayerCommand from "../../Classes/PlayerCommand.js";
+import PlayerCommand from "../../Classes/PlayerCommand.ts";
 import { usage, execute, config } from '../../Commands/undress_player.js'
 import UndressAction from "../../Data/Actions/UndressAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";

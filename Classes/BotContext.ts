@@ -3,10 +3,10 @@ import PrettyPrinter from "./PrettyPrinter.ts";
 import BotInteractableManager from "./BotInteractableManager.ts";
 import BotInteractionHandler from "./BotInteractionHandler.ts";
 import type Game from "../Data/Game.ts";
-import type BotCommand from "./BotCommand.js";
-import type ModeratorCommand from "./ModeratorCommand.js";
-import type PlayerCommand from "./PlayerCommand.js";
-import type EligibleCommand from "./EligibleCommand.js";
+import BotCommand from "./BotCommand.ts";
+import ModeratorCommand from "./ModeratorCommand.ts";
+import PlayerCommand from "./PlayerCommand.ts";
+import EligibleCommand from "./EligibleCommand.ts";
 import type { Client, Collection } from "discord.js";
 
 /**
@@ -44,7 +44,11 @@ export default class BotContext {
 	/**
 	 * An array of the most recently-issued commands. Used by the dumplog command for debugging purposes.
 	 */
-	readonly commandLog: Array<CommandLogEntry>;
+	readonly #commandLog: Array<CommandLogEntry>;
+    /**
+     * The maximum number of commands to keep in the command log at once. If the log exceeds this size, the oldest command will be removed.
+     */
+    readonly #commandLogSizeLimit = 10000;
 	/**
 	 * A set of functions to cleanly display objects.
 	 */
@@ -77,7 +81,7 @@ export default class BotContext {
 		this.playerCommands = playerCommands;
 		this.eligibleCommands = eligibleCommands;
 		this.game = game;
-		this.commandLog = [];
+		this.#commandLog = [];
 		this.prettyPrinter = new PrettyPrinter();
 		this.interactableManager = new BotInteractableManager(this.game);
 		this.interactionHandler = new BotInteractionHandler(this.game);
@@ -106,6 +110,58 @@ export default class BotContext {
      */
     public static get instance() {
         return BotContext.#instance;
+    }
+
+    /** 
+     * An array of the most recently-issued commands. Used by the dumplog command for debugging purposes.
+     */
+    public get commandLog() {
+        return this.#commandLog;
+    }
+
+    /**
+     * Adds a command to the command log. If the log is at maximum capacity, removes the oldest one.
+     * @param authorName - The name of the user who issued the command.
+     * @param commandStr - The full text of the command that was issued.
+     * @param timestamp - The timestamp at which the command was issued.
+     */
+    public logCommand(authorName: string, commandStr: string, timestamp: Date): void {
+        if (this.#commandLog.length >= this.#commandLogSizeLimit)
+            this.#commandLog.shift();
+        this.#commandLog.push({
+            timestamp: timestamp,
+            author: authorName,
+            content: commandStr
+        });
+    }
+
+    /**
+     * Gets a command by its type and alias. If the command does not exist, returns undefined.
+     * @param type - The type of command.
+     * @param alias - The alias to look up.
+     */
+    getCommand(type: "Bot" | "Moderator" | "Player" | "Eligible", alias: string): BotCommand | ModeratorCommand | PlayerCommand | EligibleCommand {
+        if (type === "Bot") return this.botCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Moderator") return this.moderatorCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Player") return this.playerCommands.find(command => command.config.aliases.includes(alias));
+        if (type === "Eligible") return this.eligibleCommands.find(command => command.config.aliases.includes(alias));
+        return undefined;
+    }
+
+    /**
+     * Returns true if the command was issued in a valid channel for its type.
+     * @param command - The command that was issued.
+     * @param message - The message in which the command was sent.
+     */
+    commandIssuedInValidChannel(command: ModeratorCommand | PlayerCommand | EligibleCommand, message: UserMessage): boolean {
+        const guild = this.game.guildContext;
+        if (command instanceof ModeratorCommand)
+            return guild.sentInCommandChannel(message) || guild.sentInRoomChannel(message) || command.config.name === "delete_moderator";
+        if (command instanceof PlayerCommand)
+            return guild.sentInDMChannel(message) || guild.sentInRoomChannel(message);
+        if (command instanceof EligibleCommand)
+            return guild.sentInDMChannel(message) || this.game.settings.debug && guild.sentInTestingChannel(message) || !this.game.settings.debug && guild.sentInGeneralChannel(message);
+        return false;
     }
 
 	/**

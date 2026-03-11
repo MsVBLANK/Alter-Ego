@@ -1,4 +1,4 @@
-import type { Guild, Role, TextChannel } from "discord.js";
+import { ChannelType, type Guild, type GuildMember, type Role, type TextChannel } from "discord.js";
 
 /**
  * Represents the guild in which a Game is occurring and all of the parts of a Guild needed by the bot.
@@ -126,4 +126,126 @@ export default class GuildContext {
 		this.deadRole = deadRole;
 		this.spectatorRole = spectatorRole;
 	}
+
+    /**
+     * Gets a member of the guild by their user ID. If no such member exists, returns undefined.
+     * @param userId 
+     */
+    getMember(userId: string): GuildMember {
+        return this.guild.members.resolve(userId);
+    }
+
+    /**
+     * Returns true if the given guild member has the given role.
+     * @param member - The guild member to check.
+     * @param role - The role to check for.
+     */
+    hasRole(member: GuildMember, role: Role): boolean {
+        if (!member || !role) return false;
+        return member.roles.cache.has(role.id);
+    }
+
+    /**
+     * Returns true if the given guild member has the tester role.
+     * @param member 
+     */
+    hasTesterRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.testerRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the eligible role.
+     * @param member 
+     */
+    hasEligibleRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.eligibleRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the player role.
+     * @param member 
+     */
+    hasPlayerRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.playerRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the free movement role.
+     * @param member 
+     */
+    hasFreeMovementRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.freeMovementRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the moderator role.
+     * @param member 
+     */
+    hasModeratorRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.moderatorRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the dead role.
+     * @param member 
+     */
+    hasDeadRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.deadRole);
+    }
+
+    /**
+     * Returns true if the given guild member has the spectator role.
+     * @param member 
+     */
+    hasSpectatorRole(member: GuildMember): boolean {
+        return this.hasRole(member, this.spectatorRole);
+    }
+
+    /**
+     * Returns true if the given message was sent in a DM channel.
+     * @param message 
+     */
+    sentInDMChannel(message: UserMessage) {
+        return message.channel.type === ChannelType.DM;
+    }
+
+    /**
+     * Returns true if the given message was sent in the moderator command channel.
+     * @param message 
+     */
+    sentInCommandChannel(message: UserMessage) {
+        return message.channel.id === this.commandChannel.id;
+    }
+
+    /**
+     * Returns true if the given message was sent in a room channel.
+     * @param message 
+     */
+    sentInRoomChannel(message: UserMessage) {
+        return message.channel.type === ChannelType.GuildText && this.roomCategories.includes(message.channel.parentId);
+    }
+
+    /**
+     * Returns true if the given message was sent in a whisper channel.
+     * @param message 
+     */
+    sentInWhisperChannel(message: UserMessage) {
+        return message.channel.type === ChannelType.GuildText && message.channel.parentId === this.whisperCategoryId;
+    }
+
+    /**
+     * Returns true if the given message was sent in the testing channel.
+     * @param message 
+     */
+    sentInTestingChannel(message: UserMessage) {
+        return message.channel.id === this.testingChannel.id;
+    }
+
+    /**
+     * Returns true if the given message was sent in the general channel.
+     * @param message 
+     */
+    sentInGeneralChannel(message: UserMessage) {
+        return message.channel.id === this.generalChannel.id;
+    }
 }

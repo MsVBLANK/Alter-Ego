@@ -1,6 +1,6 @@
 import { Collection } from "discord.js";
-import DestroyAction from "./Actions/DestroyAction.ts";
-import InstantiateAction from "./Actions/InstantiateAction.ts";
+import DestroyRoomItemAction from "./Actions/DestroyRoomItemAction.ts";
+import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import type Game from "./Game.ts";
 import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
@@ -98,11 +98,9 @@ export default class RoomItem extends ItemInstance {
             const container = this.container;
             const slot = this.slot;
             const quantity = this.quantity;
-            container.removeItemFromDescription(this, slot);
-            container.addItemToDescription(this, slot);
-            const destroyAction = new DestroyAction(this.getGame(), undefined, player, this.location, true);
+            const destroyAction = new DestroyRoomItemAction(this.getGame(), undefined, player, this.location, true);
             destroyAction.performDestroyRoomItem(this, this.quantity, true);
-            const instantiateAction = new InstantiateAction(this.getGame(), undefined, player, this.location, true);
+            const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, player, this.location, true);
             instantiateAction.performInstantiateRoomItem(nextStage, container, slot, quantity, new Map());
         }
     }
@@ -209,8 +207,9 @@ export default class RoomItem extends ItemInstance {
 
     /**
      * Returns true if the room item is currently capable of being taken from/dropped into.
+     * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true.
      */
-    canCurrentlyContainItems(): boolean {
+    canCurrentlyContainItems(requireEmptySpace = true): boolean {
         let allInventorySlotsFilled = true;
         for (const inventorySlot of this.inventory.values()) {
             if (inventorySlot.takenSpace < inventorySlot.capacity) {
@@ -218,7 +217,7 @@ export default class RoomItem extends ItemInstance {
                 break;
             }
         }
-        return this.isItemContainer() && !allInventorySlotsFilled;
+        return this.isItemContainer() && !requireEmptySpace || !allInventorySlotsFilled;
     }
 
     /**

@@ -1,6 +1,6 @@
-import ModeratorCommand from '../../Classes/ModeratorCommand.js';
+import ModeratorCommand from '../../Classes/ModeratorCommand.ts';
 import { usage, execute, config } from '../../Commands/destroy_moderator.js'
-import DestroyAction from '../../Data/Actions/DestroyAction.ts';
+import DestroyInventoryItemAction from '../../Data/Actions/DestroyInventoryItemAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -26,10 +26,10 @@ describe('destroy_moderator command', () => {
                 test('given player hand with item', async () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const item = game.entityFinder.getInventoryItem("mug of coffee", "Kyra");
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -43,10 +43,10 @@ describe('destroy_moderator command', () => {
                 test('given player item', async () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const item = game.entityFinder.getInventoryItem("mug of coffee", "Kyra");
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -60,10 +60,10 @@ describe('destroy_moderator command', () => {
                 test('given player all in container', async () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const items = game.entityFinder.getInventoryItems(null, "Kyra", "kyras pants");
-                    /** @type {DestroyAction[]} */
+                    /** @type {DestroyInventoryItemAction[]} */
                     let contexts = [];
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         contexts.push(this);
                         return original.apply(this, args);
@@ -78,10 +78,10 @@ describe('destroy_moderator command', () => {
                 test('given player all in container slot', async () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const items = game.entityFinder.getInventoryItems(null, "Kyra", "kyras pants", "right pocket");
-                    /** @type {DestroyAction[]} */
+                    /** @type {DestroyInventoryItemAction[]} */
                     let contexts = [];
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         contexts.push(this);
                         return original.apply(this, args);
@@ -97,10 +97,10 @@ describe('destroy_moderator command', () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const item = game.entityFinder.getInventoryItem("master key", "Kyra");
                     const quantity = item.quantity;
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -115,10 +115,10 @@ describe('destroy_moderator command', () => {
                     const player = game.entityFinder.getPlayer("Kyra");
                     const item = game.entityFinder.getInventoryItem("master key", "Kyra");
                     const quantity = item.quantity;
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -132,7 +132,7 @@ describe('destroy_moderator command', () => {
             });
             describe('invalid invocations', () => {
                 test('given player all in equipment slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -152,7 +152,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("The \"all\" argument cannot be used when the container is an equipped item.")
                 });*/ // TODO: what conditions trigger this?
                 test('given player hand without item', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -162,7 +162,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Cannot destroy item equipped to LEFT HAND because nothing is equipped to it.");
                 });
                 test('given nonexistent item', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -172,7 +172,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM\" in Kyra's inventory.");
                 });
                 test('given nonexistent item in nonexistent container', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -182,7 +182,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given nonexistent item in existent container', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -192,7 +192,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find item \"INVALID ITEM\" in RIGHT POCKET of KYRAS PANTS 1 in Kyra's inventory.");
                 });
                 test('given nonexistent item in nonexistent container nonexistent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -202,7 +202,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN INVALID SLOT OF INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given nonexistent item in nonexistent container existent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -212,7 +212,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN RIGHT POCKET OF INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given nonexistent item in existent container nonexistent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -222,7 +222,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID SLOT\" of KYRAS PANTS 1.");
                 });
                 test('given nonexistent item in existent container existent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -232,7 +232,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find item \"INVALID ITEM\" in RIGHT POCKET of KYRAS PANTS 1 in Kyra's inventory.");
                 });
                 test('given existent item in nonexistent container', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -242,7 +242,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given existent item in nonexistent container nonexistent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -252,7 +252,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN INVALID SLOT OF INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given existent item in nonexistent container existent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -262,7 +262,7 @@ describe('destroy_moderator command', () => {
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN RIGHT POCKET OF INVALID CONTAINER\" in Kyra's inventory.");
                 });
                 test('given existent item in existent container nonexistent slot', async () => {
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
@@ -283,10 +283,10 @@ describe('destroy_moderator command', () => {
                     const player = game.entityFinder.getPlayer("Vivian");
                     const item = game.entityFinder.getInventoryItem("hamburger bun", "Vivian");
                     const quantity = item.quantity;
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -301,10 +301,10 @@ describe('destroy_moderator command', () => {
                     const player = game.entityFinder.getPlayer("Vivian");
                     const item = game.entityFinder.getInventoryItem("hamburger bun", "Vivian");
                     const quantity = item.quantity;
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);
@@ -319,10 +319,10 @@ describe('destroy_moderator command', () => {
                     const player = game.entityFinder.getPlayer("Vivian");
                     const item = game.entityFinder.getInventoryItem("hamburger bun", "Vivian");
                     const quantity = item.quantity;
-                    /** @type {DestroyAction} */
+                    /** @type {DestroyInventoryItemAction} */
                     let context;
-                    const original = DestroyAction.prototype.performDestroyInventoryItem;
-                    const spy = vi.spyOn(DestroyAction.prototype, "performDestroyInventoryItem");
+                    const original = DestroyInventoryItemAction.prototype.performDestroyInventoryItem;
+                    const spy = vi.spyOn(DestroyInventoryItemAction.prototype, "performDestroyInventoryItem");
                     spy.mockImplementation(function (...args) {
                         context = this;
                         return original.apply(this, args);

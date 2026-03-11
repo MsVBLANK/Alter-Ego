@@ -163,18 +163,35 @@ export default class Fixture extends RecipeProcessor {
     }
 
     /**
+     * Returns the args for the InstantiateRoomItem ActionDirective for this fixture.
+     * @returns ["F", name, location, preposition]
+     */
+    getPartialInstantiateActionDirectiveArgs() {
+        return ["F", this.name, this.location.displayName, this.getPreposition()];
+    }
+
+    /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this fixture.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'Fixture', this.name, undefined];
+    }
+
+    /**
      * Returns true if the fixture is capable of containing items.
      */
     isItemContainer(): boolean {
-        return this.preposition !== "";
+        return this.preposition !== "" && this.childPuzzle === null;
     }
 
     /**
      * Returns true if the fixture is currently capable of being taken from/dropped into.
      * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true. Does nothing for fixtures.
+     * @param bypassLimitations - Whether limitations should be bypassed. If true, the fixture can be processing items. Defaults to false.
      */
-    canCurrentlyContainItems(requireEmptySpace = true): boolean {
-        return !this.isProcessingItems() && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
+    canCurrentlyContainItems(requireEmptySpace = true, bypassLimitations = false): boolean {
+        return (bypassLimitations || !this.isProcessingItems()) && (this.childPuzzle === null || this.childPuzzle.canCurrentlyContainItems());
     }
 
     /**

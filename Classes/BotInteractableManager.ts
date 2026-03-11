@@ -13,6 +13,7 @@ import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.ts";
 import type Exit from "../Data/Exit.ts";
+import Moderator from "../Data/Moderator.ts";
 import type Recipe from "../Data/Recipe.ts";
 import Player from "../Data/Player.ts";
 import RoomItem from "../Data/RoomItem.ts";
@@ -28,7 +29,9 @@ import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
+import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
+import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
@@ -535,7 +538,7 @@ export default class BotInteractableManager {
                 if (menuOptions.size >= 25) break;
                 const inventorySlot = container.inventory.get(inventorySlotId);
                 if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
-                const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player, user);
+                const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player ?? container.player, user);
                 if (menuOptions.has(actionDirective.customId)) continue;
                 const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
                 const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
@@ -575,6 +578,69 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for a list of room item containers that can be instantiated to and adds them to the cache.
+     * @param viableContainers - A map of viable room item containers and (optionally) inventory slots an item can be instantiated into.
+     * @param user - The user these interactables are being created for.
+     */
+    async createInstantiateRoomItemActionInteractables(viableContainers: Map<RoomItemContainer, string[]>, user: User): Promise<StringSelectMenuInteractable[]> {
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const [container, inventorySlots] of viableContainers.entries()) {
+            if (container instanceof RoomItem) {
+                for (const inventorySlotId of inventorySlots) {
+                    if (menuOptions.size >= 25) break;
+                    const inventorySlot = container.inventory.get(inventorySlotId);
+                    if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
+                    const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), undefined, user);
+                    if (menuOptions.has(actionDirective.customId)) continue;
+                    const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
+                    const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
+                    this.addInteractable(option);
+                    menuOptions.set(actionDirective.customId, option);
+                }
+            }
+            else {
+                if (menuOptions.size >= 25) break;
+                if (!container.canCurrentlyContainItems(true, true)) continue;
+                const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, container.getPartialInstantiateActionDirectiveArgs(), undefined, user);
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const containerName = container.getContainerIdentifier();
+                const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${containerName}`, 1, true);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+            }
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, ["InstantiateRoomItemAction Menu"], undefined, user);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
+     * Creates a modal interactable for a list of args and adds it to the cache.
+     * This should only be called as a followup to createInstantiateRoomItemActionInteractables to get the remaining required information.
+     * @param args - An array of partial instantiate room item action directive args. ["??", identifier, location, preposition, .?, .?, destinationInventorySlot]
+     * @param user - The user these interactables are being created for.
+     */
+    async createInstantiateRoomItemActionModalInteractable(args: string[], user: User): Promise<ModalInteractable> {
+        const containerIdentifier = args[1];
+        const locationDisplayName = args[2];
+        const preposition = args[3];
+        const inventorySlotId = args.length === 7 && args[0] === "RI" ? args[6] : undefined;
+        const containerPhrase = inventorySlotId ? `${inventorySlotId} of ${containerIdentifier}` : containerIdentifier;
+        const inputs: TextInputInteractable[] = [];
+        inputs.push(new TextInputInteractable("Instantiate Room Item Prefab ID", "Prefab ID"));
+        inputs.push(new TextInputInteractable("Instantiate Room Item Quantity", "Quantity", "Number.", true, "1"));
+        inputs.push(new TextInputInteractable("Instantiate Room Item Uses", "Uses", "Number. If not provided, item will be instantiated with its default uses.", false));
+        inputs.push(new TextInputInteractable("Instantiate Room Item Procedural Selections", "Procedural Selections", "Example: (color=metal + character=upa)", false, undefined, undefined, 5));
+        const modalActionDirective = await this.#createActionDirective(InstantiateRoomItemAction, args.concat(["Modal"]), undefined, user);
+        const description = `Instantiate ${preposition} ${containerPhrase} at ${locationDisplayName}`;
+        const modal = new ModalInteractable(modalActionDirective, "Instantiate Room Item", inputs, 0, description);
+        this.addInteractable(modal);
+        return modal;
+    }
+
+    /**
      * Creates Interactables for a list of destroyable inventory items and adds them to the cache.
      * @param destroyableItems - A list of destroyable inventory items to create Interactables for.
      * @param player - The player these interactables are being created for.
@@ -583,7 +649,7 @@ export default class BotInteractableManager {
     async createDestroyInventoryItemActionInteractables(destroyableItems: InventoryItem[], player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
         const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
         for (const item of destroyableItems) {
-            const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, item.getDestroyActionDirectiveArgs(), player, user);
+            const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, item.getDestroyActionDirectiveArgs(), player ?? item.player, user);
             if (menuOptions.has(actionDirective.customId)) continue;
             let containerString: string;
             if (item.container !== null) {
@@ -605,6 +671,46 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for a list of destroyable room items and adds them to the cache.
+     * @param itemContainers - A list of item containers to create Interactables for.
+     * @param user - The user these interactables are being created for.
+     */
+    async createDestroyRoomItemActionInteractables(itemContainers: RoomItemContainer[], user: User): Promise<StringSelectMenuInteractable[]> {
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const container of itemContainers) {
+            if (container instanceof RoomItem) {
+                const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, container.getDestroyRoomItemActionDirectiveArgs(), undefined, user);
+                if (menuOptions.has(actionDirective.customId)) continue;
+                let containerString = `${container.container.getPreposition()} `;
+                if (container.container instanceof RoomItem) {
+                    if (container.container.inventory.size > 1) containerString += `${container.slot} of `;
+                    containerString += `${container.container.getIdentifier()}`;
+                }
+                else containerString += `${container.container.getContainerIdentifier()}`
+                containerString += ` at ${container.getLocation().displayName}`;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, container.getIdentifier(), actionDirective.customId, `Destroy ${container.getIdentifier()} ${containerString}`);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+                if (menuOptions.size >= 25) break;
+            }
+            if (container.isItemContainer() && container.canCurrentlyContainItems(false, true) && !container.containsNoItems()) {
+                const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, container.getDestroyAllRoomItemActionDirectiveArgs(), undefined, user);
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const containerString = `${container.getPreposition()} ${container.getContainerIdentifier()}`;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, `All ${containerString}`, actionDirective.customId, `Destroy all ${containerString} at ${container.getLocation().displayName}`);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+                if (menuOptions.size >= 25) break;
+            }
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, ["DestroyRoomItemAction Menu"], undefined, user);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -615,7 +721,7 @@ export default class BotInteractableManager {
         let interactables: Interactable[] = [];
         let dropContainer = container;
         if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
-        if (dropContainer.canCurrentlyContainItems(false))
+        if (dropContainer.canCurrentlyContainItems(false, user instanceof Moderator))
             interactables = interactables.concat(await this.createTakeActionInteractable(containedItems, player, user));
         return interactables;
     }
@@ -631,7 +737,7 @@ export default class BotInteractableManager {
         let dropContainer = container;
         if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer())
             dropContainer = dropContainer.childPuzzle;
-        if (dropContainer.canCurrentlyContainItems()) {
+        if (dropContainer.canCurrentlyContainItems(true, user instanceof Moderator)) {
             if (dropContainer.isItemContainer()) {
                 const droppableEntities = this.#game.entityFinder.getPlayerHands(player).filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
                 if (droppableEntities.length !== 0) interactables = interactables.concat(await this.createDropActionInteractables(droppableEntities, player, dropContainer, user));
@@ -773,14 +879,16 @@ export default class BotInteractableManager {
      * Generates an array of instantiate inventory item interactables based on the player's current inventory.
      * @param player - The player to instantiate an inventory item to.
      * @param user - The user these interactables are being created for.
+     * @param freeEquipmentSlots - An array of equipment slots with nothing equipped. Optional.
+     * @param containerItems - An array of inventory items that can contain items. Optional.
      */
-    async getInstantiateInventoryItemInteractables(player: Player, user: User): Promise<Interactable[]> {
+    async getInstantiateInventoryItemInteractables(player: Player, user: User, freeEquipmentSlots?: EquipmentSlot[], containerItems?: InventoryItem[]): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
-        const freeEquipmentSlots = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem === null).map(equipmentSlot => equipmentSlot);
-        const playerContainerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.inventory.size > 0);
-        if (freeEquipmentSlots.length > 0 || playerContainerItems.length > 0) {
+        if (freeEquipmentSlots === undefined) freeEquipmentSlots = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem === null).map(equipmentSlot => equipmentSlot);
+        if (containerItems === undefined) containerItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.inventory.size > 0);
+        if (freeEquipmentSlots.length > 0 || containerItems.length > 0) {
             const viableStashDestinations = new Map<InventoryItem, string[]>();
-            for (const containerItem of playerContainerItems) {
+            for (const containerItem of containerItems) {
                 const viableInventorySlots: string[] = [];
                 for (const inventorySlot of containerItem.inventory.values()) {
                     if (inventorySlot.takenSpace >= inventorySlot.capacity) continue;
@@ -794,16 +902,57 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Generates an array of instantiate room item interactables based on the given item containers.
+     * @param itemContainers - An array of room item containers that can potentially be instantiated into.
+     * @param user - The user these interactables are being created for.
+     */
+    async getInstantiateRoomItemInteractables(itemContainers: RoomItemContainer[], user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        if (itemContainers.length > 0) {
+            const viableInstantiateDestinations = new Map<RoomItemContainer, string[]>();
+            for (const itemContainer of itemContainers) {
+                if (itemContainer instanceof RoomItem) {
+                    const viableInventorySlots: string[] = [];
+                    for (const inventorySlot of itemContainer.inventory.values()) {
+                        if (inventorySlot.takenSpace >= inventorySlot.capacity) continue;
+                        viableInventorySlots.push(inventorySlot.id);
+                    }
+                    if (viableInventorySlots.length > 0) viableInstantiateDestinations.set(itemContainer, viableInventorySlots);
+                }
+                else if (itemContainer.isItemContainer() && itemContainer.canCurrentlyContainItems(true, true))
+                    viableInstantiateDestinations.set(itemContainer, []);
+            }
+            interactables = interactables.concat(await this.createInstantiateRoomItemActionInteractables(viableInstantiateDestinations, user));
+        }
+        return interactables;
+    }
+
+    /**
      * Generates an array of destroy inventory item interactables based on the player's current inventory.
      * @param player - The player to destroy inventory items for.
      * @param user - The user these interactables are being created for.
+     * @param equippedItems - An array of inventory items the player has equipped. Optional.
+     * @param stashedItems - An array of inventory items the player has stashed. Optional.
      */
-    async getDestroyInventoryItemInteractables(player: Player, user: User): Promise<Interactable[]> {
+    async getDestroyInventoryItemInteractables(player: Player, user: User, equippedItems?: InventoryItem[], stashedItems?: InventoryItem[]): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
-        const equippedItems = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
-        const stashedItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.container !== null);
+        if (equippedItems === undefined) equippedItems = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem !== null).map(equipmentSlot => equipmentSlot.equippedItem);
+        if (stashedItems === undefined) stashedItems = this.#game.entityFinder.getInventoryItems(undefined, player.name).filter(item => item.container !== null);
         if (equippedItems.length > 0 || stashedItems.length > 0) {
             interactables = interactables.concat(await this.createDestroyInventoryItemActionInteractables(equippedItems.concat(stashedItems), player, user));
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of destroy room item interactables based on the given item containers.
+     * @param itemContainers - The item containers to destroy inventory items for.
+     * @param user - The user these interactables are being created for.
+     */
+    async getDestroyRoomItemInteractables(itemContainers: RoomItemContainer[], user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        if (itemContainers.length > 0) {
+            interactables = interactables.concat(await this.createDestroyRoomItemActionInteractables(itemContainers, user));
         }
         return interactables;
     }

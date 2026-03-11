@@ -210,18 +210,35 @@ export default class Puzzle extends ItemContainer {
     }
 
     /**
+     * Returns the args for the InstantiateRoomItem ActionDirective for this puzzle.
+     * @returns ["PZ", name, location, preposition, type]
+     */
+    getPartialInstantiateActionDirectiveArgs() {
+        return ["PZ", this.name, this.location.displayName, this.getPreposition(), this.type];
+    }
+
+    /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this puzzle.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'Puzzle', this.name, undefined];
+    }
+
+    /**
      * Returns true if the puzzle is capable of containing items.
      */
     isItemContainer(): boolean {
-        return this.parentFixture !== null && this.parentFixture.isItemContainer();
+        return this.parentFixture !== null && this.parentFixture.preposition !== "";
     }
 
     /**
      * Returns true if the puzzle is currently capable of being taken from/dropped into.
      * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true. Does nothing for puzzles.
+     * @param bypassLimitations - Whether limitations should be bypassed. If true, the puzzle does not need to be accessible or solved. Defaults to false.
      */
-    canCurrentlyContainItems(requireEmptySpace = true): boolean {
-        return this.type === "weight" || this.type === "container" || this.accessible && this.solved;
+    canCurrentlyContainItems(requireEmptySpace = true, bypassLimitations = false): boolean {
+        return this.type === "weight" || this.type === "container" || bypassLimitations || this.accessible && this.solved;
     }
 
     /**

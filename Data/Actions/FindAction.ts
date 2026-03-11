@@ -396,7 +396,7 @@ export default class FindAction extends Action {
     /**
      * Sends the result list message and edits it when the user requests the next or previous page.
      */
-    #sendResultListMessage<T = FindableGameEntity>(results: T[]): void {
+    async #sendResultListMessage<T = FindableGameEntity>(results: T[]): Promise<void> {
         const pages = this.#createResultPages(results);
         let page = 0;
         const resultCountString = `Found ${results.length} result${results.length === 1 ? '' : 's'}.`;
@@ -421,6 +421,23 @@ export default class FindAction extends Action {
             };
             interactables = interactables.concat(this.getGame().botContext.interactableManager.createPaginationInteractables(this, prevPageCallback, nextPageCallback));
         }
+        else {
+            interactables = interactables.concat(await this.#getInteractables(results));
+        }
         this.getGame().communicationHandler.sendToChannel(this.getGame().guildContext.commandChannel, resultCountString + pageString + resultsDisplay, [], interactables);
+    }
+
+    async #getInteractables<T = FindableGameEntity>(results: T[]): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const interactableManager = this.getGame().botContext.interactableManager;
+        if (results.every(result => result instanceof Fixture || result instanceof RoomItem || result instanceof Puzzle)) {
+            interactables = interactables.concat(await interactableManager.getInstantiateRoomItemInteractables(results, this.user));
+            interactables = interactables.concat(await interactableManager.getDestroyRoomItemInteractables(results, this.user));
+        }
+        else if (results.every(result => result instanceof InventoryItem)) {
+            interactables = interactables.concat(await interactableManager.getInstantiateInventoryItemInteractables(undefined, this.user, [], results));
+            interactables = interactables.concat(await interactableManager.createDestroyInventoryItemActionInteractables(results, undefined, this.user));
+        }
+        return interactables;
     }
 }

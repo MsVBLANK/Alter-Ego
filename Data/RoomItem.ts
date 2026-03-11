@@ -199,6 +199,31 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
+     * Returns the args for the InstantiateRoomItem ActionDirective for this room item.
+     * @param inventorySlot - The inventory slot to instantiate the room item into.
+     * @returns ["RI", identifier, location, preposition, containerType, containerName, destinationInventorySlot]
+     */
+    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<RoomItem>) {
+        return ["RI", this.getIdentifier(), this.location.displayName, this.getPreposition(), this.containerType, this.containerName, inventorySlot.id];
+    }
+
+    /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this room item.
+     * @returns ["RI", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["RI", this.getIdentifier(), this.location.id, undefined, this.containerType, this.container.getContainerIdentifier(), this.slot];
+    }
+
+    /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this room item.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'RoomItem', this.getIdentifier(), undefined];
+    }
+
+    /**
      * Returns true if the room item is capable of containing items.
      */
     isItemContainer(): boolean {
@@ -208,8 +233,9 @@ export default class RoomItem extends ItemInstance {
     /**
      * Returns true if the room item is currently capable of being taken from/dropped into.
      * @param requireEmptySpace - Whether the container needs to be below max capacity. Defaults to true.
+     * @param bypassLimitations - Whether limitations should be bypassed. Does nothing for room items. Defaults to false.
      */
-    canCurrentlyContainItems(requireEmptySpace = true): boolean {
+    canCurrentlyContainItems(requireEmptySpace = true, bypassLimitations = false): boolean {
         let allInventorySlotsFilled = true;
         for (const inventorySlot of this.inventory.values()) {
             if (inventorySlot.takenSpace < inventorySlot.capacity) {

@@ -80,6 +80,7 @@ export default class InstantiateInventoryItemAction extends Action {
         const inventorySlot = args[3];
         if (isNaN(args[4])) throw new Error("The given quantity is not a number.");
         if (args[4] < 1) throw new Error("The given quantity must be greater than or equal to 1.");
+        if (args[4] > 1 && !prefab.pluralContainingPhrase) throw new Error(`The given quantity is greater than 1, but ${prefab.id} has no plural containing phrase.`);
         const quantity = args[4];
         let proceduralSelections: Map<string, string>;
         if (args[5]) {

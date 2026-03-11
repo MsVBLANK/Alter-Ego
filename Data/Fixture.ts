@@ -163,6 +163,14 @@ export default class Fixture extends RecipeProcessor {
     }
 
     /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this fixture.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'Fixture', this.name, undefined];
+    }
+
+    /**
      * Returns true if the fixture is capable of containing items.
      */
     isItemContainer(): boolean {

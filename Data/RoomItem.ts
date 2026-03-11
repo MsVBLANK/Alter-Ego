@@ -199,6 +199,22 @@ export default class RoomItem extends ItemInstance {
     }
 
     /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this room item.
+     * @returns ["RI", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["RI", this.getIdentifier(), this.location.id, undefined, this.containerType, this.container.getContainerIdentifier(), this.slot];
+    }
+
+    /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this room item.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'RoomItem', this.getIdentifier(), undefined];
+    }
+
+    /**
      * Returns true if the room item is capable of containing items.
      */
     isItemContainer(): boolean {

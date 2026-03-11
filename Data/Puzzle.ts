@@ -210,6 +210,14 @@ export default class Puzzle extends ItemContainer {
     }
 
     /**
+     * Returns the args for the DestroyRoomItem ActionDirective for this puzzle.
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     */
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'Puzzle', this.name, undefined];
+    }
+
+    /**
      * Returns true if the puzzle is capable of containing items.
      */
     isItemContainer(): boolean {

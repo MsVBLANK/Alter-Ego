@@ -10,6 +10,7 @@ import CraftAction from "../Data/Actions/CraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
+import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
 import ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
@@ -133,9 +134,9 @@ export default class BotInteractionHandler {
 	async #processActionDirectiveInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
         const timestamp = new Date();
         const player = interactable.actionDirective.getPlayer();
-        const author = user instanceof Moderator ? `${player.name} (${user.member.user.username})` : player.name
+        const author = user instanceof Moderator ? player ? `${player.name} (${user.member.user.username})` : user.member.user.username : player.name
         const forced = user instanceof Moderator;
-		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player.location, forced);
+		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player?.location, forced);
 		if (action instanceof QueueMoveAction) {
 			const args = interactable.actionDirective.getArgs();
 			const parsedArgs = action.parseInteractionArgs(args);
@@ -269,7 +270,7 @@ export default class BotInteractionHandler {
                     }
                     else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
-                    this.#logInteraction("InstantiateAction", author, timestamp, validatedArgs);
+                    this.#logInteraction("InstantiateInventoryItemAction", author, timestamp, validatedArgs);
                     return true;
                 } 
                 catch (error) { throw new Error(error.message); }
@@ -290,7 +291,30 @@ export default class BotInteractionHandler {
                 const validatedArgs = action.validateInteractionArgs(parsedArgs);
                 action.performDestroyInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 this.#replyToInteraction("Successfully destroyed inventory item.", interaction);
-                this.#logInteraction("DestroyAction", author, timestamp, validatedArgs);
+                this.#logInteraction("DestroyInventoryItemAction", author, timestamp, validatedArgs);
+                return true;
+            }
+            catch (error) { throw new Error(error.message); }
+        }
+        if (action instanceof DestroyRoomItemAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            try {
+                if (args[0] === "ALL") {
+                    for (const item of parsedArgs) {
+                        const validatedArgs = action.validateInteractionArgs([item]);
+                        const destroyAction = new DestroyRoomItemAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
+                        destroyAction.performDestroyRoomItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                        this.#logInteraction("DestroyRoomItemAction", author, timestamp, validatedArgs);
+                    }
+                    this.#replyToInteraction(`Successfully destroyed ${parsedArgs.length} room item${parsedArgs.length !== 1 ? `s` : ``}.`, interaction);
+                }
+                else {
+                    const validatedArgs = action.validateInteractionArgs([parsedArgs[0]]);
+                    action.performDestroyRoomItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                    this.#replyToInteraction(`Successfully destroyed room item.`, interaction);
+                    this.#logInteraction("DestroyRoomItemAction", author, timestamp, validatedArgs);
+                }
                 return true;
             }
             catch (error) { throw new Error(error.message); }

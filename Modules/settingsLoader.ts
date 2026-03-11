@@ -118,7 +118,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
     const hiddenIconUrl = process.env.HIDDEN_ICON_URL ?? DEFAULT_GAME_SETTINGS.hiddenIconURL;
 
     const autoDeleteWhisperChannels = pushErrors(stringToBoolOrDefault(process.env.AUTO_DELETE_WHISPER_CHANNELS, DEFAULT_GAME_SETTINGS.autoDeleteWhisperChannels), errors);
-    const viewAllRoomChannels = pushErrors(stringToBoolOrDefault(process.env.viewAllRoomChannels, DEFAULT_GAME_SETTINGS.viewAllRoomChannels), errors);
+    const viewAllRoomChannels = pushErrors(stringToBoolOrDefault(process.env.VIEW_ALL_ROOM_CHANNELS, DEFAULT_GAME_SETTINGS.viewAllRoomChannels), errors);
 
     const colorRegex = /^[\dA-F]{6}$/i;
     let embedAccentColor = process.env.EMBED_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.embedAccentColor;

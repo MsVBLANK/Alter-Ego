@@ -1,9 +1,11 @@
-import InstantiateAction from '../Data/Actions/InstantiateAction.ts';
-import RoomItem from '../Data/RoomItem.js';
-import { instantiateRoomItem, instantiateInventoryItem } from '../Modules/itemManager.js';
+import InstantiateInventoryItemAction from '../Data/Actions/InstantiateInventoryItemAction.ts';
+import InstantiateRoomItemAction from '../Data/Actions/InstantiateRoomItemAction.ts';
+import RoomItem from '../Data/RoomItem.ts';
+import { parseProceduralSelections } from '../Modules/stringDataExtractor.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -45,8 +47,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 4)
         return game.communicationHandler.reply(message, `Not enough arguments given. Usage:\n${usage(game.settings)}`);
 
@@ -75,15 +78,14 @@ export async function execute(game, message, command, args) {
     else parsedInput = parsedInput.substring(0, undashedInput.lastIndexOf(` AT ${room.id.toUpperCase().replace(/-/g, " ")}`));
 
     // If a parenthetical expression is included, procedural options are being manually set.
-    const proceduralSelections = new Map();
+    /** @type {Map<string, string>} */
+    let proceduralSelections = new Map();
     if (parsedInput.indexOf('(') < parsedInput.indexOf(')')) {
-        const proceduralString = parsedInput.substring(parsedInput.indexOf('(') + 1, parsedInput.indexOf(')'));
-        const proceduralList = proceduralString.split('+');
-        for (let procedural of proceduralList) {
-            const proceduralAssignment = procedural.split('=');
-            if (proceduralAssignment.length !== 2)
-                return game.communicationHandler.reply(message, "Procedural options must be separated with `+`, and the name of the poss to select must be assigned to the name of its containing procedural with `=`.");
-            proceduralSelections.set(proceduralAssignment[0].toLowerCase().trim(), proceduralAssignment[1].toLowerCase().trim());
+        try {
+            proceduralSelections = parseProceduralSelections(parsedInput);
+        }
+        catch (error) {
+            return game.communicationHandler.reply(message, error.message);
         }
         parsedInput = parsedInput.substring(0, parsedInput.indexOf('(')) + parsedInput.substring(parsedInput.indexOf(')'));
     }
@@ -190,12 +192,12 @@ export async function execute(game, message, command, args) {
         // If the prefab has inventory slots, run the instantiate function quantity times so that it generates items with different identifiers.
         if (prefab.inventory.size > 0) {
             for (let i = 0; i < quantity; i++) {
-                const instantiateAction = new InstantiateAction(game, message, undefined, room, true);
+                const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
                 instantiateAction.performInstantiateRoomItem(prefab, container, slotName, 1, proceduralSelections);
             }
         }
         else {
-            const instantiateAction = new InstantiateAction(game, message, undefined, room, true);
+            const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
             instantiateAction.performInstantiateRoomItem(prefab, container, slotName, quantity, proceduralSelections);
         }
 
@@ -307,12 +309,12 @@ export async function execute(game, message, command, args) {
         // If the prefab has inventory slots, run the instantiate function quantity times so that it generates items with different identifiers.
         if (prefab.inventory.size > 0) {
             for (let i = 0; i < quantity; i++) {
-                const instantiateAction = new InstantiateAction(game, message, player, player.location, true);
+                const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
                 instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, 1, proceduralSelections);
             }
         }
         else {
-            const instantiateAction = new InstantiateAction(game, message, player, player.location, true);
+            const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
             instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, quantity, proceduralSelections);
         }
 

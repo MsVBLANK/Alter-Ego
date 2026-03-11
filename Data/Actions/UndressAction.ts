@@ -1,12 +1,12 @@
-import Action from "../Action.ts";
-import AttemptAction from "./AttemptAction.ts";
-import InventorySlot from "../InventorySlot.ts";
-import Puzzle from "../Puzzle.js";
-import DropAction from "./DropAction.ts";
 import { getSortedItemsString } from "../../Modules/helpers.ts";
-import type Fixture from "../Fixture.js";
-import type RoomItem from "../RoomItem.js";
-import type InventoryItem from "../InventoryItem.js";
+import Action from "../Action.ts";
+import type Fixture from "../Fixture.ts";
+import type InventoryItem from "../InventoryItem.ts";
+import InventorySlot from "../InventorySlot.ts";
+import Puzzle from "../Puzzle.ts";
+import type RoomItem from "../RoomItem.ts";
+import AttemptAction from "./AttemptAction.ts";
+import DropAction from "./DropAction.ts";
 
 /**
  * Represents an undress action.

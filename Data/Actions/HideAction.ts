@@ -1,6 +1,6 @@
 import Action from "../Action.ts";
+import type HidingSpot from "../HidingSpot.ts";
 import InflictAction from "./InflictAction.ts";
-import type HidingSpot from "../HidingSpot.js";
 
 /**
  * Represents a hide action.

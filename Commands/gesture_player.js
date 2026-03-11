@@ -1,12 +1,11 @@
 ﻿import GestureAction from '../Data/Actions/GestureAction.ts';
-import Fixture from '../Data/Fixture.js';
+import Fixture from '../Data/Fixture.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
-import Puzzle from '../Data/Puzzle.js';
-import { createPaginatedEmbed } from '../Modules/discordUtils.js';
+import Puzzle from '../Data/Puzzle.ts';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -55,51 +54,8 @@ export async function execute(game, message, command, args, player) {
     let input = args.join(" ").toLowerCase().replace(/\'/g, "");
 
     if (input === "list") {
-        const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => !player.hasStatus(status.id)));
-        const pages = [];
-        let page = 0;
-
-        // Divide the fields into pages.
-        for (let i = 0, pageNo = 0; i < fields.length; i++) {
-            // Divide the menu into groups of 10.
-            if (i % 15 === 0) {
-                pages.push([]);
-                if (i !== 0) pageNo++;
-            }
-            pages[pageNo].push(fields[i]);
-        }
-
-        const embedAuthorName = `Gestures List`;
-        const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-        const embedDescription = `These are all of the gestures you can currently perform.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
-        const fieldName = (entryIndex) => pages[page][entryIndex].id;
-        const fieldValue = (entryIndex) => pages[page][entryIndex].description;
-        let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-        message.author.send({ embeds: [embed] }).then(msg => {
-            msg.react('⏪').then(() => {
-                msg.react('⏩');
-
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
-
-                const backwards = msg.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-                const forwards = msg.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-                backwards.on("collect", () => {
-                    if (page === 0) return;
-                    page--;
-                    embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-
-                forwards.on("collect", () => {
-                    if (page === pages.length - 1) return;
-                    page++;
-                    embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-            });
-        });
+        const action = new GestureAction(game, message, player, player.location, false);
+        action.performGestureList();
     }
     else {
         let gesture;

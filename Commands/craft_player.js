@@ -2,9 +2,9 @@ import CraftAction from '../Data/Actions/CraftAction.ts';
 import { itemNameMatches } from '../Modules/matchers.js';
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

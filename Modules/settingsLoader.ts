@@ -1,5 +1,5 @@
 import GameSettings from "../Classes/GameSettings.js";
-import BotContext from "../Classes/BotContext.js";
+import BotContext from "../Classes/BotContext.ts";
 
 export interface PlayerDefaults {
     defaultPronouns: string;

@@ -1,9 +1,8 @@
 import Action from "../Action.ts";
-import Description from "../Description.js";
-import Fixture from "../Fixture.js";
-import InventoryItem from "../InventoryItem.js";
-import Room from "../Room.js";
-import RoomItem from "../RoomItem.js";
+import Description from "../Description.ts";
+import Fixture from "../Fixture.ts";
+import InventoryItem from "../InventoryItem.ts";
+import RoomItem from "../RoomItem.ts";
 
 /**
  * Represents an inspect action.

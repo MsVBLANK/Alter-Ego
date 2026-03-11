@@ -1,17 +1,17 @@
-import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
+import type { ActivitiesOptions, ActivityType, ButtonInteraction, GuildMember, Message, ModalSubmitInteraction, OmitPartialGroupDMChannel, Snowflake, StringSelectMenuInteraction } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
 import type CollatedItem from "./Data/CollatedItem.ts";
-import type Event from "./Data/Event.js";
-import type Fixture from "./Data/Fixture.js";
-import type Flag from "./Data/Flag.js";
-import type Game from "./Data/Game.js";
+import type Event from "./Data/Event.ts";
+import type Fixture from "./Data/Fixture.ts";
+import type Flag from "./Data/Flag.ts";
+import type Game from "./Data/Game.ts";
 import type GameEntity from "./Data/GameEntity.ts";
-import type InventoryItem from "./Data/InventoryItem.js";
-import type Player from "./Data/Player.js";
-import type Puzzle from "./Data/Puzzle.js";
-import type Recipe from "./Data/Recipe.js";
-import type Room from "./Data/Room.js";
-import type RoomItem from "./Data/RoomItem.js";
+import type InventoryItem from "./Data/InventoryItem.ts";
+import type Player from "./Data/Player.ts";
+import type Puzzle from "./Data/Puzzle.ts";
+import type Recipe from "./Data/Recipe.ts";
+import type Room from "./Data/Room.ts";
+import type RoomItem from "./Data/RoomItem.ts";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
 import type Exit from "./Data/Exit.js";
@@ -30,6 +30,20 @@ declare global {
 		type: ActivityType;
 		url?: string;
 	}
+
+    /**
+     * Represents a user of the bot in a game context.
+     * @property id - The Discord ID of the user.
+     * @property member - The Discord member object of the user.
+     * @property displayName - The name that will be displayed for this user.
+     * @property displayIcon - An image URL that will be used as an avatar when the user's messages are mirrored in a webhook.
+     */
+    interface User {
+        id: string;
+        readonly member: GuildMember;
+        displayName: string;
+        displayIcon: string;
+    }
 
 	/**
 	 * Represents a Discord message handled by Alter Ego.
@@ -60,6 +74,10 @@ declare global {
      * Represents a game entity that can be used as a target for gestures.
      */
     type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
+    /**
+     * Represents an interaction that the bot can accept.
+     */
+    type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.
@@ -89,6 +107,7 @@ declare global {
 	 * @property {string} usableBy - The role that can use the command.
 	 * @property {string[]} aliases - Alternative names for the command.
 	 * @property {boolean} requiresGame - Indicates whether the command requires an ongoing game to be executed.
+	 * @property {boolean} [whitespaceSensitive] - Whether or not the command is sensitive to whitespace, and should not have argument whitespace altered.
 	 */
 	interface CommandConfig {
 		name: string;
@@ -97,6 +116,7 @@ declare global {
 		usableBy: string;
 		aliases: string[];
 		requiresGame: boolean;
+        whitespaceSensitive?: boolean;
 	}
 
 	/**
@@ -104,24 +124,24 @@ declare global {
 	 * @property {CommandConfig} config - The specific configuration of the command.
 	 * @property {(settings: GameSettings) => string} usage - Examples of the command's usage.
 	 */
-	interface Command {
+	interface ICommand {
 		config: CommandConfig;
 		usage: (settings: GameSettings) => string;
 	}
 
-	interface IBotCommand extends Command {
+	interface IBotCommand extends ICommand {
 		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
-	interface IModeratorCommand extends Command {
+	interface IModeratorCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 
-	interface IPlayerCommand extends Command {
+	interface IPlayerCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[], player: Player) => Promise<void>;
 	}
 
-	interface IEligibleCommand extends Command {
+	interface IEligibleCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 
@@ -142,6 +162,7 @@ declare global {
 	 */
 	interface MessageQueueEntry {
 		fire: () => Promise<void>;
+		destination: string;
 	}
 
 	/**

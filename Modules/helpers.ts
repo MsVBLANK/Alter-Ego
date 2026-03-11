@@ -1,11 +1,11 @@
 import ItemInstance from '../Data/ItemInstance.ts';
 import { Duration } from 'luxon';
-import type Player from '../Data/Player.js';
+import type Player from '../Data/Player.ts';
 
-/** @import Player from "../Data/Player.js" */
-/** @import InventoryItem from "../Data/InventoryItem.js" */
+/** @import Player from "../Data/Player.ts" */
+/** @import InventoryItem from "../Data/InventoryItem.ts" */
 /** @import ItemInstance from "../Data/ItemInstance.ts" */
-/** @import RoomItem from "../Data/RoomItem.js" */
+/** @import RoomItem from "../Data/RoomItem.ts" */
 /** @import { DurationObjectUnits } from "luxon" */
 
 /**
@@ -127,10 +127,11 @@ export function capitalizeFirstLetter(string: string): string {
 
 /**
  * Returns true if the given string ends with a punctuation mark.
+ * Ignores formatting characters like *, _, ~, |, and ` that come after the punctuation mark.
  * @param string 
  */
 export function endsWithPunctuation(string: string): boolean {
-	return !!string.match(/[.!?]$/);
+	return !!string.match(/[.!?][_*~|`]*$/);
 }
 
 /**

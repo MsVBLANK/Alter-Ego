@@ -1,4 +1,4 @@
-import PlayerCommand from "../../Classes/PlayerCommand.js";
+import PlayerCommand from "../../Classes/PlayerCommand.ts";
 import { usage, execute, config } from "../../Commands/unstash_player.js";
 import UnstashAction from "../../Data/Actions/UnstashAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";

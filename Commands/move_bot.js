@@ -1,9 +1,9 @@
-import Event from "../Data/Event.js";
+import Event from "../Data/Event.ts";
 import MoveAction from "../Data/Actions/MoveAction.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

@@ -1,5 +1,5 @@
+import type { ComponentBuilder, ModalBuilder, StringSelectMenuOptionBuilder } from "discord.js";
 import type { InteractableType } from "../../Modules/enums.js";
-import type ActionDirective from "../ActionDirective.ts";
 
 /**
  * @class Interactable
@@ -11,11 +11,6 @@ export default abstract class Interactable {
      */
     readonly type: InteractableType;
 	/**
-	 * The action directive for this interactable.
-	 * @type {ActionDirective}
-	 */
-    readonly actionDirective: ActionDirective;
-	/**
 	 * The customId of the component.
 	 */
     readonly customId: string;
@@ -23,18 +18,28 @@ export default abstract class Interactable {
 	 * The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
 	 */
     readonly priority: number;
+    /**
+     * Whether to respond to an interaction with a modal.
+     * A reply to an interaction cannot be deferred if a modal is to be sent, so this will be checked by the interaction handler.
+     */
+    readonly respondWithModal: boolean;
+    /**
+     * The modal component created from this interactable.
+     */
+    abstract readonly component: ComponentBuilder|StringSelectMenuOptionBuilder|ModalBuilder;
 
 	/**
 	 * @constructor
 	 * @param type - The type of interactive message component to create.
-	 * @param actionDirective - The action directive for this interactable.
+	 * @param customId - The custom ID for this interactable.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.
+     * @param respondWithModal - Whether to respond to an interaction with a modal. Defaults to false.
 	 */
-    protected constructor(type: InteractableType, actionDirective: ActionDirective, priority: number) {
+    protected constructor(type: InteractableType, customId: string, priority: number, respondWithModal = false) {
 		this.type = type;
-		this.actionDirective = actionDirective;
-		this.customId = actionDirective.customId;
+		this.customId = customId;
 		this.priority = priority;
+        this.respondWithModal = respondWithModal;
 	}
 
 	/**

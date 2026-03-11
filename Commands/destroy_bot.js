@@ -1,13 +1,14 @@
-import DestroyAction from "../Data/Actions/DestroyAction.ts";
-import Game from "../Data/Game.js";
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
+import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
+import Game from "../Data/Game.ts";
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.js";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
+/** @import Player from '../Data/Player.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
 /** @import InventorySlot from '../Data/InventorySlot.ts' */
 
 /** @type {CommandConfig} */
@@ -161,7 +162,7 @@ export async function execute(game, command, args, player, callee) {
             if (newArgs.length !== 0)
                 return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs.join(" ")}" at ${room.id}`);
             for (const containerItem of containerItems) {
-                const destroyAction = new DestroyAction(game, undefined, undefined, room, true);
+                const destroyAction = new DestroyRoomItemAction(game, undefined, undefined, room, true);
                 destroyAction.performDestroyRoomItem(containerItem, containerItem.quantity, true);
             }
         } else {
@@ -176,7 +177,7 @@ export async function execute(game, command, args, player, callee) {
             }
             if (!item) return;
 
-            const destroyAction = new DestroyAction(game, undefined, undefined, room, true);
+            const destroyAction = new DestroyRoomItemAction(game, undefined, undefined, room, true);
             destroyAction.performDestroyRoomItem(item, item.quantity, true);
         }
     } else {
@@ -276,7 +277,7 @@ export async function execute(game, command, args, player, callee) {
 
                 if (destroyAll) {
                     for (const containerItem of containerItems) {
-                        const destroyAction = new DestroyAction(game, undefined, player, player.location, true);
+                        const destroyAction = new DestroyInventoryItemAction(game, undefined, player, player.location, true);
                         destroyAction.performDestroyInventoryItem(containerItem, containerItem.quantity, true, false);
                     }
                     gotoNext = true;
@@ -312,7 +313,7 @@ export async function execute(game, command, args, player, callee) {
                     }
                 }
                 if (item && equipmentSlotName !== "") {
-                    const destroyAction = new DestroyAction(game, undefined, player, player.location, true);
+                    const destroyAction = new DestroyInventoryItemAction(game, undefined, player, player.location, true);
                     destroyAction.performDestroyInventoryItem(item, item.quantity, true, true);
                     gotoNext = true;
                 }
@@ -320,7 +321,7 @@ export async function execute(game, command, args, player, callee) {
             if (gotoNext) continue;
 
             if (item) {
-                const destroyAction = new DestroyAction(game, undefined, player, player.location, true);
+                const destroyAction = new DestroyInventoryItemAction(game, undefined, player, player.location, true);
                 destroyAction.performDestroyInventoryItem(item, item.quantity, true);
             }
             else return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs.join(" ")}" in ${player.name}'s inventory.`);

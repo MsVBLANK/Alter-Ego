@@ -1,4 +1,4 @@
-import PlayerCommand from "../../Classes/PlayerCommand.js";
+import PlayerCommand from "../../Classes/PlayerCommand.ts";
 import { usage, execute, config } from "../../Commands/use_player.js";
 import ActivateAction from "../../Data/Actions/ActivateAction.ts";
 import AttemptAction from "../../Data/Actions/AttemptAction.ts";

@@ -1,9 +1,9 @@
-import Description from './Description.js';
-import type Game from './Game.js';
+import Description from "./Description.ts";
+import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
-import type ItemInstance from './ItemInstance.ts';
-import type Player from './Player.js';
-import type Prefab from './Prefab.js';
+import type ItemInstance from "./ItemInstance.ts";
+import type Player from "./Player.ts";
+import type Prefab from "./Prefab.ts";
 
 /**
  * Represents a game entity that can contain items.
@@ -29,30 +29,6 @@ export default abstract class ItemContainer extends GameEntity {
 	 */
 	getDescription(): Description {
 		return this.description;
-	}
-
-	/**
-	 * Adds an item to the specified item list in the container's description.
-     *
-	 * @deprecated
-	 * @param item - The item to add.
-	 * @param list - The item list to add the item to.
-	 * @param quantity - The quantity of the item to add. If none is provided, defaults to 1.
-	 */
-	addItemToDescription(item: ItemInstance, list?: string, quantity?: number): void {
-		//this.#setDescription(addItemToList(this.getDescription(), item, list, quantity));
-	}
-
-	/**
-	 * Removes an item from the specified item list in the container's description.
-     *
-	 * @deprecated
-	 * @param item - The item to remove.
-	 * @param list - The item list to remove the item from.
-	 * @param quantity - The quantity of the item to remove. If none is provided, defaults to 1.
-	 */
-	removeItemFromDescription(item: ItemInstance, list?: string, quantity?: number): void {
-		//this.#setDescription(removeItemFromList(this.getDescription(), item, list, quantity));
 	}
 
 	/**
@@ -108,4 +84,7 @@ export default abstract class ItemContainer extends GameEntity {
         const containedItems = this.getContainedItems();
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
     }
+
+    abstract getContainerIdentifier(): string;
+    abstract getContainerType(): string;
 }

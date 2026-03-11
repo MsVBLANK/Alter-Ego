@@ -1,13 +1,13 @@
 ﻿import DropAction from '../Data/Actions/DropAction.ts';
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import EquipmentSlot from '../Data/EquipmentSlot.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import InventoryItem from '../Data/InventoryItem.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import EquipmentSlot from '../Data/EquipmentSlot.ts' */
+/** @import Game from '../Data/Game.ts' */
+/** @import InventoryItem from '../Data/InventoryItem.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -107,6 +107,9 @@ export async function execute(game, message, command, args, player) {
         for (let i = 0; i < items.length; i++) {
             if (items[i].name === parsedInput) return game.communicationHandler.reply(message, `You need to supply a preposition.`);
             if (parsedInput.endsWith(items[i].name) && parsedInput !== items[i].name) {
+                const parsedInputSubstring = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
+                if (!parsedInputSubstring.endsWith(items[i].getPreposition().toUpperCase()) && !parsedInputSubstring.endsWith("IN") && !parsedInputSubstring.endsWith(" OF"))
+                    continue;
                 const itemContainer = items[i].container;
                 if (fixture === null || fixture !== null && itemContainer !== null && (itemContainer.name === fixture.name || itemContainer instanceof Puzzle && itemContainer.parentFixture.name === fixture.name)) {
                     if (items[i].inventory.size === 0) return game.communicationHandler.reply(message, `${items[i].name} cannot hold items. Contact a moderator if you believe this is a mistake.`);

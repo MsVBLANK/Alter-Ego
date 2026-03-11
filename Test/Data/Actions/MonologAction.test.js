@@ -2,8 +2,8 @@ import MonologAction from "../../../Data/Actions/MonologAction.ts";
 import { sendQueuedMessages } from "../../../Modules/messageHandler.js";
 
 /**
- * @import Player from "../../../Data/Player.js"
- * @import Room from "../../../Data/Room.js"
+ * @import Player from "../../../Data/Player.ts"
+ * @import Room from "../../../Data/Room.ts"
  */
 
 describe('MonologAction test', () => {

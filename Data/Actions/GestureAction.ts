@@ -1,5 +1,8 @@
 import Action from "../Action.ts";
-import Gesture from "../Gesture.js";
+import Gesture from "../Gesture.ts";
+import { addPages } from "../../Modules/helpers.ts";
+import { createPaginatedEmbed } from "../../Modules/discordUtils.js";
+import type { ButtonInteraction } from "discord.js";
 
 /**
  * Represents a gesture action.
@@ -23,4 +26,39 @@ export default class GestureAction extends Action {
 		this.getGame().narrationHandler.narrateGesture(this, newGesture, this.player);
 		this.getGame().logHandler.logGesture(gesture, target, this.player, this.forced);
 	}
+
+    /**
+     * Performs a gesture list action.
+     */
+    performGestureList(): void {
+        if (this.performed) return;
+		super.perform();
+        const gestures = this.getGame().entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => this.player === undefined || !this.player.hasStatus(status.id)));
+        const pages: Gesture[][] = [];
+        addPages(pages, gestures, 15);
+        let page = 0;
+        const embedAuthorName = `Gestures List`;
+        const embedAuthorIcon = this.getGame().guildContext.guild.members.me.avatarURL() || this.getGame().guildContext.guild.members.me.user.avatarURL();
+        const playerAppendString = this.player ? ` ${this.forced ? this.player.name : `you`} can currently perform` : ``;
+        const embedDescription = `These are all of the gestures${playerAppendString}.\n`
+            + `For more information on the gesture command, send \`${this.getGame().settings.commandPrefix}help gesture\`.`;
+        const fieldName = (entryIndex: number) => pages[page][entryIndex].id;
+        const fieldValue = (entryIndex: number) => pages[page][entryIndex].description;
+        let embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
+        const prevPageCallback = (interaction: ButtonInteraction) => {
+            if (page > 0)
+                page--;
+            embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
+            interaction.update({ embeds: [embed] });
+        };
+        const nextPageCallback = (interaction: ButtonInteraction) => {
+            if (page < pages.length - 1)
+                page++;
+            embed = createPaginatedEmbed(this.getGame(), page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
+            interaction.update({ embeds: [embed] });
+        };
+        let interactables = this.getGame().botContext.interactableManager.createPaginationInteractables(this, prevPageCallback, nextPageCallback);
+        const channel = this.forced ? this.getGame().guildContext.commandChannel : this.player.notificationChannel;
+        this.getGame().communicationHandler.sendToChannel(channel, undefined, [embed], interactables);
+    }
 }

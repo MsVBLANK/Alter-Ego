@@ -1,6 +1,7 @@
-import type InventoryItem from "./InventoryItem.js";
+import type InventoryItem from "./InventoryItem.ts";
 import type ItemInstance from "./ItemInstance.ts";
-import type RoomItem from "./RoomItem.js";
+import type Prefab from "./Prefab.ts";
+import type RoomItem from "./RoomItem.ts";
 
 /**
  * Represents a slot within an item that can contain other items.
@@ -111,16 +112,20 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 
 	/**
 	 * Returns true if the inventory slot's capacity is smaller than the given item.
+     * @param item - The item to check for.
+     * @param quantity - The quantity to multiply the item's size by. Defaults to 1.
 	 */
-	capacityIsSmallerThan(item: ItemInstance): boolean {
-		return item.prefab.size > this.capacity;
+	capacityIsSmallerThan(item: ItemInstance|Prefab, quantity = 1): boolean {
+		return (item.size * quantity) > this.capacity;
 	}
 
 	/**
 	 * Returns true if the inventory slot will be over capacity if it takes the given item.
+     * @param item - The item to check for.
+     * @param quantity - The quantity to multiply the item's size by. Defaults to 1.
 	 */
-	willBeOverFilledBy(item: ItemInstance): boolean {
-		return this.takenSpace + item.prefab.size > this.capacity;
+	willBeOverFilledBy(item: ItemInstance|Prefab, quantity = 1): boolean {
+		return this.takenSpace + (item.size * quantity) > this.capacity;
 	}
 
 	/**

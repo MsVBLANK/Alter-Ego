@@ -1,8 +1,8 @@
 import GestureAction from '../Data/Actions/GestureAction.ts';
-import { createPaginatedEmbed } from '../Modules/discordUtils.js';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -39,74 +39,32 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     let showList = false;
     if (args[0] === "list") {
         showList = true;
         args.splice(0, 1);
     }
-    if (!showList && args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!showList && !sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and a gesture. Usage:\n${usage(game.settings)}`);
+    if (!showList && sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify a gesture. Usage:\n${usage(game.settings)}`);
 
     const playerName = args[0] ?? '';
-    const player = game.entityFinder.getLivingPlayer(playerName);
+    let player = game.entityFinder.getLivingPlayer(playerName);
+    if (player) args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
 
     if (showList) {
-        const fields = game.entityFinder.getGestures().filter(gesture => gesture.disabledStatuses.every(status => player === undefined || !player.hasStatus(status.id)));
-        const pages = [];
-        let page = 0;
-
-        // Divide the fields into pages.
-        for (let i = 0, pageNo = 0; i < fields.length; i++) {
-            // Divide the menu into groups of 10.
-            if (i % 15 === 0) {
-                pages.push([]);
-                if (i !== 0) pageNo++;
-            }
-            pages[pageNo].push(fields[i]);
-        }
-
-        const embedAuthorName = `Gestures List`;
-        const embedAuthorIcon = game.guildContext.guild.members.me.avatarURL() || game.guildContext.guild.members.me.user.avatarURL();
-        const playerAppendString = player ? ` ${player.name} can currently perform` : ``;
-        const embedDescription = `These are all of the gestures${playerAppendString}.\nFor more information on the gesture command, send \`${game.settings.commandPrefix}help gesture\`.`;
-        const fieldName = (entryIndex) => pages[page][entryIndex].id;
-        const fieldValue = (entryIndex) => pages[page][entryIndex].description;
-        let embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-        game.guildContext.commandChannel.send({ embeds: [embed] }).then(msg => {
-            msg.react('⏪').then(() => {
-                msg.react('⏩');
-
-                const backwardsFilter = (reaction, user) => reaction.emoji.name === '⏪' && user.id === message.author.id;
-                const forwardsFilter = (reaction, user) => reaction.emoji.name === '⏩' && user.id === message.author.id;
-
-                const backwards = msg.createReactionCollector({ filter: backwardsFilter, time: 300000 });
-                const forwards = msg.createReactionCollector({ filter: forwardsFilter, time: 300000 });
-
-                backwards.on("collect", () => {
-                    const reaction = msg.reactions.cache.find(reaction => reaction.emoji.name === '⏪');
-                    if (reaction) reaction.users.cache.forEach(user => { if (user.id !== game.botContext.client.user.id) reaction.users.remove(user.id); });
-                    if (page === 0) return;
-                    page--;
-                    embed = embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-
-                forwards.on("collect", () => {
-                    const reaction = msg.reactions.cache.find(reaction => reaction.emoji.name === '⏩');
-                    if (reaction) reaction.users.cache.forEach(user => { if (user.id !== game.botContext.client.user.id) reaction.users.remove(user.id); });
-                    if (page === pages.length - 1) return;
-                    page++;
-                    embed = createPaginatedEmbed(game, page, pages, embedAuthorName, embedAuthorIcon, embedDescription, fieldName, fieldValue);
-                    msg.edit({ embeds: [embed] });
-                });
-            });
-        });
+        const action = new GestureAction(game, message, player, player?.location, true);
+        action.performGestureList();
     }
     else {
         if (player === undefined) return game.communicationHandler.reply(message, `Player "${playerName}" not found.`);
-        args.splice(0, 1);
         let input = args.join(" ").toLowerCase().replace(/\'/g, "");
 
         let gesture;

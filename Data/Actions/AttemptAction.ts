@@ -1,8 +1,8 @@
 import Action from "../Action.ts";
-import Die from "../Die.js";
-import Player from "../Player.js";
-import type Puzzle from "../Puzzle.js";
+import Die from "../Die.ts";
 import type ItemInstance from "../ItemInstance.ts";
+import Player from "../Player.ts";
+import type Puzzle from "../Puzzle.ts";
 
 /**
  * Represents an attempt action.
@@ -162,9 +162,13 @@ export default class AttemptAction extends Action {
 					this.#failPuzzle(puzzle);
 			}
 			else {
-				if (!puzzle.solutions.includes(password))
-					password = puzzle.outcome ? puzzle.outcome : "";
-				this.#solvePuzzle(puzzle, password, requiredItems, item);
+                if (password !== "" && !puzzle.solutions.includes(password))
+                    this.#failPuzzle(puzzle);
+                else {
+                    if (password === "")
+					    password = puzzle.outcome ? puzzle.outcome : "";
+				    this.#solvePuzzle(puzzle, password, requiredItems, item);
+                }
 			}
 		}
 		else if (puzzle.type === "weight") {

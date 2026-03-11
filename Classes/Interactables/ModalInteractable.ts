@@ -1,0 +1,49 @@
+import ActionDirectiveInteractable from "./ActionDirectiveInteractable.ts";
+import type ModalComponentInteractable from "./ModalComponentInteractable.ts";
+import type ActionDirective from "../ActionDirective.ts";
+import { ModalBuilder, TextDisplayBuilder } from "discord.js";
+import { InteractableType } from "../../Modules/enums.js";
+
+/**
+ * Represents a modal message component.
+ */
+export default class ModalInteractable extends ActionDirectiveInteractable {
+    /**
+     * The title of the modal. Max length is 45 characters.
+     */
+    readonly title: string;
+    /**
+     * The description of the modal. Supports markdown. Maximum number of characters is 4000.
+     */
+    readonly description: string;
+    /**
+     * The modal component created from this interactable.
+     */
+    readonly component: ModalBuilder;
+    /**
+     * The sub-components for this modal.
+     */
+    readonly subComponents: ModalComponentInteractable[];
+
+    /**
+     * @param actionDirective - The action directive of the interactable.
+     * @param title - The title of the modal. Max length is 45 characters.
+     * @param subComponents - The sub-components for this modal. Max length is 5.
+     * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components. Defaults to 1 (second-highest priority).
+     * @param description - The description of the modal. Supports markdown. Maximum number of characters is 4000. If this is given, reduces the number of allowed sub-components to 4.
+     */
+    constructor(actionDirective: ActionDirective, title: string, subComponents: ModalComponentInteractable[], priority = 1, description?: string) {
+        super(InteractableType.MODAL, actionDirective, priority);
+        this.title = title;
+        this.subComponents = [];
+        this.description = description;
+        const maxSubComponentsSize = this.description ? 4 : 5;
+        for (let i = 0; i < subComponents.length && i < maxSubComponentsSize; i++)
+            this.subComponents.push(subComponents[i]);
+        this.component = new ModalBuilder().setTitle(this.title).setCustomId(this.customId);
+        if (this.description) this.component.addTextDisplayComponents(new TextDisplayBuilder().setContent(this.description));
+        this.component.addLabelComponents(this.subComponents.map(subComponent => subComponent.component));
+    }
+
+    disable() {}
+}

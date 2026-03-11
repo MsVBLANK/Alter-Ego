@@ -1,10 +1,10 @@
-﻿import Dialog from "../Data/Dialog.js";
+﻿import Dialog from "../Data/Dialog.ts";
 import SayAction from "../Data/Actions/SayAction.ts";
 import { ChannelType } from "discord.js";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -17,7 +17,8 @@ export const config = {
         + `This command is only available to players with certain status effects. In most situations, you should send your message to the room channel directly.`,
     usableBy: "Player",
     aliases: ["say", "speak"],
-    requiresGame: true
+    requiresGame: true,
+    whitespaceSensitive: true
 };
 
 /**
@@ -47,6 +48,7 @@ export async function execute(game, message, command, args, player) {
     if (!input.startsWith("(")) {
         const dialog = new Dialog(game, message, player, player.location, input, false);
         const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(player.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
+        dialog.setMessage(dialogMessage);
         const sayAction = new SayAction(game, dialogMessage, player, player.location, false);
         sayAction.performSay(dialog);
         // The say command isn't deleted by the commandHandler because it has necessary data. Delete it now.

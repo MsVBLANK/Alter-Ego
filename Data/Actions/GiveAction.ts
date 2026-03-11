@@ -1,7 +1,7 @@
 import Action from "../Action.ts";
-import type InventoryItem from "../InventoryItem.js";
-import type EquipmentSlot from "../EquipmentSlot.js";
-import type Player from "../Player.js";
+import type EquipmentSlot from "../EquipmentSlot.ts";
+import type InventoryItem from "../InventoryItem.ts";
+import type Player from "../Player.ts";
 
 /**
  * Represents a give action.

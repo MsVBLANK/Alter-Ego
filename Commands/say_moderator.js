@@ -1,11 +1,12 @@
-﻿import Dialog from '../Data/Dialog.js';
+﻿import Dialog from '../Data/Dialog.ts';
 import NarrateAction from '../Data/Actions/NarrateAction.ts';
 import SayAction from '../Data/Actions/SayAction.ts';
 import { MessageDisplayType } from '../Modules/enums.js';
 import { ChannelType } from 'discord.js';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -18,7 +19,8 @@ export const config = {
         + 'any normal player\'s. The image URL set in the player\'s Discord ID will be used for the player\'s avatar.',
     usableBy: "Moderator",
     aliases: ["say"],
-    requiresGame: false
+    requiresGame: false,
+    whitespaceSensitive: true
 };
 
 /**
@@ -36,8 +38,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a channel or player and something to say. Usage:\n${usage(game.settings)}`);
 
@@ -49,6 +52,7 @@ export async function execute(game, message, command, args) {
         if (!player.isNPC) return game.communicationHandler.reply(message, `You cannot speak for a player that isn't an NPC.`);
         const dialog = new Dialog(game, message, player, player.location, content, false);
         const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(player.location.channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false));
+        dialog.setMessage(dialogMessage);
         const sayAction = new SayAction(game, dialogMessage, player, player.location, true);
         sayAction.performSay(dialog);
     }

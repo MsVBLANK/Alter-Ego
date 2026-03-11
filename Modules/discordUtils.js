@@ -1,11 +1,9 @@
-import ButtonInteractable from '../Classes/Interactables/ButtonInteractable.ts';
 import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.ts';
 import { InteractableType, MessageDisplayType } from './enums.js';
 import { capitalizeFirstLetter } from './helpers.ts';
 import {
     ActionRowBuilder,
     ButtonBuilder,
-    ButtonStyle,
     Embed,
     EmbedBuilder,
     TextDisplayBuilder,
@@ -17,15 +15,14 @@ import {
     MessageFlags,
     MediaGalleryBuilder,
     MediaGalleryItemBuilder,
-    StringSelectMenuBuilder,
-    StringSelectMenuOptionBuilder
+    StringSelectMenuBuilder
 } from 'discord.js';
 
 /**
  * @import Interactable from "../Classes/Interactables/Interactable.ts"
- * @import Game from "../Data/Game.js"
- * @import Player from "../Data/Player.js"
- * @import Room from "../Data/Room.js";
+ * @import Game from "../Data/Game.ts"
+ * @import Player from "../Data/Player.ts"
+ * @import Room from "../Data/Room.ts";
  * @typedef {import('discord.js').BitFieldResolvable<"SuppressEmbeds" | "SuppressNotifications" | "IsComponentsV2", MessageFlags.SuppressEmbeds | MessageFlags.SuppressNotifications | MessageFlags.IsComponentsV2>} Flags
  */
 
@@ -37,13 +34,15 @@ import {
  * @param {Player} [player] - The player the message is about. Optional.
  * @param {string[]} [files] - An array of file URLs to send. Optional.
  * @param {Interactable[]} [interactables] - An array of interactables. Optional.
+ * @param {(Embed|EmbedBuilder)[]} [embeds] - An array of embeds. Optional.
  */
-export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], interactables = []) {
+export function generateMessageDisplayCreateOptions(messageDisplayType, game, messageText, player, files = [], interactables = [], embeds = []) {
     return {
         content: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? messageText : '',
         components: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? generateActionRows(interactables) : createNarrateComponents(messageDisplayType, game, messageText, player, [], interactables),
         flags: generateFlags(messageDisplayType),
-        files: files
+        files: files,
+        embeds: messageDisplayType === MessageDisplayType.PLAIN_TEXT ? embeds : []
     };
 }
 
@@ -315,7 +314,7 @@ function generateActionRows(interactables) {
     let buttons = [];
     for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
         const interactable = buttonInteractables[i];
-        if (!includedInteractables.has(interactable.customId) && interactable instanceof ButtonInteractable) {
+        if (!includedInteractables.has(interactable.customId) && (interactable.component instanceof ButtonBuilder)) {
             buttons.push({ button: interactable.component, priority: interactable.priority });
             includedInteractables.add(interactable.customId);
         }
@@ -397,8 +396,8 @@ export function createCommandHelpComponents(title, description, aliasString, usa
  * @param {string} authorName - The title of the embed.
  * @param {string} authorIcon - The thumbnail URL to display for the embed.
  * @param {string} description - The description of the embed.
- * @param {(entryIndex: any) => string} getFieldName - A function to generate the name of each field in the embed.
- * @param {(entryIndex: any) => string} getFieldValue - A function to generate the value of each field in the embed.
+ * @param {(entryIndex: number) => string} getFieldName - A function to generate the name of each field in the embed.
+ * @param {(entryIndex: number) => string} getFieldValue - A function to generate the value of each field in the embed.
  */
 export function createPaginatedEmbed(game, page, pages, authorName, authorIcon, description, getFieldName, getFieldValue) {
 	let embed = new EmbedBuilder()

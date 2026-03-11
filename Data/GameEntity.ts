@@ -1,4 +1,4 @@
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
 
 /**

@@ -1,5 +1,5 @@
 import Action from "../Action.ts";
-import type Fixture from "../Fixture.js";
+import type Fixture from "../Fixture.ts";
 
 /**
  * Represents a deactivate action.

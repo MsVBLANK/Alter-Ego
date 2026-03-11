@@ -1,9 +1,9 @@
-﻿import Player from '../Data/Player.js';
+﻿import Game from '../Data/Game.ts';
+import Player from '../Data/Player.ts';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -60,8 +60,8 @@ export async function execute(game, message, command, args) {
     );
     player.setPronouns(player.originalPronouns, player.pronounString);
     player.setPronouns(player.pronouns, player.pronounString);
-    game.players.set(player.name, player);
-    game.livingPlayers.set(player.name, player);
+    game.players.set(Game.generateValidEntityName(player.name), player);
+    game.livingPlayers.set(Game.generateValidEntityName(player.name), player);
     member.roles.add(game.guildContext.playerRole);
 
     const channel = game.settings.debug ? game.guildContext.testingChannel : game.guildContext.generalChannel;

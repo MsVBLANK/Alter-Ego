@@ -1,11 +1,11 @@
 ﻿import InspectAction from '../Data/Actions/InspectAction.ts';
-import Fixture from "../Data/Fixture.js";
-import RoomItem from "../Data/RoomItem.js";
-import Puzzle from "../Data/Puzzle.js";
+import Fixture from "../Data/Fixture.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Puzzle from "../Data/Puzzle.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {

@@ -1,6 +1,6 @@
-import ModeratorCommand from '../../Classes/ModeratorCommand.js';
+import ModeratorCommand from '../../Classes/ModeratorCommand.ts';
 import { usage, execute, config } from '../../Commands/instantiate_moderator.js'
-import InstantiateAction from '../../Data/Actions/InstantiateAction.ts';
+import InstantiateInventoryItemAction from '../../Data/Actions/InstantiateInventoryItemAction.ts';
 import { clearQueue } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
 
@@ -21,10 +21,10 @@ describe('instantiate_moderator command', () => {
     test('valid item into player hand', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const prefab = game.entityFinder.getPrefab("mug of coffee");
-        /** @type {InstantiateAction} */
+        /** @type {InstantiateInventoryItemAction} */
         let context;
-        const original = InstantiateAction.prototype.performInstantiateInventoryItem;
-        const spy = vi.spyOn(InstantiateAction.prototype, "performInstantiateInventoryItem");
+        const original = InstantiateInventoryItemAction.prototype.performInstantiateInventoryItem;
+        const spy = vi.spyOn(InstantiateInventoryItemAction.prototype, "performInstantiateInventoryItem");
         spy.mockImplementation(function (...args) {
             context = this;
             return original.apply(this, args);

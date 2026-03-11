@@ -1,4 +1,4 @@
-import BotCommand from "../../Classes/BotCommand.js";
+import BotCommand from "../../Classes/BotCommand.ts";
 import { usage, execute, config } from '../../Commands/destroy_bot.js'
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";

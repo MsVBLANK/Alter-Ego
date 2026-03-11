@@ -1,20 +1,22 @@
 import { Collection, Guild, GuildMember, TextChannel, DMChannel } from 'discord.js';
 import { format } from 'pretty-format';
 import { Duration } from 'luxon';
-import Timer from './Timer.js';
-import Status from '../Data/Status.js';
-import Gesture from '../Data/Gesture.js';
-import Player from '../Data/Player.js';
-import Room from '../Data/Room.js';
-import BotContext from './BotContext.js';
-import Puzzle from '../Data/Puzzle.js';
-import Description from '../Data/Description.js';
-import Prefab from '../Data/Prefab.js';
-import Fixture from '../Data/Fixture.js';
+import Timer from './Timer.ts';
+import Status from '../Data/Status.ts';
+import Gesture from '../Data/Gesture.ts';
+import Player from '../Data/Player.ts';
+import Room from '../Data/Room.ts';
+import BotContext from './BotContext.ts';
+import Puzzle from '../Data/Puzzle.ts';
+import Description from '../Data/Description.ts';
+import Prefab from '../Data/Prefab.ts';
+import Fixture from '../Data/Fixture.ts';
 import InventorySlot from '../Data/InventorySlot.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
-import RoomItem from '../Data/RoomItem.js';
-import InventoryItem from '../Data/InventoryItem.js';
+import RoomItem from '../Data/RoomItem.ts';
+import InventoryItem from '../Data/InventoryItem.ts';
+import EquipmentSlot from '../Data/EquipmentSlot.ts';
+import Recipe from '../Data/Recipe.ts';
 import type { NewPlugin, Config, Refs } from 'pretty-format';
 
 interface AEConfig extends Config {
@@ -64,7 +66,7 @@ export class DMChannelPlugin implements AEPlugin<DMChannel> {
 	}
 
 	serialize(value: DMChannel) {
-		return `<DMChannel "${value.recipient.username || 'unknown'}">`;
+		return `<DMChannel "${value.recipient !== null ? value.recipient.username : 'unknown'}">`;
 	}
 }
 
@@ -449,6 +451,70 @@ export class PlayerPlugin implements AEPlugin<Player> {
 	}
 }
 
+export class EquipmentSlotPlugin implements AEPlugin<EquipmentSlot> {
+    /** Set of objects currently being processed by the EquipmentSlotPlugin to prevent recursion errors. */
+    processing: Set<EquipmentSlot>;
+
+    /** Depth after which to truncate objects. */
+    level: number;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 8) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    test(value: any): value is EquipmentSlot {
+        return value instanceof EquipmentSlot && !this.processing.has(value);
+    }
+
+    serialize(value: EquipmentSlot, config: AEConfig, indentation: string, depth: number, refs: Refs, printer: AEPrinter) {
+        if (depth > this.level) {
+            return `<EquipmentSlot ${value.id} (row ${value.row})>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
+export class RecipePlugin implements AEPlugin<Recipe> {
+    /** Set of objects currently being processed by the RecipePlugin to prevent recursion errors. */
+    processing: Set<Recipe>;
+
+    /** Depth after which to truncate objects. */
+    level: number;
+
+    /**
+     * @constructor
+     * @param {number} [level] Depth after which to truncate objects
+     */
+    constructor(level = 4) {
+        this.processing = new Set();
+        this.level = level;
+    }
+
+    test(value: any): value is Recipe {
+        return value instanceof Recipe && !this.processing.has(value);
+    }
+
+    serialize(value: Recipe, config: AEConfig, indentation: string, depth: number, refs: Refs, printer: AEPrinter) {
+        if (depth > this.level) {
+            return `<Recipe ${value.ingredientsStrings.join(",")} -> ${value.productsStrings.join(",")})>`;
+        } else {
+            this.processing.add(value);
+            let serialized = printer(value, config, indentation, depth, refs);
+            this.processing.delete(value);
+            return serialized;
+        }
+    }
+}
+
 export class CollectionPlugin implements AEPlugin<Collection<any, any>> {
 	/** Set of objects currently being processed by the CollectionPlugin to prevent recursion errors. */
 	processing: Set<Collection<any, any>>;
@@ -495,6 +561,8 @@ const plugins = [
 	new InventoryItemPlugin(),
 	new RoomPlugin(),
 	new PlayerPlugin(),
+	new EquipmentSlotPlugin(),
+	new RecipePlugin(),
 	new CollectionPlugin(),
 ];
 
@@ -529,26 +597,26 @@ const prettyObject = (object: any, level = 0) => {
 	return clone;
 };
 
-export class PolyPlugin implements AEPlugin<unknown> {
-	private find(value: unknown, plugins: readonly AEPlugin<any>[]): { plugin: AEPlugin<unknown>; value: unknown } | null {
-		for (const plugin of plugins) {
-			if (plugin.test(value)) {
-				return { plugin, value: value as any };
-			}
-		}
-		return null;
-	}
+const find = (value: unknown, plugins: readonly AEPlugin<any>[]): { plugin: AEPlugin<unknown>; value: unknown } | null => {
+	for (const plugin of plugins) {
+		if (plugin.test(value)) {
+			return { plugin, value: value as any };
+        }
+    }
+	return null;
+};
 
+export class PolyPlugin implements AEPlugin<unknown> {
 	test(value: unknown): value is unknown {
 		const processed = prettyObject(value);
-		const plugin = this.find(processed, plugins);
+		const plugin = find(processed, plugins);
 		if (plugin) return true;
 		return false;
 	}
 
 	serialize(value: any, config: AEConfig, indentation: string, depth: number, refs: Refs, printer: AEPrinter) {
 		const processed: typeof value = prettyObject(value);
-		const search = this.find(processed, plugins);
+		const search = find(processed, plugins);
 		if (search) return search.plugin.serialize(search.value, config, indentation, depth, refs, printer);
 		return '';
 	}
@@ -558,6 +626,9 @@ export default class PrettyPrinter {
 	/** Game filtering plugins for prettyString */
 	readonly gameFilterPlugins: readonly AEPlugin<unknown>[];
 
+    /** Game filtering plugins for miniString */
+    readonly miniFilterPlugins: readonly AEPlugin<unknown>[];
+
 	/** Properties truncated by prettyObject */
 	readonly truncateProperties: Set<string>;
 
@@ -566,6 +637,18 @@ export default class PrettyPrinter {
 
 	constructor() {
 		this.gameFilterPlugins = plugins;
+        this.miniFilterPlugins = [
+            new RoomPlugin(-Infinity),
+            new FixturePlugin(-Infinity),
+            new RoomItemPlugin(-Infinity),
+            new InventoryItemPlugin(-Infinity),
+            new PlayerPlugin(-Infinity),
+            new EquipmentSlotPlugin(-Infinity),
+            new PuzzlePlugin(-Infinity),
+            new InventorySlotPlugin(-Infinity),
+            new RecipePlugin(-Infinity),
+            new PrefabPlugin(-Infinity),
+        ];
 		this.truncateProperties = truncate;
 		this.prettyObject = prettyObject;
 	}
@@ -577,4 +660,12 @@ export default class PrettyPrinter {
 			indent: 4,
 		});
 	}
+
+    /** Returns a minified string representation of the given object with unneeded data filtered out. */
+    miniString(object: any) {
+        return format(object, {
+            plugins: [...this.miniFilterPlugins],
+            min: true,
+        });
+    }
 }

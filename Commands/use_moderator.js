@@ -1,7 +1,8 @@
 ﻿import UseAction from '../Data/Actions/UseAction.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
+/** @import Game from '../Data/Game.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -33,8 +34,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and an item in their inventory. Usage:\n${usage(game.settings)}`);
 
@@ -61,10 +63,12 @@ export async function execute(game, message, command, args) {
     }
 
     let target = game.entityFinder.getLivingPlayer(args[args.length - 1]);
-    if (args.length > 1 && args[args.length - 2].toLowerCase() === "on")
-        // If "on" precedes the target's name, remove both args.
-        args.splice(args.length - 2, 2);
-    else args.splice(args.length - 1, 1);
+    if (target) {
+        if (args.length > 1 && args[args.length - 2].toLowerCase() === "on")
+            // If "on" precedes the target's name, remove both args.
+            args.splice(args.length - 2, 2);
+        else args.splice(args.length - 1, 1);
+    }
     if (announcement !== "" && target === undefined) return game.communicationHandler.reply(message, `Player "${args[args.length - 1]}" not found.`);
     if (target !== undefined && player.name === target.name) return game.communicationHandler.reply(message, `${player.name} cannot use an item on ${player.originalPronouns.ref} with this command syntax.`);
     if (target !== undefined && player.location.id !== target.location.id) return game.communicationHandler.reply(message, `${player.name} and ${target.name} are not in the same room.`);
@@ -99,9 +103,11 @@ export async function execute(game, message, command, args) {
     if (item.uses === 0) return game.communicationHandler.reply(message, "That item has no uses left.");
     if (!item.prefab.usable) return game.communicationHandler.reply(message, "That item has no programmed use.");
     if (!item.usableOn(target)) return game.communicationHandler.reply(message, `${item.getIdentifier()} currently has no effect on ${target.name}.`);
+    // The item may be transformed, so preserve its identifier.
+    const itemIdentifier = item.getIdentifier();
     // Use the player's item.
     const action = new UseAction(game, message, player, player.location, true);
     action.performUse(item, target, announcement);
     const targetString = target.name !== player.name ? `on ${target.name} ` : ``;
-    game.communicationHandler.sendToCommandChannel(`Successfully used ${item.getIdentifier()} ${targetString}for ${player.name}.`);
+    game.communicationHandler.sendToCommandChannel(`Successfully used ${itemIdentifier} ${targetString}for ${player.name}.`);
 }

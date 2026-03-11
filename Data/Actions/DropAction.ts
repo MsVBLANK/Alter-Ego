@@ -1,12 +1,12 @@
-import Action from "../Action.ts";
-import AttemptAction from "./AttemptAction.ts";
-import InventoryItem from "../InventoryItem.js";
-import InventorySlot from "../InventorySlot.ts";
-import Puzzle from "../Puzzle.js";
-import RoomItem from "../RoomItem.js";
 import { getSortedItemsString } from "../../Modules/helpers.ts";
-import type EquipmentSlot from "../EquipmentSlot.js";
-import type Fixture from "../Fixture.js";
+import Action from "../Action.ts";
+import type EquipmentSlot from "../EquipmentSlot.ts";
+import type Fixture from "../Fixture.ts";
+import InventoryItem from "../InventoryItem.ts";
+import InventorySlot from "../InventorySlot.ts";
+import Puzzle from "../Puzzle.ts";
+import RoomItem from "../RoomItem.ts";
+import AttemptAction from "./AttemptAction.ts";
 
 /**
  * Represents a drop action.

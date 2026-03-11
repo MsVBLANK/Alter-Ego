@@ -1,9 +1,9 @@
 import Action from "../Action.ts";
+import type Exit from "../Exit.js";
+import type Room from "../Room.ts";
 import EnterAction from "./EnterAction.ts";
 import ExitAction from "./ExitAction.ts";
 import SolveAction from "./SolveAction.ts";
-import type Room from "../Room.js";
-import type Exit from "../Exit.js";
 
 /**
  * Represents a move action.
@@ -39,7 +39,7 @@ export default class MoveAction extends Action {
 		exitAction.performExit(currentRoom, exit, isMovingFreely);
 		// Enter the destination room.
 		const enterAction = new EnterAction(this.getGame(), this.message, this.player, this.location, this.forced, this.whisper);
-		enterAction.performEnter(destinationRoom, entrance, isMovingFreely);
+		enterAction.performEnter(destinationRoom, entrance, isMovingFreely, isRunning);
 		// Send log message.
 		this.getGame().logHandler.logMove(isRunning, destinationRoom, this.player, this.forced);
 	}

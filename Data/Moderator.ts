@@ -1,0 +1,82 @@
+import GameConstruct from "./GameConstruct.ts";
+import type { GuildMember } from "discord.js";
+import type Game from "./Game.ts";
+import type Player from "./Player.ts";
+
+/**
+ * Represents a moderator of the game.
+ *
+ * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/moderator.html
+ */
+export default class Moderator extends GameConstruct implements User {
+    /**
+     * The Discord ID of the moderator.
+     */
+    readonly id: string;
+    /**
+     * The Discord member object of the moderator.
+     */
+    readonly member: GuildMember;
+    /**
+     * The NPC the moderator is currently latched onto. If none is set, this is `null`.
+     */
+    #latchedNPC: Player | null;
+
+    constructor(id: string, member: GuildMember, game: Game) {
+        super(game);
+        this.id = id;
+        this.member = member;
+        this.#latchedNPC = null;
+    }
+
+    /**
+     * Gets the moderator's current member display name.
+     */
+    public get displayName() {
+        return this.member.displayName;
+    }
+
+    /**
+     * Gets the moderator's current member display avatar URL.
+     */
+    public get displayIcon() {
+        return this.member.displayAvatarURL();
+    }
+
+    /**
+     * Gets the NPC this moderator is currently latched to.
+     */
+    public getLatch(): Player {
+        return this.#latchedNPC;
+    }
+
+    /**
+     * Latches the moderator onto an NPC.
+     * @param npc - The NPC to latch onto.
+     */
+    public setLatch(npc: Player): void {
+        this.#latchedNPC = npc;
+    }
+
+    /**
+     * Clears the moderator's latch.
+     */
+    public clearLatch(): void {
+        this.#latchedNPC = null;
+    }
+
+    /**
+     * Returns true if the given message was sent in a room or whisper channel that their current latched NPC is in.
+     * @param message
+     */
+    public sentMessageInLatchChannel(message: UserMessage) {
+        if (this.getLatch() === null) return false;
+        if (this.getGame().communicationHandler.wasSentInRoomChannel(message) && message.channel.id === this.getLatch().location.channel.id) return true;
+        if (this.getGame().communicationHandler.wasSentInWhisperChannel(message)) {
+            for (const whisper of this.getGame().whispers.values()) {
+                if (whisper.players.has(this.getLatch().name) && whisper.channel.id === message.channel.id) return true;
+            }
+        }
+        return false;
+    }
+}

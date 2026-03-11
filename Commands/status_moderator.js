@@ -1,10 +1,11 @@
 import CureAction from '../Data/Actions/CureAction.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';
 
+/** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
-/** @import Game from '../Data/Game.js' */
-/** @import Player from '../Data/Player.js' */
-/** @import Status from "../Data/Status.js" */
+/** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
+/** @import Status from "../Data/Status.ts" */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -47,8 +48,9 @@ export function usage(settings) {
  * @param {UserMessage} message - The message in which the command was issued.
  * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Moderator} moderator - The moderator who issued the command.
  */
-export async function execute(game, message, command, args) {
+export async function execute(game, message, command, args, moderator) {
     if (command === "status") {
         if (args[0] === "add" || args[0] === "inflict") command = "inflict";
         else if (args[0] === "remove" || args[0] === "cure") command = "cure";

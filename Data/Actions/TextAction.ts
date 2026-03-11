@@ -1,6 +1,6 @@
 import { MessageDisplayType } from "../../Modules/enums.js";
 import Action from "../Action.ts";
-import type Player from "../Player.js";
+import type Player from "../Player.ts";
 
 /**
  * Represents a text action.

@@ -1,18 +1,19 @@
 import { Collection } from "discord.js";
-import Fixture from "../Data/Fixture.js";
-import Game from "../Data/Game.js";
-import Gesture from "../Data/Gesture.js";
-import InventoryItem from "../Data/InventoryItem.js";
-import Player from "../Data/Player.js";
-import Puzzle from "../Data/Puzzle.js";
-import Room from "../Data/Room.js";
-import RoomItem from "../Data/RoomItem.js";
-import Status from "../Data/Status.js";
-import Whisper from "../Data/Whisper.js";
+import Fixture from "../Data/Fixture.ts";
+import Game from "../Data/Game.ts";
+import Gesture from "../Data/Gesture.ts";
+import InventoryItem from "../Data/InventoryItem.ts";
+import ItemContainer from "../Data/ItemContainer.ts";
+import Player from "../Data/Player.ts";
+import Puzzle from "../Data/Puzzle.ts";
+import Room from "../Data/Room.ts";
+import RoomItem from "../Data/RoomItem.ts";
+import Status from "../Data/Status.ts";
+import Whisper from "../Data/Whisper.ts";
 import * as matchers from '../Modules/matchers.js';
 
 /** @import GameEntity from "../Data/GameEntity.ts"; */
-/** @import EquipmentSlot from "../Data/EquipmentSlot.js"; */
+/** @import EquipmentSlot from "../Data/EquipmentSlot.ts"; */
 
 /**
  * @class GameEntityFinder
@@ -322,6 +323,16 @@ export default class GameEntityFinder {
 	getWhisperByChannelId(channelId) {
 		if (!channelId) return;
 		return this.game.whispers.find(whisper => whisper.channel.id === channelId);
+	}
+
+    /**
+	 * Gets a moderator by their Discord user ID.
+	 * @param {string} id - The ID to search for.
+	 * @returns The moderator with the specified user ID. If no such moderator exists, returns undefined.
+	 */
+	getModeratorById(id) {
+		if (!id) return;
+        return this.game.moderators.get(id);
 	}
 
 	/**
@@ -654,8 +665,11 @@ export default class GameEntityFinder {
 				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
 			else {
 				entity = this.getFixture(entityName, player.location.id);
-				const containerType = container instanceof RoomItem ? "RoomItem" : container instanceof Puzzle ? "Puzzle" : container instanceof Fixture ? "Fixture" : undefined;
-				const containerName = container instanceof RoomItem ? container.getIdentifier() : container instanceof Puzzle || container instanceof Fixture ? container.name : undefined;
+                let itemContainer = container;
+                if (container instanceof Fixture && container.childPuzzle !== null && container.childPuzzle.isItemContainer())
+                    itemContainer = container.childPuzzle;
+                const containerType = itemContainer instanceof ItemContainer ? itemContainer.getContainerType() : undefined;
+                const containerName = itemContainer instanceof ItemContainer ? itemContainer.getContainerIdentifier() : undefined;
 				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, false, 'combined')[0];
 			}
 			if (entity) inspectableEntities.push(entity);

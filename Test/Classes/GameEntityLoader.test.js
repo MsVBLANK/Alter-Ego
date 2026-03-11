@@ -1,14 +1,14 @@
-import Description from "../../Data/Description.js";
-import EquipmentSlot from "../../Data/EquipmentSlot.js";
-import Event from "../../Data/Event.js";
-import Fixture from "../../Data/Fixture.js";
-import Game from "../../Data/Game.js";
-import InventoryItem from "../../Data/InventoryItem.js";
-import Player from "../../Data/Player.js";
-import Prefab from "../../Data/Prefab.js";
-import Puzzle from "../../Data/Puzzle.js";
-import Room from "../../Data/Room.js";
-import RoomItem from "../../Data/RoomItem.js";
+import Description from "../../Data/Description.ts";
+import EquipmentSlot from "../../Data/EquipmentSlot.ts";
+import Event from "../../Data/Event.ts";
+import Fixture from "../../Data/Fixture.ts";
+import Game from "../../Data/Game.ts";
+import InventoryItem from "../../Data/InventoryItem.ts";
+import Player from "../../Data/Player.ts";
+import Prefab from "../../Data/Prefab.ts";
+import Puzzle from "../../Data/Puzzle.ts";
+import Room from "../../Data/Room.ts";
+import RoomItem from "../../Data/RoomItem.ts";
 import sheets from "../__mocks__/libs/sheets.js";
 
 describe('GameEntityLoader test', () => {

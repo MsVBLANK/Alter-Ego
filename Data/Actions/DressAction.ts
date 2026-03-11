@@ -1,12 +1,12 @@
+import { getSortedItemsString } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
-import AttemptAction from "./AttemptAction.ts";
+import type EquipmentSlot from "../EquipmentSlot.ts";
+import type Fixture from "../Fixture.ts";
+import type InventoryItem from "../InventoryItem.ts";
 import InventorySlot from "../InventorySlot.ts";
-import Puzzle from "../Puzzle.js";
-import RoomItem from "../RoomItem.js";
-import {getSortedItemsString} from "../../Modules/helpers.ts";
-import type EquipmentSlot from "../EquipmentSlot.js";
-import type Fixture from "../Fixture.js";
-import type InventoryItem from "../InventoryItem.js";
+import Puzzle from "../Puzzle.ts";
+import RoomItem from "../RoomItem.ts";
+import AttemptAction from "./AttemptAction.ts";
 
 /**
  * Represents a dress action.

@@ -1,5 +1,5 @@
-import Status from "../../Data/Status.js";
-import type Player from "../../Data/Player.js";
+import Status from "../../Data/Status.ts";
+import type Player from "../../Data/Player.ts";
 import {Duration} from "luxon";
 
 export function createDisableStatus(player: Player, disabledCommand: string): Status {

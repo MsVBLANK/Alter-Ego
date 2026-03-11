@@ -1,9 +1,9 @@
-import GameConstruct from "./GameConstruct.ts";
 import { randomUUID } from "crypto";
-import type Player from "./Player.js";
-import type Room from "./Room.js";
-import type Whisper from "./Whisper.js";
-import type Game from "./Game.js";
+import type Game from "./Game.ts";
+import GameConstruct from "./GameConstruct.ts";
+import type Player from "./Player.ts";
+import type Room from "./Room.ts";
+import type Whisper from "./Whisper.ts";
 
 /**
  * Represents an action taken by a player.
@@ -35,6 +35,10 @@ export default abstract class Action extends GameConstruct {
 	 * The whisper where this action is being performed, if applicable.
 	 */
     readonly whisper: Whisper;
+    /**
+     * The user who created the action.
+     */
+    readonly user: User;
 	/**
 	 * Whether the action has already been performed. If this is true, the action cannot be performed again.
 	 */
@@ -51,8 +55,9 @@ export default abstract class Action extends GameConstruct {
 	 * @param location - The location where this action is being performed.
 	 * @param forced - Whether or not the action was performed by someone other than the player themselves.
 	 * @param whisper - The whisper where this action is being performed, if applicable.
+     * @param user - The user who created the action, if applicable.
 	 */
-	constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
+	constructor(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper, user?: User) {
 		super(game);
 		this.message = message;
 		this.player = player;
@@ -62,6 +67,8 @@ export default abstract class Action extends GameConstruct {
         this.performed = false;
 		this.id = randomUUID();
 		this.mirrors = new Set();
+        if (forced && message) this.user = game.entityFinder.getModeratorById(message.author.id);
+        else if (!forced) this.user = player;
 	}
 
 	/**

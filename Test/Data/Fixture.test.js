@@ -311,5 +311,31 @@ describe('Fixture test', () => {
                 expect(pan2.inventory.first().items[0].uses).toBe(2)
             }
         });
+
+        test('Full flow for BURNER 4 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('BURNER 4', 'video-room');
+            fixture.activate()
+            for (let i = 0; i < 5000; i++)
+                vi.advanceTimersByTime(1);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1).toStrictEqual(pan2)
+                expect(pan1.prefabId).toBe("DIRTY PAN")
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK")
+                expect(pan1.inventory.first().items[0].quantity).toBe(1)
+                expect(pan1.inventory.first().items[0].uses).toBe(2)
+                expect(pan2.prefabId).toBe("DIRTY PAN")
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED PORK CHOP")
+                expect(pan2.inventory.first().items[0].quantity).toBe(1)
+                expect(pan2.inventory.first().items[0].uses).toBe(2)
+            }
+        });
     });
 });

@@ -14,7 +14,7 @@ import { default as autoUpdate } from './Modules/updateHandler.js';
 import { editSpectatorMessage, deleteSpectatorMessage, processIncomingMessage } from './Modules/messageHandler.js';
 import { executeCommand } from './Modules/commandHandler.ts';
 
-import { Client, Collection, ChannelType, Events, GatewayIntentBits, Partials, TextChannel, Role } from 'discord.js';
+import { Client, Collection, ChannelType, Events, GatewayIntentBits, Partials, TextChannel, Role, PermissionFlagsBits } from 'discord.js';
 import { readdir, readFileSync } from 'fs';
 import { loadDotEnv } from "./Modules/envLoader.ts";
 import { loadGameSettings, loadPlayerDefaults } from "./Modules/settingsLoader.ts";
@@ -256,6 +256,12 @@ client.on('clientReady', async () => {
                 loadCommand.execute(game, undefined, "lar", []);
         }, 0);
     }
+    setTimeout(async () => {
+        const everyone = guildContext.guild.roles.everyone;
+        for (const room of game.rooms.values())
+            if (room.channel.permissionsFor(everyone).has(PermissionFlagsBits.ViewChannel) !== game.settings.viewAllRoomChannels)
+                await room.channel.permissionOverwrites.create(everyone, { "ViewChannel": game.settings.viewAllRoomChannels });
+    }, 10000);
     initialized = true;
 });
 

@@ -1,4 +1,4 @@
-import type { ActivitiesOptions, ActivityType, GuildMember, Message, OmitPartialGroupDMChannel, Snowflake } from "discord.js";
+import type { ActivitiesOptions, ActivityType, ButtonInteraction, GuildMember, Message, ModalSubmitInteraction, OmitPartialGroupDMChannel, Snowflake, StringSelectMenuInteraction } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
 import type CollatedItem from "./Data/CollatedItem.ts";
 import type Event from "./Data/Event.ts";
@@ -74,6 +74,10 @@ declare global {
      * Represents a game entity that can be used as a target for gestures.
      */
     type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
+    /**
+     * Represents an interaction that the bot can accept.
+     */
+    type BotInteraction = ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction;
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.
@@ -103,6 +107,7 @@ declare global {
 	 * @property {string} usableBy - The role that can use the command.
 	 * @property {string[]} aliases - Alternative names for the command.
 	 * @property {boolean} requiresGame - Indicates whether the command requires an ongoing game to be executed.
+	 * @property {boolean} [whitespaceSensitive] - Whether or not the command is sensitive to whitespace, and should not have argument whitespace altered.
 	 */
 	interface CommandConfig {
 		name: string;
@@ -111,6 +116,7 @@ declare global {
 		usableBy: string;
 		aliases: string[];
 		requiresGame: boolean;
+        whitespaceSensitive?: boolean;
 	}
 
 	/**
@@ -118,24 +124,24 @@ declare global {
 	 * @property {CommandConfig} config - The specific configuration of the command.
 	 * @property {(settings: GameSettings) => string} usage - Examples of the command's usage.
 	 */
-	interface Command {
+	interface ICommand {
 		config: CommandConfig;
 		usage: (settings: GameSettings) => string;
 	}
 
-	interface IBotCommand extends Command {
+	interface IBotCommand extends ICommand {
 		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
-	interface IModeratorCommand extends Command {
+	interface IModeratorCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 
-	interface IPlayerCommand extends Command {
+	interface IPlayerCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[], player: Player) => Promise<void>;
 	}
 
-	interface IEligibleCommand extends Command {
+	interface IEligibleCommand extends ICommand {
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 

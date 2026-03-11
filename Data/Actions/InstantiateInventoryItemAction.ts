@@ -4,36 +4,15 @@ import InventoryItem from "../InventoryItem.ts";
 import type InventorySlot from "../InventorySlot.ts";
 import ItemInstance from "../ItemInstance.ts";
 import Prefab from "../Prefab.ts";
-import type RoomItem from "../RoomItem.ts";
 import { parseProceduralSelections } from "../../Modules/stringDataExtractor.ts";
-import { instantiateInventoryItem, instantiateRoomItem } from "../../Modules/itemManager.js";
+import { instantiateInventoryItem } from "../../Modules/itemManager.js";
 
 /**
- * Represents an instantiate action.
+ * Represents an instantiate inventory item action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/instantiate-action.html
+ * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/instantiate-inventory-item-action.html
  */
-export default class InstantiateAction extends Action {
-	/**
-	 * Performs an instantiate action for a room item.
-     *
-	 * @param prefab - The prefab to instantiate as an item.
-	 * @param container - The container to instantiate the item in.
-	 * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
-	 * @param quantity - The quantity to instantiate.
-	 * @param proceduralSelections - The manually selected procedural possibilities.
-	 * @param uses - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
-     * @returns The instantiated {@link RoomItem| room item}.
-	 */
-	performInstantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses: number = prefab.uses): RoomItem {
-		if (this.performed) return;
-		super.perform();
-		const createdItem = instantiateRoomItem(prefab, this.location, container, inventorySlotId, quantity, uses, proceduralSelections, this.player);
-		const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
-		this.getGame().logHandler.logInstantiateRoomItem(createdItem, quantity, container, inventorySlot);
-		return createdItem;
-	}
-
+export default class InstantiateInventoryItemAction extends Action {
 	/**
 	 * Performs an instantiate action for an inventory item.
      *
@@ -71,7 +50,7 @@ export default class InstantiateAction extends Action {
      * @param usesString - The number of uses to instantiate the prefab with.
      * @param proceduralSelectionsString - The procedural selections to instantiate the prefab with.
      */
-    parseInstantiateInventoryItemInteractionArgs(args: string[], prefabId: string, quantityString: string, usesString: string, proceduralSelectionsString: string): [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number] {
+    parseInteractionArgs(args: string[], prefabId: string, quantityString: string, usesString: string, proceduralSelectionsString: string): [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number] {
         const equipmentSlotId = args[1];
         const equipmentSlot = this.player.getEquipmentSlot(equipmentSlotId);
         const containerIdentifier = args[2];
@@ -89,7 +68,7 @@ export default class InstantiateAction extends Action {
      * 
      * @param args - The args after being parsed.
      */
-    validateInstantiateInventoryItemInteractionArgs(args: [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number]): [Prefab, string, InventoryItem, string, number, Map<string, string>, number] {
+    validateInteractionArgs(args: [Prefab, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>, number, string, number]): [Prefab, string, InventoryItem, string, number, Map<string, string>, number] {
         if (args.length !== 7) throw new Error("Insufficient arguments.");
         if (!args[0] || !(args[0] instanceof Prefab)) throw new Error("Invalid prefab.");
         const prefab = args[0];

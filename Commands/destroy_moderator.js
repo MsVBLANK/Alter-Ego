@@ -1,7 +1,8 @@
 import Fixture from "../Data/Fixture.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import Puzzle from "../Data/Puzzle.ts";
-import DestroyAction from "../Data/Actions/DestroyAction.ts";
+import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
+import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
 
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -191,7 +192,7 @@ export async function execute(game, message, command, args, moderator) {
             if (parsedInput !== "") return game.communicationHandler.reply(message, `Couldn't find "${parsedInput}" at ${room.id}`);
             const quantity = containerItems.length;
             for (let i = 0; i < containerItems.length; i++) {
-                const destroyAction = new DestroyAction(game, message, undefined, room, true);
+                const destroyAction = new DestroyRoomItemAction(game, message, undefined, room, true);
                 destroyAction.performDestroyRoomItem(containerItems[i], containerItems[i].quantity, true);
             }
             game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${quantity} item${quantity !== 1 ? `s` : ``} ${preposition} ${containerName}.`);
@@ -208,7 +209,7 @@ export async function execute(game, message, command, args, moderator) {
             }
             if (item === null) return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" ${preposition} ${containerName}.`);
 
-            const destroyAction = new DestroyAction(game, message, undefined, room, true);
+            const destroyAction = new DestroyRoomItemAction(game, message, undefined, room, true);
             destroyAction.performDestroyRoomItem(item, item.quantity, true);
             game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} ${preposition} ${containerName}.`);
         }
@@ -293,7 +294,7 @@ export async function execute(game, message, command, args, moderator) {
             if (destroyAll) {
                 const quantity = containerItems.length;
                 for (let i = 0; i < containerItems.length; i++) {
-                    const destroyAction = new DestroyAction(game, message, player, player.location, true);
+                    const destroyAction = new DestroyInventoryItemAction(game, message, player, player.location, true);
                     destroyAction.performDestroyInventoryItem(containerItems[i], containerItems[i].quantity, true, false);
                 }
                 game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${quantity} items ${preposition} ${containerName}.`);
@@ -332,7 +333,7 @@ export async function execute(game, message, command, args, moderator) {
                 }
             }
             if (item !== null && equipmentSlotId !== "") {
-                const destroyAction = new DestroyAction(game, message, player, player.location, true);
+                const destroyAction = new DestroyInventoryItemAction(game, message, player, player.location, true);
                 destroyAction.performDestroyInventoryItem(item, item.quantity, true, true);
                 game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} equipped to ${player.name}'s ${equipmentSlotId}.`);
                 return;
@@ -343,7 +344,7 @@ export async function execute(game, message, command, args, moderator) {
             if (containerName === "") containerName = `${item.slot} of ${item.container.identifier} in ${player.name}'s inventory`;
             if (item.container.prefab.preposition) preposition = item.container.prefab.preposition;
 
-            const destroyAction = new DestroyAction(game, message, player, player.location, true);
+            const destroyAction = new DestroyInventoryItemAction(game, message, player, player.location, true);
             destroyAction.performDestroyInventoryItem(item, item.quantity, true);
             game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} ${preposition} ${containerName}.`);
         }

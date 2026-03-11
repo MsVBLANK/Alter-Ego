@@ -1,5 +1,5 @@
 ﻿import { Collection } from "discord.js";
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
 import { replaceInventoryItem } from "../Modules/itemManager.js";
 import Description from "./Description.ts";
 import type EquipmentSlot from "./EquipmentSlot.ts";
@@ -98,11 +98,7 @@ export default class InventoryItem extends ItemInstance {
             const container = this.container !== null ? this.container : this.player;
             const slot = this.container !== null ? this.slot :
                 this.equipmentSlot === "RIGHT HAND" || this.equipmentSlot === "LEFT HAND" ? "hands" : "equipment";
-            if (nextStage && !this.prefab.discreet)
-                container.removeItemFromDescription(this, slot);
             replaceInventoryItem(this, nextStage);
-            if (nextStage && !nextStage.discreet)
-                container.addItemToDescription(this, slot);
         }
     }
 
@@ -213,12 +209,20 @@ export default class InventoryItem extends ItemInstance {
     }
 
     /**
-     * Returns the args for the InstantiateInventoryItem ActionDirective for this equipment slot.
+     * Returns the args for the InstantiateInventoryItem ActionDirective for this inventory item.
      * @param inventorySlot - The inventory slot to instantiate the inventory item into.
      * @returns ["II", equipmentSlot, identifier, inventorySlot.id]
      */
     getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string] {
         return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined];
+    }
+
+    /**
+     * Returns the args for the DestroyInventoryItem ActionDirective for this inventory item.
+     * @returns ["II", identifier, containerName, equipmentSlot]
+     */
+    getDestroyActionDirectiveArgs(): [string, string, string, string] {
+        return ["II", this.getIdentifier(), this.containerName, this.equipmentSlot];
     }
 
     /**

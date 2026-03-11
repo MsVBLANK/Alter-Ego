@@ -1,5 +1,5 @@
 ﻿import type { Duration } from "luxon";
-import type Timer from "../Classes/Timer.js";
+import type Timer from "../Classes/Timer.ts";
 import Description from "./Description.ts";
 import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";

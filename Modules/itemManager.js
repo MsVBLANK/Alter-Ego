@@ -59,8 +59,6 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
 
     if (container instanceof RoomItem)
         container.insertItem(createdItem, inventorySlotId);
-    // Update the container's description.
-    container.addItemToDescription(createdItem, inventorySlotId, quantity);
 
     insertRoomItems(location, [createdItem]);
     return createdItem;
@@ -101,7 +99,6 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     const equipmentSlot = player.inventory.get(equipmentSlotId);
     if (container !== null) {
         container.insertItem(createdItem, inventorySlotId);
-        container.addItemToDescription(createdItem, inventorySlotId, quantity);
         insertInventoryItems(player, [createdItem], equipmentSlot);
     }
     // Item is being equipped.
@@ -149,7 +146,6 @@ export function destroyRoomItem(item, quantity, getChildren) {
     item.quantity -= quantity;
     const container = item.container;
 
-    container.removeItemFromDescription(item, item.slot, quantity);
     if (container instanceof RoomItem)
         container.removeItem(item, item.slot, quantity);
 
@@ -184,7 +180,6 @@ export function destroyInventoryItem(item, quantity, getChildren) {
         item.quantity -= quantity;
         const container = item.container;
         container.removeItem(item, item.slot, quantity);
-        container.removeItemFromDescription(item, item.slot, quantity);
     }
 }
 
@@ -346,7 +341,6 @@ export function removeStashedItem(item, container, inventorySlot, equipmentSlot)
 
     // Update container.
     container.removeItem(item, inventorySlot.id, 1);
-    container.removeItemFromDescription(item, inventorySlot.id);
 
     // Remove the item from its equipment slot.
     if (item.quantity === 0)

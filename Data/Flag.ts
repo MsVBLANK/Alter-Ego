@@ -1,4 +1,4 @@
-import { parseAndExecuteBotCommands } from "../Modules/commandHandler.js";
+import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
 import { default as evaluateScript } from "../Modules/scriptParser.js";
 import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";

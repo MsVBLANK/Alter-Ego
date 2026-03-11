@@ -17,7 +17,8 @@ export const config = {
 		+ `This will be treated as a narration, but it will be clearly indicated as having been written by you.`,
 	usableBy: "Moderator",
 	aliases: ["narrate", "n"],
-	requiresGame: true
+	requiresGame: true,
+	whitespaceSensitive: true
 };
 
 /**

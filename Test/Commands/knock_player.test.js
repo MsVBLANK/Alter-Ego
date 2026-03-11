@@ -1,4 +1,4 @@
-import PlayerCommand from '../../Classes/PlayerCommand.js';
+import PlayerCommand from '../../Classes/PlayerCommand.ts';
 import { usage, execute, config } from '../../Commands/knock_player.js'
 import KnockAction from '../../Data/Actions/KnockAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';

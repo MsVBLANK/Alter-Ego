@@ -1345,7 +1345,7 @@ export default class Player extends RecipeProcessor implements User {
         );
         this.updateCarryWeight();
 
-        return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance : null };
+        return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance[0] : null };
     }
 
     /**
@@ -1359,7 +1359,7 @@ export default class Player extends RecipeProcessor implements User {
      * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
      * @returns The instantiated inventory item.
      */
-    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = ""): InventoryItem {
+    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = ""): InventoryItem[] {
         const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
         const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, this, this.location, true);
         return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);

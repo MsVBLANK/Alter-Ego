@@ -52,21 +52,20 @@ export default abstract class RecipeProcessor extends ItemContainer {
 		for (const product of recipe.products) {
 			if (recipe.isIngredientAndProduct(product))
 				continue;
-			const quantity = product.quantityIsConstant ? product.quantity : product.quantity * satisfactoryProcessCount;
+			const quantity = product.calculateQuantity(satisfactoryProcessCount);
 			const uses = product.calculateUses(satisfactoryProcessCount, variableValues);
-			if (product.prefab.inventory.size > 0) {
-				for (let i = 0; i < quantity; i++) {
-					const instantiatedProduct = this.instantiate(product.prefab, 1, uses, new Map());
-					for (const childProduct of product.containedItems) {
-						const childQuantity = childProduct.quantityIsConstant ? childProduct.quantity : childProduct.quantity * satisfactoryProcessCount;
+			const instantiatedProducts = this.instantiate(product.prefab, quantity, uses, new Map());
+            if (product.prefab.inventory.size > 0) {
+                for (const instantiatedProduct of instantiatedProducts) {
+                    for (const childProduct of product.containedItems) {
+                        const childQuantity = childProduct.calculateQuantity(satisfactoryProcessCount);
 						const childUses = childProduct.calculateUses(satisfactoryProcessCount, variableValues);
 						this.instantiate(childProduct.prefab, childQuantity, childUses, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
 					}
-				}
+                }
 			}
-			else this.instantiate(product.prefab, quantity, uses, new Map());
 		}
     }
 
-    protected abstract instantiate(prefab: Prefab, quantity: number, uses: number, proceduralSelections: Map<string, string>, container?: RoomItemContainer|InventoryItem, inventorySlotId?: string): RoomItem | InventoryItem;
+    protected abstract instantiate(prefab: Prefab, quantity: number, uses: number, proceduralSelections: Map<string, string>, container?: RoomItemContainer|InventoryItem, inventorySlotId?: string): RoomItem[] | InventoryItem[];
 }

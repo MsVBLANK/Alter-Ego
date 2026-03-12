@@ -179,7 +179,7 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 					// Otherwise, split one item off of this stack.
 					item.quantity -= 1;
 					// To prevent it from being collated by the itemManager, it's necessary to instantiate it with a unique number of uses.
-					const split = this.instantiate(item.prefab, 1, NaN);
+					const split = this.instantiate(item.prefab, 1, NaN)[0];
 					// Manually set the newly split item's uses to be equal to the current stack's uses.
 					split.uses = item.uses;
 					this.items.push(split);
@@ -284,14 +284,14 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	 * @param quantity - The quantity to instantiate it with.
 	 * @param uses - The number of uses to instantiate it with. Defaults to the prefab's uses.
 	 */
-	instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses): T {
+	instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses): T[] {
         if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem) {
             const instantiateAction = new InstantiateRoomItemAction(prefab.getGame(), undefined, this.player, this.location, true);
-            return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T;
+            return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T[];
         }
         else if (this.container instanceof InventoryItem || this.container === null) {
             const instantiateAction = new InstantiateInventoryItemAction(prefab.getGame(), undefined, this.player, this.location, true);
-            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T;
+            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T[];
         }
 	}
 }

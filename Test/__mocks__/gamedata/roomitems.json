@@ -1844,5 +1844,13 @@
   [ "FRYING PAN", "FRYING PAN 6", "video-room", "TRUE", "Fixture: BURNER 4", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
   [ "FROZEN STEAK", "", "video-room", "TRUE", "RoomItem: FRYING PAN 6/PAN", "1", "2", "<desc><s>It's a frozen steak.</s> <s>It looks like it'd be pretty thick and juicy if you cooked it well.</s></desc>" ],
   [ "FRYING PAN", "FRYING PAN 7", "video-room", "TRUE", "Fixture: BURNER 4", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
-  [ "FROZEN PORK CHOP", "", "video-room", "TRUE", "RoomItem: FRYING PAN 7/PAN", "1", "2", "<desc><s>It's a frozen pork chop.</s> <s>It could probably use some seasoning after you cook it.</s></desc>" ]
+  [ "FROZEN PORK CHOP", "", "video-room", "TRUE", "RoomItem: FRYING PAN 7/PAN", "1", "2", "<desc><s>It's a frozen pork chop.</s> <s>It could probably use some seasoning after you cook it.</s></desc>" ],
+  [ "FRYING PAN", "FRYING PAN 8", "video-room", "TRUE", "Fixture: BURNER 5", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
+  [ "FROZEN STEAK", "", "video-room", "TRUE", "RoomItem: FRYING PAN 8/PAN", "2", "2", "<desc><s>It's a frozen steak.</s> <s>It looks like it'd be pretty thick and juicy if you cooked it well.</s></desc>" ],
+  [ "FRYING PAN", "FRYING PAN 9", "video-room", "TRUE", "Fixture: BURNER 5", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
+  [ "FROZEN STEAK", "", "video-room", "TRUE", "RoomItem: FRYING PAN 9/PAN", "1", "2", "<desc><s>It's a frozen steak.</s> <s>It looks like it'd be pretty thick and juicy if you cooked it well.</s></desc>" ],
+  [ "FRYING PAN", "FRYING PAN 10", "video-room", "TRUE", "Fixture: BURNER 6", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
+  [ "FROZEN CHICKEN BREAST", "", "video-room", "TRUE", "RoomItem: FRYING PAN 10/PAN", "2", "2", "<desc><s>It's a frozen chicken breast.</s> <s>You'd better cook this thoroughly, or you might get sick.</s></desc>" ],
+  [ "FRYING PAN", "FRYING PAN 11", "video-room", "TRUE", "Fixture: BURNER 6", "1", "", "<desc><s>It looks like a frying pan that you could find anywhere.</s> <s>You could probably knock someone unconscious with this.</s></desc>" ],
+  [ "FROZEN CHICKEN BREAST", "", "video-room", "TRUE", "RoomItem: FRYING PAN 11/PAN", "1", "2", "<desc><s>It's a frozen chicken breast.</s> <s>You'd better cook this thoroughly, or you might get sick.</s></desc>" ]
 ]

@@ -272,17 +272,17 @@ describe('Fixture test', () => {
 
         test('Full flow for CUTTING BOARD 1 of video-room', () => {
             const fixture = game.entityFinder.getFixture('CUTTING BOARD 1', 'video-room');
-            fixture.activate()
+            fixture.activate();
             vi.advanceTimersByTime(1000);
             {
                 let items = fixture.getContainedItems();
                 expect(items.length).toBe(2);
                 const knife = items[0];
                 const slices = items[1];
-                expect(knife.prefabId).toBe("LARGE KNIFE")
+                expect(knife.prefabId).toBe("LARGE KNIFE");
                 expect(knife.quantity).toBe(1);
                 expect(knife.uses).toBe(NaN);
-                expect(slices.prefabId).toBe("PEELED ORANGE")
+                expect(slices.prefabId).toBe("PEELED ORANGE");
                 expect(slices.quantity).toBe(10);
                 expect(slices.uses).toBe(1);
             }
@@ -290,25 +290,46 @@ describe('Fixture test', () => {
 
         test('Full flow for BURNER 3 of video-room', () => {
             const fixture = game.entityFinder.getFixture('BURNER 3', 'video-room');
-            fixture.activate()
+            fixture.activate();
             vi.advanceTimersByTime(1000);
             {
                 let items = fixture.getContainedItems();
                 expect(items.length).toBe(2);
                 const pan1 = items[0];
                 const pan2 = items[1];
-                expect(pan1.prefabId).toBe("DIRTY PAN")
+                expect(pan1.prefabId).toBe("FRYING PAN");
                 expect(pan1.quantity).toBe(1);
                 expect(pan1.uses).toBe(NaN);
-                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK")
-                expect(pan1.inventory.first().items[0].quantity).toBe(1)
-                expect(pan1.inventory.first().items[0].uses).toBe(2)
-                expect(pan2.prefabId).toBe("DIRTY PAN")
+                expect(pan1.inventory.first().items[0].prefabId).toBe("FROZEN STEAK");
+                expect(pan1.inventory.first().items[0].quantity).toBe(1);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
                 expect(pan2.quantity).toBe(1);
                 expect(pan2.uses).toBe(NaN);
-                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED STEAK")
-                expect(pan2.inventory.first().items[0].quantity).toBe(1)
-                expect(pan2.inventory.first().items[0].uses).toBe(2)
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan2.inventory.first().items[0].quantity).toBe(1);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+            fixture.recipeInterval.stop();
+            fixture.recipeInterval.start();
+            vi.advanceTimersByTime(5000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1.prefabId).toBe("DIRTY PAN");
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan1.inventory.first().items[0].quantity).toBe(1);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan2.inventory.first().items[0].quantity).toBe(1);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
             }
         });
 
@@ -321,25 +342,114 @@ describe('Fixture test', () => {
             // This is a bandage fix to get this test to functionality correctly.
             fixture.recipeInterval.stop();
             fixture.recipeInterval.start();
-            for (let i = 0; i < 5000; i++)
-                vi.advanceTimersByTime(1);
+            vi.advanceTimersByTime(5000);
             {
                 let items = fixture.getContainedItems();
                 expect(items.length).toBe(2);
                 const pan1 = items[0];
                 const pan2 = items[1];
-                expect(pan1.prefabId).toBe("DIRTY PAN")
+                expect(pan1.prefabId).toBe("DIRTY PAN");
                 expect(pan1.quantity).toBe(1);
                 expect(pan1.uses).toBe(NaN);
-                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK")
-                expect(pan1.inventory.first().items[0].quantity).toBe(1)
-                expect(pan1.inventory.first().items[0].uses).toBe(2)
-                expect(pan2.prefabId).toBe("DIRTY PAN")
+                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan1.inventory.first().items[0].quantity).toBe(1);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
                 expect(pan2.quantity).toBe(1);
                 expect(pan2.uses).toBe(NaN);
-                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED PORK CHOP")
-                expect(pan2.inventory.first().items[0].quantity).toBe(1)
-                expect(pan2.inventory.first().items[0].uses).toBe(2)
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED PORK CHOP");
+                expect(pan2.inventory.first().items[0].quantity).toBe(1);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+        });
+
+        test('Full flow for BURNER 5 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('BURNER 5', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1.prefabId).toBe("FRYING PAN");
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("FROZEN STEAK");
+                expect(pan1.inventory.first().items[0].quantity).toBe(1);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan2.inventory.first().items[0].quantity).toBe(2);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+            fixture.recipeInterval.stop();
+            fixture.recipeInterval.start();
+            vi.advanceTimersByTime(5000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1.prefabId).toBe("DIRTY PAN");
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan1.inventory.first().items[0].quantity).toBe(2);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED STEAK");
+                expect(pan2.inventory.first().items[0].quantity).toBe(1);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+        });
+
+        test('Full flow for BURNER 6 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('BURNER 6', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1.prefabId).toBe("FRYING PAN");
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("FROZEN CHICKEN BREAST");
+                expect(pan1.inventory.first().items[0].quantity).toBe(1);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED CHICKEN BREAST");
+                expect(pan2.inventory.first().items[0].quantity).toBe(2);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+            fixture.recipeInterval.stop();
+            fixture.recipeInterval.start();
+            vi.advanceTimersByTime(5000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items.length).toBe(2);
+                const pan1 = items[0];
+                const pan2 = items[1];
+                expect(pan1.prefabId).toBe("DIRTY PAN");
+                expect(pan1.quantity).toBe(1);
+                expect(pan1.uses).toBe(NaN);
+                expect(pan1.inventory.first().items[0].prefabId).toBe("COOKED CHICKEN BREAST");
+                expect(pan1.inventory.first().items[0].quantity).toBe(2);
+                expect(pan1.inventory.first().items[0].uses).toBe(2);
+                expect(pan2.prefabId).toBe("DIRTY PAN");
+                expect(pan2.quantity).toBe(1);
+                expect(pan2.uses).toBe(NaN);
+                expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED CHICKEN BREAST");
+                expect(pan2.inventory.first().items[0].quantity).toBe(1);
+                expect(pan2.inventory.first().items[0].uses).toBe(2);
             }
         });
     });

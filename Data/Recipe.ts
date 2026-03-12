@@ -173,7 +173,7 @@ export default class Recipe extends GameEntity {
             const ingredientUseCount = ingredientIsAlsoProduct ? item.uses : item.quantity;
             const itemSatisfiedQuantityCount = ingredient.getSatisfiedQuantityCount(ingredientUseCount);
             if (item.prefab.id !== ingredient.prefab.id || !item.containerMatches(ingredient) || !ingredient.quantitySatisfiedBy(item) || !ingredient.usesSatisfiedBy(item) || !ingredient.quantityIsConstant && itemSatisfiedQuantityCount === 0) return 0;
-            if(!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
+            if (!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
         }
         if (satisfactoryItemsCounts.length === 1 && isNaN(satisfactoryItemsCounts[0])) return 1;
 		if (allIngredientQuantitiesAreConstant) return 1;

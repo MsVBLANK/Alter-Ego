@@ -142,8 +142,7 @@ export default class RecipeItem extends GameConstruct {
      * @param variableValues - The variable values captured from the actual ingredients.
      */
     calculateQuantity(satisfactoryProcessCount: number): number {
-        if (!this.quantityIsConstant && this.container === null)
-            return this.quantity * satisfactoryProcessCount;
+        if (!this.quantityIsConstant) return this.quantity * satisfactoryProcessCount;
         else return this.quantity;
     }
 

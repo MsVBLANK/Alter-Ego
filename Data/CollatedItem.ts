@@ -96,8 +96,9 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 		const collatedItems: CollatedItem<T>[] = [];
 		const itemsMap: Map<string, T[]> = new Map();
 		for (const item of items) {
-			if (itemsMap.has(item.prefab.id)) itemsMap.get(item.prefab.id).push(item);
-			else itemsMap.set(item.prefab.id, [item]);
+            const key = `${item.getIdentifier()}-${item.containerType}-${item.containerName}`;
+			if (itemsMap.has(key)) itemsMap.get(key).push(item);
+			else itemsMap.set(key, [item]);
 		}
 		for (const itemGroup of itemsMap.values())
 			collatedItems.push(new CollatedItem(itemGroup));

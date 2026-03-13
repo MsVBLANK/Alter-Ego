@@ -136,7 +136,18 @@ export default class RecipeItem extends GameConstruct {
 	}
 
     /**
-     * Calculates the number of uses to instantiate this recipe as a product with.
+     * Calculates the quantity to instantiate this recipe item as a product with.
+     *
+     * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
+     * @param variableValues - The variable values captured from the actual ingredients.
+     */
+    calculateQuantity(satisfactoryProcessCount: number): number {
+        if (!this.quantityIsConstant) return this.quantity * satisfactoryProcessCount;
+        else return this.quantity;
+    }
+
+    /**
+     * Calculates the number of uses to instantiate this recipe item as a product with.
      *
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      * @param variableValues - The variable values captured from the actual ingredients.

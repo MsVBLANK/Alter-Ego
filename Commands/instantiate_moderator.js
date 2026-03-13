@@ -189,18 +189,8 @@ export async function execute(game, message, command, args, moderator) {
         }
 
         // Now instantiate the item.
-        // If the prefab has inventory slots, run the instantiate function quantity times so that it generates items with different identifiers.
-        if (prefab.inventory.size > 0) {
-            for (let i = 0; i < quantity; i++) {
-                const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
-                instantiateAction.performInstantiateRoomItem(prefab, container, slotName, 1, proceduralSelections);
-            }
-        }
-        else {
-            const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
-            instantiateAction.performInstantiateRoomItem(prefab, container, slotName, quantity, proceduralSelections);
-        }
-
+        const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
+        instantiateAction.performInstantiateRoomItem(prefab, container, slotName, quantity, proceduralSelections);
         game.communicationHandler.sendToCommandChannel("Successfully instantiated item.");
     }
     else {
@@ -306,17 +296,8 @@ export async function execute(game, message, command, args, moderator) {
         }
 
         // Now instantiate the item.
-        // If the prefab has inventory slots, run the instantiate function quantity times so that it generates items with different identifiers.
-        if (prefab.inventory.size > 0) {
-            for (let i = 0; i < quantity; i++) {
-                const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
-                instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, 1, proceduralSelections);
-            }
-        }
-        else {
-            const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
-            instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, quantity, proceduralSelections);
-        }
+        const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
+        instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, quantity, proceduralSelections);
 
         game.communicationHandler.sendToCommandChannel("Successfully instantiated inventory item.");
     }

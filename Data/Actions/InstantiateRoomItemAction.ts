@@ -23,11 +23,32 @@ export default class InstantiateRoomItemAction extends Action {
      * @param quantity - The quantity to instantiate.
      * @param proceduralSelections - The manually selected procedural possibilities.
      * @param uses - The number of uses to instantiate the room item with. Defaults to the prefab's uses.
-     * @returns The instantiated {@link RoomItem| room item}.
+     * @returns The instantiated {@link RoomItem| room items}.
      */
-    performInstantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses: number = prefab.uses): RoomItem {
+    performInstantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses: number = prefab.uses): RoomItem[] {
         if (this.performed) return;
         super.perform();
+        const createdItems: RoomItem[] = [];
+        // If the prefab has inventory slots, run the instantiate function quantity times so that it generates items with different identifiers.
+        if (prefab.inventory.size > 0) {
+            for (let i = 0; i < quantity; i++)
+                createdItems.push(this.#instantiateRoomItem(prefab, container, inventorySlotId, 1, proceduralSelections, uses));
+        }
+        else createdItems.push(this.#instantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses));
+        return createdItems;
+    }
+
+    /**
+     * Instantiates the room item.
+     * @param prefab - The prefab to instantiate as an item.
+     * @param container - The container to instantiate the item in.
+     * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+     * @param quantity - The quantity to instantiate.
+     * @param proceduralSelections - The manually selected procedural possibilities.
+     * @param uses - The number of uses to instantiate the room item with.
+     * @returns The instantiated {@link RoomItem| room item}.
+     */
+    #instantiateRoomItem(prefab: Prefab, container: RoomItemContainer, inventorySlotId: string, quantity: number, proceduralSelections: Map<string, string>, uses: number): RoomItem {
         const createdItem = instantiateRoomItem(prefab, this.location ?? container.location, container, inventorySlotId, quantity, uses, proceduralSelections, this.player);
         const inventorySlot = createdItem.container instanceof ItemInstance ? createdItem.container.inventory.get(inventorySlotId) : undefined;
         this.getGame().logHandler.logInstantiateRoomItem(createdItem, quantity, container, inventorySlot);

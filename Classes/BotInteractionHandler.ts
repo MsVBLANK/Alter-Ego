@@ -260,16 +260,7 @@ export default class BotInteractionHandler {
                 const parsedArgs = action.parseInteractionArgs(args, prefabId, quantity, uses, proceduralSelections);
                 try {
                     const validatedArgs = action.validateInteractionArgs(parsedArgs);
-                    const prefab = validatedArgs[0];
-                    const quantity = validatedArgs[4];
-                    // If the prefab has inventory slots, instantiate the prefab quantity times so that it generates items with different identifiers.
-                    if (prefab.inventory.size > 0 && quantity > 1) {
-                        for (let i = 0; i < quantity; i++) {
-                            const instantiateAction = new InstantiateInventoryItemAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
-                            instantiateAction.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], 1, validatedArgs[5], validatedArgs[6]);
-                        }
-                    }
-                    else action.performInstantiateInventoryItem(prefab, validatedArgs[1], validatedArgs[2], validatedArgs[3], quantity, validatedArgs[5], validatedArgs[6]);
+                    action.performInstantiateInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3], validatedArgs[4], validatedArgs[5], validatedArgs[6]);
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
                     this.#logInteraction("InstantiateInventoryItemAction", author, timestamp, validatedArgs);
                     return true;
@@ -297,16 +288,7 @@ export default class BotInteractionHandler {
                 const parsedArgs = action.parseInteractionArgs(args, prefabId, quantity, uses, proceduralSelections);
                 try {
                     const validatedArgs = action.validateInteractionArgs(parsedArgs);
-                    const prefab = validatedArgs[0];
-                    const quantity = validatedArgs[3];
-                    // If the prefab has inventory slots, instantiate the prefab quantity times so that it generates items with different identifiers.
-                    if (prefab.inventory.size > 0 && quantity > 1) {
-                        for (let i = 0; i < quantity; i++) {
-                            const instantiateAction = new InstantiateRoomItemAction(action.getGame(), action.message, action.player, action.location, action.forced, action.whisper, action.user);
-                            instantiateAction.performInstantiateRoomItem(prefab, validatedArgs[1], validatedArgs[2], 1, validatedArgs[4], validatedArgs[5]);
-                        }
-                    }
-                    else action.performInstantiateRoomItem(prefab, validatedArgs[1], validatedArgs[2], quantity, validatedArgs[4], validatedArgs[5]);
+                    action.performInstantiateRoomItem(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3], validatedArgs[4], validatedArgs[5]);
                     this.#replyToInteraction("Successfully instantiated room item.", interaction);
                     this.#logInteraction("InstantiateRoomItemAction", author, timestamp, validatedArgs);
                     return true;

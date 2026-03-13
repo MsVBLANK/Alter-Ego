@@ -47,6 +47,14 @@ describe("Timer Test Suite", () => {
             expect(callback).toHaveBeenCalledTimes(1);
         });
 
+        test("Auto-Loop Test", () => {
+            const callback = vi.fn();
+            const timer = new Timer(1000, { start: true, loop: true }, callback);
+
+            vi.advanceTimersByTime(10000);
+            expect(callback).toHaveBeenCalledTimes(10);
+        });
+
         test("Tracks Start/Stop Correctly", () => {
             const timer = new Timer(1000, { loop: false, start: false }, vi.fn());
 

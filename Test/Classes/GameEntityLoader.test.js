@@ -270,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1565);
+                expect(fixtureCount).toBe(1569);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -414,7 +414,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
-                expect(recipeCount).toBe(496);
+                expect(recipeCount).toBe(499);
             });
         });
     });
@@ -507,7 +507,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1838);
+                expect(roomItemCount).toBe(1854);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

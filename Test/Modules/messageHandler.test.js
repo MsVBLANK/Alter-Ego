@@ -3021,7 +3021,7 @@ describe('messageHandler test', () => {
                 describe('shouted dialog is communicated to neighboring rooms', () => {
                     test('standard shouted dialog is narrated to neighboring rooms', async () => {
                         expect(lobby.occupants).toHaveLength(0);
-                        await sendPlayerMessage(astrid, "HELLO?");
+                        await sendPlayerMessage(astrid, "# HELLO?");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
                         for (const neighboringRoom of neighboringRooms) {
@@ -3070,7 +3070,7 @@ describe('messageHandler test', () => {
                         astrid.displayName = "an individual wearing a MASK";
                         astrid.displayIcon = game.settings.defaultConcealedIconURL;
 
-                        await sendPlayerMessage(astrid, "HELLO?");
+                        await sendPlayerMessage(astrid, "## HELLO?");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
                         for (const neighboringRoom of neighboringRooms) {
@@ -3116,7 +3116,7 @@ describe('messageHandler test', () => {
                     test('speaker is hidden', async () => {
                         astrid.inflict(hidden);
 
-                        await sendPlayerMessage(astrid, "HELLO?");
+                        await sendPlayerMessage(astrid, "### HELLO?");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
                         for (const neighboringRoom of neighboringRooms) {
@@ -3205,29 +3205,29 @@ describe('messageHandler test', () => {
                         nero.inflict(asleep);
                         kyra.inflict(asleep);
 
-                        await sendPlayerMessage(astrid, "HELLO?");
+                        await sendPlayerMessage(astrid, "# Hello?");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
                         expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
                         for (const neighboringRoom of neighboringRooms) {
                             expect(neighboringRoom.channel.messages.cache).toHaveSize(1);
-                            expect(neighboringRoom.channel.messages.cache.first().content).toBe(`Someone in a nearby room with a peppy voice shouts "HELLO?"`);
+                            expect(neighboringRoom.channel.messages.cache.first().content).toBe(`Someone in a nearby room with a peppy voice shouts "Hello?"`);
                         }
                         for (const excludedAudioMonitoringRoom of excludedAudioMonitoringRooms) {
                             if (excludedAudioMonitoringRoom.channel.messages.cache.size !== 0) {
-                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
-                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[break-room]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
+                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "Hello?"');
+                                expect(excludedAudioMonitoringRoom.channel.messages.cache.first().content).not.toBe('`[break-room]` Someone in a nearby room with a peppy voice shouts "Hello?"');
                             }
                             else expect(excludedAudioMonitoringRoom.channel.messages.cache).toHaveSize(0);
                         }
                         for (const audioMonitoringRoom of audioMonitoringRooms) {
                             expect(audioMonitoringRoom.channel.messages.cache).toHaveSize(1);
-                            expect(audioMonitoringRoom.channel.messages.cache.first().content).toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "HELLO?"');
+                            expect(audioMonitoringRoom.channel.messages.cache.first().content).toBe('`[floor-1-hall-1]` Someone in a nearby room with a peppy voice shouts "Hello?"');
                         }
 
                         expect(kiara.notificationChannel.messages.cache).toHaveSize(1);
                         expect(kiara.spectateChannel.messages.cache).toHaveSize(1);
                         expect(kiaraSpectateMessage).not.toBeWebhookMessage();
-                        expect(kiaraSpectateMessage.content).toBe(`Astrid shouts "HELLO?" in a nearby room.`);
+                        expect(kiaraSpectateMessage.content).toBe(`Astrid shouts "Hello?" in a nearby room.`);
 
                         expect(nero.notificationChannel.messages.cache).toHaveSize(0);
                         expect(nero.spectateChannel.messages.cache).toHaveSize(0);
@@ -3235,7 +3235,7 @@ describe('messageHandler test', () => {
                         expect(amadeus.notificationChannel.messages.cache).toHaveSize(1);
                         expect(amadeus.spectateChannel.messages.cache).toHaveSize(1);
                         expect(amadeusSpectateMessage).not.toBeWebhookMessage();
-                        expect(amadeusSpectateMessage.content).toBe('`[floor-1-hall-1]` Astrid shouts "HELLO?" in a nearby room.');
+                        expect(amadeusSpectateMessage.content).toBe('`[floor-1-hall-1]` Astrid shouts "Hello?" in a nearby room.');
 
                         expect(kyra.notificationChannel.messages.cache).toHaveSize(0);
                         expect(kyra.spectateChannel.messages.cache).toHaveSize(0);

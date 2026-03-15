@@ -43,6 +43,10 @@ export default class Dialog extends GameConstruct {
      */
     cleanContent: string;
     /**
+     * The text content of the message without any markdown formatting characters.
+     */
+    unformattedContent: string;
+    /**
      * The cleanContent of the dialog, but only including alphanumeric characters, cast to lowercase.
      */
     alphanumericContent: string;
@@ -148,6 +152,7 @@ export default class Dialog extends GameConstruct {
         this.whisper = whisper;
         this.content = content;
         this.cleanContent = cleanContent;
+        this.unformattedContent = this.content.replace(/^(-#|#{1,3}) /, '');
         this.alphanumericContent = this.cleanContent.replace(/[^a-zA-Z0-9 ]+/g, "").toLowerCase().trim();
         this.attachments = this.message.attachments;
         this.embeds = this.message.embeds;
@@ -180,8 +185,12 @@ export default class Dialog extends GameConstruct {
         this.speakerDisplayNameIsDifferent = this.speakerDisplayName !== this.speakerRecognitionName;
         // The remaining properties only need to be initialized if the dialog isn't an out-of-character message.
         if (!this.isOOCMessage) {
+            const startsWithHeadingFormatting = /^#{1,3} /.test(this.content);
+            const startsWithSubheadingFormatting = /^-# /.test(this.content);
             const contentWithoutEmotes = this.cleanContent.replace(/<?:.*?:\d*>?/g, '');
-            this.isShouted = RegExp("[a-zA-Z](?=(.*)[a-zA-Z])", 'g').test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase();
+            const textIsJustOK = contentWithoutEmotes.replace(/[^a-zA-Z]/g, '') === "OK";
+            const isInAllCaps = /[a-zA-Z](?=(.*)[a-zA-Z])/g.test(contentWithoutEmotes) && contentWithoutEmotes === contentWithoutEmotes.toLocaleUpperCase() && !textIsJustOK;
+            this.isShouted = !startsWithSubheadingFormatting && (isInAllCaps || startsWithHeadingFormatting);
             this.locationIsAudioSurveilled = this.location.isAudioSurveilled();
             this.locationIsVideoSurveilled = this.location.isVideoSurveilled();
             this.neighboringRooms = new Collection();

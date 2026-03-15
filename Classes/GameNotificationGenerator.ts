@@ -52,8 +52,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${punctuation}`;
+		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? ` in your voice!` : endsWithPunctuation(dialog.unformattedContent) ? `` : `.`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.unformattedContent}"${punctuation}`;
 	}
 
 	/**
@@ -74,8 +74,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
 		const contentAffix = hidingSpotPhrase !== `` && !speakerString.includes(hidingSpotPhrase) ? `${hidingSpotPhrase}` : ``;
-		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? `${contentAffix} in your voice!` : contentAffix === `` && endsWithPunctuation(dialog.content) ? `` : `${contentAffix}.`;
-		return `${capitalizeFirstLetter(speakerString)} whispers "${dialog.content}"${punctuation}`;
+		const punctuation = dialog.isMimicking(player) && !dialog.isOOCMessage ? `${contentAffix} in your voice!` : contentAffix === `` && endsWithPunctuation(dialog.unformattedContent) ? `` : `${contentAffix}.`;
+		return `${capitalizeFirstLetter(speakerString)} whispers "${dialog.unformattedContent}"${punctuation}`;
 	}
 
 	/**
@@ -93,8 +93,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
 		const recipientString = playerCanSeeSpeaker ? ` to ${dialog.whisper.generatePlayerListStringExcluding(dialog.speaker)}` : ``;
-		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : recipientString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `You overhear ${speakerString} whisper "${dialog.content}"${recipientString}${punctuation}`;
+		const punctuation = dialog.isMimicking(player) ? ` in your voice!` : recipientString === `` && endsWithPunctuation(dialog.unformattedContent) ? `` : `.`;
+		return `You overhear ${speakerString} whisper "${dialog.unformattedContent}"${recipientString}${punctuation}`;
 	}
 
 	/**
@@ -112,8 +112,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = player && dialog.isMimicking(player) ? `someone in a nearby room` : `someone in a nearby room with ${dialog.speakerVoiceString}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : locator === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${locator}${punctuation}`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : locator === `` && endsWithPunctuation(dialog.unformattedContent) ? `` : `.`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.unformattedContent}"${locator}${punctuation}`;
 	}
 
 	/**
@@ -143,8 +143,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = `${dialog.speakerDisplayName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.content}"${punctuation}`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : endsWithPunctuation(dialog.unformattedContent) ? `` : `.`;
+		return `\`[${roomDisplayName}]\` ${capitalizeFirstLetter(speakerString)} ${verb} "${dialog.unformattedContent}"${punctuation}`;
 	}
 
 	/**
@@ -168,8 +168,8 @@ export default class GameNotificationGenerator {
 		else
 			speakerString = player && dialog.isMimicking(player) ? `someone speaking through ${receiverOwnerName} ${receiverItemName}` : `${dialog.speakerVoiceString} coming from ${receiverOwnerName} ${receiverItemName}`;
 		const verb = dialog.isShouted ? `shouts` : `says`;
-		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : receiverString === `` && endsWithPunctuation(dialog.content) ? `` : `.`;
-		return `${capitalizeFirstLetter(speakerString)} ${verb} "\`${dialog.content}\`"${receiverString}${punctuation}`;
+		const punctuation = player && dialog.isMimicking(player) ? ` in your voice!` : receiverString === `` && endsWithPunctuation(dialog.unformattedContent) ? `` : `.`;
+		return `${capitalizeFirstLetter(speakerString)} ${verb} "\`${dialog.unformattedContent}\`"${receiverString}${punctuation}`;
 	}
 
 	/**

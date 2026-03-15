@@ -43,7 +43,7 @@ describe('Dialog test', () => {
     });
 
     describe('shouting tests', () => {
-        test('standard shouted dialog', () => {
+        test('standard shouted dialog with all caps', () => {
             const kyra = game.entityFinder.getLivingPlayer("Kyra");
             const message = createMockMessage({
                 content: 'HELLO!',
@@ -53,6 +53,58 @@ describe('Dialog test', () => {
             });
             const dialog = new Dialog(game, message, kyra, kyra.location);
             expect(dialog.isShouted).toBe(true);
+        });
+
+        test('standard shouted dialog with h1 formatting', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: '# Hello!',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(true);
+            expect(dialog.unformattedContent).toBe("Hello!");
+        });
+
+        test('standard shouted dialog with h2 formatting', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: '## Hello!',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(true);
+            expect(dialog.unformattedContent).toBe("Hello!");
+        });
+
+        test('standard shouted dialog with h3 formatting', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: '### Hello!',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(true);
+            expect(dialog.unformattedContent).toBe("Hello!");
+        });
+
+        test('dialog with sub heading formatting is not shouted', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: '-# HELLO!',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(false);
+            expect(dialog.unformattedContent).toBe("HELLO!");
         });
 
         test('shouted dialog insufficient length', () => {
@@ -65,6 +117,30 @@ describe('Dialog test', () => {
             });
             const dialog = new Dialog(game, message, kyra, kyra.location);
             expect(dialog.isShouted).toBe(false);
+        });
+
+        test('"OK" is not shouted dialog', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: 'OK.',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(false);
+        });
+
+        test('"OK" is shouted dialog when not by itself', () => {
+            const kyra = game.entityFinder.getLivingPlayer("Kyra");
+            const message = createMockMessage({
+                content: 'OKAY!',
+                member: kyra.member,
+                author: kyra.member.user,
+                channel: kyra.location.channel
+            });
+            const dialog = new Dialog(game, message, kyra, kyra.location);
+            expect(dialog.isShouted).toBe(true);
         });
 
         test('shouted dialog in french', () => {

@@ -38,12 +38,16 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length === 0)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length === 0)
         return game.communicationHandler.reply(message, `You need to specify a player. Usage:\n${usage(game.settings)}`);
 
-    const player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    let player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase().replace(/'s/g, "")))
+        args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
-    args.splice(0, 1);
 
     const equippedItems = player.inventory.filter(equipmentSlot => equipmentSlot.equippedItem !== null);
     if (equippedItems.size === 0) return game.communicationHandler.reply(message, `${player.name} cannot undress because ${player.originalPronouns.sbj} does not have anything equipped.`);

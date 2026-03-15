@@ -22,7 +22,7 @@ export const config = {
         + 'If the status effect develops into another effect when cured, the players will be inflicted with that status effect.\n\n'
         + '-**view**: Views all of the status effects that a player is currently afflicted with, along with the time remaining on each one, if applicable.',
     usableBy: "Moderator",
-    aliases: ["status", "inflict", "cure", "view"],
+    aliases: ["status", "inflict", "cure"],
     requiresGame: true
 };
 
@@ -40,7 +40,7 @@ export function usage(settings) {
         + `${settings.commandPrefix}status remove astrid ryou juneau drunk\n`
         + `${settings.commandPrefix}cure living asleep\n`
         + `${settings.commandPrefix}status view jordan\n`
-        + `${settings.commandPrefix}view jordan`;
+        + `${settings.commandPrefix}status jordan`;
 }
 
 /**
@@ -51,27 +51,25 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
     if (command === "status") {
         if (args[0] === "add" || args[0] === "inflict") command = "inflict";
         else if (args[0] === "remove" || args[0] === "cure") command = "cure";
-        else if (args[0] === "view") {
-            command = "view";
-            if (!args[1])
-                return game.communicationHandler.reply(message, `You need to input a player. Usage:\n${usage(game.settings)}`);
-        }
-        args.splice(0, 1);
+        else command = "view";
+        if (args[0] === "add" || args[0] === "inflict" || args[0] === "remove" || args[0] === "cure" || args[0] === "view")
+            args.splice(0, 1);
     }
 
-    if (args.length === 0)
-        return game.communicationHandler.reply(message, `You need to input all required arguments. Usage:\n${usage(game.settings)}`);
+    if ((command === "inflict" || command === "cure") && args.length < 2)
+        return game.communicationHandler.reply(message, `You need to specify at least one player and a status effect. Usage:\n${usage(game.settings)}`);
+    if (command === "view" && !sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify a player. Usage:\n${usage(game.settings)}`);
 
     // Get all listed players first.
-    /**
-     * @type {Player[]}
-     */
+    /** @type {Player[]} */
     let players = [];
-    if (args[0] === "all" || args[0] === "living") {
-        players = game.entityFinder.getLivingPlayers(undefined, false).filter(player => !player.member.roles.cache.has(game.guildContext.freeMovementRole.id));
+    if (command !== "view" && (args[0] === "all" || args[0] === "living")) {
+        players = game.entityFinder.getLivingPlayers(undefined, false).filter(player => !game.guildContext.hasFreeMovementRole(player.member));
         args.splice(0, 1);
     }
     else {
@@ -82,9 +80,11 @@ export async function execute(game, message, command, args, moderator) {
                 args.splice(i, 1);
             }
         }
+        if (command === "view" && players.length === 0 && sentMessageInLatchChannel) players.push(moderator.getLatch());
     }
+    if (command === "view" && (players.length > 1 || args[0] === "all" || args[0] === "living"))
+        return game.communicationHandler.reply(message, "Cannot view status of more than one player at a time.");
     if (players.length === 0) return game.communicationHandler.reply(message, "You need to specify at least one player.");
-    if (players.length > 1 && command === "view") return game.communicationHandler.reply(message, "Cannot view status of more than one player at a time.");
     const input = args.join(" ");
     if (input === "" && command !== "view") return game.communicationHandler.reply(message, "You need to specify a status effect.");
 

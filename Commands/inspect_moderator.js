@@ -48,12 +48,16 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and a fixture/item/player. Usage:\n${usage(game.settings)}`);
+    else if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify a fixture/item/player. Usage:\n${usage(game.settings)}`);
 
-    const player = game.entityFinder.getLivingPlayer(args[0]);
+    let player = game.entityFinder.getLivingPlayer(args[0]);
+    if (player) args.splice(0, 1);
+    else if (!player && sentMessageInLatchChannel) player = moderator.getLatch();
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
-    args.splice(0, 1);
 
     const input = args.join(" ");
     let parsedInput = input.toUpperCase().replace(/\'/g, "");

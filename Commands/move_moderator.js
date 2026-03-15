@@ -36,14 +36,17 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify at least one player and a room. Usage:\n${usage(game.settings)}`);
+    else if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify a room. Usage:\n${usage(game.settings)}`);
 
     // Get all listed players first.
     const players = [];
     if (args[0] === "all" || args[0] === "living") {
         game.entityFinder.getLivingPlayers(null, false).map((player) => {
-            if (!player.member.roles.cache.find((role) => role.id === game.guildContext.freeMovementRole.id))
+            if (!game.guildContext.hasFreeMovementRole(player.member))
                 players.push(player);
         });
         args.splice(0, 1);
@@ -56,7 +59,9 @@ export async function execute(game, message, command, args, moderator) {
                 args.splice(i, 1);
             }
         }
+        if (players.length === 0 && sentMessageInLatchChannel) players.push(moderator.getLatch());
     }
+
     // Args at this point should only include the room/exit name, as well as any players that weren't found.
     // Check to see that the last argument is the name of a room.
     let input = args.join(" ").replace(/\'/g, "").replace(/ /g, "-").toLowerCase();
@@ -75,7 +80,7 @@ export async function execute(game, message, command, args, moderator) {
     let isExit = false;
     let exit = null;
     let entrance = null;
-    if (!desiredRoom) {
+    if (!desiredRoom && players.length !== 0) {
         const currentRoom = players[0].location;
         for (let i = 1; i < players.length; i++) {
             if (players[i].location !== currentRoom) return game.communicationHandler.reply(message, "All listed players must be in the same room to use an exit name.");

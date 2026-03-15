@@ -37,12 +37,18 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to specify a player and an item in their inventory. Usage:\n${usage(game.settings)}`);
+    if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to specify an item. Usage:\n${usage(game.settings)}`);
 
-    const player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    let player = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase().replace(/'s/g, "")))
+        args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
-    args.splice(0, 1);
 
     let input = args.join(" ");
 
@@ -76,29 +82,12 @@ export async function execute(game, message, command, args, moderator) {
 
     // args should now only contain the name of the item.
     input = args.join(" ");
-    const parsedInput = input.toUpperCase().replace(/\'/g, "");
 
     // First, find the item in the player's inventory.
     let item = null;
-    // Get references to the right and left hand equipment slots so we don't have to iterate through the player's inventory to find them every time.
-    const rightHand = player.inventory.get("RIGHT HAND");
-    const leftHand = player.inventory.get("LEFT HAND");
-    // Check for the identifier first.
-    if (item === null && rightHand.equippedItem !== null && rightHand.equippedItem.identifier !== "" && rightHand.equippedItem.identifier === parsedInput)
-        item = rightHand.equippedItem;
-    else if (item === null && leftHand.equippedItem !== null && leftHand.equippedItem.identifier !== "" && leftHand.equippedItem.identifier === parsedInput)
-        item = leftHand.equippedItem;
-    // Check for the prefab ID next.
-    else if (item === null && rightHand.equippedItem !== null && rightHand.equippedItem.prefab.id === parsedInput)
-        item = rightHand.equippedItem;
-    else if (item === null && leftHand.equippedItem !== null && leftHand.equippedItem.prefab.id === parsedInput)
-        item = leftHand.equippedItem;
-    // Check for the name last.
-    else if (item === null && rightHand.equippedItem !== null && rightHand.equippedItem.name === parsedInput)
-        item = rightHand.equippedItem;
-    else if (item === null && leftHand.equippedItem !== null && leftHand.equippedItem.name === parsedInput)
-        item = leftHand.equippedItem;
-    if (item === null) return game.communicationHandler.reply(message, `Couldn't find item "${parsedInput}" in either of ${player.name}'s hands.`);
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, input);
+    if (hand) item = hand.equippedItem;
+    if (!item) return game.communicationHandler.reply(message, `Couldn't find item "${input}" in either of ${player.name}'s hands.`);
 
     if (item.uses === 0) return game.communicationHandler.reply(message, "That item has no uses left.");
     if (!item.prefab.usable) return game.communicationHandler.reply(message, "That item has no programmed use.");

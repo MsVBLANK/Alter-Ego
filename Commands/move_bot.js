@@ -65,7 +65,7 @@ export async function execute(game, command, args, player, callee) {
     }
     else if (args[0].toLowerCase() === "all") {
         game.entityFinder.getLivingPlayers(null, false).map((player) => {
-            if (!player.member.roles.cache.find((role) => role.id === game.guildContext.freeMovementRole.id))
+            if (!game.guildContext.hasFreeMovementRole(player.member))
                 players.push(player);
         });
         args.splice(0, 1);

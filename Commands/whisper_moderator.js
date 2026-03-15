@@ -43,15 +43,20 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 2)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length < 2)
         return game.communicationHandler.reply(message, `You need to choose at least two players. Usage:\n${usage(game.settings)}`);
+    if (sentMessageInLatchChannel && args.length < 1)
+        return game.communicationHandler.reply(message, `You need to choose a recipient. Usage:\n${usage(game.settings)}`);
 
     // Get all players mentioned.
-    /**
-     * @type {Player[]}
-     */
+    /** @type {Player[]} */
     const recipients = new Array();
     let npc = null;
+    if (sentMessageInLatchChannel) {
+        recipients.push(moderator.getLatch());
+        npc = moderator.getLatch();
+    }
     let i;
     for (i = 0; i < args.length; i++) {
         let playerExists = false;
@@ -75,7 +80,7 @@ export async function execute(game, message, command, args, moderator) {
             }
             // If there are no attributes that prevent whispering, add them to the array.
             playerExists = true;
-            if (player.isNPC) npc = player;
+            if (!npc && player.isNPC) npc = player;
             recipients.push(player);
         }
         if (!playerExists) {

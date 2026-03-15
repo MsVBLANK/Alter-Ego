@@ -51,6 +51,7 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
     let input = command + " " + args.join(" ");
     if (command === "puzzle") {
         if (args[0] === "solve") command = "solve";
@@ -86,6 +87,8 @@ export async function execute(game, message, command, args, moderator) {
         args.splice(args.length - 1, 1);
         input = args.join(" ");
     }
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
 
     // If a player wasn't specified, check if a room name was.
     /** @type {Room} */

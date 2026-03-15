@@ -34,13 +34,19 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 3)
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    if (!sentMessageInLatchChannel && args.length < 3)
         return game.communicationHandler.reply(message, `You need to specify two players and an item. Usage:\n${usage(game.settings)}`);
+    if (sentMessageInLatchChannel && args.length < 2)
+        return game.communicationHandler.reply(message, `You need to specify a recipient and an item. Usage:\n${usage(game.settings)}`);
 
     // First, find the giver.
-    const giver = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    let giver = game.entityFinder.getLivingPlayer(args[0].replace(/'s/g, ""));
+    if (giver && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase().replace(/'s/g, "")))
+        args.splice(0, 1);
+    if (!giver && sentMessageInLatchChannel)
+        giver = moderator.getLatch();
     if (giver === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
-    args.splice(0, 1);
 
     // Next, find the recipient.
     const recipient = game.entityFinder.getLivingPlayer(args[args.length - 1].replace(/'s/g, ""));

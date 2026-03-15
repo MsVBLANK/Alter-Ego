@@ -46,6 +46,7 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
+    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
     let input = command + " " + args.join(" ");
     if (command === "fixture" || command === "object") {
         if (args[0] === "activate") command = "activate";
@@ -83,12 +84,13 @@ export async function execute(game, message, command, args, moderator) {
     }
 
     // Now find the player, who should be the last argument.
-    let player = game.entityFinder.getLivingPlayer(args[args.length - 1]);
+    let player = game.entityFinder.getLivingPlayer(args[args.length - 1]) ?? null;
     if (player) {
         args.splice(args.length - 1, 1);
         input = args.join(" ");
-    } else
-        player = null;
+    }
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
 
     // If a player wasn't specified, check if a room name was.
     let room = null;
@@ -118,7 +120,7 @@ export async function execute(game, message, command, args, moderator) {
     if (fixture.recipeTag === "") return game.communicationHandler.reply(message, `${fixture.name} cannot be ${command}d because it has no recipe tag.`);
 
     let narrate = false;
-    if (announcement === "" && player !== null) narrate = true;
+    if (announcement !== "" || player !== null) narrate = true;
 
     if (command === "activate") {
         const activateAction = new ActivateAction(game, message, player, fixture.location, true);

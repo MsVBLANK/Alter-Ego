@@ -167,11 +167,11 @@ declare global {
 
     type PersistentGameEntityName = "Room"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
 
-    interface PersistentGameEntity {
+    interface PersistentGameEntity extends GameEntity {
+        getEntityID: () => string;
         getLabel: (field: string) => string;
         getValue: (field: string) => string;
         getViewField: (field: string) => ViewField;
-        row: number;
     }
 
     interface ViewField {

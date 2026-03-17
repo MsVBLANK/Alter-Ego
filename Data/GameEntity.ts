@@ -18,4 +18,6 @@ export default abstract class GameEntity extends GameConstruct {
 		super(game);
 		this.row = row;
 	}
+
+    abstract getEntityType(): string;
 }

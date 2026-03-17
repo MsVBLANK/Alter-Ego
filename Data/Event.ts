@@ -271,6 +271,10 @@ export default class Event extends GameEntity implements PersistentGameEntity {
         return { format: null, datetime: undefined, valid: false };
     }
 
+    getEntityID(): string {
+        return this.id;
+    }
+
     getLabel(field: EventField): string {
         switch (field) {
             case "id": return "Event ID";
@@ -305,5 +309,9 @@ export default class Event extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: EventField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Event";
     }
 }

@@ -61,9 +61,10 @@ export default class ActionDirective<T extends Action = Action> {
 	 * @param location - The location where this action is being performed.
 	 * @param forced - Whether or not the action was performed by someone other than the player themselves.
 	 * @param whisper - The whisper where this action is being performed, if applicable.
+     * @param user - The user who created the action, if applicable.
 	 */
-	createAction(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper) {
-		return new this.action(game, message, player, location, forced, whisper);
+	createAction(game: Game, message: UserMessage, player: Player, location: Room, forced: boolean, whisper?: Whisper, user?: User) {
+		return new this.action(game, message, player, location, forced, whisper, user);
 	}
 
     getPlayer() {

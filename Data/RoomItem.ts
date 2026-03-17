@@ -277,6 +277,10 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
         return "RoomItem";
     }
 
+    getEntityID(): string {
+        return this.getIdentifier();
+    }
+
     getLabel(field: RoomItemField): string {
         switch (field) {
             case "prefab": return "Prefab";
@@ -305,5 +309,9 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
 
     getViewField(field: RoomItemField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "RoomItem";
     }
 }

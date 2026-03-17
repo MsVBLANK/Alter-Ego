@@ -12,6 +12,7 @@ import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventory
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
+import ViewAction from "../Data/Actions/ViewAction.ts";
 import ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
@@ -137,7 +138,7 @@ export default class BotInteractionHandler {
         const player = interactable.actionDirective.getPlayer();
         const author = user instanceof Moderator ? player ? `${player.name} (${user.member.user.username})` : user.member.user.username : player.name
         const forced = user instanceof Moderator;
-		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player?.location, forced);
+		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player?.location, forced, undefined, user);
 		if (action instanceof QueueMoveAction) {
 			const args = interactable.actionDirective.getArgs();
 			const parsedArgs = action.parseInteractionArgs(args);
@@ -264,7 +265,7 @@ export default class BotInteractionHandler {
                     this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
                     this.#logInteraction("InstantiateInventoryItemAction", author, timestamp, validatedArgs);
                     return true;
-                } 
+                }
                 catch (error) { throw new Error(error.message); }
             }
             else {
@@ -335,6 +336,17 @@ export default class BotInteractionHandler {
                     this.#replyToInteraction(`Successfully destroyed room item.`, interaction);
                     this.#logInteraction("DestroyRoomItemAction", author, timestamp, validatedArgs);
                 }
+                return true;
+            }
+            catch (error) { throw new Error(error.message); }
+        }
+        if (action instanceof ViewAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            try {
+                const validatedArgs = action.validateInteractionArgs(parsedArgs);
+                await action.performView(validatedArgs[0], validatedArgs[1]);
+                if (reply) reply.resource.message.delete();
                 return true;
             }
             catch (error) { throw new Error(error.message); }

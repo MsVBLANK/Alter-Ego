@@ -210,6 +210,10 @@ export default class Recipe extends GameEntity implements PersistentGameEntity {
         return variableValues;
     }
 
+    getEntityID(): string {
+        return `${this.getEntityType()} on row ${this.row}`;
+    }
+
     getLabel(field: RecipeField): string {
         switch (field) {
             case "ingredientsString": return "Ingredient Prefab(s)";
@@ -238,5 +242,9 @@ export default class Recipe extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: RecipeField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Recipe";
     }
 }

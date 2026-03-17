@@ -225,6 +225,10 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
         return this.getGame().constants.prefabSheetDescriptionColumn + this.row;
     }
 
+    getEntityID(): string {
+        return this.id;
+    }
+
     getLabel(field: PrefabField): string {
         switch (field) {
             case "id": return "Prefab ID";
@@ -275,5 +279,9 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: PrefabField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Prefab";
     }
 }

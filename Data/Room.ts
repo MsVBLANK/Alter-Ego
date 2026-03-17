@@ -271,6 +271,10 @@ export default class Room extends GameEntity implements PersistentGameEntity {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
     }
 
+    getEntityID(): string {
+        return this.displayName;
+    }
+
     getLabel(field: RoomField): string {
         switch (field) {
             case "id": return "Room ID";
@@ -295,6 +299,10 @@ export default class Room extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: RoomField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Room";
     }
 
     /**

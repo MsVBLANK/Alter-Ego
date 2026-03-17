@@ -20,6 +20,8 @@ export const InteractableType = {
 
 /** @enum {number} */
 export const ActionPriority = {
+    VIEW_FIELD: 1,
+    VIEW: 2,
     INSTANTIATE: 3,
     DESTROY: 4,
     QUEUE_MOVE: 7,

@@ -131,6 +131,10 @@ export default class Flag extends GameEntity implements PersistentGameEntity {
 		}
 	}
 
+    getEntityID(): string {
+        return this.id;
+    }
+
     getLabel(field: FlagField): string {
         switch (field) {
             case "id": return "Flag ID";
@@ -154,5 +158,9 @@ export default class Flag extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: FlagField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Flag";
     }
 }

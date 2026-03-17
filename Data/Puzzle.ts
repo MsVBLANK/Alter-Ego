@@ -508,11 +508,15 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
     }
 
     getContainerIdentifier(): string {
-        return this.name;
+        return this.getEntityID();
     }
 
     getContainerType(): string {
         return "Puzzle";
+    }
+
+    getEntityID(): string {
+        return this.name;
     }
 
     getLabel(field: PuzzleField): string {
@@ -563,5 +567,9 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
 
     getViewField(field: PuzzleField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Puzzle";
     }
 }

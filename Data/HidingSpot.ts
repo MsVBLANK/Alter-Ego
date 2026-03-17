@@ -108,4 +108,8 @@ export default class HidingSpot extends GameEntity {
 		if (viewerHasNoSightBehaviorAttribute) return this.occupants.length > 1 ? `${String(this.occupants.length)} people` : `someone`;
 		return generatePlayerListString(this.occupants);
 	}
+
+    override getEntityType(): string {
+        return "HidingSpot";
+    }
 }

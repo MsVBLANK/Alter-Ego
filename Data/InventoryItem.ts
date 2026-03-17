@@ -183,7 +183,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 
     /**
      * Returns the args for the Equip ActionDirective for this inventory item.
-     * 
+     *
      * @param equipmentSlot - The equipment slot to equip the inventory item to.
      * @returns [identifier, equipmentSlot, handEquipmentSlot]
      */
@@ -193,8 +193,8 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 
     /**
      * Returns the args for the Unequip ActionDirective for this inventory item.
-     * 
-     * @returns [identifier, equipmentSlot] 
+     *
+     * @returns [identifier, equipmentSlot]
      */
     getUnequipActionDirectiveArgs(): [string, string] {
         return [this.getIdentifier(), this.equipmentSlot];
@@ -202,7 +202,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 
     /**
      * Returns the args for the Use ActionDirective for this inventory item.
-     * 
+     *
      * @param target - The player to use the inventory item on.
      * @returns [identifier, targetName]
      */
@@ -309,6 +309,10 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
         return "InventoryItem";
     }
 
+    getEntityID(): string {
+        return this.getIdentifier();
+    }
+
     getLabel(field: InventoryItemField): string {
         switch (field) {
             case "player": return "Player Name";
@@ -337,5 +341,9 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 
     getViewField(field: InventoryItemField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "InventoryItem";
     }
 }

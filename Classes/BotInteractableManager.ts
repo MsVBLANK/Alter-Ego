@@ -14,7 +14,7 @@ import type Interactable from "./Interactables/Interactable.ts";
 import type InventoryItem from "../Data/InventoryItem.ts";
 import type Exit from "../Data/Exit.ts";
 import Moderator from "../Data/Moderator.ts";
-import type Recipe from "../Data/Recipe.ts";
+import Recipe from "../Data/Recipe.ts";
 import Player from "../Data/Player.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import ActionDirective from "./ActionDirective.ts";
@@ -32,6 +32,7 @@ import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventory
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
+import ViewAction, { type EntityField } from "../Data/Actions/ViewAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { ActionPriority} from "../Modules/enums.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
@@ -793,6 +794,68 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for a list of fields of the given game entity and adds them to the cache.
+     * @param entity - The entity to view.
+     * @param fields - The fields of the given entity to create view interactables for.
+     * @param user - The user these interactables are being created for.
+     * @returns An array of button interactables, if the number of fields is less than or equal to 5. Otherwise, returns an array containing one string select menu interactable.
+     */
+    async createViewFieldActionInteractables<T extends PersistentGameEntity>(entity: T, fields: EntityField<T>[], user: User): Promise<(ButtonInteractable|StringSelectMenuInteractable)[]> {
+        if (fields.length > 5) {
+            const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+            for (const field of fields) {
+                if (menuOptions.size >= 25) break;
+                const actionDirective = await this.#createActionDirective(ViewAction, [entity.getEntityType(), entity.row, field], undefined, user);
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const label = entity.getLabel(field);
+                let description = `View ${label}`;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, label, actionDirective.customId, description);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+            }
+            const actionDirective = await this.#createActionDirective(ViewAction, ["ViewFieldAction Menu"], undefined, user);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), `View Field of ${entity.getEntityID()}`, ActionPriority.VIEW_FIELD);
+            this.addInteractable(menu);
+            return [menu];
+        }
+        else {
+            const viewButtons: ButtonInteractable[] = [];
+            for (const field of fields) {
+                const actionDirective = await this.#createActionDirective(ViewAction, [entity.getEntityType(), entity.row, field], undefined, user);
+                const viewButton = new ButtonInteractable(actionDirective, `View ${entity.getLabel(field)}`, ButtonStyle.Primary, ActionPriority.VIEW_FIELD);
+                this.addInteractable(viewButton);
+                viewButtons.push(viewButton);
+            }
+            return viewButtons;
+        }
+    }
+
+    /**
+     * Creates Interactables for a list of persistent game entities and adds them to the cache.
+     * @param entities - A list of entities to view.
+     * @param user - The user these interactables are being created for.
+     */
+    async createViewActionInteractables(entities: PersistentGameEntity[], user: User): Promise<StringSelectMenuInteractable[]> {
+        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+        for (const entity of entities) {
+            if (menuOptions.size >= 25) break;
+            const actionDirective = await this.#createActionDirective(ViewAction, [entity.getEntityType(), entity.row], undefined, user);
+            if (menuOptions.has(actionDirective.customId)) continue;
+            let entityDescription: string;
+            if (entity instanceof Recipe) entityDescription = `View ${entity.getEntityType()} on row ${entity.row}`;
+            else entityDescription = `View ${entity.getEntityType()} ${entity.getEntityID()} on row ${entity.row}`;
+            const option = new StringSelectMenuOptionInteractable(actionDirective, entity.getEntityID(), actionDirective.customId, entityDescription);
+            this.addInteractable(option);
+            menuOptions.set(actionDirective.customId, option);
+        }
+        if (menuOptions.size === 0) return [];
+        const actionDirective = await this.#createActionDirective(ViewAction, ["ViewAction Menu"], undefined, user);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "View Entity", ActionPriority.VIEW);
+        this.addInteractable(menu);
+        return [menu];
+    }
+
+    /**
      * Generates an array of take interactables based on what the player is currently able to take.
      * @param container - The container the player can take items from.
      * @param containedItems - The items in the container that the player is able to take.
@@ -1036,6 +1099,22 @@ export default class BotInteractableManager {
         if (itemContainers.length > 0) {
             interactables = interactables.concat(await this.createDestroyRoomItemActionInteractables(itemContainers, user));
         }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of view interactables based on the given entity, fields, and related entities.
+     * @param entity - The entity to view.
+     * @param fields - The fields of the given entity to create view interactables for. These will usually result in the creation of button interactables.
+     * @param relatedEntities - Related entities to view. These will always be collated into a string select menu interactable.
+     * @param user - The user these interactables are being created for.
+     */
+    async getViewInteractables<T extends PersistentGameEntity>(entity: T, fields: EntityField<T>[], relatedEntities: PersistentGameEntity[], user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        if (entity && fields.length > 0)
+            interactables = interactables.concat(await this.createViewFieldActionInteractables(entity, fields, user));
+        if (relatedEntities.length > 0)
+            interactables = interactables.concat(await this.createViewActionInteractables(relatedEntities, user));
         return interactables;
     }
 }

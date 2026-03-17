@@ -191,6 +191,10 @@ export default class Status extends GameEntity implements PersistentGameEntity {
         return this.getGame().constants.statusSheetCuredColumn + this.row;
     }
 
+    getEntityID(): string {
+        return this.id;
+    }
+
     getLabel(field: StatusField): string {
         switch (field) {
             case "id": return "Status Effect ID";
@@ -206,7 +210,6 @@ export default class Status extends GameEntity implements PersistentGameEntity {
             case "behaviorAttributes": return "Behavior Attributes";
             case "inflictedDescription": return "Description When Inflicted";
             case "curedDescription": return "Description When Cured";
-            
         }
     }
 
@@ -231,6 +234,10 @@ export default class Status extends GameEntity implements PersistentGameEntity {
 
     getViewField(field: StatusField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Status";
     }
 
     /**

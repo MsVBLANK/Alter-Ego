@@ -1557,11 +1557,15 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     }
 
     getContainerIdentifier(): string {
-        return this.name;
+        return this.getEntityID();
     }
 
     getContainerType(): string {
         return "Player";
+    }
+
+    getEntityID(): string {
+        return this.name;
     }
 
     getLabel(field: PlayerField): string {
@@ -1606,6 +1610,10 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
 
     getViewField(field: PlayerField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Player";
     }
 
     /**

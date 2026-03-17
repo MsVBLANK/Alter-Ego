@@ -137,4 +137,8 @@ export default class Exit extends GameEntity {
     descriptionCell(): string {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
     }
+
+    override getEntityType(): string {
+        return "Exit";
+    }
 }

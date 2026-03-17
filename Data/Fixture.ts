@@ -452,11 +452,15 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     }
 
     getContainerIdentifier(): string {
-        return this.name;
+        return this.getEntityID();
     }
 
     getContainerType(): string {
         return "Fixture";
+    }
+
+    getEntityID(): string {
+        return this.name;
     }
 
     getLabel(field: FixtureField): string {
@@ -469,7 +473,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
             case "activatable": return "Activatable?";
             case "activated": return "Activated?";
             case "autoDeactivate": return "Deactivate Automatically?";
-            case "hidingSpotCapacity": "Hiding Spot Capacity";
+            case "hidingSpotCapacity": return "Hiding Spot Capacity";
             case "preposition": return "Preposition";
             case "description": return "Description";
         }
@@ -493,5 +497,9 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
 
     getViewField(field: FixtureField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Fixture";
     }
 }

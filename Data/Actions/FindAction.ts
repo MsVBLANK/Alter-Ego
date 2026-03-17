@@ -16,7 +16,6 @@ import type Status from "../Status.ts";
 import type Interactable from "../../Classes/Interactables/Interactable.ts";
 import { table } from "table";
 
-type FindableGameEntity = Room | Fixture | Prefab | Recipe | RoomItem | Puzzle | Event | Status | Player | InventoryItem | Gesture | Flag;
 type GameEntityFields = {
     row: 'Row',
     id?: 'ID',
@@ -51,7 +50,7 @@ export default class FindAction extends Action {
         if (!dataTypeMatch && !dataTypeMatch.groups) throw new Error(`Couldn't find a valid data type in "${query}".`);
         if (dataTypeMatch.groups.search) query = query.substring(query.indexOf(dataTypeMatch.groups.search)).trim();
         else query = '';
-        let results: FindableGameEntity[] = [];
+        let results: PersistentGameEntity[] = [];
         if (dataTypeMatch.groups.Room) results = this.#getRoomResults(query);
         else if (dataTypeMatch.groups.Fixture) results = this.#getFixtureResults(query);
         else if (dataTypeMatch.groups.Prefab) results = this.#getPrefabResults(query);
@@ -314,7 +313,7 @@ export default class FindAction extends Action {
      * Ensures that the length of the table will never exceed Discord's maximum character limit.
      * @param results - An array of rows and columns to convert into a table.
      */
-    #createResultPages<T = FindableGameEntity>(results: T[]): string[][][] {
+    #createResultPages<T = PersistentGameEntity>(results: T[]): string[][][] {
         // Divide the results into pages.
         const pages: string[][][] = [];
         let page: string[][] = [];
@@ -396,7 +395,7 @@ export default class FindAction extends Action {
     /**
      * Sends the result list message and edits it when the user requests the next or previous page.
      */
-    async #sendResultListMessage<T = FindableGameEntity>(results: T[]): Promise<void> {
+    async #sendResultListMessage<T extends PersistentGameEntity>(results: T[]): Promise<void> {
         const pages = this.#createResultPages(results);
         let page = 0;
         const resultCountString = `Found ${results.length} result${results.length === 1 ? '' : 's'}.`;
@@ -427,9 +426,10 @@ export default class FindAction extends Action {
         this.getGame().communicationHandler.sendToChannel(this.getGame().guildContext.commandChannel, resultCountString + pageString + resultsDisplay, [], interactables);
     }
 
-    async #getInteractables<T = FindableGameEntity>(results: T[]): Promise<Interactable[]> {
+    async #getInteractables<T extends PersistentGameEntity>(results: T[]): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
         const interactableManager = this.getGame().botContext.interactableManager;
+        interactables = await interactableManager.getViewInteractables(undefined, [], results, this.user);
         if (results.every(result => result instanceof Fixture || result instanceof RoomItem || result instanceof Puzzle)) {
             interactables = interactables.concat(await interactableManager.getInstantiateRoomItemInteractables(results, this.user));
             interactables = interactables.concat(await interactableManager.getDestroyRoomItemInteractables(results, this.user));

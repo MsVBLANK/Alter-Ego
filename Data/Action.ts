@@ -67,8 +67,9 @@ export default abstract class Action extends GameConstruct {
         this.performed = false;
 		this.id = randomUUID();
 		this.mirrors = new Set();
-        if (forced && message) this.user = game.entityFinder.getModeratorById(message.author.id);
-        else if (!forced) this.user = player;
+        this.user = user;
+        if (!this.user && forced && message) this.user = game.entityFinder.getModeratorById(message.author.id);
+        else if (this.user && !forced) this.user = player;
 	}
 
 	/**

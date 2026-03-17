@@ -73,6 +73,10 @@ export default class Gesture extends GameEntity implements PersistentGameEntity 
         this.target = null;
     }
 
+    getEntityID(): string {
+        return this.id;
+    }
+
     getLabel(field: GestureField): string {
         switch (field) {
             case "id": return "Gesture ID";
@@ -95,6 +99,10 @@ export default class Gesture extends GameEntity implements PersistentGameEntity 
 
     getViewField(field: GestureField): ViewField {
         return { label: this.getLabel(field), value: this.getValue(field) };
+    }
+
+    override getEntityType(): string {
+        return "Gesture";
     }
 
     /**

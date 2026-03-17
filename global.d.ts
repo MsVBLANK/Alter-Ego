@@ -15,6 +15,7 @@ import type Room from "./Data/Room.ts";
 import type RoomItem from "./Data/RoomItem.ts";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
+import type Moderator from "./Data/Moderator.ts";
 
 export { };
 
@@ -134,7 +135,7 @@ declare global {
 	}
 
 	interface IModeratorCommand extends ICommand {
-		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
+		execute: (game: Game, message: UserMessage, command: string, args: string[], moderator: Moderator) => Promise<void>;
 	}
 
 	interface IPlayerCommand extends ICommand {

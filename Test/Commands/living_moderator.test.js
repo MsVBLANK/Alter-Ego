@@ -2,6 +2,7 @@ import ModeratorCommand from "../../Classes/ModeratorCommand.ts";
 import { usage, execute, config } from "../../Commands/living_moderator.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 import { sendQueuedMessages } from "../../Modules/messageHandler.js";
+import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("living_moderator command", () => {
     beforeAll(async () => {
@@ -10,9 +11,11 @@ describe("living_moderator command", () => {
 
     const living_moderator = new ModeratorCommand(config, usage, execute);
 
+    const moderator = createMockModerator()
+
     test("living_moderator execution", async () => {
         // @ts-ignore
-        await living_moderator.execute(game, createMockMessage(), "living", []);
+        await living_moderator.execute(game, createMockMessage(), "living", [], moderator);
         sendQueuedMessages(game);
         /** @type {import('vitest').Mock} */
         // @ts-ignore

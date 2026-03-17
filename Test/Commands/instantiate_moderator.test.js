@@ -3,6 +3,7 @@ import { usage, execute, config } from '../../Commands/instantiate_moderator.js'
 import InstantiateInventoryItemAction from '../../Data/Actions/InstantiateInventoryItemAction.ts';
 import { clearQueue } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
+import { createMockModerator } from '../__mocks__/utility.ts';
 
 describe('instantiate_moderator command', () => {
     beforeAll(async () => {
@@ -18,6 +19,8 @@ describe('instantiate_moderator command', () => {
 
     const instantiate_moderator = new ModeratorCommand(config, usage, execute);
 
+    const moderator = createMockModerator()
+
     test('valid item into player hand', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const prefab = game.entityFinder.getPrefab("mug of coffee");
@@ -30,7 +33,7 @@ describe('instantiate_moderator command', () => {
             return original.apply(this, args);
         });
         // @ts-ignore
-        await instantiate_moderator.execute(game, createMockMessage(), "create", ["mug", "of", "coffee", "in", "kyra's", "left", "hand"])
+        await instantiate_moderator.execute(game, createMockMessage(), "create", ["mug", "of", "coffee", "in", "kyra's", "left", "hand"], moderator)
         expect(spy).toBeInvokedWith(prefab, "LEFT HAND", null, "", 1, expect.any(Map));
         expect(context).not.toBeUndefined();
         expect(context.player.name).toBe(player.name);

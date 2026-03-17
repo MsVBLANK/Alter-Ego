@@ -3,6 +3,7 @@ import { usage, execute, config } from '../../Commands/stash_moderator.js'
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 import StashAction from '../../Data/Actions/StashAction.ts';
+import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe('stash_moderator command', () => {
     beforeAll(async () => {
@@ -15,6 +16,8 @@ describe('stash_moderator command', () => {
     });
 
     const stash_moderator = new ModeratorCommand(config, usage, execute);
+
+    const moderator = createMockModerator()
 
     describe('valid invocations', () => {
         afterEach(async () => {
@@ -35,7 +38,7 @@ describe('stash_moderator command', () => {
                 return original.apply(this, args);
             });
             // @ts-ignore
-            await stash_moderator.execute(game, createMockMessage(), "stash", ["kyra's", "mug", "of", "coffee", "in", "right", "pocket", "of", "kyras", "lab", "coat"]);
+            await stash_moderator.execute(game, createMockMessage(), "stash", ["kyra's", "mug", "of", "coffee", "in", "right", "pocket", "of", "kyras", "lab", "coat"], moderator);
             expect(spy).toBeInvokedWith(coffee, hand, jacket.items[0], jacket.items[0].inventory.get("RIGHT POCKET"));
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
@@ -55,7 +58,7 @@ describe('stash_moderator command', () => {
                 return original.apply(this, args);
             });
             // @ts-ignore
-            await stash_moderator.execute(game, createMockMessage(), "stash", ["kyra's", "mug", "of", "coffee", "in", "kyras", "lab", "coat"]);
+            await stash_moderator.execute(game, createMockMessage(), "stash", ["kyra's", "mug", "of", "coffee", "in", "kyras", "lab", "coat"], moderator);
             expect(spy).toBeInvokedWith(coffee, hand, jacket.items[0], jacket.items[0].inventory.get("RIGHT POCKET"));
             expect(context).not.toBeUndefined();
             expect(context.player.name).toBe(player.name);
@@ -68,7 +71,7 @@ describe('stash_moderator command', () => {
             const message = createMockMessage();
             const author = message.author;
             // @ts-ignore
-            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "invalid", "pocket", "of", "kyras", "lab", "coat"]);
+            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "invalid", "pocket", "of", "kyras", "lab", "coat"], moderator);
             await sendQueuedMessages(game);
             expect(spy).not.toHaveBeenCalled();
             expect(author.send).toBeInvokedWith("Couldn't find \"POCKET\" of KYRAS LAB COAT 1.");
@@ -79,7 +82,7 @@ describe('stash_moderator command', () => {
             const message = createMockMessage();
             const author = message.author;
             // @ts-ignore
-            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "right", "pocket", "of", "kyras", "invalid", "coat"]);
+            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "right", "pocket", "of", "kyras", "invalid", "coat"], moderator);
             await sendQueuedMessages(game);
             expect(spy).not.toHaveBeenCalled();
             expect(author.send).toBeInvokedWith("Couldn't find container item \"COAT\".");
@@ -90,7 +93,7 @@ describe('stash_moderator command', () => {
             const message = createMockMessage();
             const author = message.author;
             // @ts-ignore
-            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "kyras", "glasses"]);
+            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee", "in", "kyras", "glasses"], moderator);
             await sendQueuedMessages(game);
             expect(spy).not.toHaveBeenCalled();
             expect(author.send).toBeInvokedWith("KYRAS GLASSES cannot hold items.");
@@ -101,7 +104,7 @@ describe('stash_moderator command', () => {
             const message = createMockMessage();
             const author = message.author;
             // @ts-ignore
-            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee"]);
+            await stash_moderator.execute(game, message, "stash", ["kyra's", "mug", "of", "coffee"], moderator);
             await sendQueuedMessages(game);
             expect(spy).not.toHaveBeenCalled();
             expect(author.send).toBeInvokedWith(`You need to specify two items. Usage:\n${stash_moderator.usage(game.settings)}`);

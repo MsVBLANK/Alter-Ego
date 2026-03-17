@@ -1,14 +1,17 @@
 import ModeratorCommand from "../../Classes/ModeratorCommand.ts";
 import { usage, execute, config } from "../../Commands/dumplog_moderator.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
+import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("dumplog_moderator command", () => {
     const dumplog_moderator = new ModeratorCommand(config, usage, execute);
 
+    const moderator = createMockModerator()
+
     test('execute', async () => {
         const mockMessage = createMockMessage();
         // @ts-ignore
-        await dumplog_moderator.execute(game, mockMessage, "dumplog", [])
+        await dumplog_moderator.execute(game, mockMessage, "dumplog", [], moderator)
         expect(game.messageQueue.size()).toStrictEqual(0);
         expect(game.guildContext.commandChannel.send).toHaveBeenCalledOnce()
         // @ts-ignore

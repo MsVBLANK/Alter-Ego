@@ -3,6 +3,7 @@ import { usage, execute, config } from '../../Commands/destroy_moderator.js'
 import DestroyInventoryItemAction from '../../Data/Actions/DestroyInventoryItemAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
+import { createMockModerator } from '../__mocks__/utility.ts';
 
 describe('destroy_moderator command', () => {
     beforeAll(async () => {
@@ -15,6 +16,8 @@ describe('destroy_moderator command', () => {
     });
 
     const destroy_moderator = new ModeratorCommand(config, usage, execute);
+
+    const moderator = createMockModerator()
 
     describe('on inventory items', () => {
         describe('shallow nested', () => {
@@ -35,7 +38,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "right", "hand"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "right", "hand"], moderator);
                     expect(spy).toBeInvokedWith(item, item.quantity, true, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -52,7 +55,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "mug", "of", "coffee"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["kyra's", "mug", "of", "coffee"], moderator);
                     expect(spy).toBeInvokedWith(item, item.quantity, true, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -69,7 +72,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "kyras", "pants"], moderator);
                     expect(spy).toHaveBeenCalledTimes(items.length);
                     for (const context of contexts) {
                         expect(context.player.name).toBe(player.name);
@@ -87,7 +90,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"], moderator);
                     expect(spy).toHaveBeenCalledTimes(items.length);
                     for (const context of contexts) {
                         expect(context.player.name).toBe(player.name);
@@ -106,7 +109,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "kyras", "pants"], moderator);
                     expect(spy).toBeInvokedWith(item, quantity, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -124,7 +127,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"], moderator);
                     expect(spy).toBeInvokedWith(item, quantity, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -136,7 +139,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "right", "hand"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["all", "in", "kyra's", "right", "hand"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     //expect(author.send).toBeInvokedWith("The \"all\" argument cannot be used when the container is an equipment slot.") // TODO: not called?
@@ -156,7 +159,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["kyra's", "left", "hand"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["kyra's", "left", "hand"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Cannot destroy item equipped to LEFT HAND because nothing is equipped to it.");
@@ -166,7 +169,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["kyra's", "INVALID", "ITEM"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["kyra's", "INVALID", "ITEM"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM\" in Kyra's inventory.");
@@ -176,7 +179,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN INVALID CONTAINER\" in Kyra's inventory.");
@@ -186,7 +189,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "kyras", "pants"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find item \"INVALID ITEM\" in RIGHT POCKET of KYRAS PANTS 1 in Kyra's inventory.");
@@ -196,7 +199,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "SLOT", "of", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "SLOT", "of", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN INVALID SLOT OF INVALID CONTAINER\" in Kyra's inventory.");
@@ -206,7 +209,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "right", "pocket", "of", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "right", "pocket", "of", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID ITEM IN RIGHT POCKET OF INVALID CONTAINER\" in Kyra's inventory.");
@@ -216,7 +219,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "SLOT", "of", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "INVALID", "SLOT", "of", "kyras", "pants"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID SLOT\" of KYRAS PANTS 1.");
@@ -226,7 +229,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["INVALID", "ITEM", "in", "kyra's", "right", "pocket", "of", "kyras", "pants"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find item \"INVALID ITEM\" in RIGHT POCKET of KYRAS PANTS 1 in Kyra's inventory.");
@@ -236,7 +239,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN INVALID CONTAINER\" in Kyra's inventory.");
@@ -246,7 +249,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "SLOT", "of", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "SLOT", "of", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN INVALID SLOT OF INVALID CONTAINER\" in Kyra's inventory.");
@@ -256,7 +259,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "INVALID", "CONTAINER"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "right", "pocket", "of", "INVALID", "CONTAINER"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"MASTER KEY IN RIGHT POCKET OF INVALID CONTAINER\" in Kyra's inventory.");
@@ -266,7 +269,7 @@ describe('destroy_moderator command', () => {
                     const message = createMockMessage();
                     const author = message.author;
                     // @ts-ignore
-                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "SLOT", "of", "kyras", "pants"]);
+                    await destroy_moderator.execute(game, message, "destroy", ["master", "key", "in", "kyra's", "INVALID", "SLOT", "of", "kyras", "pants"], moderator);
                     await sendQueuedMessages(game);
                     expect(spy).not.toHaveBeenCalled();
                     expect(author.send).toBeInvokedWith("Couldn't find \"INVALID SLOT\" of KYRAS PANTS 1.");
@@ -292,7 +295,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["vivian's", "hamburger", "bun"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["vivian's", "hamburger", "bun"], moderator);
                     expect(spy).toBeInvokedWith(item, quantity, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -310,7 +313,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["hamburger", "bun", "in", "vivian's", "pack", "of", "toilet", "paper"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["hamburger", "bun", "in", "vivian's", "pack", "of", "toilet", "paper"], moderator);
                     expect(spy).toBeInvokedWith(item, quantity, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);
@@ -328,7 +331,7 @@ describe('destroy_moderator command', () => {
                         return original.apply(this, args);
                     });
                     // @ts-ignore
-                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["hamburger", "bun", "in", "vivian's", "pack", "of", "pack", "of", "toilet", "paper"]);
+                    await destroy_moderator.execute(game, createMockMessage(), "destroy", ["hamburger", "bun", "in", "vivian's", "pack", "of", "pack", "of", "toilet", "paper"], moderator);
                     expect(spy).toBeInvokedWith(item, quantity, true);
                     expect(context).not.toBeUndefined();
                     expect(context.player.name).toBe(player.name);

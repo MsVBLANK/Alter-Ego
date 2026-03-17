@@ -522,35 +522,55 @@ export default class BotInteractableManager {
      * @param player - The player these interactables are being created for.
      * @param user - The user these interactables are being created for.
      */
-    async createInstantiateInventoryItemActionInteractables(freeEquipmentSlots: EquipmentSlot[], viableContainers: Map<InventoryItem, string[]>, player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
-        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+    async createInstantiateInventoryItemActionInteractables(freeEquipmentSlots: EquipmentSlot[], viableContainers: Map<InventoryItem, string[]>, player: Player, user: User): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+        const interactableOptions: { actionDirective: ActionDirective<InstantiateInventoryItemAction>, verb: string, label: string, description: string }[] = [];
         for (const equipmentSlot of freeEquipmentSlots) {
-            if (menuOptions.size >= 25) break;
             if (equipmentSlot.equippedItem !== null) continue;
             const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, equipmentSlot.getPartialInstantiateActionDirectiveArgs(), player, user);
-            if (menuOptions.has(actionDirective.customId)) continue;
-            const option = new StringSelectMenuOptionInteractable(actionDirective, `${equipmentSlot.id}`, actionDirective.customId, `Instantiate to ${equipmentSlot.id}`, 1, true);
-            this.addInteractable(option);
-            menuOptions.set(actionDirective.customId, option);
+            const verb = `Instantiate to`;
+            const label = `${equipmentSlot.id}`;
+            const description = `${verb} ${equipmentSlot.id}`;
+            interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
         }
         for (const [container, inventorySlots] of viableContainers.entries()) {
             for (const inventorySlotId of inventorySlots) {
-                if (menuOptions.size >= 25) break;
                 const inventorySlot = container.inventory.get(inventorySlotId);
                 if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
                 const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), player ?? container.player, user);
-                if (menuOptions.has(actionDirective.customId)) continue;
                 const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
-                const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
+                const verb = `Instantiate ${container.getPreposition()}`;
+                const label = `${containerName}`;
+                const description = `${verb} ${inventorySlot.id} of ${container.getIdentifier()}`;
+                interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
+            }
+        }
+        const uniqueButtonLabels = new Set(interactableOptions.map(option => `${option.verb} ${option.label}`));
+        if (interactableOptions.length > 2 || uniqueButtonLabels.size !== interactableOptions.length) {
+            const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                if (menuOptions.size >= 25) break;
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, interactableOption.label, actionDirective.customId, interactableOption.description, 1, true);
                 this.addInteractable(option);
                 menuOptions.set(actionDirective.customId, option);
             }
+            if (menuOptions.size === 0) return [];
+            const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, ["InstantiateInventoryItemAction Menu"], player, user);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+            this.addInteractable(menu);
+            return [menu];
         }
-        if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, ["InstantiateInventoryItemAction Menu"], player, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
-        this.addInteractable(menu);
-        return [menu];
+        else {
+            const instantiateButtons: ButtonInteractable[] = [];
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, 0, true);
+                this.addInteractable(instantiateButton);
+                instantiateButtons.push(instantiateButton);
+            }
+            return instantiateButtons;
+        }
     }
 
     /**
@@ -582,38 +602,58 @@ export default class BotInteractableManager {
      * @param viableContainers - A map of viable room item containers and (optionally) inventory slots an item can be instantiated into.
      * @param user - The user these interactables are being created for.
      */
-    async createInstantiateRoomItemActionInteractables(viableContainers: Map<RoomItemContainer, string[]>, user: User): Promise<StringSelectMenuInteractable[]> {
-        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+    async createInstantiateRoomItemActionInteractables(viableContainers: Map<RoomItemContainer, string[]>, user: User): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+        const interactableOptions: { actionDirective: ActionDirective<InstantiateRoomItemAction>, verb: string, label: string, description: string }[] = [];
         for (const [container, inventorySlots] of viableContainers.entries()) {
             if (container instanceof RoomItem) {
                 for (const inventorySlotId of inventorySlots) {
-                    if (menuOptions.size >= 25) break;
                     const inventorySlot = container.inventory.get(inventorySlotId);
                     if (!inventorySlot || inventorySlot.takenSpace >= inventorySlot.capacity) continue;
                     const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, container.getPartialInstantiateActionDirectiveArgs(inventorySlot), undefined, user);
-                    if (menuOptions.has(actionDirective.customId)) continue;
                     const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.getIdentifier()}` : container.getIdentifier();
-                    const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${inventorySlot.id} of ${container.getIdentifier()}`, 1, true);
-                    this.addInteractable(option);
-                    menuOptions.set(actionDirective.customId, option);
+                    const verb = `Instantiate ${container.getPreposition()}`;
+                    const label = `${containerName}`;
+                    const description = `${verb} ${inventorySlot.id} of ${container.getIdentifier()} at ${container.getLocation().displayName}`;
+                    interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
                 }
             }
             else {
-                if (menuOptions.size >= 25) break;
                 if (!container.canCurrentlyContainItems(true, true)) continue;
                 const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, container.getPartialInstantiateActionDirectiveArgs(), undefined, user);
-                if (menuOptions.has(actionDirective.customId)) continue;
                 const containerName = container.getContainerIdentifier();
-                const option = new StringSelectMenuOptionInteractable(actionDirective, `${containerName}`, actionDirective.customId, `Instantiate ${container.getPreposition()} ${containerName}`, 1, true);
+                const verb = `Instantiate ${container.getPreposition()}`;
+                const label = `${containerName}`;
+                const description = `${verb} ${containerName} at ${container.getLocation().displayName}`;
+                interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
+            }
+        }
+        const uniqueButtonLabels = new Set(interactableOptions.map(option => `${option.verb} ${option.label}`));
+        if (interactableOptions.length > 2 || uniqueButtonLabels.size !== interactableOptions.length) {
+            const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                if (menuOptions.size >= 25) break;
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, interactableOption.label, actionDirective.customId, interactableOption.description, 1, true);
                 this.addInteractable(option);
                 menuOptions.set(actionDirective.customId, option);
             }
+            if (menuOptions.size === 0) return [];
+            const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, ["InstantiateRoomItemAction Menu"], undefined, user);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+            this.addInteractable(menu);
+            return [menu];
         }
-        if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, ["InstantiateRoomItemAction Menu"], undefined, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
-        this.addInteractable(menu);
-        return [menu];
+        else {
+            const instantiateButtons: ButtonInteractable[] = [];
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, 0, true);
+                this.addInteractable(instantiateButton);
+                instantiateButtons.push(instantiateButton);
+            }
+            return instantiateButtons;
+        }
     }
 
     /**
@@ -646,11 +686,10 @@ export default class BotInteractableManager {
      * @param player - The player these interactables are being created for.
      * @param user - The user these interactables are being created for.
      */
-    async createDestroyInventoryItemActionInteractables(destroyableItems: InventoryItem[], player: Player, user: User): Promise<StringSelectMenuInteractable[]> {
-        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+    async createDestroyInventoryItemActionInteractables(destroyableItems: InventoryItem[], player: Player, user: User): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+        const interactableOptions: { actionDirective: ActionDirective<DestroyInventoryItemAction>, verb: string, label: string, description: string }[] = [];
         for (const item of destroyableItems) {
             const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, item.getDestroyActionDirectiveArgs(), player ?? item.player, user);
-            if (menuOptions.has(actionDirective.customId)) continue;
             let containerString: string;
             if (item.container !== null) {
                 containerString = `${item.container.getPreposition()} `;
@@ -658,16 +697,38 @@ export default class BotInteractableManager {
                 containerString += `${item.container.getIdentifier()}`;
             }
             else containerString = `equipped to ${item.equipmentSlot}`;
-            const option = new StringSelectMenuOptionInteractable(actionDirective, item.getIdentifier(), actionDirective.customId, `Destroy ${item.getIdentifier()} ${containerString}`);
-            this.addInteractable(option);
-            menuOptions.set(actionDirective.customId, option);
-            if (menuOptions.size >= 25) break;
+            const verb = `Destroy`;
+            const label = `${item.getIdentifier()}`;
+            const description = `${verb} ${item.getIdentifier()} ${containerString}`;
+            interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
         }
-        if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, ["DestroyInventoryItemAction Menu"], player, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
-        this.addInteractable(menu);
-        return [menu];
+        const uniqueButtonLabels = new Set(interactableOptions.map(option => `${option.verb} ${option.label}`));
+        if (interactableOptions.length > 2 || uniqueButtonLabels.size !== interactableOptions.length) {
+            const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                if (menuOptions.size >= 25) break;
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, interactableOption.label, actionDirective.customId, interactableOption.description, 1);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+            }
+            if (menuOptions.size === 0) return [];
+            const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, ["DestroyInventoryItemAction Menu"], player, user);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+            this.addInteractable(menu);
+            return [menu];
+        }
+        else {
+            const destroyButtons: ButtonInteractable[] = [];
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, 0);
+                this.addInteractable(destroyButton);
+                destroyButtons.push(destroyButton);
+            }
+            return destroyButtons;
+        }
     }
 
     /**
@@ -675,12 +736,11 @@ export default class BotInteractableManager {
      * @param itemContainers - A list of item containers to create Interactables for.
      * @param user - The user these interactables are being created for.
      */
-    async createDestroyRoomItemActionInteractables(itemContainers: RoomItemContainer[], user: User): Promise<StringSelectMenuInteractable[]> {
-        const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+    async createDestroyRoomItemActionInteractables(itemContainers: RoomItemContainer[], user: User): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+        const interactableOptions: { actionDirective: ActionDirective<DestroyRoomItemAction>, verb: string, label: string, description: string }[] = [];
         for (const container of itemContainers) {
             if (container instanceof RoomItem) {
                 const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, container.getDestroyRoomItemActionDirectiveArgs(), undefined, user);
-                if (menuOptions.has(actionDirective.customId)) continue;
                 let containerString = `${container.container.getPreposition()} `;
                 if (container.container instanceof RoomItem) {
                     if (container.container.inventory.size > 1) containerString += `${container.slot} of `;
@@ -688,26 +748,47 @@ export default class BotInteractableManager {
                 }
                 else containerString += `${container.container.getContainerIdentifier()}`
                 containerString += ` at ${container.getLocation().displayName}`;
-                const option = new StringSelectMenuOptionInteractable(actionDirective, container.getIdentifier(), actionDirective.customId, `Destroy ${container.getIdentifier()} ${containerString}`);
-                this.addInteractable(option);
-                menuOptions.set(actionDirective.customId, option);
-                if (menuOptions.size >= 25) break;
+                const verb = `Destroy`;
+                const label = `${container.getIdentifier()}`;
+                const description = `${verb} ${container.getIdentifier()} ${containerString}`;
+                interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
             }
             if (container.isItemContainer() && container.canCurrentlyContainItems(false, true) && !container.containsNoItems()) {
                 const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, container.getDestroyAllRoomItemActionDirectiveArgs(), undefined, user);
-                if (menuOptions.has(actionDirective.customId)) continue;
                 const containerString = `${container.getPreposition()} ${container.getContainerIdentifier()}`;
-                const option = new StringSelectMenuOptionInteractable(actionDirective, `All ${containerString}`, actionDirective.customId, `Destroy all ${containerString} at ${container.getLocation().displayName}`);
-                this.addInteractable(option);
-                menuOptions.set(actionDirective.customId, option);
-                if (menuOptions.size >= 25) break;
+                const verb = `Destroy`;
+                const label = `All ${containerString}`;
+                const description = `${verb} all ${containerString} at ${container.getLocation().displayName}`;
+                interactableOptions.push({ actionDirective: actionDirective, verb: verb, label: label, description: description });
             }
         }
-        if (menuOptions.size === 0) return [];
-        const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, ["DestroyRoomItemAction Menu"], undefined, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
-        this.addInteractable(menu);
-        return [menu];
+        const uniqueButtonLabels = new Set(interactableOptions.map(option => `${option.verb} ${option.label}`));
+        if (interactableOptions.length > 2 || uniqueButtonLabels.size !== interactableOptions.length) {
+            const menuOptions: Collection<string, StringSelectMenuOptionInteractable> = new Collection();
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                if (menuOptions.size >= 25) break;
+                if (menuOptions.has(actionDirective.customId)) continue;
+                const option = new StringSelectMenuOptionInteractable(actionDirective, interactableOption.label, actionDirective.customId, interactableOption.description, 1);
+                this.addInteractable(option);
+                menuOptions.set(actionDirective.customId, option);
+            }
+            if (menuOptions.size === 0) return [];
+            const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, ["DestroyRoomItemAction Menu"], undefined, user);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+            this.addInteractable(menu);
+            return [menu];
+        }
+        else {
+            const destroyButtons: ButtonInteractable[] = [];
+            for (const interactableOption of interactableOptions) {
+                const actionDirective = interactableOption.actionDirective;
+                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, 0);
+                this.addInteractable(destroyButton);
+                destroyButtons.push(destroyButton);
+            }
+            return destroyButtons;
+        }
     }
 
     /**

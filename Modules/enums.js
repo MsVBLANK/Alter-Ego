@@ -17,3 +17,20 @@ export const InteractableType = {
     MODAL: 3,
     TEXT_INPUT: 4
 };
+
+/** @enum {number} */
+export const ActionPriority = {
+    INSTANTIATE: 3,
+    DESTROY: 4,
+    QUEUE_MOVE: 7,
+    QUEUE_RUN: 8,
+    STASH: 10,
+    UNSTASH: 11,
+    INSPECT: 12,
+    TAKE: 20,
+    CRAFT: 21,
+    EQUIP: 25,
+    USE: 30,
+    UNEQUIP: 35,
+    DROP: 40
+};

@@ -33,6 +33,7 @@ import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
+import { ActionPriority} from "../Modules/enums.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
 
 /**
@@ -188,13 +189,13 @@ export default class BotInteractableManager {
 		for (const exit of exits) {
 			if (!player.hasBehaviorAttribute("disable move")) {
                 const actionDirective = await this.#createActionDirective(QueueMoveAction, exit.getQueueMoveActionDirectiveArgs(player.location, false), player, user);
-				const moveButton = new ButtonInteractable(actionDirective, `Move ${exit.name}`, ButtonStyle.Primary);
+				const moveButton = new ButtonInteractable(actionDirective, `Move ${exit.name}`, ButtonStyle.Primary, ActionPriority.QUEUE_MOVE);
 				this.addInteractable(moveButton);
 				moveButtons.push(moveButton);
 			}
 			if (!player.hasBehaviorAttribute("disable run")) {
                 const actionDirective = await this.#createActionDirective(QueueMoveAction, exit.getQueueMoveActionDirectiveArgs(player.location, true), player, user);
-				const moveButton = new ButtonInteractable(actionDirective, `Run ${exit.name}`, ButtonStyle.Danger);
+				const moveButton = new ButtonInteractable(actionDirective, `Run ${exit.name}`, ButtonStyle.Danger, ActionPriority.QUEUE_RUN);
 				this.addInteractable(moveButton);
 				runButtons.push(moveButton);
 			}
@@ -227,7 +228,7 @@ export default class BotInteractableManager {
 		}
 		if (menuOptions.size === 0) return [];
         const actionDirective = await this.#createActionDirective(InspectAction, ["InspectAction Menu"], player, user);
-		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect", 1);
+		const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Inspect", ActionPriority.INSPECT);
 		this.addInteractable(menu);
 		return [menu];
 	}
@@ -255,7 +256,7 @@ export default class BotInteractableManager {
 			}
 			if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(TakeAction, ["TakeAction Menu"], player, user);
-			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take", 2);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Take", ActionPriority.TAKE);
 			this.addInteractable(menu);
 			return [menu];
 		}
@@ -263,7 +264,7 @@ export default class BotInteractableManager {
 			const takeButtons: ButtonInteractable[] = [];
 			for (const entity of entities) {
                 const actionDirective = await this.#createActionDirective(TakeAction, entity.getTakeActionDirectiveArgs(), player, user);
-				const takeButton = new ButtonInteractable(actionDirective, `Take ${entity.name}`, ButtonStyle.Primary, 2);
+				const takeButton = new ButtonInteractable(actionDirective, `Take ${entity.name}`, ButtonStyle.Primary, ActionPriority.TAKE);
 				this.addInteractable(takeButton);
 				takeButtons.push(takeButton);
 			}
@@ -295,7 +296,7 @@ export default class BotInteractableManager {
 			}
 			if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(DropAction, ["DropAction Menu"], player, user);
-			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Drop");
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Drop", ActionPriority.DROP);
 			this.addInteractable(menu);
 			return [menu];
 		}
@@ -306,7 +307,7 @@ export default class BotInteractableManager {
 				const inventorySlot = container instanceof RoomItem ? container.inventory.first() : undefined;
 				if (inventorySlot && inventorySlot.willBeOverFilledBy(entity)) continue;
                 const actionDirective = await this.#createActionDirective(DropAction, entity.getDropActionDirectiveArgs(containerType, container, inventorySlot), player, user);
-				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, 4);
+				const dropButton = new ButtonInteractable(actionDirective, `Drop ${entity.name}`, ButtonStyle.Primary, ActionPriority.DROP);
 				this.addInteractable(dropButton);
 				dropButtons.push(dropButton);
 			}
@@ -343,7 +344,7 @@ export default class BotInteractableManager {
 			}
 			if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(StashAction, ["StashAction Menu"], player, user);
-			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Stash", 0);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Stash", ActionPriority.STASH);
 			this.addInteractable(menu);
 			return [menu];
 		}
@@ -357,7 +358,7 @@ export default class BotInteractableManager {
 						if (!inventorySlot || inventorySlot.willBeOverFilledBy(entity)) continue;
                         const actionDirective = await this.#createActionDirective(StashAction, entity.getStashActionDirectiveArgs(container, inventorySlot), player, user);
 						const containerName = container.inventory.size > 1 ? `${inventorySlot.id} of ${container.name}` : container.name;
-						const stashButton = new ButtonInteractable(actionDirective, `Stash ${entity.name} ${container.getPreposition()} ${containerName}`, ButtonStyle.Primary, 0);
+						const stashButton = new ButtonInteractable(actionDirective, `Stash ${entity.name} ${container.getPreposition()} ${containerName}`, ButtonStyle.Primary, ActionPriority.STASH);
 						this.addInteractable(stashButton);
 						stashButtons.push(stashButton);
 					}
@@ -391,7 +392,7 @@ export default class BotInteractableManager {
 			}
 			if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(UnstashAction, ["UnstashAction Menu"], player, user);
-			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unstash", 1);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unstash", ActionPriority.UNSTASH);
 			this.addInteractable(menu);
 			return [menu];
 		}
@@ -399,7 +400,7 @@ export default class BotInteractableManager {
 			const unstashButtons: ButtonInteractable[] = [];
 			for (const entity of entities) {
                 const actionDirective = await this.#createActionDirective(UnstashAction, entity.getUnstashActionDirectiveArgs(), player, user);
-				const unstashButton = new ButtonInteractable(actionDirective, `Unstash ${entity.name}`, ButtonStyle.Primary, 2);
+				const unstashButton = new ButtonInteractable(actionDirective, `Unstash ${entity.name}`, ButtonStyle.Primary, ActionPriority.UNSTASH);
 				this.addInteractable(unstashButton);
 				unstashButtons.push(unstashButton);
 			}
@@ -431,7 +432,7 @@ export default class BotInteractableManager {
             }
 			if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(EquipAction, ["EquipAction Menu"], player, user);
-			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Equip", 2);
+			const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Equip", ActionPriority.EQUIP);
 			this.addInteractable(menu);
 			return [menu];
 		}
@@ -442,7 +443,7 @@ export default class BotInteractableManager {
                     const equipmentSlot = player.inventory.get(equipmentSlotId);
                     if (!equipmentSlot || equipmentSlot.equippedItem !== null) continue;
                     const actionDirective = await this.#createActionDirective(EquipAction, heldItem.getEquipActionDirectiveArgs(equipmentSlot), player, user);
-                    const equipButton = new ButtonInteractable(actionDirective, `Equip ${heldItem.name}`, ButtonStyle.Secondary, 2);
+                    const equipButton = new ButtonInteractable(actionDirective, `Equip ${heldItem.name}`, ButtonStyle.Secondary, ActionPriority.EQUIP);
                     this.addInteractable(equipButton);
                     equipButtons.push(equipButton);
                 }
@@ -470,7 +471,7 @@ export default class BotInteractableManager {
         }
         if (menuOptions.size === 0) return [];
         const actionDirective = await this.#createActionDirective(UnequipAction, ["UnequipAction Menu"], player, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unequip", 3);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Unequip", ActionPriority.UNEQUIP);
         this.addInteractable(menu);
         return [menu];
     }
@@ -485,7 +486,7 @@ export default class BotInteractableManager {
         if (player.hasBehaviorAttribute("disable craft") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable craft")) return [];
         const heldItems = getSortedItems(this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem));
         const actionDirective = await this.#createActionDirective(CraftAction, player.getCraftActionDirectiveArgs(heldItems[0], heldItems[1], recipe), player, user);
-        const craftButton = new ButtonInteractable(actionDirective, `Craft ${heldItems[0].name} and ${heldItems[1].name}`, ButtonStyle.Success, 2);
+        const craftButton = new ButtonInteractable(actionDirective, `Craft ${heldItems[0].name} and ${heldItems[1].name}`, ButtonStyle.Success, ActionPriority.CRAFT);
         this.addInteractable(craftButton);
         return [craftButton];
     }
@@ -510,7 +511,7 @@ export default class BotInteractableManager {
         }
         if (menuOptions.size === 0) return [];
         const actionDirective = await this.#createActionDirective(UseAction, ["UseAction Menu"], player, user);
-        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Use", 3);
+        const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Use", ActionPriority.USE);
         this.addInteractable(menu);
         return [menu];
     }
@@ -557,7 +558,7 @@ export default class BotInteractableManager {
             }
             if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, ["InstantiateInventoryItemAction Menu"], player, user);
-            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", ActionPriority.INSTANTIATE, true);
             this.addInteractable(menu);
             return [menu];
         }
@@ -565,7 +566,7 @@ export default class BotInteractableManager {
             const instantiateButtons: ButtonInteractable[] = [];
             for (const interactableOption of interactableOptions) {
                 const actionDirective = interactableOption.actionDirective;
-                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, 0, true);
+                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, ActionPriority.INSTANTIATE, true);
                 this.addInteractable(instantiateButton);
                 instantiateButtons.push(instantiateButton);
             }
@@ -592,7 +593,7 @@ export default class BotInteractableManager {
         inputs.push(new TextInputInteractable("Instantiate Inventory Item Procedural Selections", "Procedural Selections", "Example: (color=metal + character=upa)", false, undefined, undefined, 5));
         const modalActionDirective = await this.#createActionDirective(InstantiateInventoryItemAction, args.concat(["Modal"]), player, user);
         const description = containerIdentifier ? `Instantiate to ${inventorySlotId} of ${player.name}'s ${containerIdentifier}` : `Instantiate to ${player.name}'s ${equipmentSlotId}`;
-        const modal = new ModalInteractable(modalActionDirective, "Instantiate Inventory Item", inputs, 0, description);
+        const modal = new ModalInteractable(modalActionDirective, "Instantiate Inventory Item", inputs, ActionPriority.INSTANTIATE, description);
         this.addInteractable(modal);
         return modal;
     }
@@ -640,7 +641,7 @@ export default class BotInteractableManager {
             }
             if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(InstantiateRoomItemAction, ["InstantiateRoomItemAction Menu"], undefined, user);
-            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", 0, true);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Instantiate", ActionPriority.INSTANTIATE, true);
             this.addInteractable(menu);
             return [menu];
         }
@@ -648,7 +649,7 @@ export default class BotInteractableManager {
             const instantiateButtons: ButtonInteractable[] = [];
             for (const interactableOption of interactableOptions) {
                 const actionDirective = interactableOption.actionDirective;
-                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, 0, true);
+                const instantiateButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Success, ActionPriority.INSTANTIATE, true);
                 this.addInteractable(instantiateButton);
                 instantiateButtons.push(instantiateButton);
             }
@@ -675,7 +676,7 @@ export default class BotInteractableManager {
         inputs.push(new TextInputInteractable("Instantiate Room Item Procedural Selections", "Procedural Selections", "Example: (color=metal + character=upa)", false, undefined, undefined, 5));
         const modalActionDirective = await this.#createActionDirective(InstantiateRoomItemAction, args.concat(["Modal"]), undefined, user);
         const description = `Instantiate ${preposition} ${containerPhrase} at ${locationDisplayName}`;
-        const modal = new ModalInteractable(modalActionDirective, "Instantiate Room Item", inputs, 0, description);
+        const modal = new ModalInteractable(modalActionDirective, "Instantiate Room Item", inputs, ActionPriority.INSTANTIATE, description);
         this.addInteractable(modal);
         return modal;
     }
@@ -715,7 +716,7 @@ export default class BotInteractableManager {
             }
             if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(DestroyInventoryItemAction, ["DestroyInventoryItemAction Menu"], player, user);
-            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", ActionPriority.DESTROY, false);
             this.addInteractable(menu);
             return [menu];
         }
@@ -723,7 +724,7 @@ export default class BotInteractableManager {
             const destroyButtons: ButtonInteractable[] = [];
             for (const interactableOption of interactableOptions) {
                 const actionDirective = interactableOption.actionDirective;
-                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, 0);
+                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, ActionPriority.DESTROY);
                 this.addInteractable(destroyButton);
                 destroyButtons.push(destroyButton);
             }
@@ -775,7 +776,7 @@ export default class BotInteractableManager {
             }
             if (menuOptions.size === 0) return [];
             const actionDirective = await this.#createActionDirective(DestroyRoomItemAction, ["DestroyRoomItemAction Menu"], undefined, user);
-            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", 0, false);
+            const menu = new StringSelectMenuInteractable(actionDirective, menuOptions.map(menuOption => menuOption), "Destroy", ActionPriority.DESTROY, false);
             this.addInteractable(menu);
             return [menu];
         }
@@ -783,7 +784,7 @@ export default class BotInteractableManager {
             const destroyButtons: ButtonInteractable[] = [];
             for (const interactableOption of interactableOptions) {
                 const actionDirective = interactableOption.actionDirective;
-                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, 0);
+                const destroyButton = new ButtonInteractable(actionDirective, `${interactableOption.verb} ${interactableOption.label}`, ButtonStyle.Danger, ActionPriority.DESTROY);
                 this.addInteractable(destroyButton);
                 destroyButtons.push(destroyButton);
             }

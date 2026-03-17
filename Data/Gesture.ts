@@ -3,12 +3,13 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type Status from "./Status.ts";
 
+export type GestureField = "id"|"requires"|"disabledStatusesString"|"description"|"narration";
 /**
  * Represents a form of body language that a player can use to communicate non-verbally.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/gesture.html
  */
-export default class Gesture extends GameEntity {
+export default class Gesture extends GameEntity implements PersistentGameEntity {
     /**
      * The unique ID of the gesture.
      */
@@ -70,6 +71,30 @@ export default class Gesture extends GameEntity {
 
         this.targetType = "";
         this.target = null;
+    }
+
+    getLabel(field: GestureField): string {
+        switch (field) {
+            case "id": return "Gesture ID";
+            case "requires": return "Requires Target";
+            case "disabledStatusesString": return "Don't Allow If Player Is";
+            case "description": return "Description In List";
+            case "narration": return "Narration When Performed";
+        }
+    }
+
+    getValue(field: GestureField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "requires": return this.requires.join(", ");
+            case "disabledStatusesString": return this.disabledStatusesStrings.join(", ");
+            case "description": return this.description;
+            case "narration": return this.narration.text;
+        }
+    }
+
+    getViewField(field: GestureField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 
     /**

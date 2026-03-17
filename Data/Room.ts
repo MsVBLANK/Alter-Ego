@@ -6,12 +6,14 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import Player from "./Player.ts";
 
+export type RoomField = "id"|"displayName"|"tags"|"iconURL"|"exits"|"description";
+
 /**
  * Represents a room in the game.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html
  */
-export default class Room extends GameEntity {
+export default class Room extends GameEntity implements PersistentGameEntity {
     /**
      * The unique ID of the room.
      */
@@ -267,6 +269,32 @@ export default class Room extends GameEntity {
 
     descriptionCell(): string {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
+    }
+
+    getLabel(field: RoomField): string {
+        switch (field) {
+            case "id": return "Room ID";
+            case "displayName": return "Room Display Name";
+            case "tags": return "Tags";
+            case "iconURL": return "Icon URL";
+            case "exits": return "Exits";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: RoomField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "displayName": return this.displayName;
+            case "tags": return Array.from(this.tags).join(", ");
+            case "iconURL": return this.iconURL;
+            case "exits": return this.exits.map(exit => `${exit.name} leading to ${exit.dest.displayName} from ${exit.link}`).join(", ");
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: RoomField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 
     /**

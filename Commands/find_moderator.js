@@ -34,14 +34,14 @@ export const config = {
 export function usage(settings) {
     return `${settings.commandPrefix}find room dorm 201\n`
 		+ `${settings.commandPrefix}search rooms stoke-hall\n`
-		+ `${settings.commandPrefix}find object desk\n`
-		+ `${settings.commandPrefix}search objects at chancellors office\n`
+		+ `${settings.commandPrefix}find fixture desk\n`
+		+ `${settings.commandPrefix}search fixtures at chancellors office\n`
 		+ `${settings.commandPrefix}find prefab FRIED RICE\n`
 		+ `${settings.commandPrefix}search items THIGH HIGH\n`
-		+ `${settings.commandPrefix}find item life preserver at beach\n`
+		+ `${settings.commandPrefix}find room item life preserver at beach\n`
 		+ `${settings.commandPrefix}search items in trash can\n`
-		+ `${settings.commandPrefix}find items on PREP STATIONS at dining-hall-kitchen\n`
-		+ `${settings.commandPrefix}search items COLORED PENCILS in MAIN POUCH of BACKPACK at school store\n`
+		+ `${settings.commandPrefix}find room items on PREP STATIONS at dining-hall-kitchen\n`
+		+ `${settings.commandPrefix}search roomitems COLORED PENCILS in MAIN POUCH of BACKPACK at school store\n`
 		+ `${settings.commandPrefix}find recipes uncraftable\n`
 		+ `${settings.commandPrefix}search recipes crafting producing glass of orange juice\n`
 		+ `${settings.commandPrefix}find recipes processing using MILK, RAW EGG producing PANCAKE BATTER, EGGSHELL\n`

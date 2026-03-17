@@ -9,12 +9,14 @@ import ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type RoomItem from "./RoomItem.ts";
 
+export type InventoryItemField = "player"|"prefab"|"identifier"|"equipmentSlot"|"container"|"quantity"|"uses"|"description";
+
 /**
  * Represents an item that is currently possessed by a player.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/inventory_item.html
  */
-export default class InventoryItem extends ItemInstance {
+export default class InventoryItem extends ItemInstance implements PersistentGameEntity {
     /**
      * The name of the player who has this inventory item.
      */
@@ -305,5 +307,35 @@ export default class InventoryItem extends ItemInstance {
 
     getContainerType(): string {
         return "InventoryItem";
+    }
+
+    getLabel(field: InventoryItemField): string {
+        switch (field) {
+            case "player": return "Player Name";
+            case "prefab": return "Prefab";
+            case "identifier": return "Container Identifier";
+            case "equipmentSlot": return "Equipment Slot";
+            case "container": return "Container";
+            case "quantity": return "Quantity";
+            case "uses": return "Uses";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: InventoryItemField): string {
+        switch (field) {
+            case "player": return this.player.name;
+            case "prefab": return this.prefab?.id ?? "NULL";
+            case "identifier": return this.identifier;
+            case "equipmentSlot": return this.equipmentSlot;
+            case "container": return this.containerName;
+            case "quantity": return isNaN(this.quantity) ? "Infinity" : this.quantity !== null ? String(this.quantity) : "";
+            case "uses": return isNaN(this.uses) && this.prefab?.usable ? "Infinity" : isNaN(this.uses) || this.uses === null ? "" : String(this.uses);
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: InventoryItemField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

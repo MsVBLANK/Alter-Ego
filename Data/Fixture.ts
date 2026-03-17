@@ -15,12 +15,14 @@ import RecipeProcessor from "./RecipeProcessor.ts";
 import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
 
+export type FixtureField = "name"|"location"|"accessible"|"childPuzzle"|"recipeTag"|"activatable"|"activated"|"autoDeactivate"|"hidingSpotCapacity"|"preposition"|"description";
+
 /**
  * Represents a fixed structure in a room that cannot be taken or moved by a player.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/fixture.html
  */
-export default class Fixture extends RecipeProcessor {
+export default class Fixture extends RecipeProcessor implements PersistentGameEntity {
     /**
      * The name of the fixture.
      */
@@ -455,5 +457,41 @@ export default class Fixture extends RecipeProcessor {
 
     getContainerType(): string {
         return "Fixture";
+    }
+
+    getLabel(field: FixtureField): string {
+        switch (field) {
+            case "name": return "Fixture Name";
+            case "location": return "Location";
+            case "accessible": return "Accessible?";
+            case "childPuzzle": return "Child Puzzle";
+            case "recipeTag": return "Recipe Tag";
+            case "activatable": return "Activatable?";
+            case "activated": return "Activated?";
+            case "autoDeactivate": return "Deactivate Automatically?";
+            case "hidingSpotCapacity": "Hiding Spot Capacity";
+            case "preposition": return "Preposition";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: FixtureField): string {
+        switch (field) {
+            case "name": return this.name;
+            case "location": return this.location.displayName;
+            case "accessible": return this.accessible ? "TRUE" : "FALSE";
+            case "childPuzzle": return this.childPuzzle?.name ?? "";
+            case "recipeTag": return this.recipeTag;
+            case "activatable": return this.activatable ? "TRUE" : "FALSE";
+            case "activated": return this.activated ? "TRUE" : "FALSE";
+            case "autoDeactivate": return this.autoDeactivate ? "TRUE" : "FALSE";
+            case "hidingSpotCapacity": return String(this.hidingSpotCapacity);
+            case "preposition": return this.preposition;
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: FixtureField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

@@ -8,12 +8,14 @@ import type ItemInstance from "./ItemInstance.ts";
 import type RecipeItem from "./RecipeItem.ts";
 import type RoomItem from "./RoomItem.ts";
 
+export type RecipeField = "ingredientsString"|"uncraftable"|"fixtureTag"|"durationString"|"productsString"|"initiatedDescription"|"completedDescription"|"uncraftedDescription";
+
 /**
  * Allows players to transform items or inventory items into other items or inventory items.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe.html
  */
-export default class Recipe extends GameEntity {
+export default class Recipe extends GameEntity implements PersistentGameEntity {
     /**
      * The IDs of the ingredients required to carry out the recipe.
      */
@@ -206,5 +208,35 @@ export default class Recipe extends GameEntity {
             }
         }
         return variableValues;
+    }
+
+    getLabel(field: RecipeField): string {
+        switch (field) {
+            case "ingredientsString": return "Ingredient Prefab(s)";
+            case "uncraftable": return "Uncraftable?";
+            case "fixtureTag": return "Fixture Tag";
+            case "durationString": return "Process Duration";
+            case "productsString": return "Produces Prefab(s)";
+            case "initiatedDescription": return "Description When Initiated";
+            case "completedDescription": return "Description When Completed";
+            case "uncraftedDescription": return "Description When Uncrafted";
+        }
+    }
+
+    getValue(field: RecipeField): string {
+        switch (field) {
+            case "ingredientsString": return this.ingredientsStrings.join(", ");
+            case "uncraftable": return this.uncraftable ? "TRUE" : "FALSE";
+            case "fixtureTag": return this.fixtureTag;
+            case "durationString": return this.durationString;
+            case "productsString": return this.productsStrings.join(", ");
+            case "initiatedDescription": return this.initiatedDescription.text;
+            case "completedDescription": return this.completedDescription.text;
+            case "uncraftedDescription": return this.uncraftedDescription.text;
+        }
+    }
+
+    getViewField(field: RecipeField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

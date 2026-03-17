@@ -2,6 +2,7 @@ import type { ActivitiesOptions, ActivityType, ButtonInteraction, GuildMember, M
 import type GameSettings from "./Classes/GameSettings.js";
 import type CollatedItem from "./Data/CollatedItem.ts";
 import type Event from "./Data/Event.ts";
+import type Exit from "./Data/Exit.js";
 import type Fixture from "./Data/Fixture.ts";
 import type Flag from "./Data/Flag.ts";
 import type Game from "./Data/Game.ts";
@@ -14,7 +15,6 @@ import type Room from "./Data/Room.ts";
 import type RoomItem from "./Data/RoomItem.ts";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
-import type Exit from "./Data/Exit.js";
 
 export { };
 
@@ -164,6 +164,20 @@ declare global {
 		fire: () => Promise<void>;
 		destination: string;
 	}
+
+    type PersistentGameEntityName = "Room"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
+
+    interface PersistentGameEntity {
+        getLabel: (field: string) => string;
+        getValue: (field: string) => string;
+        getViewField: (field: string) => ViewField;
+        row: number;
+    }
+
+    interface ViewField {
+        label?: string,
+        value: string
+    }
 
 	/**
 	 * @callback GameEntityMatcher

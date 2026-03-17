@@ -4,12 +4,14 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type Player from "./Player.ts";
 
+export type FlagField = "id"|"value"|"valueScript"|"commandSetsString";
+
 /**
  * Represents a flag that can hold various forms of data for easy access elsewhere in the game.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/flag.html
  */
-export default class Flag extends GameEntity {
+export default class Flag extends GameEntity implements PersistentGameEntity {
 	/**
 	 * The unique identifier for this flag.
 	 */
@@ -128,4 +130,29 @@ export default class Flag extends GameEntity {
 			parseAndExecuteBotCommands(commandSet, this.getGame(), this, player);
 		}
 	}
+
+    getLabel(field: FlagField): string {
+        switch (field) {
+            case "id": return "Flag ID";
+            case "value": return "Value";
+            case "valueScript": return "Value Computed By";
+            case "commandSetsString": return "When Set / Cleared";
+        }
+    }
+
+    getValue(field: FlagField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "value":
+                if (typeof this.value === 'boolean') return this.value ? "TRUE" : "FALSE";
+                if (typeof this.value === 'number') return String(this.value);
+                else return this.value;
+            case "valueScript": return this.valueScript;
+            case "commandSetsString": return this.commandSetsString;
+        }
+    }
+
+    getViewField(field: FlagField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
+    }
 }

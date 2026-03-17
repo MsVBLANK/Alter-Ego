@@ -389,6 +389,36 @@ export function createCommandHelpComponents(title, description, aliasString, usa
 }
 
 /**
+ * Creates an array of components for an entity view display.
+ * @param {PersistentGameEntityName} entityType - The type of entity this view is for.
+ * @param {number} entityRow - The row number of this entity.
+ * @param {ViewField[]} fields - An array of view fields to convert into components. 
+ * @param {string} color - The color as a hex code.
+ * @param {Interactable[]} [interactables] - An array of interactables. Optional.
+ */
+export function createEntityViewComponents(entityType, entityRow, fields, color, interactables) {
+    /** @type {(TextDisplayBuilder | ContainerBuilder | ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>)[]} */
+    let components = [];
+    components.push(new ContainerBuilder()
+        .setAccentColor(Number(`0x${color}`))
+        .addTextDisplayComponents(
+            new TextDisplayBuilder().setContent(`### ${entityType} on row ${entityRow}`)
+        )
+    );
+    for (const field of fields) {
+        let fieldContent = "";
+        if (field.label) fieldContent += `${field.label}: `;
+        if (field.value) fieldContent += `\`${field.value}\``;
+        if (fieldContent) components.push(new TextDisplayBuilder().setContent(fieldContent));
+    }
+    if (interactables.length > 0) {
+        const actionRows = generateActionRows(interactables);
+        components = components.concat(actionRows);
+    }
+    return components;
+}
+
+/**
  * Creates a page of an embed.
  * @param {Game} game - The game context.
  * @param {number} page - The current page number.

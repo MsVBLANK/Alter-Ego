@@ -9,12 +9,14 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type Status from "./Status.ts";
 
+export type EventField = "id"|"ongoing"|"durationString"|"timeRemaining"|"triggerTimesString"|"roomTag"|"commandsString"|"effectsString"|"refreshesString"|"triggeredNarration"|"endedNarration";
+
 /**
  * Represents a timed event in the game.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html
  */
-export default class Event extends GameEntity {
+export default class Event extends GameEntity implements PersistentGameEntity {
     /**
      * The unique ID of the event.
      */
@@ -267,5 +269,41 @@ export default class Event extends GameEntity {
             }
         }
         return { format: null, datetime: undefined, valid: false };
+    }
+
+    getLabel(field: EventField): string {
+        switch (field) {
+            case "id": return "Event ID";
+            case "ongoing": return "Ongoing?";
+            case "durationString": return "Duration";
+            case "timeRemaining": return "Time Remaining";
+            case "triggerTimesString": return "Triggers At";
+            case "roomTag": return "In Rooms with Tag";
+            case "commandsString": return "When Triggered / Ended";
+            case "effectsString": return "Inflicts Status Effect(s)";
+            case "refreshesString": return "Refreshes Status Effect(s)";
+            case "triggeredNarration": return "Narration When Triggered";
+            case "endedNarration": return "Narration When Ended";
+        }
+    }
+
+    getValue(field: EventField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "ongoing": return this.ongoing ? "TRUE" : "FALSE";
+            case "durationString": return this.durationString;
+            case "timeRemaining": return this.remainingString;
+            case "triggerTimesString": return this.triggerTimesStrings.join(", ");
+            case "roomTag": return this.roomTag;
+            case "commandsString": return this.commandsString;
+            case "effectsString": return this.effectsStrings.join(", ");
+            case "refreshesString": return this.refreshesStrings.join(", ");
+            case "triggeredNarration": return this.triggeredNarration.text;
+            case "endedNarration": return this.endedNarration.text;
+        }
+    }
+
+    getViewField(field: EventField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

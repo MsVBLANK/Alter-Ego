@@ -4,12 +4,14 @@ import Description from "./Description.ts";
 import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 
+export type StatusField = "id"|"durationString"|"fatal"|"visible"|"overridersString"|"curesString"|"nextStage"|"duplicatedStatus"|"curedCondition"|"statModifiers"|"behaviorAttributes"|"inflictedDescription"|"curedDescription";
+
 /**
  * Also referred to as a StatusEffect. Represents a condition that can be applied to a player.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html
  */
-export default class Status extends GameEntity {
+export default class Status extends GameEntity implements PersistentGameEntity {
     /**
      * The unique ID of the status.
      */
@@ -20,6 +22,10 @@ export default class Status extends GameEntity {
      * @deprecated Use `id` instead.
      */
     readonly name: string;
+    /**
+     * How long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
+     */
+    readonly durationString: string;
     /**
      * The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y. If there is none, this is `null`.
      */
@@ -109,6 +115,7 @@ export default class Status extends GameEntity {
 
     /**
      * @param id - The unique ID of the status.
+     * @param durationString - How long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
      * @param duration - The duration representing how long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
      * @param fatal - Whether the status kills an inflicted player when it expires. If the status has a nextStage, this is never checked.
      * @param visible - Whether the status is visible to the player.
@@ -124,13 +131,14 @@ export default class Status extends GameEntity {
      * @param row - The row number of the status in the sheet.
      * @param game - The game this belongs to.
      */
-    constructor(id: string, duration: Duration, fatal: boolean, visible: boolean,
+    constructor(id: string, durationString: string, duration: Duration, fatal: boolean, visible: boolean,
         overridersStrings: string[], curesStrings: string[], nextStageId: string, duplicatedStatusId: string,
         curedConditionId: string, statModifiers: StatModifier[], behaviorAttributes: Set<string>,
         inflictedDescription: string, curedDescription: string, row: number, game: Game) {
         super(game, row);
         this.id = id;
         this.name = id;
+        this.durationString = durationString;
         this.duration = duration;
         this.remaining = null;
         this.fatal = fatal;
@@ -181,6 +189,48 @@ export default class Status extends GameEntity {
 
     curedCell(): string {
         return this.getGame().constants.statusSheetCuredColumn + this.row;
+    }
+
+    getLabel(field: StatusField): string {
+        switch (field) {
+            case "id": return "Status Effect ID";
+            case "durationString": return "Duration";
+            case "fatal": return "Fatal?";
+            case "visible": return "Visible?";
+            case "overridersString": return "Don't Inflict If Player Is";
+            case "curesString": return "Cures";
+            case "nextStage": return "Develops Into";
+            case "duplicatedStatus": return "When Duplicated";
+            case "curedCondition": return "When Cured";
+            case "statModifiers": return "Stat Modifiers";
+            case "behaviorAttributes": return "Behavior Attributes";
+            case "inflictedDescription": return "Description When Inflicted";
+            case "curedDescription": return "Description When Cured";
+            
+        }
+    }
+
+    getValue(field: StatusField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "durationString": return this.durationString;
+            case "fatal": return this.fatal ? "TRUE" : "FALSE";
+            case "visible": return this.visible ? "TRUE" : "FALSE";
+            case "overridersString": return this.overridersStrings.join(", ");
+            case "curesString": return this.curesStrings.join(", ");
+            case "nextStage": return this.nextStage?.id ?? "";
+            case "duplicatedStatus": return this.duplicatedStatus?.id ?? "";
+            case "curedCondition": return this.curedCondition?.id ?? "";
+            case "statModifiers":
+                return this.statModifiers.map(modifier => `${modifier.modifiesSelf ? `` : `@`}${modifier.stat}${modifier.assignValue ? `=` : modifier.value >= 0 ? `+` : ``}${modifier.value}`).join(", ");
+            case "behaviorAttributes": return Array.from(this.behaviorAttributes).join(", ");
+            case "inflictedDescription": return this.inflictedDescription.text;
+            case "curedDescription": return this.curedDescription.text;
+        }
+    }
+
+    getViewField(field: StatusField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 
     /**

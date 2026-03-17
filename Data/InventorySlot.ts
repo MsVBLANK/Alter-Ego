@@ -134,4 +134,8 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
     getContainedItemsWeight(): number {
         return this.weight;
     }
+
+    toString(): string {
+        return `${this.id}: ${this.capacity}`;
+    }
 }

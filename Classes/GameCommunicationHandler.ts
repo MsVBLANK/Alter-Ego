@@ -328,6 +328,17 @@ export default class GameCommunicationHandler {
 	}
 
     /**
+     * Sends the view of a game entity as an array of Discord components.
+     * @param entityType - The type of entity this view is for.
+     * @param entityRow - The row number of this entity.
+     * @param fields - An array of view fields to convert into components.
+     * @param interactables - An array of interactables.
+     */
+    sendEntityView(entityType: PersistentGameEntityName, entityRow: number, fields: ViewField[], interactables: Interactable[] = []) {
+        messageHandler.sendEntityView(this.#game, this.#game.guildContext.commandChannel, entityType, entityRow, fields, interactables);
+    }
+
+    /**
 	 * Sends a message to the given channel as a game mechanic message.
      * @param channel - The channel to send the message to.
 	 * @param messageText - The text of the message to send.

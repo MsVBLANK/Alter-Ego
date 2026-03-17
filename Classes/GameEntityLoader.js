@@ -1672,6 +1672,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					behaviorAttributes[i] = behaviorAttributes[i].trim();
 				const status = new Status(
 					sheet[row][columnId] ? Status.generateValidId(sheet[row][columnId]) : "",
+                    durationString,
 					duration,
 					sheet[row][columnFatal] ? sheet[row][columnFatal].trim() === "TRUE" : false,
 					sheet[row][columnVisible] ? sheet[row][columnVisible].trim() === "TRUE" : false,

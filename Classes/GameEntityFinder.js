@@ -335,6 +335,102 @@ export default class GameEntityFinder {
         return this.game.moderators.get(id);
 	}
 
+    /**
+     * Gets the room with the given row number.
+     * @param {number} row 
+     */
+    getRoomByRow(row) {
+        return this.game.rooms.find(room => room.row === row);
+    }
+
+    /**
+     * Gets the fixture with the given row number.
+     * @param {number} row 
+     */
+    getFixtureByRow(row) {
+        return this.game.fixtures.find(fixture => fixture.row === row);
+    }
+
+    /**
+     * Gets the prefab with the given row number.
+     * @param {number} row 
+     */
+    getPrefabByRow(row) {
+        return this.game.prefabs.find(prefab => prefab.row === row);
+    }
+
+    /**
+     * Gets the recipe with the given row number.
+     * @param {number} row 
+     */
+    getRecipeByRow(row) {
+        return this.game.recipes.find(recipe => recipe.row === row);
+    }
+
+    /**
+     * Gets the room item with the given row number.
+     * @param {number} row 
+     */
+    getRoomItemByRow(row) {
+        return this.game.roomItems.find(roomItem => roomItem.row === row);
+    }
+
+    /**
+     * Gets the puzzle with the given row number.
+     * @param {number} row 
+     */
+    getPuzzleByRow(row) {
+        return this.game.puzzles.find(puzzle => puzzle.row === row);
+    }
+
+    /**
+     * Gets the event with the given row number.
+     * @param {number} row 
+     */
+    getEventByRow(row) {
+        return this.game.events.find(event => event.row === row);
+    }
+
+    /**
+     * Gets the status effect with the given row number.
+     * @param {number} row 
+     */
+    getStatusEffectByRow(row) {
+        return this.game.statusEffects.find(statusEffect => statusEffect.row === row);
+    }
+
+    /**
+     * Gets the player with the given row number.
+     * @param {number} row 
+     */
+    getPlayerByRow(row) {
+        return this.game.players.find(player => player.row === row);
+    }
+
+    /**
+     * Gets the inventory item with the given row number.
+     * @param {number} row 
+     */
+    getInventoryItemByRow(row) {
+        return this.game.inventoryItems.find(inventoryItem => inventoryItem.row === row);
+    }
+
+    /**
+     * Gets the gesture with the given row number.
+     * @param {number} row 
+     */
+    getGestureByRow(row) {
+        return this.game.gestures.find(gesture => gesture.row === row);
+    }
+
+    /**
+     * Gets the flag with the given row number.
+     * @param {number} row 
+     */
+    getFlagByRow(row) {
+        return this.game.flags.find(flag => flag.row === row);
+    }
+
 	/**
 	 * Gets all rooms that match the given search queries.
 	 * @param {string} [id] - Filter the rooms to only those whose ID matches the given ID.

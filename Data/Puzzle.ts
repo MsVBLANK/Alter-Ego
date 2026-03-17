@@ -11,12 +11,32 @@ import Prefab from "./Prefab.ts";
 import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
 
+export type PuzzleField =
+    "name" |
+    "solved" |
+    "outcome" |
+    "requiresMod" |
+    "location" |
+    "parentFixture" |
+    "type" |
+    "accessible" |
+    "requirements" |
+    "solutions" |
+    "remainingAttempts" |
+    "commandSetsString" |
+    "correctDescription" |
+    "alreadySolvedDescription" |
+    "unsolvedDescription" |
+    "incorrectDescription" |
+    "noMoreAttemptsDescription" |
+    "requirementsNotMetDescription";
+
 /**
  * Represents an interactable entity with correct, incorrect, and limited ways to engage with it.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html
  */
-export default class Puzzle extends ItemContainer {
+export default class Puzzle extends ItemContainer implements PersistentGameEntity {
     /**
      * The name of the puzzle.
      */
@@ -493,5 +513,55 @@ export default class Puzzle extends ItemContainer {
 
     getContainerType(): string {
         return "Puzzle";
+    }
+
+    getLabel(field: PuzzleField): string {
+        switch (field) {
+            case "name": return "Puzzle Name";
+            case "solved": return "Solved?";
+            case "outcome": return "Outcome";
+            case "requiresMod": return "Requires Mod?";
+            case "location": return "Location";
+            case "parentFixture": return "Parent Fixture";
+            case "type": return "Type";
+            case "accessible": return "Accessible?";
+            case "requirements": return "Requires";
+            case "solutions": return "Solution(s)";
+            case "remainingAttempts": return "Remaining Attempts";
+            case "commandSetsString": return "When Solved / Unsolved";
+            case "correctDescription": return "Description When Solved";
+            case "alreadySolvedDescription": return "Description When Already Solved";
+            case "unsolvedDescription": return "Description When Unsolved";
+            case "incorrectDescription": return "Description When Incorrect Answer Given";
+            case "noMoreAttemptsDescription": return "Description When No Attempts Remain";
+            case "requirementsNotMetDescription": return "Description When Requirements Not Met";
+        }
+    }
+
+    getValue(field: PuzzleField): string {
+        switch (field) {
+            case "name": return this.name;
+            case "solved": return this.solved ? "TRUE" : "FALSE";
+            case "outcome": return this.outcome;
+            case "requiresMod": return this.requiresMod ? "TRUE" : "FALSE";
+            case "location": return this.location.displayName;
+            case "parentFixture": return this.parentFixture?.name ?? "";
+            case "type": return this.type;
+            case "accessible": return this.accessible ? "TRUE" : "FALSE";
+            case "requirements": return this.requirementsStrings.map(requirement => (requirement.type ? `${requirement.type}: ` : ``) + `${requirement.entityId}`).join(", ");
+            case "solutions": return this.solutions.join(", ");
+            case "remainingAttempts": return isNaN(this.remainingAttempts) ? "" : String(this.remainingAttempts);
+            case "commandSetsString": return this.commandSetsString;
+            case "correctDescription": return this.correctDescription.text;
+            case "alreadySolvedDescription": return this.alreadySolvedDescription.text;
+            case "unsolvedDescription": return this.unsolvedDescription.text;
+            case "incorrectDescription": return this.incorrectDescription.text;
+            case "noMoreAttemptsDescription": return this.noMoreAttemptsDescription.text;
+            case "requirementsNotMetDescription": return this.requirementsNotMetDescription.text;
+        }
+    }
+
+    getViewField(field: PuzzleField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

@@ -281,6 +281,33 @@ export function sendCommandHelp(game, channel, command) {
 }
 
 /**
+ * Sends the view of a game entity as an array of Discord components.
+ * @param {Game} game - The game context in which this help menu is being sent.
+ * @param {Messageable} channel - The channel to send the view to.
+ * @param {PersistentGameEntityName} entityType - The type of entity this view is for.
+ * @param {number} entityRow - The row number of this entity.
+ * @param {ViewField[]} fields - An array of view fields to convert into components. 
+ * @param {Interactable[]} interactables - An array of interactables.
+ */
+export function sendEntityView(game, channel, entityType, entityRow, fields, interactables = []) {
+    const color = game.settings.embedAccentColor;
+    game.messageQueue.enqueue(
+        {
+            fire: async () => {
+                const message = await channel.send({
+                    components: discordUtils.createEntityViewComponents(entityType, entityRow, fields, color, interactables),
+                    flags: MessageFlags.IsComponentsV2,
+                });
+                if (message && interactables.length > 0)
+                    game.botContext.interactableManager.addInteractableMessage(channel.id, message.id, interactables.map(interactable => interactable.customId));
+            },
+            destination: channel.id
+        },
+        channel.id === game.guildContext.commandChannel.id ? "mod" : "mechanic"
+    )
+}
+
+/**
  * Sends a message to the game's log channel.
  * @param {Game} game - The game in which to send a log message.
  * @param {string} messageText - The message to send.

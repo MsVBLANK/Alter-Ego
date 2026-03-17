@@ -6,12 +6,14 @@ import type InventorySlot from "./InventorySlot.ts";
 import type ItemInstance from "./ItemInstance.ts";
 import type Status from "./Status.ts";
 
+export type PrefabField = "id"|"names"|"containingPhrases"|"discreet"|"size"|"weight"|"usable"|"useVerb"|"uses"|"inflicts"|"cures"|"nextStage"|"equippable"|"equipmentSlots"|"coveredEquipmentSlots"|"commandsString"|"inventorySlots"|"preposition"|"description";
+
 /**
  * Represents the concept of an item.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/prefab.html
  */
-export default class Prefab extends GameEntity {
+export default class Prefab extends GameEntity implements PersistentGameEntity {
     /**
      * The unique identifier of the prefab.
      */
@@ -221,5 +223,57 @@ export default class Prefab extends GameEntity {
 
     descriptionCell(): string {
         return this.getGame().constants.prefabSheetDescriptionColumn + this.row;
+    }
+
+    getLabel(field: PrefabField): string {
+        switch (field) {
+            case "id": return "Prefab ID";
+            case "names": return "Prefab Name";
+            case "containingPhrases": return "Containing Phrases";
+            case "discreet": return "Discreet?";
+            case "size": return "Size";
+            case "weight": return "Weight";
+            case "usable": return "Usable?";
+            case "useVerb": return "Use Verb";
+            case "uses": return "Uses";
+            case "inflicts": return "Gives Status Effect(s)";
+            case "cures": return "Cures Status Effect(s)";
+            case "nextStage": return "Turns Into";
+            case "equippable": return "Equippable?";
+            case "equipmentSlots": return "Restrict to Equip. Slots";
+            case "coveredEquipmentSlots": return "Covers Equip. Slots";
+            case "commandsString": return "When Equipped / Unequipped";
+            case "inventorySlots": return "Contains Inventory Slots";
+            case "preposition": return "Preposition";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: PrefabField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
+            case "discreet": return this.discreet ? "TRUE" : "FALSE";
+            case "size": return String(this.size);
+            case "weight": return String(this.weight);
+            case "usable": return this.usable ? "TRUE" : "FALSE";
+            case "useVerb": return this.secondPersonVerb ? [this.thirdPersonVerb, this.secondPersonVerb].join(", ") : this.thirdPersonVerb;
+            case "uses": return isNaN(this.uses) && this.usable ? "Infinity" : isNaN(this.uses) ? "" : String(this.uses);
+            case "inflicts": return this.effectsStrings.join(", ");
+            case "cures": return this.curesStrings.join(", ");
+            case "nextStage": return this.nextStageId;
+            case "equippable": return this.equippable ? "TRUE" : "FALSE";
+            case "equipmentSlots": return this.equipmentSlots.join(", ");
+            case "coveredEquipmentSlots": return this.coveredEquipmentSlots.join(", ");
+            case "commandsString": return this.commandsString;
+            case "inventorySlots": return this.inventory.map(inventorySlot => inventorySlot.toString()).join(", ");
+            case "preposition": return this.preposition;
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: PrefabField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

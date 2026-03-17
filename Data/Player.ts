@@ -29,12 +29,29 @@ import Room from "./Room.ts";
 import RoomItem from "./RoomItem.ts";
 import Status from "./Status.ts";
 
+export type PlayerField =
+    "id" |
+    "name" |
+    "title" |
+    "pronounString" |
+    "originalVoiceString" |
+    "defaultStrength" |
+    "defaultPerception" |
+    "defaultDexterity" |
+    "defaultSpeed" |
+    "defaultStamina" |
+    "alive" |
+    "location" |
+    "hidingSpot" |
+    "status" |
+    "description";
+
 /**
  * Represents a player in the game.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html
  */
-export default class Player extends RecipeProcessor implements User {
+export default class Player extends RecipeProcessor implements PersistentGameEntity, User {
     /**
      * The Discord ID of the player, or the avatar URL for an NPC.
      */
@@ -665,7 +682,7 @@ export default class Player extends RecipeProcessor implements User {
      * @param duration - A custom duration that overrides the status's default duration.
      */
     inflict(status: Status, duration: Duration<true> = null): void {
-        const statusInstance = new Status(status.id, status.duration, status.fatal, status.visible,
+        const statusInstance = new Status(status.id, status.durationString, status.duration, status.fatal, status.visible,
             status.overridersStrings, status.curesStrings, status.nextStageId, status.duplicatedStatusId,
             status.curedConditionId, status.statModifiers, status.behaviorAttributes, status.inflictedDescription.text,
             status.curedDescription.text, status.row, this.getGame());
@@ -1545,6 +1562,50 @@ export default class Player extends RecipeProcessor implements User {
 
     getContainerType(): string {
         return "Player";
+    }
+
+    getLabel(field: PlayerField): string {
+        switch (field) {
+            case "id": return this.isNPC ? "Avatar URL" : "Discord ID";
+            case "name": return "Name";
+            case "title": return "Title";
+            case "pronounString": return "Pronouns";
+            case "originalVoiceString": return "Speaks With";
+            case "defaultStrength": return "Strength";
+            case "defaultPerception": return "Perception";
+            case "defaultDexterity": return "Dexterity";
+            case "defaultSpeed": return "Speed";
+            case "defaultStamina": return "Stamina";
+            case "alive": return "Alive?";
+            case "location": return "Location";
+            case "hidingSpot": return "Hiding Spot";
+            case "status": return "Status Effects";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: PlayerField): string {
+        switch (field) {
+            case "id": return this.id;
+            case "name": return this.name;
+            case "title": return this.title;
+            case "pronounString": return this.pronounString;
+            case "originalVoiceString": return this.originalVoiceString;
+            case "defaultStrength": return String(this.defaultStrength);
+            case "defaultPerception": return String(this.defaultPerception);
+            case "defaultDexterity": return String(this.defaultDexterity);
+            case "defaultSpeed": return String(this.defaultSpeed);
+            case "defaultStamina": return String(this.defaultStamina);
+            case "alive": return this.alive ? "TRUE" : "FALSE";
+            case "location": return this.location?.displayName ?? "";
+            case "hidingSpot": return this.hidingSpot;
+            case "status": return this.getStatusList(true, true);
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: PlayerField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 
     /**

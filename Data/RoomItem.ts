@@ -7,12 +7,14 @@ import ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Room from "./Room.ts";
 
+export type RoomItemField = "prefab"|"identifier"|"location"|"accessible"|"container"|"quantity"|"uses"|"description";
+
 /**
  * Represents an item in a room that a player can take with them.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room_item.html
  */
-export default class RoomItem extends ItemInstance {
+export default class RoomItem extends ItemInstance implements PersistentGameEntity {
     /**
      * The display name of the room the item can be found in.
      */
@@ -273,5 +275,35 @@ export default class RoomItem extends ItemInstance {
 
     getContainerType(): string {
         return "RoomItem";
+    }
+
+    getLabel(field: RoomItemField): string {
+        switch (field) {
+            case "prefab": return "Prefab";
+            case "identifier": return "Container Identifier";
+            case "location": return "Location";
+            case "accessible": return "Accessible?";
+            case "container": return "Container";
+            case "quantity": return "Quantity";
+            case "uses": return "Uses";
+            case "description": return "Description";
+        }
+    }
+
+    getValue(field: RoomItemField): string {
+        switch (field) {
+            case "prefab": return this.prefab.id;
+            case "identifier": return this.identifier;
+            case "location": return this.location.displayName;
+            case "accessible": return this.accessible ? "TRUE" : "FALSE";
+            case "container": return `${this.containerType}: ${this.containerName}`;
+            case "quantity": return isNaN(this.quantity) ? "Infinity" : String(this.quantity);
+            case "uses": return isNaN(this.uses) && this.prefab.usable ? "Infinity" : isNaN(this.uses) ? "" : String(this.uses);
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: RoomItemField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 }

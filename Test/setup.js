@@ -8,6 +8,7 @@ import serverconfig from './__mocks__/configs/serverconfig.js';
 import settings from './__mocks__/configs/settings.js';
 
 import toBeWithinRange from './__extenders__/toBeWithinRange.js';
+import toBeLength from './__extenders__/toBeLength.ts';
 import toHaveSize from './__extenders__/toHaveSize.js';
 import toBeInvokedWith from './__extenders__/toBeInvokedWith.js';
 import toBeWebhookMessage from './__extenders__/toBeWebhookMessage.js';
@@ -134,6 +135,7 @@ afterEach(() => {
 
 expect.extend({
     toBeWithinRange,
+    toBeLength,
     toHaveSize,
     toBeInvokedWith,
     toBeWebhookMessage,

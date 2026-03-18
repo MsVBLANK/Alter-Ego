@@ -288,6 +288,28 @@ describe('Fixture test', () => {
             }
         });
 
+        test('Full flow for CUTTING BOARD 3 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('CUTTING BOARD 3', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(3);
+                const leather = items[0];
+                const button = items[1];
+                const jacket = items[2];
+                expect(leather.prefabId).toBe("LEATHER SKIN");
+                expect(leather.quantity).toBe(NaN);
+                expect(leather.uses).toBe(NaN);
+                expect(button.prefabId).toBe("BUTTON");
+                expect(button.quantity).toBe(NaN);
+                expect(button.uses).toBe(NaN);
+                expect(jacket.prefabId).toBe("CRUDE LEATHER JACKET");
+                expect(jacket.quantity).toBe(1);
+                expect(jacket.uses).toBe(NaN);
+            }
+        });
+
         test('Full flow for BURNER 3 of video-room', () => {
             const fixture = game.entityFinder.getFixture('BURNER 3', 'video-room');
             fixture.activate();

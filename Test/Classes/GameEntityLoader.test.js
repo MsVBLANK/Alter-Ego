@@ -270,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1569);
+                expect(fixtureCount).toBe(1570);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -344,7 +344,7 @@ describe('GameEntityLoader test', () => {
                 if (game.statusEffects.size === 0) await game.entityLoader.loadStatusEffects(false);
                 const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
                 expect(errors).toEqual([]);
-                expect(prefabCount).toBe(1501);
+                expect(prefabCount).toBe(1504);
                 for (const prefab of game.prefabs.values()) {
                     const descriptionText = prefab.description.toString();
                     expect(descriptionText).not.toContain("<item>");
@@ -414,7 +414,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const recipeCount = await game.entityLoader.loadRecipes(true, errors);
                 expect(errors).toEqual([]);
-                expect(recipeCount).toBe(499);
+                expect(recipeCount).toBe(500);
             });
         });
     });
@@ -507,7 +507,7 @@ describe('GameEntityLoader test', () => {
                 if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);
                 const roomItemCount = await game.entityLoader.loadRoomItems(true, errors);
                 expect(errors).toEqual([]);
-                expect(roomItemCount).toBe(1854);
+                expect(roomItemCount).toBe(1856);
                 for (const roomItem of game.roomItems) {
                     expect(roomItem.prefab).toBeInstanceOf(Prefab);
                     expect(roomItem.prefab.id).toEqual(Game.generateValidEntityName(roomItem.prefabId));

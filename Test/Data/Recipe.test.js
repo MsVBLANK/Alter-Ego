@@ -251,6 +251,16 @@ describe('Recipe test', () => {
 			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
 		});
 
+		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 3', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'cutting board', 'LEATHER SKIN, BUTTON', 'CRUDE LEATHER JACKET')[0];
+			const cuttingBoard = game.entityFinder.getFixture('CUTTING BOARD 3', 'video-room');
+			const items = CollatedItem.collate(cuttingBoard.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+			const cuttingBoardRecipe = cuttingBoard.findRecipe();
+			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
+			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
+		});
+
 		test('getSatisfactoryProcessCount on video-room BLENDER 2', () => {
 			const blender = game.entityFinder.getFixture('BLENDER 2', 'video-room');
 			const recipe = blender.findRecipe().recipe;

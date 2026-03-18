@@ -474,5 +474,33 @@ describe('Fixture test', () => {
                 expect(pan2.inventory.first().items[0].uses).toBe(2);
             }
         });
+
+        test('Full flow for BURNER 7 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('BURNER 7', 'video-room');
+            fixture.activate();
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pan = items[0];
+                expect(pan.prefabId).toBe("FRYING PAN");
+                expect(pan.quantity).toBe(1);
+                expect(pan.uses).toBe(NaN);
+                expect(pan.inventory.first().items[0].prefabId).toBe("CLEAN GLASS");
+                expect(pan.inventory.first().items[0].quantity).toBe(1);
+                expect(pan.inventory.first().items[0].uses).toBe(NaN);
+            }
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pan = items[0];
+                expect(pan.prefabId).toBe("DIRTY PAN");
+                expect(pan.quantity).toBe(1);
+                expect(pan.uses).toBe(NaN);
+                expect(pan.inventory.first().items[0].prefabId).toBe("DIRTY GLASS");
+                expect(pan.inventory.first().items[0].quantity).toBe(1);
+                expect(pan.inventory.first().items[0].uses).toBe(NaN);
+            }
+        });
     });
 });

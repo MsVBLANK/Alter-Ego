@@ -8,6 +8,7 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 describe("unstash_moderator command", () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     afterEach(async () => {
@@ -18,7 +19,8 @@ describe("unstash_moderator command", () => {
 
     const unstash_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator();
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
 
     test("valid item from valid container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");

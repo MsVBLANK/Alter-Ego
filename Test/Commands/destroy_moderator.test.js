@@ -8,6 +8,7 @@ import { createMockModerator } from '../__mocks__/utility.ts';
 describe('destroy_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     afterEach(async () => {
@@ -17,7 +18,8 @@ describe('destroy_moderator command', () => {
 
     const destroy_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator();
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
 
     describe('on inventory items', () => {
         describe('shallow nested', () => {

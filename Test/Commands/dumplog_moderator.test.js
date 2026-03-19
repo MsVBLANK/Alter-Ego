@@ -4,9 +4,14 @@ import { createMockMessage } from "../__mocks__/libs/discord.js";
 import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("dumplog_moderator command", () => {
+    beforeAll(() => {
+        moderator = createMockModerator();
+    })
+
     const dumplog_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator();
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
 
     test('execute', async () => {
         const mockMessage = createMockMessage();

@@ -7,11 +7,13 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 describe("living_moderator command", () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     const living_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator();
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
 
     test("living_moderator execution", async () => {
         // @ts-ignore

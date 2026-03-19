@@ -39,7 +39,7 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    const sentMessageInLatchChannel = moderator?.sentMessageInLatchChannel(message) ?? false;
 	if (!sentMessageInLatchChannel && args.length < 2)
 		return game.communicationHandler.reply(message, `You need to specify an NPC and something to narrate. Usage:\n${usage(game.settings)}`);
     if (sentMessageInLatchChannel && args.length < 1)

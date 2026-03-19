@@ -51,7 +51,7 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    const sentMessageInLatchChannel = moderator?.sentMessageInLatchChannel(message) ?? false;
     let input = command + " " + args.join(" ");
     if (command === "puzzle") {
         if (args[0] === "solve") command = "solve";

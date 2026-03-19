@@ -3,10 +3,12 @@ import { usage, execute, config } from '../../Commands/unequip_moderator.js'
 import UnequipAction from '../../Data/Actions/UnequipAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
+import { createMockModerator } from '../__mocks__/utility.ts';
 
 describe('unequip_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     afterEach(async () => {
@@ -17,6 +19,9 @@ describe('unequip_moderator command', () => {
 
     const unequip_moderator = new ModeratorCommand(config, usage, execute);
 
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
+
     test('given valid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
         const item = game.entityFinder.getInventoryItem("kyras glasses", "Kyra");
@@ -24,7 +29,7 @@ describe('unequip_moderator command', () => {
         const hand = game.entityFinder.getPlayerFreeHand(player);
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore
-        await unequip_moderator.execute(game, createMockMessage(), "unequip", ["kyra's", "kyras", "glasses"]);
+        await unequip_moderator.execute(game, createMockMessage(), "unequip", ["kyra's", "kyras", "glasses"], moderator);
         expect(spy).toBeInvokedWith(item, slot, hand);
     });
     test('given valid item from valid slot', async () => {
@@ -34,7 +39,7 @@ describe('unequip_moderator command', () => {
         const hand = game.entityFinder.getPlayerFreeHand(player);
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         // @ts-ignore
-        await unequip_moderator.execute(game, createMockMessage(), "unequip", ["kyra's", "kyras", "glasses", "from", "glasses"]);
+        await unequip_moderator.execute(game, createMockMessage(), "unequip", ["kyra's", "kyras", "glasses", "from", "glasses"], moderator);
         expect(spy).toBeInvokedWith(item, slot, hand);
     });
     test('given invalid item', async () => {
@@ -42,7 +47,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "invalid"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "invalid"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Couldn't find equipped item "INVALID".`);
@@ -52,7 +57,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses", "from", "jacket"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses", "from", "jacket"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Couldn't find "KYRAS GLASSES" equipped to JACKET.`);
@@ -62,7 +67,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses", "from", "invalid"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses", "from", "invalid"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Couldn't find equipment slot "INVALID".`);
@@ -72,7 +77,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "invalid", "from", "hat"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "invalid", "from", "hat"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Nothing is equipped to "HAT".`);
@@ -82,7 +87,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "mug", "of", "coffee"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "mug", "of", "coffee"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Cannot unequip items from either of Kyra's hands. To get rid of this item, use the drop command.`);
@@ -92,7 +97,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["glasses"]);
+        await unequip_moderator.execute(game, message, "unequip", ["glasses"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`You need to specify a player and an item. Usage:\n${unequip_moderator.usage(game.settings)}`);
@@ -102,7 +107,7 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyras", "glasses", "from", "glasses"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyras", "glasses", "from", "glasses"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith(`Player "kyras" not found.`);
@@ -112,8 +117,8 @@ describe('unequip_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses"]);
-        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "tie"]);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses"], moderator);
+        await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "tie"], moderator);
         await sendQueuedMessages(game);
         expect(spy).toHaveBeenCalledTimes(1);
         expect(author.send).toBeInvokedWith(`Kyra does not have a free hand to unequip an item.`);

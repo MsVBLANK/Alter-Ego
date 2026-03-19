@@ -51,7 +51,7 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    const sentMessageInLatchChannel = moderator.sentMessageInLatchChannel(message);
+    const sentMessageInLatchChannel = moderator?.sentMessageInLatchChannel(message) ?? false;
     if (command === "status") {
         if (args[0] === "add" || args[0] === "inflict") command = "inflict";
         else if (args[0] === "remove" || args[0] === "cure") command = "cure";

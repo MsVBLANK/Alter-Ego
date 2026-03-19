@@ -10,7 +10,7 @@ export default class ModeratorCommand extends Command implements IModeratorComma
     /**
      * The code to execute when the command is called.
      */
-    readonly execute: (game: Game, message: UserMessage, command: string, args: string[], moderator: Moderator) => Promise<void>;
+    readonly execute: (game: Game, message: UserMessage, command: string, args: string[], moderator?: Moderator) => Promise<void>;
 
 	/**
 	 * @param config - The specific configuration of the command.
@@ -20,7 +20,7 @@ export default class ModeratorCommand extends Command implements IModeratorComma
 	constructor(
         config: CommandConfig,
         usage: (settings: GameSettings) => string,
-        execute: (game: Game, message: UserMessage, command: string, args: string[], moderator: Moderator) => Promise<void>
+        execute: (game: Game, message: UserMessage, command: string, args: string[], moderator?: Moderator) => Promise<void>
     ) {
 		super(config, usage);
 		this.execute = execute;

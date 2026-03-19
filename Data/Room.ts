@@ -279,7 +279,7 @@ export default class Room extends GameEntity implements PersistentGameEntity {
         switch (field) {
             case "id": return "Room ID";
             case "displayName": return "Room Display Name";
-            case "tags": return "Tags";
+            case "tags": return "Room Tags";
             case "iconURL": return "Icon URL";
             case "exits": return "Exits";
             case "description": return "Description";
@@ -292,7 +292,7 @@ export default class Room extends GameEntity implements PersistentGameEntity {
             case "displayName": return this.displayName;
             case "tags": return Array.from(this.tags).join(", ");
             case "iconURL": return this.iconURL;
-            case "exits": return this.exits.map(exit => `${exit.name} leading to ${exit.dest.displayName} from ${exit.link}`).join(", ");
+            case "exits": return this.exits.map(exit => `${exit.name} on row ${exit.row}`).join(", ");
             case "description": return this.description.text;
         }
     }

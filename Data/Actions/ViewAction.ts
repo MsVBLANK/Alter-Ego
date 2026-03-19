@@ -2,6 +2,7 @@ import type BotInteractableManager from "../../Classes/BotInteractableManager.ts
 import type Interactable from "../../Classes/Interactables/Interactable.ts";
 import Action from "../Action.ts";
 import Event, { type EventField } from "../Event.ts";
+import Exit, { type ExitField } from "../Exit.ts";
 import Fixture, { type FixtureField } from "../Fixture.ts";
 import Flag, { type FlagField } from "../Flag.ts";
 import Gesture, { type GestureField } from "../Gesture.ts";
@@ -16,6 +17,7 @@ import Status, { type StatusField } from "../Status.ts";
 
 export type EntityField<T extends PersistentGameEntity> =
     T extends Event ? EventField :
+    T extends Exit ? ExitField :
     T extends Fixture ? FixtureField :
     T extends Flag ? FlagField :
     T extends Gesture ? GestureField :
@@ -35,6 +37,7 @@ export type EntityField<T extends PersistentGameEntity> =
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/view-action.html
  */
 export default class ViewAction extends Action {
+    static readonly dataTypeRegex = /^((?<Room>room(?! ?item)s?)|(?<Exit>exits?)|(?<Fixture>objects?|fixtures?)|(?<Prefab>prefabs?)|(?<Recipe>recipes?)|(?<RoomItem>(room ?)?items?)|(?<Puzzle>puzzles?)|(?<Event>events?)|(?<Status>status(?:es)? ?(?:effects?)?)|(?<Player>players?)|(?<InventoryItem>inventory(?: ?items?)?)|(?<Gesture>gestures?)|(?<Flag>flags?))(?<search>.*)/i;
     /** Shorthand for the interactable manager, since we'll be using it a lot. */
     #interactableManager: BotInteractableManager;
 
@@ -42,6 +45,7 @@ export default class ViewAction extends Action {
      * Performs a view action.
      *
      * @param entity - A persistent game entity to view.
+     * @param row
      * @param field - The name of a field belonging to the given entity to view. Optional.
      */
     async performView<T extends PersistentGameEntity>(entity: T, field?: EntityField<T>): Promise<void> {
@@ -55,6 +59,11 @@ export default class ViewAction extends Action {
             entityType = "Room";
             views = this.#getRoomView(entity, field as RoomField);
             if (!field) interactables = await this.#getRoomInteractables(entity);
+        }
+        if (entity instanceof Exit) {
+            entityType = "Exit";
+            views = this.#getExitView(entity, field as ExitField);
+            if (!field) interactables = await this.#getExitInteractables(entity);
         }
         if (entity instanceof Fixture) {
             entityType = "Fixture";
@@ -127,6 +136,9 @@ export default class ViewAction extends Action {
                 case "Event":
                     entity = this.getGame().entityFinder.getEventByRow(row);
                     break;
+                case "Exit":
+                    entity = this.getGame().entityFinder.getExitByRow(row);
+                    break;
                 case "Fixture":
                     entity = this.getGame().entityFinder.getFixtureByRow(row);
                     break;
@@ -174,7 +186,7 @@ export default class ViewAction extends Action {
     validateInteractionArgs<T extends PersistentGameEntity>(args: [T, EntityField<T>]): [T, EntityField<T>] {
         if (args.length !== 2) throw new Error("Insufficient arguments.");
         if (!args[0]) throw new Error("Invalid entity.");
-        if (!(args[0] instanceof Event) && !(args[0] instanceof Fixture) && !(args[0] instanceof Flag) && !(args[0] instanceof Gesture)
+        if (!(args[0] instanceof Event) && !(args[0] instanceof Exit) && !(args[0] instanceof Fixture) && !(args[0] instanceof Flag) && !(args[0] instanceof Gesture)
             && !(args[0] instanceof InventoryItem) && !(args[0] instanceof Player) && !(args[0] instanceof Prefab) && !(args[0] instanceof Puzzle)
             && !(args[0] instanceof Recipe) && !(args[0] instanceof Room) && !(args[0] instanceof RoomItem) && !(args[0] instanceof Status))
             throw new Error("Entity is not viewable.");
@@ -212,9 +224,44 @@ export default class ViewAction extends Action {
         let interactables: Interactable[];
         const fields: RoomField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
-        entity.exits.forEach(exit => {
-            if (exit.dest.id !== entity.id) relatedEntities.push(exit.dest);
-        })
+        entity.exits.forEach(exit => relatedEntities.push(exit));
+        interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
+        return interactables;
+    }
+
+    /**
+     * Gets an array of view fields for the given exit.
+     * @param entity - The entity to view.
+     * @param field - The specific field to view. Optional.
+     */
+    #getExitView(entity: Exit, field?: ExitField): ViewField[] {
+        let fields: ExitField[];
+        if (field) fields = [field];
+        else {
+            fields = [
+                "name",
+                "phrase",
+                "tags",
+                "x",
+                "y",
+                "z",
+                "unlocked",
+                "dest",
+                "link"
+            ];
+        }
+        return fields.map(field => entity.getViewField(field));
+    }
+
+    /**
+     * Gets interactables for the given exit.
+     * @param entity - The entity to generate interactables for.
+     */
+    async #getExitInteractables(entity: Exit): Promise<Interactable[]> {
+        let interactables: Interactable[];
+        const fields: ExitField[] = ["description"];
+        let relatedEntities: PersistentGameEntity[] = [];
+        relatedEntities.push(entity.dest);
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
         return interactables;
     }

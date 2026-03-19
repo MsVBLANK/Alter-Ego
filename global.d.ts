@@ -165,7 +165,7 @@ declare global {
 		destination: string;
 	}
 
-    type PersistentGameEntityName = "Room"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
+    type PersistentGameEntityName = "Room"|"Exit"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
 
     interface PersistentGameEntity extends GameEntity {
         getEntityID: () => string;

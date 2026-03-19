@@ -394,7 +394,7 @@ function calculateModifiedPossibilityArr(possibilityArr, statValue) {
     }
 
     // Generate modified percentages based on the supplied stat value.
-    if (statValue !== null && possibilityArr.length > 1) {
+    if (!isNaN(statValue) && possibilityArr.length > 1) {
         const modifierMax = statValue - 5;
         const modifierMin = -1 * modifierMax;
         for (let i = 0; i < possibilityArr.length; i++) {

@@ -267,6 +267,14 @@ export default class Room extends GameEntity implements PersistentGameEntity {
         return ["R", this];
     }
 
+    /**
+     * Returns the args for the Find ActionDirective to get all entities of the given type in this room.
+     * @param entityType - The type of entity to find.
+     */
+    getFindActionDirectiveArgs(entityType: "Fixtures" | "RoomItems" | "Puzzles"): [string] {
+        return [`${entityType} at ${this.displayName}`];
+    }
+
     descriptionCell(): string {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
     }

@@ -684,6 +684,23 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables to find entities using the given args generator function and adds them to the cache.
+     * @param argsSets - Sets of args to be passed into performFind as search queries.
+     * @param user - The user these interactables are being created for.
+     */
+    async createFindActionInteractables(argsSets: [string][], user: User): Promise<StringSelectMenuInteractable[]> {
+        const interactableOptions: InteractableOptions<FindAction>[] = [];
+        for (const args of argsSets) {
+            const actionDirective = await this.#createActionDirective(FindAction, args, undefined, user);
+            const stringSelectLabel = `${args[0]}`;
+            const buttonLabel = `Find ${stringSelectLabel}`;
+            interactableOptions.push(new InteractableOptions(actionDirective, buttonLabel, stringSelectLabel, buttonLabel));
+        }
+        const actionDirective = await this.#createActionDirective(FindAction, ["FindAction Menu"], undefined, user);
+        return this.#createStringSelectMenuInteractable(actionDirective, interactableOptions, "Find", ActionPriority.FIND);
+    }
+
+    /**
      * Creates Interactables for an item container's list of items and adds them to the cache.
      * @param container - The container to search in.
      * @param user - The user these interactables are being created for.

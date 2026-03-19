@@ -226,6 +226,12 @@ export default class ViewAction extends Action {
         let relatedEntities: PersistentGameEntity[] = [];
         entity.exits.forEach(exit => relatedEntities.push(exit));
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
+        const containedEntityQueries = [
+            entity.getFindActionDirectiveArgs("Fixtures"),
+            entity.getFindActionDirectiveArgs("RoomItems"),
+            entity.getFindActionDirectiveArgs("Puzzles")
+        ];
+        interactables = interactables.concat(await this.#interactableManager.createFindActionInteractables(containedEntityQueries, this.user));
         return interactables;
     }
 

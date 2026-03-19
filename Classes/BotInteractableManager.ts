@@ -11,7 +11,7 @@ import type EquipmentSlot from "../Data/EquipmentSlot.ts";
 import Fixture from "../Data/Fixture.ts";
 import type Game from "../Data/Game.ts";
 import type Interactable from "./Interactables/Interactable.ts";
-import type InventoryItem from "../Data/InventoryItem.ts";
+import InventoryItem from "../Data/InventoryItem.ts";
 import type Exit from "../Data/Exit.ts";
 import Moderator from "../Data/Moderator.ts";
 import Recipe from "../Data/Recipe.ts";
@@ -32,6 +32,7 @@ import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventory
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
+import FindAction from "../Data/Actions/FindAction.ts";
 import ViewAction, { type EntityField } from "../Data/Actions/ViewAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { ActionPriority} from "../Modules/enums.js";
@@ -683,6 +684,36 @@ export default class BotInteractableManager {
     }
 
     /**
+     * Creates Interactables for an item container's list of items and adds them to the cache.
+     * @param container - The container to search in.
+     * @param user - The user these interactables are being created for.
+     */
+    async createFindContainedItemsActionInteractables(container: RoomItemContainer|InventoryItem, user: User): Promise<(ButtonInteractable | StringSelectMenuInteractable)[]> {
+        const interactableOptions: InteractableOptions<FindAction>[] = [];
+        let inventorySlotIDs: string[] = [undefined];
+        if ((container instanceof RoomItem || container instanceof InventoryItem) && container.inventory.size > 1) {
+            for (const inventorySlot of container.inventory.values()) {
+                if (!inventorySlot.containsNoItems()) inventorySlotIDs.push(inventorySlot.id);
+            }
+        }
+        for (const inventorySlotID of inventorySlotIDs) {
+            const actionDirective = await this.#createActionDirective(FindAction, container.getFindChildItemsActionDirectiveArgs(inventorySlotID), undefined, user);
+            let containerString = `${container.getPreposition()} `;
+            const slotPhrase = inventorySlotID ? `${inventorySlotID} of ` : ``;
+            const stringSelectLabel = `${slotPhrase}${container.getContainerIdentifier()}`;
+            containerString += `${stringSelectLabel}`;
+            const buttonLabel = `Find Contained Items`;
+            const description = `Find items ${containerString}`;
+            interactableOptions.push(new InteractableOptions(actionDirective, buttonLabel, stringSelectLabel, description));
+        }
+        if (interactableOptions.length > 1) {
+            const actionDirective = await this.#createActionDirective(FindAction, ["FindContainedItemsAction Menu"], undefined, user);
+            return this.#createStringSelectMenuInteractable(actionDirective, interactableOptions, "Find Contained Items", ActionPriority.FIND);
+        }
+        else return this.#createButtonInteractables(interactableOptions, ButtonStyle.Secondary, ActionPriority.FIND);
+    }
+
+    /**
      * Creates Interactables for a list of fields of the given game entity and adds them to the cache.
      * @param entity - The entity to view.
      * @param fields - The fields of the given entity to create view interactables for.
@@ -968,6 +999,18 @@ export default class BotInteractableManager {
         if (itemContainers.length > 0) {
             interactables = interactables.concat(await this.createDestroyRoomItemActionInteractables(itemContainers, user));
         }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of find interactables that find all of the items contained inside the given container.
+     * @param container - The container to search in.
+     * @param user - The user these interactables are being created for.
+     */
+    async getFindContainedItemsInteractables(container: RoomItemContainer|InventoryItem, user: User): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        if (container && !container.containsNoItems())
+            interactables = interactables.concat(await this.createFindContainedItemsActionInteractables(container, user));
         return interactables;
     }
 

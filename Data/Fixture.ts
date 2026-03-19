@@ -181,6 +181,13 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     }
 
     /**
+     * Returns the args for the Find ActionDirective to get the contained items for this item container.
+     */
+    getFindChildItemsActionDirectiveArgs(inventorySlotID?: string): [string] {
+        return [`RoomItems ${this.getPreposition()} ${this.getEntityID()} at ${this.getLocation().id}`];
+    }
+
+    /**
      * Returns true if the fixture is capable of containing items.
      */
     isItemContainer(): boolean {

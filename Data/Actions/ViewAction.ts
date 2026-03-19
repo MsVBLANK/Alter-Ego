@@ -190,7 +190,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getRoomView(entity: Room, field?: RoomField): ViewField[] {
-        let fields: RoomField[] = [];
+        let fields: RoomField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -209,7 +209,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getRoomInteractables(entity: Room): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: RoomField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.exits.forEach(exit => {
@@ -225,7 +225,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getFixtureView(entity: Fixture, field?: FixtureField): ViewField[] {
-        let fields: FixtureField[] = [];
+        let fields: FixtureField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -249,12 +249,13 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getFixtureInteractables(entity: Fixture): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: FixtureField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.location);
         if (entity.childPuzzle) relatedEntities.push(entity.childPuzzle);
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
+        interactables = interactables.concat(await this.#interactableManager.getFindContainedItemsInteractables(entity, this.user));
         interactables = interactables.concat(await this.#interactableManager.getInstantiateRoomItemInteractables([entity], this.user));
         interactables = interactables.concat(await this.#interactableManager.getDestroyRoomItemInteractables([entity], this.user));
         return interactables;
@@ -266,7 +267,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getPrefabView(entity: Prefab, field?: PrefabField): ViewField[] {
-        let fields: PrefabField[] = [];
+        let fields: PrefabField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -299,7 +300,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getPrefabInteractables(entity: Prefab): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: PrefabField[] = ["description", "commandsString"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.effects.forEach(status => relatedEntities.push(status));
@@ -315,7 +316,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getRecipeView(entity: Recipe, field?: RecipeField): ViewField[] {
-        let fields: RecipeField[] = [];
+        let fields: RecipeField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -334,7 +335,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getRecipeInteractables(entity: Recipe): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: RecipeField[] = ["initiatedDescription", "completedDescription", "uncraftedDescription"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.ingredientsFlat.forEach(ingredient => relatedEntities.push(ingredient.prefab));
@@ -349,7 +350,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getRoomItemView(entity: RoomItem, field?: RoomItemField): ViewField[] {
-        let fields: RoomItemField[] = [];
+        let fields: RoomItemField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -370,7 +371,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getRoomItemInteractables(entity: RoomItem): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: RoomItemField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.prefab);
@@ -378,6 +379,7 @@ export default class ViewAction extends Action {
         if (entity.container) relatedEntities.push(entity.container);
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
         if (entity.quantity !== 0) {
+            interactables = interactables.concat(await this.#interactableManager.getFindContainedItemsInteractables(entity, this.user));
             interactables = interactables.concat(await this.#interactableManager.getInstantiateRoomItemInteractables([entity], this.user));
             interactables = interactables.concat(await this.#interactableManager.getDestroyRoomItemInteractables([entity], this.user));
         }
@@ -390,7 +392,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getPuzzleView(entity: Puzzle, field?: PuzzleField): ViewField[] {
-        let fields: PuzzleField[] = [];
+        let fields: PuzzleField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -415,13 +417,14 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getPuzzleInteractables(entity: Puzzle): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: PuzzleField[] = ["correctDescription", "alreadySolvedDescription", "unsolvedDescription", "incorrectDescription", "noMoreAttemptsDescription", "requirementsNotMetDescription", "commandSetsString"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.location);
         if (entity.parentFixture) relatedEntities.push(entity.parentFixture);
         entity.requirements.forEach(requirement => relatedEntities.push(requirement));
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
+        interactables = interactables.concat(await this.#interactableManager.getFindContainedItemsInteractables(entity, this.user));
         interactables = interactables.concat(await this.#interactableManager.getInstantiateRoomItemInteractables([entity], this.user));
         interactables = interactables.concat(await this.#interactableManager.getDestroyRoomItemInteractables([entity], this.user));
         return interactables;
@@ -433,7 +436,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getEventView(entity: Event, field?: EventField): ViewField[] {
-        let fields: EventField[] = [];
+        let fields: EventField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -455,7 +458,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getEventInteractables(entity: Event): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: EventField[] = ["triggeredNarration", "endedNarration", "commandsString"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.effects.forEach(effect => relatedEntities.push(effect));
@@ -470,7 +473,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getStatusView(entity: Status, field?: StatusField): ViewField[] {
-        let fields: StatusField[] = [];
+        let fields: StatusField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -495,7 +498,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getStatusInteractables(entity: Status): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: StatusField[] = ["inflictedDescription", "curedDescription"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.overriders.forEach(effect => relatedEntities.push(effect));
@@ -513,7 +516,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getPlayerView(entity: Player, field?: PlayerField): ViewField[] {
-        let fields: PlayerField[] = [];
+        let fields: PlayerField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -541,7 +544,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getPlayerInteractables(entity: Player): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: PlayerField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.location);
@@ -556,7 +559,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getInventoryItemView(entity: InventoryItem, field?: InventoryItemField): ViewField[] {
-        let fields: InventoryItemField[] = [];
+        let fields: InventoryItemField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -577,7 +580,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getInventoryItemInteractables(entity: InventoryItem): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: InventoryItemField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.player);
@@ -585,6 +588,7 @@ export default class ViewAction extends Action {
         if (entity.container) relatedEntities.push(entity.container);
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
         if (entity.quantity !== 0) {
+            interactables = interactables.concat(await this.#interactableManager.getFindContainedItemsInteractables(entity, this.user));
             const isEquipped = entity.container === null && entity.prefab !== null;
             const isEmpty = entity.container === null && entity.prefab === null;
             const equipmentSlot = entity.player.inventory.get(entity.equipmentSlot);
@@ -600,7 +604,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getGestureView(entity: Gesture, field?: GestureField): ViewField[] {
-        let fields: GestureField[] = [];
+        let fields: GestureField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -618,7 +622,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getGestureInteractables(entity: Gesture): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: GestureField[] = ["narration"];
         let relatedEntities: PersistentGameEntity[] = [];
         entity.disabledStatuses.forEach(status => relatedEntities.push(status));
@@ -632,7 +636,7 @@ export default class ViewAction extends Action {
      * @param field - The specific field to view. Optional.
      */
     #getFlagView(entity: Flag, field?: FlagField): ViewField[] {
-        let fields: FlagField[] = [];
+        let fields: FlagField[];
         if (field) fields = [field];
         else {
             fields = [
@@ -649,7 +653,7 @@ export default class ViewAction extends Action {
      * @param entity - The entity to generate interactables for.
      */
     async #getFlagInteractables(entity: Flag): Promise<Interactable[]> {
-        let interactables: Interactable[] = [];
+        let interactables: Interactable[];
         const fields: FlagField[] = ["commandSetsString"];
         let relatedEntities: PersistentGameEntity[] = [];
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);

@@ -40,7 +40,7 @@ export default class FindAction extends Action {
 
     /**
      * Performs a find action.
-     * 
+     *
      * @param query - A user-entered query to determine what game entities to find.
      */
     performFind(query: string): void {
@@ -65,6 +65,26 @@ export default class FindAction extends Action {
         else if (dataTypeMatch.groups.Flag) results = this.#getFlagResults(query);
         if (results.length === 0) return this.getGame().communicationHandler.sendToCommandChannel(`Found 0 results.`);
         this.#sendResultListMessage(results);
+    }
+
+    /**
+     * Finds the required args to call performFind.
+     *
+     * @param args - The args as strings.
+     */
+    parseInteractionArgs(args: string[]): [string] {
+        return [args[0]];
+    }
+
+    /**
+     * Validates the parsed args. The results can be passed directly into performFind.
+     *
+     * @param args - The args after being parsed.
+     */
+    validateInteractionArgs(args: [string]): string {
+        if (args.length !== 1) throw new Error("Insufficient arguments.");
+        if (!args[0]) throw new Error("Invalid query.");
+        return args[0];
     }
 
     /**
@@ -330,9 +350,9 @@ export default class FindAction extends Action {
             headerEntryLength.push(value.length);
         });
         page.push(header);
-    
+
         const widestEntryLength = [...headerEntryLength];
-    
+        
         for (let i = 0, pageNo = 0; i < results.length; i++) {
             // Create a new row.
             const row = [];

@@ -18,7 +18,7 @@ describe("unstash_moderator command", () => {
 
     const unstash_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator
+    const moderator = createMockModerator();
 
     test("valid item from valid container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");

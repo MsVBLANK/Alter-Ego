@@ -17,7 +17,7 @@ describe('knock_moderator command', () => {
 
     const knock_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test('with valid exit', async () => {
         const player = game.entityFinder.getPlayer("Kyra");

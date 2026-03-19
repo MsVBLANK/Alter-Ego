@@ -17,7 +17,7 @@ describe('stash_moderator command', () => {
 
     const stash_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     describe('valid invocations', () => {
         afterEach(async () => {

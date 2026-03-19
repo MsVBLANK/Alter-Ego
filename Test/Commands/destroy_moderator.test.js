@@ -17,7 +17,7 @@ describe('destroy_moderator command', () => {
 
     const destroy_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     describe('on inventory items', () => {
         describe('shallow nested', () => {

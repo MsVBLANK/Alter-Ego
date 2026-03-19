@@ -11,7 +11,7 @@ describe("dead_moderator command", () => {
 
     const dead_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test("with dead players", async () => {
         // @ts-ignore

@@ -11,7 +11,7 @@ describe("living_moderator command", () => {
 
     const living_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test("living_moderator execution", async () => {
         // @ts-ignore

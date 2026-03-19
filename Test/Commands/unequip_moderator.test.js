@@ -18,7 +18,7 @@ describe('unequip_moderator command', () => {
 
     const unequip_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test('given valid item', async () => {
         const player = game.entityFinder.getPlayer("Kyra");

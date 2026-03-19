@@ -6,7 +6,7 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 describe("dumplog_moderator command", () => {
     const dumplog_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test('execute', async () => {
         const mockMessage = createMockMessage();

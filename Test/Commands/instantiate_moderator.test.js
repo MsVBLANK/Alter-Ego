@@ -19,7 +19,7 @@ describe('instantiate_moderator command', () => {
 
     const instantiate_moderator = new ModeratorCommand(config, usage, execute);
 
-    const moderator = createMockModerator()
+    const moderator = createMockModerator();
 
     test('valid item into player hand', async () => {
         const player = game.entityFinder.getPlayer("Kyra");

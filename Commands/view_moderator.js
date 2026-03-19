@@ -1,4 +1,3 @@
-import FindAction from '../Data/Actions/FindAction.ts';
 import ViewAction from '../Data/Actions/ViewAction.ts';
 
 /** @import Moderator from '../Data/Moderator.ts' */
@@ -25,20 +24,21 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}view room 496\n`
-        + `${settings.commandPrefix}v fixture 21\n`
-        + `${settings.commandPrefix}view prefab 75\n`
-        + `${settings.commandPrefix}v recipe 43\n`
-        + `${settings.commandPrefix}view room item 1173\n`
-        + `${settings.commandPrefix}v item 692\n`
-        + `${settings.commandPrefix}view puzzle 81\n`
-        + `${settings.commandPrefix}v event 16\n`
-        + `${settings.commandPrefix}view status effect 92\n`
-        + `${settings.commandPrefix}v status 17\n`
-        + `${settings.commandPrefix}view player 4\n`
-        + `${settings.commandPrefix}v inventory item 70\n`
-        + `${settings.commandPrefix}view inventoryitem 381\n`
-        + `${settings.commandPrefix}v gesture 102\n`
-        + `${settings.commandPrefix}view flag 7`;
+        + `${settings.commandPrefix}v exit 497\n`
+        + `${settings.commandPrefix}view fixture 21\n`
+        + `${settings.commandPrefix}v prefab 75\n`
+        + `${settings.commandPrefix}view recipe 43\n`
+        + `${settings.commandPrefix}v room item 1173\n`
+        + `${settings.commandPrefix}view item 692\n`
+        + `${settings.commandPrefix}v puzzle 81\n`
+        + `${settings.commandPrefix}view event 16\n`
+        + `${settings.commandPrefix}v status effect 92\n`
+        + `${settings.commandPrefix}view status 17\n`
+        + `${settings.commandPrefix}v player 4\n`
+        + `${settings.commandPrefix}view inventory item 70\n`
+        + `${settings.commandPrefix}v inventoryitem 381\n`
+        + `${settings.commandPrefix}view gesture 102\n`
+        + `${settings.commandPrefix}v flag 7`;
 }
 
 /**
@@ -55,7 +55,7 @@ export async function execute(game, message, command, args, moderator) {
         return game.communicationHandler.reply(message, `You need to specify a data type and the row number of an entity to view. Usage:\n${usage(game.settings)}`);
 
     // First, separate the input into data type and search.
-    const dataTypeMatch = input.match(FindAction.dataTypeRegex);
+    const dataTypeMatch = input.match(ViewAction.dataTypeRegex);
     if (!dataTypeMatch && !dataTypeMatch.groups) return game.communicationHandler.reply(message, `Couldn't find a valid data type in "${input}".`);
     if (!dataTypeMatch.groups.search) return game.communicationHandler.reply(message, `You need to specify the row number of an entity to view.`);
     input = input.substring(input.indexOf(dataTypeMatch.groups.search)).trim();
@@ -69,6 +69,10 @@ export async function execute(game, message, command, args, moderator) {
     if (dataTypeMatch.groups.Room) {
         entityType = "Room";
         entity = game.entityFinder.getRoomByRow(row);
+    }
+    else if (dataTypeMatch.groups.Exit) {
+        entityType = "Exit";
+        entity = game.entityFinder.getExitByRow(row);
     }
     else if (dataTypeMatch.groups.Fixture) {
         entityType = "Fixture";

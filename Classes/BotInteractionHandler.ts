@@ -12,6 +12,7 @@ import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventory
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
 import DestroyInventoryItemAction from "../Data/Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "../Data/Actions/DestroyRoomItemAction.ts";
+import FindAction from "../Data/Actions/FindAction.ts";
 import ViewAction from "../Data/Actions/ViewAction.ts";
 import ActionDirectiveInteractable from "./Interactables/ActionDirectiveInteractable.ts";
 import type Game from "../Data/Game.ts";
@@ -336,6 +337,17 @@ export default class BotInteractionHandler {
                     this.#replyToInteraction(`Successfully destroyed room item.`, interaction);
                     this.#logInteraction("DestroyRoomItemAction", author, timestamp, validatedArgs);
                 }
+                return true;
+            }
+            catch (error) { throw new Error(error.message); }
+        }
+        if (action instanceof FindAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            try {
+                const validatedArgs = action.validateInteractionArgs(parsedArgs);
+                action.performFind(validatedArgs);
+                if (reply) reply.resource.message.delete();
                 return true;
             }
             catch (error) { throw new Error(error.message); }

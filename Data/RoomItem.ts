@@ -226,6 +226,14 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
     }
 
     /**
+     * Returns the args for the Find ActionDirective to get the contained items for this item container.
+     */
+    getFindChildItemsActionDirectiveArgs(inventorySlotID?: string): [string] {
+        const slotPhrase = inventorySlotID ? `${inventorySlotID} of ` : ``;
+        return [`RoomItems ${this.getPreposition()} ${slotPhrase}${this.getEntityID()} at ${this.getLocation().id}`];
+    }
+
+    /**
      * Returns true if the room item is capable of containing items.
      */
     isItemContainer(): boolean {
@@ -252,6 +260,7 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): RoomItem[] {
+        if (this.inventory.size === 0) return [];
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, 'RoomItem', this.identifier);
     }
 

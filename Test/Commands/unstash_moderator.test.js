@@ -3,10 +3,12 @@ import { usage, execute, config } from '../../Commands/unstash_moderator.js'
 import UnstashAction from "../../Data/Actions/UnstashAction.ts";
 import { clearQueue, sendQueuedMessages } from "../../Modules/messageHandler.js";
 import { createMockMessage } from "../__mocks__/libs/discord.js";
+import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("unstash_moderator command", () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     afterEach(async () => {
@@ -17,6 +19,9 @@ describe("unstash_moderator command", () => {
 
     const unstash_moderator = new ModeratorCommand(config, usage, execute);
 
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
+
     test("valid item from valid container", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
         const container = game.entityFinder.getInventoryItem("PACK OF TOILET PAPER 2", player.name);
@@ -24,7 +29,7 @@ describe("unstash_moderator command", () => {
         const [item] = slot.items;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "hamburger", "bun", "from", "pack", "of", "toilet", "paper", "2"]);
+        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "hamburger", "bun", "from", "pack", "of", "toilet", "paper", "2"], moderator);
         expect(spy).toBeInvokedWith(item, expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), container, slot);
     });
     test("valid item without specified container", async () => {
@@ -34,16 +39,16 @@ describe("unstash_moderator command", () => {
         const items = slots.flatMap(slot => slot.items).filter(item => item.name === "PACK OF TOILET PAPER");
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"], moderator);
         expect(spy).toBeInvokedWith(expect.toBeOneOf(items), expect.toBeOneOf(game.entityFinder.getPlayerHands(player)), expect.toBeOneOf(containers), expect.toBeOneOf(slots));
     });
     test("valid item with item of same name in hand", async () => {
         const player = game.entityFinder.getPlayer("Vivian");
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"], moderator);
         // @ts-ignore
-        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, createMockMessage(), "retrieve", ["vivian", "pack", "of", "toilet", "paper"], moderator);
         expect(spy).toHaveBeenCalledTimes(2);
     });
     test("invalid item from valid container", async () => {
@@ -52,7 +57,7 @@ describe("unstash_moderator command", () => {
         const author = message.author;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "from", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "from", "pack", "of", "toilet", "paper"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith("Couldn't find \"PACK OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER\".");
@@ -63,7 +68,7 @@ describe("unstash_moderator command", () => {
         const author = message.author;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "bun", "from", "bag", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "bun", "from", "bag", "of", "toilet", "paper"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith("Couldn't find \"BAG OF TOILET PAPER\" in Vivian's inventory containing \"HAMBURGER BUN\".");
@@ -74,11 +79,11 @@ describe("unstash_moderator command", () => {
         const author = message.author;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "bun", "from", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "hamburger", "bun", "from", "pack", "of", "toilet", "paper"], moderator);
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "detergent", "from", "pack", "of", "toilet", "paper"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "detergent", "from", "pack", "of", "toilet", "paper"], moderator);
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "pack", "of", "toilet", "paper", "from", "white", "jeans"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["vivian", "pack", "of", "toilet", "paper", "from", "white", "jeans"], moderator);
         await sendQueuedMessages(game);
         expect(spy).toHaveBeenCalledTimes(2);
         expect(author.send).toBeInvokedWith("Vivian does not have a free hand to retrieve an item.");
@@ -89,7 +94,7 @@ describe("unstash_moderator command", () => {
         const author = message.author;
         const spy = vi.spyOn(UnstashAction.prototype, "performUnstash");
         // @ts-ignore
-        await unstash_moderator.execute(game, message, "retrieve", ["kyra", "mug", "of", "coffee"]);
+        await unstash_moderator.execute(game, message, "retrieve", ["kyra", "mug", "of", "coffee"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(author.send).toBeInvokedWith("MUG OF COFFEE is not contained in another item and cannot be unstashed.");

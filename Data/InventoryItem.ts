@@ -228,9 +228,18 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     }
 
     /**
+     * Returns the args for the Find ActionDirective to get the contained items for this item container.
+     */
+    getFindChildItemsActionDirectiveArgs(inventorySlotID?: string): [string] {
+        const slotPhrase = inventorySlotID ? `${inventorySlotID} of ` : ``;
+        return [`InventoryItems ${this.getPreposition()} ${this.player.name}'s ${slotPhrase}${this.getEntityID()}`];
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {
+        if (this.inventory.size === 0) return [];
         return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier);
     }
 

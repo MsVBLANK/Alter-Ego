@@ -22,8 +22,9 @@ export const InteractableType = {
 export const ActionPriority = {
     VIEW_FIELD: 1,
     VIEW: 2,
-    INSTANTIATE: 3,
-    DESTROY: 4,
+    FIND: 3,
+    INSTANTIATE: 4,
+    DESTROY: 5,
     QUEUE_MOVE: 7,
     QUEUE_RUN: 8,
     STASH: 10,

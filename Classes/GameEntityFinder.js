@@ -337,15 +337,27 @@ export default class GameEntityFinder {
 
     /**
      * Gets the room with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getRoomByRow(row) {
         return this.game.rooms.find(room => room.row === row);
     }
 
     /**
+     * Gets the exit with the given row number.
+     * @param {number} row
+     */
+    getExitByRow(row) {
+        for (const room of this.game.rooms.values()) {
+            for (const exit of room.exits.values()) {
+                if (exit.row === row) return exit;
+            }
+        }
+    }
+
+    /**
      * Gets the fixture with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getFixtureByRow(row) {
         return this.game.fixtures.find(fixture => fixture.row === row);
@@ -353,7 +365,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the prefab with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getPrefabByRow(row) {
         return this.game.prefabs.find(prefab => prefab.row === row);
@@ -361,7 +373,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the recipe with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getRecipeByRow(row) {
         return this.game.recipes.find(recipe => recipe.row === row);
@@ -369,7 +381,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the room item with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getRoomItemByRow(row) {
         return this.game.roomItems.find(roomItem => roomItem.row === row);
@@ -377,7 +389,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the puzzle with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getPuzzleByRow(row) {
         return this.game.puzzles.find(puzzle => puzzle.row === row);
@@ -385,7 +397,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the event with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getEventByRow(row) {
         return this.game.events.find(event => event.row === row);
@@ -393,7 +405,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the status effect with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getStatusEffectByRow(row) {
         return this.game.statusEffects.find(statusEffect => statusEffect.row === row);
@@ -401,7 +413,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the player with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getPlayerByRow(row) {
         return this.game.players.find(player => player.row === row);
@@ -409,7 +421,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the inventory item with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getInventoryItemByRow(row) {
         return this.game.inventoryItems.find(inventoryItem => inventoryItem.row === row);
@@ -417,7 +429,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the gesture with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getGestureByRow(row) {
         return this.game.gestures.find(gesture => gesture.row === row);
@@ -425,7 +437,7 @@ export default class GameEntityFinder {
 
     /**
      * Gets the flag with the given row number.
-     * @param {number} row 
+     * @param {number} row
      */
     getFlagByRow(row) {
         return this.game.flags.find(flag => flag.row === row);

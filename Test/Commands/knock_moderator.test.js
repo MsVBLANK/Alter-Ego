@@ -3,10 +3,12 @@ import { usage, execute, config } from '../../Commands/knock_moderator.js'
 import KnockAction from '../../Data/Actions/KnockAction.ts';
 import { clearQueue, sendQueuedMessages } from '../../Modules/messageHandler.js';
 import { createMockMessage } from '../__mocks__/libs/discord.js';
+import { createMockModerator } from '../__mocks__/utility.ts';
 
 describe('knock_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        moderator = createMockModerator();
     });
 
     afterEach(async () => {
@@ -15,6 +17,9 @@ describe('knock_moderator command', () => {
     });
 
     const knock_moderator = new ModeratorCommand(config, usage, execute);
+
+    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    let moderator;
 
     test('with valid exit', async () => {
         const player = game.entityFinder.getPlayer("Kyra");
@@ -29,7 +34,7 @@ describe('knock_moderator command', () => {
             return original.apply(this, args);
         });
         // @ts-ignore
-        await knock_moderator.execute(game, createMockMessage(), "knock", ["kyra", "door"]);
+        await knock_moderator.execute(game, createMockMessage(), "knock", ["kyra", "door"], moderator);
         expect(context.player.name).toBe(player.name);
         expect(spy).toBeInvokedWith(exit);
     });
@@ -45,7 +50,7 @@ describe('knock_moderator command', () => {
         const message = createMockMessage();
         const author = message.author;
         // @ts-ignore
-        await knock_moderator.execute(game, message, "knock", ["kyra", "invalid"]);
+        await knock_moderator.execute(game, message, "knock", ["kyra", "invalid"], moderator);
         await sendQueuedMessages(game);
         expect(spy).not.toHaveBeenCalled();
         expect(context).toBeUndefined();

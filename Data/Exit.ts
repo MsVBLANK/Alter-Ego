@@ -3,12 +3,14 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type Room from "./Room.ts";
 
+export type ExitField = "name"|"phrase"|"tags"|"x"|"y"|"z"|"unlocked"|"dest"|"link"|"description";
+
 /**
  * Represents an exit in a room.
  *
  * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html
  */
-export default class Exit extends GameEntity {
+export default class Exit extends GameEntity implements PersistentGameEntity {
     /**
      * The name of the exit.
      */
@@ -136,6 +138,44 @@ export default class Exit extends GameEntity {
 
     descriptionCell(): string {
         return this.getGame().constants.roomSheetDescriptionColumn + this.row;
+    }
+
+    getEntityID(): string {
+        return this.name;
+    }
+
+    getLabel(field: ExitField): string {
+        switch (field) {
+            case "name": return "Exit Name";
+            case "phrase": return "Exit Phrase";
+            case "tags": return "Exit Tags";
+            case "x": return "X";
+            case "y": return "Y";
+            case "z": return "Z";
+            case "unlocked": return "Unlocked?";
+            case "dest": return "Leads To Room";
+            case "link": return "From Exit";
+            case "description": return "Description When Entering From This Exit";
+        }
+    }
+
+    getValue(field: ExitField): string {
+        switch (field) {
+            case "name": return this.name;
+            case "phrase": return this.phrase;
+            case "tags": return Array.from(this.tags).join(", ");
+            case "x": return String(this.pos.x);
+            case "y": return String(this.pos.y);
+            case "z": return String(this.pos.z);
+            case "unlocked": return this.unlocked ? "TRUE" : "FALSE";
+            case "dest": return this.dest.displayName;
+            case "link": return this.link;
+            case "description": return this.description.text;
+        }
+    }
+
+    getViewField(field: ExitField): ViewField {
+        return { label: this.getLabel(field), value: this.getValue(field) };
     }
 
     override getEntityType(): string {

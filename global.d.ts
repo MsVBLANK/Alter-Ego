@@ -15,6 +15,7 @@ import type Room from "./Data/Room.ts";
 import type RoomItem from "./Data/RoomItem.ts";
 import type { DateTime, Duration } from "luxon";
 import type { Node } from "acorn";
+import type Moderator from "./Data/Moderator.ts";
 
 export { };
 
@@ -134,7 +135,7 @@ declare global {
 	}
 
 	interface IModeratorCommand extends ICommand {
-		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
+		execute: (game: Game, message: UserMessage, command: string, args: string[], moderator: Moderator) => Promise<void>;
 	}
 
 	interface IPlayerCommand extends ICommand {
@@ -165,7 +166,7 @@ declare global {
 		destination: string;
 	}
 
-    type PersistentGameEntityName = "Room"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
+    type PersistentGameEntityName = "Room"|"Exit"|"Fixture"|"Prefab"|"Recipe"|"RoomItem"|"Puzzle"|"Event"|"StatusEffect"|"Player"|"InventoryItem"|"Gesture"|"Flag";
 
     interface PersistentGameEntity extends GameEntity {
         getEntityID: () => string;

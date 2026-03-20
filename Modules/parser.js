@@ -296,6 +296,7 @@ export function generateProceduralOutput(description, proceduralSelections, play
     let procedurals = document.getElementsByTagName('procedural');
     /** @type {Array<Node>} */
     let proceduralsToRemove = [];
+    const attributesToRemove = ['chance', 'stat'];
     for (let i = 0; i < procedurals.length; i++) {
         const proceduralName = procedurals[i].getAttribute('name').toLowerCase().trim();
         let proceduralAssigned = false;
@@ -358,14 +359,26 @@ export function generateProceduralOutput(description, proceduralSelections, play
         // Remove poss tags that failed the roll.
         for (let j = 0; j < possibilitiesToRemove.length; j++)
             procedurals[i].removeChild(possibilitiesToRemove[j]);
+        // Remove unneeded attributes from the remaining possibilities.
+        for (let i = 0; i < possibilities.length; i++) {
+            for (const attribute of attributesToRemove) {
+                possibilities[i].removeAttribute(attribute);
+            }
+        }
     }
     // Remove procedurals that failed the roll.
     for (let i = 0; i < proceduralsToRemove.length; i++) {
         if (proceduralsToRemove[i].parentNode) proceduralsToRemove[i].parentNode.removeChild(proceduralsToRemove[i]);
         else document.removeChild(proceduralsToRemove[i]);
     }
+    // Remove unneeded attributes from the remaining procedurals.
+    for (let i = 0; i < procedurals.length; i++) {
+        for (const attribute of attributesToRemove) {
+            procedurals[i].removeAttribute(attribute);
+        }
+    }
 
-    return stringify(document).replace(/<\/?procedural\s?[^>]*>/g, '').replace(/<\/?poss\s?[^>]*>/g, '').replace(/<s>\s*<\/s>/g, '').replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+    return stringify(document).replace(/<procedural\s?[^>]*>\s*<\/procedural>/g, '').replace(/<procedural\s?[^>]*\/>/g, '').replace(/<s>\s*<\/s>/g, '').replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 }
 
 /** @param {number} chance */

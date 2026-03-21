@@ -177,7 +177,8 @@ export default class Recipe extends GameEntity implements PersistentGameEntity {
             if (item.prefab.id !== ingredient.prefab.id || !item.containerMatches(ingredient) || !ingredient.quantitySatisfiedBy(item) || !ingredient.usesSatisfiedBy(item) || !ingredient.quantityIsConstant && itemSatisfiedQuantityCount === 0) return 0;
             if (!ingredient.quantityIsConstant) satisfactoryItemsCounts.push(itemSatisfiedQuantityCount);
         }
-        if (satisfactoryItemsCounts.length === 1 && isNaN(satisfactoryItemsCounts[0])) return 1;
+        // If EVERY value is NaN, we need to return 1, or else we return Infinity later on, and bad things can happen because of this.
+        if (satisfactoryItemsCounts.every(satisfactoryItemCount => isNaN(satisfactoryItemCount))) return 1;
 		if (allIngredientQuantitiesAreConstant) return 1;
         return Math.min(...satisfactoryItemsCounts.filter(satisfactoryItemsCount => !isNaN(satisfactoryItemsCount)));
     }

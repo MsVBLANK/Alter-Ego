@@ -288,6 +288,28 @@ describe('Fixture test', () => {
             }
         });
 
+        test('Full flow for CUTTING BOARD 3 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('CUTTING BOARD 3', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(3);
+                const leather = items[0];
+                const button = items[1];
+                const jacket = items[2];
+                expect(leather.prefabId).toBe("LEATHER SKIN");
+                expect(leather.quantity).toBe(NaN);
+                expect(leather.uses).toBe(NaN);
+                expect(button.prefabId).toBe("BUTTON");
+                expect(button.quantity).toBe(NaN);
+                expect(button.uses).toBe(NaN);
+                expect(jacket.prefabId).toBe("CRUDE LEATHER JACKET");
+                expect(jacket.quantity).toBe(1);
+                expect(jacket.uses).toBe(NaN);
+            }
+        });
+
         test('Full flow for BURNER 3 of video-room', () => {
             const fixture = game.entityFinder.getFixture('BURNER 3', 'video-room');
             fixture.activate();
@@ -450,6 +472,34 @@ describe('Fixture test', () => {
                 expect(pan2.inventory.first().items[0].prefabId).toBe("COOKED CHICKEN BREAST");
                 expect(pan2.inventory.first().items[0].quantity).toBe(1);
                 expect(pan2.inventory.first().items[0].uses).toBe(2);
+            }
+        });
+
+        test('Full flow for BURNER 7 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('BURNER 7', 'video-room');
+            fixture.activate();
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pan = items[0];
+                expect(pan.prefabId).toBe("FRYING PAN");
+                expect(pan.quantity).toBe(1);
+                expect(pan.uses).toBe(NaN);
+                expect(pan.inventory.first().items[0].prefabId).toBe("CLEAN GLASS");
+                expect(pan.inventory.first().items[0].quantity).toBe(1);
+                expect(pan.inventory.first().items[0].uses).toBe(NaN);
+            }
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pan = items[0];
+                expect(pan.prefabId).toBe("DIRTY PAN");
+                expect(pan.quantity).toBe(1);
+                expect(pan.uses).toBe(NaN);
+                expect(pan.inventory.first().items[0].prefabId).toBe("DIRTY GLASS");
+                expect(pan.inventory.first().items[0].quantity).toBe(1);
+                expect(pan.inventory.first().items[0].uses).toBe(NaN);
             }
         });
     });

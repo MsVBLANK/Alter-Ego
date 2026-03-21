@@ -7,6 +7,7 @@ declare global {
 
 interface CustomMatchers<R = unknown> {
     toBeInvokedWith: (...args: any) => R;
+    toBeLength: (length: number) => R;
     toHaveSize: (size: number) => R;
     toBeWithinRange: (floor: number, ceiling: number) => R;
     toBeWebhookMessage: () => R;

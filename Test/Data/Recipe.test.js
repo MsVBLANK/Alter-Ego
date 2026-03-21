@@ -231,6 +231,15 @@ describe('Recipe test', () => {
 			expect(burnerRecipe.ingredients.toString()).not.toBe(items.toString());
 		});
 
+        test('getSatisfactoryProcessCount on video-room BURNER 7', () => {
+            const recipe = game.entityFinder.getRecipes('processing', 'stovetop', 'FRYING PAN, CLEAN GLASS', 'DIRTY PAN, DIRTY GLASS')[0];
+            const burner = game.entityFinder.getFixture('BURNER 7', 'video-room');
+            const items = CollatedItem.collate(burner.getContainedItems());
+            expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
+            const burnerRecipe = burner.findRecipe();
+            expect(burnerRecipe.recipe.row).toBe(recipe.row);
+        });
+
 		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 1', () => {
 			const recipe = game.entityFinder.getRecipes('processing', 'cutting board', 'ORANGE, LARGE KNIFE', 'PEELED ORANGE, LARGE KNIFE')[0];
 			const cuttingBoard = game.entityFinder.getFixture('CUTTING BOARD 1', 'video-room');
@@ -246,6 +255,16 @@ describe('Recipe test', () => {
 			const cuttingBoard = game.entityFinder.getFixture('CUTTING BOARD 2', 'video-room');
 			const items = CollatedItem.collate(cuttingBoard.getContainedItems());
 			expect(recipe.getSatisfactoryProcessCount(items)).toBe(10);
+			const cuttingBoardRecipe = cuttingBoard.findRecipe();
+			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
+			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());
+		});
+
+		test('getSatisfactoryProcessCount on video-room CUTTING BOARD 3', () => {
+			const recipe = game.entityFinder.getRecipes('processing', 'cutting board', 'LEATHER SKIN, BUTTON', 'CRUDE LEATHER JACKET')[0];
+			const cuttingBoard = game.entityFinder.getFixture('CUTTING BOARD 3', 'video-room');
+			const items = CollatedItem.collate(cuttingBoard.getContainedItems());
+			expect(recipe.getSatisfactoryProcessCount(items)).toBe(1);
 			const cuttingBoardRecipe = cuttingBoard.findRecipe();
 			expect(cuttingBoardRecipe.recipe.row).toBe(recipe.row);
 			expect(cuttingBoardRecipe.ingredients.toString()).toBe(items.toString());

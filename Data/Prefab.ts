@@ -128,6 +128,10 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
      * The description of the prefab. Can contain multiple item lists named after its inventory slots.
      */
     readonly description: Description;
+    /**
+     * A map of procedurals in this prefab's description and the set of possibilities contained within them.
+     */
+    readonly proceduralOptions: Map<string, Set<string>>;
 
     /**
      * @param id - The unique identifier of the prefab.
@@ -193,6 +197,7 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
         this.inventory = inventory;
         this.preposition = preposition;
         this.description = new Description(description, this, game);
+        this.proceduralOptions = this.description.procedurals;
     }
 
     /**

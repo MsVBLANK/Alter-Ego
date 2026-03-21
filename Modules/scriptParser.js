@@ -12,7 +12,7 @@ const PARSER_OPTIONS = {
 	ecmaVersion: 2020
 };
 
-const SCRIPT_SCOPE_OPTIONS = {
+export const SCRIPT_SCOPE_OPTIONS = {
 	maxNodes: 20,
 	allowCall: true,
 	// Expose useful helpers by default.
@@ -88,6 +88,10 @@ const SCRIPT_SCOPE_OPTIONS = {
 		'recipeInterval',
 		'setAccessible',
 		'setInaccessible',
+        'setLocation',
+        'setChildPuzzle',
+        'instantiate',
+        'destroy',
 		'activate',
 		'deactivate',
 		'processRecipes',
@@ -98,15 +102,26 @@ const SCRIPT_SCOPE_OPTIONS = {
 		'decreaseUses',
 		'insertItem',
 		'removeItem',
+        'setParentFixture',
 		'solve',
+        'setOutcome',
+        'decrementRequiredItemUses',
+        'executeSolvedCommands',
 		'unsolve',
+        'clearOutcome',
+        'executeUnsolvedCommands',
 		'fail',
 		'alreadySolved',
+        'checkRequirementsMet',
 		'requirementsNotMet',
 		'trigger',
+        'executeTriggeredCommands',
 		'end',
+        'executeEndedCommands',
 		'startTimer',
 		'startEffectsTimer',
+        'executeEquippedCommands',
+        'executeUnequippedCommands',
 		'setPronouns',
 		'queueMovement',
 		'move',
@@ -144,6 +159,7 @@ const SCRIPT_SCOPE_OPTIONS = {
 		'clearValue'
 	],
 	blockedMutators: [
+        'add',
 		'set',
 		'delete',
 		'clear',

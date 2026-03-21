@@ -296,6 +296,7 @@ export function generateProceduralOutput(description, proceduralSelections, play
     let procedurals = document.getElementsByTagName('procedural');
     /** @type {Array<Node>} */
     let proceduralsToRemove = [];
+    const attributesToRemove = ['chance', 'stat'];
     for (let i = 0; i < procedurals.length; i++) {
         const proceduralName = procedurals[i].getAttribute('name').toLowerCase().trim();
         let proceduralAssigned = false;
@@ -358,14 +359,26 @@ export function generateProceduralOutput(description, proceduralSelections, play
         // Remove poss tags that failed the roll.
         for (let j = 0; j < possibilitiesToRemove.length; j++)
             procedurals[i].removeChild(possibilitiesToRemove[j]);
+        // Remove unneeded attributes from the remaining possibilities.
+        for (let i = 0; i < possibilities.length; i++) {
+            for (const attribute of attributesToRemove) {
+                possibilities[i].removeAttribute(attribute);
+            }
+        }
     }
     // Remove procedurals that failed the roll.
     for (let i = 0; i < proceduralsToRemove.length; i++) {
         if (proceduralsToRemove[i].parentNode) proceduralsToRemove[i].parentNode.removeChild(proceduralsToRemove[i]);
         else document.removeChild(proceduralsToRemove[i]);
     }
+    // Remove unneeded attributes from the remaining procedurals.
+    for (let i = 0; i < procedurals.length; i++) {
+        for (const attribute of attributesToRemove) {
+            procedurals[i].removeAttribute(attribute);
+        }
+    }
 
-    return stringify(document).replace(/<\/?procedural\s?[^>]*>/g, '').replace(/<\/?poss\s?[^>]*>/g, '').replace(/<s>\s*<\/s>/g, '').replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
+    return stringify(document).replace(/<procedural\s?[^>]*>\s*<\/procedural>/g, '').replace(/<procedural\s?[^>]*\/>/g, '').replace(/<s>\s*<\/s>/g, '').replace(/<\/([^>]+?)> +<\/desc>/g, "</$1></desc>").replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').trim();
 }
 
 /** @param {number} chance */
@@ -394,7 +407,7 @@ function calculateModifiedPossibilityArr(possibilityArr, statValue) {
     }
 
     // Generate modified percentages based on the supplied stat value.
-    if (statValue !== null && possibilityArr.length > 1) {
+    if (!isNaN(statValue) && possibilityArr.length > 1) {
         const modifierMax = statValue - 5;
         const modifierMin = -1 * modifierMax;
         for (let i = 0; i < possibilityArr.length; i++) {
@@ -427,7 +440,7 @@ function choosePossibilityIndex(possibilityArr) {
 
 /**
  * @param {string} description
- * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType}}
+ * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType, procedurals: Map<string, Set<string>>}}
  */
 function createDescriptionDocumentFromString(description) {
     description = description.replace(/<il><\/il>/g, "<il><null /></il>");
@@ -448,8 +461,10 @@ function createDescriptionDocumentFromString(description) {
     // Get message display type.
     const messageDisplayTypeString = document?.getElementsByTagName('desc').item(0)?.getAttribute('type')?.toUpperCase();
     const messageDisplayType = getMessageDisplayType(messageDisplayTypeString);
+    // Get procedurals.
+    const procedurals = getProcedurals(document);
 
-    return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType };
+    return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType, procedurals: procedurals };
 }
 
 /**
@@ -508,8 +523,7 @@ function createSentence(sentenceNode) {
         itemListName = itemList.getAttribute('name');
     }
 
-    let sentence = new Sentence(clauses, itemCount, itemList, itemListName);
-    return sentence;
+    return new Sentence(clauses, itemCount, itemList, itemListName);
 }
 
 /**
@@ -543,6 +557,34 @@ function getItemListSentences(document) {
     }
 
     return itemListSentences;
+}
+
+/**
+ * Gets all procedurals contained in the document.
+ * @param {Document} document
+ * @returns {Map<string, Set<string>>} A map of procedurals and the set of possibilities contained within them.
+ */
+function getProcedurals(document) {
+    /** @type {Map<string, Set<string>>} */
+    const procedurals = new Map();
+    // Get a list of all procedural tags in the document.
+    const proceduralElements = document?.getElementsByTagName('procedural') ?? [];
+    for (let i = 0; i < proceduralElements.length; i++) {
+        const proceduralName = proceduralElements[i].getAttribute('name').toLowerCase().trim();
+        if (!procedurals.has(proceduralName)) procedurals.set(proceduralName, new Set());
+        const procedural = procedurals.get(proceduralName);
+        const possibilityElements = proceduralElements[i].getElementsByTagName('poss');
+        for (let j = 0; j < possibilityElements.length; j++) {
+            // Skip possibilities that belong to nested procedurals.
+            let parentNode = possibilityElements[j].parentNode;
+            while (parentNode.parentNode && 'tagName' in parentNode && parentNode.tagName !== 'procedural')
+                parentNode = parentNode.parentNode;
+            if (parentNode !== proceduralElements[i]) continue;
+            const possibilityName = possibilityElements[j].getAttribute('name').toLowerCase();
+            procedural.add(possibilityName);
+        }
+    }
+    return procedurals;
 }
 
 /**

@@ -1325,8 +1325,9 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         const satisfactoryProcessCount = recipe.getSatisfactoryProcessCount(ingredientsFlat);
         if (satisfactoryProcessCount < 1) return;
         const variableValues = recipe.getIngredientVariableValues(ingredientsFlat);
+        const proceduralSelections = itemManager.combineProceduralSelections(ingredientsFlat);
         this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
-        this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues);
+        this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues, proceduralSelections);
         heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
         this.updateCarryWeight();
 
@@ -1346,6 +1347,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
         let ingredient1 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[0] : recipe.ingredients[1];
         let ingredient2 = oneDiscreet && recipe.ingredients[0].prefab.discreet ? recipe.ingredients[1] : recipe.ingredients[0];
+        const proceduralSelections = item.proceduralSelections;
 
         const rightHand = this.inventory.get("RIGHT HAND");
         const ingredient1Instance = itemManager.replaceInventoryItem(item, ingredient1.prefab);
@@ -1356,7 +1358,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             null,
             "",
             1,
-            new Map(),
+            proceduralSelections,
             ingredient2.prefab.uses,
             false
         );

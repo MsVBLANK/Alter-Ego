@@ -502,5 +502,98 @@ describe('Fixture test', () => {
                 expect(pan.inventory.first().items[0].uses).toBe(NaN);
             }
         });
+
+        test('Full flow for KILN 1 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('KILN 1', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pot = items[0];
+                const proceduralSelections = new Map([
+                    ["base color", "white"],
+                    ["quality", "decent"]
+                ]);
+                const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="white">white</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="decent">The craftsmanship is fairly decent. It has a flat, sturdy bottom that sits perfectly level. The sides are mostly even, but it has a bit of a rough texture, with a few small divots and bumps here and there. It should be able to hold things.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                expect(pot.proceduralSelections).toEqual(proceduralSelections);
+                expect(pot.description.text).toEqual(expectedDescription);
+            }
+        });
+
+        test('Full flow for KILN 2 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('KILN 2', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(1);
+                const pot = items[0];
+                const proceduralSelections = new Map([
+                    ["base color", "obscured"],
+                    ["quality", "excellent"],
+                    ["glaze color", "orange"],
+                    ["pattern", "waves"],
+                    ["pattern quality", "detailed"],
+                    ["pattern color", "teal"]
+                ]);
+                const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="obscured"/></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's been glazed, giving it a smooth, glassy finish.</s> <s>The glaze is <procedural name="glaze color"><poss name="orange">orange</poss></procedural> in color<procedural name="pattern">, and patterned with <procedural name="pattern quality"><poss name="detailed">detailed</poss></procedural> <procedural name="pattern color"><poss name="teal">teal</poss></procedural> <poss name="waves">waves</poss></procedural>.</s> <s>In it, you find <il></il>.</s></desc>`;
+                expect(pot.proceduralSelections).toEqual(proceduralSelections);
+                expect(pot.description.text).toEqual(expectedDescription);
+            }
+        });
+
+        test('Full flow for KILN 3 of video-room', () => {
+            const fixture = game.entityFinder.getFixture('KILN 3', 'video-room');
+            fixture.activate();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(2);
+                const pot1 = items[0];
+                const pot2 = items[1];
+                const proceduralSelections1 = new Map([
+                    ["base color", "white"],
+                    ["quality", "excellent"]
+                ]);
+                const proceduralSelections2 = new Map([
+                    ["base color", "red"],
+                    ["quality", "terrible"]
+                ]);
+                const expectedDescription1 = `<desc><s>This is a pot made of <procedural name="base color"><poss name="white">white</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture.</poss></s></procedural> <s>It's unglazed, and it still needs to be fired in a kiln.</s></desc>`;
+                const expectedDescription2 = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="terrible">It's of *terrible* quality. The sides are extremely rugged and misshapen, with a thin bottom that's sure to break after a few uses. It barely even looks recognizable as a pot, but it should still be able to hold things for now.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                expect(pot1.prefab.id).toBe("WET CLAY POT");
+                expect(pot2.prefab.id).toBe("FIRED CLAY POT");
+                expect(pot1.proceduralSelections).toEqual(proceduralSelections1);
+                expect(pot1.description.text).toEqual(expectedDescription1);
+                expect(pot2.proceduralSelections).toEqual(proceduralSelections2);
+                expect(pot2.description.text).toEqual(expectedDescription2);
+            }
+            fixture.recipeInterval.stop();
+            fixture.recipeInterval.start();
+            vi.advanceTimersByTime(1000);
+            {
+                let items = fixture.getContainedItems();
+                expect(items).toBeLength(2);
+                const pot1 = items[0];
+                const pot2 = items[1];
+                const proceduralSelections1 = new Map([
+                    ["base color", "red"],
+                    ["quality", "terrible"]
+                ]);
+                const proceduralSelections2 = new Map([
+                    ["base color", "white"],
+                    ["quality", "excellent"]
+                ]);
+                const expectedDescription1 = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="terrible">It's of *terrible* quality. The sides are extremely rugged and misshapen, with a thin bottom that's sure to break after a few uses. It barely even looks recognizable as a pot, but it should still be able to hold things for now.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                const expectedDescription2 = `<desc><s>This is a pot made of <procedural name="base color"><poss name="white">white</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                expect(pot1.prefab.id).toBe("FIRED CLAY POT");
+                expect(pot2.prefab.id).toBe("FIRED CLAY POT");
+                expect(pot1.proceduralSelections).toEqual(proceduralSelections1);
+                expect(pot1.description.text).toEqual(expectedDescription1);
+                expect(pot2.proceduralSelections).toEqual(proceduralSelections2);
+                expect(pot2.description.text).toEqual(expectedDescription2);
+            }
+        });
     });
 });

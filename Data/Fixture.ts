@@ -1,7 +1,7 @@
 import { Duration } from "luxon";
 import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
-import { getChildItems } from "../Modules/itemManager.js";
+import { getChildItems, combineProceduralSelections } from "../Modules/itemManager.js";
 import DeactivateAction from "./Actions/DeactivateAction.ts";
 import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import CollatedItem from "./CollatedItem.ts";
@@ -16,6 +16,26 @@ import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
 
 export type FixtureField = "name"|"location"|"accessible"|"childPuzzle"|"recipeTag"|"activatable"|"activated"|"autoDeactivate"|"hidingSpotCapacity"|"preposition"|"description";
+
+interface Process {
+    /** The recipe being processed. */
+    recipe?: Recipe;
+    /** The ingredients used in the recipe. */
+    ingredients?: CollatedItem<RoomItem>[];
+    /** How many times the given ingredients satisfy the recipe. Only set right before products are instantiated. */
+    satisfactoryProcessCount?: number;
+    /** The duration of the recipe. */
+    duration?: Duration;
+    /** The timer used to track the duration of the recipe. */
+    timer?: Timer | null;
+}
+
+interface FindRecipeResult {
+    /** The recipe found. */
+    recipe: Recipe | null;
+    /** The ingredients used in the recipe. */
+    ingredients: CollatedItem<RoomItem>[];
+}
 
 /**
  * Represents a fixed structure in a room that cannot be taken or moved by a player.
@@ -267,6 +287,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     #clearProcess(): void {
         this.process.recipe = null;
         this.process.ingredients.length = 0;
+        this.process.satisfactoryProcessCount = 0;
         if (this.process.timer !== null)
             this.process.timer.stop();
         this.process.duration = null;
@@ -307,7 +328,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         this.#setProcess(result);
         this.#setProcessDuration();
         this.#whenProcessTimerExpires(() => {
-            this.#processRecipe(player);
+            this.processRecipe(player);
 			this.#endProcess();
         });
     }
@@ -335,7 +356,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
             this.#setProcess(result);
             this.#setProcessDuration();
             this.#whenProcessTimerExpires(() => {
-                this.#processRecipe();
+                this.processRecipe();
 				this.#endProcess();
             });
         }
@@ -346,13 +367,14 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      *
      * @param player - The player who initiated the recipe, if any. If a player is given and they are still in the room, they will be sent the recipe's completedDescription.
      */
-    #processRecipe(player?: Player): void {
+    private processRecipe(player?: Player): void {
         // Calculate how many times the fixture's ingredients satisfy the current recipe.
-        const satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
-		if (satisfactoryProcessCount < 1) return;
+        this.process.satisfactoryProcessCount = this.process.recipe.getSatisfactoryProcessCount(this.process.ingredients);
+		if (this.process.satisfactoryProcessCount < 1) return;
         const variableValues = this.process.recipe.getIngredientVariableValues(this.process.ingredients);
-        this.destroyIngredients(this.process.recipe, this.process.ingredients, satisfactoryProcessCount);
-		this.instantiateProducts(this.process.recipe, satisfactoryProcessCount, variableValues);
+        const proceduralSelections = combineProceduralSelections(this.process.ingredients);
+        this.destroyIngredients(this.process.recipe, this.process.ingredients, this.process.satisfactoryProcessCount);
+		this.instantiateProducts(this.process.recipe, this.process.satisfactoryProcessCount, variableValues, proceduralSelections);
 		this.#sendRecipeCompletedDescription(player);
     }
 

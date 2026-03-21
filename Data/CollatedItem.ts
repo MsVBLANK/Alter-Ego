@@ -1,5 +1,5 @@
 import { getSortedItems } from "../Modules/helpers.ts";
-import { getChildItems } from "../Modules/itemManager.js";
+import { getChildItems, combineProceduralSelections } from "../Modules/itemManager.js";
 import DestroyInventoryItemAction from "./Actions/DestroyInventoryItemAction.ts";
 import DestroyRoomItemAction from "./Actions/DestroyRoomItemAction.ts";
 import InstantiateInventoryItemAction from "./Actions/InstantiateInventoryItemAction.ts";
@@ -63,6 +63,10 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	 * The recipe variable this is associated with.
 	 */
 	variable: string;
+    /**
+     * A map of procedurals and the possibilities assigned to them. Consists of the procedural selections of all collated items joined together.
+     */
+    proceduralSelections: Map<string, string>;
 
 	/**
 	 * @param items - The items to collate.
@@ -77,6 +81,7 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 		this.slot = items[0].slot;
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
 		this.uses = this.items.reduce((uses, item) => uses + (isNaN(item.uses) ? NaN : item.quantity * item.uses), 0);
+        this.proceduralSelections = combineProceduralSelections(this.items);
 	}
 
 	/**
@@ -96,7 +101,7 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 		const collatedItems: CollatedItem<T>[] = [];
 		const itemsMap: Map<string, T[]> = new Map();
 		for (const item of items) {
-            const key = `${item.getIdentifier()}-${item.containerType}-${item.containerName}`;
+            const key = `${item.getIdentifier()}-${item.containerType}-${item.containerName}-${JSON.stringify([...item.proceduralSelections])}`;
 			if (itemsMap.has(key)) itemsMap.get(key).push(item);
 			else itemsMap.set(key, [item]);
 		}
@@ -288,11 +293,11 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses): T[] {
         if (this.container instanceof Fixture || this.container instanceof Puzzle || this.container instanceof RoomItem) {
             const instantiateAction = new InstantiateRoomItemAction(prefab.getGame(), undefined, this.player, this.location, true);
-            return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, new Map(), uses) as T[];
+            return instantiateAction.performInstantiateRoomItem(prefab, this.container, this.slot, quantity, this.proceduralSelections, uses) as T[];
         }
         else if (this.container instanceof InventoryItem || this.container === null) {
             const instantiateAction = new InstantiateInventoryItemAction(prefab.getGame(), undefined, this.player, this.location, true);
-            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, new Map(), uses, false) as T[];
+            return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, this.proceduralSelections, uses, false) as T[];
         }
 	}
 }

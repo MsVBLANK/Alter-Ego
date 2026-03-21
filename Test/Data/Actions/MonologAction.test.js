@@ -117,7 +117,6 @@ describe('MonologAction test', () => {
 					expect(notificationMessage.content).toBe(messageText);
 					expect(player.spectateChannel.messages.cache).toHaveSize(1);
 					expect(spectateMessage).toBeWebhookMessage();
-					console.log(spectateMessage);
 					expect(spectateMessage).toBeMessageWith("Kyra", kyra.member.avatarURL(), messageText);
 				}
 				else {

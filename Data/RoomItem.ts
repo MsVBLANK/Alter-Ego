@@ -102,8 +102,10 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
             const quantity = this.quantity;
             const destroyAction = new DestroyRoomItemAction(this.getGame(), undefined, player, this.location, true);
             destroyAction.performDestroyRoomItem(this, this.quantity, true);
-            const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, player, this.location, true);
-            instantiateAction.performInstantiateRoomItem(nextStage, container, slot, quantity, new Map());
+            if (nextStage) {
+                const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, player, this.location, true);
+                instantiateAction.performInstantiateRoomItem(nextStage, container, slot, quantity, this.proceduralSelections);
+            }
         }
     }
 

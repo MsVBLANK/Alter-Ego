@@ -46,21 +46,22 @@ export default abstract class RecipeProcessor extends ItemContainer {
      * @param recipe - The recipe being processed.
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      * @param variableValues - The variable values to use when instantiating the products.
+     * @param proceduralSelections - The procedural selections to instantiate the the products with.
      */
-    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map()): void {
+    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map(), proceduralSelections: Map<string, string> = new Map()): void {
         if (satisfactoryProcessCount < 1) return;
 		for (const product of recipe.products) {
 			if (recipe.isIngredientAndProduct(product))
 				continue;
 			const quantity = product.calculateQuantity(satisfactoryProcessCount);
 			const uses = product.calculateUses(satisfactoryProcessCount, variableValues);
-			const instantiatedProducts = this.instantiate(product.prefab, quantity, uses, new Map());
+			const instantiatedProducts = this.instantiate(product.prefab, quantity, uses, proceduralSelections);
             if (product.prefab.inventory.size > 0) {
                 for (const instantiatedProduct of instantiatedProducts) {
                     for (const childProduct of product.containedItems) {
                         const childQuantity = childProduct.calculateQuantity(satisfactoryProcessCount);
 						const childUses = childProduct.calculateUses(satisfactoryProcessCount, variableValues);
-						this.instantiate(childProduct.prefab, childQuantity, childUses, new Map(), instantiatedProduct, instantiatedProduct.inventory.firstKey());
+						this.instantiate(childProduct.prefab, childQuantity, childUses, proceduralSelections, instantiatedProduct, instantiatedProduct.inventory.firstKey());
 					}
                 }
 			}

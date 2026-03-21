@@ -1,3 +1,4 @@
+import Description from '../Data/Description.ts';
 import Fixture from '../Data/Fixture.ts';
 import Puzzle from '../Data/Puzzle.ts';
 import InventoryItem from '../Data/InventoryItem.ts';
@@ -6,6 +7,7 @@ import RoomItem from '../Data/RoomItem.ts';
 import ItemInstance from '../Data/ItemInstance.ts';
 import { generateProceduralOutput } from '../Modules/parser.js';
 
+/** @import CollatedItem from '../Data/CollatedItem.ts' */
 /** @import EquipmentSlot from '../Data/EquipmentSlot.ts' */
 /** @import Prefab from '../Data/Prefab.ts' */
 /** @import Room from '../Data/Room.ts' */
@@ -130,7 +132,8 @@ export function replaceInventoryItem(item, newPrefab) {
 
         item.inventory.clear();
         item.initializeInventory();
-        item.setDescription(newPrefab.description);
+        const description = new Description(generateProceduralOutput(newPrefab.description, item.proceduralSelections, item.player), item, item.getGame());
+        item.setDescription(description);
     }
     item.player.updateCarryWeight();
     return item;
@@ -324,6 +327,19 @@ export function setChildItemQuantitiesZero(item) {
     getChildItems(childItems, item);
     for (let i = 0; i < childItems.length; i++)
         childItems[i].quantity = 0;
+}
+
+/**
+ * Combines the procedural selections of the given items into one map.
+ * @param {(ItemInstance | CollatedItem)[]} items - The items whose procedural selections should be combined. 
+ * @returns {Map<string, string>} The combined procedural selections.
+ */
+export function combineProceduralSelections(items) {
+    /** @type {Map<string, string>} */
+    const proceduralSelections = new Map();
+    for (const item of items)
+        item.proceduralSelections.forEach((value, key) => proceduralSelections.set(key, value));
+    return proceduralSelections;
 }
 
 /**

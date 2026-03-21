@@ -109,4 +109,62 @@ describe('Player test', () => {
 			expect(milkSlot.equippedItem.quantity).toBe(1);
 		});
 	});
+
+    describe('Procedural selection preservation', () => {
+        test('Procedural selections are preserved during crafting and uncrafting', () => {
+            const player = game.entityFinder.getPlayer('???');
+            let rightHand = game.entityFinder.getPlayerHandHoldingItem(player, 'FIRED CLAY POT 91');
+            let leftHand = game.entityFinder.getPlayerHandHoldingItem(player, 'GLAZE');
+            expect(rightHand).not.toBeUndefined();
+            expect(leftHand).not.toBeUndefined();
+            expect(rightHand.equippedItem).not.toBeUndefined();
+            expect(leftHand.equippedItem).not.toBeUndefined();
+            expect(rightHand.equippedItem.uses).toBe(NaN);
+            expect(leftHand.equippedItem.uses).toBe(NaN);
+            expect(rightHand.equippedItem.quantity).toBe(1);
+            expect(leftHand.equippedItem.quantity).toBe(1);
+            const recipe = game.entityFinder.getRecipes('crafting', '', 'FIRED CLAY POT, GLAZE', 'GLAZED CLAY POT')[0];
+            expect(recipe).not.toBeUndefined();
+            {
+                player.craft(recipe);
+                const expectedProceduralSelections = new Map([
+                    ["base color", "red"],
+                    ["quality", "excellent"],
+                    ["glaze color", "light blue"]
+                ]);
+                const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red </poss></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's already been fired in a kiln, but it's been coated with glaze.</s> <s>The glaze is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural> in color.</s> <s>It's still wet, so you might not want to use it as a container just yet.</s> <s>It should be fired in a kiln one more time before it's truly complete.</s> <s>In it, you find <il></il>.</s></desc>`;
+                expect(rightHand.equippedItem.prefab.id).toBe('GLAZED CLAY POT');
+                expect(leftHand.equippedItem).toBeNull();
+                expect(rightHand.equippedItem.uses).toBe(NaN);
+                expect(rightHand.equippedItem.quantity).toBe(1);
+                expect(rightHand.equippedItem.proceduralSelections).toEqual(expectedProceduralSelections);
+                expect(rightHand.equippedItem.description.text).toEqual(expectedDescription);
+            }
+
+            {
+                player.uncraft(rightHand.equippedItem, recipe);
+                const clayPotExpectedProceduralSelections = new Map([
+                    ["base color", "red"],
+                    ["quality", "excellent"]
+                ]);
+                const glazeExpectedProceduralSelections = new Map([
+                    ["glaze color", "light blue"]
+                ]);
+                const clayPotExpectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                const glazeExpectedDescription = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural>.</s> <s>You can apply it to a fired CLAY POT or CLAY SCULPTURE before putting it in the kiln to give it a glossy finish.</s></desc>`;
+                expect(rightHand.equippedItem).not.toBeNull();
+                expect(leftHand.equippedItem).not.toBeNull();
+                expect(rightHand.equippedItem.prefab.id).toBe('GLAZE');
+                expect(leftHand.equippedItem.prefab.id).toBe('FIRED CLAY POT');
+                expect(rightHand.equippedItem.uses).toBe(NaN);
+                expect(leftHand.equippedItem.uses).toBe(NaN);
+                expect(rightHand.equippedItem.quantity).toBe(1);
+                expect(leftHand.equippedItem.quantity).toBe(1);
+                expect(rightHand.equippedItem.proceduralSelections).toEqual(glazeExpectedProceduralSelections);
+                expect(rightHand.equippedItem.description.text).toEqual(glazeExpectedDescription);
+                expect(leftHand.equippedItem.proceduralSelections).toEqual(clayPotExpectedProceduralSelections);
+                expect(leftHand.equippedItem.description.text).toEqual(clayPotExpectedDescription);
+            }
+        });
+    });
 });

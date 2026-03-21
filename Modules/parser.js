@@ -328,7 +328,10 @@ export function generateProceduralOutput(description, proceduralSelections, play
         let winningPossibilityIndex;
         for (let j = 0; j < possibilities.length; j++) {
             // Skip possibilities that belong to nested procedurals.
-            if (possibilities[j].parentNode !== procedurals[i]) continue;
+            let parentNode = possibilities[j].parentNode;
+            while (parentNode.parentNode && 'tagName' in parentNode && parentNode.tagName !== 'procedural')
+                parentNode = parentNode.parentNode;
+            if (parentNode !== procedurals[i]) continue;
             const possibilityName = possibilities[j].getAttribute('name').toLowerCase();
             if (proceduralAssigned && proceduralSelections.get(proceduralName) === possibilityName)
                 winningPossibilityIndex = j;
@@ -358,7 +361,7 @@ export function generateProceduralOutput(description, proceduralSelections, play
         }
         // Remove poss tags that failed the roll.
         for (let j = 0; j < possibilitiesToRemove.length; j++)
-            procedurals[i].removeChild(possibilitiesToRemove[j]);
+            possibilitiesToRemove[j].parentNode.removeChild(possibilitiesToRemove[j]);
         // Remove unneeded attributes from the remaining possibilities.
         for (let i = 0; i < possibilities.length; i++) {
             for (const attribute of attributesToRemove) {

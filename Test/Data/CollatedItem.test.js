@@ -170,6 +170,24 @@ describe('CollatedItem test', () => {
 			expect(dirtyPlate.quantity).toBe(19);
 			expect(dirtyPlate.uses).toBeNaN();
 		});
+
+        test('collate items in video room KILN 3', () => {
+            const kiln = game.entityFinder.getFixture("KILN 3", "video-room");
+            const items = CollatedItem.collate(kiln.getContainedItems());
+            expect(items).toBeLength(2);
+            const wetClayPot1 = items[0];
+            const wetClayPot2 = items[1];
+            const proceduralSelections1 = new Map([
+                ["base color", "red"],
+                ["quality", "terrible"]
+            ]);
+            const proceduralSelections2 = new Map([
+                ["base color", "white"],
+                ["quality", "excellent"]
+            ]);
+            expect(wetClayPot1.proceduralSelections).toEqual(proceduralSelections1);
+            expect(wetClayPot2.proceduralSelections).toEqual(proceduralSelections2);
+        });
 	});
 
 	describe('test decreaseUses method', () => {

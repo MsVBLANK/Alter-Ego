@@ -1,6 +1,5 @@
 import type { ActivitiesOptions, ActivityType, ButtonInteraction, GuildMember, Message, ModalSubmitInteraction, OmitPartialGroupDMChannel, Snowflake, StringSelectMenuInteraction } from "discord.js";
 import type GameSettings from "./Classes/GameSettings.js";
-import type CollatedItem from "./Data/CollatedItem.ts";
 import type Event from "./Data/Event.ts";
 import type Exit from "./Data/Exit.js";
 import type Fixture from "./Data/Fixture.ts";
@@ -10,10 +9,9 @@ import type GameEntity from "./Data/GameEntity.ts";
 import type InventoryItem from "./Data/InventoryItem.ts";
 import type Player from "./Data/Player.ts";
 import type Puzzle from "./Data/Puzzle.ts";
-import type Recipe from "./Data/Recipe.ts";
 import type Room from "./Data/Room.ts";
 import type RoomItem from "./Data/RoomItem.ts";
-import type { DateTime, Duration } from "luxon";
+import type { DateTime } from "luxon";
 import type { Node } from "acorn";
 import type Moderator from "./Data/Moderator.ts";
 
@@ -211,41 +209,6 @@ declare global {
 		x: number;
 		y: number;
 		z: number;
-	}
-
-	/**
-	 * @property recipe - The recipe being processed.
-	 * @property ingredients - The ingredients used in the recipe.
-	 * @property duration - The duration of the recipe.
-	 * @property timer - The timer used to track the duration of the recipe.
-	 */
-	interface Process {
-		recipe?: Recipe;
-		ingredients: CollatedItem<RoomItem>[];
-		duration?: Duration;
-		timer?: any;
-	}
-
-	/**
-	 * @property recipe - The recipe found.
-	 * @property ingredients - The ingredients used in the recipe.
-	 */
-	interface FindRecipeResult {
-		recipe: Recipe | null;
-		ingredients: CollatedItem<RoomItem>[];
-	}
-
-	/**
-	 * @property ingredientIndex - The index of the ingredient in the ingredients array.
-	 * @property productIndex - The index of the product in the products array.
-	 * @property decreaseUses - Whether to decrease the uses of the ingredient.
-	 * @property nextStage - Whether to move to the next stage of the product.
-	 */
-	interface RemainingIngredient {
-		ingredientIndex: number;
-		productIndex: number;
-		decreaseUses: boolean;
-		nextStage: boolean;
 	}
 
 	/**

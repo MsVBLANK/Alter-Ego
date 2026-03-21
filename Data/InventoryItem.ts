@@ -304,6 +304,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      */
     setDescription(description: Description): void {
         this.description = new Description(description.text, this, this.getGame());
+        this.setProceduralSelections();
     }
 
     descriptionCell(): string {

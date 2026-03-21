@@ -41,6 +41,10 @@ export default class Description extends GameConstruct {
      * The display type of the message to send for this description.
      */
     readonly messageDisplayType: MessageDisplayType;
+    /**
+     * A map of procedurals in this description and the set of possibilities contained within them.
+     */
+    readonly procedurals: Map<string, Set<string>>;
 
 	/**
 	 * @param text - The text of the description.
@@ -56,6 +60,7 @@ export default class Description extends GameConstruct {
 		this.#warnings = descriptionDocument.warnings;
 		this.#errors = descriptionDocument.errors;
 		this.messageDisplayType = descriptionDocument.messageDisplayType;
+        this.procedurals = descriptionDocument.procedurals;
 	}
 
 	getContainer(): GameEntity {

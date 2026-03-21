@@ -440,7 +440,7 @@ function choosePossibilityIndex(possibilityArr) {
 
 /**
  * @param {string} description
- * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType}}
+ * @returns {{document: Document, warnings: string[], errors: string[], messageDisplayType: MessageDisplayType, procedurals: Map<string, Set<string>>}}
  */
 function createDescriptionDocumentFromString(description) {
     description = description.replace(/<il><\/il>/g, "<il><null /></il>");
@@ -461,8 +461,10 @@ function createDescriptionDocumentFromString(description) {
     // Get message display type.
     const messageDisplayTypeString = document?.getElementsByTagName('desc').item(0)?.getAttribute('type')?.toUpperCase();
     const messageDisplayType = getMessageDisplayType(messageDisplayTypeString);
+    // Get procedurals.
+    const procedurals = getProcedurals(document);
 
-    return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType };
+    return { document: document, warnings: warnings, errors: errors, messageDisplayType: messageDisplayType, procedurals: procedurals };
 }
 
 /**
@@ -521,8 +523,7 @@ function createSentence(sentenceNode) {
         itemListName = itemList.getAttribute('name');
     }
 
-    let sentence = new Sentence(clauses, itemCount, itemList, itemListName);
-    return sentence;
+    return new Sentence(clauses, itemCount, itemList, itemListName);
 }
 
 /**
@@ -556,6 +557,34 @@ function getItemListSentences(document) {
     }
 
     return itemListSentences;
+}
+
+/**
+ * Gets all procedurals contained in the document.
+ * @param {Document} document
+ * @returns {Map<string, Set<string>>} A map of procedurals and the set of possibilities contained within them.
+ */
+function getProcedurals(document) {
+    /** @type {Map<string, Set<string>>} */
+    const procedurals = new Map();
+    // Get a list of all procedural tags in the document.
+    const proceduralElements = document?.getElementsByTagName('procedural') ?? [];
+    for (let i = 0; i < proceduralElements.length; i++) {
+        const proceduralName = proceduralElements[i].getAttribute('name').toLowerCase().trim();
+        if (!procedurals.has(proceduralName)) procedurals.set(proceduralName, new Set());
+        const procedural = procedurals.get(proceduralName);
+        const possibilityElements = proceduralElements[i].getElementsByTagName('poss');
+        for (let j = 0; j < possibilityElements.length; j++) {
+            // Skip possibilities that belong to nested procedurals.
+            let parentNode = possibilityElements[j].parentNode;
+            while (parentNode.parentNode && 'tagName' in parentNode && parentNode.tagName !== 'procedural')
+                parentNode = parentNode.parentNode;
+            if (parentNode !== proceduralElements[i]) continue;
+            const possibilityName = possibilityElements[j].getAttribute('name').toLowerCase();
+            procedural.add(possibilityName);
+        }
+    }
+    return procedurals;
 }
 
 /**

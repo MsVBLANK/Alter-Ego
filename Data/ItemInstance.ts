@@ -70,6 +70,10 @@ export default abstract class ItemInstance extends ItemContainer {
 	 * A collection of {@link InventorySlot|inventory slots} the item has. The key is the inventory slot's ID.
 	 */
 	inventory: Collection<string, InventorySlot<ItemInstance>>;
+    /**
+     * A map of procedurals in this item's description and the possibilities assigned to them.
+     */
+    proceduralSelections: Map<string, string>;
 
 	/**
 	 * @param game - The game this belongs to.
@@ -92,6 +96,7 @@ export default abstract class ItemInstance extends ItemContainer {
 		this.quantity = quantity;
 		this.uses = uses;
 		this.inventory = new Collection();
+        this.setProceduralSelections();
 	}
 
 	/**
@@ -116,6 +121,18 @@ export default abstract class ItemInstance extends ItemContainer {
 		this.pluralContainingPhrase = prefab.pluralContainingPhrase ? prefab.pluralContainingPhrase : "";
 		this.weight = prefab ? prefab.weight : 0;
 	}
+
+    /**
+     * Sets the item's procedural selections based off of the procedurals in its current description.
+     * @protected
+     */
+    protected setProceduralSelections(): void {
+        this.proceduralSelections = new Map();
+        for (const procedural of this.description.procedurals) {
+            if (procedural[1].size === 1)
+                this.proceduralSelections.set(procedural[0], procedural[1].values().next().value);
+        }
+    }
 
 	/**
 	 * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.

@@ -1,6 +1,6 @@
 import StringSelectMenuInteractable from '../Classes/Interactables/StringSelectMenuInteractable.ts';
 import { InteractableType, MessageDisplayType } from './enums.js';
-import { capitalizeFirstLetter } from './helpers.ts';
+import { capitalizeFirstLetter, makeCopyable } from './helpers.ts';
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -407,8 +407,10 @@ export function createEntityViewComponents(entityType, entityRow, fields, color,
     );
     for (const field of fields) {
         let fieldContent = "";
-        if (field.label) fieldContent += `${field.label}: `;
-        if (field.value) fieldContent += `\`${field.value}\``;
+        const fieldValueTooLong = field.value && field.value.length > 3000;
+        if (field.label) fieldContent += `${field.label}${fieldValueTooLong ? ` (TRIMMED)` : ``}: `;
+        if (fieldValueTooLong) field.value = field.value.substring(0, 3000) + '…';
+        if (field.value) fieldContent += makeCopyable(field.value);
         if (fieldContent) components.push(new TextDisplayBuilder().setContent(fieldContent));
     }
     if (interactables.length > 0) {

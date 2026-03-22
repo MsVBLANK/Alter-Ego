@@ -20,7 +20,8 @@ export default class DestroyRoomItemAction extends Action {
         super.perform();
         const inventorySlot = item.container instanceof RoomItem ? item.container.inventory.get(item.slot) : undefined;
         this.getGame().logHandler.logDestroyRoomItem(item, quantity, item.container, inventorySlot);
-        this.successMessage = `Successfully destroyed ${item.getIdentifier()} ${item.container.getPreposition()} ${item.slot} of ${item.container.getContainerIdentifier()} at ${item.location.id}.`;
+        const slotPhrase = item.slot ? `${item.slot} of ` : ``;
+        this.successMessage = `Successfully destroyed ${item.getIdentifier()} ${item.container.getPreposition()} ${slotPhrase}${item.container.getContainerIdentifier()} at ${item.location.id}.`;
         destroyRoomItem(item, quantity, destroyChildren);
     }
 

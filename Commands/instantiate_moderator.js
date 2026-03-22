@@ -95,7 +95,7 @@ export async function execute(game, message, command, args, moderator) {
     if (room !== null) {
         // Check if a fixture was specified.
         let fixture = null;
-        const fixtures = game.fixtures.filter(fixture => fixture.location.id === room.id && fixture.accessible);
+        const fixtures = game.fixtures.filter(fixture => fixture.location.id === room.id);
         for (let i = 0; i < fixtures.length; i++) {
             if (fixtures[i].name === parsedInput) return game.communicationHandler.reply(message, `You need to supply a prefab and a preposition.`);
             if (parsedInput.endsWith(`${fixtures[i].preposition.toUpperCase()} ${fixtures[i].name}`) || parsedInput.endsWith(`IN ${fixtures[i].name}`)) {
@@ -115,7 +115,7 @@ export async function execute(game, message, command, args, moderator) {
         let containerItemSlot = null;
         if (fixture === null) {
             // Check if a container item was specified.
-            const items = game.entityFinder.getRoomItems(null, room.id, true);
+            const items = game.entityFinder.getRoomItems(null, room.id);
             for (let i = 0; i < items.length; i++) {
                 if (items[i].identifier === parsedInput || items[i].name === parsedInput) return game.communicationHandler.reply(message, `You need to supply a prefab and a preposition.`);
                 if (parsedInput.endsWith(items[i].identifier) && items[i].identifier !== "" || parsedInput.endsWith(items[i].name)) {

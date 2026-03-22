@@ -27,24 +27,28 @@ import { generateProceduralOutput } from '../Modules/parser.js';
 export function instantiateRoomItem(prefab, location, container, inventorySlotId, quantity, uses = prefab.uses, proceduralSelections = new Map(), player) {
     let containerType = "";
     let containerName = "";
+    let accessible = true;
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
+        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";
         containerName = container.name;
+        accessible = container.accessible;
     }
     else if (container instanceof RoomItem) {
         containerType = "RoomItem";
         containerName = container.identifier + '/' + inventorySlotId;
+        accessible = container.accessible;
     }
 
     let createdItem = new RoomItem(
         prefab.id,
         generateIdentifier(prefab),
         location.id,
-        container instanceof Puzzle && container.type !== "weight" && container.type !== "container" ? container.accessible && container.solved : true,
+        accessible,
         containerType,
         containerName,
         quantity,
@@ -253,17 +257,21 @@ export function copyInventoryItem(item, player, equipmentSlotId, quantity) {
 export function convertInventoryItem(item, player, container, inventorySlotId, quantity) {
     let containerType = "";
     let containerName = "";
+    let accessible = true;
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
+        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";
         containerName = container.name;
+        accessible = container.accessible;
     }
     else if (container instanceof RoomItem) {
         containerType = "RoomItem";
         containerName = container.identifier + '/' + inventorySlotId;
+        accessible = container.accessible;
     }
     else if (container instanceof InventoryItem) {
         containerType = "RoomItem";
@@ -274,7 +282,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
         item.prefab.id,
         item.identifier,
         player.location.id,
-        container instanceof Puzzle && container.type !== "weight" && container.type !== "container" ? container.accessible && container.solved : true,
+        accessible,
         containerType,
         containerName,
         quantity,
@@ -404,7 +412,7 @@ export function insertRoomItems(location, items) {
         let matchedItem = roomItems.find(roomItem =>
             roomItem.prefab.id === item.prefab.id &&
             roomItem.identifier === item.identifier &&
-            roomItem.accessible &&
+            roomItem.accessible === item.accessible &&
             roomItem.containerName === item.containerName &&
             roomItem.slot === item.slot &&
             (roomItem.uses === item.uses || isNaN(roomItem.uses) && isNaN(item.uses)) &&

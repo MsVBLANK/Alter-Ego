@@ -12,11 +12,12 @@ export default class LockAction extends Action {
      *
 	 * @param exit - The exit to lock.
 	 */
-	async performLock(exit: Exit): Promise<void> {
+	performLock(exit: Exit): void {
 		if (this.performed) return;
 		super.perform();
 		exit.lock();
 		if (this.location.occupants.length > 0) this.getGame().narrationHandler.narrateLock(this, this.location, exit);
         this.getGame().logHandler.logLock(this.location, exit);
+        this.successMessage = `Successfully locked ${exit.name} at ${this.location.getEntityID()}.`;
 	}
 }

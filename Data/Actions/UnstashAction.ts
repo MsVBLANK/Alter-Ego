@@ -23,6 +23,7 @@ export default class UnstashAction extends Action {
         this.getGame().narrationHandler.narrateUnstash(this, item, container, inventorySlot, this.player);
         this.getGame().logHandler.logUnstash(item, this.player, container, inventorySlot, this.forced);
         this.player.unstash(item, handEquipmentSlot, container, inventorySlot);
+        this.successMessage = `Successfully unstashed ${item.getIdentifier()} from ${inventorySlot.id} of ${container.identifier} for ${this.player.name}.`;
     }
 
     /**

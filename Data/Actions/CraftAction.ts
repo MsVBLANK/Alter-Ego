@@ -29,6 +29,7 @@ export default class CraftAction extends Action {
 		this.player.sendDescription(completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
 		this.getGame().narrationHandler.narrateCraft(this, craftingResult, this.player);
 		this.getGame().logHandler.logCraft(item1Id, item2Id, craftingResult, this.player, this.forced);
+        this.successMessage = `Successfully crafted ${item1Id} and ${item2Id} for ${this.player.name}.`;
 	}
 
     async #getInteractables(createdItems: InventoryItem[]): Promise<Interactable[]> {

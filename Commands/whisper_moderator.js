@@ -108,6 +108,7 @@ export async function execute(game, message, command, args, moderator) {
     if (!whisper) {
         const action = new WhisperAction(game, message, recipients[0], recipients[0].location, true);
         whisper = await action.performWhisper(recipients);
+        action.sendSuccessMessageToCommandChannel();
     }
     if (npc !== null && communication)
         await sendMessageToWhisper(game, message, communication, npc, whisper);
@@ -121,10 +122,11 @@ export async function execute(game, message, command, args, moderator) {
  * @param {Player} npc - The NPC player whispering this message.
  * @param {Whisper} whisper - The whisper this is occurring in.
  */
-async function sendMessageToWhisper (game, message, messageText, npc, whisper) {
+async function sendMessageToWhisper(game, message, messageText, npc, whisper) {
     const dialog = new Dialog(game, message, npc, npc.location, messageText, false, whisper);
     const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, npc.displayName, npc.displayIcon);
     dialog.setMessage(dialogMessage);
     const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
     sayAction.performSay(dialog);
+    sayAction.sendSuccessMessageToCommandChannel();
 }

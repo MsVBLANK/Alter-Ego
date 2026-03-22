@@ -24,5 +24,6 @@ export default class GiveAction extends Action {
 		this.getGame().narrationHandler.narrateGive(this, item, this.player, recipient);
 		this.getGame().logHandler.logGive(item, this.player, recipient, successful, this.forced);
 		if (successful) this.player.give(item, handEquipmentSlot, recipient, recipientHandEquipmentSlot);
+        this.successMessage = `Successfully gave ${this.player.name}'s ${item.getIdentifier()} to ${recipient.name}.`;
 	}
 }

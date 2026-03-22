@@ -21,5 +21,6 @@ export default class TriggerAction extends Action {
 		event.trigger();
 		const executeTriggeredCommands = !callee || !(callee instanceof Event);
 		if (executeTriggeredCommands) event.executeTriggeredCommands();
+        this.successMessage = `Successfully triggered ${event.id}.`;
 	}
 }

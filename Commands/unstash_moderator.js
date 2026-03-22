@@ -137,5 +137,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new UnstashAction(game, message, player, player.location, true);
     action.performUnstash(item, hand, container, slot);
-    game.communicationHandler.sendToCommandChannel(`Successfully unstashed ${item.getIdentifier()} from ${slotName} of ${container.identifier} for ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

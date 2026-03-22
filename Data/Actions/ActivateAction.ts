@@ -31,5 +31,6 @@ export default class ActivateAction extends Action {
 		if (initiatedDescription) {
 			this.player.sendDescription(initiatedDescription, fixture, messageDisplayType ?? MessageDisplayType.STANDARD);
 		}
+        this.successMessage = `Successfully activated ${fixture.name} at ${fixture.location.getEntityID()}${this.player ? ` for ${this.player.name}` : ``}.`;
 	}
 }

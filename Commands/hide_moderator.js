@@ -45,7 +45,7 @@ export async function execute(game, message, command, args, moderator) {
     if (player.status.has("hidden") && command === "unhide") {
         const unhideAction = new UnhideAction(game, message, player, player.location, true);
         unhideAction.performUnhide();
-        game.communicationHandler.sendToCommandChannel(`Successfully brought ${player.name} out of hiding.`);
+        unhideAction.sendSuccessMessageToCommandChannel();
     }
     else if (player.status.has("hidden"))
         return game.communicationHandler.reply(message, `${player.name} is already **hidden**. If you want ${player.originalPronouns.obj} to stop hiding, use "${game.settings.commandPrefix}unhide ${player.name}".`);
@@ -74,6 +74,6 @@ export async function execute(game, message, command, args, moderator) {
 
         const hideAction = new HideAction(game, message, player, player.location, true);
         hideAction.performHide(fixture.hidingSpot);
-        game.communicationHandler.sendToCommandChannel(`Successfully hid ${player.name} in the ${fixture.name}.`);
+        hideAction.sendSuccessMessageToCommandChannel();
     }
 }

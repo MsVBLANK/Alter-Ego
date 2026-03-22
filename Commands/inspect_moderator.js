@@ -67,8 +67,8 @@ export async function execute(game, message, command, args, moderator) {
 
     // Before anything else, check if the player is trying to inspect the room.
     if (parsedInput === "ROOM") {
-        action.performInspect(player.location);
-        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${player.location.id} for ${player.name}.`);
+        await action.performInspect(player.location);
+        action.sendSuccessMessageToCommandChannel();
         return;
     }
 
@@ -108,8 +108,8 @@ export async function execute(game, message, command, args, moderator) {
     }
 
     if (fixture !== null) {
-        action.performInspect(fixture);
-        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${fixture.name} for ${player.name}.`);
+        await action.performInspect(fixture);
+        action.sendSuccessMessageToCommandChannel();
         return;
     }
 
@@ -177,9 +177,8 @@ export async function execute(game, message, command, args, moderator) {
     }
 
     if (item !== null) {
-        action.performInspect(item);
-        const containerPhrase = item.container instanceof RoomItem ? item.container.getIdentifier() : item.container.name;
-        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${item.getIdentifier()} ${item.getContainerPreposition()} ${containerPhrase} for ${player.name}.`);
+        await action.performInspect(item);
+        action.sendSuccessMessageToCommandChannel();
         return;
     }
 
@@ -189,8 +188,8 @@ export async function execute(game, message, command, args, moderator) {
         parsedInput = parsedInput.replace(`${player.name.toUpperCase()}S `, "");
         if ((inventory[i].identifier !== "" && inventory[i].identifier === parsedInput || inventory[i].prefab.id === parsedInput || inventory[i].prefab.name === parsedInput)
             && inventory[i].quantity > 0) {
-            action.performInspect(inventory[i]);
-            game.communicationHandler.sendToCommandChannel(`Successfully inspected ${player.name}'s ` + (inventory[i].getIdentifier()) + ` for ${player.name}.`);
+            await action.performInspect(inventory[i]);
+            action.sendSuccessMessageToCommandChannel();
             return;
         }
     }
@@ -204,8 +203,8 @@ export async function execute(game, message, command, args, moderator) {
         if (occupant.name.toUpperCase() === parsedInput) {
             // Don't let player inspect themselves.
             if (occupant.name === player.name) return game.communicationHandler.reply(message, `${player.name} can't inspect ${player.originalPronouns.ref}.`);
-            action.performInspect(occupant);
-            game.communicationHandler.sendToCommandChannel(`Successfully inspected ${occupant.name} for ${player.name}.`);
+            await action.performInspect(occupant);
+            action.sendSuccessMessageToCommandChannel();
             return;
         }
         else if (parsedInput.startsWith(possessive)) {
@@ -222,8 +221,8 @@ export async function execute(game, message, command, args, moderator) {
                         item.prefab.coveredEquipmentSlots.includes(inventory[j].equipmentSlot)
                     );
                     if (coveringItems.length === 0) {
-                        action.performInspect(inventory[j]);
-                        game.communicationHandler.sendToCommandChannel(`Successfully inspected ${occupant.name}'s ` + (inventory[j].getIdentifier()) + ` for ${player.name}.`);
+                        await action.performInspect(inventory[j]);
+                        action.sendSuccessMessageToCommandChannel();
                         return;
                     }
                 }

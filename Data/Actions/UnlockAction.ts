@@ -12,11 +12,12 @@ export default class UnlockAction extends Action {
      *
 	 * @param exit - The exit to unlock.
 	 */
-	async performUnlock(exit: Exit): Promise<void> {
+	performUnlock(exit: Exit): void {
 		if (this.performed) return;
 		super.perform();
 		exit.unlock();
 		if (this.location.occupants.length > 0) this.getGame().narrationHandler.narrateUnlock(this, this.location, exit);
 		this.getGame().logHandler.logUnlock(this.location, exit);
+        this.successMessage = `Successfully unlocked ${exit.name} at ${this.location.getEntityID()}.`;
 	}
 }

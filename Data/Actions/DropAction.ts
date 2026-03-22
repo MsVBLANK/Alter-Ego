@@ -23,8 +23,7 @@ export default class DropAction extends Action {
      * @param inventorySlot - The {@link InventorySlot|inventory slot} to put the item in.
      * @param notify - Whether or not to notify the player that they dropped the item. Defaults to true.
 	 */
-	performDrop(item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: Puzzle | Fixture | RoomItem,
-        inventorySlot: InventorySlot<RoomItem>, notify: boolean = true): void {
+	performDrop(item: InventoryItem, handEquipmentSlot: EquipmentSlot, container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>, notify: boolean = true): void {
 		if (this.performed) return;
 		super.perform();
 		this.getGame().narrationHandler.narrateDrop(this, item, container, this.player, notify);
@@ -43,6 +42,9 @@ export default class DropAction extends Action {
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "drop", "");
         }
+        const preposition = container.getPreposition() ? container.getPreposition() : "in";
+        const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
+        this.successMessage = `Successfully dropped ${item.getIdentifier()} ${preposition} ${containerPhrase} for ${this.player.name}.`;
 	}
 
 	/**

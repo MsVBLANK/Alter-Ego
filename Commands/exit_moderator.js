@@ -80,11 +80,13 @@ export async function execute(game, message, command, args, moderator) {
         const destinationLockAction = new LockAction(game, message, undefined, exit.dest, true);
         roomLockAction.performLock(exit);
         destinationLockAction.performLock(entrance);
+        roomLockAction.sendSuccessMessageToCommandChannel();
     }
     else if (command === "unlock") {
         const roomUnlockAction = new UnlockAction(game, message, undefined, room, true);
         const destinationUnlockAction = new UnlockAction(game, message, undefined, exit.dest, true);
         roomUnlockAction.performUnlock(exit);
         destinationUnlockAction.performUnlock(entrance);
+        roomUnlockAction.sendSuccessMessageToCommandChannel();
     }
 }

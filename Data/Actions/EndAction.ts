@@ -21,5 +21,6 @@ export default class EndAction extends Action {
 		event.end();
 		const executeEndedCommands = !callee || !(callee instanceof Event);
 		if (executeEndedCommands) event.executeEndedCommands();
+        this.successMessage = `Successfully ended ${event.id}.`;
 	}
 }

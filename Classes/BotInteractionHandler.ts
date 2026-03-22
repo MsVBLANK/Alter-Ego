@@ -1,3 +1,4 @@
+import type Action from "../Data/Action.ts";
 import InspectAction from "../Data/Actions/InspectAction.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
 import TakeAction from "../Data/Actions/TakeAction.ts";
@@ -146,7 +147,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 2) {
 				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
-				if (reply) reply.resource.message.delete();
+				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("QueueMoveAction", author, timestamp, validatedArgs);
 				return true;
 			}
@@ -156,8 +157,8 @@ export default class BotInteractionHandler {
 			const parsedArgs = action.parseInteractionArgs(args);
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 1) {
-				action.performInspect(validatedArgs[0]);
-				if (reply) reply.resource.message.delete();
+				await action.performInspect(validatedArgs[0]);
+				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("InspectAction", author, timestamp, validatedArgs);
 				return true;
 			}
@@ -167,8 +168,8 @@ export default class BotInteractionHandler {
 			const parsedArgs = action.parseInteractionArgs(args);
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
-				action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
+				await action.performTake(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
+				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("TakeAction", author, timestamp, validatedArgs);
 				return true;
 			}
@@ -179,7 +180,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performDrop(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
+				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("DropAction", author, timestamp, validatedArgs);
 				return true;
 			}
@@ -190,7 +191,7 @@ export default class BotInteractionHandler {
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 4) {
 				action.performStash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-				if (reply) reply.resource.message.delete();
+				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("StashAction", author, timestamp, validatedArgs);
 				return true;
 			}
@@ -201,7 +202,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 4) {
                 action.performUnstash(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3]);
-                if (reply) reply.resource.message.delete();
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("UnstashAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -212,7 +213,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performEquip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                if (reply) reply.resource.message.delete();
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("EquipAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -223,7 +224,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
                 action.performUnequip(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                if (reply) reply.resource.message.delete();
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("UnequipAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -233,8 +234,8 @@ export default class BotInteractionHandler {
             const parsedArgs = action.parseInteractionArgs(args);
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 3) {
-                action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                if (reply) reply.resource.message.delete();
+                await action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("CraftAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -245,7 +246,7 @@ export default class BotInteractionHandler {
             const validatedArgs = action.validateInteractionArgs(parsedArgs);
             if (validatedArgs.length === 2) {
                 action.performUse(validatedArgs[0], validatedArgs[1]);
-                if (reply) reply.resource.message.delete();
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("UseAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -263,7 +264,7 @@ export default class BotInteractionHandler {
                 try {
                     const validatedArgs = action.validateInteractionArgs(parsedArgs);
                     action.performInstantiateInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3], validatedArgs[4], validatedArgs[5], validatedArgs[6]);
-                    this.#replyToInteraction("Successfully instantiated inventory item.", interaction);
+                    this.#replyToInteraction(action.successMessage, interaction);
                     this.#logInteraction("InstantiateInventoryItemAction", author, timestamp, validatedArgs);
                     return true;
                 }
@@ -291,7 +292,7 @@ export default class BotInteractionHandler {
                 try {
                     const validatedArgs = action.validateInteractionArgs(parsedArgs);
                     action.performInstantiateRoomItem(validatedArgs[0], validatedArgs[1], validatedArgs[2], validatedArgs[3], validatedArgs[4], validatedArgs[5]);
-                    this.#replyToInteraction("Successfully instantiated room item.", interaction);
+                    this.#replyToInteraction(action.successMessage, interaction);
                     this.#logInteraction("InstantiateRoomItemAction", author, timestamp, validatedArgs);
                     return true;
                 }
@@ -312,7 +313,7 @@ export default class BotInteractionHandler {
             try {
                 const validatedArgs = action.validateInteractionArgs(parsedArgs);
                 action.performDestroyInventoryItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                this.#replyToInteraction("Successfully destroyed inventory item.", interaction);
+                this.#replyToInteraction(action.successMessage, interaction);
                 this.#logInteraction("DestroyInventoryItemAction", author, timestamp, validatedArgs);
                 return true;
             }
@@ -334,7 +335,7 @@ export default class BotInteractionHandler {
                 else {
                     const validatedArgs = action.validateInteractionArgs([parsedArgs[0]]);
                     action.performDestroyRoomItem(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
-                    this.#replyToInteraction(`Successfully destroyed room item.`, interaction);
+                    this.#replyToInteraction(action.successMessage, interaction);
                     this.#logInteraction("DestroyRoomItemAction", author, timestamp, validatedArgs);
                 }
                 return true;
@@ -383,12 +384,23 @@ export default class BotInteractionHandler {
        return true;
     }
 
+    /**
+     * Replies to the interaction if it was initiated by a moderator. Otherwise, deletes the deferred response.
+     * @param action - The action that was performed.
+     * @param interaction - The interaction being executed.
+	 * @param reply - The reply that was sent.
+     */
+    #replyOrDeleteActionResponse(action: Action, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>) {
+        if (action.forced && action.successMessage) this.#replyToInteraction(action.successMessage, interaction);
+        else if (reply) reply.resource.message.delete();
+    }
+
 	/**
 	 * Replies to an interaction.
 	 * @param response - The response to send.
 	 * @param interaction - The interaction to reply to.
 	 */
-	#replyToInteraction(response: string, interaction: ButtonInteraction|StringSelectMenuInteraction|ModalSubmitInteraction): void {
+	#replyToInteraction(response: string, interaction: BotInteraction): void {
         if (interaction.replied || interaction.deferred) interaction.editReply({ content: response });
         else interaction.reply({ content: response });
 	}

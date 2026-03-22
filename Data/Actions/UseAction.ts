@@ -19,7 +19,10 @@ export default class UseAction extends Action {
 		super.perform();
 		this.getGame().narrationHandler.narrateUse(this, item, this.player, target, customNarration);
 		this.getGame().logHandler.logUse(item, this.player, target, this.forced);
+        const itemIdentifier = item.getIdentifier();
 		this.player.use(item, target);
+        const targetString = target.name !== this.player.name ? `on ${target.name} ` : ``;
+        this.successMessage = `Successfully used ${itemIdentifier} ${targetString}for ${this.player.name}.`;
 	}
 
     /**

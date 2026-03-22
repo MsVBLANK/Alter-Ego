@@ -68,5 +68,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new EquipAction(game, message, player, player.location, true);
     action.performEquip(item, slot, hand);
-    game.communicationHandler.sendToCommandChannel(`Successfully equipped ${item.getIdentifier()} to ${player.name}'s ${slotName}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

@@ -54,5 +54,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new KnockAction(game, message, player, player.location, true);
     action.performKnock(exit);
-    game.communicationHandler.sendToCommandChannel(`Successfully knocked on ${exit.name} for ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

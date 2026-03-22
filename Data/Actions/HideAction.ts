@@ -27,5 +27,6 @@ export default class HideAction extends Action {
 			successful = true;
 		}
 		this.getGame().logHandler.logHide(hidingSpot, this.player, successful, this.forced);
+        this.successMessage = `Successfully hid ${this.player.name} in ${hidingSpot.getFixture().getContainingPhrase()}.`;
 	}
 }

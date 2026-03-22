@@ -25,9 +25,12 @@ export default class DestroyInventoryItemAction extends Action {
 		if (!item.container) {
 			if (notify) this.getGame().narrationHandler.narrateDestroyEquippedInventoryItem(this, item, this.player);
 			this.getGame().logHandler.logDestroyEquippedInventoryItem(item, this.player, equipmentSlot);
+            this.successMessage = `Successfully destroyed ${item.getIdentifier()} equipped to ${item.player.name}'s ${equipmentSlot.id}.`;
 		}
-		else
+		else {
 			this.getGame().logHandler.logDestroyStashedInventoryItem(item, quantity, this.player, item.container, inventorySlot);
+            this.successMessage = `Successfully destroyed ${item.getIdentifier()} ${item.container.getPreposition()} ${item.slot} of ${item.container.identifier} in ${item.player.name}'s inventory.`;
+        }
 		destroyInventoryItem(item, quantity, destroyChildren);
 	}
 

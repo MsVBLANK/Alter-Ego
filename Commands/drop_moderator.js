@@ -179,5 +179,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new DropAction(game, message, player, player.location, true);
     action.performDrop(item, hand, container, slot);
-    game.communicationHandler.sendToCommandChannel(`Successfully dropped ${item.getIdentifier()} for ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

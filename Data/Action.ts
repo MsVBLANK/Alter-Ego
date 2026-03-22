@@ -1,6 +1,7 @@
 import { randomUUID } from "crypto";
 import type Game from "./Game.ts";
 import GameConstruct from "./GameConstruct.ts";
+import type Interactable from "../Classes/Interactables/Interactable.ts";
 import type Player from "./Player.ts";
 import type Room from "./Room.ts";
 import type Whisper from "./Whisper.ts";
@@ -43,6 +44,10 @@ export default abstract class Action extends GameConstruct {
 	 * Whether the action has already been performed. If this is true, the action cannot be performed again.
 	 */
 	protected performed: boolean;
+    /**
+     * The message to send when the action successfully finishes performing.
+     */
+    #successMessage: string;
 	/**
 	 * A set of channel IDs this action has already been communicated in. This is used to ensure that actions are not communicated in the same place twice.
 	 */
@@ -78,6 +83,23 @@ export default abstract class Action extends GameConstruct {
 	protected perform(): void {
 		this.performed = true;
 	}
+
+    get successMessage(): string {
+        return this.#successMessage;
+    }
+
+    protected set successMessage(string: string) {
+        this.#successMessage = string;
+    }
+
+    /**
+     * Sends the success message to the command channel.
+     * @param interactables - An array of interactables to send. Optional.
+     */
+    sendSuccessMessageToCommandChannel(interactables: Interactable[] = []): void {
+        if (this.#successMessage)
+            this.getGame().communicationHandler.sendToCommandChannel(this.#successMessage, interactables);
+    }
 
 	/**
 	 * Returns true if the action has been communicated in the given channel.

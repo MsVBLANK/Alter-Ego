@@ -22,5 +22,6 @@ export default class UnsolveAction extends Action {
 		const executeUnsolvedCommands = !callee || !(callee instanceof Puzzle);
 		if (executeUnsolvedCommands) puzzle.executeUnsolvedCommands(this.player);
 		puzzle.clearOutcome();
+        this.successMessage = `Successfully unsolved ${puzzle.name} at ${puzzle.location.getEntityID()}${this.player ? `for ${this.player.name}` : ``}.`;
 	}
 }

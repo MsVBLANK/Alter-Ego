@@ -34,5 +34,7 @@ export default class SolveAction extends Action {
 		this.getGame().logHandler.logSolve(puzzle, this.player, this.forced);
 		const executeSolvedCommands = !callee || !(callee instanceof Puzzle);
 		if (executeSolvedCommands) puzzle.executeSolvedCommands(targetPlayer ? targetPlayer : this.player);
+        const outcomePhrase = password ? ` with outcome ${password}` : ``;
+        this.successMessage = `Successfully solved ${puzzle.name}${outcomePhrase} at ${puzzle.location.getEntityID()}${this.player ? `for ${this.player.name}` : ``}.`;
 	}
 }

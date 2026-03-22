@@ -94,6 +94,15 @@ export function generateListString(list: string[]): string {
 }
 
 /**
+ * Makes the given string easier to copy with Discord's markdown.
+ * @param string 
+ */
+export function makeCopyable(string: string): string {
+    if (string.length === 0) return string;
+    return '`' + string + '`';
+}
+
+/**
  * Sorts the list of items alphabetically by prefab ID.
  * @param items - A list of room items.
  * @returns A copy of the list of items, sorted alphabetically by prefab ID.

@@ -102,12 +102,12 @@ export async function execute(game, message, command, args, moderator) {
                 const action = new InflictAction(game, undefined, players[i], players[i].location, true);
                 action.performInflict(status, true, true, true);
             }
-            game.communicationHandler.sendToCommandChannel("Status successfully added to the listed players.");
+            game.communicationHandler.sendToCommandChannel(`Successfully added status effect ${status.id} to the listed players.`);
         }
         else {
             const action = new InflictAction(game, message, players[0], players[0].location, true);
-            const doResponse = action.performInflict(status, true, true, true);
-            if (doResponse) game.communicationHandler.sendToCommandChannel("Status successfully added.");
+            action.performInflict(status, true, true, true);
+            action.sendSuccessMessageToCommandChannel();
         }
     }
     else if (command === "cure") {
@@ -116,12 +116,12 @@ export async function execute(game, message, command, args, moderator) {
                 const action = new CureAction(game, undefined, players[i], players[i].location, true);
                 action.performCure(status, true, true, true);
             }
-            game.communicationHandler.sendToCommandChannel("Successfully removed status effect from the listed players.");
+            game.communicationHandler.sendToCommandChannel(`Successfully removed status effect ${status.id} from the listed players.`);
         }
         else {
             const action = new CureAction(game, message, players[0], players[0].location, true);
-            const doResponse = action.performCure(status, true, true, true);
-            if (doResponse) game.communicationHandler.sendToCommandChannel("Successfully removed status effect.");
+            action.performCure(status, true, true, true);
+            action.sendSuccessMessageToCommandChannel();
         }
     }
     else if (command === "view") {

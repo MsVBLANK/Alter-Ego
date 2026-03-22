@@ -21,6 +21,7 @@ export default class NarrateAction extends Action {
 		this.#communicateNarrationToLocation(narration);
 		this.#communicateNarrationToWhisper(narration);
 		this.#communicateNarrationToVideoMonitoringRooms(narration);
+        this.successMessage = `Successfully narrated${this.player ? ` for ${this.player.name}` : ``}.`
 	}
 
 	/**

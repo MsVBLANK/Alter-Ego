@@ -125,11 +125,11 @@ export async function execute(game, message, command, args, moderator) {
     if (command === "activate") {
         const activateAction = new ActivateAction(game, message, player, fixture.location, true);
         activateAction.performActivate(fixture, narrate, announcement);
-        game.communicationHandler.sendToCommandChannel(`Successfully activated ${fixture.name}.`);
+        activateAction.sendSuccessMessageToCommandChannel();
     }
     else if (command === "deactivate") {
         const deactivateAction = new DeactivateAction(game, message, player, fixture.location, true);
         deactivateAction.performDeactivate(fixture, narrate, announcement);
-        game.communicationHandler.sendToCommandChannel(`Successfully deactivated ${fixture.name}.`);
+        deactivateAction.sendSuccessMessageToCommandChannel();
     }
 }

@@ -26,6 +26,15 @@ export default class InspectAction extends Action {
 
 		description.parseAndSendTo(this.player);
 		this.getGame().logHandler.logInspect(target, this.player, this.forced);
+        if (target instanceof RoomItem || target instanceof InventoryItem && target.container) {
+            const slotPhrase = target.container instanceof RoomItem || target.container instanceof InventoryItem ? `${target.slot} of ` : ``;
+            const ownerPhrase = target instanceof InventoryItem ? `${target.player.name}'s ` : ``;
+            this.successMessage = `Successfully inspected ${ownerPhrase}${target.getEntityID()} ${target.container.getPreposition()} ${slotPhrase}${target.getContainer().getEntityID()} for ${this.player.name}.`;
+        }
+        else if (target instanceof InventoryItem)
+            this.successMessage = `Successfully inspected ${target.player.name}'s ${target.getIdentifier()} for ${this.player.name}.`
+        else
+            this.successMessage = `Successfully inspected ${target.getEntityID()} for ${this.player.name}.`;
 	}
 
 	/**

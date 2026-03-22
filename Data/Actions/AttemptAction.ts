@@ -256,6 +256,7 @@ export default class AttemptAction extends Action {
 			else
 				this.#failPuzzle(puzzle);
 		}
+        this.successMessage = `Successfully attempted ${puzzle.name} for ${this.player?.name}.`;
 	}
 
 	/**

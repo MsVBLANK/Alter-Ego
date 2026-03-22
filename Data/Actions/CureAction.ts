@@ -18,16 +18,14 @@ export default class CureAction extends Action {
      * @param doCuredCondition - Whether or not to turn the status into its curedCondition. Defaults to true.
      * @param narrate - Whether or not to send any narrations caused by the status being cured. Defaults to true.
      * @param item - The inventory item that caused the status to be cured, if applicable.
-	 * @returns Whether or not the bot should send a followup message.
 	 */
-	performCure(status: Status, notify: boolean = true, doCuredCondition: boolean = true, narrate: boolean = true, item?: InventoryItem): boolean {
-		if (this.performed) return false;
+	performCure(status: Status, notify: boolean = true, doCuredCondition: boolean = true, narrate: boolean = true, item?: InventoryItem): void {
+		if (this.performed) return;
 		super.perform();
-		let sendFollowupMessage = true;
 		const playerStatusIds = this.player.status.map(statusEffect => statusEffect.id);
 		if (!playerStatusIds.includes(status.id)) {
 			if (this.message && this.forced) this.message.reply(`Specified player doesn't have that status effect.`);
-			return false;
+            return;
 		}
 		if (status.behaviorAttributes.has("no channel") && this.player.getBehaviorAttributeStatusEffects("no channel").length - 1 === 0)
 			this.player.location.joinChannel(this.player);
@@ -42,8 +40,7 @@ export default class CureAction extends Action {
 		if (status.curedCondition && doCuredCondition) {
 			const curedConditionAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, true);
 			curedConditionAction.performInflict(status.curedCondition, false, false, true);
-			if (this.message && this.forced) this.message.reply(`Successfully removed status effect. Player is now ${status.curedCondition.id}.`);
-			sendFollowupMessage = false;
+			if (this.message && this.forced) this.successMessage = `Successfully removed status effect. Player is now ${status.curedCondition.id}.`;
 		}
 		if (notify) {
 			const curedDescription = status.curedDescription.parseFor(this.player, status);
@@ -58,6 +55,6 @@ export default class CureAction extends Action {
 			const heatedPlayers = this.getGame().entityFinder.getLivingPlayers(undefined, undefined, undefined, undefined, "heated");
 			if (heatedPlayers.length === 0) this.getGame().heated = false;
 		}
-		return sendFollowupMessage;
+		if (!this.successMessage) this.successMessage = `Successfully removed status effect ${status.id} from ${this.player?.name}.`;
 	}
 }

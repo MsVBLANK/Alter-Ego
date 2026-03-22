@@ -114,5 +114,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new StashAction(game, message, player, player.location, true);
     action.performStash(item, hand, containerItem, containerItemSlot);
-    game.communicationHandler.sendToCommandChannel(`Successfully stashed ${item.getIdentifier()} ${containerItem.prefab.preposition} ${containerItemSlot.id} of ${containerItem.identifier} for ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

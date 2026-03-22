@@ -25,6 +25,7 @@ export default class GestureAction extends Action {
 		newGesture.target = target;
 		this.getGame().narrationHandler.narrateGesture(this, newGesture, this.player);
 		this.getGame().logHandler.logGesture(gesture, target, this.player, this.forced);
+        this.successMessage = `Successfully made ${this.player.name} perform gesture ${gesture.id}.`;
 	}
 
     /**

@@ -130,5 +130,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new DressAction(game, message, player, player.location, true);
     action.performDress(containerItems, hand, container, inventorySlot);
-    game.communicationHandler.sendToCommandChannel(`Successfully dressed ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

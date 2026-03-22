@@ -191,7 +191,7 @@ export async function execute(game, message, command, args, moderator) {
         // Now instantiate the item.
         const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
         instantiateAction.performInstantiateRoomItem(prefab, container, slotName, quantity, proceduralSelections);
-        game.communicationHandler.sendToCommandChannel("Successfully instantiated item.");
+        instantiateAction.sendSuccessMessageToCommandChannel();
     }
     else {
         for (let i = 0; i < args.length; i++) {
@@ -298,7 +298,6 @@ export async function execute(game, message, command, args, moderator) {
         // Now instantiate the item.
         const instantiateAction = new InstantiateInventoryItemAction(game, message, player, player.location, true);
         instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotName, containerItem, slotName, quantity, proceduralSelections);
-
-        game.communicationHandler.sendToCommandChannel("Successfully instantiated inventory item.");
+        instantiateAction.sendSuccessMessageToCommandChannel();
     }
 }

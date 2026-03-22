@@ -71,5 +71,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new GiveAction(game, message, giver, giver.location, true);
     action.performGive(item, giverHand, recipient, recipientHand);
-    game.communicationHandler.sendToCommandChannel(`Successfully gave ${giver.name}'s ${item.getIdentifier()} to ${recipient.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

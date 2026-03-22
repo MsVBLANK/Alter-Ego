@@ -99,6 +99,6 @@ export async function execute(game, message, command, args, moderator) {
     if (recipe === null) return game.communicationHandler.reply(message, `Couldn't find recipe requiring ${items[0].prefab.id} and ${items[1].prefab.id}.`);
 
     const action = new CraftAction(game, message, player, player.location, true);
-    action.performCraft(items[0], items[1], recipe);
-    game.communicationHandler.sendToCommandChannel(`Successfully crafted ${items[0].getIdentifier()} and ${items[1].getIdentifier()} for ${player.name}.`);
+    await action.performCraft(items[0], items[1], recipe);
+    action.sendSuccessMessageToCommandChannel();
 }

@@ -41,5 +41,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new TriggerAction(game, message, undefined, undefined, true);
     await action.performTrigger(event);
-    game.communicationHandler.sendToCommandChannel(`Successfully triggered ${event.id}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

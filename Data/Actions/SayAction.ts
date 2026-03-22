@@ -29,6 +29,8 @@ export default class SayAction extends Action {
 		this.#voicePuzzles = this.getGame().entityFinder.getPuzzles(undefined, undefined, "voice");
 		if (dialog.whisper) this.#communicateWhisperedDialog(dialog);
 		this.#communicateDialogToRoomOccupants(dialog);
+        const verb = this.whisper ? `whispered` : `spoke`;
+        this.successMessage = `Successfully ${verb} dialog for ${dialog.speaker.name}.`;
 		// If the dialog is an OOC message or took place in a whisper, the rest of the functions don't need to be called.
 		if (dialog.isOOCMessage || dialog.whisper) return;
 		this.#solveVoicePuzzles(dialog.location, dialog);

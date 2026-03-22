@@ -22,5 +22,6 @@ export default class DeactivateAction extends Action {
 			this.getGame().narrationHandler.narrateDeactivate(this, fixture, player, customNarration);
 		this.getGame().logHandler.logDeactivate(fixture, player, this.forced);
 		fixture.deactivate();
+        this.successMessage = `Successfully deactivated ${fixture.name} at ${fixture.location.getEntityID()}${this.player ? ` for ${this.player.name}` : ``}.`;
 	}
 }

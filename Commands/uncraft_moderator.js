@@ -90,9 +90,7 @@ export async function execute(game, message, command, args, moderator) {
         return game.communicationHandler.reply(message, `${player.name} does not have an empty hand to uncraft ${item.prefab.id}.`);
     }
 
-    const itemIdentifier = item.getIdentifier();
-
     const action = new UncraftAction(game, message, player, player.location, true);
     action.performUncraft(item, recipe);
-	game.communicationHandler.sendToCommandChannel(`Successfully uncrafted ${itemIdentifier} for ${player.name}.`);
+	action.sendSuccessMessageToCommandChannel();
 }

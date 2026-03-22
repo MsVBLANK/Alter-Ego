@@ -41,5 +41,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new EndAction(game, message, undefined, undefined, true);
     await action.performEnd(event);
-    game.communicationHandler.sendToCommandChannel(`Successfully ended ${event.id}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

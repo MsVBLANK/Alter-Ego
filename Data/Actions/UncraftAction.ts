@@ -25,5 +25,6 @@ export default class UncraftAction extends Action {
 		this.player.sendDescription(uncraftedDescription, recipe, recipe.uncraftedDescription.messageDisplayType ?? MessageDisplayType.STANDARD);
 		this.getGame().narrationHandler.narrateUncraft(this, recipe, originalItemPrefab, item, uncraftingResult, this.player);
 		this.getGame().logHandler.logUncraft(itemId, uncraftingResult, this.player, this.forced);
+        this.successMessage = `Successfully uncrafted ${itemId} for ${this.player.name}.`;
 	}
 }

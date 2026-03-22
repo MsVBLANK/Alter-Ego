@@ -23,6 +23,7 @@ export default class EquipAction extends Action {
 		this.getGame().logHandler.logEquip(item, this.player, equipmentSlot, this.forced);
 		this.player.equip(item, equipmentSlot, handEquipmentSlot);
 		equipmentSlot.equippedItem.executeEquippedCommands();
+        this.successMessage = `Successfully equipped ${item.getIdentifier()} to ${this.player.name}'s ${equipmentSlot.id}.`;
 	}
 
     /**

@@ -150,17 +150,17 @@ export async function execute(game, message, command, args, moderator) {
         if (puzzle.solutions.length > 1 && input !== "" && outcome === "") return game.communicationHandler.reply(message, `"${input}" is not a valid solution.`);
         const solveAction = new SolveAction(game, message, player, puzzle.location, true);
         solveAction.performSolve(puzzle, outcome, targetPlayer, announcement);
-        game.communicationHandler.sendToCommandChannel(`Successfully solved ${puzzle.name}.`);
+        solveAction.sendSuccessMessageToCommandChannel();
     }
     else if (command === "unsolve") {
         const unsolveAction = new UnsolveAction(game, message, player, puzzle.location, true);
         unsolveAction.performUnsolve(puzzle, announcement);
-        game.communicationHandler.sendToCommandChannel(`Successfully unsolved ${puzzle.name}.`);
+        unsolveAction.sendSuccessMessageToCommandChannel();
     }
     else if (command === "attempt") {
         if (player === null) return game.communicationHandler.reply(message, `Cannot attempt a puzzle without a player.`);
         const attemptAction = new AttemptAction(game, message, player, puzzle.location, true);
         attemptAction.performAttempt(puzzle, undefined, input, command, input, targetPlayer);
-        game.communicationHandler.sendToCommandChannel(`Successfully attempted ${puzzle.name} for ${player.name}.`);
+        attemptAction.sendSuccessMessageToCommandChannel();
     }
 }

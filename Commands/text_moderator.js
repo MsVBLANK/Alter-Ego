@@ -63,4 +63,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new TextAction(game, message, player, player.location, false);
     action.performText(recipient, input);
+    action.sendSuccessMessageToCommandChannel();
 }

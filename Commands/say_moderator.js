@@ -55,6 +55,7 @@ export async function execute(game, message, command, args, moderator) {
         dialog.setMessage(dialogMessage);
         const sayAction = new SayAction(game, dialogMessage, player, player.location, true);
         sayAction.performSay(dialog);
+        sayAction.sendSuccessMessageToCommandChannel();
     }
     else if (channel?.type === ChannelType.GuildText && game.guildContext.roomCategories.includes(channel?.parentId)) {
         const room = game.entityFinder.getRoom(channel.name);

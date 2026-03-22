@@ -1,4 +1,4 @@
-import { getSortedItemsString } from "../../Modules/helpers.ts";
+import { generateListString, getSortedItemsString } from "../../Modules/helpers.ts";
 import Action from "../Action.ts";
 import type Fixture from "../Fixture.ts";
 import type InventoryItem from "../InventoryItem.ts";
@@ -60,5 +60,7 @@ export default class UndressAction extends Action {
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "drop", "");
 		}
+        const slotPhrase = inventorySlot ? `${inventorySlot.id} of ` : ``;
+        this.successMessage = `Successfully undressed ${this.player.name}, putting ${generateListString(droppedItems.map(item => item.getIdentifier()))} in ${slotPhrase}${container.getEntityID()}.`;
 	}
 }

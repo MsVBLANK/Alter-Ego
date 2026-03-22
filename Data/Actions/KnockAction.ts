@@ -17,5 +17,6 @@ export default class KnockAction extends Action {
 		super.perform();
 		this.getGame().narrationHandler.narrateKnock(this, exit, this.player);
 		this.getGame().logHandler.logKnock(exit, this.player, this.forced);
+        this.successMessage = `Successfully knocked on ${exit.name} for ${this.player.name}.`;
 	}
 }

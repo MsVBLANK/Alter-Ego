@@ -21,5 +21,6 @@ export default class TextAction extends Action {
 		const recipientText = this.getGame().notificationGenerator.generateTextNotification(messageText, this.player.name);
 		this.getGame().narrationHandler.sendNotification(this.player, this, senderText, MessageDisplayType.PLAIN_TEXT, true, this.message.attachments, [], this.message.embeds);
 		this.getGame().narrationHandler.sendNotification(recipient, this, recipientText, MessageDisplayType.PLAIN_TEXT, true, this.message.attachments, [], this.message.embeds);
+        this.successMessage = `Successfully texted ${recipient.name} for ${this.player.name}.`;
 	}
 }

@@ -42,5 +42,6 @@ export default class MoveAction extends Action {
 		enterAction.performEnter(destinationRoom, entrance, isMovingFreely, isRunning);
 		// Send log message.
 		this.getGame().logHandler.logMove(isRunning, destinationRoom, this.player, this.forced);
+        this.successMessage = `Successfully moved ${this.player.name} to ${destinationRoom.channel}.`;
 	}
 }

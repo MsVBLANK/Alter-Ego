@@ -31,5 +31,6 @@ export default class UnhideAction extends Action {
 		const cureAction = new CureAction(this.getGame(), undefined, this.player, this.player.location, true);
 		cureAction.performCure(hiddenStatus, true, false, true);
 		this.getGame().logHandler.logUnhide(hidingSpot, this.player, this.forced);
+        this.successMessage = `Successfully brought ${this.player.name} out of hiding.`;
 	}
 }

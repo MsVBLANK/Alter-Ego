@@ -7,6 +7,7 @@ import Puzzle from "../Puzzle.ts";
 import RoomItem from "../RoomItem.ts";
 import { parseProceduralSelections } from "../../Modules/stringDataExtractor.ts";
 import { instantiateRoomItem } from "../../Modules/itemManager.js";
+import { generateListString, makeCopyable } from "../../Modules/helpers.ts";
 
 /**
  * Represents an instantiate room item action.
@@ -35,6 +36,12 @@ export default class InstantiateRoomItemAction extends Action {
                 createdItems.push(this.#instantiateRoomItem(prefab, container, inventorySlotId, 1, proceduralSelections, uses));
         }
         else createdItems.push(this.#instantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses));
+
+        const entityType = `room item${createdItems.length !== 1 ? `s` : ``}`;
+        const itemsString = generateListString(createdItems.map(item => makeCopyable(item.getIdentifier())));
+        const slotPhrase = inventorySlotId ? `${inventorySlotId} of ` : ``;
+        const containerString = `${container.getPreposition()} ${slotPhrase}${container.getContainerIdentifier()}`;
+		this.successMessage = `Successfully instantiated ${entityType} ${itemsString} ${containerString} at ${container.location.getEntityID()}.`;
         return createdItems;
     }
 

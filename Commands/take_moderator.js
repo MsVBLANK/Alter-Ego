@@ -162,6 +162,6 @@ export async function execute(game, message, command, args, moderator) {
         return game.communicationHandler.reply(message, `Items cannot be taken from ${topContainer.name} while it is turned on.`);
 
     const action = new TakeAction(game, message, player, player.location, true);
-    action.performTake(item, hand, container, slot);
-    game.communicationHandler.sendToCommandChannel(`Successfully took ${item.getIdentifier()} for ${player.name}.`);
+    await action.performTake(item, hand, container, slot);
+    action.sendSuccessMessageToCommandChannel();
 }

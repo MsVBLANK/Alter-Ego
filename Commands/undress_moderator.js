@@ -141,5 +141,5 @@ export async function execute(game, message, command, args, moderator) {
 
     const action = new UndressAction(game, message, player, player.location, true);
     action.performUndress(container, slot);
-    game.communicationHandler.sendToCommandChannel(`Successfully undressed ${player.name}.`);
+    action.sendSuccessMessageToCommandChannel();
 }

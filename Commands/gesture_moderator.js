@@ -139,6 +139,6 @@ export async function execute(game, message, command, args, moderator) {
 
         const action = new GestureAction(game, message, player, player.location, true);
         action.performGesture(gesture, targetType, target);
-        game.communicationHandler.sendToCommandChannel(`Successfully made ${player.name} perform gesture ${gesture.id}.`);
+        action.sendSuccessMessageToCommandChannel();
     }
 }

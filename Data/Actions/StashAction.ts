@@ -23,6 +23,7 @@ export default class StashAction extends Action {
 		this.getGame().narrationHandler.narrateStash(this, item, container, inventorySlot, this.player);
 		this.getGame().logHandler.logStash(item, this.player, container, inventorySlot, this.forced);
 		this.player.stash(item, handEquipmentSlot, container, inventorySlot);
+        this.successMessage = `Successfully stashed ${item.getIdentifier()} ${container.getPreposition()} ${inventorySlot.id} of ${container.identifier} for ${this.player.name}.`;
 	}
 
 	/**

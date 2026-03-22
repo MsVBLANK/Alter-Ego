@@ -211,7 +211,7 @@ export async function execute(game, message, command, args, moderator) {
 
             const destroyAction = new DestroyRoomItemAction(game, message, undefined, room, true);
             destroyAction.performDestroyRoomItem(item, item.quantity, true);
-            game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} ${preposition} ${containerName}.`);
+            destroyAction.sendSuccessMessageToCommandChannel();
         }
     }
     else {
@@ -335,7 +335,7 @@ export async function execute(game, message, command, args, moderator) {
             if (item !== null && equipmentSlotId !== "") {
                 const destroyAction = new DestroyInventoryItemAction(game, message, player, player.location, true);
                 destroyAction.performDestroyInventoryItem(item, item.quantity, true, true);
-                game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} equipped to ${player.name}'s ${equipmentSlotId}.`);
+                destroyAction.sendSuccessMessageToCommandChannel();
                 return;
             }
         }
@@ -346,7 +346,7 @@ export async function execute(game, message, command, args, moderator) {
 
             const destroyAction = new DestroyInventoryItemAction(game, message, player, player.location, true);
             destroyAction.performDestroyInventoryItem(item, item.quantity, true);
-            game.communicationHandler.sendToCommandChannel(`Successfully destroyed ${item.getIdentifier()} ${preposition} ${containerName}.`);
+            destroyAction.sendSuccessMessageToCommandChannel();
         }
         else return game.communicationHandler.reply(message, `Couldn't find "${parsedInput}" in ${player.name}'s inventory.`);
     }

@@ -6,6 +6,7 @@ import ItemInstance from "../ItemInstance.ts";
 import Prefab from "../Prefab.ts";
 import { parseProceduralSelections } from "../../Modules/stringDataExtractor.ts";
 import { instantiateInventoryItem } from "../../Modules/itemManager.js";
+import { generateListString, makeCopyable } from "../../Modules/helpers.ts";
 
 /**
  * Represents an instantiate inventory item action.
@@ -36,7 +37,12 @@ export default class InstantiateInventoryItemAction extends Action {
                 createdItems.push(this.#instantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, 1, proceduralSelections, uses, notify));
         }
         else createdItems.push(this.#instantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, notify));
-		return createdItems;
+        
+        const entityType = `inventory item${createdItems.length !== 1 ? `s` : ``}`;
+        const itemsString = generateListString(createdItems.map(item => makeCopyable(item.getIdentifier())));
+        const containerString = container ? `${container.getPreposition()} ${this.player.name}'s ${inventorySlotId} of ${container.getIdentifier()}` : `to ${this.player.name}'s ${equipmentSlotId}`;
+		this.successMessage = `Successfully instantiated ${entityType} ${itemsString} ${containerString}.`;
+        return createdItems;
 	}
 
     /**

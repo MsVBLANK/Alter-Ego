@@ -20,17 +20,15 @@ export default class InflictAction extends Action {
      * @param narrate - Whether or not to send any narrations caused by the status being inflicted. Defaults to true.
      * @param item - The inventory item that caused the status to be inflicted, if applicable.
 	 * @param duration - A custom duration that overrides the status's default duration.
-	 * @returns Whether or not the bot should send a followup message.
 	 */
-	performInflict(status: Status, notify: boolean = true, doCures: boolean = true, narrate: boolean = true,
-        item?: InventoryItem, duration: Duration<true> = null): boolean {
-		if (this.performed) return false;
+	performInflict(status: Status, notify: boolean = true, doCures: boolean = true, narrate: boolean = true, item?: InventoryItem, duration: Duration<true> = null): void {
+		if (this.performed) return;
 		super.perform();
 		const playerStatusIds = this.player.status.map(statusEffect => statusEffect.id);
 		for (const overrider of status.overriders) {
 			if (playerStatusIds.includes(overrider.id)) {
-				if (this.message) this.message.reply(`Couldn't inflict status effect "${status.id}" because ${this.player.name} is already ${overrider.id}.`);
-				return false;
+				if (this.message) this.successMessage = `Couldn't inflict status effect "${status.id}" because ${this.player.name} is already ${overrider.id}.`;
+				return;
 			}
 		}
 		if (playerStatusIds.includes(status.id)) {
@@ -39,12 +37,12 @@ export default class InflictAction extends Action {
 				cureAction.performCure(status, false, false, false);
 				const duplicatedStatusAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, true);
 				duplicatedStatusAction.performInflict(status.duplicatedStatus, true, false, true);
-				if (this.message) this.message.reply(`Status was duplicated, so inflicted ${status.duplicatedStatus.id} instead.`);
-				return false;
+				if (this.message) this.successMessage = `Status was duplicated, so inflicted ${this.player.name} with ${status.duplicatedStatus.id} instead.`;
+				return;
 			}
 			else {
-				if (this.message) this.message.reply(`Specified player already has that status effect.`);
-				return false;
+				if (this.message) this.message.reply(`${this.player.name} already has status effect ${status.id}.`);
+				return;
 			}
 		}
 		if (status.cures.length > 0 && doCures) {
@@ -83,6 +81,6 @@ export default class InflictAction extends Action {
 		if (narrate) this.getGame().narrationHandler.narrateInflict(this, status, this.player);
         if (removeFromWhisperNarration) this.player.removeFromWhispers(removeFromWhisperNarration, this);
 		this.getGame().logHandler.logInflict(status, this.player);
-		return true;
+        this.successMessage = `Successfully added status effect ${status.id} to ${this.player?.name}.`;
 	}
 }

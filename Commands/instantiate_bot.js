@@ -11,14 +11,28 @@ import { parseProceduralSelections } from '../Modules/stringDataExtractor.ts';
 export const config = {
     name: "instantiate_bot",
     description: "Generates an item.",
-    details: "Generates an item or inventory item in the specified location. The prefab ID must be used. "
-        + "A quantity can also be set. If the prefab has procedural options, they can be manually set in parentheses.\n\n"
-        + "To instantiate an item, the name of the room must be given at the end, following \"at\". The name of the container to put it in "
-        + "must also be given. If the container is an object with a child puzzle, the puzzle will be its container. If the container is another item, "
-        + "the item's name or container identifier can be used. The name of the inventory slot to instantiate the item in can also be specified.\n\n"
-        + "To instantiate an inventory item, \"player\", \"room\", \"all\", or the name of a player followed by \"'s\", must be given. A container item can be specified, as well as which slot to "
-        + "instantiate the item into. The player will not be notified if a container item is specified. An equipment slot can also be chosen instead of a container item. "
-        + "The player will be notified of obtaining the item in this case, and the prefab's equipped commands will be run.",
+    details: `Generates a room item or inventory item in the specified location. The prefab ID must be used. `
+        + `A quantity can also be set by supplying a number before the prefab ID. If no quantity is given, the item `
+        + `will be instantiated with a quantity of 1.\n\n`
+        + `If the prefab has procedural options, they can be manually selected in parentheses. To do this, write the `
+        + `name of the procedural tag and the poss tag to select within it, separated by an equal sign (\`=\`). `
+        + `Multiple procedural selections can be made, separated by a plus sign (\`+\`).\n\n`
+        + `To instantiate a room item, the display name or ID of the room must be given at the end, following \"at\". `
+        + `The container to put it in must also be specified after the prefab's ID, preceded by the container's `
+        + `preposition or "in". If the container is a fixture with a child puzzle, the puzzle will be its container. `
+        + `If the container is another room item, the container's name or identifier can be used.\n\n`
+        + `To instantiate an inventory item, the name of the player must be given followed by \`'s\`. It is possible to `
+        + `instantiate an inventory item directly to a player's equipment slot by specifying the equipment slot's ID. `
+        + `In this case, the player will be notified that they equipped the item, and the prefab's equipped commands `
+        + `will be executed. However, a container item can be specified instead by entering its preposition or "in" `
+        + `followed by its name or identifier. The player will not be notified when the item is instantiated this way.\n\n`
+        + `If, when instantiating an inventory item, "player" is supplied instead of a player's name, then the prefab `
+        + `will be instantiated in the inventory of the player who caused this command to be executed. If "room" is `
+        + `supplied instead, then the command will executed on all players in the room as the initiating player. `
+        + `If "all" is supplied instead, then the command will be executed on all living players, `
+        + `including NPCs and players with the Free Movement role.\n\n`
+        + `If the container to instantiate the item into is a room item or inventory item, the ID of the inventory slot `
+        + `to instantiate the item into can be specified, followed by "of" before the container's identifier.`,
     usableBy: "Bot",
     aliases: ["instantiate", "create", "generate", "is", "gn"],
     requiresGame: true
@@ -29,17 +43,18 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `instantiate raw fish on floor at beach\n`
-        + `create pickaxe in locker 1 at mining hub\n`
-        + `generate 3 empty drain cleaner in cupboards at kitchen\n`
-        + `instantiate green book in main pocket of large backpack 1 at dorm library\n`
-        + `create 4 screwdriver in tool box at beach house\n`
-        + `instantiate gacha capsule (color=metal + character=upa) in gacha slot at arcade\n`
-        + `generate katana in player right hand\n`
-        + `instantiate monokuma mask on all face\n`
-        + `create laptop in vivian's vivians satchel\n`
-        + `generate 2 shotput ball in cassie's main pocket of large backpack`
-        + `instantiate 3 capsulebeast card (species=lavazard) in asuka's left pocket of gamer hoodie`;
+    return `instantiate RAW FISH on FLOOR at Beach\n`
+        + `create PICKAXE in LOCKER 1 at mining-hub\n`
+        + `generate 3 EMPTY DRAIN CLEANER in CUPBOARDS at Kitchen\n`
+        + `instantiate GREEN BOOK in MAIN POCKET of LARGE BACKPACK 1 at dorm-library\n`
+        + `is 4 SCREWDRIVER in TOOL BOX at Beach House\n`
+        + `gn WET CLAY POT (quality = excellent) on POTTERY WHEEL at Art Studio\n`
+        + `instantiate KATANA in player RIGHT HAND\n`
+        + `create GORILLA MASK on all FACE\n`
+        + `instantiate NECK CLAMP to room NECK\n`
+        + `generate VIVIANS LAPTOP in Vivian's VIVIANS SATCHEL\n`
+        + `is 2 SHOTPUT BALL in Cassie's MAIN POCKET of LARGE BACKPACK\n`
+        + `gn 3 GACHA CAPSULE (color=metal + character=upa) in Asuka's LEFT POCKET of GAMER HOODIE`;
 }
 
 /**

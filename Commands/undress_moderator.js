@@ -11,9 +11,18 @@ import Puzzle from "../Data/Puzzle.ts";
 export const config = {
     name: "undress_moderator",
     description: "Unequips and drops all items for a player.",
-    details: "Unequips all items the given player has equipped and drops them into a container of your choosing. If no container is chosen, then items will be "
-        + `dropped on the floor. The given container must have a large enough capacity to hold all of the items in the given player's `
-        + "inventory. This command will also drop any items in their hands.",
+    details: `Unequips all of the player's equipped items and drops them in the room they're currently in. They will `
+        + `undress completely, including any items in their hands. However, any items whose prefab is not equippable `
+        + `will not be removed with this command. They can be forcibly removed with the \`unequip\` command. When the `
+        + `player undresses, it will narrated in the room.\n\n`
+        + `A container to drop the items into can be specified. To do so, enter the container's name. No preposition is `
+        + `necessary. If the container is a room item, its prefab ID or container identifier must be used. If you don't `
+        + "specify a container, they will leave the items on the `DEFAULT_DROP_FIXTURE` defined in the game's settings.\n\n"
+        + `If the container has multiple inventory slots, you can also specify which slot to put the items in. To do `
+        + `this, enter the ID of the inventory slot followed by "of" before the container's identifier. If an inventory `
+        + `slot is not specified, the player will put the items in the container's first inventory slot. However, they `
+        + `will not be able to undress into an inventory slot if the combined size of their items would overfill it.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["undress"],
     requiresGame: true
@@ -24,10 +33,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}undress haru\n`
-        + `${settings.commandPrefix}undress yuko locker 1\n`
-        + `${settings.commandPrefix}undress aki laundry basket\n`
-        + `${settings.commandPrefix}undress stella main pocket of backpack`;
+    return `${settings.commandPrefix}undress Haru\n`
+        + `${settings.commandPrefix}undress Aisha LOCKER 1\n`
+        + `${settings.commandPrefix}undress Astrid LAUNDRY BASKET 17\n`
+        + `${settings.commandPrefix}undress Xenia MAIN POCKET of XENIAS BACKPACK`;
 }
 
 /**

@@ -18,7 +18,7 @@ export const config = {
         + "compressed into a .gz file before being sent. If the file size exceeds this, they will "
         + "instead be saved to disk.\n\n"
         + "This command is for debugging purposes, and has no use during regular gameplay. If you discover "
-        + "a bug that was not caused by Moderator error, please use this command and attach these files to "
+        + "a bug that was not caused by moderator error, please use this command and attach these files to "
         + "a new Issue on the [Alter Ego GitHub page](https://github.com/MolSnoo/Alter-Ego/issues).",
     usableBy: "Moderator",
     aliases: ["dumplog"],

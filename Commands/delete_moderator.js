@@ -7,11 +7,11 @@
 export const config = {
     name: "delete_moderator",
     description: "Deletes multiple messages at once.",
-    details: "Deletes multiple messages at once. You can delete up to 100 messages at a time. Only messages "
-        + "from the past 2 weeks can be deleted. You can also choose to only delete messages from a certain user. "
-        + "Note that if you specify a user and for example, 5 messages, it will not delete that user's last 5 messages. "
-        + "Rather, it will search through the past 5 messages, and if any of those 5 messages were sent by "
-        + "the given user, they wil be deleted.",
+    details: "Deletes multiple messages at once. You can delete up to 100 messages at a time. Only messages from the past "
+        + "2 weeks can be deleted. You can also choose to only delete messages from a certain user. Note that if you "
+        + "specify a user and for example, 5 messages, it will not delete that user's last 5 messages. Rather, it will search "
+        + "through the past 5 messages, and if any of those 5 messages were sent by the given user, they wil be deleted.\n\n"
+        + "This command can be used in any channel in the server.",
     usableBy: "Moderator",
     aliases: ["delete"],
     requiresGame: false

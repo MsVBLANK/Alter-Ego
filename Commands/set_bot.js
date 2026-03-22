@@ -8,37 +8,41 @@ import { getChildItems } from '../Modules/itemManager.js';
 /** @type {CommandConfig} */
 export const config = {
     name: "set_bot",
-    description: "Sets an object, puzzle, or set of items as accessible or inaccessible.",
-    details: 'Sets an object, puzzle, or set of items as accessible or inaccessible. '
-        + 'You have to specify whether to set an object or puzzle, even if you want to set a set of '
-        + 'items. When you use the optional "items" argument, it will set all of the items contained '
-        + 'in that object or puzzle as accessible/inaccessible at once. Individual items cannot be set. '
-        + 'You can also specify a room name.  If you do, only object/items/puzzles in the room you specify '
-        + 'can be set as accessible/ inaccessible. This is useful if you have multiple objects or puzzles '
-        + 'with the same name spread across the map.',
+    description: "Sets a fixture, puzzle, or group of room items as accessible or inaccessible.",
+    details: `Sets a fixture, puzzle, or group of room items as accessible or inaccessible. `
+        + `You have to specify whether to set a fixture or puzzle, even if you want to set a group of room items. `
+        + `When you use the optional "items" argument, it will set all of the items contained in that fixture or puzzle `
+        + `as accessible/inaccessible at once. This will also update the accessibility of all child items contained `
+        + `inside of those room items. It is not possible to set the accessibility of individual room items.\n\n`
+        + `You can also specify a room display name or ID at the end of the command. If you do, only `
+        + `fixtures/puzzles/room items in the room you specify can be set as accessible/inaccessible. This is useful `
+        + `if you have multiple fixtures or puzzles with the same name in different locations.`,
     usableBy: "Bot",
     aliases: ["set"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `set accessible puzzle button\n`
-        + `set inaccessible fixture terminal\n`
-        + `set accessible fixture keypad tool shed\n`
-        + `set accessible fixture items medicine cabinet\n`
-        + `set inaccessible puzzle items lock men's locker room`;
+    return `set accessible puzzle ROCK CLIMBING WALL\n`
+        + `set inaccessible puzzle LOGIN Infirmary\n`
+        + `set accessible fixture BUNSEN BURNER\n`
+        + `set inaccessible fixture UNDERBRUSH path-2\n`
+        + `set accessible puzzle items LOCK robotics-lab\n`
+        + `set inaccessible puzzle items LOOSE CRATE\n`
+        + `set accessible fixture items DOLLHOUSE\n`
+        + `set inaccessible fixture items TOP OF THE SHELVES Library`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} [player] - The player who caused the command to be executed, if applicable. 
- * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} [player] - The player who caused the command to be executed, if applicable.
+ * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable.
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");

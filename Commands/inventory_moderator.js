@@ -7,7 +7,12 @@
 export const config = {
     name: "inventory_moderator",
     description: "Lists a given player's inventory.",
-    details: "Lists the given player's inventory.",
+    details: `Lists all of the given player's equipment slots, and any items equipped to each one. `
+        + `The player's stashed items will be listed underneath the container they're inside of, in parentheses. They `
+        + `will be preceded by the ID of the inventory slot they're in.\n\n`
+        + `In the player's inventory, the identifiers of all items will be contained in code blocks. This makes it `
+        + `easier to copy them and paste them into other commands.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["inventory", "i"],
     requiresGame: true
@@ -18,7 +23,8 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}inventory nero`;
+    return `${settings.commandPrefix}inventory Nero\n`
+        + `${settings.commandPrefix}i Aisha`;
 }
 
 /**

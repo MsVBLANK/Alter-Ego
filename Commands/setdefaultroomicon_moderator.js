@@ -1,5 +1,3 @@
-import {writeFile} from 'fs/promises';
-
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
@@ -8,8 +6,11 @@ import {writeFile} from 'fs/promises';
 export const config = {
     name: "setdefaultroomicon_moderator",
     description: "Sets the default room icon.",
-    details: "Sets the icon that will display by default when the given room's information is displayed, if there exists no specific icon for that room. "
-        + "The icon given must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension. To reset the default icon, simply do not specify a new icon.",
+    details: `Sets the icon that will display by default when the given room's information is sent to a player, if `
+        + `there exists no specific icon for that room. The icon given must be a URL with a .jpg, .jpeg, .png, .gif, `
+        + `.webp, or .avif extension. To reset the default icon, simply do not specify a new icon.\n\n`
+        + `Note that this will not persist across bot reboots. When the bot is rebooted, the default room icon will be `
+        + `reverted to whatever is set for the \`DEFAULT_ROOM_ICON_URL\` setting in your \`.env\` file.`,
     usableBy: "Moderator",
     aliases: ["setdefaultroomicon"],
     requiresGame: false
@@ -41,9 +42,5 @@ export async function execute(game, message, command, args, moderator) {
     if (!iconURLSyntax.test(input) && input !== "") return game.communicationHandler.reply(message, `The display icon must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 
     game.settings.defaultRoomIconURL = input;
-
-    const json = JSON.stringify(game.settings, undefined, 4);
-    await writeFile('Configs/settings.json', json, 'utf8');
-
     game.communicationHandler.sendToCommandChannel(`Successfully updated the default room icon.`);
 }

@@ -14,7 +14,9 @@ export const config = {
         + `If any of your equipped items have inventory slots, then you can store other items inside of them. These inventory slots will be `
         + `listed underneath the equipped item, and any items they contain will be listed in parentheses. To store an item in one of these `
         + `inventory slots, use the \`stash\` command. To retrieve one and put it in your hand, use the \`unstash\` command. Be warned `
-        + `that items that you have stashed in inventory slots can be stolen by other players, sometimes without you noticing.`,
+        + `that items that you have stashed in inventory slots can be stolen by other players, sometimes without you noticing.\n\n`
+        + `In your inventory, the names of all items will be contained in code blocks. This makes it easier to copy them `
+        + `so that you can paste them into other commands.`,
     usableBy: "Player",
     aliases: ["inventory", "i"],
     requiresGame: true

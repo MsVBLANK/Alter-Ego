@@ -7,11 +7,13 @@ import UncraftAction from '../Data/Actions/UncraftAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "uncraft_moderator",
-    description: "Separates an item in a player's inventory into its component parts.",
-    details: "Separates an item in one of the given player's hands into its component parts, assuming they can be separated. "
-		+ "This reverses the process of a crafting recipe, using the product of the recipe as an ingredient, and creating its ingredients as products. "
-        + "This will produce two items, so they will need a free hand in order for this command to be usable. "
-        + "If there is no crafting recipe that produces the supplied item which allows it to be uncrafted again, this command cannot be used.",
+    description: "Uncrafts an item for a player.",
+    details: `Separates an item in one of the given player's hands into its component parts. This reverses the process `
+		+ `of a crafting recipe, using the product of the recipe as an ingredient, and creating its ingredients as `
+        + `products. This will produce two items, so they will need a free hand in order for this command to be usable. `
+        + `If there is no crafting recipe that produces the given item which allows it to be uncrafted again, `
+        + `this command cannot be used.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["uncraft", "dismantle", "disassemble", "uc"],
     requiresGame: true
@@ -22,9 +24,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}uncraft olavi shovel\n`
-        + `${settings.commandPrefix}dismantle avani crossbow\n`
-        + `${settings.commandPrefix}disassemble juno pistol`;
+    return `${settings.commandPrefix}uncraft Olavi SHOVEL\n`
+        + `${settings.commandPrefix}dismantle Avani ASSEMBLED CROSSBOW\n`
+        + `${settings.commandPrefix}disassemble Juno LOADED PISTOL\n`
+        + `${settings.commandPrefix}uc Ray RING STAND WITH SUPPORT RING`;
 }
 
 /**

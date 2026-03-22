@@ -9,9 +9,8 @@ import UnlockAction from '../Data/Actions/UnlockAction.ts';
 export const config = {
     name: "exit_bot",
     description: "Locks or unlocks an exit.",
-    details: "Locks or unlocks an exit in the specified room. The corresponding entrance in the room the exit leads to "
-        + "will also be locked, so that it goes both ways. When an exit is locked, players will be unable to enter the room "
-        + "that exit leads to, and will be unable to enter through the exit from another room.",
+    details: `Locks or unlocks an exit in the specified room. The corresponding entrance in the room the exit leads to `
+        + `will also be locked/unlocked. When an exit is locked, players will be unable to move through that exit.`,
     usableBy: "Bot",
     aliases: ["exit", "room", "lock", "unlock"],
     requiresGame: true
@@ -22,10 +21,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `exit lock carousel door\n`
-        + `exit unlock headmasters quarters door\n`
-        + `lock warehouse door 3\n`
-        + `unlock trial grounds elevator`;
+    return `exit lock Carousel DOOR\n`
+        + `exit unlock Chancellor's Quarters DOOR\n`
+        + `lock warehouse DOOR 3\n`
+        + `unlock floor-b1-hall-3 ELEVATOR`;
 }
 
 /**

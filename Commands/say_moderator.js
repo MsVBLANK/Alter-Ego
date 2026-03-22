@@ -12,11 +12,14 @@ import { ChannelType } from 'discord.js';
 export const config = {
     name: "say_moderator",
     description: "Sends a message.",
-    details: 'Sends a message. A channel or player must be specified. Messages can be sent to any '
-        + 'channel, but if it is sent to a room channel, it will be treated as a narration so that players with the '
-        + '"see room" attribute can see it. If the name of a player is specified and that player has the talent "NPC", '
-        + 'the player will speak in the channel of the room they\'re in. Their dialog will be treated just like that of '
-        + 'any normal player\'s. The image URL set in the player\'s Discord ID will be used for the player\'s avatar.',
+    details: `Sends a message. A channel or player must be specified. Messages can be sent to any `
+        + `channel in the server, but if it is sent to a room channel, it will be treated as a narration.\n\n`
+        + `If the name of a player is specified and that player is an NPC, the player will speak in the channel of the `
+        + `room they're in. Their dialog will be treated just like that of any normal player's. The image URL set in `
+        + `the player's Discord ID will be used for the player's avatar. It is not possible to use this command on a `
+        + `non-NPC player.\n\n`
+        + `It is possible to speak for an NPC without using this command. `
+        + `For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["say"],
     requiresGame: false,
@@ -28,8 +31,8 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}say #park Hello. My name is Alter Ego.\n`
-        + `${settings.commandPrefix}say #general Thank you for speaking with me today.\n`
+    return `${settings.commandPrefix}say #general Hello. My name is Alter Ego.\n`
+        + `${settings.commandPrefix}say #park Haru taps the left part of the wall in certain locations in order, and it begins descending, revealing the entrance to PATH 10.\n`
         + `${settings.commandPrefix}say amy One appletini, coming right up.`;
 }
 

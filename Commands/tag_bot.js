@@ -1,3 +1,4 @@
+/** @import Room from '../Data/Room.ts'; */
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
 /** @import Player from '../Data/Player.ts' */
@@ -6,33 +7,36 @@
 export const config = {
     name: "tag_bot",
     description: "Adds or removes a room's tags.",
-    details: "-**add**/**addtag**: Adds a tag to the given room. Events that affect rooms with that tag will immediately "
-        + "apply to the given room, and any tag that gives a room special behavior will immediately activate those functions.\n\n"
-        + "-**remove**/**removetag**: Removes a tag from the given room. Events that affect rooms with that tag will immediately "
-        + "stop applying to the given room, and any tag that gives a room special behavior will immediately stop functioning.\n\n"
-        + "Note that unlike the moderator version of this command, you cannot add/remove multiple tags at once.",
+    details: `This command has two sub-commands:\n\n`
+        + `- **add**/**addtag**: Adds a tag to the given room. Events that affect rooms with `
+        + `that tag will immediately apply to the given room, and any tag that gives a room special behavior will `
+        + `immediately activate those functions. The new tag will be added to the spreadsheet on the next save.\n`
+        + `- **remove**/**removetag**: Removes a tag from the given room. Events that affect `
+        + `rooms with that tag will immediately stop applying to the given room, and any tag that gives a room special `
+        + `behavior will immediately stop functioning. The tags will be removed from the spreadsheet on the next save.\n\n`
+        + `Note that unlike the moderator version of this command, you cannot add/remove multiple tags at once.`,
     usableBy: "Bot",
     aliases: ["tag", "addtag", "removetag"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `tag add kitchen video surveilled\n`
-        + `tag remove kitchen audio surveilled\n`
+    return `tag add Kitchen video surveilled\n`
+        + `tag remove Kitchen audio surveilled\n`
         + `addtag vault soundproof\n`
         + `removetag freezer cold`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {string} command - The command alias that was used. 
- * @param {string[]} args - A list of arguments passed to the command as individual words. 
- * @param {Player} [player] - The player who caused the command to be executed, if applicable. 
- * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {string} command - The command alias that was used.
+ * @param {string[]} args - A list of arguments passed to the command as individual words.
+ * @param {Player} [player] - The player who caused the command to be executed, if applicable.
+ * @param {Callee} [callee] - The in-game entity that caused the command to be executed, if applicable.
  */
 export async function execute(game, command, args, player, callee) {
     const cmdString = command + " " + args.join(" ");
@@ -51,17 +55,19 @@ export async function execute(game, command, args, player, callee) {
 
     input = args.join(" ");
 
+    /** @type {Room} */
     let room;
-    for (let i = args.length - 1; i >= 0; i--) {
+    for (let i = args.length; i >= 0; i--) {
         const searchString = args.slice(0, i).join(" ");
         room = game.entityFinder.getRoom(searchString);
         if (room) {
+            args = args.slice(i);
+            input = args.join(" ");
             break;
         }
     }
     if (room === undefined) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find room "${input}".`);
 
-    input = input.substring(room.id.length).trim();
     if (input === "") return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Insufficient arguments.`);
 
     if (command === "addtag") {

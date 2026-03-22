@@ -1,6 +1,7 @@
 import ActivateAction from "../Data/Actions/ActivateAction.ts";
 import DeactivateAction from "../Data/Actions/DeactivateAction.ts";
 import Room from "../Data/Room.ts";
+import { endsWithPunctuation } from "../Modules/helpers.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
@@ -10,14 +11,20 @@ import Room from "../Data/Room.ts";
 export const config = {
     name: "fixture_bot",
     description: "Activates or deactivates a fixture.",
-    details: 'Activates or deactivates a fixture. You may specify a player to activate/deactivate the fixture. If you do, '
-        + 'players in the room will be notified, so you should generally give a string for the bot to use, '
-        + 'otherwise the bot will say "[player] turns on/off the [fixture]." which may not sound right. '
-        + "If you specify a player, only fixtures in the room that player is in can be activated/deactivated. "
-        + 'You can also use a room name instead of a player name. In that case, only fixtures in the room '
-        + 'you specify can be activated/deactivated. This is useful if you have multiple fixtures with the same name '
-        + 'spread across the map. This command can only be used for fixtures with a recipe tag. If there is a puzzle with '
-        + 'the same name as the fixture whose state is supposed to be the same as the fixture, use the puzzle command to update it as well.',
+    details: `Activates or deactivates the specified fixture. When a fixture is activated, it will begin processing `
+        + `the recipe with the highest count of ingredients satisfied by the room items contained inside of it. `
+        + `If no recipe is found, it will look for one that it can process every second while it is activated. `
+        + `Keep in mind that this command can only be used for fixtures with a recipe tag. If there is a puzzle whose `
+        + `state is supposed to match that of the fixture's, you must use the \`puzzle\` command to update it separately.\n\n`
+        + `If there are multiple fixtures with the same name, you can specify the room the fixture is in.\n\n`
+        + `Alternatively, you may specify a player to activate/deactivate the fixture. In this case, only fixtures in the `
+        + `same room as the player can be activated/deactivated. When a player is supplied, a narration will be sent. `
+        + `You may also enter "player" instead of directly specifying the name of a player. In this case, the player `
+        + `who caused this command to be executed will be the one made to activate/deactivate the fixture.\n\n`
+        + `It is possible to supply a custom narration for the fixture being activated/deactivated. Simply add a string of `
+        + `text surrounded by quotation marks at the end of the command. This can be done even without supplying a player. `
+        + `If the "player" argument is used, the text "player" (case-sensitive) within a custom narration will be `
+        + `replaced with the display name of the player who activates/deactivates the fixture.`,
     usableBy: "Bot",
     aliases: ["fixture", "object", "activate", "deactivate"],
     requiresGame: true
@@ -28,14 +35,14 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `fixture activate blender\n`
-        + `fixture deactivate microwave\n`
-        + `activate keurig kyra\n`
-        + `deactivate oven noko\n`
-        + `fixture activate fireplace log cabin\n`
-        + `fixture deactivate fountain flower garden\n`
-        + `activate freezer zoran "Zoran plugs in the FREEZER."\n`
-        + `deactivate washer 1 laundry room "WASHER 1 turns off"`;
+    return `fixture activate BLENDER\n`
+        + `fixture deactivate MICROWAVE\n`
+        + `activate KEURIG Kyra\n`
+        + `deactivate OVEN player\n`
+        + `fixture activate FIREPLACE Log Cabin\n`
+        + `fixture deactivate FOUNTAIN flower-garden\n`
+        + `activate FREEZER player "player plugs in the FREEZER."\n`
+        + `deactivate WASHER 1 laundry-room "WASHER 1 turns off"`;
 }
 
 /**
@@ -65,16 +72,16 @@ export async function execute(game, command, args, player, callee) {
     // The message, if it exists, is the easiest to find at the beginning. Look for that first.
     let announcement = "";
     let index = input.indexOf('"');
-    if (index === -1) index = input.indexOf('�');
+    if (index === -1) index = input.indexOf('“');
     if (index !== -1) {
         announcement = input.substring(index + 1);
         // Remove the announcement from the list of arguments.
         input = input.substring(0, index - 1);
         args = input.split(" ");
         // Now clean up the announcement text.
-        if (announcement.endsWith('"') || announcement.endsWith('�'))
+        if (announcement.endsWith('"') || announcement.endsWith('”'))
             announcement = announcement.substring(0, announcement.length - 1);
-        if (!announcement.endsWith('.') && !announcement.endsWith('!'))
+        if (!endsWithPunctuation(announcement))
             announcement += '.';
     }
 
@@ -86,7 +93,7 @@ export async function execute(game, command, args, player, callee) {
     }
 
     // Now find the player, who should be the last argument.
-    if (args[args.length - 1] === "player" && player !== null) {
+    if (args[args.length - 1] === "player" && player) {
         args.splice(args.length - 1, 1);
         input = args.join(" ");
         announcement = announcement.replace(/player/g, player.displayName);
@@ -101,18 +108,20 @@ export async function execute(game, command, args, player, callee) {
     }
 
     // If a player wasn't specified, check if a room name was.
+    /** @type {Room} */
     let room = null;
     if (player === null) {
-        const parsedInput = Room.generateValidId(input);
         for (let i = args.length - 1; i >= 0; i--) {
-            room = game.entityFinder.getRoom(args.splice(i).join(" "));
+            const parsedInput = Room.generateValidId(args.slice(i).join(" "));
+            room = game.entityFinder.getRoom(parsedInput);
             if (room) {
-                input = input.substring(0, parsedInput.indexOf(room.id) - 1);
+                args.splice(i);
                 break;
             }
         }
         if (!room) room = null;
     }
+    input = args.join(" ");
 
     // Finally, find the fixture.
     let fixture = null;

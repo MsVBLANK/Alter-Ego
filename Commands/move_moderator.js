@@ -7,11 +7,17 @@ import MoveAction from '../Data/Actions/MoveAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "move_moderator",
-    description: "Moves the given player(s) to the specified room or exit.",
-    details: 'Forcibly moves the specified players to the specified room or exit. If you use "living" or "all" in place of the players, '
-        + 'it will move all living players to the specified room (skipping over players who are already in that room as well as players with the Headmaster role). '
-        + 'All of the same things that happen when a player moves to a room of their own volition apply, however you can move players to non-adjacent rooms this way. '
-        + 'The bot will not announce which exit the player leaves through or which entrance they enter from when a player is moved to a non-adjacent room.',
+    description: "Moves the given player to the specified room or exit.",
+    details: `Forcibly moves the given players to the specified room or exit. When a player is moved, they will be `
+        + `removed from the room channel they were already in and added to the destination room channel. `
+        + `They will move to the given destination immediately, without consuming any stamina, and with no regard for `
+        + `whether the room is adjacent to their current room or the exit leading to it is locked.\n\n`
+        + `You can select multiple players by separating their names with a space. If instead of providing the names of `
+        + `players, you enter "living" or "all", all living players will be moved to the specified room, except for `
+        + `players who are already in that room, NPCs, and players with the Free Movement role.\n\n`
+        + `When this command is used to move a player to a room that is not adjacent to their current room, `
+        + `the narration in the destination room will not specify which exit they entered from.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["move", "go", "enter", "walk", "m"],
     requiresGame: true
@@ -22,10 +28,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}move joshua door 2\n`
-        + `${settings.commandPrefix}move val amber devyn trial grounds\n`
-        + `${settings.commandPrefix}move living diner\n`
-        + `${settings.commandPrefix}move all elevator`;
+    return `${settings.commandPrefix}move Kiki DOOR 2\n`
+        + `${settings.commandPrefix}enter Kiki Lingling Maple Wally biosphere-garden\n`
+        + `${settings.commandPrefix}go living Dining Hall\n`
+        + `${settings.commandPrefix}m all ELEVATOR`;
 }
 
 /**

@@ -5,6 +5,7 @@ import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as itemManager from "../Modules/itemManager.js";
 import { itemIdentifierMatches } from "../Modules/matchers.js";
+import { makeCopyable } from "../Modules/helpers.ts";
 import type Action from "./Action.ts";
 import CureAction from "./Actions/CureAction.ts";
 import DieAction from "./Actions/DieAction.ts";
@@ -1252,8 +1253,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      * @returns A string representation of the player's inventory.
      */
     viewInventory(moderatorView: boolean): string {
-        const equipmentSlotOpener = `[ `;
-        const equipmentSlotCloser = ` ]`;
+        const equipmentSlotOpener = `[`;
+        const equipmentSlotCloser = `]`;
         const inventorySlotOpener = `(`;
         const inventorySlotCloser = `)`;
         const indent = "  ";
@@ -1261,11 +1262,11 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         const possessive = moderatorView ? `${this.name}'s` : `Your`;
         let itemString = `__${possessive} inventory:__\n`;
         this.inventory.forEach(equipmentSlot => {
-            itemString += `- \`${equipmentSlot.id}\`: `;
+            itemString += `- ${equipmentSlot.id}: `;
             const equippedItem = equipmentSlot.equippedItem;
             if (equippedItem === null) itemString += `${equipmentSlotOpener} ${equipmentSlotCloser}\n`;
             else {
-                itemString += `${equipmentSlotOpener}${moderatorView ? equippedItem.getIdentifier() : equippedItem.name}${equipmentSlotCloser}\n`;
+                itemString += `${equipmentSlotOpener}${makeCopyable(moderatorView ? equippedItem.getIdentifier() : equippedItem.name)}${equipmentSlotCloser}\n`;
                 let descendantsCount = 1;
                 /**
                  * Generates a display of an inventory item's children.
@@ -1279,7 +1280,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
                         let parentItemIndexes: number[] = [];
                         for (let i = 0; i < descendantsCount; i++)
                             itemString += indent;
-                        itemString += `- \`${inventorySlot.id}\`: `;
+                        itemString += `- ${inventorySlot.id}: `;
                         if (inventorySlot.items.length === 0) itemString += `${inventorySlotOpener} ${inventorySlotCloser}`;
                         else {
                             itemString += inventorySlotOpener;
@@ -1290,7 +1291,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
                                 const childName = moderatorView ? childItem.getIdentifier()
                                     : childItem.quantity > 1 && childItem.pluralName ? childItem.pluralName
                                         : childItem.name;
-                                inventorySlotItemNames.push(`${quantityString}${childName}`);
+                                inventorySlotItemNames.push(`${quantityString}${makeCopyable(childName)}`);
                                 if (childItem.inventory.size !== 0) parentItemIndexes.push(i);
                             });
                             itemString += inventorySlotItemNames.join(") (");

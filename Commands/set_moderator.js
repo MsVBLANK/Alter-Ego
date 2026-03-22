@@ -8,35 +8,39 @@ import { getChildItems } from '../Modules/itemManager.js';
 /** @type {CommandConfig} */
 export const config = {
     name: "set_moderator",
-    description: "Sets an object, puzzle, or set of items as accessible or inaccessible.",
-    details: 'Sets an object, puzzle, or set of items as accessible or inaccessible. '
-        + 'You have to specify whether to set an object or puzzle, even if you want to set a set of '
-        + 'items. When you use the optional "items" argument, it will set all of the items contained '
-        + 'in that object or puzzle as accessible/inaccessible at once. Individual items cannot be set. '
-        + 'You can also specify a room name.  If you do, only object/items/puzzles in the room you specify '
-        + 'can be set as accessible/ inaccessible. This is useful if you have multiple objects or puzzles '
-        + 'with the same name spread across the map.',
+    description: "Sets a fixture, puzzle, or group of room items as accessible or inaccessible.",
+    details: `Sets a fixture, puzzle, or group of room items as accessible or inaccessible. `
+        + `You have to specify whether to set a fixture or puzzle, even if you want to set a group of room items. `
+        + `When you use the optional "items" argument, it will set all of the items contained in that fixture or puzzle `
+        + `as accessible/inaccessible at once. This will also update the accessibility of all child items contained `
+        + `inside of those room items. It is not possible to set the accessibility of individual room items.\n\n`
+        + `You can also specify a room display name or ID at the end of the command. If you do, only `
+        + `fixtures/puzzles/room items in the room you specify can be set as accessible/inaccessible. This is useful `
+        + `if you have multiple fixtures or puzzles with the same name in different locations.`,
     usableBy: "Moderator",
     aliases: ["set"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}set accessible puzzle button\n`
-        + `${settings.commandPrefix}set inaccessible fixture terminal\n`
-        + `${settings.commandPrefix}set accessible fixture keypad tool shed\n`
-        + `${settings.commandPrefix}set accessible fixture items medicine cabinet\n`
-        + `${settings.commandPrefix}set inaccessible puzzle items lock men's locker room`;
+    return `${settings.commandPrefix}set accessible puzzle ROCK CLIMBING WALL\n`
+        + `${settings.commandPrefix}set inaccessible puzzle LOGIN Infirmary\n`
+        + `${settings.commandPrefix}set accessible fixture BUNSEN BURNER\n`
+        + `${settings.commandPrefix}set inaccessible fixture UNDERBRUSH path-2\n`
+        + `${settings.commandPrefix}set accessible puzzle items LOCK robotics-lab\n`
+        + `${settings.commandPrefix}set inaccessible puzzle items LOOSE CRATE\n`
+        + `${settings.commandPrefix}set accessible fixture items DOLLHOUSE\n`
+        + `${settings.commandPrefix}set inaccessible fixture items TOP OF THE SHELVES Library`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

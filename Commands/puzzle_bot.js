@@ -11,17 +11,23 @@ import Room from "../Data/Room.ts";
 export const config = {
     name: "puzzle_bot",
     description: "Solves or unsolves a puzzle.",
-    details: 'Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. '
-        + 'You may specify a player to solve the puzzle. If you do, players in the room '
-        + 'will be notified, so you should generally give a string for the bot to use, '
-        + 'otherwise the bot will say "[player] uses the [puzzle]." which may not sound right. '
-        + "If you specify a player, only puzzles in the room that player is in can be solved/unsolved. "
-        + 'Additionally, if you specify a player, you can make them attempt to solve a puzzle. '
-        + 'If you use "player" in place of the player, then the player who triggered the command will be '
-        + 'the one to solve/unsolve the puzzle. It will also do the same in the string, if one is specified. '
-        + 'You can also use a room name instead of a player name. In that case, only puzzles in the room '
-        + 'you specify can be solved/unsolved. This is useful if you have multiple puzzles with the same name '
-        + 'spread across the map.',
+    details: `Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. `
+        + `When a puzzle is solved, it will execute the solved commands for the outcome it was solved with. `
+        + `When a puzzle is unsolved, it will execute the unsolved commands for the outcome it currently has. `
+        + `If there is a fixture whose state is supposed to match that of the puzzle's, you must use the \`fixture\` `
+        + `command to update it separately.\n\n`
+        + `If there are multiple puzzles with the same name, you can specify the room the puzzle is in.\n\n`
+        + `Alternatively, you may specify a player to solve/unsolve the puzzle. In this case, only puzzles in the same `
+        + `room as the player can be solved/unsolved. When a player is supplied, a narration will be sent. `
+        + `You may also enter "player" instead of directly specifying the name of a player. In this case, the player `
+        + `who caused this command to be executed will be the one made to solve/unsolve the puzzle.\n\n`
+        + `It is possible to supply a custom narration for the puzzle being solved/unsolved. Simply add a string of `
+        + `text surrounded by quotation marks at the end of the command. This can be done even without supplying a player. `
+        + `If the "player" argument is used, the text "player" (case-sensitive) within a custom narration will be `
+        + `replaced with the display name of the player who solves/unsolves the puzzle.\n\n`
+        + `Additionally, if you specify a player, you can make them attempt the puzzle with the \`attempt\` option. `
+        + `This makes it possible to force the player to fail the puzzle because they didn't provide a correct `
+        + `solution or they didn't satisfy the requirements for the puzzle to be solved/unsolved.`,
     usableBy: "Bot",
     aliases: ["puzzle", "solve", "unsolve", "attempt"],
     requiresGame: true
@@ -32,17 +38,18 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `puzzle solve button\n`
-        + `puzzle unsolve keypad\n`
-        + `solve binder taylor\n`
-        + `unsolve lever colin\n`
-        + `solve computer PASSWORD1\n`
-        + `solve computer PASSWORD2\n`
-        + `puzzle solve keypad tool shed\n`
-        + `puzzle unsolve lock men's locker room\n`
-        + `solve paintings player "player removes the PAINTINGS from the wall."\n`
-        + `unsolve lock men's locker room "The LOCK on LOCKER 1 locks itself"\n`
-        + `puzzle attempt cyptex lock 05-25-99 player`;
+    return `puzzle solve TERMINAL\n`
+        + `puzzle unsolve SEARCH QUERY\n`
+        + `solve AISHA PROGRAM Ava\n`
+        + `unsolve BURIED TREASURE Jackie\n`
+        + `solve USERNAME jl\n`
+        + `solve USERNAME doublehelix\n`
+        + `puzzle solve CALL BUTTON Floor B2 Hall 1\n`
+        + `puzzle unsolve SWITCH dorm-6\n`
+        + `solve DRINK IN PROGRESS player "Amy begins preparing a drink for player."\n`
+        + `unsolve DRINK IN PROGRESS player "Amy places a glass of TEQUILA SUNRISE on the BAR counter for player."\n`
+        + `puzzle attempt COMPARTMENT player\n`
+        + `attempt 3D PRINTER rabbit Huiyu`;
 }
 
 /**

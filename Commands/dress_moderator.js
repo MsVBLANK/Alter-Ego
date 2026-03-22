@@ -12,11 +12,15 @@ import Puzzle from "../Data/Puzzle.ts";
 export const config = {
     name: "dress_moderator",
     description: "Takes and equips all items from a container for a player.",
-    details: "Takes all items from a container of your choosing and equips them for the given player, if possible. They must "
-        + "have a free hand to take an item. Items will be equipped in the order in which they appear on the spreadsheet. "
-        + "If an item is equippable to an equipment slot, but the player already has something equipped to that slot, it will not be equipped, "
-        + "and they will not be notified when this happens. If the container you choose has multiple inventory slots, you can specify which "
-        + "slot to dress from. Otherwise, the player will dress from all slots.",
+    details: `Takes all room items from the given container and equips them for the given player, if possible. `
+        + `The container's name must be given, or its container identifier if it is a room item. The specified player must `
+        + `have a free hand to take an item. The player dressing will be narrated in the room they're in.\n\n`
+        + `Items will be equipped in the order in which they appear on the spreadsheet. If an item is equippable to an `
+        + `equipment slot, but the player already has something equipped to that slot, it will not be equipped, and they `
+        + `will not be notified when this happens. If the container has multiple inventory slots, you can specify `
+        + `which slot to dress from by entering the ID of the inventory slot followed by "of" before the container. `
+        + `Otherwise, the player will dress from all slots.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["dress", "redress"],
     requiresGame: true
@@ -27,9 +31,9 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}dress ezekiel wardrobe\n`
-        + `${settings.commandPrefix}dress kelly laundry basket\n`
-        + `${settings.commandPrefix}redress luna main pocket of backpack`;
+    return `${settings.commandPrefix}dress Ezekiel WARDROBE\n`
+        + `${settings.commandPrefix}dress Kelly LAUNDRY BASKET 7\n`
+        + `${settings.commandPrefix}redress Luna MAIN POCKET of BLUE BACKPACK`;
 }
 
 /**

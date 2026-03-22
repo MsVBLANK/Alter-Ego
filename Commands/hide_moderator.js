@@ -8,10 +8,11 @@ import UnhideAction from '../Data/Actions/UnhideAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "hide_moderator",
-    description: "Hides a player in the given object.",
-    details: `Forcibly hides a player in the specified object. They will be able to hide in the specified object `
+    description: "Hides a player in the given fixture.",
+    details: `Forcibly hides a player in the specified fixture. They will be able to hide in the specified fixture `
         + `even if it is attached to a lock-type puzzle that is unsolved, and even if the hiding spot is beyond its `
-        + `capacity. To force them out of hiding, use the unhide command.`,
+        + `capacity. To force them out of hiding, use the \`unhide\` command.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["hide", "unhide"],
     requiresGame: true
@@ -22,9 +23,9 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}hide nero beds\n`
-        + `${settings.commandPrefix}hide cleo bleachers\n`
-        + `${settings.commandPrefix}unhide scarlet`;
+    return `${settings.commandPrefix}hide Xenia DESK\n`
+        + `${settings.commandPrefix}hide Kiara SHOWER 1\n`
+        + `${settings.commandPrefix}unhide Aisha`;
 }
 
 /**
@@ -35,12 +36,16 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length === 0)
+    const sentMessageInLatchChannel = moderator?.sentMessageInLatchChannel(message) ?? false;
+    if (!sentMessageInLatchChannel && args.length === 0)
         return game.communicationHandler.reply(message, `You need to specify a player. Usage:\n${usage(game.settings)}`);
 
-    const player = game.entityFinder.getLivingPlayer(args[0]);
+    let player = game.entityFinder.getLivingPlayer(args[0]);
+    if (player && (moderator.getLatch() === null || moderator.getLatch().name.toLowerCase() !== args[0].toLowerCase()))
+        args.splice(0, 1);
+    if (!player && sentMessageInLatchChannel)
+        player = moderator.getLatch();
     if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
-    args.splice(0, 1);
 
     if (player.status.has("hidden") && command === "unhide") {
         const unhideAction = new UnhideAction(game, message, player, player.location, true);

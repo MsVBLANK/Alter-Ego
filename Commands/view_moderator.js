@@ -8,11 +8,12 @@ import ViewAction from '../Data/Actions/ViewAction.ts';
 export const config = {
     name: "view_moderator",
     description: "View a game entity.",
-    details: 'View in-game data. You can view any entry on the spreadsheet, but you must specify which kind of data to find, as well as its row number. '
-        + 'You will be shown most of the data visible on the spreadsheet for that entity. To avoid exceeding Discord\'s character limit, '
-        + 'some fields may be omitted. These can be viewed with the interactables that are sent alongside the result.\n\n'
-        + 'To view a game entity with this command, you must know its row number, which can be found on the spreadsheet. '
-        + 'To obtain the row number of an entity you wish to view, or use the find command.',
+    details: `View in-game data. You can view any entry on the spreadsheet, but you must specify which kind of data to `
+        + `find, as well as its row number. You will be shown most of the data visible on the spreadsheet for that `
+        + `entity. To avoid exceeding Discord's character limit, some fields may be omitted. These can be viewed with `
+        + `the interactables that are sent alongside the result.\n\n`
+        + `To view a game entity with this command, you must know its row number, which can be found on the `
+        + `spreadsheet. Alternatively, you can obtain it with the \`find\` command.`,
     usableBy: "Moderator",
     aliases: ["view", "v"],
     requiresGame: true

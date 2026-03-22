@@ -8,14 +8,16 @@ import GestureAction from '../Data/Actions/GestureAction.ts';
 export const config = {
     name: "gesture_moderator",
     description: "Performs a gesture for the given player.",
-    details: `Makes the given player perform one of a set of pre-defined gestures. Everybody in the room with them will see them do this gesture. `
-        + `This allows them to communicate non-verbally, though some gestures cannot be performed if them have certain status effects. `
-        + `For example, if they have the "concealed" status effect, they may not use gestures like "smile" or "frown", as nobody would be able to see it. `
-        + `To see a list of all of the gestures they can currently perform, send the \`gesture\` command followed by "list" and the name of the player. `
-        + `Omitting the name of a player after "list" will simply list all gestures on the sheet.\n\n`
-        + `Certain gestures may require a target to perform them. For example, a gesture might require you specify an exit, a fixture, another player, etc. `
-        + `To specify a target, enter the identifier of the target directly after the name of the gesture. For a room item or inventory item, this must be its `
-        + `container identifier or prefab ID. For any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.`,
+    details: `Makes the given player perform one of a set of pre-defined gestures. Everybody in the room with them will `
+        + `see them do this gesture. This allows them to communicate non-verbally, though they cannot perform a gesture `
+        + `if they have one of the gesture's disabled statuses. To see a list of all of the gestures they can currently `
+        + `perform, send the \`gesture\` command followed by "list" and the name of the player. Omitting the name of a `
+        + `player after "list" will simply list all gestures on the sheet.\n\n`
+        + `Certain gestures may require a target to perform them. To specify a target, enter the identifier of the `
+        + `target directly after the ID of the gesture. For a room item or inventory item, this must be its `
+        + `container identifier or prefab ID. For any other type of target, it should be its name. `
+        + `Note that a gesture can only be performed with one target at a time.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["gesture", "g"],
     requiresGame: true

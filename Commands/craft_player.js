@@ -10,7 +10,7 @@ import { itemNameMatches } from '../Modules/matchers.js';
 export const config = {
     name: "craft_player",
     description: "Crafts two items in your inventory together.",
-    details: `Creates a new item using the two items in your hand. The names of the items must be separated by "with" or "and". `
+    details: `Creates a new item using the two items in your hands. The names of the items must be separated by "with" or "and". `
         + `If no recipe for those two items exists, the items cannot be crafted together. `
         + `If any of the resulting items is particularly large, this will be narrated in the room, so other players will see you craft them.\n\n`
         + `You can view a list of all recipes that you can craft with the items in your inventory using the \`recipes\` command. Some crafting recipes `

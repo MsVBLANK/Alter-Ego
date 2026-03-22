@@ -6,24 +6,25 @@
 export const config = {
     name: "restore_moderator",
     description: "Restores a player's stamina.",
-    details: "Sets the given player's stamina to its maximum value. Note that this does not automatically cure the weary status effect.",
+    details: `Sets the given player's stamina to its maximum value. This is based on their current max stamina, not `
+        + `their default stamina. Note that this does not automatically cure the \`weary\` status effect.`,
     usableBy: "Moderator",
     aliases: ["restore"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}restore flint`;
+    return `${settings.commandPrefix}restore Flint`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

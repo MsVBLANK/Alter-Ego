@@ -6,13 +6,13 @@
 export const config = {
     name: "latch_moderator",
     description: "Latches onto an NPC.",
-    details: "Latches onto an NPC player. If you issue a player-controlling command in a channel that the selected NPC is in "
-        + "while you are latched, you do not have to specify which player to control. However, if you wish to control a different "
-        + "player in that channel, you must still specify their name.\n\n"
-        + "While latched, you can also speak for that NPC without using the `say` command. However, keep in mind that this "
-        + "prevents you from sending narrations as a moderator in that channel.\n\n"
+    details: "Latches onto an NPC player. If you issue a player-controlling command in a channel that the selected NPC "
+        + "is in while you are latched, you do not have to specify which player to control. However, if you wish to "
+        + "control a different player in that channel, you must still specify their name.\n\n"
+        + "While latched, you can also speak for that NPC without using the `say` command. However, keep in mind that "
+        + "this prevents you from sending narrations as a moderator in that channel.\n\n"
         + "Note that you cannot latch onto any player that is not an NPC.\n\n"
-        + "If you wish to clear your latch, send the `latch` command without specifying an NPC, or use the `unlatch` alias.",
+        + "To clear your latch, send the `latch` command without specifying an NPC, or use the `unlatch` alias.",
     usableBy: "Moderator",
     aliases: ["latch", "unlatch"],
     requiresGame: true

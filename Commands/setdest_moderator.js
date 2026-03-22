@@ -9,21 +9,24 @@ export const config = {
     name: "setdest_moderator",
     description: "Updates an exit's destination.",
     details: "Replaces the destination for the specified room's exit. Given the following initial room setup:\n```"
-        + "Room Name|Exits |Leads To|From\n"
-        + "---------------------------------\n"
-        + "room-1   |EXIT A|room-2  | EXIT B\n"
-        + "---------------------------------\n"
-        + "room-2   |EXIT B|room-1  | EXIT A\n"
-        + "         |EXIT C|room-3  | EXIT D\n"
-        + "---------------------------------\n"
-        + "room-3   |EXIT D|room-2  | EXIT C```\n"
+        + "Room ID   | Exits  | Leads To | From\n"
+        + "--------------------------------------\n"
+        + "room-1    | EXIT A | room-2   | EXIT B\n"
+        + "--------------------------------------\n"
+        + "room-2    | EXIT B | room-1   | EXIT A\n"
+        + "          | EXIT C | room-3   | EXIT D\n"
+        + "--------------------------------------\n"
+        + "room-3    | EXIT D | room-2   | EXIT C```\n"
         + "If the destination for room-1's EXIT A is set to room-3's EXIT D, players passing through EXIT A would emerge from EXIT D from that point onward. "
         + "The Rooms sheet will be updated to reflect the updated destination, like so:\n```"
-        + "room-1   |EXIT A|room-3  | EXIT D\n"
-        + "---------------------------------\n"
-        + "...\n"
-        + "---------------------------------\n"
-        + "room-3   |EXIT D|room-1  | EXIT A```\n"
+        + "Room ID   | Exits  | Leads To | From\n"
+        + "--------------------------------------\n"
+        + "room-1    | EXIT A | room-3   | EXIT D <- updated\n"
+        + "--------------------------------------\n"
+        + "room-2    | EXIT B | room-1   | EXIT A\n"
+        + "          | EXIT C | room-3   | EXIT D\n"
+        + "--------------------------------------\n"
+        + "room-3    | EXIT D | room-1   | EXIT A <- updated```\n"
         + "Note that this will leave room-2's EXIT B and EXIT C without exits that lead back to them, which will result in errors next time rooms are loaded. "
         + "To prevent this, this command should be used sparingly, and all affected exits should have their destinations reassigned.",
     usableBy: "Moderator",
@@ -32,19 +35,20 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}setdest corolla DOOR wharf VEHICLE\n`
-        + `${settings.commandPrefix}setdest motor boat PORT docks BOAT\n`
+    return `${settings.commandPrefix}setdest Truck DOOR Mountain Cave TRUCK\n`
+        + `${settings.commandPrefix}setdest Mountain Entrance TRUCK Mountain Entrance TRUCK\n`
+        + `${settings.commandPrefix}setdest motor-boat PORT docks BOAT\n`
         + `${settings.commandPrefix}setdest wharf MOTOR BOAT wharf MOTOR BOAT`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

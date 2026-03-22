@@ -9,13 +9,16 @@ import Player from '../Data/Player.ts';
 export const config = {
     name: "roll_moderator",
     description: "Rolls a die.",
-    details: `Rolls a die. If a stat and a player are specified, calculates the result plus the modifier of `
-        + "the player's specified stat. If two players are specified, any status effects the second player has which affect the "
-        + "first player will be applied to the first player, whose stats will be recalculated before their stat modifier is applied. "
-        + "Additionally, if a strength roll is performed using two players, the second player's dexterity stat will be inverted and "
-        + "applied to the first player's roll. Any modifiers will be mentioned in the result, but please note that the result sent "
-        + "has already had the modifiers applied. Valid stat inputs include: `str`, `strength`, `per`, `perception`, `dex`, "
-        + "`dexterity`, `spd`, `speed`, `sta`, `stamina`.",
+    details: `Rolls a die. You can set the minimum and maximum possible values in your \`.env\` file `
+        + `with the \`DICE_MIN\` and \`DICE_MAX\` settings, respectively.\n\n`
+        + `If a stat and a player are specified, the result will have the modifier of the player's specified stat `
+        + `added to it. If two players are specified, any status effects the second player has which `
+        + `affect the first player will be applied to the first player, whose stats will be recalculated before their `
+        + `stat modifier is applied. Additionally, if a strength roll is performed using two players, the second `
+        + `player's dexterity modifier will be inverted and applied to the first player's roll. Any modifiers will be `
+        + `mentioned in the result, but please note that the result sent has already had the modifiers applied.\n\n`
+        + "Valid stat inputs are: "
+        + "`str`, `strength`, `per`, `perception`, `dex`, `dexterity`, `spd`, `speed`, `sta`, `stamina`.",
     usableBy: "Moderator",
     aliases: ["roll"],
     requiresGame: true
@@ -27,12 +30,18 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}roll\n`
-        + `${settings.commandPrefix}roll per colin\n`
-        + `${settings.commandPrefix}roll faye devyn\n`
-        + `${settings.commandPrefix}roll str seamus terry\n`
-        + `${settings.commandPrefix}roll strength shinobu shiori\n`
-        + `${settings.commandPrefix}roll sta evad\n`
-        + `${settings.commandPrefix}roll dexterity agiri`;
+        + `${settings.commandPrefix}roll Sadie\n`
+        + `${settings.commandPrefix}roll Christopher Nero\n`
+        + `${settings.commandPrefix}roll str Ai\n`
+        + `${settings.commandPrefix}roll strength Aisha Huiyu\n`
+        + `${settings.commandPrefix}roll perception Kanda\n`
+        + `${settings.commandPrefix}roll per Kyra Amadeus\n`
+        + `${settings.commandPrefix}roll dexterity Flint\n`
+        + `${settings.commandPrefix}roll dex Elijah Lucia\n`
+        + `${settings.commandPrefix}roll spd Luna\n`
+        + `${settings.commandPrefix}roll speed Xenia Fury\n`
+        + `${settings.commandPrefix}roll stamina Danica\n`
+        + `${settings.commandPrefix}roll sta Ezekiel Kelly`;
 }
 
 /**

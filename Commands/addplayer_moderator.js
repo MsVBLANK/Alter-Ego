@@ -12,10 +12,12 @@ export const config = {
     name: "addplayer_moderator",
     description: "Adds a player to the game.",
     details: "Adds a user to the list of players for the current game. This command will give the specified user the "
-        + "Player role and add their data to the players and inventory items spreadsheets. This will be generated "
-        + "using the data in the playerdefaults config file. Note that edit mode must be turned on in order to use "
-        + "this command. After using this command, you may edit the new Player's data. Then, the players sheet "
-        + "must be loaded, otherwise the new player will not be created correctly, and their data may be overwritten.",
+        + "Player role and add their data to the Players and Inventory Items spreadsheets. This will be generated "
+        + "using the data in your `playerdefaults.json` configuration file. However, their name will be set as "
+        + "whatever their current nickname is in the server. So, you should set their nickname to their character's "
+        + "name before using this command. Note that edit mode must be turned on in order to use this command. "
+        + "After using this command, you may edit the new player's data. Then, the Players sheet must be loaded, "
+        + "otherwise the new player will not be created correctly, and their data may be overwritten.",
     usableBy: "Moderator",
     aliases: ["addplayer"],
     requiresGame: false
@@ -110,6 +112,7 @@ export async function execute(game, message, command, args, moderator) {
     try {
         await appendRowsToSheet(game.constants.playerSheetDataCells, playerCells, game.settings.spreadsheetID);
         await appendRowsToSheet(game.constants.inventorySheetDataCells, inventoryCells, game.settings.spreadsheetID);
+        game.loadedEntitiesWithErrors.add("Players");
 
         const successMessage = `<@${member.id}> has been added to the game. `
             + "After making any desired changes to the players and inventory items sheets, be sure to load players before disabling edit mode.";

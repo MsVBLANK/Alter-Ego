@@ -11,15 +11,17 @@ import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 
 /** @type {CommandConfig} */
 export const config = {
-    name: "testparser_moderator",
-    description: "Tests the parsing module on your descriptions.",
-    details: `Tests the parsing algorithm responsible for interpreting and editing descriptions. `
-        + `Sends the results as a text file to the command channel. `
-        + `You can input a player name to parse the text as if that player is reading it. `
-        + `This command should be used to make sure you've written properly formatted descriptions. `
-        + `If there are any errors in your descriptions, they will be listed alongside the resulting file.`,
+    name: "parse_moderator",
+    description: "Checks your descriptions for errors.",
+    details: `Runs all of your descriptions through the parser module. It will parse every single one and output the `
+        + `plain-text results to a text file that will be sent to the command channel. If there are any errors with `
+        + `your descriptions, they will be listed alongside the resulting file. It is important to fix all errors and `
+        + `warnings, or undesired behavior may occur during gameplay.\n\n`
+        + `You can input a player name to parse the text as if that player is reading it. This is useful if you want to `
+        + `see how descriptions will appear to a given player. If you do not supply one, descriptions will be parsed as `
+        + `if they are being read by a player named Cella.`,
     usableBy: "Moderator",
-    aliases: ["testparser"],
+    aliases: ["parse", "testparser"],
     requiresGame: false
 };
 
@@ -28,8 +30,9 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}testparser\n`
-        + `${settings.commandPrefix}testparser kyra`;
+    return `${settings.commandPrefix}parse\n`
+        + `${settings.commandPrefix}parse Kyra\n`
+        + `${settings.commandPrefix}testparser`;
 }
 
 /**
@@ -119,9 +122,7 @@ export async function execute(game, message, command, args, moderator) {
             }
         ]
     });
-
-    return;
-};
+}
 
 /**
  * Parses all in-game descriptions and writes the results to a file.

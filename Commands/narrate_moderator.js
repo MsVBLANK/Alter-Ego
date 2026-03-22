@@ -9,11 +9,14 @@ import { MessageDisplayType } from '../Modules/enums.js';
 export const config = {
 	name: "narrate_moderator",
 	description: "Narrates an NPC's non-verbal actions.",
-	details: `Narrates non-verbal actions for an NPC. The name of an NPC must be specified. This narration will be sent to the room or hiding spot the NPC is currently in. `
-		+ `This behaves similarly to the \`gesture\` command, but it allows you to write more complex narrations. `
-		+ `Please note that you cannot send a narration that exceeds Discord's character limit, which is 2000 characters.\n\n`
-		+ `This command cannot be used to narrate actions for a non-NPC player. To do that, send a message in the room or whisper channel they're currently in. `
-		+ `This will be treated as a narration, but it will be clearly indicated as having been written by you.`,
+	details: `Narrates non-verbal actions for an NPC. The name of an NPC must be specified. This narration will be sent `
+        + `to the room or hiding spot the NPC is currently in. This behaves similarly to the \`gesture\` command, but `
+		+ `it allows you to write more complex narrations. Please note that you cannot send a narration that exceeds `
+		+ `Discord's character limit, which is 2000 characters.\n\n`
+		+ `This command cannot be used to narrate actions for a non-NPC player. To do that, send a message in the `
+        + `room or whisper channel they're currently in. This will be treated as a narration, `
+		+ `but it will be clearly indicated as having been written by you.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
 	usableBy: "Moderator",
 	aliases: ["narrate", "n"],
 	requiresGame: true,
@@ -25,10 +28,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-	return `${settings.commandPrefix}narrate ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
-		+ `${settings.commandPrefix}n unit_050 It sits up straight on the piano bench and prepares to play.\n`
-		+ `${settings.commandPrefix}narrate sid She is utterly perplexed by the $100 bill that's suddenly in the tip jar.\n`
-		+ `${settings.commandPrefix}n haru He walks over to the plushie rack and takes the used dog plushie. He puts it under the counter for safekeeping. Definitely not for easy access.`;
+	return `${settings.commandPrefix}narrate Ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.\n`
+		+ `${settings.commandPrefix}n Unit_050 It sits up straight on the piano bench and prepares to play.\n`
+		+ `${settings.commandPrefix}narrate Sid She is utterly perplexed by the $100 bill that's suddenly in the tip jar.\n`
+		+ `${settings.commandPrefix}n Haru He walks over to the plushie rack and takes the used dog plushie. He puts it under the counter for safekeeping. Definitely not for easy access.`;
 }
 
 /**

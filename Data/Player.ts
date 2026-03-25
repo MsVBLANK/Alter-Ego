@@ -4,7 +4,7 @@ import type Interactable from "../Classes/Interactables/Interactable.ts";
 import Timer from "../Classes/Timer.ts";
 import { MessageDisplayType } from "../Modules/enums.js";
 import * as itemManager from "../Modules/itemManager.js";
-import { itemIdentifierMatches } from "../Modules/matchers.js";
+import { itemIdentifierMatches } from "../Modules/matchers.ts";
 import type Action from "./Action.ts";
 import CureAction from "./Actions/CureAction.ts";
 import DieAction from "./Actions/DieAction.ts";

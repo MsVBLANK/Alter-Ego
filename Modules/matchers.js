@@ -122,7 +122,7 @@ export const exitLockedMatches = (exit, lock) => {
 
 /**
  * Returns true if the entity's name matches the given name.
- * @param {Fixture|ItemInstance|Player|Prefab|Puzzle} entity - The entity to match the name against.
+ * @param {Fixture|ItemInstance|Player|Puzzle} entity - The entity to match the name against.
  * @param {string} name - The name to match.
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
@@ -133,7 +133,7 @@ export const entityNameMatches = (entity, name, normalize = false) => {
 
 /**
  * Returns true if the entity's name contains the given name.
- * @param {Fixture|ItemInstance|Player|Prefab|Puzzle} entity - The entity to match the name against.
+ * @param {Fixture|ItemInstance|Player|Puzzle} entity - The entity to match the name against.
  * @param {string} name - The name to match.
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */
@@ -282,7 +282,7 @@ export const recipeProductsMatches = (recipe, productsString, normalize = false)
 
 /**
  * Returns true if the item's name matches the given name.
- * @param {Prefab|ItemInstance} item - The prefab or item instance to match the name against.
+ * @param {ItemInstance} item - The item instance to match the name against.
  * @param {string} name - The name to match.
  * @param {boolean} [normalize] - Whether or not to normalize the name before matching. Defaults to false.
  */

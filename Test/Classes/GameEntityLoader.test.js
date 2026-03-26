@@ -270,7 +270,7 @@ describe('GameEntityLoader test', () => {
                 await game.entityLoader.loadPuzzles(false);
                 const fixtureCount = await game.entityLoader.loadFixtures(true, errors);
                 expect(errors).toEqual([]);
-                expect(fixtureCount).toBe(1574);
+                expect(fixtureCount).toBe(1575);
                 for (const fixture of game.fixtures) {
                     const descriptionText = fixture.description.toString();
                     expect(descriptionText).not.toContain("<item>");

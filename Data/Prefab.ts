@@ -7,6 +7,7 @@ import type ItemInstance from "./ItemInstance.ts";
 import type Status from "./Status.ts";
 
 export type PrefabField = "id"|"names"|"containingPhrases"|"discreet"|"size"|"weight"|"usable"|"useVerb"|"uses"|"inflicts"|"cures"|"nextStage"|"equippable"|"equipmentSlots"|"coveredEquipmentSlots"|"commandsString"|"inventorySlots"|"preposition"|"description";
+export type PrefabPossibleNames = Collection<Map<string, string>, [string, string]>;
 
 /**
  * Represents the concept of an item.
@@ -19,21 +20,13 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
      */
     readonly id: string;
     /**
-     * The name of the prefab.
+     * A map of possible names. The key is a single procedural selection, and the value is the name and pluralName.
      */
-    readonly name: string;
+    readonly possibleNames: PrefabPossibleNames;
     /**
-     * The plural name of the prefab.
+     * A map of possible containing phrases. The key is a single procedural selection, and the value is the singleContainingPhrase and pluralContainingPhrase.
      */
-    readonly pluralName: string;
-    /**
-     * The phrase that will be inserted in/removed from item tags when an instance of this prefab is added to/removed from an item list.
-     */
-    readonly singleContainingPhrase: string;
-    /**
-     * The phrase that will be used in an item list when it contains multiple instances of prefabs with the same single containing phrase.
-     */
-    readonly pluralContainingPhrase: string;
+    readonly possibleContainingPhrases: PrefabPossibleNames;
     /**
      * Whether interactions with instances of this prefab are narrated or not.
      */
@@ -135,10 +128,8 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
 
     /**
      * @param id - The unique identifier of the prefab.
-     * @param name - The name of the prefab.
-     * @param pluralName - The plural name of the prefab.
-     * @param singleContainingPhrase - The phrase that will be inserted in/removed from item tags when an instance of this prefab is added to/removed from an item list.
-     * @param pluralContainingPhrase - The phrase that will be used in an item list when it contains multiple instances of prefabs with the same single containing phrase.
+     * @param possibleNames - A map of possible names. The key is a single procedural selection, and the value is the name and pluralName.
+     * @param possibleContainingPhrases - A map of possible containing phrases. The key is a single procedural selection, and the value is the singleContainingPhrase and pluralContainingPhrase.
      * @param discreet - Whether interactions with instances of this prefab are narrated or not.
      * @param size - How large the prefab is. Does not correspond with any particular unit of measurement.
      * @param weight - How much the prefab weighs in kilograms.
@@ -161,8 +152,8 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
      * @param row - The row number of the prefab in the sheet.
      * @param game - The game this belongs to.
      */
-    constructor(id: string, name: string, pluralName: string, singleContainingPhrase: string,
-        pluralContainingPhrase: string, discreet: boolean, size: number, weight: number, usable: boolean,
+    constructor(id: string, possibleNames: PrefabPossibleNames, possibleContainingPhrases: PrefabPossibleNames,
+        discreet: boolean, size: number, weight: number, usable: boolean,
         thirdPersonVerb: string, secondPersonVerb: string, uses: number, effectsStrings: string[],
         curesStrings: string[], nextStageId: string, equippable: boolean, equipmentSlots: string[],
         coveredEquipmentSlots: string[], commandsString: string, equippedCommands: string[],
@@ -170,10 +161,8 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
         description: string, row: number, game: Game) {
         super(game, row);
         this.id = id;
-        this.name = name;
-        this.pluralName = pluralName;
-        this.singleContainingPhrase = singleContainingPhrase;
-        this.pluralContainingPhrase = pluralContainingPhrase;
+        this.possibleNames = possibleNames;
+        this.possibleContainingPhrases = possibleContainingPhrases;
         this.discreet = discreet;
         this.size = size;
         this.weight = weight;
@@ -198,6 +187,34 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
         this.preposition = preposition;
         this.description = new Description(description, this, game);
         this.proceduralOptions = this.description.procedurals;
+    }
+
+    /**
+     * The first possible name of the prefab.
+     */
+    get name(): string {
+        return this.possibleNames.first()[0];
+    }
+
+    /**
+     * The first possible plural name of the prefab.
+     */
+    get pluralName(): string {
+        return this.possibleNames.first()[1];
+    }
+
+    /**
+     * The first possible single containing phrase of the prefab.
+     */
+    get singleContainingPhrase(): string {
+        return this.possibleContainingPhrases.first()[0];
+    }
+
+    /**
+     * The first possible plural containing phrase of the prefab.
+     */
+    get pluralContainingPhrase(): string {
+        return this.possibleContainingPhrases.first()[1];
     }
 
     /**

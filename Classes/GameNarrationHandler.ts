@@ -739,15 +739,16 @@ export default class GameNarrationHandler {
 	 * Narrates an uncraft action.
 	 * @param action - The action that initiated this narration.
 	 * @param recipe - The recipe used to uncraft the item.
-	 * @param originalItemPrefab - The prefab of the original item.
+	 * @param originalItemDiscreet - Whether or not the original item was discreet.
+     * @param originalItemSingleContainingPhrase - The single containing phrase of the original item.
 	 * @param item - The item being uncrafted.
 	 * @param uncraftingResult - The result of the uncraft action.
 	 * @param player - The player performing the uncraft action.
 	 */
-	narrateUncraft(action: Action, recipe: Recipe, originalItemPrefab: Prefab, item: InventoryItem, uncraftingResult: UncraftingResult, player: Player) {
+	narrateUncraft(action: Action, recipe: Recipe, originalItemDiscreet: boolean, originalItemSingleContainingPhrase: string, item: InventoryItem, uncraftingResult: UncraftingResult, player: Player) {
 		const messageType = MessageDisplayType.STANDARD;
-		if (!originalItemPrefab.discreet || !recipe.ingredients[0].prefab.discreet || !recipe.ingredients[1].prefab.discreet) {
-			const originalItemPhrase = originalItemPrefab.singleContainingPhrase;
+		if (!originalItemDiscreet || !recipe.ingredients[0].prefab.discreet || !recipe.ingredients[1].prefab.discreet) {
+			const originalItemPhrase = originalItemSingleContainingPhrase;
 			const itemPhrase = item.singleContainingPhrase;
 			const narration = this.#game.notificationGenerator.generateUncraftNotification(player, false, recipe, originalItemPhrase, itemPhrase, uncraftingResult);
 			this.#sendNarration(messageType, action, player, narration);

@@ -134,6 +134,10 @@ describe('Player test', () => {
                 ]);
                 const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red </poss></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's already been fired in a kiln, but it's been coated with glaze.</s> <s>The glaze is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural> in color.</s> <s>It's still wet, so you might not want to use it as a container just yet.</s> <s>It should be fired in a kiln one more time before it's truly complete.</s> <s>In it, you find <il></il>.</s></desc>`;
                 expect(rightHand.equippedItem.prefab.id).toBe('GLAZED CLAY POT');
+                expect(rightHand.equippedItem.name).toBe('LIGHT BLUE GLAZED CLAY POT');
+                expect(rightHand.equippedItem.pluralName).toBe('LIGHT BLUE GLAZED CLAY POTS');
+                expect(rightHand.equippedItem.singleContainingPhrase).toBe('a LIGHT BLUE GLAZED CLAY POT');
+                expect(rightHand.equippedItem.pluralContainingPhrase).toBe('LIGHT BLUE GLAZED CLAY POTS');
                 expect(leftHand.equippedItem).toBeNull();
                 expect(rightHand.equippedItem.uses).toBe(NaN);
                 expect(rightHand.equippedItem.quantity).toBe(1);
@@ -155,7 +159,15 @@ describe('Player test', () => {
                 expect(rightHand.equippedItem).not.toBeNull();
                 expect(leftHand.equippedItem).not.toBeNull();
                 expect(rightHand.equippedItem.prefab.id).toBe('GLAZE');
+                expect(rightHand.equippedItem.name).toBe('LIGHT BLUE GLAZE');
+                expect(rightHand.equippedItem.pluralName).toBe('');
+                expect(rightHand.equippedItem.singleContainingPhrase).toBe('a bottle of LIGHT BLUE GLAZE');
+                expect(rightHand.equippedItem.pluralContainingPhrase).toBe('bottles of LIGHT BLUE GLAZE');
                 expect(leftHand.equippedItem.prefab.id).toBe('FIRED CLAY POT');
+                expect(leftHand.equippedItem.name).toBe('RED CLAY POT');
+                expect(leftHand.equippedItem.pluralName).toBe('RED CLAY POTS');
+                expect(leftHand.equippedItem.singleContainingPhrase).toBe('a RED CLAY POT');
+                expect(leftHand.equippedItem.pluralContainingPhrase).toBe('RED CLAY POTS');
                 expect(rightHand.equippedItem.uses).toBe(NaN);
                 expect(leftHand.equippedItem.uses).toBe(NaN);
                 expect(rightHand.equippedItem.quantity).toBe(1);

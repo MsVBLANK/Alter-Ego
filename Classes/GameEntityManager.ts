@@ -207,12 +207,16 @@ export default abstract class GameEntityManager {
 	 */
 	protected updatePrefabReferences(prefab: Prefab): void {
 		this.game.roomItems.forEach(roomItem => {
-			if (roomItem.prefabId === prefab.id)
+			if (roomItem.prefabId === prefab.id) {
 				roomItem.setPrefab(prefab);
+                roomItem.setNames();
+            }
 		});
 		this.game.inventoryItems.forEach(inventoryItem => {
-			if (inventoryItem.prefabId !== "" && inventoryItem.prefabId === prefab.id)
+			if (inventoryItem.prefabId !== "" && inventoryItem.prefabId === prefab.id) {
 				inventoryItem.setPrefab(prefab);
+                inventoryItem.setNames();
+            }
 		});
 		this.game.puzzles.forEach(puzzle => {
 			puzzle.requirementsStrings.forEach((requirementsString, i) => {

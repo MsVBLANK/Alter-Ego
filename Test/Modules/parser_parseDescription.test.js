@@ -606,6 +606,27 @@ describe('test parseDescription', () => {
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
+        
+        test('items with the same prefab but different uses are collated', () => {
+            const container = game.entityFinder.getFixture('SINK 1', 'video-room');
+            const expected = `It's a sink. It has two knobs, one for hot water and one for cold water. It looks impeccably clean. In it, you find 20 DIRTY PLATES and 4 bottles of DETERGENT.`;
+            const result = parseDescription(container.description, container, kyra);
+            expect(result).toBe(expected);
+        });
+
+        test('container items with the same prefab are collated', () => {
+            const container = game.entityFinder.getFixture('BURNER 5', 'video-room');
+            const expected = `It's an old stovetop burner. It's gas-powered, which means you'll be cooking with actual fire. On it, you find 2 FRYING PANS.`;
+            const result = parseDescription(container.description, container, kyra);
+            expect(result).toBe(expected);
+        });
+
+        test('items with the same prefab but different names are not collated', () => {
+            const container = game.entityFinder.getFixture('KILN 3', 'video-room');
+            const expected = `It's a large kiln, for firing clay. It's currently off. Inside, you find an unfired RED CLAY POT and an unfired WHITE CLAY POT.`;
+            const result = parseDescription(container.description, container, kyra);
+            expect(result).toBe(expected);
+        });
 
 		test('multiple empty item lists', () => {
 			const container = game.entityFinder.getRoomItem('KYRAS PANTS 2', 'suite-9');

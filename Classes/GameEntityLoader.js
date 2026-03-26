@@ -18,6 +18,7 @@ import Flag from '../Data/Flag.ts';
 import InflictAction from '../Data/Actions/InflictAction.ts';
 import { getSheetValues } from '../Modules/sheets.js';
 import { convertTimeStringToDurationUnits, parseDuration, validateDuration } from '../Modules/helpers.ts';
+import { parsePrefabPossibleNames } from '../Modules/stringDataExtractor.ts';
 import { ChannelType, Collection } from 'discord.js';
 import { Duration } from 'luxon';
 import RecipeItem from '../Data/RecipeItem.ts';
@@ -683,10 +684,8 @@ export default class GameEntityLoader extends GameEntityManager {
 			/** @type {Error[]} */
 			let errors = [];
 			for (let row = 0; row < sheet.length; row++) {
-				// Separate name and plural name.
-				const name = sheet[row][columnName] ? sheet[row][columnName].split(',') : "";
-				// Separate single containing phrase and plural containing phrase.
-				const containingPhrase = sheet[row][columnContainingPhrase] ? sheet[row][columnContainingPhrase].split(',') : "";
+                const possibleNames = parsePrefabPossibleNames(sheet[row][columnName], true);
+                const possibleContainingPhrases = parsePrefabPossibleNames(sheet[row][columnContainingPhrase], false);
 				// Separate third person verb and second person verb.
 				const verb = sheet[row][columnUseVerb] ? sheet[row][columnUseVerb].split(',') : "";
 				// Create a list of all status effect IDs this prefab will inflict when used.
@@ -737,10 +736,8 @@ export default class GameEntityLoader extends GameEntityManager {
 				});
 				const prefab = new Prefab(
 					sheet[row][columnId] ? Game.generateValidEntityName(sheet[row][columnId]) : "",
-					name[0] ? Game.generateValidEntityName(name[0]) : "",
-					name[1] ? Game.generateValidEntityName(name[1]) : "",
-					containingPhrase[0] ? containingPhrase[0].trim() : "",
-					containingPhrase[1] ? containingPhrase[1].trim() : "",
+					possibleNames,
+                    possibleContainingPhrases,
 					sheet[row][columnDiscreet] ? sheet[row][columnDiscreet].trim() === "TRUE" : false,
 					parseInt(sheet[row][columnSize]),
 					parseInt(sheet[row][columnWeight]),
@@ -819,10 +816,42 @@ export default class GameEntityLoader extends GameEntityManager {
 	checkPrefab(prefab) {
 		if (prefab.id === "" || prefab.id === null || prefab.id === undefined)
 			return new Error(`Couldn't load prefab on row ${prefab.row}. No prefab ID was given.`);
-		if (prefab.name === "" || prefab.name === null || prefab.name === undefined)
+		if (prefab.possibleNames.size < 1 || prefab.name === "" || prefab.name === null || prefab.name === undefined)
 			return new Error(`Couldn't load prefab on row ${prefab.row}. No prefab name was given.`);
-		if (prefab.singleContainingPhrase === "")
+		if (prefab.possibleContainingPhrases.size < 1 || prefab.singleContainingPhrase === "" || prefab.singleContainingPhrase === null || prefab.singleContainingPhrase === undefined)
 			return new Error(`Couldn't load prefab on row ${prefab.row}. No single containing phrase was given.`);
+        if (prefab.possibleNames.size > 1) {
+            for (const possibility of prefab.possibleNames.entries()) {
+                const proceduralSelections = [...possibility[0]][0];
+                const proceduralName = proceduralSelections[0];
+                const possName = proceduralSelections[1];
+                const names = possibility[1];
+                if (!prefab.proceduralOptions.has(proceduralName))
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural with name "${proceduralName}" exists in its description.`);
+                if (possName === "" || possName === null || possName === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No possibility was given for procedural "${proceduralName}".`);
+                if (!prefab.proceduralOptions.get(proceduralName).has(possName))
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. Procedural "${proceduralName}" does not contain possibility "${possName}".`);
+                if (names[0] === "" || names[0] === null || names[0] === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No name was given for possibility "${possName}" in procedural "${proceduralName}".`);
+            }
+        }
+        if (prefab.possibleContainingPhrases.size > 1) {
+            for (const possibility of prefab.possibleContainingPhrases.entries()) {
+                const proceduralSelections = [...possibility[0]][0];
+                const proceduralName = proceduralSelections[0];
+                const possName = proceduralSelections[1];
+                const containingPhrases = possibility[1];
+                if (!prefab.proceduralOptions.has(proceduralName))
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural with name "${proceduralName}" exists in its description.`);
+                if (possName === "" || possName === null || possName === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No possibility was given for procedural "${proceduralName}".`);
+                if (!prefab.proceduralOptions.get(proceduralName).has(possName))
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. Procedural "${proceduralName}" does not contain possibility "${possName}".`);
+                if (containingPhrases[0] === "" || containingPhrases[0] === null || containingPhrases[0] === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No single containing phrase was given for possibility "${possName}" in procedural "${proceduralName}".`);
+            }
+        }
 		if (isNaN(prefab.size))
 			return new Error(`Couldn't load prefab on row ${prefab.row}. The size given is not a number.`);
 		if (isNaN(prefab.weight))
@@ -1106,6 +1135,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				const prefab = this.game.entityFinder.getPrefab(roomItem.prefabId);
 				if (prefab) {
 					roomItem.setPrefab(prefab);
+                    roomItem.setNames();
 					roomItem.initializeInventory();
 				}
 				const location = this.game.entityFinder.getRoom(roomItem.locationDisplayName);
@@ -1186,7 +1216,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			this.game.roomItems.filter(roomItem => roomItem.identifier === item.identifier && roomItem.quantity !== 0).length
 			+ this.game.inventoryItems.filter(inventoryItem => inventoryItem.identifier === item.identifier && inventoryItem.quantity !== 0).length > 1)
 			return new Error(`Couldn't load room item on row ${item.row}. Another item or inventory item with this container identifier already exists.`);
-		if (item.prefab.pluralContainingPhrase === "" && (item.quantity > 1 || isNaN(item.quantity)))
+		if (item.pluralContainingPhrase === "" && (item.quantity > 1 || isNaN(item.quantity)))
 			return new Error(`Couldn't load room item on row ${item.row}. Quantity is higher than 1, but its prefab on row ${item.prefab.row} has no plural containing phrase.`);
 		if (!(item.location instanceof Room))
 			return new Error(`Couldn't load room item on row ${item.row}. "${item.locationDisplayName}" is not a room.`);
@@ -2015,6 +2045,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					const prefab = this.game.entityFinder.getPrefab(inventoryItem.prefabId);
 					if (prefab) {
 						inventoryItem.setPrefab(prefab);
+                        inventoryItem.setNames();
 						inventoryItem.initializeInventory();
 					}
 					if (inventoryItem.quantity !== 0 && inventoryItem.identifier !== "" && inventoryItem.inventory.size > 0) {
@@ -2162,7 +2193,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			if (item.identifier !== "" && item.quantity !== 0 && this.game.roomItems.filter(roomItem => roomItem.identifier === item.identifier && roomItem.quantity !== 0).length
 				+ this.game.inventoryItems.filter(inventoryItem => inventoryItem.identifier === item.identifier && inventoryItem.quantity !== 0).length > 1)
 				return new Error(`Couldn't load inventory item on row ${item.row}. Another item or inventory item with this container identifier already exists.`);
-			if (item.prefab.pluralContainingPhrase === "" && (item.quantity > 1))
+			if (item.pluralContainingPhrase === "" && (item.quantity > 1))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Quantity is higher than 1, but its prefab on row ${item.prefab.row} has no plural containing phrase.`);
 			if (!item.player.inventory.get(item.equipmentSlot))
 				return new Error(`Couldn't load inventory item on row ${item.row}. Couldn't find equipment slot "${item.equipmentSlot}".`);

@@ -518,6 +518,10 @@ describe('Fixture test', () => {
                 const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="white">white</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="decent">The craftsmanship is fairly decent. It has a flat, sturdy bottom that sits perfectly level. The sides are mostly even, but it has a bit of a rough texture, with a few small divots and bumps here and there. It should be able to hold things.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
                 expect(pot.proceduralSelections).toEqual(proceduralSelections);
                 expect(pot.description.text).toEqual(expectedDescription);
+                expect(pot.name).toBe('WHITE CLAY POT');
+                expect(pot.pluralName).toBe('WHITE CLAY POTS');
+                expect(pot.singleContainingPhrase).toBe('a WHITE CLAY POT');
+                expect(pot.pluralContainingPhrase).toBe('WHITE CLAY POTS');
             }
         });
 
@@ -540,6 +544,10 @@ describe('Fixture test', () => {
                 const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="obscured"/></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's been glazed, giving it a smooth, glassy finish.</s> <s>The glaze is <procedural name="glaze color"><poss name="orange">orange</poss></procedural> in color<procedural name="pattern">, and patterned with <procedural name="pattern quality"><poss name="detailed">detailed</poss></procedural> <procedural name="pattern color"><poss name="teal">teal</poss></procedural> <poss name="waves">waves</poss></procedural>.</s> <s>In it, you find <il></il>.</s></desc>`;
                 expect(pot.proceduralSelections).toEqual(proceduralSelections);
                 expect(pot.description.text).toEqual(expectedDescription);
+                expect(pot.name).toBe('ORANGE GLAZED CLAY POT');
+                expect(pot.pluralName).toBe('ORANGE GLAZED CLAY POTS');
+                expect(pot.singleContainingPhrase).toBe('an ORANGE GLAZED CLAY POT');
+                expect(pot.pluralContainingPhrase).toBe('ORANGE GLAZED CLAY POTS');
             }
         });
 
@@ -568,6 +576,14 @@ describe('Fixture test', () => {
                 expect(pot1.description.text).toEqual(expectedDescription1);
                 expect(pot2.proceduralSelections).toEqual(proceduralSelections2);
                 expect(pot2.description.text).toEqual(expectedDescription2);
+                expect(pot1.name).toBe('WHITE CLAY POT');
+                expect(pot1.pluralName).toBe('WHITE CLAY POTS');
+                expect(pot1.singleContainingPhrase).toBe('an unfired WHITE CLAY POT');
+                expect(pot1.pluralContainingPhrase).toBe('unfired WHITE CLAY POTS');
+                expect(pot2.name).toBe('RED CLAY POT');
+                expect(pot2.pluralName).toBe('RED CLAY POTS');
+                expect(pot2.singleContainingPhrase).toBe('a RED CLAY POT');
+                expect(pot2.pluralContainingPhrase).toBe('RED CLAY POTS');
             }
             fixture.recipeInterval.stop();
             fixture.recipeInterval.start();
@@ -593,6 +609,14 @@ describe('Fixture test', () => {
                 expect(pot1.description.text).toEqual(expectedDescription1);
                 expect(pot2.proceduralSelections).toEqual(proceduralSelections2);
                 expect(pot2.description.text).toEqual(expectedDescription2);
+                expect(pot1.name).toBe('RED CLAY POT');
+                expect(pot1.pluralName).toBe('RED CLAY POTS');
+                expect(pot1.singleContainingPhrase).toBe('a RED CLAY POT');
+                expect(pot1.pluralContainingPhrase).toBe('RED CLAY POTS');
+                expect(pot2.name).toBe('WHITE CLAY POT');
+                expect(pot2.pluralName).toBe('WHITE CLAY POTS');
+                expect(pot2.singleContainingPhrase).toBe('a WHITE CLAY POT');
+                expect(pot2.pluralContainingPhrase).toBe('WHITE CLAY POTS');
             }
         });
     });

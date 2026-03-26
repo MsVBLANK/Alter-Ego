@@ -190,8 +190,7 @@ export async function execute(game, message, command, args, moderator) {
     const inventory = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
     for (let i = 0; i < inventory.length; i++) {
         parsedInput = parsedInput.replace(`${player.name.toUpperCase()}S `, "");
-        if ((inventory[i].identifier !== "" && inventory[i].identifier === parsedInput || inventory[i].prefab.id === parsedInput || inventory[i].prefab.name === parsedInput)
-            && inventory[i].quantity > 0) {
+        if ((inventory[i].identifier !== "" && inventory[i].identifier === parsedInput || inventory[i].prefab.id === parsedInput || inventory[i].name === parsedInput) && inventory[i].quantity > 0) {
             await action.performInspect(inventory[i]);
             action.sendSuccessMessageToCommandChannel();
             return;
@@ -216,7 +215,7 @@ export async function execute(game, message, command, args, moderator) {
             // Only equipped items should be an option.
             const inventory = game.inventoryItems.filter(item => item.player.name === occupant.name && item.prefab !== null && item.containerName === "" && item.container === null);
             for (let j = 0; j < inventory.length; j++) {
-                if ((inventory[j].identifier !== "" && inventory[j].identifier === parsedInput || inventory[j].prefab.id === parsedInput || inventory[j].prefab.name === parsedInput)
+                if ((inventory[j].identifier !== "" && inventory[j].identifier === parsedInput || inventory[j].prefab.id === parsedInput || inventory[j].name === parsedInput)
                     && (inventory[j].equipmentSlot !== "LEFT HAND" && inventory[j].equipmentSlot !== "RIGHT HAND" || !inventory[j].prefab.discreet)) {
                     // Make sure the item isn't covered by anything first.
                     const coveringItems = inventory.filter(item =>

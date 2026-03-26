@@ -58,6 +58,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
         prefab.getGame()
     );
     createdItem.setPrefab(prefab);
+    createdItem.setNames();
     createdItem.initializeInventory();
     createdItem.location = location;
     createdItem.container = container;
@@ -97,6 +98,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     );
     createdItem.player = player;
     createdItem.setPrefab(prefab);
+    createdItem.setNames();
     createdItem.initializeInventory();
     createdItem.container = container;
     createdItem.slot = inventorySlotId;
@@ -138,6 +140,7 @@ export function replaceInventoryItem(item, newPrefab) {
         item.initializeInventory();
         const description = new Description(generateProceduralOutput(newPrefab.description, item.proceduralSelections, item.player), item, item.getGame());
         item.setDescription(description);
+        item.setNames();
     }
     item.player.updateCarryWeight();
     return item;
@@ -215,6 +218,7 @@ export function convertRoomItem(item, player, equipmentSlotId, quantity) {
     );
     createdItem.player = player;
     createdItem.setPrefab(item.prefab);
+    createdItem.setNames();
     createdItem.initializeInventory();
 
     // Now recursively run through all of the inventory items and convert them.
@@ -292,6 +296,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
         item.getGame()
     );
     createdItem.setPrefab(item.prefab);
+    createdItem.setNames();
     createdItem.initializeInventory();
     createdItem.location = player.location;
 

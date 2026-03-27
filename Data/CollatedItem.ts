@@ -15,14 +15,17 @@ import type RecipeItem from "./RecipeItem.ts";
 import type Room from "./Room.ts";
 import RoomItem from "./RoomItem.ts";
 
-type ContainerOf<T extends RoomItem | InventoryItem> = T extends RoomItem ? RoomItemContainer : InventoryItem;
+type ContainerOf<T extends ItemInstance | RoomItem | InventoryItem> =
+    T extends RoomItem ? RoomItemContainer 
+    : T extends InventoryItem ? InventoryItem
+    : never;
 
 /**
  * Represents a list of room items that are instances of the same prefab in the same location and container.
  *
  * @typeParam T - The type of the items collated together. Must be either a {@link RoomItem} or {@link InventoryItem}.
  */
-export default class CollatedItem<T extends RoomItem | InventoryItem> {
+export default class CollatedItem<T extends ItemInstance | RoomItem | InventoryItem> {
 	/**
 	 * The items collated together.
 	 */
@@ -31,6 +34,22 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	 * The prefab these items all have.
 	 */
 	prefab: Prefab;
+    /**
+     * The name these items all have.
+     */
+    name: string;
+    /**
+     * The plural name these items all have.
+     */
+    pluralName: string;
+    /**
+     * The single containing phrase these items all have.
+     */
+    singleContainingPhrase: string;
+    /**
+     * The plural containing phrase these items all have.
+     */
+    pluralContainingPhrase: string;
 	/**
 	 * The location these items all have.
 	 */
@@ -74,10 +93,15 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	constructor(items: T[]) {
 		this.items = items;
 		this.prefab = items[0].prefab;
+        this.name = items[0].name;
+        this.pluralName = items[0].pluralName;
+        this.singleContainingPhrase = items[0].singleContainingPhrase;
+        this.pluralContainingPhrase = items[0].pluralContainingPhrase;
 		this.location = items[0].getLocation();
         this.player = items[0] instanceof InventoryItem ? items[0].player : null;
         this.equipmentSlotId = items[0] instanceof InventoryItem ? items[0].equipmentSlot : null;
-		this.container = items[0].container;
+        const item = items[0]
+		this.container = items[0].container as ContainerOf<T>;
 		this.slot = items[0].slot;
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);
 		this.uses = this.items.reduce((uses, item) => uses + (isNaN(item.uses) ? NaN : item.quantity * item.uses), 0);
@@ -85,9 +109,9 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 	}
 
 	/**
-	 * Returns an array of collated room items.
-     *
-	 * @param items - The room items to collate.
+	 * Returns an array of collated items.
+     * Items are collated if they have the same identifier, container, and procedural selections.
+	 * @param items - The items to collate.
 	 */
 	static collate<T extends RoomItem | InventoryItem>(items: T[]): CollatedItem<T>[] {
 		const childItems: T[] = [];
@@ -109,6 +133,24 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
 			collatedItems.push(new CollatedItem(itemGroup));
 		return collatedItems;
 	}
+
+    /**
+     * Returns an array of collated items.
+     * Items are collated if they have the same prefab ID, single containing phrase, and plural containing phrase.
+     * @param items - The items to collate.
+     */
+    static collateForItemList<T extends ItemInstance>(items: T[]): CollatedItem<T>[] {
+        const collatedItems: CollatedItem<T>[] = [];
+        const itemsMap: Map<string, T[]> = new Map();
+        for (const item of items) {
+            const key = `${item.prefab.id}-${item.singleContainingPhrase}-${item.pluralContainingPhrase}`;
+            if (itemsMap.has(key)) itemsMap.get(key).push(item);
+            else itemsMap.set(key, [item]);
+        }
+        for (const itemGroup of itemsMap.values())
+			collatedItems.push(new CollatedItem(itemGroup));
+        return collatedItems;
+    }
 
 	/**
 	 * Sets the collated room item's variable for recipe processing.
@@ -299,5 +341,17 @@ export default class CollatedItem<T extends RoomItem | InventoryItem> {
             const instantiateAction = new InstantiateInventoryItemAction(prefab.getGame(), undefined, this.player, this.location, true);
             return instantiateAction.performInstantiateInventoryItem(prefab, this.equipmentSlotId, this.container, this.slot, quantity, this.proceduralSelections, uses, false) as T[];
         }
+	}
+
+    /**
+	 * Outputs a string to insert into an item list in a description.
+	 * If the given quantity is 1, returns the prefab's single containing phrase.
+	 * If the quantity is not 1, returns the prefab's quantity followed by its plural containing phrase.
+	 * If the quantity is infinite, returns only the prefab's plural containing phrase.
+	 */
+	toSingleOrPluralContainingPhrase(): string {
+		if (isNaN(this.quantity)) return this.pluralContainingPhrase;
+		else if (this.quantity !== 1) return `${this.quantity} ${this.pluralContainingPhrase}`;
+		else return this.singleContainingPhrase;
 	}
 }

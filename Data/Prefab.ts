@@ -230,7 +230,7 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
 	 * If the quantity is not 1, returns the prefab's quantity followed by its plural containing phrase.
 	 * If the quantity is infinite, returns only the prefab's plural containing phrase.
 	 */
-	toContainingPhrase(quantity: number): string {
+	toSingleOrPluralContainingPhrase(quantity: number): string {
 		if (isNaN(quantity)) return this.pluralContainingPhrase;
 		else if (quantity !== 1) return `${quantity} ${this.pluralContainingPhrase}`;
 		else return this.singleContainingPhrase;

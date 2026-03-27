@@ -5,6 +5,7 @@ import ItemContainer from "./ItemContainer.ts";
 import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type RecipeItem from "./RecipeItem.ts";
+import type Room from "./Room.ts";
 
 /**
  * Represents an instance of a prefab that actually exists in the game.
@@ -164,6 +165,9 @@ export default abstract class ItemInstance extends ItemContainer {
         if (!this.pluralContainingPhrase) this.pluralContainingPhrase = !this.pluralContainingPhrase && this.prefab.pluralContainingPhrase ? this.prefab.pluralContainingPhrase : "";
     }
 
+    /** Gets the entity's location. */
+    abstract getLocation(): Room;
+
 	/**
 	 * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
      *
@@ -213,7 +217,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	}
 
 	/**
-	 * Gets the item's single containing phrase.
+	 * Gets the item's single containing phrase. This is for use in narrations, notifications, and descriptions.
 	 */
 	getContainingPhrase(): string {
 		return this.singleContainingPhrase;

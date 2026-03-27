@@ -165,7 +165,7 @@ export default class RecipeItem extends GameConstruct {
 	 */
 	getDisplayString(): string {
 		let displayString = "";
-		if (this.quantityIsConstant || this.quantityVariableName === "") displayString = this.prefab.toContainingPhrase(this.quantity);
+		if (this.quantityIsConstant || this.quantityVariableName === "") displayString = this.prefab.toSingleOrPluralContainingPhrase(this.quantity);
 		else displayString = `${this.quantity}${this.quantityVariableName} ${this.prefab.pluralContainingPhrase}`;
 		const containedItemsString = this.containedItems.map(containedItem => containedItem.getDisplayString()).join(', ');
 		if (containedItemsString !== "") displayString += ` (${containedItemsString})`;

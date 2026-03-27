@@ -9,9 +9,14 @@ import Game from '../Data/Game.ts';
 export const config = {
     name: "unequip_moderator",
     description: "Unequips an item for a player.",
-    details: "Unequips an item the given player currently has equipped. The unequipped item will be placed in one of the player's free hands. "
-        + "You can specify which equipment slot you want the item to be unequipped from. Any item can be unequipped, whether it's equippable "
-        + "or not. People in the room will see the player unequip an item, regardless of its size.",
+    details: `Unequips an item from one of the given player's equipment slots. The item will be placed in their hand, `
+        + `so they must have a free hand. When an item is unequipped, it will be narrated in the room, regardless of `
+        + `whether it is discreet or not. If the item's prefab has any unequipped commands, they will be executed when `
+        + `it is unequipped.\n\n`
+        + `You can unequip any item with this command, even if its prefab is not equippable. You can also specify which `
+        + `equipment slot to unequip the item from. To do so, enter "from" after the prefab ID or container identifier `
+        + `of the item, followed by the ID of the equipment slot.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["unequip", "remove", "u"],
     requiresGame: true
@@ -22,10 +27,9 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}unequip lavris's mask\n`
-        + `${settings.commandPrefix}unequip keiko lab coat\n`
-        + `${settings.commandPrefix}unequip cara's sweater from shirt\n`
-        + `${settings.commandPrefix}unequip aria large purse from glasses`;
+    return `${settings.commandPrefix}unequip Kyra's PLAGUE DOCTOR MASK\n`
+        + `${settings.commandPrefix}remove Lain WHITE PARKA\n`
+        + `${settings.commandPrefix}u Dexter KNIT WOOL SWEATER from SHIRT`;
 }
 
 /**

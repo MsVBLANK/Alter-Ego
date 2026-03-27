@@ -6,27 +6,27 @@
 export const config = {
     name: "stats_moderator",
     description: "Lists a given player's stats.",
-    details: "Lists the given player's default and current stats, as well as the roll modifiers they have based on each current stat. "
-        + "The maximum weight the player can carry will be listed, as well as how much weight they are currently carrying. "
-        + "Additionally, the player's current maximum stamina will be listed, as this can differ if the player is inflicted with any "
-        + "status effects that modify the stamina stat.",
+    details: `Lists the given player's default and current stats, as well as the roll modifiers they have based on each `
+        + `of their current stats, in square brackets. The maximum weight the player can currently carry will be listed, `
+        + `as well as how much weight they are currently carrying. Additionally, the player's current stamina will be `
+        + `listed as a numerator over their current maximum stamina. This shows how much stamina they have remaining.`,
     usableBy: "Moderator",
     aliases: ["stats"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}stats ayaka`;
+    return `${settings.commandPrefix}stats Lucia`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

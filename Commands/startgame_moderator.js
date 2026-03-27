@@ -9,11 +9,19 @@ import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
 export const config = {
     name: "startgame_moderator",
     description: "Starts a game.",
-    details: 'Starts a new game. You must specify a timer using either hours (h) or minutes (m). '
-        + 'During this time, any players with the Student role will be able to join using the PLAY command, '
-        + 'at which point they will be given the Player role. When the timer reaches 0, '
-        + 'all of the players will be uploaded to the Players spreadsheet. '
-        + 'After making any needed modifications, use ".load all start" to begin the game.',
+    details: `Starts a new game with a timed delay. You must specify an amount of time as a number followed by a unit, `
+        + `either hours (\`h\`) or minutes (\`m\`). During this time, server members with the Eligible role will be `
+        + `able to voluntarily add themselves to the game as players using the \`play\` command in the general channel. `
+        + `If debug mode is on, they must have the Tester role, and send the command in the testing channel. `
+        + `When this occurs, they will be given the Player role, and they will be added to the game's data as players `
+        + `with default player data as defined in your \`playerdefaults.json\` configuration.\n\n`
+        + `When the timer you set reaches 0, all of the player data will be saved to the Players sheet. After that, you `
+        + `can edit their data to accurately reflect their characters. If you edit their data before the timer expires, `
+        + `it will be overwritten. When you are ready to begin the game, use the \`load\` command `
+        + `with the \`all start\` arguments.\n\n`
+        + `**Only use this command if you are not planning to add players to the sheet yourself.** Any data already on `
+        + `the Players and Inventory Items sheets will be overwritten by this command. If you just want an easier way `
+        + `to populate those sheets without having to fill them out manually, use the \`addplayer\` command.`,
     usableBy: "Moderator",
     aliases: ["startgame", "start"],
     requiresGame: false
@@ -25,6 +33,8 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}startgame 24h\n`
+        + `${settings.commandPrefix}start 1h\n`
+        + `${settings.commandPrefix}startgame 30m\n`
         + `${settings.commandPrefix}start 0.25m`;
 }
 

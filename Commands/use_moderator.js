@@ -8,11 +8,18 @@
 export const config = {
     name: "use_moderator",
     description: "Uses an item in the given player's inventory.",
-    details: "Uses an item in one of the given player's hands. You can specify a second player for the first player to use their item on. "
-        + "If you do, players in the room will be notified, so you should generally give a string for the bot to use, "
-        + 'otherwise the bot will say "[player] uses [item single containing phrase] on [target]." which may not sound right. '
-        + "Both players must be in the same room. If no second player is given, the first player will use the item on themself. "
-        + "Note that you cannot solve puzzles using this command. To do that, use the puzzle command.",
+    details: `Uses an item in one of the given player's hands. You can specify a second player for the first player to `
+        + `use the item on. Both players must be in the same room. If no second player is given, `
+        + `the first player will use the item on themself.\n\n`
+        + `When an item is used, it will inflict or cure the targeted player of any status effects listed under the `
+        + `"Gives Status Effect(s)" and "Cures Status Effect(s)" columns for its prefab. If it has a limited number of `
+        + `uses, its uses will be decremented by 1. If it reaches 0, the item will transform into its next stage `
+        + `prefab, or be destroyed if it doesn't have one.\n\n`
+        + `When a player uses an item, a narration will be sent in the room. It is possible to supply a custom `
+        + `narration for the item being used. Simply add a string of text surrounded by quotation marks at the `
+        + `end of the command.\n\n`
+        + `Note that you cannot solve puzzles using this command. To do that, use the \`puzzle\` command.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["use"],
     requiresGame: true
@@ -23,10 +30,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}use princeton first aid kit\n`
-        + `${settings.commandPrefix}use celia's food\n`
-        + `${settings.commandPrefix}use pollux first aid spray ximena "Pollux uncaps and applies a can of FIRST AID SPRAY to Ximena's wounds."\n`
-        + `${settings.commandPrefix}use ayaka's black lipstick on wynne "Ayaka applies a tube of BLACK LIPSTICK to Wynne's lips."`;
+    return `${settings.commandPrefix}use Princeton FIRST AID KIT\n`
+        + `${settings.commandPrefix}use Michio TOOTHBRUSH WITH TOOTHPASTE\n`
+        + `${settings.commandPrefix}use Unit_039 ADHESIVE BANDAGE Huiyu "It applies an ADHESIVE BANDAGE over the wound, to prevent it from becoming infected again."\n`
+        + `${settings.commandPrefix}use Kanda's SYRINGE OF ESTRADIOL on Florian "Count Kanda quickly pushes the needle the rest of the way, injecting all of the fluid into Florian's body."`;
 }
 
 /**

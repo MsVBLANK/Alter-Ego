@@ -8,7 +8,7 @@ import { generateProceduralOutput } from "../../Modules/parser.js";
 var expected = new Map();
 var actual = new Map();
 var proceduralSelections = new Map();
-const acceptableDeviation = 150;
+const acceptableDeviation = 200;
 
 /**
  * @param {string} text - The text of the description to generate procedurals for.

@@ -8,12 +8,20 @@ import MoveAction from "../Data/Actions/MoveAction.ts";
 /** @type {CommandConfig} */
 export const config = {
     name: "move_bot",
-    description: "Moves the given player(s) to the specified room.",
-    details: 'Forcibly moves the specified player to the specified room. If you use "all" in place of the player, '
-        + 'it will move all living players to the specified room (skipping over players who are already in that room as well as players with the Headmaster role). '
-        + 'If you use "player" in place of the player, then the player who triggered the command will be moved. If you use "room" instead, all players in the room will be moved. '
-        + 'All of the same things that happen when a player moves to a room of their own volition apply, however you can move players to non-adjacent rooms this way. '
-        + 'The bot will not announce which exit the player leaves through or which entrance they enter from when a player is moved to a non-adjacent room.',
+    description: "Moves the given player to the specified room.",
+    details: `Forcibly moves the given players to the specified room. When a player is moved, they will be `
+        + `removed from the room channel they were already in and added to the destination room channel. `
+        + `They will move to the given destination immediately, without consuming any stamina, and with no regard for `
+        + `whether the room is adjacent to their current room or the exit leading to it is locked.\n\n`
+        + `You can select multiple players by separating their names with a space. If instead of providing the names of `
+        + `players, you enter "all", all living players will be moved to the specified room, except for players `
+        + `who are already in that room, NPCs, and players with the Free Movement role. However, if you instead `
+        + `use "player", the player who caused this command to be executed will be moved to the given destination. `
+        + `If "room" is used instead, then all players in the room with the initiating player will be moved, including `
+        + `NPCs and players with the Free Movement role. However, if the command was issued by an event and the "room" `
+        + `argument is used, all players in all rooms that have the event's room tag will be moved.\n\n`
+        + `When this command is used to move a player to a room that is not adjacent to their current room, `
+        + `the narration in the destination room will not specify which exit they entered from.`,
     usableBy: "Bot",
     aliases: ["move", "go", "enter", "walk", "m"],
     requiresGame: true
@@ -24,11 +32,11 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `move susie main-office\n`
-        + `move player general-managers-office\n`
-        + `move player cafeteria\n`
-        + `move room trial-grounds\n`
-        + `move all elevator`;
+    return `move Flint Chancellor's Office\n`
+        + `enter player general-managers-office\n`
+        + `go player Dining Hall\n`
+        + `move room ultimate-conference-hall\n`
+        + `m all Elevator`;
 }
 
 /**

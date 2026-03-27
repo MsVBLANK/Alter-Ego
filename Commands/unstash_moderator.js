@@ -9,10 +9,14 @@ import InventoryItem from '../Data/InventoryItem.ts';
 export const config = {
     name: "unstash_moderator",
     description: "Moves an inventory item into a player's hand.",
-    details: "Moves a player's inventory item from another item in their inventory into their hand. You can specify which item to remove it from, if they have "
-        + "multiple items with the same name. If the inventory item you choose to move it from has multiple slots for items (such as multiple pockets), "
-        + "you can specify which slot you want to take it from as well. If you attempt to unstash a very large item (a sword, for example), "
-        + "people in the room with the player will see them doing so.",
+    details: `Moves an inventory item from a container item in the given player's inventory into their hand. They must `
+        + `have a free hand to unstash an item. The item's prefab ID or container identifier must be used. If the `
+        + `player unstashes a non-discreet item, this will be narrated in the room.\n\n`
+        + `It is possible to specify a container to unstash an item from. To do so, enter "from" after the item's `
+        + `identifier, followed by the container item's prefab ID or container identifier. If the container item has `
+        + `multiple inventory slots, you can also specify which slot to unstash the item from. To do so, enter the `
+        + `ID of the inventory slot followed by "of" before the container's identifier.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["unstash", "retrieve", "r"],
     requiresGame: true
@@ -23,10 +27,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}unstash vivian's laptop\n`
-        + `${settings.commandPrefix}retrieve nero sword from sheath\n`
-        + `${settings.commandPrefix}unstash antimony's old key from right pocket of pants\n`
-        + `${settings.commandPrefix}retrieve cassie water bottle from side pouch of backpack`;
+    return `${settings.commandPrefix}unstash Vivian's VIVIANS LAPTOP\n`
+        + `${settings.commandPrefix}retrieve Nero KATANA from KATANA SHEATH\n`
+        + `${settings.commandPrefix}r Kyra's MASTER KEY from RIGHT POCKET of KYRAS LAB COAT 5\n`
+        + `${settings.commandPrefix}r Haru WATER BOTTLE from SIDE POUCH of GREEN BACKPACK 1`;
 }
 
 /**

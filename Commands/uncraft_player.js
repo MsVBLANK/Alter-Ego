@@ -28,7 +28,8 @@ export const config = {
 export function usage(settings) {
     return `${settings.commandPrefix}uncraft SHOVEL\n`
         + `${settings.commandPrefix}dismantle CROSSBOW\n`
-        + `${settings.commandPrefix}disassemble PISTOL`;
+        + `${settings.commandPrefix}disassemble PISTOL\n`
+        + `${settings.commandPrefix}uc RING STAND`;
 }
 
 /**

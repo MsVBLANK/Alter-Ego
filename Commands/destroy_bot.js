@@ -15,15 +15,22 @@ import { itemIdentifierMatches } from "../Modules/matchers.ts";
 export const config = {
     name: "destroy_bot",
     description: "Destroys an item.",
-    details: "Destroys an item in the specified location or in the player's inventory. The prefab ID or container identifier of the item must be given. "
-        + "In order to destroy an item, the name of the room must be given, following \"at\". The name of the container it belongs to can also be specified. "
-        + "If the container is another item, the identifier of the item or its prefab ID must be used. "
-        + "The name of the inventory slot to destroy the item from can also be specified.\n\n"
-        + "To destroy an inventory item, \"player\", \"room\", \"all\", or the name of a player followed by \"'s\", must be given. A container item can also be specified, "
-        + "as well as which slot to delete the item from. The player will not be notified if a container item is specified. "
-        + "An equipment slot can also be specified instead of a container item. This will destroy whatever item is equipped to it. "
-        + "The player will be notified in this case, and the item's unequipped commands will be run.\n\n"
-        + "Note that using the \"all\" argument with a container will destroy all items in that container.",
+    details: `Destroys an item in the specified location or in the player's inventory. `
+        + `The prefab ID or container identifier of the item must be given.\n\n`
+        + `To destroy a room item, the display name or ID of the room it's in must be given at the end of the command, following "at". `
+        + `To destroy an inventory item, the name of the player must be given followed by \`'s\` before the item's identifier.\n\n`
+        + `If, when destroying an inventory item, "player" is supplied instead of a player's name, then the given item will be `
+        + `destroyed from the inventory of the player who caused this command to be executed. If "room" is supplied instead, then `
+        + `the command will be executed on all players in the room as the initiating player. If "all" is supplied instead, then `
+        + `the command will be executed on all living players, including NPCs and players with the Free Movement role.\n\n`
+        + `It is possible to specify the container from which to destroy the item. To do so, add the container's preposition or "in" `
+        + `after the item's identifier, followed by the container's name. If the container is another item, its identifier or prefab `
+        + `ID must be used. The ID of the inventory slot to destroy the item from can also be specified, followed by "of". `
+        + `If you enter "all" in place of an item's identifier and specify a container, all items in that container will be destroyed.\n\n`
+        + `It is also possible to destroy an inventory item by specifying only the ID of the equipment slot it's equipped to `
+        + `instead of the item's identifier. This will destroy whatever is equipped to that equipment slot.\n\n`
+        + `Note that if you destroy an inventory item, the player will be notified if it is an item they have equipped, and its `
+        + `unequipped commands will be executed. The player will not be notified if it is an item they have stashed.`,
     usableBy: "Bot",
     aliases: ["destroy", "ds"],
     requiresGame: true
@@ -34,18 +41,19 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `destroy volleyball at beach\n`
-        + `destroy gasoline on shelves at warehouse\n`
-        + `destroy note in locker 1 at mens locker room\n`
-        + `destroy wrench in tool box at beach house\n`
-        + `destroy gloves in breast pocket of tuxedo at dressing room\n`
-        + `destroy all in trash can at lounge\n`
-        + `destroy player keyboard\n`
-        + `destroy all face\n`
-        + `destroy vivians laptop in vivian's vivians satchel\n`
-        + `destroy shotput ball in cassie's main pocket of large backpack\n`
-        + `destroy all in hitoshi's trousers\n`
-        + `destroy all in charlotte's right pocket of dress`;
+    return `destroy VOLLEYBALL at beach\n`
+        + `ds CAN OF GASOLINE on SHELVES at Warehouse\n`
+        + `destroy NOTE in LOCKER 1 at Men's Locker Room\n`
+        + `ds WRENCH in TOOL BOX 1 at beach-house\n`
+        + `destroy WHITE GLOVES in BREAST POCKET of TUXEDO at dressing room\n`
+        + `ds all in TRASH CAN at lounge\n`
+        + `destroy player BLUE BIRD MUSIC BOX\n`
+        + `ds all FACE\n`
+        + `destroy room NUMBERED BRACELET`
+        + `ds Vivian's VIVIANS LAPTOP in VIVIANS SATCHEL\n`
+        + `destroy SHOTPUT BALL in Cassie's MAIN POCKET of LARGE BACKPACK 1\n`
+        + `ds all in Hitoshi's HITOSHIS TROUSERS\n`
+        + `destroy all in Evad's FRONT POCKET of DENIM OVERALLS 6`;
 }
 
 /**

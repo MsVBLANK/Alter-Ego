@@ -9,16 +9,16 @@ import { ChannelType } from 'discord.js';
 export const config = {
     name: "setupdemo_moderator",
     description: "Sets up a demo game.",
-    details: "Populates an empty spreadsheet with default game data as defined in the demodata config file. "
-        + "This will create a game environment to demonstrate most of the basics of Neo World Program gameplay. "
-        + "By default, it will generate 2 rooms, 8 objects, 14 prefabs, 3 recipes, 3 items, 1 puzzle, 1 event, "
-        + "13 status effects, and 6 gestures. If the channels for the demo game's rooms don't exist, they will be "
-        + "created automatically. It will not create any players for you. Once this command is used you can use "
-        + `the startgame command to add players, or manually add them on the spreadsheet. `
-        + "It is recommended that you have at least one other Discord account to use as a player. "
-        + `Once the spreadsheet has been fully populated, you can use load all start `
-        + "to begin the demo. **If there is already data on the spreadsheet, it will be overwritten. Only use "
-        + "this command if the spreadsheet is currently blank.**",
+    details: `Populates an empty spreadsheet with default game data as defined in the \`demodata.json\` config file. `
+        + `This will create a game environment to demonstrate most of the basic game mechanics.\n\n`
+        + `If the channels for the demo game's rooms don't exist, they will be created automatically. `
+        + `This command will not create any players for you. Once the demo data has been saved to the spreadsheet, you `
+        + `can use the \`startgame\` or \`addplayer\` commands to add players, or manually add them to the spreadsheet. `
+        + `It is recommended that you have at least one other Discord account to use as a player. `
+        + `Once the spreadsheet has been fully populated, you can use the \`load\` command with the arguments `
+        + `\`all start\` to begin the demo.\n\n`
+        + `**If there is already data on the spreadsheet, it will be overwritten. `
+        + `Only use this command if the spreadsheet is currently blank.**`,
     usableBy: "Moderator",
     aliases: ["setupdemo"],
     requiresGame: false

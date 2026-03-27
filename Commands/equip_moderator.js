@@ -8,9 +8,14 @@ import EquipAction from '../Data/Actions/EquipAction.ts';
 export const config = {
     name: "equip_moderator",
     description: "Equips an item for a player.",
-    details: "Equips an item currently in the given player's hand. You can specify which equipment slot you want the item to be equipped to, if you want. "
-        + "Any item (whether equippable or not) can be equipped to any slot using this command. People in the room will see the player equip an item, "
-        + "regardless of its size.",
+    details: `Equips an item to one of the given player's equipment slots. The item to equip must be in one of the `
+        + `player's hands. When an item is equipped, it will be narrated in the room, regardless of whether it is `
+        + `discreet or not. If the item's prefab has any equipped commands, they will be executed when it is equipped.\n\n`
+        + `Any item can be equipped to any equipment slot with this command, regardless of whether its prefab is `
+        + `equippable or what equipment slots it is restricted to. To specify which equipment slot to equip the item to, `
+        + `enter "to" after the prefab ID or container identifier of the item, followed by the ID of the equipment slot. `
+        + `If no equipment slot is specified, the player will equip it to the first equipment slot its prefab is restricted to.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["equip", "wear", "e"],
     requiresGame: true
@@ -21,10 +26,9 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}equip lavris's mask\n`
-        + `${settings.commandPrefix}equip keiko lab coat\n`
-        + `${settings.commandPrefix}equip cara's sweater to shirt\n`
-        + `${settings.commandPrefix}equip aria large purse to glasses`;
+    return `${settings.commandPrefix}equip Kyra's PLAGUE DOCTOR MASK\n`
+        + `${settings.commandPrefix}wear Lain WHITE PARKA\n`
+        + `${settings.commandPrefix}e Dexter KNIT WOOL SWEATER to SHIRT`;
 }
 
 /**

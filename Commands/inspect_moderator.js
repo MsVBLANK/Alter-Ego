@@ -9,15 +9,19 @@ import RoomItem from "../Data/RoomItem.ts";
 export const config = {
     name: "inspect_moderator",
     description: "Inspects something for a player.",
-    details: "Inspect something for the given player. The target must be the \"room\" argument, an object, an item, "
-        + "a player, or an inventory item, and it must be in the same room as the given player. The description will "
-        + "be parsed and sent to the player in DMs. If the target is an object, or a non-discreet item or inventory "
-        + "item, a narration will be sent about the player inspecting it to the room channel. Items and inventory "
-        + "items should use the prefab ID or container identifier. If there are multiple items in the room "
-        + "with the same ID, you can specify which one to inspect using its container's name (if the container is an "
-        + "object or puzzle), or its prefab ID or container identifier (if it's an item). The player can be forced "
-        + "to inspect items and inventory items belonging to a specific player (including themself) using the "
-        + "player's name followed by \"'s\". If inspecting a different player's inventory items, a narration will not be sent.",
+    details: `Inspect something for the given player. The target must be the \"room\" argument, a fixture, a room item, `
+        + `a player, or an inventory item, and it must be in the same room as the given player. The description will `
+        + `be parsed and sent to the player. If the target is a fixture, or a non-discreet room item or inventory `
+        + `item belonging to the player, a narration will be sent in the room.\n\n`
+        + `When inspecting a room item or inventory item, the prefab ID or container identifier must be used. `
+        + `If the target is a room item, you can specify which one to inspect by appending its container's preposition `
+        + `or "in" after the item's identifier, followed by the container's name (if the container is a fixture or `
+        + `puzzle) or prefab ID or container identifier (if the container is a room item).\n\n`
+        + `If the target is an inventory item, you can specify the player that the inventory item belongs to by preceding `
+        + `the item's identifier with the player's name followed by \`'s\`. The player can even inspect their own `
+        + `inventory items this way. However, a player cannot inspect another player's non-discreet or stashed inventory `
+        + `items. Note that if a player inspects a different player's inventory items, a narration will not be sent.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["inspect", "investigate", "examine", "look", "x"],
     requiresGame: true
@@ -28,16 +32,16 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}inspect akio desk\n`
-        + `${settings.commandPrefix}examine florian knife\n`
-        + `${settings.commandPrefix}look florian knife on desk\n`
-        + `${settings.commandPrefix}x florian knife in main pouch of red backpack 1\n`
-        + `${settings.commandPrefix}investigate blake blake's knife\n`
-        + `${settings.commandPrefix}look jun amadeus\n`
-        + `${settings.commandPrefix}examine nestor jae-seong\n`
-        + `${settings.commandPrefix}look roma lain's glasses\n`
-        + `${settings.commandPrefix}x haruka binita's shirt\n`
-        + `${settings.commandPrefix}inspect ambrosia room`;
+    return `${settings.commandPrefix}inspect Michio DESK\n`
+        + `${settings.commandPrefix}examine Fable LARGE KNIFE\n`
+        + `${settings.commandPrefix}look Ava JUG OF ORANGE JUICE in REFRIGERATOR\n`
+        + `${settings.commandPrefix}x Florian WOOLEN MITTENS in MAIN POUCH of RED BACKPACK 1\n`
+        + `${settings.commandPrefix}investigate Ai AIS PISTOL\n`
+        + `${settings.commandPrefix}look Jun Amadeus\n`
+        + `${settings.commandPrefix}examine Kanda Huiyu\n`
+        + `${settings.commandPrefix}look Jackie Kyra's KYRAS GLASSES\n`
+        + `${settings.commandPrefix}x Unit_026 Jackie's JACKIES NECKLACE\n`
+        + `${settings.commandPrefix}inspect Aisha room`;
 }
 
 /**
@@ -186,8 +190,7 @@ export async function execute(game, message, command, args, moderator) {
     const inventory = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
     for (let i = 0; i < inventory.length; i++) {
         parsedInput = parsedInput.replace(`${player.name.toUpperCase()}S `, "");
-        if ((inventory[i].identifier !== "" && inventory[i].identifier === parsedInput || inventory[i].prefab.id === parsedInput || inventory[i].prefab.name === parsedInput)
-            && inventory[i].quantity > 0) {
+        if ((inventory[i].identifier !== "" && inventory[i].identifier === parsedInput || inventory[i].prefab.id === parsedInput || inventory[i].name === parsedInput) && inventory[i].quantity > 0) {
             await action.performInspect(inventory[i]);
             action.sendSuccessMessageToCommandChannel();
             return;
@@ -212,7 +215,7 @@ export async function execute(game, message, command, args, moderator) {
             // Only equipped items should be an option.
             const inventory = game.inventoryItems.filter(item => item.player.name === occupant.name && item.prefab !== null && item.containerName === "" && item.container === null);
             for (let j = 0; j < inventory.length; j++) {
-                if ((inventory[j].identifier !== "" && inventory[j].identifier === parsedInput || inventory[j].prefab.id === parsedInput || inventory[j].prefab.name === parsedInput)
+                if ((inventory[j].identifier !== "" && inventory[j].identifier === parsedInput || inventory[j].prefab.id === parsedInput || inventory[j].name === parsedInput)
                     && (inventory[j].equipmentSlot !== "LEFT HAND" && inventory[j].equipmentSlot !== "RIGHT HAND" || !inventory[j].prefab.discreet)) {
                     // Make sure the item isn't covered by anything first.
                     const coveringItems = inventory.filter(item =>

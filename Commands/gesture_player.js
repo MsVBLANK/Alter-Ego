@@ -28,9 +28,9 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}gesture smile\n`
-        + `${settings.commandPrefix}gesture point at DOOR 1\n`
+        + `${settings.commandPrefix}g point at DOOR 1\n`
         + `${settings.commandPrefix}gesture wave Johnny\n`
-        + `${settings.commandPrefix}gesture sit CHAIR\n`
+        + `${settings.commandPrefix}g sit CHAIR\n`
         + `${settings.commandPrefix}gesture list`;
 }
 

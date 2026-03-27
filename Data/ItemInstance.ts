@@ -5,6 +5,7 @@ import ItemContainer from "./ItemContainer.ts";
 import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type RecipeItem from "./RecipeItem.ts";
+import type Room from "./Room.ts";
 
 /**
  * Represents an instance of a prefab that actually exists in the game.
@@ -23,19 +24,19 @@ export default abstract class ItemInstance extends ItemContainer {
 	 */
 	identifier: string;
 	/**
-	 * The name of the prefab.
+	 * The name of the item.
 	 */
 	name: string;
 	/**
-	 * The pluralName of the prefab.
+	 * The pluralName of the item.
 	 */
 	pluralName: string;
 	/**
-	 * The singleContainingPhrase of the prefab.
+	 * The phrase that will be inserted in/removed from item tags when this item is added to/removed from an item list.
 	 */
 	singleContainingPhrase: string;
 	/**
-	 * The pluralContainingPhrase of the prefab.
+	 * The phrase that will be used in an item list when it contains multiple instances this item.
 	 */
 	pluralContainingPhrase: string;
 	/**
@@ -115,10 +116,6 @@ export default abstract class ItemInstance extends ItemContainer {
 	 */
 	setPrefab(prefab: Prefab): void {
 		this.prefab = prefab;
-		this.name = prefab.name ? prefab.name : "";
-		this.pluralName = prefab.pluralName ? prefab.pluralName : "";
-		this.singleContainingPhrase = prefab.singleContainingPhrase ? prefab.singleContainingPhrase : "";
-		this.pluralContainingPhrase = prefab.pluralContainingPhrase ? prefab.pluralContainingPhrase : "";
 		this.weight = prefab ? prefab.weight : 0;
 	}
 
@@ -133,6 +130,49 @@ export default abstract class ItemInstance extends ItemContainer {
                 this.proceduralSelections.set(procedural[0], procedural[1].values().next().value);
         }
     }
+
+    /**
+     * Returns true if the item has the given procedural selection.
+     * @param proceduralOption - A procedural name and possibility name.
+     */
+    private hasProceduralSelection(proceduralOption: [string, string]): boolean {
+        if (!this.proceduralSelections.has(proceduralOption[0])) return false;
+        return this.proceduralSelections.get(proceduralOption[0]) === proceduralOption[1];
+    }
+
+    /**
+     * Sets the item's name, plural name, single containing phrase, and plural containing phrase, based off its procedural selections.
+     */
+    setNames(): void {
+        // Initialize the names as empty strings in case there's already something there.
+        this.name = "";
+        this.pluralName = "";
+        this.singleContainingPhrase = "";
+        this.pluralContainingPhrase = "";
+        
+        for (const [[...proceduralOption], names] of this.prefab.possibleNames.entries()) {
+            if (this.hasProceduralSelection(proceduralOption[0])) {
+                this.name = names[0];
+                this.pluralName = names[1];
+                break;
+            }
+        }
+        for (const [[...proceduralOption], containingPhrases] of this.prefab.possibleContainingPhrases.entries()) {
+            if (this.hasProceduralSelection(proceduralOption[0])) {
+                this.singleContainingPhrase = containingPhrases[0];
+                this.pluralContainingPhrase = containingPhrases[1];
+                break;
+            }
+        }
+        // Fall back and set the prefab's first one, if any are empty.
+        if (!this.name) this.name = !this.name && this.prefab.name ? this.prefab.name : "";
+        if (!this.pluralName) this.pluralName = !this.pluralName && this.prefab.pluralName ? this.prefab.pluralName : "";
+        if (!this.singleContainingPhrase) this.singleContainingPhrase = !this.singleContainingPhrase && this.prefab.singleContainingPhrase ? this.prefab.singleContainingPhrase : "";
+        if (!this.pluralContainingPhrase) this.pluralContainingPhrase = !this.pluralContainingPhrase && this.prefab.pluralContainingPhrase ? this.prefab.pluralContainingPhrase : "";
+    }
+
+    /** Gets the entity's location. */
+    abstract getLocation(): Room;
 
 	/**
 	 * Decreases the number of uses this item has left. If it runs out of uses, instantiates its nextStage in its place, if it has one.
@@ -183,7 +223,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	}
 
 	/**
-	 * Gets the item's single containing phrase.
+	 * Gets the item's single containing phrase. This is for use in narrations, notifications, and descriptions.
 	 */
 	getContainingPhrase(): string {
 		return this.singleContainingPhrase;

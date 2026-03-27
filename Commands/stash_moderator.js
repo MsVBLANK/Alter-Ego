@@ -8,11 +8,15 @@ import StashAction from '../Data/Actions/StashAction.ts';
 export const config = {
     name: "stash_moderator",
     description: "Stores a player's inventory item inside another inventory item.",
-    details: "Moves an item from the given player's hand to another item in their inventory. You can specify any item in their inventory "
-        + "that has the capacity to hold items. If the inventory item you choose has multiple slots for items (such as multiple pockets), "
-        + "you can specify which slot you want to store the item in. Note that each slot has a maximum capacity that it can hold, so if it's "
-        + "too full or too small to contain the item you're trying to stash, you won't be able to stash it there. If you attempt to stash a "
-        + "very large item (a sword, for example), people in the room with the player will see them doing so.",
+    details: `Moves an item from the given player's hand into an inventory slot of one of their container items. `
+        + `The held item and container item's prefab ID or container identifier must be used. If the player stashes a `
+        + `non-discreet item, this will be narrated in the room.\n\n`
+        + `The container item's identifier must be preceded by its preposition or "in". If the container item has `
+        + `multiple inventory slots, you can also specify which slot to stash the item in. To do so, enter the ID of `
+        + `the inventory slot followed by "of" before the container's identifier. If an inventory slot is not specified, `
+        + `the player will stash the item in the container's first inventory slot. Note that it is not possible to `
+        + `stash an item in an inventory slot if doing so would make it exceed its capacity.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["stash", "store", "s"],
     requiresGame: true
@@ -23,10 +27,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}stash vivian laptop in satchel\n`
-        + `${settings.commandPrefix}store nero's sword in sheath\n`
-        + `${settings.commandPrefix}stash antimony's old key in right pocket of pants\n`
-        + `${settings.commandPrefix}store cassie water bottle in side pouch of backpack`;
+    return `${settings.commandPrefix}stash Vivian VIVIANS LAPTOP in VIVIANS SATCHEL\n`
+        + `${settings.commandPrefix}store Nero's KATANA in KATANA SHEATH\n`
+        + `${settings.commandPrefix}s Kyra's MASTER KEY in RIGHT POCKET of KYRAS LAB COAT 5\n`
+        + `${settings.commandPrefix}s Haru WATER BOTTLE in SIDE POUCH of GREEN BACKPACK 1`;
 }
 
 /**

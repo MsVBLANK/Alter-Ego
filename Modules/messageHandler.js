@@ -58,7 +58,7 @@ export function processIncomingMessage(game, message) {
             const npc = moderator.getLatch();
             const dialog = new Dialog(game, message, npc, npc.location, message.content, false, whisper, message.cleanContent);
             const channel = whisper ? whisper.channel : npc.location.channel;
-            game.communicationHandler.sendDialogAsWebhook(channel, dialog, dialog.getDisplayNameForWebhook(false), dialog.getDisplayIconForWebhook(false)).then(dialogMessage => {
+            game.communicationHandler.sendDialogAsWebhook(channel, dialog, dialog.getDisplayNameForWebhook(!!whisper), dialog.getDisplayIconForWebhook(!!whisper)).then(dialogMessage => {
                 dialog.setMessage(dialogMessage);
                 const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
                 sayAction.performSay(dialog);

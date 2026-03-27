@@ -11,14 +11,17 @@ import WhisperAction from '../Data/Actions/WhisperAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "whisper_moderator",
-    description: "Initiates a whisper with the given players.",
-    details: "Creates a channel for the given players to speak in. Only the selected players will be able to read messages "
-        + "posted in the new channel, but everyone in the room will be notified that they've begun whispering to each other. "
-        + "You can select as many players as you want as long as they're all in the same room. When a player in the whisper "
-        + "leaves the room, they will be removed from the channel. If everyone leaves the room, the whisper channel will be "
-        + "deleted or archived. If one of the players listed has the talent \"NPC\", the remaining string "
-        + "after the list of players will be sent in the whisper channel. Once the channel is created, "
-        + "NPC players can only speak in the whisper using this command and the list of players in the whisper.",
+    description: "Initiates a whisper between the given players.",
+    details: `Creates a channel for the given players to whisper in. Only the selected players will be able to read `
+        + `messages posted in the new channel, but a narration will be sent in the room indicating that they've begun `
+        + `whispering to each other. You can select as many players as you want as long as they're all in the same room.\n\n`
+        + `When a player in the whisper leaves the room, they will be removed from the channel. If everyone leaves the `
+        + `room, the whisper channel will be deleted or archived, depending on the \`AUTO_DELETE_WHISPER_CHANNELS\` `
+        + `setting in your \`.env\` file.\n\n`
+        + `If one of the players listed is an NPC, any text that remains after the list of players will be sent to the `
+        + `new whisper channel as dialog from that NPC. After the channel has been created, sending the command again `
+        + `with a different string of text at the end will make the NPC whisper that text as dialog in the channel.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["whisper", "w"],
     requiresGame: true
@@ -29,10 +32,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}whisper nestor jun\n`
-        + `${settings.commandPrefix}whisper sadie elijah flint\n`
-        + `${settings.commandPrefix}whisper amy hibiki Clean it up.\n`
-        + `${settings.commandPrefix}whisper amy hibiki The mess you made. Clean it up now.`;
+    return `${settings.commandPrefix}whisper Nestor Jun\n`
+        + `${settings.commandPrefix}w Sadie Elijah Flint\n`
+        + `${settings.commandPrefix}whisper Amy Asuka Clean it up.\n`
+        + `${settings.commandPrefix}w Amy Asuka The mess you made. Clean it up now.`;
 }
 
 /**
@@ -124,7 +127,7 @@ export async function execute(game, message, command, args, moderator) {
  */
 async function sendMessageToWhisper(game, message, messageText, npc, whisper) {
     const dialog = new Dialog(game, message, npc, npc.location, messageText, false, whisper);
-    const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, npc.displayName, npc.displayIcon);
+    const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, dialog.getDisplayNameForWebhook(true), dialog.getDisplayIconForWebhook(true));
     dialog.setMessage(dialogMessage);
     const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
     sayAction.performSay(dialog);

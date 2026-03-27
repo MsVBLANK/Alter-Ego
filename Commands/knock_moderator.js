@@ -8,7 +8,9 @@ import KnockAction from '../Data/Actions/KnockAction.ts';
 export const config = {
     name: "knock_moderator",
     description: "Knocks on a door for a player.",
-    details: "Knocks on a door for the given player",
+    details: `Knocks on an exit for the given player. This will be narrated in the room they're in, and in the room that `
+        + `the exit leads to. If an exit has the \`not knockable\` exit tag, it cannot be knocked on.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["knock"],
     requiresGame: true
@@ -19,7 +21,7 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}knock kanda door 1`;
+    return `${settings.commandPrefix}knock Kanda DORM 2`;
 }
 
 /**

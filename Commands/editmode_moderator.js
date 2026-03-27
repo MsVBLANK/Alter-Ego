@@ -8,29 +8,33 @@ export const config = {
     description: "Toggles edit mode for editing the spreadsheet.",
     details: "Toggles edit mode on or off, allowing you to make edits to the spreadsheet. When edit mode is turned on, "
         + "Alter Ego will no longer save the game to the spreadsheet automatically. Additionally, all player activity, "
-        + "aside from speaking in room channels or in whispers, will be disabled. Players will be notified when edit mode "
-        + "is enabled, so use it sparingly. Data will be saved to the spreadsheet before edit mode is enabled, so be sure "
-        + "to wait until the confirmation message has been sent before making any edits. When you are finished making edits, "
-        + "be sure to load the updated spreadsheet data before disabling edit mode.",
+        + "aside from speaking in room channels or in whispers, will be disabled. Players who don't have the "
+        + "`unconscious` behavior attribute will be notified when edit mode is enabled, so use it sparingly. Data will "
+        + "be saved to the spreadsheet before edit mode is enabled, so you must wait until the confirmation message "
+        + "has been sent before making any edits, or your edits will be overwritten. When you are finished making "
+        + "edits, be sure to load the updated spreadsheet data before disabling edit mode.",
     usableBy: "Moderator",
     aliases: ["editmode", "em"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
     return `${settings.commandPrefix}editmode\n`
+        + `${settings.commandPrefix}em\n`
         + `${settings.commandPrefix}editmode on\n`
-        + `${settings.commandPrefix}editmode off`;
+        + `${settings.commandPrefix}em on\n`
+        + `${settings.commandPrefix}editmode off\n`
+        + `${settings.commandPrefix}em off`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

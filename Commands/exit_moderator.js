@@ -9,11 +9,11 @@ import UnlockAction from '../Data/Actions/UnlockAction.ts';
 export const config = {
     name: "exit_moderator",
     description: "Locks or unlocks an exit.",
-    details: "Locks or unlocks an exit in the specified room. The corresponding entrance in the room the exit leads to "
-        + "will also be locked, so that it goes both ways. When an exit is locked, players will be unable to enter the room "
-        + "that exit leads to, and will be unable to enter through the exit from another room. If the exit can also be locked "
-        + "or unlocked via a puzzle, you should NOT lock/unlock it with this command. Instead, use the puzzle command to "
-        + "solve/unsolve it.",
+    details: `Locks or unlocks an exit in the specified room. The corresponding entrance in the room the exit leads to `
+        + `will also be locked/unlocked. When an exit is locked, players will be unable to move through that exit.\n\n`
+        + `If the exit can also be locked or unlocked using the bot commands of a puzzle, you should not lock/unlock it `
+        + `with this command. Instead, use the \`puzzle\` command to solve/unsolve it, so that the exit remains `
+        + `in sync with the puzzle that controls it.`,
     usableBy: "Moderator",
     aliases: ["exit", "room", "lock", "unlock"],
     requiresGame: false
@@ -24,10 +24,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}exit lock carousel door\n`
-        + `${settings.commandPrefix}exit unlock headmasters quarters door\n`
-        + `${settings.commandPrefix}lock warehouse door 3\n`
-        + `${settings.commandPrefix}unlock trial grounds elevator`;
+    return `${settings.commandPrefix}exit lock Carousel DOOR\n`
+        + `${settings.commandPrefix}exit unlock Chancellor's Quarters DOOR\n`
+        + `${settings.commandPrefix}lock warehouse DOOR 3\n`
+        + `${settings.commandPrefix}unlock floor-b1-hall-3 ELEVATOR`;
 }
 
 /**

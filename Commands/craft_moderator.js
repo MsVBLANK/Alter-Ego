@@ -10,9 +10,10 @@ import { itemIdentifierMatches } from '../Modules/matchers.ts';
 export const config = {
     name: "craft_moderator",
     description: "Crafts two items in a player's inventory together.",
-    details: 'Creates a new item using the two items in the given player\'s hand. The prefab IDs or container identifiers of the '
-        + 'items must be separated by "with" or "and". If no recipe for those two items exists, the items cannot be crafted together. '
-        + "Note that this command can also be used to use one item on another item, which may produce something new.",
+    details: `Creates a new item using the two items in the given player\'s hands. The prefab IDs or container identifiers of the `
+        + `items must be separated by "with" or "and". If no recipe for those two items exists, the items cannot be crafted together. `
+        + `If any of the resulting items is non-discreet, this will be narrated in the room, so other players will see the player craft them.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["craft", "combine", "mix", "c"],
     requiresGame: true
@@ -23,10 +24,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}craft chris drain cleaner and plastic bottle\n`
-        + `${settings.commandPrefix}combine keiko's bread and cheese\n`
-        + `${settings.commandPrefix}mix finn red vial with blue vial\n`
-        + `${settings.commandPrefix}craft dayne's soap with knife`;
+    return `${settings.commandPrefix}craft Kris DRAIN CLEANER and PLASTIC BOTTLE\n`
+        + `${settings.commandPrefix}combine Colette's SLICE OF BREAD and SLICE OF CHEESE\n`
+        + `${settings.commandPrefix}mix Flint RED VIAL with BLUE VIAL\n`
+        + `${settings.commandPrefix}c Sid's BAR OF SOAP with CARVING KNIFE`;
 }
 
 /**

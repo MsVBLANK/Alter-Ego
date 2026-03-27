@@ -10,18 +10,23 @@ import InventoryItem from "../Data/InventoryItem.ts";
 /** @type {CommandConfig} */
 export const config = {
     name: "status_bot",
-    description: "Deals with status effects on players.",
-    details: 'Deals with status effects on players.\n'
-        + '-**add**/**inflict**: Inflicts the specified player with the given status effect. '
-        + 'If the "player" argument is used in place of a name, then the player who triggered '
-        + 'the command will be inflicted. If the "all" argument is used instead, then all living '
-        + 'players will be inflicted. If the "room" argument is used in place of a name, '
-        + 'then all players in the same room as the player who solved it will be inflicted.\n'
-        + '-**remove**/**cure**: Cures the specified player of the given status effect. '
-        + 'If the "player" argument is used in place of a name, then the player who triggered '
-        + 'the command will be cured. If the "all" argument is used instead, then all living '
-        + 'players will be cured. If the "room" argument is used in place of a name, '
-        + 'then all players in the same room as the player who solved it will be cured.',
+    description: "Inflict or cure status effects on a player.",
+    details: `This command has two sub-commands:\n\n`
+        + `- **add**/**inflict**: Inflicts the specified player with the given status effect. `
+        + `The player will receive the "Description When Inflicted" message for the specified status effect. `
+        + `If they already have that status effect and there is a status listed in the "When Duplicated" column, `
+        + `they will be cured of the given status effect and inflicted with that instead. If the inflicted status `
+        + `has a timer, the player will be cured and then inflicted with the status effect in the "Develops Into" `
+        + `column when the timer reaches 0, if there is one. If the status effect is fatal, `
+        + `they will simply die when the timer reaches 0 instead.\n`
+        + `- **remove**/**cure**: Cures the specified player of the given status effect. `
+        + `The player will receive the "Description When Cured" message for the specified status effect. If there `
+        + `is a status listed in the "When Cured" column, they will then be inflicted with that status effect.\n\n`
+        + `If instead of providing the name of a player, you enter "all" or "living", all living players will be `
+        + `inflicted/cured of the given status effect, except for NPCs and players with the Free Movement role. `
+        + `However, if you instead use "player", the player who caused this command to be executed will be `
+        + `inflicted/cured. If "room" is used instead, then all players in the room with the initiating player will be `
+        + `inflicted/cured, including NPCs and players with the Free Movement role.`,
     usableBy: "Bot",
     aliases: ["status", "inflict", "cure"],
     requiresGame: true
@@ -34,12 +39,12 @@ export const config = {
 export function usage(settings) {
     return `status add player heated\n`
         + `status add room safe\n`
-        + `inflict all deaf\n`
-        + `inflict diego heated\n`
+        + `inflict all deafened\n`
+        + `inflict Diego heated\n`
         + `status remove player injured\n`
         + `status remove room restricted\n`
-        + `cure antoine injured\n`
-        + `cure all deaf`;
+        + `cure Flint injured\n`
+        + `cure all deafened`;
 }
 
 /**

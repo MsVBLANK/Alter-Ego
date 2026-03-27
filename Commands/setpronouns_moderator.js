@@ -6,35 +6,42 @@
 export const config = {
     name: "setpronouns_moderator",
     description: "Sets a player's pronouns.",
-    details: "Sets the pronouns that will be used in the given player's description and other places where pronouns are used. This will not change "
-        + "their pronouns on the spreadsheet, and when player data is reloaded, their pronouns will be reverted to their original pronouns. "
-        + "Note that if the player is inflicted with or cured of a status effect with the concealed attribute, their pronouns will be updated, "
-        + "thus overwriting the ones that were set manually. However, this command can be used to overwrite their new pronouns afterwards as well. "
-        + "Temporary custom pronoun sets can be applied with this method. They must adhere to the following format: "
-        + "`subjective/objective/dependent possessive/independent possessive/reflexive/plural`.",
+    details: `Sets the pronouns that will be used in the given player's description and other places where pronouns are `
+        + `used. This will not change their pronouns on the spreadsheet, and when player data is reloaded, their `
+        + `pronouns will be reverted to their original pronouns.\n\n`
+        + `To set a player's pronouns, enter their name, followed by a set of pronouns. Pronoun sets must be given `
+        + `in the form:\n`
+        + `\`subjective/objective/dependent possessive/independent possessive/reflexive/plural\`.\n`
+        + `However, you can use shorthand for the most common pronoun sets:\n`
+        + '- "female" (`she/her/her/hers/herself/false`), \n'
+        + '- "male" (`he/him/his/his/himself/false`), and \n'
+        + '- "neutral" (`they/them/their/theirs/themself/true`).\n\n'
+        + `Note that if the player is inflicted with a status effect with the \`concealed\` behavior attribute, their `
+        + `pronouns will be set to "neutral", thus overwriting any that were set manually. However, this command can `
+        + `be used to update their pronouns again afterwards. When the status is cured, their pronouns will be reset.`,
     usableBy: "Moderator",
     aliases: ["setpronouns"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}setpronouns sadie female\n`
-        + `${settings.commandPrefix}setpronouns roma neutral\n`
-        + `${settings.commandPrefix}setpronouns platt male\n`
-        + `${settings.commandPrefix}setpronouns monokuma it/it/its/its/itself/false\n`
-        + `${settings.commandPrefix}setpronouns sadie she/her/her/hers/herself/false\n`
-        + `${settings.commandPrefix}setpronouns roma they/them/their/theirs/themself/true\n`
-        + `${settings.commandPrefix}setpronouns platt he/him/his/his/himself/false`;
+    return `${settings.commandPrefix}setpronouns Lain female\n`
+        + `${settings.commandPrefix}setpronouns Amadeus neutral\n`
+        + `${settings.commandPrefix}setpronouns Platt male\n`
+        + `${settings.commandPrefix}setpronouns Unit_050 it/it/its/its/itself/false\n`
+        + `${settings.commandPrefix}setpronouns Asuka she/it/her/its/herself/false\n`
+        + `${settings.commandPrefix}setpronouns Hollow ey/em/eir/eirs/emself/true\n`
+        + `${settings.commandPrefix}setpronouns Aeries xey/xem/xeir/xeirs/xemself/true`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

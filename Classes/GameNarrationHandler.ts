@@ -339,7 +339,7 @@ export default class GameNarrationHandler {
 		let playerNotification = "";
 		const narration = this.#game.notificationGenerator.generateHideNotification(player, false, hidingSpotPhrase);
 		const hiddenPlayersList = hidingSpot.generateOccupantsString(!player.canSee());
-		if (hidingSpot.occupants.length + 1 > hidingSpot.capacity)
+		if (hidingSpot.occupants.length + 1 > hidingSpot.capacity && !action.forced)
 			playerNotification = this.#game.notificationGenerator.generateHidingSpotFullNotification(hidingSpotPhrase, hiddenPlayersList);
 		else {
 			if (hidingSpot.occupants.length > 0) playerNotification = this.#game.notificationGenerator.generateHidingSpotOccupiedNotification(hidingSpotPhrase, hiddenPlayersList);
@@ -348,7 +348,7 @@ export default class GameNarrationHandler {
 		this.sendNotification(player, action, playerNotification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration);
 		for (const occupant of hidingSpot.occupants) {
-			const occupantNotification = hidingSpot.occupants.length + 1 > hidingSpot.capacity ? this.#game.notificationGenerator.generateFoundInFullHidingSpotNotification(occupant, player)
+			const occupantNotification = hidingSpot.occupants.length + 1 > hidingSpot.capacity && !action.forced ? this.#game.notificationGenerator.generateFoundInFullHidingSpotNotification(occupant, player)
 			: this.#game.notificationGenerator.generateFoundInOccupiedHidingSpotNotification(occupant, player);
 			this.sendNotification(occupant, action, occupantNotification, messageType);
 		}
@@ -739,15 +739,16 @@ export default class GameNarrationHandler {
 	 * Narrates an uncraft action.
 	 * @param action - The action that initiated this narration.
 	 * @param recipe - The recipe used to uncraft the item.
-	 * @param originalItemPrefab - The prefab of the original item.
+	 * @param originalItemDiscreet - Whether or not the original item was discreet.
+     * @param originalItemSingleContainingPhrase - The single containing phrase of the original item.
 	 * @param item - The item being uncrafted.
 	 * @param uncraftingResult - The result of the uncraft action.
 	 * @param player - The player performing the uncraft action.
 	 */
-	narrateUncraft(action: Action, recipe: Recipe, originalItemPrefab: Prefab, item: InventoryItem, uncraftingResult: UncraftingResult, player: Player) {
+	narrateUncraft(action: Action, recipe: Recipe, originalItemDiscreet: boolean, originalItemSingleContainingPhrase: string, item: InventoryItem, uncraftingResult: UncraftingResult, player: Player) {
 		const messageType = MessageDisplayType.STANDARD;
-		if (!originalItemPrefab.discreet || !recipe.ingredients[0].prefab.discreet || !recipe.ingredients[1].prefab.discreet) {
-			const originalItemPhrase = originalItemPrefab.singleContainingPhrase;
+		if (!originalItemDiscreet || !recipe.ingredients[0].prefab.discreet || !recipe.ingredients[1].prefab.discreet) {
+			const originalItemPhrase = originalItemSingleContainingPhrase;
 			const itemPhrase = item.singleContainingPhrase;
 			const narration = this.#game.notificationGenerator.generateUncraftNotification(player, false, recipe, originalItemPhrase, itemPhrase, uncraftingResult);
 			this.#sendNarration(messageType, action, player, narration);
@@ -774,7 +775,7 @@ export default class GameNarrationHandler {
 			if (recipeInitiatedDescriptionSent) messageType = MessageDisplayType.MINOR;
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateActivateNotification(fixturePhrase);
-		if (notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
+		if (player && notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(MessageDisplayType.STANDARD, action, player, narration, fixture.location);
 	}
 
@@ -796,7 +797,7 @@ export default class GameNarrationHandler {
 			narration = this.#game.notificationGenerator.generateDeactivateNotification(fixturePhrase, player, false);
 		}
 		else if (!customNarration) narration = this.#game.notificationGenerator.generateDeactivateNotification(fixturePhrase);
-		if (notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
+		if (player && notification) this.sendNotification(player, action, notification, messageType, undefined, undefined, interactables);
 		this.#sendNarration(messageType, action, player, narration, fixture.location);
 	}
 

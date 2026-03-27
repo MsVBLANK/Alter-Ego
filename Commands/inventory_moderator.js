@@ -7,7 +7,12 @@
 export const config = {
     name: "inventory_moderator",
     description: "Lists a given player's inventory.",
-    details: "Lists the given player's inventory.",
+    details: `Lists all of the given player's equipment slots, and any items equipped to each one. `
+        + `The player's stashed items will be listed underneath the container they're inside of, in parentheses. They `
+        + `will be preceded by the ID of the inventory slot they're in.\n\n`
+        + `In the player's inventory, the identifiers of all items will be contained in code blocks. This makes it `
+        + `easier to copy them and paste them into other commands.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["inventory", "i"],
     requiresGame: true
@@ -18,7 +23,8 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}inventory nero`;
+    return `${settings.commandPrefix}inventory Nero\n`
+        + `${settings.commandPrefix}i Aisha`;
 }
 
 /**
@@ -35,7 +41,12 @@ export async function execute(game, message, command, args, moderator) {
 
     let player = game.entityFinder.getLivingPlayer(args[0]);
     if (!player && sentMessageInLatchChannel) player = moderator.getLatch();
-    if (player === undefined) return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
+    if (player === undefined) {
+        // The `i` alias makes it so this message will trigger very frequently in the bot commands channel if people start a message with "I".
+        // Guard against that.
+        if (!sentMessageInLatchChannel && command === 'i' && !message.content.startsWith(game.settings.commandPrefix) && args.length !== 1) return;
+        return game.communicationHandler.reply(message, `Player "${args[0]}" not found.`);
+    }
 
     const action = new InventoryAction(game, message, player, player.location, true);
 	action.performInventory();

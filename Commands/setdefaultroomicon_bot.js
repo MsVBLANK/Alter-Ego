@@ -8,8 +8,11 @@ import {writeFile} from 'fs/promises';
 export const config = {
     name: "setdefaultroomicon_bot",
     description: "Sets the default room icon.",
-    details: "Sets the icon that will display by default when the given room's information is displayed, if there exists no specific icon for that room. "
-        + "The icon given must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension. To reset the default icon, simply do not specify a new icon.",
+    details: `Sets the icon that will display by default when the given room's information is sent to a player, if `
+        + `there exists no specific icon for that room. The icon given must be a URL with a .jpg, .jpeg, .png, .gif, `
+        + `.webp, or .avif extension. To reset the default icon, simply do not specify a new icon.\n\n`
+        + `Note that this will not persist across bot reboots. When the bot is rebooted, the default room icon will be `
+        + `reverted to whatever is set for the \`DEFAULT_ROOM_ICON_URL\` setting in your \`.env\` file.`,
     usableBy: "Bot",
     aliases: ["setdefaultroomicon"],
     requiresGame: true

@@ -110,8 +110,8 @@ export default class Whisper extends GameConstruct {
      * @param narration - The text of the narration to send in the whisper channel when the player is removed.
      * @param action - The action that caused the player to be removed.
      */
-    removePlayer(player: Player, narration?: string, action?: Action): void {
-        this.revokeChannelAccess(player);
+    async removePlayer(player: Player, narration?: string, action?: Action): Promise<void> {
+        await this.revokeChannelAccess(player);
         this.players.delete(player.name);
         const newId = Whisper.generateValidId(this.players.map(player => player), this.location, this.hidingSpotName);
         const deleteWhisper = this.players.size === 0 || this.getGame().whispers.get(newId);
@@ -128,8 +128,8 @@ export default class Whisper extends GameConstruct {
     /**
      * Revoke access to the whisper channel for a player.
      */
-    revokeChannelAccess(player: Player): void {
-        if (!player.isNPC) this.channel.permissionOverwrites.delete(player.id);
+    async revokeChannelAccess(player: Player): Promise<void> {
+        if (!player.isNPC) await this.channel.permissionOverwrites.delete(player.id);
     }
 
     /**

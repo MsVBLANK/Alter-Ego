@@ -11,11 +11,11 @@ import { Collection } from 'discord.js';
 export const config = {
     name: "testspeeds_moderator",
     description: "Checks the move times between each exit.",
-    details: 'Tests the amount of time it takes to move between every exit in the game. '
-        + 'Sends the results as a text file to the command channel. '
-        + 'An argument must be provided. If the "players" argument is given, then the move times will be calculated for each player in the game. '
-        + 'Note that the weight of any items the players are carrying will affect their calculated speed. '
-        + 'If the "stats" argument is given, then the move times will be calculated for hypothetical players with speed from 1-10.',
+    details: `Calculates the amount of time it takes to move between every exit in the game. Sends the results as a `
+        + `text file to the command channel. An argument must be provided. If the "players" argument is given, `
+        + `then the move times will be calculated for each player in the game. Note that the weight of any items the `
+        + `players are carrying will affect their calculated speed. If the "stats" argument is given, then the move `
+        + `times will be calculated for hypothetical players with speed from 1-10.`,
     usableBy: "Moderator",
     aliases: ["testspeeds"],
     requiresGame: false

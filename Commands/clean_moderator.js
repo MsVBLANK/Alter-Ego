@@ -5,12 +5,12 @@
 /** @type {CommandConfig} */
 export const config = {
     name: "clean_moderator",
-    description: "Cleans the items and inventory items sheets.",
-    details: "Combs through all items and inventory items and deletes any whose quantity is 0. All game data will then "
-        + "be saved to the spreadsheet, not just items and inventory items. This process will effectively clean the "
-        + "spreadsheet of items and inventory items that no longer exist, reducing the size of both sheets. Note that "
-        + "edit mode must be turned on in order to use this command. The items and inventory items sheets must be loaded "
-        + "after this command finishes executing, otherwise data may be overwritten on the sheet during gameplay.",
+    description: "Cleans the room items and inventory items sheets.",
+    details: "Combs through all room items and inventory items and deletes any whose quantity is 0. All game data will then "
+        + "be saved to the spreadsheet, not just room items and inventory items. This process will effectively clean the "
+        + "spreadsheet of room items and inventory items that no longer exist, reducing the size of both sheets. Note that "
+        + "edit mode must be turned on in order to use this command. The room items and inventory items sheets must be "
+        + "loaded after this command finishes executing, otherwise data may be overwritten on the sheet during gameplay.",
     usableBy: "Moderator",
     aliases: ["clean", "autoclean"],
     requiresGame: true
@@ -34,7 +34,7 @@ export function usage(settings) {
  */
 export async function execute(game, message, command, args, moderator) {
     if (!game.editMode)
-        return game.communicationHandler.reply(message, `You cannot clean the items and inventory items sheet while edit mode is disabled. Please turn edit mode on before using this command.`);
+        return game.communicationHandler.reply(message, `You cannot clean the room items and inventory items sheet while edit mode is disabled. Please turn edit mode on before using this command.`);
 
     let deletedItemsCount = 0;
     let deletedInventoryItemsCount = 0;
@@ -55,10 +55,12 @@ export async function execute(game, message, command, args, moderator) {
     try {
         // Pass deletedItemsCount and deletedInventoryItemsCount so the saver knows how many blank rows to append at the end.
         await game.entitySaver.saveGame(deletedItemsCount, deletedInventoryItemsCount);
-        game.communicationHandler.sendToCommandChannel("Successfully cleaned items and inventory items. Successfully saved game data to the spreadsheet. Be sure to load items and inventory items before disabling edit mode.");
+        game.communicationHandler.sendToCommandChannel("Successfully cleaned room items and inventory items. Successfully saved game data to the spreadsheet. Be sure to load room items and inventory items before disabling edit mode.");
+        game.loadedEntitiesWithErrors.add("RoomItems");
+        game.loadedEntitiesWithErrors.add("InventoryItems");
     }
     catch (err) {
         console.log(err);
-        game.communicationHandler.sendToCommandChannel("Successfully cleaned items and inventory items, but there was an error saving data to the spreadsheet. Proceeding without manually saving and loading may cause additional errors. Error:\n```" + err + "```");
+        game.communicationHandler.sendToCommandChannel("Successfully cleaned room items and inventory items, but there was an error saving data to the spreadsheet. Proceeding without manually saving and loading may cause additional errors. Error:\n```" + err + "```");
     }
 }

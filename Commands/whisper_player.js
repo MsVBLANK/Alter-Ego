@@ -24,7 +24,7 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}whisper Jun\n`
-        + `${settings.commandPrefix}whisper Florian Michio Ava`;
+        + `${settings.commandPrefix}w Florian Michio Ava`;
 }
 
 /**

@@ -7,9 +7,13 @@ import TextAction from '../Data/Actions/TextAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "text_moderator",
-    description: "Sends a text message from an NPC.",
-    details: "Sends a text message from the first player to the second player. The first player must have the talent \"NPC\". "
-        + "If an image is attached, it will be sent as well.",
+    description: "Sends a text message from an NPC to a player.",
+    details: `Sends a text message from the given NPC to a player. If an image is attached, it will be sent as well. `
+        + `It is possible to send a text message to any player, even those that don't have a status effect with the `
+        + `\`enable text\` behavior attribute.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command. `
+        + `However, keep in mind that if you send a text with an attached image in the NPC's room channel, the message `
+        + `will be deleted, and the attachment may not send properly.`,
     usableBy: "Moderator",
     aliases: ["text"],
     requiresGame: true
@@ -20,10 +24,10 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}text amy florian I work at the bar.\n`
-        + `${settings.commandPrefix}text amy florian Here's a picture of me at work. (attached image)\n`
-        + `${settings.commandPrefix}text ??? keiko This is a message about your car's extended warranty.\n`
-        + `${settings.commandPrefix}text ??? hibiki (attached image)`;
+    return `${settings.commandPrefix}text Amy Florian I work at the bar.\n`
+        + `${settings.commandPrefix}text Amy Florian Here's a picture of me at work. (attached image)\n`
+        + `${settings.commandPrefix}text ??? Sadie This is a message about your car's extended warranty.\n`
+        + `${settings.commandPrefix}text ??? Lisa (attached image)`;
 }
 
 /**

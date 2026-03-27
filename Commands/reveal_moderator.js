@@ -6,26 +6,26 @@
 export const config = {
     name: "reveal_moderator",
     description: "Gives a player the Dead role.",
-    details: "Removes the Player role from the listed players and gives them the Dead role. "
-        + "All listed players must be dead.",
+    details: `Removes the Player role from the listed players and gives them the Dead role. `
+        + `All listed players must be dead.`,
     usableBy: "Moderator",
     aliases: ["reveal"],
     requiresGame: true
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}reveal chris\n`
-        + `${settings.commandPrefix}reveal micah joshua amber devyn veronica\n`;
+    return `${settings.commandPrefix}reveal Platt\n`
+        + `${settings.commandPrefix}reveal Strickland Wu Obi Katou\n`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

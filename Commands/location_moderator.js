@@ -13,17 +13,18 @@ export const config = {
 };
 
 /**
- * @param {GameSettings} settings 
- * @returns {string} 
+ * @param {GameSettings} settings
+ * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}location faye`;
+    return `${settings.commandPrefix}location Gabriella\n`
+        + `${settings.commandPrefix}l Amy`;
 }
 
 /**
- * @param {Game} game - The game in which the command is being executed. 
- * @param {UserMessage} message - The message in which the command was issued. 
- * @param {string} command - The command alias that was used. 
+ * @param {Game} game - The game in which the command is being executed.
+ * @param {UserMessage} message - The message in which the command was issued.
+ * @param {string} command - The command alias that was used.
  * @param {string[]} args - A list of arguments passed to the command as individual words.
  * @param {Moderator} moderator - The moderator who issued the command.
  */

@@ -18,7 +18,7 @@ export default class HideAction extends Action {
 		super.perform();
 		this.getGame().narrationHandler.narrateHide(this, hidingSpot, this.player);
 		let successful = false;
-		if (hidingSpot.occupants.length + 1 <= hidingSpot.capacity) {
+		if (hidingSpot.occupants.length + 1 <= hidingSpot.capacity || this.forced) {
 			hidingSpot.addPlayer(this.player);
 			const hiddenStatus = this.getGame().entityFinder.getStatusEffect("hidden");
 			const hiddenStatusAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, false);

@@ -3,7 +3,6 @@ import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import type ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
-import type Prefab from "./Prefab.ts";
 
 /**
  * Represents a game entity that can contain items.
@@ -48,27 +47,7 @@ export default abstract class ItemContainer extends GameEntity {
 	 * @param itemListName - The name of the item list. Only required for ItemContainers which can have multiple item lists.
 	 * @param player - The player the description is being sent to. Optional.
 	 */
-	protected abstract getContainedItemsForItemList(itemListName: string, player: Player): ItemInstance[];
-
-	/**
-	 * Gets all of the items that should appear in the given item list and collates them. Items with the same prefab ID will be considered the same and have their quantities combined.
-     *
-	 * @param itemListName - The name of the item list. Only required for ItemContainers which can have multiple item lists.
-	 * @param player - The player the description is being sent to. Optional.
-	 * @returns A map of unique prefabs in the item list, and their collated quantities.
-	 */
-	getCollatedContainedItemsInItemList(itemListName?: string, player?: Player): Map<Prefab, number> {
-		const containedItems = this.getContainedItemsForItemList(itemListName, player).reverse();
-		const containedPrefabCounts: Map<Prefab, number> = new Map();
-		for (const item of containedItems) {
-			if (containedPrefabCounts.has(item.prefab)) {
-				if (isNaN(item.quantity)) containedPrefabCounts.set(item.prefab, NaN);
-				else containedPrefabCounts.set(item.prefab, containedPrefabCounts.get(item.prefab) + item.quantity);
-			}
-			else containedPrefabCounts.set(item.prefab, item.quantity);
-		}
-		return containedPrefabCounts;
-	}
+	abstract getContainedItemsForItemList(itemListName: string, player: Player): ItemInstance[];
 
 	/**
 	 * Returns true if this entity contains no items.

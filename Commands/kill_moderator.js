@@ -7,13 +7,19 @@
 /** @type {CommandConfig} */
 export const config = {
     name: "kill_moderator",
-    description: "Makes a player dead.",
-    details: "Moves the listed players from the living list to the dead list. "
-        + "The player will be removed from whatever room channel they're in as well as any whispers. "
-        + "A dead player will retain any items they had in their inventory, but they will not be accessible "
-        + "unless they are manually added to the spreadsheet. A dead player will retain the Player role. "
-        + "When a dead player's body is officially discovered, use the reveal command to remove the Player role "
-        + "and give them the Dead role.",
+    description: "Kills a player.",
+    details: `Kills the listed players. Player names must be separated by a space.\n\n`
+        + `When a player is killed, they are removed from the list of living players and added to the list of dead `
+        + `players. This prevents them from using any player commands, thus making them unable to interact with the `
+        + `game world. When a player dies, they are dead permanently. To bring them back to life, they must be manually `
+        + `edited on the spreadsheet. Only use this command if you are absolutely sure.\n\n`
+        + `Upon death, the player will be removed from whatever room and whisper channels they were in. `
+        + `The player will be notified, and a narration will be sent indicating that they have died. All status effects `
+        + `the player had will be cleared. They will retain any items they had in their inventory, but they will not `
+        + `be accessible in any way. In order to make the player's corpse inspectable, it must be manually added to the `
+        + `appropriate location as a fixture, and their inventory items must be manually added as room items.\n\n`
+        + `A dead player will retain the Player role. To remove the Player role and give them the Dead role, `
+        + `use the \`reveal\` command.`,
     usableBy: "Moderator",
     aliases: ["kill", "die"],
     requiresGame: true
@@ -24,8 +30,8 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}kill chris\n`
-        + `${settings.commandPrefix}die micah joshua amber devyn veronica`;
+    return `${settings.commandPrefix}kill Platt\n`
+        + `${settings.commandPrefix}die Strickland Wu Obi Katou`;
 }
 
 /**

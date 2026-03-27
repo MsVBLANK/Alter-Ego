@@ -8,13 +8,15 @@ import { registerRoomCategory, createCategory } from '../Modules/serverManager.t
 export const config = {
     name: "createroomcategory_moderator",
     description: "Creates a room category.",
-    details: "Creates a room category channel with the given name. The ID of the new category channel will "
-        + "automatically be added to the roomCategories setting in the serverconfig file. If a room category "
-        + "with the given name already exists, but its ID hasn't been registered in the roomCategories setting, "
-        + "it will automatically be added. Note that if you create a room category in Discord without using "
-        + "this command, you will have to add its ID to the roomCategories setting manually.",
+    details: `Creates a room category channel with the given name. The ID of the new category channel will automatically be `
+        + `added to the \`roomCategories\` setting in your \`serverconfig.json\` file. If a room category with the given name `
+        + `already exists, but its ID hasn't been registered in the \`roomCategories\` setting, it will automatically be added.\n\n`
+        + `Keep in mind that if \`ROOM_CATEGORIES\` is set in your \`.env\` file, room categories registered with this command `
+        + `will not persist when the bot is rebooted. For that reason, the \`ROOM_CATEGORIES\` setting should not be set `
+        + `unless you plan to manage room category IDs manually. To do this, you will have to create a category channel in `
+        + `Discord without using this command, and add its ID to the \`ROOM_CATEGORIES\` setting manually, then reboot the bot.`,
     usableBy: "Moderator",
-    aliases: ["createroomcategory","register"],
+    aliases: ["createroomcategory", "register"],
     requiresGame: false
 };
 

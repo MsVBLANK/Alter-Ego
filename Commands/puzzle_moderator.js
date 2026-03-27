@@ -11,15 +11,20 @@ import Room from "../Data/Room.ts";
 export const config = {
     name: "puzzle_moderator",
     description: "Solves or unsolves a puzzle.",
-    details: 'Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. '
-        + 'You may specify a player to solve the puzzle. If you do, players in the room '
-        + 'will be notified, so you should generally give a string for the bot to use, '
-        + 'otherwise the bot will say "[player] uses the [puzzle]." which may not sound right. '
-        + "If you specify a player, only puzzles in the room that player is in can be solved/unsolved. "
-        + 'Additionally, if you specify a player, you can make them attempt to solve a puzzle. '
-        + 'You can also use a room name instead of a player name. In that case, only puzzles in the room '
-        + 'you specify can be solved/unsolved. This is useful if you have multiple puzzles with the same name '
-        + 'spread across the map. This should generally only be used for puzzles which require moderator intervention.',
+    details: `Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. `
+        + `When a puzzle is solved, it will execute the solved commands for the outcome it was solved with. `
+        + `When a puzzle is unsolved, it will execute the unsolved commands for the outcome it currently has. `
+        + `If there is a fixture whose state is supposed to match that of the puzzle's, you must use the \`fixture\` `
+        + `command to update it separately.\n\n`
+        + `If there are multiple puzzles with the same name, you can specify the room the puzzle is in.\n\n`
+        + `Alternatively, you may specify a player to solve/unsolve the puzzle. In this case, only puzzles in the same `
+        + `room as the player can be solved/unsolved. When a player is supplied, a narration will be sent.\n\n`
+        + `It is possible to supply a custom narration for the puzzle being solved/unsolved. Simply add a string of `
+        + `text surrounded by quotation marks at the end of the command. This can be done even without supplying a player.\n\n`
+        + `Additionally, if you specify a player, you can make them attempt the puzzle with the \`attempt\` option. `
+        + `This makes it possible to force the player to fail the puzzle because they didn't provide a correct `
+        + `solution or they didn't satisfy the requirements for the puzzle to be solved/unsolved.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["puzzle", "solve", "unsolve", "attempt"],
     requiresGame: true
@@ -30,17 +35,18 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}puzzle solve button\n`
-        + `${settings.commandPrefix}puzzle unsolve keypad\n`
-        + `${settings.commandPrefix}solve binder taylor\n`
-        + `${settings.commandPrefix}unsolve lever colin\n`
-        + `${settings.commandPrefix}solve computer PASSWORD1\n`
-        + `${settings.commandPrefix}solve computer PASSWORD2\n`
-        + `${settings.commandPrefix}puzzle solve keypad tool shed\n`
-        + `${settings.commandPrefix}puzzle unsolve lock men's locker room\n`
-        + `${settings.commandPrefix}solve paintings emily "Emily removes the PAINTINGS from the wall."\n`
-        + `${settings.commandPrefix}unsolve lock men's locker room "The LOCK on LOCKER 1 locks itself"\n`
-        + `${settings.commandPrefix}puzzle attempt cyptex lock 05-25-99 scarlet`;
+    return `${settings.commandPrefix}puzzle solve TERMINAL\n`
+        + `${settings.commandPrefix}puzzle unsolve SEARCH QUERY\n`
+        + `${settings.commandPrefix}solve AISHA PROGRAM Ava\n`
+        + `${settings.commandPrefix}unsolve BURIED TREASURE Jackie\n`
+        + `${settings.commandPrefix}solve USERNAME jl\n`
+        + `${settings.commandPrefix}solve USERNAME doublehelix\n`
+        + `${settings.commandPrefix}puzzle solve CALL BUTTON Floor B2 Hall 1\n`
+        + `${settings.commandPrefix}puzzle unsolve SWITCH dorm-6\n`
+        + `${settings.commandPrefix}solve IRONWOOD TREES Jackie "Jackie takes a sturdy stance, holding her ax with confidence. With one-! two-! *three-!* swings, she chops through an IRONWOOD TREE, and it falls out of the way."\n`
+        + `${settings.commandPrefix}unsolve LOGIN infirmary "The COMPUTER automatically logs out"\n`
+        + `${settings.commandPrefix}puzzle attempt AISHA PROGRAM 05 4C 91 F1 04 1F AB F0 Ava\n`
+        + `${settings.commandPrefix}attempt 3D PRINTER rabbit Huiyu`;
 }
 
 /**

@@ -31,8 +31,8 @@ export function usage(settings) {
         + `${settings.commandPrefix}get FIRST AID KIT\n`
         + `${settings.commandPrefix}t BOTTLE OF MIDAZOLAM from MEDICINE CABINET\n`
         + `${settings.commandPrefix}take TOWEL from BENCHES\n`
-        + `${settings.commandPrefix}take HAMMER from TOP RACK of TOOLBOX\n`
-        + `${settings.commandPrefix}get KEY from RIGHT POCKET of PLAID SKIRT`;
+        + `${settings.commandPrefix}grab HAMMER from TOP RACK of TOOLBOX\n`
+        + `${settings.commandPrefix}t KEY from RIGHT POCKET of PLAID SKIRT`;
 }
 
 /**

@@ -11,9 +11,14 @@ import Puzzle from "../Data/Puzzle.ts";
 export const config = {
     name: "take_moderator",
     description: "Takes the given item for a player.",
-    details: "Forcibly takes an item for a player. The player must have a free hand to take an item. You can specify "
-        + "which object or item to take the item from, but only items in the same room as the player can be taken. Additionally, if "
-        + "the item is contained in another item with multiple inventory slots (such as pockets), you can specify which slot to take it from.",
+    details: `Takes an item from the room the given player is in and puts it in their inventory. They must have a free `
+        + `hand to take an item. The item's prefab ID or container identifier must be used. If the player takes a `
+        + `non-discreet item, this will be narrated in the room.\n\n`
+        + `You can specify a container to take the item from. To do so, enter "from" after the item's identifier, `
+        + `followed by the container's name. If the container is a room item, its prefab ID or container identifier `
+        + `must be used. If the container item has multiple inventory slots, you can also specify which slot to take the `
+        + `item from. To do so, enter the ID of the inventory slot followed by "of" before the container's identifier.\n\n`
+        + `This command supports NPC latching. For more information, see the help details for the \`latch\` command.`,
     usableBy: "Moderator",
     aliases: ["take", "get", "grab", "t"],
     requiresGame: true
@@ -24,12 +29,12 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}take nero food\n`
-        + `${settings.commandPrefix}take livida food from floor\n`
-        + `${settings.commandPrefix}take cleo sword from desk\n`
-        + `${settings.commandPrefix}take taylor hammer from tool box\n`
-        + `${settings.commandPrefix}take aria green key from large purse\n`
-        + `${settings.commandPrefix}take veronica game system from main pocket of backpack`;
+    return `${settings.commandPrefix}take Nero BUTCHERS KNIFE\n`
+        + `${settings.commandPrefix}get Unit_039 FIRST AID KIT\n`
+        + `${settings.commandPrefix}t Olavi BOTTLE OF MIDAZOLAM from MEDICINE CABINET\n`
+        + `${settings.commandPrefix}take Sadie TOWEL from BENCHES\n`
+        + `${settings.commandPrefix}grab Evad HAMMER from TOP RACK OF TOOLBOX 1\n`
+        + `${settings.commandPrefix}t Vivian CHEST KEY from RIGHT POCKET of VIVIANS SKIRT 4`;
 }
 
 /**

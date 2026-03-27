@@ -1,3 +1,4 @@
+import CollatedItem from '../Data/CollatedItem.ts';
 import Description from '../Data/Description.ts';
 import ItemContainer from '../Data/ItemContainer.ts';
 import Player from '../Data/Player.ts';
@@ -9,8 +10,6 @@ import { DOMParser, XMLSerializer } from '@xmldom/xmldom';
 export * as default from './parser.js';
 
 /** @import GameEntity from '../Data/GameEntity.ts' */
-/** @import InventoryItem from '../Data/InventoryItem.ts' */
-/** @import RoomItem from '../Data/RoomItem.ts' */
 
 class Clause {
     /**
@@ -220,36 +219,36 @@ export function parseDescription(description, container, player) {
  * @param {Player} player - The Player currently reading the description.
  */
 function addItemsToItemList(document, sentence, container, player) {
-    const items = container.getCollatedContainedItemsInItemList(sentence.itemListName, player);
-    for (const [prefab, quantity] of items) {
-        const singleContainingPhrase = prefab.singleContainingPhrase.toLocaleUpperCase();
-        const pluralContainingPhrase = prefab.pluralContainingPhrase?.toLocaleUpperCase();
+    const items = CollatedItem.collateForItemList(container.getContainedItemsForItemList(sentence.itemListName, player)).reverse();
+    for (const item of items) {
+        const singleContainingPhrase = item.singleContainingPhrase.toLocaleUpperCase();
+        const pluralContainingPhrase = item.pluralContainingPhrase?.toLocaleUpperCase();
         let itemAlreadyExists = false;
         for (const clause of sentence.clause) {
             const clauseText = clause.node.data.toLocaleUpperCase();
-            if (isNaN(quantity) && (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase) || clauseText.includes(prefab.pluralName) || clauseText.includes(prefab.name))) {
+            if (isNaN(item.quantity) && (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase) || clauseText.includes(item.pluralName) || clauseText.includes(item.name))) {
                 itemAlreadyExists = true;
                 break;
             }
-            else if (!isNaN(quantity) && clause.isItem
+            else if (!isNaN(item.quantity) && clause.isItem
                 && (clauseText === singleContainingPhrase
                     // Ensure that the clause is exactly a set of digits followed by the plural containing phrase, and nothing else.
                     || pluralContainingPhrase && clauseText.endsWith(pluralContainingPhrase) && clauseText.substring(0, clauseText.lastIndexOf(pluralContainingPhrase)).trim().match(/^\d+$/))) {
                 itemAlreadyExists = true;
                 if (clauseText === singleContainingPhrase)
-                    clause.set(`${1 + quantity} ${prefab.pluralContainingPhrase}`);
+                    clause.set(`${1 + item.quantity} ${item.pluralContainingPhrase}`);
                 else if (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase)) {
                     const quantityMatch = clauseText.match(/\d+/);
                     if (quantityMatch) {
                         const oldQuantity = parseInt(quantityMatch[0]);
-                        clause.set(clause.text.replace(oldQuantity, oldQuantity + quantity));
+                        clause.set(clause.text.replace(oldQuantity, oldQuantity + item.quantity));
                     }
                 }
                 break;
             }
         }
         if (itemAlreadyExists) continue;
-        addClause(sentence, prefab.toContainingPhrase(quantity), quantity);
+        addClause(sentence, item.toSingleOrPluralContainingPhrase(), item.quantity);
         sentence.itemCount++;
     }
     return document;

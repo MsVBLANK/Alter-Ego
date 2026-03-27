@@ -10,17 +10,24 @@ import InflictAction from '../Data/Actions/InflictAction.ts';
 /** @type {CommandConfig} */
 export const config = {
     name: "status_moderator",
-    description: "Deals with status effects on players.",
-    details: 'Deals with status effects on players.\n\n'
-        + '-**add**/**inflict**: Inflicts the specified players with the given status effect. '
-        + 'Those players will receive the "Message When Inflicted" message for the specified status effect. '
-        + 'If the status effect has a timer, the players will be cured and then inflicted with the status effect '
-        + 'in the "Develops Into" column when the timer reaches 0. If the status effect is fatal, '
-        + 'then they will simply die when the timer reaches 0 instead.\n\n'
-        + '-**remove**/**cure**: Cures the specified players of the given status effect. '
-        + 'Those players will receive the "Message When Cured" message for the specified status effect. '
-        + 'If the status effect develops into another effect when cured, the players will be inflicted with that status effect.\n\n'
-        + '-**view**: Views all of the status effects that a player is currently afflicted with, along with the time remaining on each one, if applicable.',
+    description: "Inflict, cure, or view status effects on players.",
+    details: `This command has three sub-commands:\n\n`
+        + `- **add**/**inflict**: Inflicts the specified players with the given status effect. `
+        + `Those players will receive the "Description When Inflicted" message for the specified status effect. `
+        + `If they already have that status effect and there is a status listed in the "When Duplicated" column, `
+        + `they will be cured of the given status effect and inflicted with that instead. If the inflicted status `
+        + `has a timer, the players will be cured and then inflicted with the status effect in the "Develops Into" `
+        + `column when the timer reaches 0, if there is one. If the status effect is fatal, `
+        + `they will simply die when the timer reaches 0 instead.\n`
+        + `- **remove**/**cure**: Cures the specified players of the given status effect. `
+        + `Those players will receive the "Description When Cured" message for the specified status effect. If there `
+        + `is a status listed in the "When Cured" column, they will then be inflicted with that status effect.\n`
+        + `- **view**/**status**: Views all of the status effects that one player currently has, along with the time `
+        + `remaining on each one, if applicable. This sub-command supports NPC latching. For more information, `
+        + `see the help details for the \`latch\` command.\n\n`
+        + `If, when using the **inflict** or **cure** sub-commands, you enter "living" or all" instead of providing `
+        + `the names of players, all living players will be inflicted/cured of the given status effect, except for `
+        + `NPCs and players with the Free Movement role.`,
     usableBy: "Moderator",
     aliases: ["status", "inflict", "cure"],
     requiresGame: true
@@ -31,16 +38,16 @@ export const config = {
  * @returns {string}
  */
 export function usage(settings) {
-    return `${settings.commandPrefix}status add mari heated\n`
-        + `${settings.commandPrefix}inflict yume heated\n`
-        + `${settings.commandPrefix}status add aki saay yuko haru asleep\n`
+    return `${settings.commandPrefix}status add Ava Huiyu Kyra heated\n`
+        + `${settings.commandPrefix}inflict Xenia heated\n`
+        + `${settings.commandPrefix}status add Florian Michio Kanda Jackie asleep\n`
         + `${settings.commandPrefix}inflict all deafened\n`
-        + `${settings.commandPrefix}status remove flint injured\n`
-        + `${settings.commandPrefix}cure elijah injured\n`
-        + `${settings.commandPrefix}status remove astrid ryou juneau drunk\n`
+        + `${settings.commandPrefix}status remove Flint injured\n`
+        + `${settings.commandPrefix}cure Elijah injured\n`
+        + `${settings.commandPrefix}status remove Astrid Kiara drunk\n`
         + `${settings.commandPrefix}cure living asleep\n`
-        + `${settings.commandPrefix}status view jordan\n`
-        + `${settings.commandPrefix}status jordan`;
+        + `${settings.commandPrefix}status view Amadeus\n`
+        + `${settings.commandPrefix}status Mara`;
 }
 
 /**

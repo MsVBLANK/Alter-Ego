@@ -9,11 +9,12 @@ export const config = {
     name: "setpos_bot",
     description: "Sets a player's position.",
     details: `Sets the specified player's position. If the "player" argument is used in place of a name, `
-        + `then the player who triggered the command will have their position updated. If the "room" argument `
-        + `is used instead, then all players in the same room as the player who triggered the command will have their `
-        + `positions updated. Lastly, if the "all" argument is used, then all players will have their positions updated. `
-        + `You can set individual coordinates with the "x", "y", or "z" arguments and the value to set it to. Otherwise, `
-        + `a space-separated list of coordinates in the order **x y z** must be given.`,
+        + `then the player who caused the command to be executed will have their position updated. If the "room" `
+        + `argument is used instead, then all players in the same room as the player who caused the command to be `
+        + `executed will have their positions updated. Lastly, if the "all" argument is used, then all players will `
+        + `have their positions updated, except for NPCs and players with the Free Movement role. You can set `
+        + `individual coordinates with the "x", "y", or "z" arguments and the value to set it to. Otherwise, a `
+        + `space-separated list of coordinates in the order **x y z** must be given.`,
     usableBy: "Bot",
     aliases: ["setpos"],
     requiresGame: true
@@ -55,7 +56,7 @@ export async function execute(game, command, args, player, callee) {
     else if (args[0].toLowerCase() === "room" && callee !== null && callee instanceof Puzzle)
         players = callee.location.occupants;
     else if (args[0].toLowerCase() === "all") {
-        players.concat(game.entityFinder.getLivingPlayers());
+        players = game.entityFinder.getLivingPlayers(null, false).filter(player => !game.guildContext.hasFreeMovementRole(player.member));
     }
     else {
         player = game.entityFinder.getLivingPlayer(args[0]);

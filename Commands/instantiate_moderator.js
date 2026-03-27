@@ -59,7 +59,10 @@ export function usage(settings) {
  * @param {Moderator} moderator - The moderator who issued the command.
  */
 export async function execute(game, message, command, args, moderator) {
-    if (args.length < 4)
+    // The `is` alias makes it so error messages trigger very frequently in the bot commands channel if people start a message with "is".
+    // Guard against that.
+    const isMessageStartingWithIs = command === 'is' && !message.content.startsWith(game.settings.commandPrefix);
+    if (args.length < 4 && !isMessageStartingWithIs)
         return game.communicationHandler.reply(message, `Not enough arguments given. Usage:\n${usage(game.settings)}`);
 
     let quantity = 1;
@@ -215,7 +218,10 @@ export async function execute(game, message, command, args, moderator) {
                 args.splice(i, 1);
             }
         }
-        if (player === null) return game.communicationHandler.reply(message, `Couldn't find a room or player in your input.`);
+        if (player === null) {
+            if (!isMessageStartingWithIs) game.communicationHandler.reply(message, `Couldn't find a room or player in your input.`);
+            return;
+        }
 
         parsedInput = args.join(" ").toUpperCase().replace(/\'/g, "");
 

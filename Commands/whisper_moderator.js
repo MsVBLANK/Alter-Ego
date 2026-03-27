@@ -33,9 +33,9 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}whisper Nestor Jun\n`
-        + `${settings.commandPrefix}whisper Sadie Elijah Flint\n`
+        + `${settings.commandPrefix}w Sadie Elijah Flint\n`
         + `${settings.commandPrefix}whisper Amy Asuka Clean it up.\n`
-        + `${settings.commandPrefix}whisper Amy Asuka The mess you made. Clean it up now.`;
+        + `${settings.commandPrefix}w Amy Asuka The mess you made. Clean it up now.`;
 }
 
 /**
@@ -127,7 +127,7 @@ export async function execute(game, message, command, args, moderator) {
  */
 async function sendMessageToWhisper(game, message, messageText, npc, whisper) {
     const dialog = new Dialog(game, message, npc, npc.location, messageText, false, whisper);
-    const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, npc.displayName, npc.displayIcon);
+    const dialogMessage = await game.communicationHandler.sendDialogAsWebhook(whisper.channel, dialog, dialog.getDisplayNameForWebhook(true), dialog.getDisplayIconForWebhook(true));
     dialog.setMessage(dialogMessage);
     const sayAction = new SayAction(game, dialogMessage, npc, npc.location, true, whisper);
     sayAction.performSay(dialog);

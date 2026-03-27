@@ -29,11 +29,11 @@ export const config = {
  */
 export function usage(settings) {
     return `${settings.commandPrefix}gesture Astrid smile\n`
-        + `${settings.commandPrefix}gesture Ezekiel point at DOOR 1\n`
+        + `${settings.commandPrefix}g Ezekiel point at DOOR 1\n`
         + `${settings.commandPrefix}gesture Holly wave Johnny\n`
-        + `${settings.commandPrefix}gesture Dexter sit CHAIR\n`
+        + `${settings.commandPrefix}g Dexter sit CHAIR\n`
         + `${settings.commandPrefix}gesture list\n`
-        + `${settings.commandPrefix}gesture list Kyra`;
+        + `${settings.commandPrefix}g list Kyra`;
 }
 
 /**

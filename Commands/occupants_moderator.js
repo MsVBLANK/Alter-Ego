@@ -58,21 +58,8 @@ export async function execute(game, message, command, args, moderator) {
     const movingList = [];
     for (let i = 0; i < moving.length; i++) {
         const remaining = Duration.fromMillis(moving[i].remainingTime);
-
-        const days = Math.floor(remaining.as('days'));
-        const hours = remaining.hours;
-        const minutes = remaining.minutes;
-        const seconds = remaining.seconds;
-
-        let displayString = "";
-        if (days !== 0) displayString += `${days} `;
-        if (hours >= 0 && hours < 10) displayString += '0';
-        displayString += `${hours}:`;
-        if (minutes >= 0 && minutes < 10) displayString += '0';
-        displayString += `${minutes}:`;
-        if (seconds >= 0 && seconds < 10) displayString += '0';
-        displayString += `${seconds}`;
-
+        const format = Math.floor(remaining.as("days")) !== 0 ? "d hh:mm:ss" : "hh:mm:ss";
+        const displayString = remaining.toFormat(format);
         const moveQueue = moving[i].moveQueue.join(">");
         movingList.push(`${moving[i].name} (${displayString}) [>${moveQueue}]`);
     }

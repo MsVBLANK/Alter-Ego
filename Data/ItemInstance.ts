@@ -144,6 +144,12 @@ export default abstract class ItemInstance extends ItemContainer {
      * Sets the item's name, plural name, single containing phrase, and plural containing phrase, based off its procedural selections.
      */
     setNames(): void {
+        // Initialize the names as empty strings in case there's already something there.
+        this.name = "";
+        this.pluralName = "";
+        this.singleContainingPhrase = "";
+        this.pluralContainingPhrase = "";
+        
         for (const [[...proceduralOption], names] of this.prefab.possibleNames.entries()) {
             if (this.hasProceduralSelection(proceduralOption[0])) {
                 this.name = names[0];

@@ -276,6 +276,8 @@ export const recipeProductsMatches = (recipe: Recipe, productsString: string, no
 	return products.every(product => recipe.productsFlat.map(recipeProduct => recipeProduct.prefab.id).includes(product));
 };
 
+/**
+ * Returns true if the item's name matches the given name.
  * @param item - The item instance to match the name against.
  * @param name - The name to match.
  * @param [normalize] - Whether or not to normalize the name before matching. Defaults to false.

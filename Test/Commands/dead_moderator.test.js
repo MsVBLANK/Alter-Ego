@@ -12,7 +12,7 @@ describe("dead_moderator command", () => {
 
     const dead_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.js')} */
     let moderator;
 
     test("with dead players", async () => {

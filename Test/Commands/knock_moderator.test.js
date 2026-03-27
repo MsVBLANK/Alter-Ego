@@ -18,7 +18,7 @@ describe('knock_moderator command', () => {
 
     const knock_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.js')} */
     let moderator;
 
     test('with valid exit', async () => {

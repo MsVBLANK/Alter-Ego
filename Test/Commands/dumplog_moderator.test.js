@@ -10,7 +10,7 @@ describe("dumplog_moderator command", () => {
 
     const dumplog_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.js')} */
     let moderator;
 
     test('execute', async () => {

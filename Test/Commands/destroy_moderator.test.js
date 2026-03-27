@@ -18,7 +18,7 @@ describe('destroy_moderator command', () => {
 
     const destroy_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.js')} */
     let moderator;
 
     describe('on inventory items', () => {

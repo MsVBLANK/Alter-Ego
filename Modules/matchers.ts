@@ -124,6 +124,8 @@ export const exitLockedMatches = (exit: Exit, lock: boolean) => {
  * Returns true if the entity's name matches the given name.
  * @param entity - The entity to match the name against.
  * @param name - The name to match.
+ * @param [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
 export const entityNameMatches = (entity: Fixture | ItemInstance | Player | Puzzle, name: string, normalize = false) => {
 	if (normalize) name = Game.generateValidEntityName(name);
 	return entity.name === name;
@@ -133,6 +135,8 @@ export const entityNameMatches = (entity: Fixture | ItemInstance | Player | Puzz
  * Returns true if the entity's name contains the given name.
  * @param entity - The entity to match the name against.
  * @param name - The name to match.
+ * @param [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
 export const entityNameContains = (entity: Fixture | ItemInstance | Player | Puzzle, name: string, normalize = false) => {
 	if (normalize) name = Game.generateValidEntityName(name);
 	return entity.name.includes(name);

@@ -8,6 +8,7 @@ import { createMockModerator } from '../__mocks__/utility.ts';
 describe('knock_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        // @ts-expect-error
         moderator = createMockModerator();
     });
 

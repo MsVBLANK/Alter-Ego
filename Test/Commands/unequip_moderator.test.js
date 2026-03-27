@@ -8,6 +8,7 @@ import { createMockModerator } from '../__mocks__/utility.ts';
 describe('unequip_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        // @ts-expect-error
         moderator = createMockModerator();
     });
 
@@ -116,8 +117,9 @@ describe('unequip_moderator command', () => {
         const spy = vi.spyOn(UnequipAction.prototype, "performUnequip");
         const message = createMockMessage();
         const author = message.author;
-        // @ts-ignore
+        // @ts-expect-error
         await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "glasses"], moderator);
+        // @ts-expect-error
         await unequip_moderator.execute(game, message, "unequip", ["kyra's", "kyras", "tie"], moderator);
         await sendQueuedMessages(game);
         expect(spy).toHaveBeenCalledTimes(1);

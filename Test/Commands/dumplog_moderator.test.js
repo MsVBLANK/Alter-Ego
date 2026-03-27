@@ -5,6 +5,7 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("dumplog_moderator command", () => {
     beforeAll(() => {
+        // @ts-expect-error
         moderator = createMockModerator();
     })
 

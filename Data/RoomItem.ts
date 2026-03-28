@@ -6,7 +6,7 @@ import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Room from "./Room.ts";
-import { itemIdentifierMatches } from "../Modules/matchers.js";
+import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
 export type RoomItemField = "prefab"|"identifier"|"location"|"accessible"|"container"|"quantity"|"uses"|"description";
 

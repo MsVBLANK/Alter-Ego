@@ -1,5 +1,5 @@
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
-import { itemIdentifierMatches } from "../Modules/matchers.js";
+import { itemIdentifierMatches } from "../Modules/matchers.ts";
 import Description from "./Description.ts";
 import Event from "./Event.ts";
 import type Fixture from "./Fixture.ts";

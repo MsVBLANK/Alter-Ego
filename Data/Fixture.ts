@@ -14,6 +14,7 @@ import type Recipe from "./Recipe.ts";
 import RecipeProcessor from "./RecipeProcessor.ts";
 import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
+import { itemIdentifierMatches } from "../Modules/matchers.js";
 
 export type FixtureField = "name"|"location"|"accessible"|"childPuzzle"|"recipeTag"|"activatable"|"activated"|"autoDeactivate"|"hidingSpotCapacity"|"preposition"|"description";
 
@@ -70,7 +71,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     /**
      * A keyword or phrase assigned to an fixture's recipe that allows it to carry out recipes that require it.
      */
-    readonly recipeTag: string;
+    private _recipeTag: string;
     /**
      * Whether the fixture can be activated or deactivated with the use command.
      */
@@ -129,7 +130,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         this.accessible = accessible;
         this.childPuzzleName = childPuzzleName;
         this.childPuzzle = null;
-        this.recipeTag = recipeTag;
+        this._recipeTag = recipeTag;
         this.activatable = activatable;
         this.activated = activated;
         this.autoDeactivate = autoDeactivate;
@@ -173,6 +174,20 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     /** Gets the entity's location. */
     getLocation(): Room {
         return this.location;
+    }
+
+    /** A keyword or phrase assigned to an fixture's recipe that allows it to carry out recipes that require it. */
+    get recipeTag(): string {
+        return this._recipeTag;
+    }
+
+    /**
+     * Sets the fixture's recipe tag. This will immediately stop any recipes the fixture is currently processing.
+     * @param tag - The tag to set.
+     */
+    setRecipeTag(tag: string): void {
+        this.#clearProcess();
+        this._recipeTag = tag?.trim();
     }
 
     /**
@@ -239,6 +254,18 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
 	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
 		return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'Fixture', this.name);
 	}
+
+    /**
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
+        }
+        return false;
+    }
 
     /**
      * Returns true if the fixture is activated and deactivates automatically.

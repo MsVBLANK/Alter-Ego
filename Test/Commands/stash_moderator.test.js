@@ -19,7 +19,7 @@ describe('stash_moderator command', () => {
 
     const stash_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {typeof import('../../Data/Moderator.js')} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     describe('valid invocations', () => {

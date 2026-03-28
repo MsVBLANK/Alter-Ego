@@ -20,7 +20,7 @@ describe('unequip_moderator command', () => {
 
     const unequip_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {typeof import('../../Data/Moderator.js')} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     test('given valid item', async () => {

@@ -20,7 +20,7 @@ describe("unstash_moderator command", () => {
 
     const unstash_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {typeof import('../../Data/Moderator.js')} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     test("valid item from valid container", async () => {

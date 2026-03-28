@@ -14,7 +14,7 @@ import type Recipe from "./Recipe.ts";
 import RecipeProcessor from "./RecipeProcessor.ts";
 import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
-import { itemIdentifierMatches } from "../Modules/matchers.js";
+import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
 export type FixtureField = "name"|"location"|"accessible"|"childPuzzle"|"recipeTag"|"activatable"|"activated"|"autoDeactivate"|"hidingSpotCapacity"|"preposition"|"description";
 

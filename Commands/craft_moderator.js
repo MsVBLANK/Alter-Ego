@@ -1,5 +1,5 @@
 import CraftAction from '../Data/Actions/CraftAction.ts';
-import { itemIdentifierMatches } from '../Modules/matchers.js';
+import { itemIdentifierMatches } from '../Modules/matchers.ts';
 
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */

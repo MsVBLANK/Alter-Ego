@@ -8,6 +8,7 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 describe('stash_moderator command', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        // @ts-expect-error
         moderator = createMockModerator();
     });
 
@@ -18,7 +19,7 @@ describe('stash_moderator command', () => {
 
     const stash_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     describe('valid invocations', () => {

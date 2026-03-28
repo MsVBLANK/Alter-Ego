@@ -10,7 +10,7 @@ import Room from "../Data/Room.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import Status from "../Data/Status.ts";
 import Whisper from "../Data/Whisper.ts";
-import * as matchers from '../Modules/matchers.js';
+import * as matchers from '../Modules/matchers.ts';
 
 /** @import GameEntity from "../Data/GameEntity.ts"; */
 /** @import EquipmentSlot from "../Data/EquipmentSlot.ts"; */

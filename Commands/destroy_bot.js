@@ -147,6 +147,8 @@ export async function execute(game, command, args, player, callee) {
                 }
             }
         }
+        if (container instanceof Fixture && container.childPuzzle !== null)
+            container = container.childPuzzle;
 
         /** @type {RoomItem[]} */
         let containerItems = [];

@@ -7,12 +7,13 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 describe("dead_moderator command", () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
+        // @ts-expect-error
         moderator = createMockModerator();
     });
 
     const dead_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     test("with dead players", async () => {

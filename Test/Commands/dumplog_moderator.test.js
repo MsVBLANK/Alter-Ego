@@ -5,12 +5,13 @@ import { createMockModerator } from "../__mocks__/utility.ts";
 
 describe("dumplog_moderator command", () => {
     beforeAll(() => {
+        // @ts-expect-error
         moderator = createMockModerator();
     })
 
     const dumplog_moderator = new ModeratorCommand(config, usage, execute);
 
-    /** @type {import('../../../Data/Moderator.js').Moderator} */
+    /** @type {typeof import('../../Data/Moderator.ts')} */
     let moderator;
 
     test('execute', async () => {

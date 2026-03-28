@@ -8,6 +8,7 @@ import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type RoomItem from "./RoomItem.ts";
+import { itemIdentifierMatches } from "../Modules/matchers.js";
 
 export type InventoryItemField = "player"|"prefab"|"identifier"|"equipmentSlot"|"container"|"quantity"|"uses"|"description";
 
@@ -253,6 +254,18 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
         if (player && player.name !== this.player.name) return [];
         return this.getGame().entityFinder.getInventoryItems(undefined, this.player.name, this.identifier, itemListName);
 	}
+
+    /**
+         * Returns true if this entity contains an item with the given identifier or prefab ID.
+         * @param identifier - The identifier or prefab ID to search for.
+         */
+        override containsItem(identifier: string): boolean {
+            const containedItems = this.getContainedItems();
+            for (const item of containedItems) {
+                if (itemIdentifierMatches(item, identifier, true)) return true;
+            }
+            return false;
+        }
 
     /**
      * Executes the inventory item's equipped commands.

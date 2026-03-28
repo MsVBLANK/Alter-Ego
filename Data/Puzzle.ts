@@ -1,4 +1,5 @@
 import { parseAndExecuteBotCommands } from "../Modules/commandHandler.ts";
+import { itemIdentifierMatches } from "../Modules/matchers.js";
 import Description from "./Description.ts";
 import Event from "./Event.ts";
 import type Fixture from "./Fixture.ts";
@@ -286,6 +287,18 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
 	}
 
     /**
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
+        }
+        return false;
+    }
+
+    /**
      * Sets the puzzle as solved.
      */
     solve(): void {
@@ -425,7 +438,8 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
                     const value = requirement.evaluate(requirement.valueScript, player);
                     requirement.setValue(value, true, player);
                 }
-                if (requirement.value !== true) return false;
+                if (typeof requirement.value === 'string' && (requirement.value === null || requirement.value === "")) return false;
+                if (typeof requirement.value !== 'string' && requirement.value !== true) return false;
             }
             else if (requirement instanceof Prefab) {
                 if (item && item.prefab.id !== requirement.id) return false;

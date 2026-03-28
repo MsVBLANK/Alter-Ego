@@ -20,12 +20,12 @@ export const config = {
         + `To instantiate a room item, the display name or ID of the room must be given at the end, following \"at\". `
         + `The container to put it in must also be specified after the prefab's ID, preceded by the container's `
         + `preposition or "in". If the container is a fixture with a child puzzle, the puzzle will be its container. `
-        + `If the container is another room item, the container's name or identifier can be used.\n\n`
+        + `If the container is another room item, the container's identifier, prefab ID, or name can be used.\n\n`
         + `To instantiate an inventory item, the name of the player must be given followed by \`'s\`. It is possible to `
         + `instantiate an inventory item directly to a player's equipment slot by specifying the equipment slot's ID. `
         + `In this case, the player will be notified that they equipped the item, and the prefab's equipped commands `
         + `will be executed. However, a container item can be specified instead by entering its preposition or "in" `
-        + `followed by its name or identifier. The player will not be notified when the item is instantiated this way.\n\n`
+        + `followed by its identifier, prefab ID, or name. The player will not be notified when the item is instantiated this way.\n\n`
         + `If, when instantiating an inventory item, "player" is supplied instead of a player's name, then the prefab `
         + `will be instantiated in the inventory of the player who caused this command to be executed. If "room" is `
         + `supplied instead, then the command will executed on all players in the room as the initiating player. `
@@ -77,7 +77,7 @@ export async function execute(game, command, args, player, callee) {
         args.splice(0, 1);
     }
 
-    const input = args.join(" ");
+    let input = args.join(" ");
     let parsedInput = input.toUpperCase().replace(/\'/g, "");
     const undashedInput = parsedInput.replace(/-/g, " ");
 
@@ -105,8 +105,10 @@ export async function execute(game, command, args, player, callee) {
         catch (error) {
             return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${error.message}`);
         }
-        parsedInput = parsedInput.substring(0, parsedInput.indexOf('(')) + parsedInput.substring(parsedInput.indexOf(')'));
+        input = input.substring(0, input.indexOf('(')) + input.substring(input.indexOf(')') + 1).trimStart();
+        parsedInput = parsedInput.substring(0, parsedInput.indexOf('(')) + parsedInput.substring(parsedInput.indexOf(')') + 1).trimStart();
     }
+    args = parsedInput.split(' ');
 
     // Room was found. Look for the container in it.
     if (room !== null) {
@@ -134,13 +136,15 @@ export async function execute(game, command, args, player, callee) {
             // Check if a container item was specified.
             const items = game.entityFinder.getRoomItems(null, room.id);
             for (let i = 0; i < items.length; i++) {
-                if (items[i].identifier === parsedInput || items[i].name === parsedInput) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". You need to supply a prefab and a preposition.`);
-                if (parsedInput.endsWith(items[i].identifier) && items[i].identifier !== "" || parsedInput.endsWith(items[i].name)) {
+                if (items[i].identifier === parsedInput || items[i].prefab.id === parsedInput || items[i].name === parsedInput) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". You need to supply a prefab and a preposition.`);
+                if (parsedInput.endsWith(items[i].identifier) && items[i].identifier !== "" || parsedInput.endsWith(items[i].prefab.id) || parsedInput.endsWith(items[i].name)) {
                     if (items[i].inventory.size === 0 || items[i].prefab.preposition === "") return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${items[i].identifier ? items[i].identifier : items[i].name} cannot hold items.`);
                     containerItem = items[i];
 
                     if (parsedInput.endsWith(items[i].identifier) && items[i].identifier !== "")
                         parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].identifier)).trimEnd();
+                    else if (parsedInput.endsWith(items[i].prefab.id))
+                        parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].prefab.id)).trimEnd();
                     else if (parsedInput.endsWith(items[i].name))
                         parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(items[i].name)).trimEnd();
                     let newArgs = parsedInput.split(' ');
@@ -210,6 +214,7 @@ export async function execute(game, command, args, player, callee) {
         instantiateAction.performInstantiateRoomItem(prefab, container, slotName, quantity, proceduralSelections);
     }
     else {
+        args = input.split(' ');
         let players = [];
         for (let i = 0; i < args.length; i++) {
             if (args[i].toLowerCase().replace(/'s/g, "") === "player" && player !== null) {
@@ -253,13 +258,15 @@ export async function execute(game, command, args, player, callee) {
             let containerItemSlot = null;
             const items = game.inventoryItems.filter(item => item.player.name === player.name && item.prefab !== null);
             for (let i = 0; i < items.length; i++) {
-                if (items[i].identifier === parsedInput2 || items[i].name === parsedInput2) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". You need to supply a prefab and a preposition.`);
-                if (parsedInput2.endsWith(items[i].identifier) && items[i].identifier !== "" || parsedInput2.endsWith(items[i].name)) {
+                if (items[i].identifier === parsedInput2 || items[i].prefab.id === parsedInput2 || items[i].name === parsedInput2) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". You need to supply a prefab and a preposition.`);
+                if (parsedInput2.endsWith(items[i].identifier) && items[i].identifier !== "" || parsedInput2.endsWith(items[i].prefab.id) || parsedInput2.endsWith(items[i].name)) {
                     if (items[i].inventory.size === 0 || items[i].prefab.preposition === "") return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${items[i].identifier ? items[i].identifier : items[i].name} cannot hold items.`);
                     containerItem = items[i];
 
                     if (parsedInput2.endsWith(items[i].identifier) && items[i].identifier !== "")
                         parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(items[i].identifier)).trimEnd();
+                    else if (parsedInput2.endsWith(items[i].prefab.id))
+                        parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(items[i].prefab.id)).trimEnd();
                     else if (parsedInput2.endsWith(items[i].name))
                         parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(items[i].name)).trimEnd();
                     let newArgs = parsedInput2.split(' ');
@@ -275,13 +282,12 @@ export async function execute(game, command, args, player, callee) {
                             }
                         }
                         if (containerItemSlot === null) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find "${newArgs[newArgs.length - 1]}" of ${containerItem.identifier ? containerItem.identifier : containerItem.name}.`);
-
-                        if (parsedInput2.endsWith(containerItem.prefab.preposition.toUpperCase()))
-                            parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(containerItem.prefab.preposition.toUpperCase())).trimEnd();
-                        else if (parsedInput2.endsWith(" IN"))
-                            parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(" IN")).trimEnd();
-                        break;
                     }
+                    if (parsedInput2.endsWith(containerItem.prefab.preposition.toUpperCase()))
+                        parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(containerItem.prefab.preposition.toUpperCase())).trimEnd();
+                    else if (parsedInput2.endsWith(" IN"))
+                        parsedInput2 = parsedInput2.substring(0, parsedInput2.lastIndexOf(" IN")).trimEnd();
+                    break;
                 }
             }
             if (containerItem !== null && containerItemSlot === null) [containerItemSlot] = containerItem.inventory.values();

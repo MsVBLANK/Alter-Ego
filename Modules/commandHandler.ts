@@ -5,6 +5,7 @@ import PlayerCommand from "../Classes/PlayerCommand.ts";
 import EligibleCommand from "../Classes/EligibleCommand.ts";
 import type Player from '../Data/Player.ts';
 import Puzzle from '../Data/Puzzle.ts';
+import Flag from '../Data/Flag.ts';
 
 /**
  * Finds the right command file for the user and executes it.
@@ -132,12 +133,13 @@ export async function parseAndExecuteBotCommands(commandSet: string[], game: Gam
         else {
             if (callee instanceof Puzzle && callee.type === "matrix") {
                 const regex = /{([^{},/]+?)}/g;
-                let match;
+                let match: RegExpExecArray;
                 while (match = regex.exec(command)) {
                     for (const requirement of callee.requirements) {
-                        if (requirement instanceof Puzzle && requirement.name.toUpperCase() === match[1].toUpperCase() && requirement.outcome !== "") {
+                        if (requirement instanceof Puzzle && requirement.name.toUpperCase() === match[1].toUpperCase() && requirement.outcome !== "")
                             command = command.replace(match[0], requirement.outcome);
-                        }
+                        else if (requirement instanceof Flag && typeof requirement.value === 'string' && requirement.id === match[1].toUpperCase() && requirement.value !== null)
+                            command = command.replace(match[0], requirement.value);
                     }
                 }
             }

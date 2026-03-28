@@ -6,6 +6,7 @@ import InventorySlot from "./InventorySlot.ts";
 import ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Room from "./Room.ts";
+import { itemIdentifierMatches } from "../Modules/matchers.js";
 
 export type RoomItemField = "prefab"|"identifier"|"location"|"accessible"|"container"|"quantity"|"uses"|"description";
 
@@ -275,6 +276,18 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
 	override getContainedItemsForItemList(itemListName?: string, player?: Player): RoomItem[] {
         return this.getGame().entityFinder.getRoomItems(undefined, this.location.id, true, 'RoomItem', this.identifier, itemListName);
 	}
+
+    /**
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
+        }
+        return false;
+    }
 
     descriptionCell(): string {
         return this.getGame().constants.roomItemSheetDescriptionColumn + this.row;

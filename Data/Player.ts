@@ -1012,6 +1012,18 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         return equipmentSlots.map(equipmentSlot => equipmentSlot.equippedItem);
     }
 
+    /**
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
+        }
+        return false;
+    }
+
     override getContainedItemsWeight(): number {
         const containedItems = this.inventory.map(equipmentSlot => equipmentSlot.equippedItem).filter(item => item !== null);
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);

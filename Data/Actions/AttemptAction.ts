@@ -199,7 +199,7 @@ export default class AttemptAction extends Action {
 		else if (puzzle.type === "option") {
 			if (puzzle.solved && password === "")
 				this.#unsolvePuzzle(puzzle);
-			if (puzzle.outcome === password)
+			else if (puzzle.solved && puzzle.outcome === password)
 				this.#narrateAndLogAlreadySolvedPuzzle(puzzle);
 			else if (puzzle.solutions.includes(password))
 				this.#solvePuzzle(puzzle, password, requiredItems, item);

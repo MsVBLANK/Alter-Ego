@@ -113,6 +113,6 @@ resolved, [upvote this thread in the Discord Feedback forums](https://support.di
 ## Known bugs
 
 * Occasionally, when a Player moves to a new Room, the member list for that Room will appear blank. This can usually be
-  fixed by the user opening a channel in the Monopad category and then opening the Room channel again.
+  fixed by the user opening a channel in a different category and then opening the Room channel again.
 * Occasionally, when a Player leaves a Room, their read permission for all of the Whispers they were in will not be
   revoked. Additionally, the channel name may not be updated.

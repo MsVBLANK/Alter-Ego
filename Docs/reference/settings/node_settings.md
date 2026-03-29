@@ -87,7 +87,7 @@ This is how often, in seconds, Alter Ego should update the spreadsheet with any 
 These are Discord user activities that Alter Ego will set for itself at certain times. They each have two options:
 
 - **type**: This is the verb that will be used. This is
-  a [Discord ActivityType](https://discord.js.org/docs/packages/discord.js/main/ActivityType:Enum), so valid strings
+  a [Discord ActivityType](https://discord.js.org/docs/packages/discord.js/14.25.1/ActivityType:Enum), so valid strings
   are:
     - PLAYING
     - STREAMING

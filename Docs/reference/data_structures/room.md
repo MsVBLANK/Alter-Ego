@@ -22,7 +22,7 @@ must be exactly the same as the corresponding [Discord](../../about/discord.md) 
 
 ### Channel
 
-- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/main/TextChannel:Class) `this.channel`
+- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class) `this.channel`
 
 This is an internal attribute. When the Room data is loaded, Alter Ego will attempt to find the channel whose name
 matches the name of the Room. By making the channel a persistent internal attribute, Alter Ego can perform many
@@ -121,7 +121,7 @@ on [Exits](exit.md).
 This is the default description of a Room. The default description will always be the description for the first Exit in
 the Room. When a Player enters or inspects a Room, they will receive a parsed version of this string. The Player will
 not be sent the Room's description by itself. Instead, they will be sent
-a [Discord Embed](https://discord.js.org/docs/packages/discord.js/main/Embed:Class) containing:
+a [Discord Embed](https://discord.js.org/docs/packages/discord.js/14.25.1/Embed:Class) containing:
 
 - The name of the Room.
 - The Room's default description, or the description of the Exit they entered from.

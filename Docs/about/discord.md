@@ -34,11 +34,11 @@ This section lists how Discord is used to facilitate the Neo World Program.
 A game is contained in one and only one Discord server. It is run by Alter Ego.
 
 Every [Player](../reference/data_structures/player.md) is represented by
-a [Discord server member](https://discord.js.org/docs/packages/discord.js/main/GuildMember:Class). Each Player must have
+a [Discord server member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class). Each Player must have
 their own Discord account. A single account cannot be used for multiple Players.
 
 Every [Room](../reference/data_structures/room.md) is represented by
-a [Discord text channel](https://discord.js.org/docs/packages/discord.js/main/TextChannel:Class). When a Player moves to
+a [Discord text channel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class). When a Player moves to
 a given Room, they will be granted permission to read that channel, and their permission to read the channel of the Room
 they were previously in will be revoked. This creates the effect of only being in one Room at a time. In a Room, a
 Player can see all of the other Players that are in the Room on the user list on the right side of the screen. Messages

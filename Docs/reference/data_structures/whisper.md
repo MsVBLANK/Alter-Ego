@@ -49,7 +49,7 @@ hyphens (`-`). Whenever a Player is removed from the Whisper, the channel name i
 
 ### Channel
 
-- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/main/TextChannel:Class) `this.channel`
+- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class) `this.channel`
 
 When the Whisper is initialized, a channel is created for it in
 the [Whisper category](../settings/docker_settings.md#whisper_category). In this channel, Players can speak to each

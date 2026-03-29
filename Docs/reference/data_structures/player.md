@@ -24,10 +24,10 @@ spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.id`
 
-For full Players, this is the [unique ID](https://discord.js.org/docs/packages/discord.js/main/Snowflake:TypeAlias)
+For full Players, this is the [unique ID](https://discord.js.org/docs/packages/discord.js/14.25.1/Snowflake:TypeAlias)
 assigned to their Discord account. [Developer Mode](../../moderator_guide/installation.md#enable-developer-mode) must be
 enabled in order to obtain this ID by right clicking on a Discord user and selecting **Copy ID**. When Player data is
-loaded, Alter Ego will fetch the [guild member](https://discord.js.org/docs/packages/discord.js/main/GuildMember:Class)
+loaded, Alter Ego will fetch the [guild member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class)
 whose account has this ID. That Discord user will then be able to control this Player. Because Alter Ego requires guild
 member data, this account must belong to a Discord user in the server. If the user associated with a particular Player
 leaves the server, Alter Ego will be unable to load that Player's data; they must either be removed from the
@@ -40,7 +40,7 @@ and [spectate channels](player.md#spectate-channel).
 
 ### Member
 
-- Class attribute: [GuildMember](https://discord.js.org/docs/packages/discord.js/main/GuildMember:Class) `this.member`
+- Class attribute: [GuildMember](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class) `this.member`
 
 This is an internal attribute which contains a reference to the guild member whose Discord ID matches the Player ID. For
 NPCs, this is `null`.
@@ -80,7 +80,7 @@ This is an internal attribute which contains an image URL that will be used as a
 the [say](../commands/player_commands.md#say) [command](../commands/moderator_commands.md#say), and when their dialog
 appears in a spectate channel. It is also used when NPCs use
 the [whisper command](../commands/moderator_commands.md#whisper). For full Players, this is most often `null` -
-their [display avatar](https://discord.js.org/docs/packages/discord.js/main/GuildMember:Class#displayAvatarURL) is used
+their [display avatar](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class#displayAvatarURL) is used
 instead. Only NPCs have this set to a non-`null` value by default: the image URL in their ID. Much like the Player's
 display name, this can change during gameplay. It is automatically set
 to [this image](https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png) when the
@@ -754,7 +754,7 @@ on [Equipment Slots](equipment_slot.md) for more information.
 
 ### Spectate Channel
 
-- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/main/TextChannel:Class)
+- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class)
   `this.spectateChannel`
 
 This is an internal attribute. When Player data is loaded, Alter Ego will attempt to find the channel in

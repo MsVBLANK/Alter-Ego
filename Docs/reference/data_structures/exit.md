@@ -93,7 +93,7 @@ Exit only, their Exit tables must look like this:
 
 This is the description of the Room coming from this Exit. That is, when a Player enters a Room from this Exit, they
 will receive a parsed version of this string. The Player will not be sent the Exit's description by itself. Instead,
-they will be sent a [Discord Embed](https://discord.js.org/docs/packages/discord.js/main/Embed:Class) containing:
+they will be sent a [Discord Embed](https://discord.js.org/docs/packages/discord.js/14.25.1/Embed:Class) containing:
 
 - The name of the Room.
 - The description of the Exit they entered from.

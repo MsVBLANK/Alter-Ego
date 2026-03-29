@@ -128,11 +128,11 @@ describe('Player test', () => {
             {
                 player.craft(recipe);
                 const expectedProceduralSelections = new Map([
-                    ["base color", "red"],
+                    ["base color", "obscured"],
                     ["quality", "excellent"],
                     ["glaze color", "light blue"]
                 ]);
-                const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red </poss></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's already been fired in a kiln, but it's been coated with glaze.</s> <s>The glaze is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural> in color.</s> <s>It's still wet, so you might not want to use it as a container just yet.</s> <s>It should be fired in a kiln one more time before it's truly complete.</s> <s>In it, you find <il></il>.</s></desc>`;
+                const expectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="obscured"/></procedural>clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>It's already been fired in a kiln, but it's been coated with glaze.</s> <s>The glaze is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural> in color.</s> <s>It's still wet, so you might not want to use it as a container just yet.</s> <s>It should be fired in a kiln one more time before it's truly complete.</s> <s>In it, you find <il></il>.</s></desc>`;
                 expect(rightHand.equippedItem.prefab.id).toBe('GLAZED CLAY POT');
                 expect(rightHand.equippedItem.name).toBe('LIGHT BLUE GLAZED CLAY POT');
                 expect(rightHand.equippedItem.pluralName).toBe('LIGHT BLUE GLAZED CLAY POTS');
@@ -147,35 +147,54 @@ describe('Player test', () => {
 
             {
                 player.uncraft(rightHand.equippedItem, recipe);
-                const clayPotExpectedProceduralSelections = new Map([
+                // The original base color is expected to have been lost.
+                const clayPotRedProceduralSelections = new Map([
                     ["base color", "red"],
                     ["quality", "excellent"]
                 ]);
-                const glazeExpectedProceduralSelections = new Map([
-                    ["glaze color", "light blue"]
+                const clayPotWhiteProceduralSelections = new Map([
+                    ["base color", "white"],
+                    ["quality", "excellent"]
                 ]);
-                const clayPotExpectedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
-                const glazeExpectedDescription = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="glaze color"><poss name="light blue">light blue</poss></procedural>.</s> <s>You can apply it to a fired CLAY POT or CLAY SCULPTURE before putting it in the kiln to give it a glossy finish.</s></desc>`;
+                const glazeExpectedProceduralSelections = new Map([
+                    ["glaze color", "light blue"],
+                    ["base color", "obscured"],
+                    ["secondary glaze color", "light blue"],
+                    ["secondary base color", "obscured"]
+                ]);
+                const clayPotRedDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="red">red</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                const clayPotWhiteDescription = `<desc><s>This is a pot made of <procedural name="base color"><poss name="white">white</poss></procedural> clay.</s> <s>It was made on a pottery wheel.</s> <procedural name="quality"><s><poss name="excellent">The craftsmanship is *excellent*. It has a flat, sturdy bottom that sits level on any surface. The sides have perfect radial symmetry, and a very smooth texture. It makes for a good container, as any pot should.</poss></s></procedural> <s>Since it's unglazed, it's bone dry, and feels quite delicate.</s> <s>If it comes into contact with moisture, it will absorb it, and it may eventually break.</s> <s>In it, you find <il></il>.</s></desc>`;
+                const glazeExpectedDescription = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="glaze color"><poss name="light blue"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="light blue"><procedural name="secondary base color"><poss name="obscured">light blue</poss></procedural></poss></procedural></poss></procedural></poss></procedural>.</s> <s>You can apply it to a fired clay sculpture before putting it in the kiln to give it a glossy finish.</s></desc>`;
                 expect(rightHand.equippedItem).not.toBeNull();
                 expect(leftHand.equippedItem).not.toBeNull();
+                expect(rightHand.equippedItem.proceduralSelections).toEqual(glazeExpectedProceduralSelections);
+                expect(leftHand.equippedItem.proceduralSelections).toBeOneOf([clayPotRedProceduralSelections, clayPotWhiteProceduralSelections]);
+                const clayPotBaseColor = leftHand.equippedItem.proceduralSelections.get("base color");
                 expect(rightHand.equippedItem.prefab.id).toBe('GLAZE');
                 expect(rightHand.equippedItem.name).toBe('LIGHT BLUE GLAZE');
                 expect(rightHand.equippedItem.pluralName).toBe('');
                 expect(rightHand.equippedItem.singleContainingPhrase).toBe('a bottle of LIGHT BLUE GLAZE');
                 expect(rightHand.equippedItem.pluralContainingPhrase).toBe('bottles of LIGHT BLUE GLAZE');
                 expect(leftHand.equippedItem.prefab.id).toBe('FIRED CLAY POT');
-                expect(leftHand.equippedItem.name).toBe('RED CLAY POT');
-                expect(leftHand.equippedItem.pluralName).toBe('RED CLAY POTS');
-                expect(leftHand.equippedItem.singleContainingPhrase).toBe('a RED CLAY POT');
-                expect(leftHand.equippedItem.pluralContainingPhrase).toBe('RED CLAY POTS');
+                if (clayPotBaseColor === "red") {
+                    expect(leftHand.equippedItem.name).toBe('RED CLAY POT');
+                    expect(leftHand.equippedItem.pluralName).toBe('RED CLAY POTS');
+                    expect(leftHand.equippedItem.singleContainingPhrase).toBe('a RED CLAY POT');
+                    expect(leftHand.equippedItem.pluralContainingPhrase).toBe('RED CLAY POTS');
+                    expect(leftHand.equippedItem.description.text).toEqual(clayPotRedDescription);
+                }
+                else if (clayPotBaseColor === "white") {
+                    expect(leftHand.equippedItem.name).toBe('WHITE CLAY POT');
+                    expect(leftHand.equippedItem.pluralName).toBe('WHITE CLAY POTS');
+                    expect(leftHand.equippedItem.singleContainingPhrase).toBe('a WHITE CLAY POT');
+                    expect(leftHand.equippedItem.pluralContainingPhrase).toBe('WHITE CLAY POTS');
+                    expect(leftHand.equippedItem.description.text).toEqual(clayPotWhiteDescription);
+                }
                 expect(rightHand.equippedItem.uses).toBe(NaN);
                 expect(leftHand.equippedItem.uses).toBe(NaN);
                 expect(rightHand.equippedItem.quantity).toBe(1);
                 expect(leftHand.equippedItem.quantity).toBe(1);
-                expect(rightHand.equippedItem.proceduralSelections).toEqual(glazeExpectedProceduralSelections);
                 expect(rightHand.equippedItem.description.text).toEqual(glazeExpectedDescription);
-                expect(leftHand.equippedItem.proceduralSelections).toEqual(clayPotExpectedProceduralSelections);
-                expect(leftHand.equippedItem.description.text).toEqual(clayPotExpectedDescription);
             }
         });
     });

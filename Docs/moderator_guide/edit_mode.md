@@ -66,7 +66,7 @@ game data consistent are:
 * Use edit mode sparingly - only when needed.
 * Only load the manually edited data structures before disabling edit mode in order to avoid reloading old game data.
 * When applicable, load related data structures. For example, if manually
-  editing [Items](../reference/data_structures/item.md), load the [Objects](../reference/data_structures/object.md)
+  editing [Items](../reference/data_structures/room_item.md), load the [Fixtures](../reference/data_structures/fixture.md)
   and [Puzzles](../reference/data_structures/puzzle.md) which contain them.
 * Avoid loading Players unless absolutely necessary.
 * Every so often, load all game data to get everything back in sync.

@@ -348,7 +348,7 @@ programmed into Alter Ego. Here, each behavior attribute will be listed, and the
   when this behavior attribute is cured.
 - The Player cannot be Whispered to. They will be removed from any Whispers that they are a part of. If the Status
   Effect is inflicted by use of the hide command, a Whisper will automatically be created with all Players hiding in the
-  same Object.
+  same Fixture.
 - If the Player whispers and someone in the Room has the `acute hearing` behavior attribute, the whispered dialog that
   will be sent via DM will not have the Player's identity attached. Example:
   `You overhear someone in the room whisper "[Message]".`
@@ -357,30 +357,30 @@ programmed into Alter Ego. Here, each behavior attribute will be listed, and the
 - If the Player is in a Whisper, Narrations about their actions will be sent to the Whisper channel.
 - The Player will not appear in the list of occupants when another Player enters the Room they're in.
 - The Player will not appear in the [occupants string](room.md#occupants-string) of the Room they're in.
-- The Player cannot be inspected, except by another Player hiding in the same Object as them.
-- The Player cannot be given to or stolen from, except by another Player hiding in the same Object as them.
-- The Player cannot be the target for a [Gesture](gesture.md), except by another Player hiding in the same Object as
+- The Player cannot be inspected, except by another Player hiding in the same Fixture as them.
+- The Player cannot be given to or stolen from, except by another Player hiding in the same Fixture as them.
+- The Player cannot be the target for a [Gesture](gesture.md), except by another Player hiding in the same Fixture as
   them.
-- The Player can only use the dress command to dress from the Object they're hiding in, from
-  its [child Puzzle](object.md#child-puzzle), or from Items contained within it.
-- The Player can only use the drop command to drop Inventory Items into the Object they're hiding in, into its child
+- The Player can only use the dress command to dress from the Fixture they're hiding in, from
+  its [child Puzzle](fixture.md#child-puzzle), or from Items contained within it.
+- The Player can only use the drop command to drop Inventory Items into the Fixture they're hiding in, into its child
   Puzzle, or into Items contained within it.
-- The Player can only use the gesture command to target the Object they're hiding in, Items contained within it, Players
-  hiding in the same Object they're hiding in, and their own Inventory Items.
-- The Player can only use the give command to give Inventory Items to Players hiding in the same Object as them.
-- The Player can only use the inspect command to inspect the Room, the Object they're hiding in, Items contained within
-  it, their own Inventory Items, Players hiding in the same Object they're hiding in, and their Inventory Items.
+- The Player can only use the gesture command to target the Fixture they're hiding in, Items contained within it, Players
+  hiding in the same Fixture they're hiding in, and their own Inventory Items.
+- The Player can only use the give command to give Inventory Items to Players hiding in the same Fixture as them.
+- The Player can only use the inspect command to inspect the Room, the Fixture they're hiding in, Items contained within
+  it, their own Inventory Items, Players hiding in the same Fixture they're hiding in, and their Inventory Items.
 - When the Player uses the say command, their display name will be temporarily changed to `Someone in the room`. It will
   be restored to what it was previously after the command is executed.
 - When the Player uses the say command, their display icon will be temporarily changed
   to [this image](https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png). It
   will be restored to what it was previously after the command is executed.
-- The Player can only use the steal command to steal Inventory Items from Players hiding in the same Object as them.
-- The Player can only use the take command to take Items from the Object they're hiding in, from its child Puzzle, or
+- The Player can only use the steal command to steal Inventory Items from Players hiding in the same Fixture as them.
+- The Player can only use the take command to take Items from the Fixture they're hiding in, from its child Puzzle, or
   from Items contained within it.
-- The Player can only use the undress command to undress into the Object they're hiding in, into its child Puzzle, or
+- The Player can only use the undress command to undress into the Fixture they're hiding in, into its child Puzzle, or
   into Items contained within it.
-- The Player can only use the use command to activate/deactivate the Object they're hiding in, solve/unsolve its child
+- The Player can only use the use command to activate/deactivate the Fixture they're hiding in, solve/unsolve its child
   Puzzle, or use their own Inventory Items.
 
 #### `concealed`

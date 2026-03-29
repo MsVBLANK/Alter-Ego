@@ -57,8 +57,8 @@ Player data is loaded from the spreadsheet, Alter Ego will check to see if that 
 the Spectator category. If not, it will create one with that Player's name. It will not do this if there are already 50
 spectate channels in the category.
 
-When a Player enters a Room, inspects an [Object](../reference/data_structures/object.md) or
-[Item](../reference/data_structures/item.md), or otherwise does something that requires text from
+When a Player enters a Room, inspects an [Fixture](../reference/data_structures/fixture.md) or
+[Item](../reference/data_structures/room_item.md), or otherwise does something that requires text from
 the [Spreadsheet](../reference/data_structures/index.md) be sent, Alter Ego will send the text to that Player via DM.
 Any [Narration](../reference/data_structures/narration.md) regarding a Player action will generally be sent to the
 channel of the Room that Player is in.

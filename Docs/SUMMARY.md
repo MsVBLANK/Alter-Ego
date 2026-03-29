@@ -35,7 +35,7 @@
     - [Inventory Item](reference/data_structures/inventory_item.md)
     - [Item](reference/data_structures/item.md)
     - [Narration]()
-    - [Object](reference/data_structures/object.md)
+    - [Fixture](reference/data_structures/fixture.md)
     - [Player](reference/data_structures/player.md)
     - [Prefab](reference/data_structures/prefab.md)
     - [Puzzle](reference/data_structures/puzzle.md)

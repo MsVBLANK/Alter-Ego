@@ -131,7 +131,7 @@ and [Players](../reference/data_structures/player.md) support multiple `il` tags
 Lastly, `il` tags can only be used in a certain number of places, and each one has its own limitations. They can be used
 in:
 
-- An [Object](../reference/data_structures/object.md)'s description. A single Object can only have one item list in its
+- An [Fixture](../reference/data_structures/fixture.md)'s description. A single Fixture can only have one item list in its
   description.
 - A [Prefab](../reference/data_structures/prefab.md)'s description. A single Prefab can have multiple item lists;
   however, there must be one for each [inventory slot](../reference/data_structures/prefab.md#inventory), with names to
@@ -164,12 +164,12 @@ plural containing phrase. For example:
 `<desc><s>You open the dresser.</s> <s>There are a few drawers with nothing of interest in them.</s> <s>In the bottom drawer, you find <il><item>a pair of NEEDLES</item></il>.</s></desc>`
 
 In this example, the Item, `NEEDLES`, has the single containing phrase `a pair of NEEDLES`. If a Player dropped another
-`NEEDLES` Item into this Object, Alter Ego would change the contents of the `item` tag to the quantity 2 plus the
+`NEEDLES` Item into this Fixture, Alter Ego would change the contents of the `item` tag to the quantity 2 plus the
 `NEEDLES` Item's plural containing phrase, which is `pairs of NEEDLES`. The description would become:
 
 `<desc><s>You open the dresser.</s> <s>There are a few drawers with nothing of interest in them.</s> <s>In the bottom drawer, you find <il><item>2 pairs of NEEDLES</item></il>.</s></desc>`
 
-Likewise, if the Player then removed a `NEEDLES` Item from this Object, Alter Ego would revert the description to use
+Likewise, if the Player then removed a `NEEDLES` Item from this Fixture, Alter Ego would revert the description to use
 the Item's single containing phrase.
 
 ---
@@ -193,17 +193,17 @@ The `if` tag is used to modify the contents of a description before it is sent t
 `cond` (condition) attribute is true, then the contents of the `if` tag will be kept in the description. If it is false,
 the contents will be removed. In the above example, there are two outcomes:
 
-- If the Player inspecting this Object has the talent "Ultimate Herbalist", the condition is true, and they will be sent
+- If the Player inspecting this Fixture has the talent "Ultimate Herbalist", the condition is true, and they will be sent
   `You take a look at the seaberry plant. Growing on it are SEABERRIES. You think you've heard that it can cure nausea.`
-- If the Player inspecting this Object doesn't have the talent "Ultimate Herbalist", the condition is false, and they
+- If the Player inspecting this Fixture doesn't have the talent "Ultimate Herbalist", the condition is false, and they
   will be sent `You take a look at the seaberry plant. Growing on it are SEABERRIES.`
 
-You can chain multiple `if` tags together for different outcomes. For example, in this Object description:
+You can chain multiple `if` tags together for different outcomes. For example, in this Fixture description:
 `<desc><s>The window covers most of the wall, filling the room with <if cond="findEvent('NIGHT').ongoing === true">moonlight</if><if cond="findEvent('NIGHT').ongoing === false">sunlight</if>.</s></desc>`
 
-- If the `NIGHT` Event is ongoing, the Player inspecting this Object will be sent:
+- If the `NIGHT` Event is ongoing, the Player inspecting this Fixture will be sent:
   `The window covers most of the wall, filling the room with moonlight.`
-- If the `NIGHT` Event is _not_ ongoing, the Player inspecting this Object will be sent:
+- If the `NIGHT` Event is _not_ ongoing, the Player inspecting this Fixture will be sent:
   `The window covers most of the wall, filling the room with sunlight.`
 
 ### Player conditionals
@@ -229,10 +229,10 @@ write descriptions that change:
 - Based on the number of Players in the room:
   `<if cond="this.occupants.length > 6">It's a little cramped with so many people in a room this small.</if>`
 
-If the description belongs to an [Object](../reference/data_structures/object.md), you can write descriptions that
+If the description belongs to an [Fixture](../reference/data_structures/fixture.md), you can write descriptions that
 change:
 
-- Based on whether the Object's child Puzzle has been solved:
+- Based on whether the Fixture's child Puzzle has been solved:
   `<desc><if cond="this.childPuzzle.solved === true"><s>You examine the poster.</s> <s>It looks like this: https://i.imgur.com/wtUujam.png</s></if><if cond="this.childPuzzle.solved === false"><s>It is too dark to see anything.</s></if></desc>`
 
 If the description belongs to an [Item](../reference/data_structures/item.md), you can write descriptions that change:
@@ -274,7 +274,7 @@ Here are just a few examples of ways to use the finder module in `if` tags:
   `<desc><s>You look through the peephole.</s> <if cond="findRoom('hall-1').occupants.length > 0"><s>There's someone in the hall outside.</s></if><if cond="findRoom('hall-1').occupants.length === 0"><s>You don't see anyone in the hall.</s></if></desc>`
 - Add additional details to a description based on the presence of an Item:
   `<desc><s>It's a queen bed with perfectly white sheets<if cond="findItem('COMFORTER', this.location.name, 'Object: BED') !== undefined"> and a thick, black comforter tucked neatly under the mattress</if>.</s> <s>On it, you find <il><item>2 PILLOWS</item> and <item>a COMFORTER</item></il>.</s></desc>`
-- Indicate if another Object is activated or not:
+- Indicate if another Fixture is activated or not:
   `<desc><s>It’s a life-sized iron bull made out of metal, with a chamber so you can climb inside.</s> <var v="this.childPuzzle.alreadySolvedDescription" /> <s>Underneath it is <if cond="findObject('BUTTON', 'torture-chamber').activated === false">what looks like a pit for a campfire</if><if cond="findObject('BUTTON', 'torture-chamber').activated === true">a roaring fire</if>.</s> <s>There is a BUTTON on its nose.</s> <s>Do you dare push it?</s></desc>`
 - Provide details based on the presence of an Inventory Item in the Player's inventory:
   `<desc><s>You examine the rightmost poster.</s> <s>It seems to be an eye chart to test a patient's vision.</s> <s>There's a line of text on the bottom that's so small you need a magnifying glass to read it.</s> <if cond="findInventoryItem('MAGNIFYING GLASS', player.name) !== undefined"><s>You use your MAGNIFYING GLASS to read the text, which is as follows: "MADE YOU LOOK".</s></if></desc>`
@@ -311,10 +311,10 @@ uses for it:
 
 ### Indicating Puzzle status
 
-One of the `var` tag's most common uses is changing the description of an Object or something else based on the solved
+One of the `var` tag's most common uses is changing the description of an Fixture or something else based on the solved
 status of a Puzzle. Here are a few examples:
 
-- Indicating what items are inside the Object's child Puzzle:
+- Indicating what items are inside the Fixture's child Puzzle:
   `<desc><s>You examine the table.</s> <s>Looking closely, you can see that it's not a table at all, but a chest!</s> <if cond="this.childPuzzle.solved === true"><s>It looks like it requires an old key to open, but it seems to be unlocked.</s> <var v=" this.childPuzzle.alreadySolvedDescription" /></if><if cond="this.childPuzzle.solved === false"><s>It looks like it requires an old key to open.</s></if></desc>`
     - `this.childPuzzle.alreadySolvedDescription`:
       `<desc><s>You open the chest.</s> <s>Inside, you find <il><item>a bottle of PEPSI</item>, <item>a ROPE</item>, and <item>a KNIFE</item></il>.</s></desc>`
@@ -362,7 +362,7 @@ Because the `var` tag is able to access all of the game's data, it has many more
 - Indicate which players are in another Room:
   `<desc><s>You look through the window into the pool room below.</s> <s>On the right side of the room you see an Olympic-size swimming pool and on the left is a larger recreational pool, surrounded by a number of beach chairs.</s> <if cond="findRoom('rec-pool').occupantsString !== ''"><s>You think you see <var v="findRoom('rec-pool').occupantsString" /> down there.</s></if></desc>`
 - Use the player's name: `<desc><s>You look in the mirror.</s> <s>It's you.</s> <s><var v="player.name" />.</s></desc>`
-- Indicate the password to an Object's child Puzzle:
+- Indicate the password to an Fixture's child Puzzle:
   `<desc><s>You examine the safe.</s> <s>It comes equipped with a small screen and a miniature keyboard.</s> <if cond="this.childPuzzle.solved === true"><s>It's currently unlocked.</s> <var v="this.childPuzzle.alreadySolvedDescription" /></if><if cond="this.childPuzzle.solved === false"><s>It seems to require a password to unlock.</s> <s><if cond="player.name === 'Nero'">You, of course, know that the password is <var v="this.childPuzzle.solution" />.</if></s></if></desc>`
 
 ---

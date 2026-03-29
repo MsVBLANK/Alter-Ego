@@ -32,7 +32,7 @@ a terminal, run.
 
 ```
 git fetch --all --tags
-git checkout tags/[VERSION] -b [BRANCH NAME]
+git checkout [VERSION]
 ```
 
 Where `VERSION` is the version of Alter Ego you wish to use (e.g. `1.8.0`) and `BRANCH_NAME` is a name of your choice (

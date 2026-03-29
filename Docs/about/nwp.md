@@ -9,9 +9,9 @@ The basis of the Neo World Program is moving between [rooms](../reference/data_s
 represented by a Discord channel. When a player moves from one room to another, they will be removed from the room
 channel they are currently in and added to the channel corresponding to the desired room. Upon entering the new room,
 they will receive a written description of the room, noting any
-interesting [objects](../reference/data_structures/object.md) they find there. They may check who else is in the room
+interesting [fixtures](../reference/data_structures/fixture.md) they find there. They may check who else is in the room
 with them by looking at the Discord member list. In any given room, a player may speak to other players in the room,
-inspect objects, take and discard [items](../reference/data_structures/item.md),
+inspect fixtures, take and discard [items](../reference/data_structures/room_item.md),
 solve [puzzles](../reference/data_structures/puzzle.md), and do various other things.
 
 The Neo World Program is overseen by at least one [moderator](../moderator_guide/moderating.md). The moderator(s) are

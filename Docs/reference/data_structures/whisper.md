@@ -13,8 +13,8 @@ Room, they will be removed from the Whisper. If, when a Player is removed from t
 remaining is the same as a different Whisper that already exists, it will be deleted upon the Player's removal.
 Otherwise, a Whisper will only be deleted once all Players have been removed from it.
 
-A Whisper can also be created when a Player [hides]() in an [Object](object.md). This allows a Whisper to be created
-with only one Player. However, if more Players hide in the same Object, the Whisper will be deleted and a new one will
+A Whisper can also be created when a Player [hides]() in a [Fixture](fixture.md). This allows a Whisper to be created
+with only one Player. However, if more Players hide in the same Fixture, the Whisper will be deleted and a new one will
 be created with all Players. A Whisper created in this way behaves similarly to a Room, but with most of the same
 properties as a normal Whisper. When a Player comes out of hiding or is inflicted with a Status Effect with the
 `no channel` or `no hearing` behavior attributes, they will be removed from the Whisper. When all Players are removed

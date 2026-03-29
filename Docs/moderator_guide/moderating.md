@@ -7,8 +7,8 @@ easier, it presents its own challenges. In this tutorial, the process will be ex
 
 The purpose of a moderator in the Neo World Program is to facilitate gameplay. While Alter Ego does most of the heavy
 lifting, there are many things it cannot do. A moderator must draw the Map, program the game world on the spreadsheet,
-create and manage the server, host Alter Ego, respond to player inquiries, narrate player actions, handle combat, fix
-bugs, and much more.
+create and manage the server, host Alter Ego, respond to player inquiries, handle player actions that aren't automated,
+handle combat, fix bugs, and much more.
 
 A good moderator must remain calm even during the most tense situations. However, these responsibilities can and do take
 a toll on a moderator, and it is all too easy to become overwhelmed. For this reason, it is **strongly** recommended to
@@ -74,7 +74,8 @@ the [mapmaking tutorial]() for more information.
 By far the longest and most difficult part of a moderator's job is writing the game. Writing takes place entirely on the
 spreadsheet. In this stage of development, your goal must be to write all of
 the [Rooms](../reference/data_structures/room.md) on the map and fill them
-with [Objects](../reference/data_structures/object.md), [Items](../reference/data_structures/item.md)
+with [Fixtures](../reference/data_structures/fixture.md),
+[Room Items](../reference/data_structures/room_item.md),
 and [Puzzles](../reference/data_structures/puzzle.md) for Players to interact with. You'll need to
 write [Prefabs](../reference/data_structures/prefab.md) to provide functionality to Items,
 add [Recipes](../reference/data_structures/recipe.md) for Players to carry out, and
@@ -186,7 +187,9 @@ This message can be customized to suit each individual Player. You can then end 
 everyone spawns in so that they don't receive the spawn message again when they inspect or enter the Room through the
 first Exit. An example of a description that uses this tactic looks something like this:
 
-`<desc><if cond="findEvent('PROLOGUE').ongoing === true"><s>You wake up feeling disoriented. It doesn't take long for your eyes to adjust to the bright light of the room, and you find yourself in bed in what appears to be a small dorm of sorts. The last thing you remember is arriving at the hotel in Miami, Florida on the morning of August 12th, 2045. People were buzzing about the solar eclipse that was supposed to happen today around 12:30 PM, but you were there for another reason: the **Ultimate Conference**. Several months ago, an official from the UN approached you and informed you that you had been selected as the <var v="player.talent" />, and you were invited to speak at the Ultimate Conference, where you and many other talented individuals would be able to promote your talents and ideas on the world stage. The conference was supposed to start on the 14th, but as soon as you entered your hotel suite, the room filled up with gas, and you went unconscious.<br /><br />You look around. You're currently lying in a BED, which is pushed into the corner of the room. A NIGHTSTAND is just to your right. In the corner past it is a small CLOSET with a DRESSER beside it. A MONITOR is mounted on the wall to your right. Looking up at the ceiling, you notice a CAMERA between the dull fluorescent lights. On the wall to your left, past the foot of the bed, is a wall-mounted MIRROR. There is a DOOR on the wall across from you, with an electronic SWITCH just above the door handle. Beside it is a TRASH CAN. You suddenly notice the strange BRACELET on your left wrist.</s></if><if cond="findEvent('PROLOGUE').ongoing === false"><s>You enter dorm 1. In the back right corner is a BED, which has a NIGHTSTAND just to the left of it. A MIRROR is mounted on the wall to the right, past the foot of the bed. In the back left corner is a small CLOSET. Beside it, against the left wall, is a DRESSER. A MONITOR is mounted on the left wall as well. Looking up at the ceiling, you notice a CAMERA between the dull fluorescent lights. The DOOR behind you is fitted with an electronic SWITCH just above the door handle. There is a TRASH CAN just beside the door.</s></if></desc>`
+```xml
+<desc><if cond="findEvent('PROLOGUE').ongoing === true"><s>You wake up feeling disoriented. It doesn't take long for your eyes to adjust to the bright light of the room, and you find yourself in bed in what appears to be a small dorm of sorts. The last thing you remember is arriving at the hotel in Miami, Florida on the morning of August 12th, 2045. People were buzzing about the solar eclipse that was supposed to happen today around 12:30 PM, but you were there for another reason: the **Ultimate Conference**. Several months ago, an official from the UN approached you and informed you that you had been selected as the <var v="player.talent" />, and you were invited to speak at the Ultimate Conference, where you and many other talented individuals would be able to promote your talents and ideas on the world stage. The conference was supposed to start on the 14th, but as soon as you entered your hotel suite, the room filled up with gas, and you went unconscious.<br /><br />You look around. You're currently lying in a BED, which is pushed into the corner of the room. A NIGHTSTAND is just to your right. In the corner past it is a small CLOSET with a DRESSER beside it. A MONITOR is mounted on the wall to your right. Looking up at the ceiling, you notice a CAMERA between the dull fluorescent lights. On the wall to your left, past the foot of the bed, is a wall-mounted MIRROR. There is a DOOR on the wall across from you, with an electronic SWITCH just above the door handle. Beside it is a TRASH CAN. You suddenly notice the strange BRACELET on your left wrist.</s></if><if cond="findEvent('PROLOGUE').ongoing === false"><s>You enter dorm 1. In the back right corner is a BED, which has a NIGHTSTAND just to the left of it. A MIRROR is mounted on the wall to the right, past the foot of the bed. In the back left corner is a small CLOSET. Beside it, against the left wall, is a DRESSER. A MONITOR is mounted on the left wall as well. Looking up at the ceiling, you notice a CAMERA between the dull fluorescent lights. The DOOR behind you is fitted with an electronic SWITCH just above the door handle. There is a TRASH CAN just beside the door.</s></if></desc>
+```
 
 Once all of your preparations have been made and you have Alter Ego up and running, it's officially time to start the
 game. Note that if you have all of the Player data written on the spreadsheet already, you don't have to use
@@ -213,16 +216,6 @@ When the game is finally underway, this is when your game world will truly be te
 may not have anticipated, which could reveal bugs that you didn't catch during development. This is why the more testing
 you did beforehand, the better - the more bugs you caught in advance, the fewer you'll have to fix during the game
 itself. When they do pop up, you can usually just turn on [edit mode](edit_mode.md) and fix them within a few minutes.
-
-The most common category of bugs is ghost Items. These are Items that exist in Object, Item, or Puzzle descriptions
-which can't be interacted with in any way because they don't actually exist. It could be that they never existed on the
-Items sheet, they turned into something else via a Recipe, or they were taken or destroyed and now have a quantity of 0.
-These are created under several different circumstances, one of which is the use of edit mode combined with the load
-command. This is troublesome, as there's no way to fix ghost Items other than to use edit mode and the load command. For
-this reason, ghost Items should usually be dealt with during off-times, such as after the game session when Players
-aren't currently interacting with the game world. They, along with the item tags surrounding them, can simply be removed
-from the descriptions in which they appear. Issuing the command `.testparser remove` can help you identify ghost Items
-so that you can remove them from descriptions, although this method won't necessarily catch all of them.
 
 There will be some bugs whose cause you can't quickly identify. If they're not that severe, you can simply let them be
 until the game session is over and you have time to study them without Players getting in the way. Sometimes, all you

@@ -231,16 +231,16 @@ Open the `.env` file on your computer. You should see something like this.
 TZ='America/New_York'
 
 # Credentials
-DISCORD_TOKEN=                      # String. Token of discord bot
-G_PROJECT_ID=                       # String. Google project ID
-G_PRIVATE_KEY_ID=                   # String. Google private key ID
-G_PRIVATE_KEY=                      # String. Google private key
-G_CLIENT_EMAIL=                     # String. Google client email
-G_CLIENT_ID=                        # String. Google client id
-G_CLIENT_X509_CERT_URL=             # String. Google cert url
+DISCORD_TOKEN=                                # String. Token of discord bot
+G_PROJECT_ID=                                 # String. Google project ID
+G_PRIVATE_KEY_ID=                             # String. Google private key ID
+G_PRIVATE_KEY=                                # String. Google private key
+G_CLIENT_EMAIL=                               # String. Google client email
+G_CLIENT_ID=                                  # String. Google client id
+G_CLIENT_X509_CERT_URL=                       # String. Google cert url
 
 # Settings
-SPREADSHEET_ID=                     # String. ID of spreadsheet
+SPREADSHEET_ID=                               # String. ID of spreadsheet
 ...
 (file continues on)
 ```
@@ -400,7 +400,7 @@ docker compose up -d
 
 ### Docker Commands
 
-To view the status of your container run:
+To view the status of your container, run:
 
 ```shell
 docker ps

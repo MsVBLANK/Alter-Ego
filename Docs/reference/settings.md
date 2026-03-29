@@ -1,6 +1,6 @@
-# Docker Settings
+# Settings
 
-Alter Ego has various **settings** that can be configured in the file `.env`. All values should be enclosed with single
+Alter Ego has various **settings** that can be configured in the file `.env`, or as environment variables. All values in `.env` should be enclosed with single
 quotes. Remember to uncomment (i.e. remove the `#` before the line) for them to go into effect. This page details each
 setting and what it does.
 
@@ -12,18 +12,50 @@ This is what users must begin their messages with in order to run a command. If 
 with this string, it will pass the message into its command handler module to determine if it was a command or not, and
 run it if it was.
 
+*Default: `.`*
+
 ### DEBUG_MODE
 
 This is a simple [Boolean value](https://en.wikipedia.org/wiki/Boolean_data_type). If this is `true`, Alter Ego will
 start in debug mode. If this is `false`, it will start normally.
 
+*Default: `false`*
+
 ### EMBED_COLOR
 
-This is a string that determines the color of embed messages sent by Alter Ego. String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`
+This is a string that determines the accent color of embed messages sent by Alter Ego. String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
+
+*Default: `1F8B4C`*
+
+### STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR
+
+This is a string that determines the accent color of standard messages sent by Alter Ego. String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
+
+*Default: `1F8B4C`*
+
+### WARNING_MESSAGE_DISPLAY_ACCENT_COLOR
+
+This is a string that determines the accent color of warning messages sent by Alter Ego. String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
+
+*Default: `FFC107`*
+
+### ALERT_MESSAGE_DISPLAY_ACCENT_COLOR
+
+This is a string that determines the accent color of alert messages sent by Alter Ego. String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
+
+*Default: `FF0E0E`*
 
 ### AUTO_LOAD
 
 This is a boolean that determines whether or not the bot automatically executes functionality equivalent to `.load all resume` upon startup.
+
+*Default: `false`*
+
+### SHOW_ONLINE_PLAYER_COUNT
+
+This is a boolean that determines whether or not the bot shows the number of online players (that is, players who are not asleep and are active) in its status.
+
+*Default: `true`*
 
 ## Other game data
 
@@ -35,11 +67,15 @@ meters. In order to set this properly, find a part of your map with a standard s
 must be 28 x 15 meters according to the International Basketball Federation). Divide the number of pixels making up its
 length by its length in meters. The result should go here.
 
+*Default: `25`*
+
 ### STAMINA_USE_RATE
 
 This is used to calculate how much stamina a player will lose every 1/10th of a second they are moving. You can change
 this to be higher or lower, depending on how quickly you want players to lose stamina, but it should always be a
 negative number.
+
+*Default: `-0.01`*
 
 ### HEATED_SLOWDOWN_RATE
 
@@ -48,6 +84,8 @@ accomplish this feat, the rate of time passing during player movement as well as
 by this number. This allows you to narrate heated situations such as combat without worrying about how much time is
 passing. The lower this number, the more slowed down time will become. Players are not informed that time is being
 slowed, so setting this number too low can tip them off that a heated situation is ongoing.
+
+*Default: `0.5`*
 
 ### DICE_MIN
 
@@ -58,18 +96,32 @@ This is an integer that indicates the lowest possible number for a standard die 
 This is an integer that indicates the highest possible number for a standard die roll. The default is `6`, but it can be
 changed to any number higher than diceMin.
 
-### DEFAULT_DROP_OBJECT
+### DEFAULT_DROP_FIXTURE
 
-This is the name of the [Object](../data_structures/object.md) in each room that players will drop Items on if they
-don't specify one themselves. Every Room must have an Object with this name capable of holding Items.
+This is the name of the [Fixture](../data_structures/fixture.md) in each room that players will drop Items on if they
+don't specify one themselves. Every Room must have an Fixture with this name capable of holding Items.
+
+*Default: `FLOOR`*
 
 ### DEFAULT_ROOM_ICON_URL
 
 This is the URL of an image that will be inserted into
-the [Room MessageEmbed](../data_structures/room.md#room-description)
-when a player enters or inspects a Room if the Room does not have a unique icon URL. This must end in `.jpg`, `.png`, or
-`.gif`. If this is left blank and the Room does not have a unique icon URL, then Alter Ego will use the server icon
-instead. If the server icon is not set, then no image will be sent in the MessageEmbed.
+the [Room description message](../data_structures/room.md#room-description)
+when a player enters or inspects a Room if the Room does not have a unique icon URL. This must end in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, or `.avif`.
+If this is left blank and the Room does not have a unique icon URL, then Alter Ego will use the server icon
+instead. If the server icon is not set, then no image will be sent in the description message.
+
+*Default: blank*
+
+### DEFAULT_CONCEAL_ICON_URL
+
+This is the URL of an image that will be used as
+the default icon for a player or NPC whose identity is concealed, if the concealing effect does not have a unique icon URL.
+This must end in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, or `.avif`.
+If this is left blank and the Room does not have a unique icon URL, then Alter Ego will use the server icon
+instead. If the server icon is not set, then no image will be sent in the description message.
+
+*Default: blank*
 
 ### AUTO_DELETE_WHISPER_CHANNELS
 
@@ -79,9 +131,13 @@ they will be renamed "archived-(Room name)". Because [Discord](../../about/disco
 have up to 50 channels, this should be `true` unless you plan on manually deleting Whisper channels when you no longer
 need to see them.
 
+*Default: `true`*
+
 ### AUTOSAVE_INTERVAL
 
-This is how often, in seconds, Alter Ego should update the spreadsheet with any necessary changes. The default is `30`.
+This is how often, in seconds, Alter Ego should update the spreadsheet with any necessary changes.
+
+*Default: `30`*
 
 ## Bot activities
 
@@ -93,24 +149,39 @@ These are Discord user activities that Alter Ego will set for itself at certain 
     - STREAMING
     - LISTENING
     - WATCHING
+    - CUSTOM
     - COMPETING
 - **string**: This is the name of the activity that will be used after the verb.
 
 ### ONLINE_ACTIVITY_TYPE, ONLINE_ACTIVITY_STRING
 
-This is the activity that Alter Ego will set for itself when it comes online. Its default activity will display as
-`Listening to Future Foundation HQ`. Alter Ego will set its status to Online.
+This is the activity that Alter Ego will set for itself when it comes online.
+Alter Ego will set its status to Online.
 
-### DEBUG_MODE_TYPE, DEBUG_MODE_STRING
+*Type Default: `CUSTOM`*
 
-This is the activity that Alter Ego will set for itself when it comes online in debug mode. Its default activity will
-display as `Playing NWP Debugger.exe`. Alter Ego will set its status to Do Not Disturb.
+*String Default: `Waiting for commands...`*
 
-### IN_PROGRESS_TYPE, IN_PROGRESS_STRING
+### DEBUG_MODE_ACTIVITY_TYPE, DEBUG_MODE_ACTIVITY_STRING
 
-This is the activity that Alter Ego will set for itself when a game has begun. Its default activity will display as
-`Streaming Neo World Program`. Alter Ego's status will be set to Online, however if a valid URL is set, it will appear
-to be streaming. The number of players online will be appended and updated periodically.
+This is the activity that Alter Ego will set for itself when it comes online in debug mode.
+Alter Ego will set its status to Do Not Disturb.
+
+*Type Default: `PLAYING`*
+
+*String Default: `Debug Mode`*
+
+### GAME_IN_PROGRESS_ACTIVITY_TYPE, GAME_IN_PROGRESS_ACTIVITY_STRING, GAME_IN_PROGRESS_ACTIVITY_URL
+
+This is the activity that Alter Ego will set for itself when a game has begun. 
+Alter Ego's status will be set to Online, however if a valid URL is set, it will appear
+to be streaming. The number of players online will be appended and updated periodically if `SHOW_ONLINE_PLAYER_COUNT` is set to `true`.
+
+*Type Default: `STREAMING`*
+
+*String Default: `NWP`*
+
+*Url Default: `https://www.twitch.tv/twitch`*
 
 ## Default player data
 
@@ -119,13 +190,18 @@ changed to suit each individual player on the spreadsheet itself before all game
 
 ### DEFAULT_PRONOUNS
 
-This is the default [pronoun string](../data_structures/player.md#pronoun-string) that each player will have. The
-default is `neutral`. Once it is on the spreadsheet, it should be edited to suit each player.
+This is the default [pronoun string](../data_structures/player.md#pronoun-string) that each player will have.
+Once it is on the spreadsheet, it should be edited to suit each player.
+
+*Default: `neutral`*
 
 ### DEFAULT_VOICE
 
 This is the default [original voice string](../data_structures/player.md#original-voice-string) that each player will
-have. The default is `a neutral voice`. Once it is on the spreadsheet, it should be edited to suit each player.
+have.
+Once it is on the spreadsheet, it should be edited to suit each player.
+
+*Default: `a neutral voice`*
 
 ### Default Stats
 
@@ -135,37 +211,51 @@ between 1 and 10.
 
 #### DEFAULT_STR
 
-This is the strength stat that each player will have by default. The default is `5`. For more information, read the
+This is the strength stat that each player will have by default. For more information, read the
 [strength section](../data_structures/player.md#strength) of the Player article.
 
-#### DEFAULT_INT
+*Default: `5`*
 
-This is the intelligence stat that each player will have by default. The default is `5`. For more information, read the
+#### DEFAULT_PER
+
+This is the perception stat that each player will have by default. For more information, read the
 [intelligence section](../data_structures/player.md#intelligence) of the Player article.
+
+*Default: `5`*
 
 #### DEFAULT_DEX
 
-This is the dexterity stat that each player will have by default. The default is `5`. For more information, read the
+This is the dexterity stat that each player will have by default. For more information, read the
 [dexterity section](../data_structures/player.md#dexterity) of the Player article.
+
+*Default: `5`*
 
 #### DEFAULT_SPD
 
-This is the speed stat that each player will have by default. The default is `5`. For more information, read the
+This is the speed stat that each player will have by default. For more information, read the
 [speed section](../data_structures/player.md#speed) of the Player article.
+
+*Default: `5`*
 
 #### DEFAULT_STA
 
-This is the stamina stat that each player will have by default. The default is `5`. For more information, read the
+This is the stamina stat that each player will have by default. For more information, read the
 [stamina section](../data_structures/player.md#stamina) of the Player article.
+
+*Default: `5`*
 
 ### DEFAULT_LOCATION
 
 This is the name of the [Room](../data_structures/room.md) that all players will start in at the beginning of the game.
 
+*Default: `living-room`*
+
 ### DEFAULT_STATUS_EFFECTS
 
 This is a comma-separated list of [Status Effects](../data_structures/status.md) that will be inflicted on all players
 at the beginning of the game.
+
+*Default: `satisfied, well rested`*
 
 ### DEFAULT_INVENTORY
 
@@ -173,12 +263,40 @@ This is an [array](https://en.wikipedia.org/wiki/Array_data_structure) of arrays
 inventory on the spreadsheet. This is used to initialize the Inventory Items sheet when the startgame timer ends. If you
 wish to change the default inventory that players start with, you can do so here. Note that if the `#` character is
 found in the container identifier slot, Alter Ego will replace it with a unique number for each player.
+The format for default player inventory corresponds to the sheet format for inventory items, with the exception that the player name column is not present.
+While the default is multiple lines, it is simpler to specify a compact, single-line array.
+
+*Default:*
+```json
+[
+    ["NULL", "", "RIGHT HAND", "", "", "", ""],
+    ["NULL", "", "LEFT HAND", "", "", "", ""],
+    ["NULL", "", "HAT", "", "", "", ""],
+    ["NULL", "", "GLASSES", "", "", "", ""],
+    ["NULL", "", "FACE", "", "", "", ""],
+    ["NULL", "", "NECK", "", "", "", ""],
+    ["NULL", "", "CHEST", "", "", "", ""],
+    ["DEFAULT SHIRT", "", "SHIRT", "", "1", "", "<desc><s>It's a plain, white T-shirt.</s></desc>"],
+    ["NULL", "", "JACKET", "", "", "", ""],
+    ["NULL", "", "BAG", "", "", "", ""],
+    ["NULL", "", "GLOVES", "", "", "", ""],
+    ["DEFAULT PANTS", "DEFAULT PANTS #", "PANTS", "", "1", "", "<desc><s>It's a plain pair of blue jeans.</s> <s>It has two pockets on the front.</s> <s>In the left pocket, you find <il name=\"LEFT POCKET\"></il>.</s> <s>In the right pocket, you find <il name=\"RIGHT POCKET\"></il>.</s></desc>"],
+    ["DEFAULT UNDERWEAR", "", "UNDERWEAR", "", "1", "", "<desc><s>It's a plain, white pair of underwear.</s></desc>"],
+    ["DEFAULT SOCKS", "", "SOCKS", "", "1", "", "<desc><s>It's a pair of plain, white ankle socks.</s></desc>"],
+    ["DEFAULT SHOES", "", "SHOES", "", "1", "", "<desc><s>It's a pair of plain, white tennis shoes.</s></desc>"]
+]
+```
 
 ### DEFAULT_DESCRIPTION
 
 This is the default description that will be applied to each player's Description cell on the Players sheet when the
 startgame timer ends. Once it is on the spreadsheet, it should be edited to describe each player's appearance. The item
 lists should also be filled out to contain the containing phrases for the default inventory, if it has been changed.
+
+*Default:*
+```xml
+<desc><s>You examine <var v="container.displayName" />.</s> <if cond="container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /> <if cond="container.pronouns.plural">are</if><if cond="!container.pronouns.plural">is</if> [HEIGHT], but <var v="container.pronouns.dpos" /> face is concealed.</s></if><if cond="!container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /><if cond="container.pronouns.plural">'re</if><if cond="!container.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s></if> <s><var v="container.pronouns.Sbj" /> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"></il>.</s> <s>You see <var v="container.pronouns.obj" /> carrying <il name="hands"></il>.</s></desc>
+```
 
 ## Role IDs
 
@@ -206,10 +324,10 @@ in single quotes.
 This should be the ID of the [Player role](../../appendix/manual_installation/channel_and_role_creation.md#player) in
 single quotes.
 
-### HEADMASTER_ROLE
+### FREE_MOVEMENT_ROLE
 
 This should be the ID of
-the [Headmaster role](../../appendix/manual_installation/channel_and_role_creation.md#headmaster) in single quotes.
+the [Free movement role](../../appendix/manual_installation/channel_and_role_creation.md#free-movement) in single quotes.
 
 ### MODERATOR_ROLE
 

@@ -234,7 +234,7 @@ This category is for the moderator(s) only. You should set the following permiss
 #### Channel: bot-log
 
 This channel is where Alter Ego will post the time and location in which players perform actions. For example, every
-time a player moves to another room, it will be posted here. Every time a player inspects an object or item, it will be
+time a player moves to another room, it will be posted here. Every time a player inspects an fixture or item, it will be
 posted here. Due to the sheer number of messages that will be posted in this channel, it is strongly recommended you
 mute it.
 

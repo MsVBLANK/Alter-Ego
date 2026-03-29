@@ -96,7 +96,7 @@ use the play command. Enable these settings:
 
 Disable everything else.
 
-### Headmaster
+### Free Movement
 
 This role allows a player to move to any room they wish, adjacent or not. This should generally not be given out freely.
 Enable these settings:
@@ -164,7 +164,7 @@ category:
     * Read Message History: Enabled
 * Hidden
     * View Channels: Disabled
-* Headmaster
+* Free Movement
     * Send Messages: Enabled
 * Moderator
     * Send Messages: Enabled _(only needed if Moderator doesn't have Administrator permission)_
@@ -172,7 +172,7 @@ category:
 #### Channel: announcements
 
 This channel will be used by the bot in very limited circumstances. If a message is sent in this channel by a player
-with the Headmaster role, it will be sent to the spectate channels of all players. You can use this channel to post
+with the Free Movement role, it will be sent to the spectate channels of all players. You can use this channel to post
 general announcements, announcements from the killing game host (e.g. morning and night announcements, body discovery
 announcements, etc.), and anything else you want to inform everyone about. You don't need to set any permission
 overrides for this channel.

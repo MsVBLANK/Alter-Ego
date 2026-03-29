@@ -20,7 +20,7 @@ These arguments are:
     - The command will act on all Players in the same Room as the Player who caused the command to be executed.
       Alternatively, for Events, this is all Players in all Rooms affected by the Event.
 - `all`
-    - The command will act on all living Players, except for NPCs and Players with the Headmaster role.
+    - The command will act on all living Players, except for NPCs and Players with the Free Movement role.
 
 ## destroy
 
@@ -181,7 +181,7 @@ Moves the given player(s) to the specified room.
 
 Forcibly moves the specified player to the specified room. If you use "all" in place of the player, it will move all
 living players to the specified room (skipping over players who are already in that room as well as players with the
-Headmaster role). If you use "player" in place of the player, then the player who triggered the command will be moved.
+Free Movement role). If you use "player" in place of the player, then the player who triggered the command will be moved.
 If you use "room" instead, all players in the room will be moved. All of the same things that happen when a player moves
 to a room of their own volition apply, however you can move players to non-adjacent rooms this way. The bot will not
 announce which exit the player leaves through or which entrance they enter from when a player is moved to a non-adjacent

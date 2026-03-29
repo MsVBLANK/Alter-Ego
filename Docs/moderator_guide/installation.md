@@ -315,11 +315,11 @@ Copy the ID for the entire spreadsheet and paste it in single quotes after `SPRE
 SPREADSHEET_ID='1234567890'
 ```
 
-## (Optional) Fill out other settings
+### (Optional) Fill out other settings
 
 If you wish to change other settings other than the ones outlined above, you can edit their entries in the `.env` file.
 Remember to uncomment (i.e. remove the `#` before the line) for them to go into effect. For more information, see the
-article on [settings](../reference/settings/docker_settings.md).
+article on [settings](../reference/settings.md).
 
 ## Step 11: Run Alter Ego
 

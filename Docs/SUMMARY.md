@@ -43,9 +43,7 @@
     - [Room](reference/data_structures/room.md)
     - [Status](reference/data_structures/status.md)
     - [Whisper](reference/data_structures/whisper.md)
-- [Settings]()
-    - [Docker Settings](reference/settings/docker_settings.md)
-    - [Node Settings](reference/settings/node_settings.md)
+- [Settings](reference/settings.md)
 
 # Appendix
 

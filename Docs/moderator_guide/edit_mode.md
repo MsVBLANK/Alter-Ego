@@ -22,8 +22,8 @@ pages on this Wiki serve this purpose), and more importantly, that data is out o
 During gameplay, this is typically not a problem. However, in the event of an error, or a crash, or a power outage, or
 some other incident which causes Alter Ego to shut down during gameplay, its internal data will be lost. In order to
 combat this, Alter Ego regularly updates the spreadsheet with the most recent copy of its internal data using
-the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/saver.js); the interval at which this occurs
-can be set with the [autoSaveInterval setting](../reference/settings/docker_settings.md#autosave_interval). While this
+the [saver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval at which this occurs
+can be set with the [autoSaveInterval setting](../reference/settings.md#autosave_interval). While this
 still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a fairly recent
 backup to load from in order to minimize the amount of data loss.
 

@@ -57,7 +57,7 @@ GNOME Archive Manager, Keka), and extract the contents into your folder of choic
 If you already have Node.js installed, you can skip this step.
 
 Node.js is the programming language that Alter Ego was coded in. Without installing it to your computer, you won't be
-able to run Alter Ego. You can install it using the link below. The **LTS** version should be fine.
+able to run Alter Ego. You can install it using the link below. Alter Ego is currently developed and tested for the v24 LTS version.
 
 https://nodejs.org/en/
 
@@ -75,7 +75,7 @@ something like this:
 
 ![](../../images/uwT7YRM.png)
 
-Now that you're in the directory of Alter Ego, run this command: `npm install`. This will automatically install all of
+Now that you're in the directory of Alter Ego, run this command: `npm ci`. This will automatically install all of
 the required dependencies.
 
 ## Step 4: Create a Discord bot
@@ -182,53 +182,71 @@ On the spreadsheet, press the **Share** button. Paste the service account's emai
 sure to give it permission to edit the spreadsheet. You can also do the same with any other moderators you have, if you
 haven't done so already. Once you've done that, you nearly have everything you need.
 
-## Step 11: Copy configuration files
+## Step 11: Edit .env file
 
-In the Alter Ego folder, navigate to the Defaults folder, and you should see something like this:
+The `.env` file is used to change all settings for Alter Ego. Before running Alter Ego, you must change several values
+here.
 
-```
-Alter-Ego
-└───Defaults
-│   │   README: DO NOT CHANGE.txt
-│   │   default_constants.json
-│   │   default_demodata.json
-│   │   default_playerdefaults.json
-│   │   default_serverconfig.json
-│   │   default_settings.json
-│...
+First, open the `Alter-Ego` folder that you downloaded. Then, make a copy of `.env.example` and name it `.env` (note you
+may have to set your file browser to show hidden files). On Linux, use these commands:
+
+```shell
+cd Alter-Ego
+cp .env.example .env
 ```
 
-Copy all `.json` files into the Configs directory, then rename them by removing the "default\_" before the name of the
-file. For instance `default_settings.json` becomes `settings.json`
+Open the `.env` file on your computer in a text editor. You should see something like this.
 
-Your folders should now look something like this:
+```dotenv
+# This is an example of an environment file for docker compose.
+#
+# '#' has been used to comment out any variables that do not need
+# to be changed from default. Remove '#' to set them if you want
+# to use something other than the default value.
+#
+# Environment variables should be enclosed in single quotes, and
+# should follow the data type next to it (e.g. String).
+# For instance: DEBUG_MODE='true'
 
+# Time Zone
+# See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+# for a complete list of timezones.
+TZ='America/New_York'
+
+# Credentials
+DISCORD_TOKEN=                                # String. Token of discord bot
+G_PROJECT_ID=                                 # String. Google project ID
+G_PRIVATE_KEY_ID=                             # String. Google private key ID
+G_PRIVATE_KEY=                                # String. Google private key
+G_CLIENT_EMAIL=                               # String. Google client email
+G_CLIENT_ID=                                  # String. Google client id
+G_CLIENT_X509_CERT_URL=                       # String. Google cert url
+
+# Settings
+SPREADSHEET_ID=                               # String. ID of spreadsheet
+...
+(file continues on)
 ```
-Alter-Ego
-└───Defaults
-│   │   README: DO NOT CHANGE.txt
-│   │   default_constants.json
-│   │   default_demodata.json
-│   │   default_playerdefaults.json
-│   │   default_serverconfig.json
-│   │   default_settings.json
-│
-└───Configs
-│   │   CONFIGS GO HERE
-│   │   constants.json
-│   │   demodata.json
-│   │   playerdefaults.json
-│   │   serverconfig.json
-│   │   settings.json
-│...
-```
 
-## Step 12: Edit credentials file
+### Setting Time Zone
 
-Open the file you downloaded after creating the service account in any text editor. The file should look something like
-this:
+Before running Alter Ego, you should set the time zone for your container, so that events in the game sync up to your
+location.
 
-```
+Edit the `TZ` line so that it matches the time zone where the game occurs in. For instance, if you want to set the
+timezone to London, you would change the line to `TZ='Europe/London'`. For a complete list of timezones, refer to
+this [Wikipedia article](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones).
+
+### Setting Credentials
+
+Navigate to the Discord Developer Portal once again and find the application you created earlier. Open the **Bot** tab.
+Under **Token**, click **Copy**. Paste it inside the single quotes after `DISCORD_TOKEN=` in your `.env` file. _This
+token must not be shared with **anyone**, as it grants access to your bot's account._
+
+Next, open the file you downloaded after creating the service account in any text editor. The file should look something
+like this:
+
+```json
 {
     "type": "service_account",
     "project_id": "(CONFIDENTIAL)",
@@ -247,54 +265,46 @@ In case it wasn't clear,
 _**almost all of the data in this file is confidential. Don't share it with a single person, and make absolutely sure
 not to put it online somehow.**_
 
-Open `Configs/credentials.json`. This file is where you're going to put the credentials for both the Discord bot and the
-service account. Copy and paste this into the file:
+Next, add the Google service account credentials to your `.env` file. Copy each corresponding value in the Google
+credentials file into your `.env` file. For instance, copy `project_id` into `PROJECT_ID=`. Replace the double quotes in
+the original file with single quotes. Don't worry about any values that aren't in the `.env` file, you won't need them.
 
-```
-{
-    "discord": {
-        "token": ""
-    },
-    "google": {
+If you did everything right, the credentials section should look like this:
 
-    }
-}
-```
-
-Now navigate to the Discord Developer Portal once again and find the application you created earlier. Open the **Bot**
-tab. Under **Token**, click **Copy**. Paste it inside the quotation marks after "token" in your credentials file. _This
-token must not be shared with **anyone**, as it grants access to your bot's account._
-
-The next thing to do with your credentials file is add the Google service account credentials. Copy everything within
-the braces from the service account credentials file and paste it onto the blank line after "google". Make sure
-everything's indented properly, and if you did everything right, you'll have a file that looks like this:
-
-```
-{
-    "discord": {
-        "token": "(CONFIDENTIAL)"
-    },
-    "google": {
-        "type": "service_account",
-        "project_id": "(CONFIDENTIAL)",
-        "private_key_id": "(CONFIDENTIAL)",
-        "private_key": "(CONFIDENTIAL)",
-        "client_email": "(CONFIDENTIAL)",
-        "client_id": "(CONFIDENTIAL)",
-        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-        "token_uri": "https://oauth2.googleapis.com/token",
-        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-        "client_x509_cert_url": "(CONFIDENTIAL)"
-    }
-}
+```dotenv
+...
+# Credentials
+DISCORD_TOKEN='(CONFIDENTIAL)'                      # String. Token of discord bot
+G_PROJECT_ID='(CONFIDENTIAL)'                       # String. Google project ID
+G_PRIVATE_KEY_ID='(CONFIDENTIAL)'                   # String. Google private key ID
+G_PRIVATE_KEY='(CONFIDENTIAL)'                      # String. Google private key
+G_CLIENT_EMAIL='(CONFIDENTIAL)'                     # String. Google client email
+G_CLIENT_ID='(CONFIDENTIAL)'                        # String. Google client id
+G_CLIENT_X509_CERT_URL='(CONFIDENTIAL)'             # String. Google cert url
+...
 ```
 
-## Step 13: Fill out settings
+### Setting Spreadsheet ID
 
-The last thing you must do before you can run Alter Ego is configure the settings file. For more information, see the
-article on [settings](../../reference/settings/node_settings.md).
+Finally, you must set the spreadsheet ID. A Google Sheets URL contains two IDs. The first is the ID of the entire
+spreadsheet itself. The second is the ID of the individual sheet currently open in the spreadsheet. You can retrieve the
+ID of either by copying them from the URL. The format is as follows:
 
-## Step 14: Run Alter Ego
+`https://docs.google.com/spreadsheets/d/(entire spreadsheet ID)/edit#gid=(individual sheet ID)`
+
+Copy the ID for the entire spreadsheet and paste it in single quotes after `SPREADSHEET_ID=`. For instance.
+
+```dotenv
+SPREADSHEET_ID='1234567890'
+```
+
+### (Optional) Fill out other settings
+
+If you wish to change other settings other than the ones outlined above, you can edit their entries in the `.env` file.
+Remember to uncomment (i.e. remove the `#` before the line) for them to go into effect. For more information, see the
+article on [settings](../reference/settings.md).
+
+## Step 12: Run Alter Ego
 
 Finally, you can run Alter Ego. In the Node.js terminal, run `node bot.js`. If you did everything right, this is what
 you'll see:

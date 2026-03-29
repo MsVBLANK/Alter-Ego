@@ -150,7 +150,7 @@ it) is the second highest role in the list.** If it's not, it may have issues wi
 There are a number of channels you'll have to create before you can get Alter Ego to work. You can name them all
 anything you want, but the ones listed here are recommended for clarity's sake.
 
-### Category: Monopad
+### Category: Important
 
 This category is where you should put all of the important channels that will be viewable to everyone. You can put all
 kinds of channels here such as rules for the killing game, a list of players and their
@@ -177,7 +177,7 @@ general announcements, announcements from the killing game host (e.g. morning an
 announcements, etc.), and anything else you want to inform everyone about. You don't need to set any permission
 overrides for this channel.
 
-### Category: Free Time Events
+### Category: Out of Character
 
 This category is for people to talk outside of the game. You should set the following permission overrides for this
 category:
@@ -224,7 +224,7 @@ this channel instead of in general. You should set the following permission over
 * Moderator
     * View Channel: Enabled
 
-### Category: Control Panel
+### Category: Control Center
 
 This category is for the moderator(s) only. You should set the following permission override for this category:
 

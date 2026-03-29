@@ -50,7 +50,7 @@ the Whisper will be granted read access to that channel. When a Player leaves th
 Room's channel, their read access to all Whispers they were in will be revoked. Their name will also be removed from the
 Whisper name, whose channel name will be edited accordingly. When all Players in a Whisper leave the Room, the Whisper
 channel will either be archived or immediately deleted, depending on the
-[autoDeleteWhisperChannels setting](../reference/settings/docker_settings.md#auto_delete_whisper_channels).
+[autoDeleteWhisperChannels setting](../reference/settings.md#auto_delete_whisper_channels).
 
 Every [spectate channel](../reference/data_structures/player.md#spectate-channel) also has a Discord text channel. When
 Player data is loaded from the spreadsheet, Alter Ego will check to see if that Player already has a spectate channel in

@@ -55,7 +55,7 @@ export function parseAndTrimCommaSeparatedStrings(input: string, normalize = fal
  */
 export function parsePrefabPossibleNames(input: string, normalize = false): PrefabPossibleNames {
     const possibleNames: PrefabPossibleNames = new Collection();
-    const regex = /(\[((.*?): (.*?))\],?)/g;
+    const regex = /(\[((.*?): *(.*?))\],?)/g;
     if (input && !!input.match(regex)) {
         let match: RegExpExecArray;
         while (match = regex.exec(input)) {

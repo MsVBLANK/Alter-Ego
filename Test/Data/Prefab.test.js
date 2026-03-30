@@ -72,5 +72,17 @@ describe('Prefab test', () => {
             ]);
             expect(entity.proceduralOptions).toEqual(expected);
         });
+
+        test('GLAZE proceduralOptions', () => {
+            const entity = game.entityFinder.getPrefab("GLAZE");
+            /** @type {Map<string, Set<string>>} */
+            const expected = new Map([
+                ["glaze color", new Set(["clear", "red", "orange", "brown", "yellow", "green", "teal", "light blue", "indigo", "violet", "pink", "white", "gray", "black"])],
+                ["secondary glaze color", new Set(["clear", "red", "orange", "brown", "yellow", "green", "teal", "light blue", "indigo", "violet", "pink", "white", "gray", "black"])],
+                ["base color", new Set(["obscured"])],
+                ["secondary base color", new Set(["obscured"])]
+            ]);
+            expect(entity.proceduralOptions).toEqual(expected);
+        });
     });
 });

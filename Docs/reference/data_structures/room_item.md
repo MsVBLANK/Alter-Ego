@@ -1,14 +1,14 @@
-# Item
+# Room Item
 
-An Item is a data structure in the Neo World Program. It represents an item in a [Room](room.md)
+A Room Item is a data structure in the Neo World Program. It represents an item in a [Room](room.md)
 that a [Player](player.md) can take with them. It is an instance of a [Prefab](prefab.md), and is similar to
 an [Inventory Item](inventory_item.md).
 
 ## Attributes
 
-Items themselves have relatively few attributes. However. being instances of Prefabs, they inherit many attributes as a
+Room Items themselves have relatively few attributes. However. being instances of Prefabs, they inherit many attributes as a
 result. Note that if an attribute is _internal_, that means it only exists within
-the [Item class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Item.js). Internal attributes will be given in
+the [Item class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/RoomItem.ts). Internal attributes will be given in
 the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -116,7 +116,7 @@ examples of correct container names, see the following table:
 
 ### Container
 
-- Class attribute: [Object](object.md)|[Puzzle](puzzle.md)|[Item](item.md)
+- Class attribute: [Fixture](fixture.md) | [Puzzle](puzzle.md) | [Room Item](room_item.md)
   `this.container`
 
 This is an internal attribute which simply contains a reference to the actual Object, Puzzle, or Item object whose name
@@ -173,7 +173,7 @@ of containing Items, the Items inside will add to the weight of the parent Item.
 ### Inventory
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>
+  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Inventory Slot](inventory_slot.md)>
   `this.inventory`
 
 This is a list of inventory slot objects that the Item has. It is inherited from its Prefab. For more details, see the

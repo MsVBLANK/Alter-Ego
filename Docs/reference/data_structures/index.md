@@ -11,7 +11,8 @@ In the Neo World Program, all of the map data is stored on a Google Sheet. There
 
 Alter Ego uses the [Google Sheets API](https://developers.google.com/sheets/api/) to load the data from the spreadsheet,
 as well as make edits to the spreadsheet. The data for each set of data structures in the map is kept in a separate
-sheet. This article lists each of the main data structures.
+sheet. This article lists each of the persistent data structures, as well as some of the ephemeral data structures
+that are not saved to the spreadsheet.
 
 ## Creation
 

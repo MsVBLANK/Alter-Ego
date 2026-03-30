@@ -186,6 +186,7 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
 
     /** Gets the item's container. */
     getContainer(): RoomItemContainer {
+        console.log(this.inventory)
         return this.container;
     }
 

@@ -31,7 +31,7 @@ Effect (e.g. "injured" and "badly injured") should be avoided.
 ### Duration
 
 - Spreadsheet label: **Duration**
-- Class attribute: [Duration](https://momentjs.com/docs/#/durations/) `this.duration`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.duration`
 
 This is a Duration object which determines how long after the Status Effect is inflicted it will take to expire. This
 should consist of a whole number (no decimals) with a letter immediately following it, with no space between them. There
@@ -54,7 +54,7 @@ not expire on its own.
 
 ### Remaining
 
-- Class attribute: [Duration](https://momentjs.com/docs/#/durations/) `this.remaining`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.remaining`
 
 This is an internal attribute which contains a Duration object indicating how much time is remaining until the Status
 Effect expires. This is `null` for all Status Effects loaded from the spreadsheet. This is only assigned to an

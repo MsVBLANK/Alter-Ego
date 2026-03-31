@@ -85,7 +85,7 @@ Recipe. For example, a Recipe with the Object tag "blender" can only be processe
 ### Duration
 
 - Spreadsheet label: **Wait Duration**
-- Class attribute: [Duration](https://momentjs.com/docs/#/durations/) `this.duration`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.duration`
 
 This is a string which determines how long the Recipe will take to process before it is completed. This can only be
 given for processing-type Recipes. This should consist of a whole number (no decimals) with a letter immediately

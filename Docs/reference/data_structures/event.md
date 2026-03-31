@@ -13,13 +13,13 @@ the [Event class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Event.js
 the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
-### Name
+### ID
 
-- Spreadsheet label: **Event Name**
+- Spreadsheet label: **Event ID**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.name`
+  `this.id`
 
-This is the name of the Event. All letters should be capitalized, and spaces are allowed. Every Event must have a unique
+This is the ID of the Event. All letters should be capitalized, and spaces are allowed. Every Event must have a unique
 name. This will only be used when Events are triggered or ended
 with [moderator](../commands/moderator_commands.md#trigger) [commands](../commands/moderator_commands.md#end)
 or [bot](../commands/bot_commands.md#trigger) [commands](../commands/bot_commands.md#end).
@@ -40,7 +40,7 @@ is ongoing. If it is `false`, then the Event is not ongoing.
   `this.durationString`
 
 This is a string which determines how long after the Event is triggered it will be ongoing until it ends. This should
-consist of a whole number (no decimals) with a letter immediately following it, with no space between them. There is a
+consist of a number (i.e. `30`, `1.5`) with a letter immediately following it, with no space between them. There is a
 fixed set of predefined units that correspond with each letter. They are as follows:
 
 | Letter | Unit    |
@@ -55,11 +55,11 @@ fixed set of predefined units that correspond with each letter. They are as foll
 
 So, an Event that should last 30 seconds should have a duration of `30s`, one that should last 15 minutes should have a
 duration of `15m`, one that should last 2 hours should have a duration of `2h`, one that should last 1.5 days should
-have a duration of `36h`, and so on.
+have a duration of `1.5d`, and so on.
 
 ### Duration
 
-- Class attribute: [Duration](https://momentjs.com/docs/#/durations/) `this.duration`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.duration`
 
 This is an internal attribute which contains a Duration object created from the duration string. If the Event has no
 duration string, this is `null`.
@@ -85,20 +85,20 @@ of `0:59:00`.
 
 ### Remaining
 
-- Class attribute: [Duration](https://momentjs.com/docs/#/durations/) `this.remaining`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.remaining`
 
 This is an internal attribute which contains a Duration object indicating how much time is remaining until the Event
 ends. If the Event has no duration or the Event is not currently ongoing, this is `null`. While the Event is ongoing,
 1000 milliseconds are subtracted from this Duration every second until it is less than or equal to zero, at which point
 the Event ends.
 
-### Trigger Times String
+### Trigger Times Strings
 
 - Spreadsheet label: **Triggers At**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.triggerTimesString`
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.triggerTimesStrings`
 
-This is a string of comma-separated times that this Event will automatically trigger at. Every minute, Alter Ego
+This is an array of strings representing times that this Event will automatically trigger at. Every minute, Alter Ego
 iterates through the list of all Events and checks the trigger times for each one. If the current month, weekday, date,
 hour, and minute match one of the Event's trigger times, it will automatically be triggered, after which it will be
 ongoing. A single Event can have multiple trigger times. However, if it is already ongoing, it will not be triggered
@@ -112,8 +112,8 @@ numbered day of the month, or days of the year. Trigger times must be written in
 
 First, the accepted time formats are as follows:
 
-- `LT`, the time (in hours and minutes) in the system's local format.
-- `LTS`, the time (in hours, minutes, and seconds) in the system's local format. Note that triggering Events on specific
+- `p`, the time (in hours and minutes) in the system's local format.
+- `pp`, the time (in hours, minutes, and seconds) in the system's local format. Note that triggering Events on specific
   seconds is not supported, so the seconds will be ignored.
 - `HH:mm`, where `HH` stands for the hour in a 24-hour format (0-23) and `mm` stands for the minutes with leading
   zeroes. Example: `7:35` or `15:00`.
@@ -122,17 +122,17 @@ First, the accepted time formats are as follows:
 
 The accepted date formats are as follows:
 
-- `ddd`, the abbreviated day of the week in the system's local format. Example: `Wed`.
-- `ddd`, the day of the week in the system's local format. Example: `Wednesday`.
-- `Do`, the numbered day of the month with ordinal. Example: `16th`.
-- `Do MMM`, the numbered day of the month with ordinal and abbreviated month. Example: `16th Apr`.
-- `Do MMMM`, the numbered day of the month with ordinal and the month. Example: `16th April`.
-- `D MMM`, the numbered day of the month and abbreviated month. Example: `16 Apr`.
-- `D MMMM`, the numbered day of the month and the month. Example: `16 April`.
-- `MMM Do`, the abbreviated month and numbered day of the month with ordinal. Example: `Apr 16th`.
-- `MMMM Do`, the month and numbered day of the month with ordinal. Example: `April 16th`.
-- `MMM D`, the abbreviated month and numbered day of the month. Example: `Apr 16`.
-- `MMMM D`, the month and numbered day of the month. Example: `April 16`.
+- `ccc`, the abbreviated day of the week in the system's local format. Example: `Wed`.
+- `cccc`, the day of the week in the system's local format. Example: `Wednesday`.
+- `do`, the numbered day of the month with ordinal. Example: `16th`.
+- `do MMM`, the numbered day of the month with ordinal and abbreviated month. Example: `16th Apr`.
+- `do MMMM`, the numbered day of the month with ordinal and the month. Example: `16th April`.
+- `d MMM`, the numbered day of the month and abbreviated month. Example: `16 Apr`.
+- `d MMMM`, the numbered day of the month and the month. Example: `16 April`.
+- `MMM do`, the abbreviated month and numbered day of the month with ordinal. Example: `Apr 16th`.
+- `MMMM do`, the month and numbered day of the month with ordinal. Example: `April 16th`.
+- `MMM d`, the abbreviated month and numbered day of the month. Example: `Apr 16`.
+- `MMMM d`, the month and numbered day of the month. Example: `April 16`.
 
 It is possible to set a trigger time with only a time of day, and no date. In this case, the Event will trigger at the
 same time every day. However, it is not possible to set a trigger time with only a date; a time must also be specified.
@@ -141,30 +141,18 @@ format, as well as an example and a note indicating when the given example will 
 
 |              |               |                 |                   | Example                 | Triggers on                            |
 | ------------ | ------------- | --------------- | ----------------- | ----------------------- | -------------------------------------- |
-| `LT`         | `LTS`         | `HH:mm`         | `hh:mm a`         | `8:30 PM`               | Every day at 8:30 PM                   |
-| `ddd LT`     | `ddd LTS`     | `ddd HH:mm`     | `ddd hh:mm a`     | `Wed 8:30:00 PM`        | Every Wednesday at 8:30 PM             |
-| `dddd LT`    | `dddd LTS`    | `dddd HH:mm`    | `dddd hh:mm a`    | `Wednesday 20:30`       | Every Wednesday at 8:30 PM             |
-| `Do LT`      | `Do LTS`      | `Do HH:mm`      | `Do hh:mm a`      | `16th 08:30 PM`         | The 16th day of every month at 8:30 PM |
-| `Do MMM LT`  | `Do MMM LTS`  | `Do MMM HH:mm`  | `Do MMM hh:mm a`  | `16th Apr 8:30 PM`      | The 16th of April at 8:30 PM           |
-| `Do MMMM LT` | `Do MMMM LTS` | `Do MMMM HH:mm` | `Do MMMM hh:mm a` | `16th April 8:30:00 PM` | The 16th of April at 8:30 PM           |
-| `D MMM LT`   | `D MMM LTS`   | `D MMM HH:mm`   | `D MMM hh:mm a`   | `16 Apr 20:30`          | The 16th of April at 8:30 PM           |
-| `D MMMM LT`  | `D MMMM LTS`  | `D MMMM HH:mm`  | `D MMMM hh:mm a`  | `16 April 08:30 PM`     | The 16th of April at 8:30 PM           |
-| `MMM Do LT`  | `MMM Do LTS`  | `MMM Do HH:mm`  | `MMM Do hh:mm a`  | `Apr 16th 8:30 PM`      | The 16th of April at 8:30 PM           |
-| `MMMM Do LT` | `MMMM Do LTS` | `MMMM Do HH:mm` | `MMMM Do hh:mm a` | `April 16th 8:30:00 PM` | The 16th of April at 8:30 PM           |
-| `MMM D LT`   | `MMM D LTS`   | `MMM D HH:mm`   | `MMM D hh:mm a`   | `Apr 16 20:30`          | The 16th of April at 8:30 PM           |
-| `MMMM D LT`  | `MMMM D LTS`  | `MMMM D HH:mm`  | `MMMM D hh:mm a`  | `April 16 08:30 PM`     | The 16th of April at 8:30 PM           |
-
-### Trigger Times
-
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
-  `this.triggerTimes`
-
-This is an internal attribute which contains a list of strings separated from the trigger times string. Every minute,
-each string in this list is converted into a [Moment](https://momentjs.com/docs/#/parsing/). This is to ensure that any
-fields that are not set in this string will match the current date. Then the month, weekday, date, hour, and minute of
-every Event's trigger time Moment objects are compared to the current month, weekday, date, hour, and minute. If they
-match, the Event is triggered.
+| `p`          | `pp`          | `HH:mm`         | `hh:mm a`         | `8:30 PM`               | Every day at 8:30 PM                   |
+| `ccc p`      | `ccc pp`      | `ccc HH:mm`     | `ccc hh:mm a`     | `Wed 8:30:00 PM`        | Every Wednesday at 8:30 PM             |
+| `cccc p`     | `cccc pp`     | `cccc HH:mm`    | `cccc hh:mm a`    | `Wednesday 20:30`       | Every Wednesday at 8:30 PM             |
+| `do p`       | `do pp`       | `do HH:mm`      | `do hh:mm a`      | `16th 08:30 PM`         | The 16th day of every month at 8:30 PM |
+| `do MMM p`   | `do MMM pp`   | `do MMM HH:mm`  | `do MMM hh:mm a`  | `16th Apr 8:30 PM`      | The 16th of April at 8:30 PM           |
+| `do MMMM p`  | `do MMMM pp`  | `do MMMM HH:mm` | `do MMMM hh:mm a` | `16th April 8:30:00 PM` | The 16th of April at 8:30 PM           |
+| `d MMM p`    | `d MMM pp`    | `d MMM HH:mm`   | `d MMM hh:mm a`   | `16 Apr 20:30`          | The 16th of April at 8:30 PM           |
+| `d MMMM p`   | `d MMMM pp`   | `d MMMM HH:mm`  | `d MMMM hh:mm a`  | `16 April 08:30 PM`     | The 16th of April at 8:30 PM           |
+| `MMM do p`   | `MMM do pp`   | `MMM do HH:mm`  | `MMM do hh:mm a`  | `Apr 16th 8:30 PM`      | The 16th of April at 8:30 PM           |
+| `MMMM do p`  | `MMMM do pp`  | `MMMM do HH:mm` | `MMMM do hh:mm a` | `April 16th 8:30:00 PM` | The 16th of April at 8:30 PM           |
+| `MMM d p`    | `MMM d pp`    | `MMM d HH:mm`   | `MMM d hh:mm a`   | `Apr 16 20:30`          | The 16th of April at 8:30 PM           |
+| `MMMM d p`   | `MMMM d pp`   | `MMMM d HH:mm`  | `MMMM d hh:mm a`  | `April 16 08:30 PM`     | The 16th of April at 8:30 PM           |
 
 ### Room Tag
 
@@ -302,7 +290,7 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
 
 ### Timer
 
-- Class attribute: [moment-timer](https://momentjs.com/docs/#/plugins/timer/) `this.timer`
+- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.timer`
 
 This is an internal attribute which contains a timer counting down until the Event ends. Every 1000 milliseconds, 1
 second is subtracted from the Event's [remaining Duration](event.md#remaining) until it reaches 0. When it does, the
@@ -310,7 +298,7 @@ Event ends, and this attribute becomes `null`.
 
 ### Effects Timer
 
-- Class attribute: [moment-timer](https://momentjs.com/docs/#/plugins/timer/) `this.effectsTimer`
+- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.effectsTimer`
 
 This is an internal attribute which contains a timer that inflicts and refreshes Status Effects while the Event is
 ongoing. Every 1000 milliseconds, Alter Ego iterates through all Rooms tagged with this

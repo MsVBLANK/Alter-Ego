@@ -12,12 +12,30 @@ spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
 
 ### Name
 
-- Spreadsheet label: **Exits**
+- Spreadsheet label: **Exit Name**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.name`
 
 This is the name of the Exit. All letters should be capitalized, and spaces are allowed. For clarity's sake, it should
 usually be mentioned in all descriptions of the Room it belongs to, unless it is supposed to be hidden.
+
+### Phrase
+
+- Spreadsheet label: **Exit Phrase**
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.phrase`
+
+This is the "phrase" of the Exit, used in narrating the beginning of movement as well as the exit and entrance of Players through Exits.
+If unset, it defaults to "the (Exit Name)".
+
+### Tags
+
+- Spreadsheet label: **Exit Tags**
+- Class attribute: [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.tags`
+
+List of comma-separated tags for an exit.
+Currently, the only tag with behavior specified is `not knockable`, which denotes that a door cannot be knocked on.
 
 ### Position
 
@@ -62,7 +80,7 @@ Exit. If it is `false`, then the Player will simply be told that the Exit is loc
 
 ### Destination
 
-- Spreadsheet label: **Leads To**
+- Spreadsheet label: **Leads To Room**
 - Class attribute: [Room](room.md) `this.dest`
 
 This is the Room that the Exit leads to. When a Player travels through this Exit, their permission to view the channel
@@ -72,7 +90,7 @@ desired Room exactly.
 
 ### Link
 
-- Spreadsheet label: **From**
+- Spreadsheet label: **From Exit**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.link`
 
@@ -87,7 +105,7 @@ Exit only, their Exit tables must look like this:
 
 ### Description
 
-- Spreadsheet label: **Description**
+- Spreadsheet label: **Description When Entering From This Exit**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.description`
 

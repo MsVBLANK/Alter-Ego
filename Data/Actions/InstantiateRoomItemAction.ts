@@ -127,6 +127,12 @@ export default class InstantiateRoomItemAction extends Action {
         const uses = args[5];
         if (inventorySlot && inventorySlot.capacityIsSmallerThan(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${container.getContainerIdentifier()} because it is too large.`);
         if (inventorySlot && inventorySlot.willBeOverFilledBy(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${container.getContainerIdentifier()} because there isn't enough space left.`);
+        for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+            if (!prefab.proceduralOptions.has(proceduralName))
+                throw new Error(`${prefab.id} does not have procedural "${proceduralName}".`);
+            if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                throw new Error(`${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
+        }
         return [prefab, container, inventorySlot?.id, quantity, proceduralSelections, uses];
     }
 }

@@ -8,7 +8,7 @@ import type Player from "./Player.ts";
 import type Room from "./Room.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
-export type RoomItemField = "prefab"|"identifier"|"location"|"accessible"|"container"|"quantity"|"uses"|"description";
+export type RoomItemField = "prefab"|"identifier"|"names"|"containingPhrases"|"location"|"accessible"|"container"|"quantity"|"uses"|"description"|"proceduralSelections";
 
 /**
  * Represents an item in a room that a player can take with them.
@@ -309,12 +309,15 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
         switch (field) {
             case "prefab": return "Prefab";
             case "identifier": return "Container Identifier";
+            case "names": return "Names";
+            case "containingPhrases": return "Containing Phrases";
             case "location": return "Location";
             case "accessible": return "Accessible?";
             case "container": return "Container";
             case "quantity": return "Quantity";
             case "uses": return "Uses";
             case "description": return "Description";
+            case "proceduralSelections": return "Procedural Selections";
         }
     }
 
@@ -322,12 +325,15 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
         switch (field) {
             case "prefab": return this.prefab.id;
             case "identifier": return this.identifier;
+            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
             case "location": return this.location.displayName;
             case "accessible": return this.accessible ? "TRUE" : "FALSE";
             case "container": return `${this.containerType}: ${this.containerName}`;
             case "quantity": return isNaN(this.quantity) ? "Infinity" : String(this.quantity);
             case "uses": return isNaN(this.uses) && this.prefab.usable ? "Infinity" : isNaN(this.uses) ? "" : String(this.uses);
             case "description": return this.description.text;
+            case "proceduralSelections": return this.proceduralSelectionsString;
         }
     }
 

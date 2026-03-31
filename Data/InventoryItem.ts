@@ -10,7 +10,7 @@ import type Player from "./Player.ts";
 import type RoomItem from "./RoomItem.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
-export type InventoryItemField = "player"|"prefab"|"identifier"|"equipmentSlot"|"container"|"quantity"|"uses"|"description";
+export type InventoryItemField = "player"|"prefab"|"identifier"|"names"|"containingPhrases"|"equipmentSlot"|"container"|"quantity"|"uses"|"description"|"proceduralSelections";
 
 /**
  * Represents an item that is currently possessed by a player.
@@ -341,11 +341,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
             case "player": return "Player Name";
             case "prefab": return "Prefab";
             case "identifier": return "Container Identifier";
+            case "names": return "Names";
+            case "containingPhrases": return "Containing Phrases";
             case "equipmentSlot": return "Equipment Slot";
             case "container": return "Container";
             case "quantity": return "Quantity";
             case "uses": return "Uses";
             case "description": return "Description";
+            case "proceduralSelections": return "Procedural Selections";
         }
     }
 
@@ -354,11 +357,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
             case "player": return this.player.name;
             case "prefab": return this.prefab?.id ?? "NULL";
             case "identifier": return this.identifier;
+            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
             case "equipmentSlot": return this.equipmentSlot;
             case "container": return this.containerName;
             case "quantity": return isNaN(this.quantity) ? "Infinity" : this.quantity !== null ? String(this.quantity) : "";
             case "uses": return isNaN(this.uses) && this.prefab?.usable ? "Infinity" : isNaN(this.uses) || this.uses === null ? "" : String(this.uses);
             case "description": return this.description.text;
+            case "proceduralSelections": return this.proceduralSelectionsString;
         }
     }
 

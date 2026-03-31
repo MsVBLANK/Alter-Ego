@@ -84,7 +84,7 @@ export default class InstantiateInventoryItemAction extends Action {
         const equipmentSlotId = args[1];
         const equipmentSlot = this.player.getEquipmentSlot(equipmentSlotId);
         const containerIdentifier = args[2];
-        const container = containerIdentifier ? this.getGame().entityFinder.getInventoryItem(containerIdentifier, this.player.name, undefined, equipmentSlotId) ?? null : undefined;
+        const container = containerIdentifier ? this.getGame().entityFinder.getInventoryItem(containerIdentifier, this.player.name, undefined, equipmentSlotId, args[4]) ?? null : undefined;
         const inventorySlotId = args[3];
         const inventorySlot = inventorySlotId ? container?.inventory?.get(inventorySlotId) ?? null : undefined;
         const prefab = this.getGame().entityFinder.getPrefab(prefabId);

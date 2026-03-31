@@ -122,7 +122,7 @@ export default abstract class ItemInstance extends ItemContainer {
     /**
      * The item's procedural selections represented as a string.
      */
-    protected get proceduralSelectionsString(): string {
+    get proceduralSelectionsString(): string {
         const selectionsStrings: string[] = [];
         this.proceduralSelections.forEach((value, key) => selectionsStrings.push(`${key} = ${value}`));
         return `(${selectionsStrings.join(" + ")})`;

@@ -43,10 +43,11 @@ export function findPrefab(container, id) {
  * @param {string} [location] - The ID or displayName of the room the item is in. 
  * @param {string} [containerType] - The room item's container type.
  * @param {string} [containerName] - The room item's container name.
+ * @param {string} [proceduralSelections] - The room item's procedural selections expressed as a string.
  * @returns The room item with the specified identifier, and location and container name if applicable. If no such item exists, returns undefined.
  */
-export function findRoomItem(container, identifier, location, containerType, containerName) {
-    return container.getGame().entityFinder.getRoomItem(identifier, location, containerType, containerName);
+export function findRoomItem(container, identifier, location, containerType, containerName, proceduralSelections) {
+    return container.getGame().entityFinder.getRoomItem(identifier, location, containerType, containerName, proceduralSelections);
 }
 
 /**
@@ -124,10 +125,11 @@ export function findDeadPlayer(container, name) {
  * @param {string} [player] - The name of the player the inventory item belongs to.
  * @param {string} [containerName] - The inventory item's container name.
  * @param {string} [equipmentSlotId] - The ID of the equipment slot the inventory item belongs to.
+ * @param {string} [proceduralSelections] - The inventory item's procedural selections expressed as a string.
  * @returns The inventory item with the specified identifier, and player, container name, and equipment slot if applicable. If no such item exists, returns undefined.
  */
-export function findInventoryItem(container, identifier, player, containerName, equipmentSlotId) {
-    return container.getGame().entityFinder.getInventoryItem(identifier, player, containerName, equipmentSlotId);
+export function findInventoryItem(container, identifier, player, containerName, equipmentSlotId, proceduralSelections) {
+    return container.getGame().entityFinder.getInventoryItem(identifier, player, containerName, equipmentSlotId, proceduralSelections);
 }
 
 /**
@@ -215,9 +217,10 @@ export function findRecipes(container, type, fixtureTag, ingredientsString, prod
  * @param {string} [containerType] - Filter the room items to only those with the given container type.
  * @param {string} [containerName] - Filter the room items to only those with the given container name. Does not include slot.
  * @param {string} [slotId] - Filter the room items to only those in the inventory slot with the given ID.
+ * @param {string} [proceduralSelections] - Filter the room items to only those with the given procedural selections.
  */
-export function findRoomItems(container, identifier, location, accessible, containerType, containerName, slotId) {
-    return container.getGame().entityFinder.getRoomItems(identifier, location, accessible, containerType, containerName, slotId);
+export function findRoomItems(container, identifier, location, accessible, containerType, containerName, slotId, proceduralSelections) {
+    return container.getGame().entityFinder.getRoomItems(identifier, location, accessible, containerType, containerName, slotId, proceduralSelections);
 }
 
 /**
@@ -293,9 +296,10 @@ export function findDeadPlayers(container, name, isNPC) {
  * @param {string} [containerName] - Filter the inventory items to only those with the given container name. Does not include slot.
  * @param {string} [slotId] - Filter the inventory items to only those in the inventory slot with the given ID.
  * @param {string} [equipmentSlotId] - Filter the inventory items to only those belonging to the equipment slot with the given ID.
+ * @param {string} [proceduralSelections] - Filter the inventory items to only those with the given procedural selections.
  */
-export function findInventoryItems(container, identifier, player, containerName, slotId, equipmentSlotId) {
-    return container.getGame().entityFinder.getInventoryItems(identifier, player, containerName, slotId, equipmentSlotId);
+export function findInventoryItems(container, identifier, player, containerName, slotId, equipmentSlotId, proceduralSelections) {
+    return container.getGame().entityFinder.getInventoryItems(identifier, player, containerName, slotId, equipmentSlotId, proceduralSelections);
 }
 
 /**

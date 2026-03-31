@@ -67,7 +67,7 @@ export default class TakeAction extends Action {
 	 * @param args - The args as strings.
 	 */
 	parseInteractionArgs(args: string[]): [RoomItem] {
-		const item = this.getGame().entityFinder.getRoomItem(args[0], args[1], args[2], args[3]);
+		const item = this.getGame().entityFinder.getRoomItem(args[0], args[1], args[2], args[3], args[4]);
 		return [item];
 	}
 

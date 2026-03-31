@@ -146,7 +146,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * Returns the args for the Inspect ActionDirective for this inventory item.
      */
     getInspectActionDirectiveArgs() {
-        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot];
+        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -156,11 +156,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * @param container - The container to drop the inventory item into.
      * @param inventorySlot - The inventory slot to drop the inventory item into.
      */
-    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer,
-        inventorySlot: InventorySlot<RoomItem>): string[] {
+    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): string[] {
         let containerName = container.name;
-        if (container instanceof ItemInstance) containerName = container.getIdentifier();
-        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
+        let containerProceduralSelectionsString = "";
+        if (container instanceof ItemInstance) {
+            containerName = container.getIdentifier();
+            containerProceduralSelectionsString = container.proceduralSelectionsString;
+        }
+        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id, containerProceduralSelectionsString];
     }
 
 	/**
@@ -169,17 +172,17 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 	 * @param container - The container to stash the inventory item into.
 	 * @param inventorySlot - The inventory slot to stash the inventory item into.
 	 */
-	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string] {
-		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
+	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string, string] {
+		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot, container.proceduralSelectionsString];
 	}
 
 	/**
 	 * Returns the args for the Unstash ActionDirective for this inventory item.
      *
-     * @returns [identifier, containerName, equipmentSlot]
+     * @returns [identifier, containerName, equipmentSlot, proceduralSelectionsString]
 	 */
-	getUnstashActionDirectiveArgs(): [string, string, string] {
-		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
+	getUnstashActionDirectiveArgs(): [string, string, string, string] {
+		return [this.getIdentifier(), this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
 	}
 
     /**
@@ -195,10 +198,10 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     /**
      * Returns the args for the Unequip ActionDirective for this inventory item.
      *
-     * @returns [identifier, equipmentSlot]
+     * @returns [identifier, equipmentSlot, proceduralSelectionsString]
      */
-    getUnequipActionDirectiveArgs(): [string, string] {
-        return [this.getIdentifier(), this.equipmentSlot];
+    getUnequipActionDirectiveArgs(): [string, string, string] {
+        return [this.getIdentifier(), this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -214,18 +217,18 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     /**
      * Returns the args for the InstantiateInventoryItem ActionDirective for this inventory item.
      * @param inventorySlot - The inventory slot to instantiate the inventory item into.
-     * @returns ["II", equipmentSlot, identifier, inventorySlot.id]
+     * @returns ["II", equipmentSlot, identifier, inventorySlot.id, proceduralSelectionsString]
      */
-    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string] {
-        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined];
+    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string] {
+        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the DestroyInventoryItem ActionDirective for this inventory item.
-     * @returns ["II", identifier, containerName, equipmentSlot]
+     * @returns ["II", identifier, containerName, equipmentSlot, proceduralSelectionsString]
      */
-    getDestroyActionDirectiveArgs(): [string, string, string, string] {
-        return ["II", this.getIdentifier(), this.containerName, this.equipmentSlot];
+    getDestroyActionDirectiveArgs(): [string, string, string, string, string] {
+        return ["II", this.getIdentifier(), this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**

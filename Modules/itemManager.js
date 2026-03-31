@@ -62,7 +62,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
     createdItem.initializeInventory();
     createdItem.location = location;
     createdItem.container = container;
-    createdItem.slot = inventorySlotId;
+    createdItem.slot = inventorySlotId ?? "";
 
     if (container instanceof RoomItem)
         container.insertItem(createdItem, inventorySlotId);
@@ -101,7 +101,7 @@ export function instantiateInventoryItem(prefab, player, equipmentSlotId, contai
     createdItem.setNames();
     createdItem.initializeInventory();
     createdItem.container = container;
-    createdItem.slot = inventorySlotId;
+    createdItem.slot = inventorySlotId ?? "";
 
     // Item is being stashed.
     const equipmentSlot = player.inventory.get(equipmentSlotId);

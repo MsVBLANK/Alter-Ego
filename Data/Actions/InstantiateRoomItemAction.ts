@@ -82,11 +82,12 @@ export default class InstantiateRoomItemAction extends Action {
             const type = args[4];
             container = this.getGame().entityFinder.getPuzzle(containerIdentifier, locationId, type);
         }
-        else if (args.length === 8 && args[0] === "RI") {
+        else if (args.length === 9 && args[0] === "RI") {
             const containerType = args[4];
             const containerName = args[5];
             const inventorySlotId = args[6];
-            container = this.getGame().entityFinder.getRoomItem(containerIdentifier, locationId, containerType, containerName);
+            const containerProceduralSelections = args[7];
+            container = this.getGame().entityFinder.getRoomItem(containerIdentifier, locationId, containerType, containerName, containerProceduralSelections);
             inventorySlot = inventorySlotId ? container?.inventory?.get(inventorySlotId) ?? null : undefined;
         }
         const prefab = this.getGame().entityFinder.getPrefab(prefabId);

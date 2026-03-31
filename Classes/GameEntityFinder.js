@@ -83,9 +83,10 @@ export default class GameEntityFinder {
 	 * @param {string} [location] - The ID or displayName of the room the item is in.
 	 * @param {string} [containerType] - The room item's container type.
 	 * @param {string} [containerName] - The room item's container name.
-	 * @returns The room item with the specified identifier, and location and container name if applicable. If no such item exists, returns undefined.
+     * @param {string} [proceduralSelections] - The room item's procedural selections expressed as a string.
+	 * @returns The room item with the specified identifier, procedural selections, and location and container name if applicable. If no such item exists, returns undefined.
 	 */
-	getRoomItem(identifier, location, containerType, containerName) {
+	getRoomItem(identifier, location, containerType, containerName, proceduralSelections) {
 		if (!identifier) return;
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
@@ -100,6 +101,7 @@ export default class GameEntityFinder {
 			selectedFilters.set(containerType, matchers.itemContainerTypeMatches);
 		}
 		if (identifier && containerName) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNamePropertyMatches);
+        if (identifier && proceduralSelections) selectedFilters.set(proceduralSelections, matchers.itemProceduralSelectionsMatches);
 		return this.game.roomItems.find(roomItem => roomItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(roomItem, key)));
 	}
 
@@ -255,9 +257,10 @@ export default class GameEntityFinder {
 	 * @param {string} [player] - The name of the player the inventory item belongs to.
 	 * @param {string} [containerName] - The inventory item's container name.
 	 * @param {string} [equipmentSlotId] - The ID of the equipment slot the inventory item belongs to.
-	 * @returns The inventory item with the specified identifier, and player, container name, and equipment slot if applicable. If no such item exists, returns undefined.
+     * @param {string} [proceduralSelections] - The inventory item's procedural selections expressed as a string.
+	 * @returns The inventory item with the specified identifier, procedural selections, and player, container name, and equipment slot if applicable. If no such item exists, returns undefined.
 	 */
-	getInventoryItem(identifier, player, containerName, equipmentSlotId) {
+	getInventoryItem(identifier, player, containerName, equipmentSlotId, proceduralSelections) {
 		if (!identifier) return;
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
@@ -265,6 +268,7 @@ export default class GameEntityFinder {
 		if (identifier && player) selectedFilters.set(Game.generateValidEntityName(player), matchers.inventoryItemPlayerNameMatches);
 		if (identifier && containerName) selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerNamePropertyMatches);
 		if (identifier && equipmentSlotId) selectedFilters.set(Game.generateValidEntityName(equipmentSlotId), matchers.inventoryItemEquipmentSlotMatches);
+        if (identifier && proceduralSelections) selectedFilters.set(proceduralSelections, matchers.itemProceduralSelectionsMatches);
 		return this.game.inventoryItems.find(inventoryItem => inventoryItem.prefab !== null && inventoryItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(inventoryItem, key)));
 	}
 
@@ -557,10 +561,11 @@ export default class GameEntityFinder {
 	 * @param {string} [containerType] - Filter the room items to only those with the given container type.
 	 * @param {string} [containerName] - Filter the room items to only those with the given container name. Does not include slot.
 	 * @param {string} [slotId] - Filter the room items to only those in the inventory slot with the given ID.
+     * @param {string} [proceduralSelections] - Filter the room items to only those with the given procedural selections.
 	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose ID only contains the given ID. If this is true, automatically makes the result context `combined`. Defaults to false.
 	 * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 */
-	getRoomItems(identifier, location, accessible, containerType, containerName, slotId, fuzzySearch = false, resultContext = 'moderator') {
+	getRoomItems(identifier, location, accessible, containerType, containerName, slotId, proceduralSelections, fuzzySearch = false, resultContext = 'moderator') {
 		/** @type {Collection<string|boolean, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (identifier) {
@@ -586,6 +591,7 @@ export default class GameEntityFinder {
 			else selectedFilters.set(Game.generateValidEntityName(containerName), matchers.itemContainerIdentifierMatches);
 		}
 		if (slotId) selectedFilters.set(Game.generateValidEntityName(slotId), matchers.itemSlotMatches);
+        if (proceduralSelections) selectedFilters.set(proceduralSelections, matchers.itemProceduralSelectionsMatches);
 		return this.game.roomItems.filter(roomItem => roomItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(roomItem, key)));
 	}
 
@@ -704,10 +710,11 @@ export default class GameEntityFinder {
 	 * @param {string} [containerName] - Filter the inventory items to only those with the given container name. Does not include slot.
 	 * @param {string} [slotId] - Filter the inventory items to only those in the inventory slot with the given ID.
 	 * @param {string} [equipmentSlotId] - Filter the inventory items to only those belonging to the equipment slot with the given ID.
+     * @param {string} [proceduralSelections] - Filter the inventory items to only those with the given procedural selections.
 	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose ID only contains the given ID. If this is true, automatically makes the result context `combined`. Defaults to false.
 	 * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 */
-	getInventoryItems(identifier, player, containerName, slotId, equipmentSlotId, fuzzySearch = false, resultContext = 'moderator') {
+	getInventoryItems(identifier, player, containerName, slotId, equipmentSlotId, proceduralSelections, fuzzySearch = false, resultContext = 'moderator') {
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (identifier) {
@@ -725,6 +732,7 @@ export default class GameEntityFinder {
 		}
 		if (slotId) selectedFilters.set(Game.generateValidEntityName(slotId), matchers.itemSlotMatches);
 		if (equipmentSlotId) selectedFilters.set(Game.generateValidEntityName(equipmentSlotId), matchers.inventoryItemEquipmentSlotMatches);
+        if (proceduralSelections) selectedFilters.set(proceduralSelections, matchers.itemProceduralSelectionsMatches);
 		return this.game.inventoryItems.filter(inventoryItem => inventoryItem.prefab !== null && inventoryItem.quantity !== 0 && selectedFilters.every((filterFunction, key) => filterFunction(inventoryItem, key)));
 	}
 
@@ -768,9 +776,9 @@ export default class GameEntityFinder {
 			/** @type {Inspectable} */
 			let entity;
 			if (container instanceof Player)
-				entity = this.getInventoryItems(entityName, container.name, undefined, undefined, undefined, false, 'player')[0];
+				entity = this.getInventoryItems(entityName, container.name, undefined, undefined, undefined, undefined, false, 'player')[0];
 			else if (container instanceof InventoryItem)
-				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, false, 'player')[0];
+				entity = this.getInventoryItems(entityName, container.player.name, undefined, undefined, undefined, undefined, false, 'player')[0];
 			else {
 				entity = this.getFixture(entityName, player.location.id);
                 let itemContainer = container;
@@ -778,7 +786,7 @@ export default class GameEntityFinder {
                     itemContainer = container.childPuzzle;
                 const containerType = itemContainer instanceof ItemContainer ? itemContainer.getContainerType() : undefined;
                 const containerName = itemContainer instanceof ItemContainer ? itemContainer.getContainerIdentifier() : undefined;
-				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, false, 'combined')[0];
+				if (!entity) entity = this.getRoomItems(entityName, player.location.id, container instanceof Puzzle ? undefined : true, containerType, containerName, undefined, undefined, false, 'combined')[0];
 			}
 			if (entity) inspectableEntities.push(entity);
 			if (entity && entity instanceof RoomItem) takeableEntities.push(entity);

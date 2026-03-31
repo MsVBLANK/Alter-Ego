@@ -33,7 +33,7 @@ export default class StashAction extends Action {
 	 */
 	parseInteractionArgs(args: string[]): [InventoryItem, EquipmentSlot, InventoryItem, InventorySlot<InventoryItem>] {
 		const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
-		const container = this.getGame().entityFinder.getInventoryItem(args[2], this.player.name, args[4], args[5]);
+		const container = this.getGame().entityFinder.getInventoryItem(args[2], this.player.name, args[4], args[5], args[6]);
 		let inventorySlot: InventorySlot<InventoryItem>;
 		if (container instanceof InventoryItem) inventorySlot = container.inventory.get(args[3]);
 		return [hand?.equippedItem, hand, container, inventorySlot];

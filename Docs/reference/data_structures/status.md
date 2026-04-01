@@ -13,7 +13,7 @@ Effects that are inflicted on a Player — are dynamic.
 
 Status Effects have several attributes. However, their behavior is relatively limited. Note that if an attribute is
 _internal_, that means it only exists within
-the [Status class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Status.js). Internal attributes will be given
+the [Status class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Status.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

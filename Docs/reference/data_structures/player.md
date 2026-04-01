@@ -14,7 +14,7 @@ be loaded without loading Player data, but not vice versa.
 
 In order to provide a wide array of functionality, Players have many attributes. Note that if an attribute is
 _internal_, that means it only exists within
-the [Player class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.js). Internal attributes will be given
+the [Player class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

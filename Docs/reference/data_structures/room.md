@@ -6,7 +6,7 @@ A **Room** is a data structure in the Neo World Program. It represents a room th
 
 Despite being the basis of the Neo World Program game, Rooms have relatively few attributes. Note that if an attribute
 is _internal_, that means it only exists within
-the [Room class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Room.js). Internal attributes will be given in
+the [Room class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Room.ts). Internal attributes will be given in
 the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

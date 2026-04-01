@@ -7,7 +7,7 @@ a [Player](player.md). It is an instance of a [Prefab](prefab.md), and is simila
 
 Inventory Items themselves have relatively few attributes. However, being instances of Prefabs, they inherit many
 attributes as a result. Note that if an attribute is _internal_, that means it only exists within
-the [InventoryItem class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/InventoryItem.js). Internal attributes
+the [InventoryItem class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/InventoryItem.ts). Internal attributes
 will be given in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only
 exists on the spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

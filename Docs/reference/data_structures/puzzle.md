@@ -9,7 +9,7 @@ in most games.
 
 In order to provide a versatile array of behaviors, Puzzles have many attributes. Note that if an attribute is
 _internal_, that means it only exists within
-the [Puzzle class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Puzzle.js). Internal attributes will be given
+the [Puzzle class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Puzzle.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -79,33 +79,34 @@ predefined behavior that makes Puzzles such a useful data type.
 
 This is the Room the Puzzle can be found in. This must match the Room's name exactly on the spreadsheet.
 
-### Parent Object Name
+### Parent Fixture Name
 
-- Spreadsheet label: **Parent Object**
+- Spreadsheet label: **Parent Fixture**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.parentObjectName`
 
-This is the name of an [Object](object.md) that is associated with the Puzzle, if any. The parent Object must be in the
-same Room as the Puzzle referencing it. If the name of an Object is supplied, then a Player will be able to supply the
-name of the parent Object as an argument in the use command instead of the name of the
-Puzzle. [Narrations](narration.md) involving the Puzzle will also use the parent Object's name instead of the Puzzle's
+This is the name of an [Fixture](fixture.md) that is associated with the Puzzle, if any. The parent Fixture must be in the
+same Room as the Puzzle referencing it. If the name of an Fixture is supplied, then a Player will be able to supply the
+name of the parent Fixture as an argument in the use command instead of the name of the
+Puzzle. [Narrations](narration.md) involving the Puzzle will also use the parent Fixture's name instead of the Puzzle's
 name. This is particularly useful if every Puzzle is given a unique name. For example, if the Puzzle is named "PANIC
-BUTTON" and the parent Object is named "YELLOW BUTTON", then a Player will be able to interact with the Puzzle by
+BUTTON" and the parent Fixture is named "YELLOW BUTTON", then a Player will be able to interact with the Puzzle by
 sending `.use YELLOW BUTTON` or `.use PANIC BUTTON`. When the Puzzle is interacted with by a Player named Haru, Alter
 Ego will send "Haru uses the YELLOW BUTTON." to the PANIC BUTTON's Room channel.
 
-Additionally, by assigning a Puzzle a parent Object, it becomes possible for the Puzzle to contain [Items](item.md).
+Additionally, by assigning a Puzzle a parent Fixture, it becomes possible for the Puzzle to contain [Items](item.md).
 This allows Items to be made inaccessible until the Puzzle is solved, while also allowing Players to take and drop Items
-from/into the parent Object if the Puzzle is solved. When an Object capable of containing Items is assigned a child
+from/into the parent Fixture if the Puzzle is solved. When an Fixture capable of containing Items is assigned a child
 Puzzle, the [item list](../../moderator_guide/writing_descriptions.md#il) must be in the Puzzle's already solved
-description. If no parent Object is needed, this cell can simply be left blank on the spreadsheet.
+description. If no parent Fixture is needed, this cell can simply be left blank on the spreadsheet.
 
-### Parent Object
+### Parent Fixture
 
-- Class attribute: [Object](object.md) `this.parentObject`
+- Class attribute: [Fixture](fixture.md) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.parentFixture`
 
-This is an internal attribute which simply contains a reference to the actual Object object whose name matches
-`this.parentObjectName` and whose location is the same as the Puzzle. If no parent Object name is given, this will be
+This is an internal attribute which simply contains a reference to the actual Fixture object whose name matches
+`this.parentObjectName` and whose location is the same as the Puzzle. If no parent Fixture name is given, this will be
 `null` instead.
 
 ### Type
@@ -379,20 +380,25 @@ to use it.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.requirementsStrings`
 
-This is a comma-separated list of Puzzle names and/or Prefabs that are required for the Puzzle to be made accessible if
+This is a comma-separated list of names corresponding to Puzzles, Events, Prefabs, and Flags that are required for the Puzzle to be made accessible if
 it is not and vice versa. Puzzle names must match the Puzzle's name exactly on the spreadsheet, although they can
 optionally be prefixed with "Puzzle: ". They do not need to be in the same Room as the Puzzle that requires them. If
 there are multiple Puzzles with the same name as one that is required, then the first to appear on the sheet will be
 required. For this reason, it is strongly suggested that Puzzles are given unique names. Prefabs can also be listed as
 requirements. However, they **must** be prefixed with "Prefab: " or "Item: ", followed by the Prefab ID.
+Events can additionally be listed as requirements.
+However, they **must** be prefixed with "Event: ", followed by the Event ID.
+Flags can additionally be listed as requirements.
+However, they **must** be prefixed with "Flag: ", followed by the Flag ID.
 
-In order for all requirements to be considered met, all required Puzzles must be solved and all required Prefabs must be
-in the Player's inventory as Inventory Items.
+In order for all requirements to be considered met, all required Puzzles must be solved, all required Prefabs must be
+in the Player's inventory as Inventory Items, all required Events must be ongoing, and all required Flags must be TODO.
+<!--help! what circumstances make a Flag requirement be considered a met requirement?-->
 
 ### Requirements
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Puzzle](puzzle.md)|[Prefab](prefab.md)>
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Puzzle](puzzle.md) | [Prefab](prefab.md) | [Event](event.md) | [Flag](flag.md)>
   `this.requirements`
 
 This is an internal attribute which contains references to each of the Puzzle or Prefab objects whose names are listed
@@ -490,11 +496,11 @@ examples of Puzzles with multiple solutions:
 This is an internal attribute which consists of a list of command set objects. Command set objects have the following
 structure:
 
-`{ Array outcomes, Array solvedCommands, Array unsolvedCommands }`
+`{ Array<String> outcomes, Array<String> solvedCommands, Array<String> unsolvedCommands }`
 
-### Correct Description
+### Solved Description
 
-- Spreadsheet label: **Correct Answer**
+- Spreadsheet label: **Description When Solved**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.correctDescription`
 
@@ -506,13 +512,21 @@ be surrounded with single quote characters (`'`).
 
 ### Already Solved Description
 
-- Spreadsheet label: **Puzzle Already Solved**
+- Spreadsheet label: **Description When Already Solved**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.alreadySolvedDescription`
 
 When a Player attempts to solve the Puzzle and it is already solved, they will receive a parsed version of this string.
 However, the exact situation that this description is used in can vary based on the Puzzle type. For Puzzles that
 contain Items, the item list must be contained in this description.
+
+### Unsolved Description
+
+- Spreadsheet label: **Description When Unsolved**
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.unsolvedDescription`
+
+When a Player unsolves the Puzzle, they will receive a parsed version of this string.
 
 ### Incorrect Description
 

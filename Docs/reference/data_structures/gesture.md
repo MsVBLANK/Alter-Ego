@@ -11,7 +11,7 @@ without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 ## Attributes
 
 Gestures have very few attributes. Note that if an attribute is _internal_, that means it only exists within
-the [Gesture class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Gesture.js). Internal attributes will be given
+the [Gesture class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Gesture.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -99,7 +99,7 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
   `this.targetType`
 
 This is an internal attribute which is only assigned when a Gesture is instantiated in
-the [gesture Player method](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.js#L1761). It indicates the
+the [gesture Player method](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.ts#L1761). It indicates the
 data type of the Gesture's target. This allows the Gesture's Narration to
 contain [conditional formatting](../../moderator_guide/writing_descriptions.md#if) based on the data type of the target.
 

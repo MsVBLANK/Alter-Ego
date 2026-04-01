@@ -14,7 +14,7 @@ be loaded without loading Player data, but not vice versa.
 
 In order to provide a wide array of functionality, Players have many attributes. Note that if an attribute is
 _internal_, that means it only exists within
-the [Player class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.js). Internal attributes will be given
+the [Player class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Player.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -34,13 +34,14 @@ leaves the server, Alter Ego will be unable to load that Player's data; they mus
 spreadsheet, converted to an NPC, or reassigned a different ID.
 
 Because NPCs aren't associated with a Discord account, this attribute is repurposed for them. Instead of a Discord user
-ID, this must be an image URL with a `.png` or `.jpg` file extension. This image will be used as the NPC's avatar when
+ID, this must be an image URL with a `.png`, `.jpg`, `.jpeg`, `.webp`, or `.avif` file extension. This image will be used as the NPC's avatar when
 they speak; it will appear in [Room](room.md), [Whisper](whisper.md),
 and [spectate channels](player.md#spectate-channel).
 
 ### Member
 
-- Class attribute: [GuildMember](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class) `this.member`
+- Class attribute: [GuildMember](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.member`
 
 This is an internal attribute which contains a reference to the guild member whose Discord ID matches the Player ID. For
 NPCs, this is `null`.
@@ -73,7 +74,7 @@ loading Player data during gameplay, as any Players with different display names
 
 ### Display Icon
 
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.displayIcon`
 
 This is an internal attribute which contains an image URL that will be used as an avatar when the Player uses
@@ -92,9 +93,12 @@ channel by sending a message to it; it will only appear in spectate channels whe
 
 ### Talent
 
-- Spreadsheet label: **Talent**
+- Spreadsheet label: **Title or "NPC"**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.talent`
+  `this.title`
+
+> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.talent`.
+  This alias is deprecated, and will be removed in a future release of Alter Ego.
 
 This is primarily a relic from older versions of Alter Ego which used this attribute to produce behavior that has since
 been re-implemented using Status Effect behavior attributes. For full Players, this can be left blank without issue.
@@ -257,7 +261,7 @@ This is a Boolean value indicating whether this pronoun set pluralizes verbs.
 
 ### Original Voice String
 
-- Spreadsheet label: **Voice**
+- Spreadsheet label: **Speaks With**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.originalVoiceString`
 
@@ -343,41 +347,47 @@ the [defender's](die.md#defender) [dexterity](player.md#dexterity) [roll modifie
 will be multiplied by \\(-1\\) and added to the Die's modifier. In effect, this factors in the defender's ability to
 dodge the Player's attack.
 
-### Default Intelligence
+### Default Perception
 
-- Spreadsheet label: **Int**
+- Spreadsheet label: **Per**
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
-  `this.defaultIntelligence`
+  `this.defaultPerception`
 
-This is the Player's default intelligence stat. This quantifies the Player's logical intelligence. It must be a whole
+> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.defaultIntelligence`.
+  This alias is deprecated, and will be removed in a future release of Alter Ego.
+
+This is the Player's default perception stat. This quantifies the Player's perceptiveness. It must be a whole
 number from 1 - 10.
 
-### Intelligence
+### Perception
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
-  `this.intelligence`
+  `this.perception`
 
-This internal attribute is the Player's current intelligence stat. By default, this equals their default intelligence,
+> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.intelligence`.
+  This alias is deprecated, and will be removed in a future release of Alter Ego.
+
+This internal attribute is the Player's current perception stat. By default, this equals their default perception,
 however it can be changed by Status Effects with stat modifiers.
 
 This stat has no programmed use. However, it can be used
 in [if conditionals](../../moderator_guide/writing_descriptions.md#if) when writing descriptions to affect what the
-Player sees when inspecting various things. For example, a Player with a high intelligence stat may receive more clues
-to assist in solving [Puzzles](puzzle.md) and murders than a Player with a low intelligence stat. Whereas a Player with
-a low intelligence stat might see this:
+Player sees when inspecting various things. For example, a Player with a high perception stat may receive more clues
+to assist in solving [Puzzles](puzzle.md) and murders than a Player with a low perception stat. Whereas a Player with
+a low perception stat might see this:
 
 `It's a small compartment below the dartboard. Written on it is "Prime x Prime x Prime = 266". There doesn't seem to be any way to open it. Maybe it will open if you hit three prime numbers on the dartboard that multiply together to make 266.`
 
-A Player with an average intelligence stat might see this:
+A Player with an average perception stat might see this:
 
 `It's a small compartment below the dartboard. Written on it is "Prime x Prime x Prime = 266". There doesn't seem to be any way to open it. Maybe it will open if you hit three prime numbers on the dartboard that multiply together to make 266. If that's the case, then you know a prime number is a number whose only products are 1 and itself. You don't even have to try any of the double or triple point values, or 50 for that matter.`
 
-And a Player with a high intelligence stat might see this:
+And a Player with a high perception stat might see this:
 
 `It's a small compartment below the dartboard. Written on it is "Prime x Prime x Prime = 266". There doesn't seem to be any way to open it. Maybe it will open if you hit three prime numbers on the dartboard that multiply together to make 266. If that's the case, then you know a prime number is a number whose only products are 1 and itself. You don't even have to try any of the double or triple point values, or 50 for that matter. The only prime numbers on this board would be 2, 3, 5, 7, 11, 13, 17, and 19. Better yet, 266 is an even number, so you know one of the products MUST be 2, and you only need to find the other two numbers. This should be easy.`
 
 It should be noted that because this stat has no programmed use, it doesn't necessarily have to correlate with the
-Player's logical intelligence. It could correlate with the Player's perception, or anything else. How this stat is used
+Player's perceptiveness. It could correlate with the Player's logical intelligence, or anything else. How this stat is used
 is entirely up to the moderator's discretion when writing descriptions.
 
 ### Default Dexterity
@@ -623,10 +633,10 @@ Player is not currently hidden, this should be left blank.
 ### Status
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](status.md)>
+  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Status Effect](status.md)>
   `this.status`
 
-This internal attribute contains a list of all instantiated Status Effects that the Player currently has. Every time a
+This internal attribute contains a collection of all instantiated Status Effects that the Player currently has. Every time a
 Status Effect is inflicted or cured, the Player's stats are recalculated.
 
 ### Status String
@@ -656,12 +666,14 @@ gameplay.
 ### Description
 
 - Spreadsheet label: **Description**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+- Class attribute: [Description](description.md)
   `this.description`
 
 This is the description of the Player. When another Player inspects this Player, they will receive a parsed version of
 this string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more
 information.
+
+<!--TODO: Definitely need help with updating this!-->
 
 Player descriptions have a few peculiarities that set them apart from other descriptions, mostly due to the complexity
 of Players. In this section, Player descriptions will be explained in full detail.
@@ -746,19 +758,19 @@ with additional detail that makes use of static pronouns where possible might lo
 ### Inventory
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Equipment Slot](equipment_slot.md)>
+  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Equipment Slot](equipment_slot.md)>
   `this.inventory`
 
-This internal attribute is a list of Equipment Slots that the Player has. See the article
+This internal attribute is a collection of Equipment Slots that the Player has. See the article
 on [Equipment Slots](equipment_slot.md) for more information.
 
 ### Spectate Channel
 
-- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class)
+- Class attribute: [TextChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.spectateChannel`
 
 This is an internal attribute. When Player data is loaded, Alter Ego will attempt to find the channel in
-the [Spectate category](../settings/docker_settings.md#spectate_category) whose name matches the name of the Player. If
+the [Spectate category](../settings.md#spectate_category) whose name matches the name of the Player. If
 it is not found, it will create one with that Player's name. It will not do this if there are already 50 spectate
 channels in the Spectate category, however. It also will not attempt to find or create spectate channels for NPCs. In
 both scenarios, this is `null`.
@@ -767,9 +779,9 @@ A spectate channel replicates the experience of being this Player. Everything th
 Narrations, dialog, and more, is sent to this channel in chronological order. Here, spectators and dead Players can
 watch the game happen in real time, or read it at any point in the future, even after the game has concluded.
 
-There are some things that do not appear in spectate channels, however. Out-Of-Character (OOC) messages - messages that
-begin with `(` - are not sent, as
-the [dialogHandler module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/dialogHandler.js) does not count
+There are some things that do not appear in spectate channels, however. Out-Of-Character (OOC) messages—messages that
+begin with `(`—are not sent, as
+the [messageHandler module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/messageHandler.js) does not count
 these as dialog. The Player's commands are also not sent, nor are error messages about command syntax. When the Player
 uses the [status command](../commands/player_commands.md#status), their status will not appear in their spectate
 channel.
@@ -820,17 +832,17 @@ dies, they will stop moving, and all class attributes associated with movement w
 
 ### Move Timer
 
-- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+- Class attribute: [Timeout](https://nodejs.org/api/timers.html#class-timeout) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.moveTimer`
 
-This internal attribute uses the [setInterval method](https://developer.mozilla.org/en-US/docs/Web/API/setInterval) to
+This internal attribute uses the [setInterval method](https://nodejs.org/api/timers.html#setintervalcallback-delay-args) to
 handle the Player's movement. Every 100 milliseconds, 100 milliseconds are subtracted from the
 Player's [remaining time](player.md#remaining-time), and the Player's position and stamina are updated. However, if at
 least one Player in the game has the "heated" Status Effect, the amount of milliseconds subtracted from the Player's
 remaining time is first multiplied by
 the [heatedSlowdownRate setting](../settings/docker_settings.md#heated_slowdown_rate), effectively making the Player
 move more slowly. If the Player stops moving for any reason,
-the [clearInterval method](https://developer.mozilla.org/en-US/docs/Web/API/clearInterval) is used on this so that the
+the [clearInterval method](https://nodejs.org/api/timers.html#clearintervaltimeout) is used on this so that the
 Player's movement will no longer continue. When Player data is loaded, this is `null`.
 
 ### Remaining Time
@@ -860,8 +872,10 @@ Player instantaneously. As such, NPCs cannot have queued movements.
 
 ### Reached Half Stamina
 
+<!--TODO: this documents a private attribute? consider removing-->
+
 - Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-  `this.reachedHalfStamina`
+  `this.#reachedHalfStamina`
 
 This internal attribute indicates whether or not the Player has depleted half of their stamina while moving. When the
 Player's stamina first dips below half of their maximum stamina, they will be warned that they're starting to become
@@ -869,6 +883,8 @@ tired, and this is set to `true`. Once this is `true`, the warning message is no
 reloaded, where it is set to `false` by default.
 
 ### Interval
+
+<!--TODO: this documents a private attribute? consider removing-->
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.interval`
@@ -888,6 +904,8 @@ Player is counted. If this is `false`, then they are not. A Player is set as onl
 in-game. NPCs are never considered online.
 
 ### Online Interval
+
+<!--TODO: this documents a private attribute? consider removing-->
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.onlineInterval`

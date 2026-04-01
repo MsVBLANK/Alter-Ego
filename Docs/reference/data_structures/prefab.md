@@ -13,7 +13,7 @@ without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
 Due to the versatility of functions that different items can have, Prefabs have many attributes. Note that if an
 attribute is _internal_, that means it only exists within
-the [Prefab class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Prefab.js). Internal attributes will be given
+the [Prefab class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Prefab.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -289,14 +289,11 @@ character in the cell, with the unequipped commands following it.
 
 - Spreadsheet label: **Contains Inventory Slots**
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>
+  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Inventory Slot](inventory_slot.md)>
   `this.inventory`
 
-This is a list of inventory slot objects that instances of this Prefab will have. Items and Inventory Items with
-inventory slots are capable of containing other Items/Inventory Items. Inventory slot objects have the following
-structure:
-
-`{ String name, Number capacity, Number takenSpace, Number weight, Array item }`
+This is a collection of inventory slot objects that instances of this Prefab will have. Room Items and Inventory Items with
+inventory slots are capable of containing other Items of the same type (i.e. a Room Item can contain other Room Items, and an Inventory Item can contain other Inventory Items).
 
 In order to define an inventory slot for a Prefab, the name of the inventory slot and its capacity should be given,
 separated by a colon (`:`). For example, a Prefab with the ID "PANTS" might have two inventory slots, named "LEFT
@@ -304,19 +301,18 @@ POCKET" and "RIGHT POCKET", each with a capacity of 3. In this case, the cell fo
 would be `LEFT POCKET: 3, RIGHT POCKET: 3`. There is no theoretical limit to the amount of inventory slots a single item
 can have.
 
-The size of every Item/Inventory Item placed into a single inventory slot is added to that inventory slot's takenSpace
-value. If the quantity of that Item/Inventory Item is higher than 1, its size will be multiplied by its quantity before
-being added. If inserting an Item/Inventory Item would cause the inventory slot's takenSpace value to exceed its
-capacity, it cannot be inserted into that inventory slot. Additionally, every Item/Inventory Item inserted adds its own
-weight to the inventory slot's weight. Lastly, the Item/Inventory Item itself will be inserted into the inventory slot's
-item array.
+The size of every Item placed into a single inventory slot is added to that inventory slot's takenSpace
+value. If the quantity of that Item is higher than 1, its size will be multiplied by its quantity before
+being added. If inserting an tem would cause the inventory slot's takenSpace value to exceed its
+capacity, it cannot be inserted into that inventory slot. Additionally, every Item inserted adds its own
+weight to the inventory slot's weight. Lastly, the Item itself will be inserted into the inventory slot's
+items array.
 
 When inventory slots are initialized, their takenSpace and weight attributes are set to 0. Their item arrays are
-initially empty. Prefab inventory slots will always retain this initialized state. That is, even if an Item/Inventory
-Item contains other Items/Inventory Items in one of its inventory slots, the corresponding inventory slots of its
-associated Prefab will remain in its initialized, empty state. **Prefabs cannot contain Items/Inventory Items. The
+initially empty. Prefab inventory slots will always retain this initialized state. That is, even if an Item contains other Items in one of its inventory slots, the corresponding inventory slots of its
+associated Prefab will remain in its initialized, empty state. **Prefabs cannot contain Items. The
 inventory attribute of Prefabs is merely a template for _instances_ of those Prefabs to use so that _they_ can contain
-Items/Inventory Items.**
+Items.**
 
 ### Preposition
 

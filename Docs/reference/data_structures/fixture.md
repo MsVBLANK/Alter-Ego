@@ -165,13 +165,13 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
 
 This is an internal attribute used to process Recipes. It has the following structure:
 
-`{ Recipe recipe, Array<Item> ingredients, moment duration, moment-timer timer }`
+`{ Recipe recipe, Array<Item> ingredients, luxon duration, Timer timer }`
 
-For more information on the moment data type, see the documentation for [Moment.js](https://momentjs.com/docs/).
+For more information on the moment data type, see the documentation for [Luxon](https://moment.github.io/luxon/#/).
 
 ### Recipe Interval
 
-- Class attribute: [moment-timer](https://momentjs.com/docs/#/plugins/timer/) `this.recipeInterval`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.recipeInterval`
 
 This is an internal attribute that allows Objects to check for and process Recipes every second. If the Fixture does not
 have a Recipe tag, then this will be `null`.

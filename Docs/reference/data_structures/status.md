@@ -4,7 +4,7 @@ A **Status**, also called a **Status Effect**, is a data structure in the Neo Wo
 that affects a [Player](player.md).
 
 Status Effects that are loaded from the [spreadsheet](index.md) are static; once loaded, they do not change in any way.
-Thus, the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/saver.js) will never make changes to
+Thus, the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to
 the Status Effects sheet. As a result, the Status Effects sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled. Only _instantiated_ Status Effects — Status
 Effects that are inflicted on a Player — are dynamic.

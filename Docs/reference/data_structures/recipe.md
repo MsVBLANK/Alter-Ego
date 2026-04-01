@@ -1,11 +1,11 @@
 # Recipe
 
 A **Recipe** is a data structure in the Neo World Program. Its primary purpose is to allow [Players](player.md) to
-transform [Items](item.md)
-or [Inventory Items](inventory_item.md) into other Items or Inventory Items using game-like crafting mechanics.
+transform [Room Items](room_item.md)
+or [Inventory Items](inventory_item.md) into other Items using game-like crafting mechanics.
 
 Recipes are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
-the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/saver.js) will never make changes to the
+the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
 Recipes sheet. As a result, the Recipes sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 

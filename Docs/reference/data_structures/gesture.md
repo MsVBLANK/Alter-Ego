@@ -4,7 +4,7 @@ A Gesture is a data structure in the Neo World Program. It represents a form of 
 [Player](player.md) can use to communicate with other Players nonverbally.
 
 Gestures are static; once loaded from the spreadsheet, they do not change in any way. Thus,
-the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
+the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
 Gestures sheet. As a result, the Gestures sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 

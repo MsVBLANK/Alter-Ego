@@ -5,7 +5,7 @@ data structure which gives [Items](item.md)
 and [Inventory Items](inventory_item.md) their properties.
 
 Prefabs are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
-the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/saver.js) will never make changes to the
+the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
 Prefabs sheet. As a result, the Prefabs sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 

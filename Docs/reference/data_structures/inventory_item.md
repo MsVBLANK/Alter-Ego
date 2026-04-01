@@ -191,7 +191,7 @@ Inventory Item. This will also be added to the Player's [carry weight](player.md
 ### Inventory
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>
+  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Inventory Slot](inventory_slot.md)>
   `this.inventory`
 
 This is a list of inventory slot objects that the Inventory Item has. It is inherited from its Prefab. For more details,

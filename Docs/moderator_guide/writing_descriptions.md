@@ -43,7 +43,11 @@ meaning.
 
 ## `<desc>`
 
-Example: `<desc>This is the simplest description you can write.</desc>`
+Example: 
+
+```xml
+<desc>This is the simplest description you can write.</desc>
+```
 
 The `desc` tag is used to mark the beginning and ending of a description. It _must_ be included in every single
 description.
@@ -53,7 +57,10 @@ description.
 ## `<s>`
 
 Example:
-`<desc><s>After leaving the PARK, you come to a crossroads.</s> <s>To your left is PATH 2.</s> <s>Straight ahead is PATH 3.</s> <s>To your right is PATH 4.</s> <s>It seems all of these roads lead you to the north side of the island.</s></desc>`
+
+```xml
+<desc><s>After leaving the PARK, you come to a crossroads.</s> <s>To your left is PATH 2.</s> <s>Straight ahead is PATH 3.</s> <s>To your right is PATH 4.</s> <s>It seems all of these roads lead you to the north side of the island.</s></desc>
+```
 
 The `s` tag, short for **sentence**, is used to mark the beginning and ending of a sentence. The closing tag should
 always go after the final punctuation mark of the sentence. There should generally be a space between the closing tag of
@@ -68,7 +75,10 @@ around multiple sentences. For example, this would be perfectly acceptable:
 ## `<br>`
 
 Example:
-`<desc><s>You flip through the diary.</s> <s>Most of the pages are blacked out.</s> <s>A few things remain:</s><br /><s>-"my wife's birthday is on the 4th Monday of the month this year,"</s><br /><s>-"anniversary dinner went great, but my wife's birthday is in just 3 days and I don't know what to get her!"</s></desc>`
+
+```xml
+<desc><s>You flip through the diary.</s> <s>Most of the pages are blacked out.</s> <s>A few things remain:</s><br /><s>-"my wife's birthday is on the 4th Monday of the month this year,"</s><br /><s>-"anniversary dinner went great, but my wife's birthday is in just 3 days and I don't know what to get her!"</s></desc>
+```
 
 The `br` tag, short for **break**, is used to divide text into multiple lines. In general, you should _never_ split the
 contents of a cell on the spreadsheet into multiple lines. Instead, use the `br` tag. Note that the `br` tag cannot
@@ -86,117 +96,145 @@ You flip through the diary. Most of the pages are blacked out. A few things rema
 ## `<il>`
 
 Example:
-`<desc><s>The floor beneath you is soft and earthy.</s> <s>You find <il></il> haphazardly placed on it.</s></desc>`
 
-The `il` tag, short for **item list**, is used to mark the beginning and ending of a list of Items, though it can
-include non-Items as well. In the example above, the set of `il` tags contains nothing. In this case, when this
-description is sent to a player, the entire sentence containing the pair of `il` tags will be removed. That is, the
-player will be sent: `The floor beneath you is soft and earthy.`
+```xml
+<desc><s>The floor beneath you is soft and earthy.</s> <s>You find <il></il> haphazardly placed on it.</s></desc>
+```
 
-The primary function of the `il` tag is so Alter Ego can remove and add Items to descriptions as players take and drop
-them, while making sentences that are grammatically correct. For that to be possible, the grammar within an item list
-must be correct to begin with. In order to do that, several rules should be followed:
+The `il` tag, short for **item list**, is used to mark where items will be inserted into a description. Items are 
+inserted between the opening and closing `il` tags whenever a description is sent to a player. They are generated 
+on-demand by fetching the list of items that are currently contained in the game entity that the description belongs to.
 
-- `item` tags should be wrapped around either the entire single containing phrase or plural containing phrase of that
-  Item.
-- If there are two Items, the item list should follow this format:
-  `<il><item>ITEM 1</item> and <item>ITEM 2</item></il>`. That is, the word "and" should be between the two `item` tags.
-- If there are three or more Items, the `item` tags should be comma separated, and an Oxford comma should be used before
-  the "and" preceding the last `item` tag. That is, it should follow this format:
-  `<il><item>ITEM 1</item>, <item>ITEM 2</item>, and <item>ITEM 3</item></il>`.
-- Periods and other sentence-ending punctuation should not placed within `il` tags.
-- If the word "is" or the word "are" is in the clause just before or just after an item list, it should be the final
-  word or first word of the clause, respectively. This is so that Alter Ego can change them if the plurality of the
-  referenced Items changes. For example, if you have a sentence like this:
-  `<s>There is <il><item>a PENCIL</item></il> on the desk.</s>` and a player drops another `PENCIL` Item on the desk,
-  the sentence will become: `<s>There are <il><item>2 PENCILS</item></il> on the desk.</s>`. The same will happen if a
-  different Item is added as well. For example, if an `ERASER` Item was dropped on the desk, the sentence would become:
-  `<s>There are <il><item>a PENCIL</item> and <item>an ERASER</item></il> on the desk.</s>`. The same happens in
-  reverse, as well. If the second Item, whatever it may be, is removed from the desk, "are" will be changed to "is".
-- Though non-Items can be placed within `il` tags, they should follow the same grammatical rules that `item` tags would
-  have. For example, in the sentence
-  `<s>The shelves are lined with <il><item>2 bags of RICE</item>, different ingredients for baking, and dough mixes</il>.</s>`,
-  if the `RICE` Items were removed, Alter Ego would remove the Oxford comma before "dough mixes", making the sentence
-  `<s>The shelves are lined with <il>different ingredients for baking and dough mixes</il>.</s>`. Non-Items should only
-  be placed after all `item` tags.
+If an item list is empty, the entire sentence containing the item list will be removed from the parsed description. 
+So, in the example above, if the item list is determined to be empty, the player will be sent: 
+`The floor beneath you is soft and earthy.`
+
+If you want to prevent an item list sentence from being removed from the parsed description when the container it 
+belongs to contains no items, you can enter text between the opening and closing `il` tags, like so:
+
+```xml
+<desc><s>It's a long, white countertop.</s> <s>It's broken up only by a SINK in the middle.</s> <s>On it, you find <il>a BLENDER and a MIXER</il>.</s></desc>
+```
+
+Pay close attention to the above example, and ensure that sentence-ending punctuation is never placed inside of `il` tags.
 
 `il` tags are capable of having attributes. There is one attribute with defined behavior, the `name` attribute. This
 allows you to insert multiple item lists into a description, giving each a name. This looks like:
-`<desc><s>It's a plain pair of black jeans.</s> <s>It has four pockets in total.</s> <s>In the right pocket, you find <il name="RIGHT POCKET"></il>.</s> <s>In the left pocket, you find <il name="LEFT POCKET"></il>.</s> <s>In the right back pocket, you find <il name="RIGHT BACK POCKET"></il>.</s> <s>In the left back pocket, you find <il name="LEFT BACK POCKET"></il>.</s></desc>`
 
-Note that only [Prefabs](../reference/data_structures/prefab.md), [Items](../reference/data_structures/item.md),
-[Inventory Items](../reference/data_structures/inventory_item.md)
+```xml
+<desc><s>It's a plain pair of black jeans.</s> <s>It has four pockets in total.</s> <s>In the right pocket, you find <il name="RIGHT POCKET"></il>.</s> <s>In the left pocket, you find <il name="LEFT POCKET"></il>.</s> <s>In the right back pocket, you find <il name="RIGHT BACK POCKET"></il>.</s> <s>In the left back pocket, you find <il name="LEFT BACK POCKET"></il>.</s></desc>
+```
+
+Note that only [Prefabs](../reference/data_structures/prefab.md), 
+[Room Items](../reference/data_structures/room_item.md),
+[Inventory Items](../reference/data_structures/inventory_item.md), 
 and [Players](../reference/data_structures/player.md) support multiple `il` tags in a single description.
 
-Lastly, `il` tags can only be used in a certain number of places, and each one has its own limitations. They can be used
+`il` tags can only be used in a certain number of places, and each one has its own limitations. They can be used
 in:
 
-- An [Fixture](../reference/data_structures/fixture.md)'s description. A single Fixture can only have one item list in its
-  description.
+- A [Fixture](../reference/data_structures/fixture.md)'s description. A single Fixture can only have one item list 
+  in its description.
 - A [Prefab](../reference/data_structures/prefab.md)'s description. A single Prefab can have multiple item lists;
-  however, there must be one for each [inventory slot](../reference/data_structures/prefab.md#inventory), with names to
-  match. Item lists in a Prefab's description will never be updated. They simply serve as a base for instances of that
-  Prefab.
-- An [Item](../reference/data_structures/item.md)
+  however, there must be one for each [Inventory Slot](../reference/data_structures/inventory_slot.md), with names to
+  match each slot's ID. Item lists in a Prefab's description will never have items inserted into them, since players 
+  cannot directly inspect Prefabs. They simply serve as a base for instances of that Prefab.
+- A [Room Item](../reference/data_structures/room_item.md)
   or [Inventory Item](../reference/data_structures/inventory_item.md)'s description. The same rules that Prefabs have
-  apply, however these can be updated as other Items/Inventory Items are inserted or removed.
-- A [Puzzle](../reference/data_structures/puzzle.md)'s "Already Solved" text. A single Puzzle can only have one item
-  list in its "Already Solved" text.
+  apply, however these item lists can actually display items.
+- A [Puzzle](../reference/data_structures/puzzle.md)'s Already Solved Description. A single Puzzle can only have one 
+  item list in its Already Solved Description.
 - A [Player](../reference/data_structures/player.md)'s description. A single Player can only have two item lists in
   their description, and they must be named `equipment` and `hands`. Any other item lists will never be updated.
 
 Lastly, every item list must be in its own sentence. That is, a single `s` tag can only have one `il` tag within it.
 
-To test that you've formatted item lists correctly, use the `add` and `remove` functions of
-the [testparser command](../reference/commands/moderator_commands.md#testparser).
-
 ---
 
 ## `<item>`
 
-Example: `<desc><s>You open the locker.</s> <s>Inside, you find <il><item>a SWIMSUIT</item></il>.</s></desc>`
+Example:
 
-The `item` tag is used to mark the beginning and ending of [Items](../reference/data_structures/item.md). It must go
-inside an [il tag](#il) and contain only the Item's
-entire [single containing phrase](../reference/data_structures/item.md#single-containing-phrase) or a quantity plus its
-plural containing phrase. For example:
+```xml
+<desc><s>You open the locker.</s> <s>Inside, you find <il><item>a SWIMSUIT</item></il>.</s></desc>
+```
 
-`<desc><s>You open the dresser.</s> <s>There are a few drawers with nothing of interest in them.</s> <s>In the bottom drawer, you find <il><item>a pair of NEEDLES</item></il>.</s></desc>`
+The `item` tag is used to mark the beginning and ending of items. In previous versions of Alter Ego, it was necessary 
+to include these when writing item lists in descriptions. However, **as of version 2.0, you should not enter these 
+manually**.
 
-In this example, the Item, `NEEDLES`, has the single containing phrase `a pair of NEEDLES`. If a Player dropped another
-`NEEDLES` Item into this Fixture, Alter Ego would change the contents of the `item` tag to the quantity 2 plus the
-`NEEDLES` Item's plural containing phrase, which is `pairs of NEEDLES`. The description would become:
+`item` tags are generated on-demand whenever a description containing an item list is parsed and sent to a player.
+They do not persist within the description after that. Additionally, if `item` tags are found to already be in a 
+description when it is created, Alter Ego will attempt to remove them in a grammatically correct manner. However, 
+it may not be able to do so completely perfectly. Therefore, if you already have `item` tags in your descriptions, 
+you should remove them manually.
 
-`<desc><s>You open the dresser.</s> <s>There are a few drawers with nothing of interest in them.</s> <s>In the bottom drawer, you find <il><item>2 pairs of NEEDLES</item></il>.</s></desc>`
+When an item list is generated for a given `il` tag, the parser module retrieves all items currently contained inside 
+the game entity the item list corresponds with, and collates them so that any item with the same 
+[Prefab ID](../reference/data_structures/prefab.md#id) and 
+[containing](../reference/data_structures/room_item.md#single-containing-phrase)
+[phrases](../reference/data_structures/inventory_item.md#single-containing-phrase) are considered the same item. Then, 
+for each item in the list, it creates an `item` tag, whose contents are as follows:
 
-Likewise, if the Player then removed a `NEEDLES` Item from this Fixture, Alter Ego would revert the description to use
-the Item's single containing phrase.
+- The item's plural containing phrase, if it has an infinite quantity and isn't already mentioned in the sentence,
+- The item's quantity and plural containing phrase if it has a quantity greater than 1, or
+- The item's single containing phrase, if it has a quantity of 1.
+
+`item` tags are inserted into the description in the order they appear in on the sheet. They are inserted so as to 
+follow several grammatical rules:
+
+- If there are two items, they will be separated by the word "and", like so:
+    - `<il><item>ITEM 1</item> and <item>ITEM 2</item></il>`
+- If there are three or more items, the `item` tags will be comma-separated, and an Oxford comma will be inserted
+  before the word "and" preceding the last `item` tag, like so:
+    - `<il><item>ITEM 1</item>, <item>ITEM 2</item>, and <item>ITEM 3</item></il>`
+- If the word "is" or the word "are" is the last word in the clause just before an item list or the first word in the 
+  clause just after an item list, it will be changed to the other word in order to properly reflect the plurality of 
+  the referenced items. For example, if a sentence like `<s>There is <il></il> on the desk.</s>` contains an item with 
+  a quantity greater than 1, or multiple items, it will be changed like so:
+    - `<s>There are <il><item>2 PENCILS</item></il> on the desk.</s>`, or 
+    - `<s>There are <il><item>a PENCIL</item> and <item>an ERASER</item></il> on the desk.</s>`
+- If an item list contains non-items, they will be updated according to the same rules that `item` tags follow. For 
+  example, in the sentence `<s>The shelves are lined with <il>different ingredients for baking and dough mixes</il>.</s>`,
+  if the description's container contains an item, an Oxford comma will be inserted before the final "and", like so:
+    - `<s>The shelves are lined with <il><item>2 bags of RICE</item>, different ingredients for baking, and dough mixes</il>.</s>`
+
+It is worth noting that `item` tags will always be inserted at the beginning of an item list, never at the end.
 
 ---
 
 ## `<if>`
 
-Example:
-`<desc><s>You take a look at the seaberry plant.</s> <s>Growing on it are <il><item>SEABERRIES</item></il>.</s> <if cond="player.talent === 'Ultimate Herbalist'"><s>You think you've heard that it can cure nausea.</s></if></desc>`
-
 > [!CAUTION]
 > This tag has the ability to run code. In order to determine if the condition in the `cond` attribute is
-> true, Alter Ego uses the [JavaScript eval function](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval),
-> which most programmers agree is a massive security risk. Given that the only way to insert code is to write it on the
-> spreadsheet, write access should be given to as few people as possible. Possible malicious uses of this feature include, but are not limited to:
+> true, Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While
+> it has been tested to prevent access to many functions which can cause severe damage, its security cannot
+> be guaranteed, especially if Alter Ego is run outside of a Docker container. Given that the only way to
+> insert code is to write it on the spreadsheet, write access should be given to as few people as possible.
+> There may exist exploits that allow malicious users to do such things as:
 >
 > - Sending Alter Ego's authentication token to the server
 > - Killing a player in the game
 > - Shutting down Alter Ego
+> - Read, modify, and delete files on your computer
+>
+> We, the Alter Ego developers, assume no responsibility for damage caused by malicious use of this feature.
+> You have been warned.
 
-The `if` tag is used to modify the contents of a description before it is sent to a Player. If the condition in the
+Example:
+
+```xml
+<desc><s>It's a small, glossy red berry.</s> <s>It looks ripe.</s> <if cond="player.name === 'Nestor' || player.name === 'Jun'"><s>It's a holly berry.</s> <s>It can cause vomiting and diarrhea.</s> <s>It's best not to eat this.</s></if></desc>
+```
+
+The `if` tag is used to modify the contents of a description before it is sent to a player. If the condition in the
 `cond` (condition) attribute is true, then the contents of the `if` tag will be kept in the description. If it is false,
 the contents will be removed. In the above example, there are two outcomes:
 
-- If the Player inspecting this Fixture has the talent "Ultimate Herbalist", the condition is true, and they will be sent
-  `You take a look at the seaberry plant. Growing on it are SEABERRIES. You think you've heard that it can cure nausea.`
-- If the Player inspecting this Fixture doesn't have the talent "Ultimate Herbalist", the condition is false, and they
-  will be sent `You take a look at the seaberry plant. Growing on it are SEABERRIES.`
+- If the Player inspecting this Room Item has the name "Nestor" or "Jun", the condition is true, and they will be sent
+  `It's a small, glossy red berry. It looks ripe. It's a holly berry. It can cause vomiting and diarrhea. It's best not to eat this.`
+- If the Player inspecting this Room Item doesn't have the name "Nestor" or "Jun", the condition is false, and they
+  will be sent `It's a small, glossy red berry. It looks ripe.`
 
 You can chain multiple `if` tags together for different outcomes. For example, in this Fixture description:
 `<desc><s>The window covers most of the wall, filling the room with <if cond="findEvent('NIGHT').ongoing === true">moonlight</if><if cond="findEvent('NIGHT').ongoing === false">sunlight</if>.</s></desc>`
@@ -235,7 +273,7 @@ change:
 - Based on whether the Fixture's child Puzzle has been solved:
   `<desc><if cond="this.childPuzzle.solved === true"><s>You examine the poster.</s> <s>It looks like this: https://i.imgur.com/wtUujam.png</s></if><if cond="this.childPuzzle.solved === false"><s>It is too dark to see anything.</s></if></desc>`
 
-If the description belongs to an [Item](../reference/data_structures/item.md), you can write descriptions that change:
+If the description belongs to an [Item](../reference/data_structures/room_item.md), you can write descriptions that change:
 
 - Based on the number of uses the Item has left:
   `<desc><if cond="this.uses > 0"><s>It's a bottle of water.</s> <s>You feel thirsty just looking at it.</s></if><if cond="this.uses === 0"><s>It's an empty plastic water bottle.</s></if></desc>`

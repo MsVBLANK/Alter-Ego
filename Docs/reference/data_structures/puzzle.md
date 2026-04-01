@@ -380,20 +380,25 @@ to use it.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.requirementsStrings`
 
-This is a comma-separated list of Puzzle names and/or Prefabs that are required for the Puzzle to be made accessible if
+This is a comma-separated list of names corresponding to Puzzles, Events, Prefabs, and Flags that are required for the Puzzle to be made accessible if
 it is not and vice versa. Puzzle names must match the Puzzle's name exactly on the spreadsheet, although they can
 optionally be prefixed with "Puzzle: ". They do not need to be in the same Room as the Puzzle that requires them. If
 there are multiple Puzzles with the same name as one that is required, then the first to appear on the sheet will be
 required. For this reason, it is strongly suggested that Puzzles are given unique names. Prefabs can also be listed as
 requirements. However, they **must** be prefixed with "Prefab: " or "Item: ", followed by the Prefab ID.
+Events can additionally be listed as requirements.
+However, they **must** be prefixed with "Event: ", followed by the Event ID.
+Flags can additionally be listed as requirements.
+However, they **must** be prefixed with "Flag: ", followed by the Flag ID.
 
-In order for all requirements to be considered met, all required Puzzles must be solved and all required Prefabs must be
-in the Player's inventory as Inventory Items.
+In order for all requirements to be considered met, all required Puzzles must be solved, all required Prefabs must be
+in the Player's inventory as Inventory Items, all required Events must be ongoing, and all required Flags must be TODO.
+<!--help! what circumstances make a Flag requirement be considered a met requirement?-->
 
 ### Requirements
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Puzzle](puzzle.md)|[Prefab](prefab.md)>
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Puzzle](puzzle.md) | [Prefab](prefab.md) | [Event](event.md) | [Flag](flag.md)>
   `this.requirements`
 
 This is an internal attribute which contains references to each of the Puzzle or Prefab objects whose names are listed
@@ -491,11 +496,11 @@ examples of Puzzles with multiple solutions:
 This is an internal attribute which consists of a list of command set objects. Command set objects have the following
 structure:
 
-`{ Array outcomes, Array solvedCommands, Array unsolvedCommands }`
+`{ Array<String> outcomes, Array<String> solvedCommands, Array<String> unsolvedCommands }`
 
-### Correct Description
+### Solved Description
 
-- Spreadsheet label: **Correct Answer**
+- Spreadsheet label: **Description When Solved**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.correctDescription`
 
@@ -507,13 +512,21 @@ be surrounded with single quote characters (`'`).
 
 ### Already Solved Description
 
-- Spreadsheet label: **Puzzle Already Solved**
+- Spreadsheet label: **Description When Already Solved**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.alreadySolvedDescription`
 
 When a Player attempts to solve the Puzzle and it is already solved, they will receive a parsed version of this string.
 However, the exact situation that this description is used in can vary based on the Puzzle type. For Puzzles that
 contain Items, the item list must be contained in this description.
+
+### Unsolved Description
+
+- Spreadsheet label: **Description When Unsolved**
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.unsolvedDescription`
+
+When a Player unsolves the Puzzle, they will receive a parsed version of this string.
 
 ### Incorrect Description
 

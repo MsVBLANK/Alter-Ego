@@ -259,16 +259,16 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 	}
 
     /**
-         * Returns true if this entity contains an item with the given identifier or prefab ID.
-         * @param identifier - The identifier or prefab ID to search for.
-         */
-        override containsItem(identifier: string): boolean {
-            const containedItems = this.getContainedItems();
-            for (const item of containedItems) {
-                if (itemIdentifierMatches(item, identifier, true)) return true;
-            }
-            return false;
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
         }
+        return false;
+    }
 
     /**
      * Executes the inventory item's equipped commands.

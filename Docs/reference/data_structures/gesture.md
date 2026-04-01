@@ -4,7 +4,7 @@ A Gesture is a data structure in the Neo World Program. It represents a form of 
 [Player](player.md) can use to communicate with other Players nonverbally.
 
 Gestures are static; once loaded from the spreadsheet, they do not change in any way. Thus,
-the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/saver.js) will never make changes to the
+the [saver module](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
 Gestures sheet. As a result, the Gestures sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
@@ -15,20 +15,20 @@ the [Gesture class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Gestur
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
-### Name
+### ID
 
-- Spreadsheet label: **Gesture Name**
+- Spreadsheet label: **Gesture ID**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.name`
+  `this.id`
 
-This is a name of the Gesture. This is what a Player must input in order to perform this Gesture. There are no rules for
+This is a ID of the Gesture. This is what a Player must input in order to perform this Gesture. There are no rules for
 how Gestures must be named, although they are conventionally named with all lowercase letters. Each Gesture must have a
-unique name. Additionally, a Gesture cannot be named "list", as attempting to perform a Gesture with that name would
+unique ID. Additionally, a Gesture cannot be named "list", as attempting to perform a Gesture with that ID would
 instead bring up the list of all Gestures.
 
 ### Requires
 
-- Spreadsheet label: **Requires**
+- Spreadsheet label: **Requires Target**
 - Class
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.requires`
@@ -36,8 +36,8 @@ instead bring up the list of all Gestures.
 This is a comma-separated list of data types the Gesture can take as a target. Accepted data types are:
 
 - [Exit](exit.md)
-- [Object](object.md)
-- [Item](item.md)
+- [Fixture](fixture.md)
+- [Room Item](room_item.md)
 - [Player](player.md)
 - [Inventory Item](inventory_item.md)
 
@@ -49,7 +49,7 @@ RIGHT HAND or LEFT HAND. If this is blank, then the Player can perform this Gest
 
 ### Disabled Statuses Strings
 
-- Spreadsheet label: **Don't Allow If**
+- Spreadsheet label: **Don't Allow If Player Is**
 - Class
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.disabledStatusesStrings`
@@ -69,7 +69,7 @@ This is an internal attribute which contains references to each of the Status Ef
 
 ### Description
 
-- Spreadsheet label: **Description**
+- Spreadsheet label: **Description In List**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.description`
 
@@ -79,7 +79,7 @@ and use as few words as possible.
 
 ### Narration
 
-- Spreadsheet label: **Narration**
+- Spreadsheet label: **Narration When Performed**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.narration`
 

@@ -79,33 +79,34 @@ predefined behavior that makes Puzzles such a useful data type.
 
 This is the Room the Puzzle can be found in. This must match the Room's name exactly on the spreadsheet.
 
-### Parent Object Name
+### Parent Fixture Name
 
-- Spreadsheet label: **Parent Object**
+- Spreadsheet label: **Parent Fixture**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.parentObjectName`
 
-This is the name of an [Object](object.md) that is associated with the Puzzle, if any. The parent Object must be in the
-same Room as the Puzzle referencing it. If the name of an Object is supplied, then a Player will be able to supply the
-name of the parent Object as an argument in the use command instead of the name of the
-Puzzle. [Narrations](narration.md) involving the Puzzle will also use the parent Object's name instead of the Puzzle's
+This is the name of an [Fixture](fixture.md) that is associated with the Puzzle, if any. The parent Fixture must be in the
+same Room as the Puzzle referencing it. If the name of an Fixture is supplied, then a Player will be able to supply the
+name of the parent Fixture as an argument in the use command instead of the name of the
+Puzzle. [Narrations](narration.md) involving the Puzzle will also use the parent Fixture's name instead of the Puzzle's
 name. This is particularly useful if every Puzzle is given a unique name. For example, if the Puzzle is named "PANIC
-BUTTON" and the parent Object is named "YELLOW BUTTON", then a Player will be able to interact with the Puzzle by
+BUTTON" and the parent Fixture is named "YELLOW BUTTON", then a Player will be able to interact with the Puzzle by
 sending `.use YELLOW BUTTON` or `.use PANIC BUTTON`. When the Puzzle is interacted with by a Player named Haru, Alter
 Ego will send "Haru uses the YELLOW BUTTON." to the PANIC BUTTON's Room channel.
 
-Additionally, by assigning a Puzzle a parent Object, it becomes possible for the Puzzle to contain [Items](item.md).
+Additionally, by assigning a Puzzle a parent Fixture, it becomes possible for the Puzzle to contain [Items](item.md).
 This allows Items to be made inaccessible until the Puzzle is solved, while also allowing Players to take and drop Items
-from/into the parent Object if the Puzzle is solved. When an Object capable of containing Items is assigned a child
+from/into the parent Fixture if the Puzzle is solved. When an Fixture capable of containing Items is assigned a child
 Puzzle, the [item list](../../moderator_guide/writing_descriptions.md#il) must be in the Puzzle's already solved
-description. If no parent Object is needed, this cell can simply be left blank on the spreadsheet.
+description. If no parent Fixture is needed, this cell can simply be left blank on the spreadsheet.
 
-### Parent Object
+### Parent Fixture
 
-- Class attribute: [Object](object.md) `this.parentObject`
+- Class attribute: [Fixture](fixture.md) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.parentFixture`
 
-This is an internal attribute which simply contains a reference to the actual Object object whose name matches
-`this.parentObjectName` and whose location is the same as the Puzzle. If no parent Object name is given, this will be
+This is an internal attribute which simply contains a reference to the actual Fixture object whose name matches
+`this.parentObjectName` and whose location is the same as the Puzzle. If no parent Fixture name is given, this will be
 `null` instead.
 
 ### Type

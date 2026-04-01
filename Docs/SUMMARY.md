@@ -40,7 +40,7 @@
     - [Puzzle](reference/data_structures/puzzle.md)
     - [Recipe](reference/data_structures/recipe.md)
     - [Room](reference/data_structures/room.md)
-    - [Room Item](reference/data_structures/item.md)
+    - [Room Item](reference/data_structures/room_item.md)
     - [Status](reference/data_structures/status.md)
     - [Whisper](reference/data_structures/whisper.md)
 - [Settings](reference/settings.md)

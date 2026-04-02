@@ -248,8 +248,8 @@ If both ingredients are non-discreet, then the Narration will instead be:
 Processing is a complex game mechanic that uses Recipes. It makes use of
 the [processRecipes Fixture method](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L96).
 
-Recipes can be processed in an Fixture as long as that Fixture is [activated](object.md#activated) and has
-a [Recipe tag](object.md#recipe-tag) that matches the Recipe's Fixture tag, regardless of how the Fixture was activated.
+Recipes can be processed in an Fixture as long as that Fixture is [activated](fixture.md#activated) and has
+a [Recipe tag](fixture.md#recipe-tag) that matches the Recipe's Fixture tag, regardless of how the Fixture was activated.
 There are four ways an Fixture can be activated:
 
 - By a Player using the [use player command](../commands/player_commands.md#use),

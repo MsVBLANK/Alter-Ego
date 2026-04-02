@@ -303,7 +303,7 @@ can have.
 
 The size of every Item placed into a single inventory slot is added to that inventory slot's takenSpace
 value. If the quantity of that Item is higher than 1, its size will be multiplied by its quantity before
-being added. If inserting an tem would cause the inventory slot's takenSpace value to exceed its
+being added. If inserting an Item would cause the inventory slot's takenSpace value to exceed its
 capacity, it cannot be inserted into that inventory slot. Additionally, every Item inserted adds its own
 weight to the inventory slot's weight. Lastly, the Item itself will be inserted into the inventory slot's
 items array.
@@ -320,7 +320,7 @@ Items.**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.preposition`
 
-This attribute is similar to the [preposition attribute in the Fixture class](object.md#preposition). However, it does
+This attribute is similar to the [preposition attribute in the Fixture class](fixture.md#preposition). However, it does
 not determine whether instances of this Prefab can contain Items/Inventory Items. That function is taken care of by the
 inventory attribute of the Prefab. Otherwise, it functions the same. When a Player drops/stashes a non-discreet
 Item/Inventory Item into an instance of this Prefab, Alter Ego will narrate them doing so using this preposition. For

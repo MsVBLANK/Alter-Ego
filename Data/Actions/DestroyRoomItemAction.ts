@@ -31,7 +31,7 @@ export default class DestroyRoomItemAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): RoomItem[] {
-        const items = this.getGame().entityFinder.getRoomItems(args[1], args[2], args[3] ? args[3].toLowerCase() === "true" : undefined, args[4], args[5], args[6]);
+        const items = this.getGame().entityFinder.getRoomItems(args[1], args[2], args[3] ? args[3].toLowerCase() === "true" : undefined, args[4], args[5], args[6], args[7]);
         return items;
     }
 

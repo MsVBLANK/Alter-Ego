@@ -130,10 +130,10 @@ export default class EquipmentSlot extends GameEntity {
     /**
      * Returns the args for the InstantiateInventoryItem ActionDirective for this equipment slot.
      *
-     * @returns ["II", id, undefined, undefined]
+     * @returns ["II", id, undefined, undefined, undefined]
      */
-    getPartialInstantiateActionDirectiveArgs(): [string, string, string, string] {
-        return ["II", this.id, undefined, undefined];
+    getPartialInstantiateActionDirectiveArgs(): [string, string, string, string, string] {
+        return ["II", this.id, undefined, undefined, undefined];
     }
 
     override getEntityType(): string {

@@ -27,7 +27,8 @@ export default class RecipesAction extends Action {
 	#uncraftingRecipesDescription: string;
 	#processingRecipesDescription: string;
 	#syntaxNote = "Note: If an item is preceded by a number and letter, that means the recipe accepts a variable number of that ingredient, and the quantity of its "
-			+ "products can be multiplied by that variable. If an item is contained in parentheses, it must be contained in the item preceding it.";
+			+ "products can be multiplied by that variable. If an item is contained in parentheses, it must be contained in the item preceding it. "
+            + "If an item is marked with an asterisk, there are multiple possible names for that item, and the recipe can be performed with any of them.";
 	#craftingList: RecipeListEntry[] = [];
 	#uncraftingList: RecipeListEntry[] = [];
 	#processingList: RecipeListEntry[] = [];
@@ -55,7 +56,7 @@ export default class RecipesAction extends Action {
 			if (this.message) this.getGame().communicationHandler.reply(this.message, errorMessage);
 			return;
 		}
-		this.#setRecipeLists(doableRecipes);
+		this.#setRecipeLists(doableRecipes, item);
 		this.#sendRecipeListMessage();
 	}
 
@@ -112,15 +113,17 @@ export default class RecipesAction extends Action {
 
 	/**
 	 * Sets the craftingList, uncraftingList, and processingList with the given doable recipes.
+     * @param doableRecipes - The doable recipes to set the lists with.
+     * @param item - The inventory item that was provided. If this is given, display strings will be generated based on its procedural selections.
 	 */
-	#setRecipeLists(doableRecipes: DoableRecipe[]): void {
+	#setRecipeLists(doableRecipes: DoableRecipe[], item?: InventoryItem): void {
 		// Get a list of all fixtures in the room. We'll filter this later.
 		const roomFixtures = this.getGame().entityFinder.getFixtures(undefined, this.player.location.id, true);
 		const recipeTagFixtureNames: Map<string, string> = new Map();
 		for (const doableRecipe of doableRecipes) {
 			const recipe = doableRecipe.recipe;
-			const ingredientsString = recipe.ingredients.map(ingredient => ingredient.getDisplayString()).join(', ');
-			const productsString = recipe.products.map(product => product.getDisplayString()).join(', ');
+			const ingredientsString = recipe.ingredients.map(ingredient => ingredient.getDisplayString(item?.proceduralSelections)).join(', ');
+			const productsString = recipe.products.map(product => product.getDisplayString(item?.proceduralSelections)).join(', ');
 			if (recipe.fixtureTag !== "") {
 				if (!recipeTagFixtureNames.has(recipe.fixtureTag)) {
 					const fixtures = roomFixtures.filter(fixture => fixture.recipeTag === recipe.fixtureTag);

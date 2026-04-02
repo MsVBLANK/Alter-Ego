@@ -8,7 +8,7 @@ import type Player from "./Player.ts";
 import type Room from "./Room.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
-export type RoomItemField = "prefab"|"identifier"|"location"|"accessible"|"container"|"quantity"|"uses"|"description";
+export type RoomItemField = "prefab"|"identifier"|"names"|"containingPhrases"|"location"|"accessible"|"container"|"quantity"|"uses"|"description"|"proceduralSelections";
 
 /**
  * Represents an item in a room that a player can take with them.
@@ -194,39 +194,39 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
      * Returns the args for the Inspect ActionDirective for this room item.
      */
     getInspectActionDirectiveArgs(): string[] {
-        return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName];
+        return ["RI", this.getIdentifier(), this.location.id, this.containerType, this.containerName, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the Take ActionDirective for this room item.
      */
     getTakeActionDirectiveArgs(): string[] {
-        return [this.getIdentifier(), this.location.id, this.containerType, this.containerName];
+        return [this.getIdentifier(), this.location.id, this.containerType, this.containerName, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the InstantiateRoomItem ActionDirective for this room item.
      * @param inventorySlot - The inventory slot to instantiate the room item into.
-     * @returns ["RI", identifier, location, preposition, containerType, containerName, destinationInventorySlot]
+     * @returns ["RI", identifier, location, preposition, containerType, containerName, destinationInventorySlot, proceduralSelections]
      */
     getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<RoomItem>) {
-        return ["RI", this.getIdentifier(), this.location.displayName, this.getPreposition(), this.containerType, this.containerName, inventorySlot.id];
+        return ["RI", this.getIdentifier(), this.location.displayName, this.getPreposition(), this.containerType, this.containerName, inventorySlot.id, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the DestroyRoomItem ActionDirective for this room item.
-     * @returns ["RI", identifier, location, accessible, containerType, containerName, slotId]
+     * @returns ["RI", identifier, location, accessible, containerType, containerName, slotId, proceduralSelections]
      */
-    getDestroyRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
-        return ["RI", this.getIdentifier(), this.location.id, undefined, this.containerType, this.container.getContainerIdentifier(), this.slot];
+    getDestroyRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string, string] {
+        return ["RI", this.getIdentifier(), this.location.id, undefined, this.containerType, this.container.getContainerIdentifier(), this.slot, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the DestroyRoomItem ActionDirective for this room item.
-     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId]
+     * @returns ["ALL", identifier, location, accessible, containerType, containerName, slotId, proceduralSelections]
      */
-    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string] {
-        return ["ALL", undefined, this.location.id, undefined, 'RoomItem', this.getIdentifier(), undefined];
+    getDestroyAllRoomItemActionDirectiveArgs(): [string, string, string, string, string, string, string, string] {
+        return ["ALL", undefined, this.location.id, undefined, 'RoomItem', this.getIdentifier(), undefined, this.proceduralSelectionsString];
     }
 
     /**
@@ -310,12 +310,15 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
         switch (field) {
             case "prefab": return "Prefab";
             case "identifier": return "Container Identifier";
+            case "names": return "Names";
+            case "containingPhrases": return "Containing Phrases";
             case "location": return "Location";
             case "accessible": return "Accessible?";
             case "container": return "Container";
             case "quantity": return "Quantity";
             case "uses": return "Uses";
             case "description": return "Description";
+            case "proceduralSelections": return "Procedural Selections";
         }
     }
 
@@ -323,12 +326,15 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
         switch (field) {
             case "prefab": return this.prefab.id;
             case "identifier": return this.identifier;
+            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
             case "location": return this.location.displayName;
             case "accessible": return this.accessible ? "TRUE" : "FALSE";
             case "container": return `${this.containerType}: ${this.containerName}`;
             case "quantity": return isNaN(this.quantity) ? "Infinity" : String(this.quantity);
             case "uses": return isNaN(this.uses) && this.prefab.usable ? "Infinity" : isNaN(this.uses) ? "" : String(this.uses);
             case "description": return this.description.text;
+            case "proceduralSelections": return this.proceduralSelectionsString;
         }
     }
 

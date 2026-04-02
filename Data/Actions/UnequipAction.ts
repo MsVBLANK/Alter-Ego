@@ -32,7 +32,7 @@ export default class UnequipAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): [InventoryItem, EquipmentSlot] {
-        const item = this.getGame().entityFinder.getInventoryItem(args[0], this.player.name, "", args[1]);
+        const item = this.getGame().entityFinder.getInventoryItem(args[0], this.player.name, "", args[1], args[2]);
         const equipmentSlot = this.player.inventory.get(args[1]);
         return [item, equipmentSlot];
     }

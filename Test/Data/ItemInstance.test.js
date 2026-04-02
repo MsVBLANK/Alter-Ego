@@ -112,7 +112,10 @@ describe('ItemInstance test', () => {
             const entity = game.entityFinder.getInventoryItem('GLAZE', '???', undefined, 'LEFT HAND');
             /** @type {Map<string, string>} */
             const expected = new Map([
-                ["glaze color", "light blue"]
+                ["glaze color", "light blue"],
+                ["base color", "obscured"],
+                ["secondary glaze color", "light blue"],
+                ["secondary base color", "obscured"]
             ]);
             expect(entity.proceduralSelections).toEqual(expected);
             expect(entity.name).toBe("LIGHT BLUE GLAZE");

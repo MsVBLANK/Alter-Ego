@@ -10,7 +10,7 @@ import type Player from "./Player.ts";
 import type RoomItem from "./RoomItem.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
-export type InventoryItemField = "player"|"prefab"|"identifier"|"equipmentSlot"|"container"|"quantity"|"uses"|"description";
+export type InventoryItemField = "player"|"prefab"|"identifier"|"names"|"containingPhrases"|"equipmentSlot"|"container"|"quantity"|"uses"|"description"|"proceduralSelections";
 
 /**
  * Represents an item that is currently possessed by a player.
@@ -146,7 +146,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * Returns the args for the Inspect ActionDirective for this inventory item.
      */
     getInspectActionDirectiveArgs() {
-        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot];
+        return ["II", this.getIdentifier(), this.player.name, this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -156,11 +156,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * @param container - The container to drop the inventory item into.
      * @param inventorySlot - The inventory slot to drop the inventory item into.
      */
-    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer,
-        inventorySlot: InventorySlot<RoomItem>): string[] {
+    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): string[] {
         let containerName = container.name;
-        if (container instanceof ItemInstance) containerName = container.getIdentifier();
-        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id];
+        let containerProceduralSelectionsString = "";
+        if (container instanceof ItemInstance) {
+            containerName = container.getIdentifier();
+            containerProceduralSelectionsString = container.proceduralSelectionsString;
+        }
+        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id, containerProceduralSelectionsString];
     }
 
 	/**
@@ -169,17 +172,17 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 	 * @param container - The container to stash the inventory item into.
 	 * @param inventorySlot - The inventory slot to stash the inventory item into.
 	 */
-	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string] {
-		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot];
+	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string, string] {
+		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot, container.proceduralSelectionsString];
 	}
 
 	/**
 	 * Returns the args for the Unstash ActionDirective for this inventory item.
      *
-     * @returns [identifier, containerName, equipmentSlot]
+     * @returns [identifier, containerName, equipmentSlot, proceduralSelectionsString]
 	 */
-	getUnstashActionDirectiveArgs(): [string, string, string] {
-		return [this.getIdentifier(), this.containerName, this.equipmentSlot];
+	getUnstashActionDirectiveArgs(): [string, string, string, string] {
+		return [this.getIdentifier(), this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
 	}
 
     /**
@@ -195,10 +198,10 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     /**
      * Returns the args for the Unequip ActionDirective for this inventory item.
      *
-     * @returns [identifier, equipmentSlot]
+     * @returns [identifier, equipmentSlot, proceduralSelectionsString]
      */
-    getUnequipActionDirectiveArgs(): [string, string] {
-        return [this.getIdentifier(), this.equipmentSlot];
+    getUnequipActionDirectiveArgs(): [string, string, string] {
+        return [this.getIdentifier(), this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -214,18 +217,18 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     /**
      * Returns the args for the InstantiateInventoryItem ActionDirective for this inventory item.
      * @param inventorySlot - The inventory slot to instantiate the inventory item into.
-     * @returns ["II", equipmentSlot, identifier, inventorySlot.id]
+     * @returns ["II", equipmentSlot, identifier, inventorySlot.id, proceduralSelectionsString]
      */
-    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string] {
-        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined];
+    getPartialInstantiateActionDirectiveArgs(inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string] {
+        return ["II", this.equipmentSlot, this.getIdentifier(), inventorySlot?.id ?? undefined, this.proceduralSelectionsString];
     }
 
     /**
      * Returns the args for the DestroyInventoryItem ActionDirective for this inventory item.
-     * @returns ["II", identifier, containerName, equipmentSlot]
+     * @returns ["II", identifier, containerName, equipmentSlot, proceduralSelectionsString]
      */
-    getDestroyActionDirectiveArgs(): [string, string, string, string] {
-        return ["II", this.getIdentifier(), this.containerName, this.equipmentSlot];
+    getDestroyActionDirectiveArgs(): [string, string, string, string, string] {
+        return ["II", this.getIdentifier(), this.containerName, this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -256,16 +259,16 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 	}
 
     /**
-         * Returns true if this entity contains an item with the given identifier or prefab ID.
-         * @param identifier - The identifier or prefab ID to search for.
-         */
-        override containsItem(identifier: string): boolean {
-            const containedItems = this.getContainedItems();
-            for (const item of containedItems) {
-                if (itemIdentifierMatches(item, identifier, true)) return true;
-            }
-            return false;
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
         }
+        return false;
+    }
 
     /**
      * Executes the inventory item's equipped commands.
@@ -341,11 +344,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
             case "player": return "Player Name";
             case "prefab": return "Prefab";
             case "identifier": return "Container Identifier";
+            case "names": return "Names";
+            case "containingPhrases": return "Containing Phrases";
             case "equipmentSlot": return "Equipment Slot";
             case "container": return "Container";
             case "quantity": return "Quantity";
             case "uses": return "Uses";
             case "description": return "Description";
+            case "proceduralSelections": return "Procedural Selections";
         }
     }
 
@@ -354,11 +360,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
             case "player": return this.player.name;
             case "prefab": return this.prefab?.id ?? "NULL";
             case "identifier": return this.identifier;
+            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
             case "equipmentSlot": return this.equipmentSlot;
             case "container": return this.containerName;
             case "quantity": return isNaN(this.quantity) ? "Infinity" : this.quantity !== null ? String(this.quantity) : "";
             case "uses": return isNaN(this.uses) && this.prefab?.usable ? "Infinity" : isNaN(this.uses) || this.uses === null ? "" : String(this.uses);
             case "description": return this.description.text;
+            case "proceduralSelections": return this.proceduralSelectionsString;
         }
     }
 

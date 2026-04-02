@@ -49,7 +49,7 @@ export default class InspectAction extends Action {
 				target = this.getGame().entityFinder.getFixture(args[1], args[2]);
 				break;
 			case 'II':
-				target = this.getGame().entityFinder.getInventoryItem(args[1], args[2], args[3], args[4]);
+				target = this.getGame().entityFinder.getInventoryItem(args[1], args[2], args[3], args[4], args[5]);
 				break;
 			case 'P':
 				target = this.getGame().entityFinder.getLivingPlayer(args[1]);
@@ -58,7 +58,7 @@ export default class InspectAction extends Action {
 				target = this.getGame().entityFinder.getRoom(args[1]);
 				break;
 			case 'RI':
-				target = this.getGame().entityFinder.getRoomItem(args[1], args[2], args[3], args[4]);
+				target = this.getGame().entityFinder.getRoomItem(args[1], args[2], args[3], args[4], args[5]);
 				break;
 		}
 		return [args[0], target];

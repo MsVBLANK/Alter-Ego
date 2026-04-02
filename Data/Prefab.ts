@@ -6,7 +6,7 @@ import type InventorySlot from "./InventorySlot.ts";
 import type ItemInstance from "./ItemInstance.ts";
 import type Status from "./Status.ts";
 
-export type PrefabField = "id"|"names"|"containingPhrases"|"discreet"|"size"|"weight"|"usable"|"useVerb"|"uses"|"inflicts"|"cures"|"nextStage"|"equippable"|"equipmentSlots"|"coveredEquipmentSlots"|"commandsString"|"inventorySlots"|"preposition"|"description";
+export type PrefabField = "id"|"names"|"possibleNames"|"containingPhrases"|"possibleContainingPhrases"|"discreet"|"size"|"weight"|"usable"|"useVerb"|"uses"|"inflicts"|"cures"|"nextStage"|"equippable"|"equipmentSlots"|"coveredEquipmentSlots"|"commandsString"|"inventorySlots"|"preposition"|"description"|"proceduralOptions";
 export type PrefabPossibleNames = Collection<Map<string, string>, [string, string]>;
 
 /**
@@ -218,6 +218,95 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
     }
 
     /**
+     * The possible names of the prefab as they would appear in the sheet.
+     */
+    get possibleNamesString(): string {
+        return this.getPossibleNameString("possibleNames");
+    }
+
+    /**
+     * The possible containing phrases of the prefab as they would appear in the sheet.
+     */
+    get possibleContainingPhrasesString(): string {
+        return this.getPossibleNameString("possibleContainingPhrases");
+    }
+
+    /**
+     * Generates a string representation of the prefab's possible names or containing phrases as they would appear in the sheet.
+     * @param possibleNames - The key of the possible names property to generate the string for.
+     */
+    private getPossibleNameString(possibleNames: "possibleNames"|"possibleContainingPhrases"): string {
+        const possibleNamesStrings: string[] = [];
+        this[possibleNames].forEach((namePair, proceduralSelection) => {
+            const proceduralKey = proceduralSelection.keys().next().value as string;
+            const proceduralValue = proceduralSelection.values().next().value as string;
+            const name = namePair[0];
+            const pluralName = namePair[1];
+            const namesString = `${pluralName ? `${name}, ${pluralName}` : name}`;
+            if (proceduralKey && proceduralValue)
+                possibleNamesStrings.push(`[${proceduralKey}=${proceduralValue}]: ${namesString}]`);
+            else possibleNamesStrings.push(namesString);
+        });
+        return possibleNamesStrings.join(", ");
+    }
+
+    /**
+     * The prefab's procedural options represented as a string.
+     */
+    private get proceduralOptionsString(): string {
+        const optionsStrings: string[] = [];
+        this.proceduralOptions.forEach((options, key) => optionsStrings.push(`(${key} = ${Array.from(options).join("|")})`));
+        return optionsStrings.join(", ");
+    }
+
+    /**
+     * Gets the prefab's name for the given procedural selections. If there isn't one, returns its default name.
+     * @param proceduralSelections - A map of procedural selections.
+     */
+    getNameFor(proceduralSelections: Map<string, string>): string {
+        return this.getPossibleNamesFor("possibleNames", proceduralSelections)?.[0] ?? this.name;
+    }
+
+    /**
+     * Gets the prefab's plural name for the given procedural selections. If there isn't one, returns its default plural name.
+     * @param proceduralSelections - A map of procedural selections.
+     */
+    getPluralNameFor(proceduralSelections: Map<string, string>): string {
+        return this.getPossibleNamesFor("possibleNames", proceduralSelections)?.[1] ?? this.pluralName;
+    }
+
+    /**
+     * Gets the prefab's single containing phrase for the given procedural selections. If there isn't one, returns its default single containing phrase.
+     * @param proceduralSelections - A map of procedural selections.
+     */
+    getSingleContainingPhraseFor(proceduralSelections: Map<string, string>): string {
+        return this.getPossibleNamesFor("possibleContainingPhrases", proceduralSelections)?.[0] ?? this.singleContainingPhrase;
+    }
+
+    /**
+     * Gets the prefab's plural containing phrase for the given procedural selections. If there isn't one, returns its default plural containing phrase.
+     * @param proceduralSelections - A map of procedural selections.
+     */
+    getPluralContainingPhraseFor(proceduralSelections: Map<string, string>): string {
+        return this.getPossibleNamesFor("possibleContainingPhrases", proceduralSelections)?.[1] ?? this.pluralContainingPhrase;
+    }
+
+    /**
+     * Gets the names of the prefab based on the given procedural selections. If there are no procedural selections, or if the procedural selections do not match any of the prefab's possible names, returns undefined.
+     * @param possibleNames - The key of the possible names property to get the name for.
+     * @param proceduralSelections - A map of procedural selections to determine the prefab's name.
+     */
+    private getPossibleNamesFor(possibleNames: "possibleNames"|"possibleContainingPhrases", proceduralSelections: Map<string, string>): [string, string] {
+        for (const [[...proceduralOption], names] of this[possibleNames].entries()) {
+            const proceduralName = proceduralOption[0][0];
+            const possibilityName = proceduralOption[0][1];
+            if (!proceduralSelections.has(proceduralName)) continue;
+            if (proceduralSelections.get(proceduralName) === possibilityName) return names;
+        }
+        return undefined;
+    }
+
+    /**
      * Sets the next stage.
      */
     setNextStage(nextStage: Prefab): void {
@@ -229,11 +318,12 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
 	 * If the given quantity is 1, returns the prefab's single containing phrase.
 	 * If the quantity is not 1, returns the prefab's quantity followed by its plural containing phrase.
 	 * If the quantity is infinite, returns only the prefab's plural containing phrase.
+     * @param proceduralSelections - A map of procedural selections to determine the prefab's containing phrase.
 	 */
-	toSingleOrPluralContainingPhrase(quantity: number): string {
-		if (isNaN(quantity)) return this.pluralContainingPhrase;
-		else if (quantity !== 1) return `${quantity} ${this.pluralContainingPhrase}`;
-		else return this.singleContainingPhrase;
+	toSingleOrPluralContainingPhrase(quantity: number, proceduralSelections: Map<string, string> = new Map()): string {
+		if (isNaN(quantity)) return this.getPluralContainingPhraseFor(proceduralSelections);
+		else if (quantity !== 1) return `${quantity} ${this.getPluralContainingPhraseFor(proceduralSelections)}`;
+		else return this.getSingleContainingPhraseFor(proceduralSelections);
 	}
 
     /**
@@ -255,7 +345,9 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
         switch (field) {
             case "id": return "Prefab ID";
             case "names": return "Prefab Name";
+            case "possibleNames": return "Possible Names";
             case "containingPhrases": return "Containing Phrases";
+            case "possibleContainingPhrases": return "Possible Containing Phrases";
             case "discreet": return "Discreet?";
             case "size": return "Size";
             case "weight": return "Weight";
@@ -272,14 +364,17 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
             case "inventorySlots": return "Contains Inventory Slots";
             case "preposition": return "Preposition";
             case "description": return "Description";
+            case "proceduralOptions": return "Procedural Options";
         }
     }
 
     getValue(field: PrefabField): string {
         switch (field) {
             case "id": return this.id;
-            case "names": return this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
-            case "containingPhrases": return this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
+            case "names": return this.possibleNames.size > 1 ? "(Variable)" : this.pluralName ? [this.name, this.pluralName].join(", ") : this.name;
+            case "possibleNames": return this.possibleNamesString;
+            case "containingPhrases": return this.possibleContainingPhrases.size > 1 ? "(Variable)" : this.pluralContainingPhrase ? [this.singleContainingPhrase, this.pluralContainingPhrase].join(", ") : this.singleContainingPhrase;
+            case "possibleContainingPhrases": return this.possibleContainingPhrasesString;
             case "discreet": return this.discreet ? "TRUE" : "FALSE";
             case "size": return String(this.size);
             case "weight": return String(this.weight);
@@ -296,6 +391,7 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
             case "inventorySlots": return this.inventory.map(inventorySlot => inventorySlot.toString()).join(", ");
             case "preposition": return this.preposition;
             case "description": return this.description.text;
+            case "proceduralOptions": return this.proceduralOptionsString;
         }
     }
 

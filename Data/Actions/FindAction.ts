@@ -197,7 +197,7 @@ export default class FindAction extends Action {
             if (location && containerName)
                 this.#fields = Object.assign(this.#fields, containerField);
             else Object.assign(this.#fields, locationField, containerField);
-            return this.getGame().entityFinder.getRoomItems(id, location, undefined, undefined, containerName, slot, true);
+            return this.getGame().entityFinder.getRoomItems(id, location, undefined, undefined, containerName, slot, undefined, true);
         }
     }
 
@@ -304,7 +304,7 @@ export default class FindAction extends Action {
             else if (equipmentSlot)
                 this.#fields = Object.assign(this.#fields, playerField, containerField);
             else this.#fields = Object.assign(this.#fields, playerField, equipmentSlotField, containerField);
-            return this.getGame().entityFinder.getInventoryItems(id, player, containerName, slot, equipmentSlot, true);
+            return this.getGame().entityFinder.getInventoryItems(id, player, containerName, slot, equipmentSlot, undefined, true);
         }
     }
 

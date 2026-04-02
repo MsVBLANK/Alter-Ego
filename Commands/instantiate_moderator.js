@@ -203,6 +203,13 @@ export async function execute(game, message, command, args, moderator) {
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity && container.inventory.size !== 1) return game.communicationHandler.reply(message, `${prefab.id} will not fit in ${containerItemSlot.id} of ${container.name} because there isn't enough space left.`);
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${prefab.id} will not fit in ${container.name} because there isn't enough space left.`);
         }
+        // Check for procedural selections errors.
+        for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+            if (!prefab.proceduralOptions.has(proceduralName))
+                return game.communicationHandler.reply(message, `${prefab.id} does not have procedural "${proceduralName}".`);
+            if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                return game.communicationHandler.reply(message, `${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
+        }
 
         // Now instantiate the item.
         const instantiateAction = new InstantiateRoomItemAction(game, message, undefined, room, true);
@@ -315,6 +322,13 @@ export async function execute(game, message, command, args, moderator) {
             else if (prefab.size > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${prefab.id} will not fit in ${player.name}'s ${containerItem.name} because it is too large.`);
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity && containerItem.inventory.size !== 1) return game.communicationHandler.reply(message, `${prefab.id} will not fit in ${containerItemSlot.id} of ${player.name}'s ${containerItem.name} because there isn't enough space left.`);
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity) return game.communicationHandler.reply(message, `${prefab.id} will not fit in ${player.name}'s ${containerItem.name} because there isn't enough space left.`);
+        }
+        // Check for procedural selections errors.
+        for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+            if (!prefab.proceduralOptions.has(proceduralName))
+                return game.communicationHandler.reply(message, `${prefab.id} does not have procedural "${proceduralName}".`);
+            if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                return game.communicationHandler.reply(message, `${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
         }
 
         // Now instantiate the item.

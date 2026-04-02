@@ -208,6 +208,13 @@ export async function execute(game, command, args, player, callee) {
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity && container.inventory.size !== 1) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} will not fit in ${containerItemSlot.id} of ${container.name} because there isn't enough space left.`);
             else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} will not fit in ${container.name} because there isn't enough space left.`);
         }
+        // Check for procedural selections errors.
+        for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+            if (!prefab.proceduralOptions.has(proceduralName))
+                return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} does not have procedural "${proceduralName}".`);
+            if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
+        }
 
         // Now instantiate the item.
         const instantiateAction = new InstantiateRoomItemAction(game, undefined, player, room, true);
@@ -338,6 +345,13 @@ export async function execute(game, command, args, player, callee) {
                 else if (prefab.size > containerItemSlot.capacity) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} will not fit in ${player.name}'s ${containerItem.name} because it is too large.`);
                 else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity && containerItem.inventory.size !== 1) game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} will not fit in ${containerItemSlot.id} of ${player.name}'s ${containerItem.name} because there isn't enough space left.`);
                 else if (containerItemSlot.takenSpace + quantity * prefab.size > containerItemSlot.capacity) game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} will not fit in ${player.name}'s ${containerItem.name} because there isn't enough space left.`);
+            }
+            // Check for procedural selections errors.
+            for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+                if (!prefab.proceduralOptions.has(proceduralName))
+                    return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id} does not have procedural "${proceduralName}".`);
+                if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                    return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
             }
 
             // Now instantiate the item.

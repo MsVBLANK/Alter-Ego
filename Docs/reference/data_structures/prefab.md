@@ -342,6 +342,10 @@ removed from the description before it is parsed, effectively making it so that 
 that Inventory Item. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more
 information.
 
+### Procedural Options
+
+- Class attribute: [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>> `this.proceduralOptions`
+
 ### Row
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)

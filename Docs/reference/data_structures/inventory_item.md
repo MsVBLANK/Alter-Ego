@@ -209,6 +209,10 @@ See the article on [writing descriptions](../../moderator_guide/writing_descript
 when an Inventory Item is inspected by a different Player than the one who possesses it, all sentences containing item
 list tags will be removed.
 
+### Procedural Selections
+
+- Class attribute: [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> `this.proceduralSelections`
+
 ### Row
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)

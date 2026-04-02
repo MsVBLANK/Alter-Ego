@@ -401,7 +401,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         const variableValues = this.process.recipe.getIngredientVariableValues(this.process.ingredients);
         const proceduralSelections = combineProceduralSelections(this.process.ingredients);
         this.destroyIngredients(this.process.recipe, this.process.ingredients, this.process.satisfactoryProcessCount);
-		this.instantiateProducts(this.process.recipe, this.process.satisfactoryProcessCount, variableValues, proceduralSelections);
+		this.instantiateProducts(this.process.recipe, this.process.satisfactoryProcessCount, variableValues, proceduralSelections, player);
 		this.#sendRecipeCompletedDescription(player);
     }
 
@@ -414,11 +414,13 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
 	 * @param proceduralSelections - The manually selected procedural possibilities.
 	 * @param container - The container to instantiate the prefab into. Defaults to the fixture itself.
 	 * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+     * @param player - The player who caused this instantiation, if applicable.
 	 * @returns The instantiated room item.
 	 */
 	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
-        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = ""): RoomItem[] {
-		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, undefined, this.location, true);
+        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = "", player?: Player): RoomItem[] {
+        const instantiatingPlayer = player && player.alive && player.location.id === this.location.id ? player : undefined;
+		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, instantiatingPlayer, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
 	}
 

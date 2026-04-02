@@ -1389,11 +1389,12 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      * @param proceduralSelections - The manually selected procedural possibilities.
      * @param container - The container to instantiate the prefab into. Defaults to null.
      * @param inventorySlotId - The ID of the {@link InventorySlot|inventory slot} to instantiate the item in.
+     * @param player - The player to instantiate the item for. Defaults to the player calling the method.
      * @returns The instantiated inventory item.
      */
-    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = ""): InventoryItem[] {
-        const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(this).id : container.equipmentSlot;
-        const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, this, this.location, true);
+    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = "", player = this): InventoryItem[] {
+        const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(player).id : container.equipmentSlot;
+        const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, player, player.location, true);
         return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
     }
 

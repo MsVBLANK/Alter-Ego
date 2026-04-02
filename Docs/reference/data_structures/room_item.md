@@ -36,8 +36,8 @@ looks, see the following table:
 
 | Prefab ID       | Container Identifier | Location | Container                               | Quantity |
 | --------------- | -------------------- | -------- | --------------------------------------- | -------- |
-| VINYL GLOVE BOX | VINYL GLOVE BOX 1    | kitchen  | Object: HAND WASH STATION 1             | 1        |
-| VINYL GLOVE BOX | VINYL GLOVE BOX 2    | kitchen  | Object: HAND WASH STATION 2             | 1        |
+| VINYL GLOVE BOX | VINYL GLOVE BOX 1    | kitchen  | Fixture: HAND WASH STATION 1             | 1        |
+| VINYL GLOVE BOX | VINYL GLOVE BOX 2    | kitchen  | Fixture: HAND WASH STATION 2             | 1        |
 | VINYL GLOVES    |                      | kitchen  | Item: VINYL GLOVE BOX 1/VINYL GLOVE BOX | 10       |
 | VINYL GLOVES    |                      | kitchen  | Item: VINYL GLOVE BOX 2/VINYL GLOVE BOX | 10       |
 
@@ -110,7 +110,7 @@ examples of correct container names, see the following table:
 
 | Type   | Name / Identifier | Inventory Slot | Container Name                      |
 | ------ | ----------------- | -------------- | ----------------------------------- |
-| Object | SHELF             |                | Object: SHELF                       |
+| Fixture | SHELF             |                | Fixture: SHELF                       |
 | Puzzle | LOCKER 1          |                | Puzzle: LOCKER 1                    |
 | Item   | KAEDES BACKPACK 1 | MAIN POCKET    | Item: KAEDES BACKPACK 1/MAIN POCKET |
 
@@ -119,7 +119,7 @@ examples of correct container names, see the following table:
 - Class attribute: [Fixture](fixture.md) | [Puzzle](puzzle.md) | [Room Item](room_item.md)
   `this.container`
 
-This is an internal attribute which simply contains a reference to the actual Object, Puzzle, or Item object whose name
+This is an internal attribute which simply contains a reference to the actual Fixture, Puzzle, or Item object whose name
 matches `this.containerName` and whose location is the same as the Item.
 
 ### Slot

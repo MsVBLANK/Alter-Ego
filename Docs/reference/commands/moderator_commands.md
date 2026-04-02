@@ -355,7 +355,7 @@ Performs a gesture for the given player.
 
 Makes the given player perform one of a set of predefined gestures. Everybody in the room with them will see them do
 this gesture. Certain gestures may require a target to perform them. For example, a gesture might require you specify an
-Exit, an Object, another Player, etc. A gesture can only be performed with one target at a time. Gestures can be made
+Exit, an Fixture, another Player, etc. A gesture can only be performed with one target at a time. Gestures can be made
 impossible if the given player is inflicted with certain Status Effects. For example, if they are concealed, they cannot
 smile, frown, etc. as nobody would be able to see it. To see a list of all possible gestures, send `.gesture list`.
 

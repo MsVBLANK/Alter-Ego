@@ -320,7 +320,7 @@ Items.**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.preposition`
 
-This attribute is similar to the [preposition attribute in the Object class](object.md#preposition). However, it does
+This attribute is similar to the [preposition attribute in the Fixture class](object.md#preposition). However, it does
 not determine whether instances of this Prefab can contain Items/Inventory Items. That function is taken care of by the
 inventory attribute of the Prefab. Otherwise, it functions the same. When a Player drops/stashes a non-discreet
 Item/Inventory Item into an instance of this Prefab, Alter Ego will narrate them doing so using this preposition. For

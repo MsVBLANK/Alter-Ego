@@ -118,7 +118,7 @@ This is an internal attribute which simply contains a reference to the actual Fi
 This is a string which determines the specific behavior of the Puzzle. This must match exactly one of the predefined
 Puzzle types that have been programmed into Alter Ego. Here, each Puzzle type will be listed, and their behavior will be
 detailed. Note that if the term `[PUZZLE NAME]` is used, it doesn't necessarily refer to the Puzzle's name attribute. It
-can refer to that, or the name of the Puzzle's parent Object, if it has one.
+can refer to that, or the name of the Puzzle's parent Fixture, if it has one.
 
 #### `password`
 
@@ -262,24 +262,24 @@ can refer to that, or the name of the Puzzle's parent Object, if it has one.
 
 #### `weight`
 
-- A Player must take from or drop into the Puzzle's parent Object an Item which makes the total weight of all Items in
-  the Object equal the Puzzle's solution in order to solve the Puzzle. In order to prevent the Player from simply
+- A Player must take from or drop into the Puzzle's parent Fixture an Item which makes the total weight of all Items in
+  the Fixture equal the Puzzle's solution in order to solve the Puzzle. In order to prevent the Player from simply
   entering the correct weight as a password with the use command, the Puzzle should be made inaccessible.
 - Once the Puzzle has been solved, it can be unsolved when the Player takes from or drops into the Puzzle's parent
-  Object an Item which makes the total weight of all Items in the Object not equal the Puzzle's solution. The Player
+  Fixture an Item which makes the total weight of all Items in the Fixture not equal the Puzzle's solution. The Player
   will not be sent a message for unsolving the Puzzle.
 - When a Player interacts with the Puzzle in any way, whether they solve it or not, Alter Ego will not narrate anything
   in the Puzzle's Room channel.
 
 #### `container`
 
-- A Player must take from or drop into the Puzzle's parent Object an Item which makes the container hold all of the
-  Items listed in the solution. Every time an Item is dropped into the Puzzle's parent Object, Alter Ego will check if
+- A Player must take from or drop into the Puzzle's parent Fixture an Item which makes the container hold all of the
+  Items listed in the solution. Every time an Item is dropped into the Puzzle's parent Fixture, Alter Ego will check if
   the complete list of Items contained inside it matches the Puzzle's solution. If multiple Items are required to solve
   the Puzzle, they should be separated with a plus sign (`+`) in the solution. In order to prevent the Player from
   simply entering the Prefab IDs as a password with the use command, the Puzzle should be made inaccessible.
 - Once the Puzzle has been solved, it can be unsolved when the Player takes from or drops into the Puzzle's parent
-  Object an Item. However, if the remaining Items are also a valid solution, the Puzzle will immediately be solved again
+  Fixture an Item. However, if the remaining Items are also a valid solution, the Puzzle will immediately be solved again
   using them as an outcome. The Player will not be sent a message for unsolving the Puzzle.
 - When a Player interacts with the Puzzle in any way, whether they solve it or not, Alter Ego will not narrate anything
   in the Puzzle's Room channel.

@@ -626,8 +626,8 @@ This is the Player's current Z coordinate.
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.hidingSpot`
 
-This is a string which contains the name of the Object the Player is currently hiding in. Since this is just a string,
-it can be set manually on the spreadsheet to anything, whether it's the name of an Object in the Room or not. If the
+This is a string which contains the name of the Fixture the Player is currently hiding in. Since this is just a string,
+it can be set manually on the spreadsheet to anything, whether it's the name of an Fixture in the Room or not. If the
 Player is not currently hidden, this should be left blank.
 
 ### Status
@@ -686,14 +686,14 @@ This description always refers to the Player with the correct name and pronouns 
 so by making use of the Player's class attributes with `if` and `var` tags. However, unlike descriptions of other data
 structures, the class attributes of the Player being described are not being accessed with the typical `this` keyword.
 Instead, they are accessed by the `container` keyword. This is done so that the Player can view their own description
-when inspecting a MIRROR Object, for example. Because
+when inspecting a MIRROR Fixture, for example. Because
 the [parser module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/parser.js) replaces the `this` keyword
 in [evaluated](../../moderator_guide/writing_descriptions.md#if) [expressions](../../moderator_guide/writing_descriptions.md#var)
 with `container`, the name of the variable referring to the data structure being described, and because the container
-variable when a Player inspects a mirror is the MIRROR Object itself, the `this` keyword cannot be used in Player
-descriptions while allowing for this functionality. Instead, the `container` keyword must be used, and a MIRROR Object
+variable when a Player inspects a mirror is the MIRROR Fixture itself, the `this` keyword cannot be used in Player
+descriptions while allowing for this functionality. Instead, the `container` keyword must be used, and a MIRROR Fixture
 cannot simply use the Player's description in a variable tag without modifications. It must replace all instances of the
-`container` keyword with the `player` keyword, which describes the Player inspecting the MIRROR Object, like so:
+`container` keyword with the `player` keyword, which describes the Player inspecting the MIRROR Fixture, like so:
 
 `<desc><s>You look at your reflection in the mirror.</s> <var v="player.description.replace(/container./g, 'player.')" /></desc>`
 

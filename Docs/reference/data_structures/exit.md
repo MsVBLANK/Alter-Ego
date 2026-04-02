@@ -116,7 +116,7 @@ they will be sent a [Discord Embed](https://discord.js.org/docs/packages/discord
 - The name of the Room.
 - The description of the Exit they entered from.
 - The Room's occupants, excluding the Player themself.
-- The description of the Room's [default drop Object](../settings/docker_settings.md#default_drop_object). If the Room
+- The description of the Room's [default drop Fixture](../settings.md#default_drop_fixture). If the Room
   doesn't have one, "You don't see any items." will be sent instead.
 - The Room's icon URL. If the Room does not have one, then
   the [default Room icon URL](../settings/docker_settings.md#default_room_icon_url) will be used instead. If no default

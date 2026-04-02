@@ -89,7 +89,7 @@ export async function execute(game, message, command, args, player) {
                         targetType = "Fixture";
                     } else target = null;
                 } else if (requireType === "RoomItem" || requireType == "Item") {
-                    target = game.entityFinder.getRoomItems(input2, player.location.id, true, undefined, undefined, undefined, false, 'player')[0];
+                    target = game.entityFinder.getRoomItems(input2, player.location.id, true, undefined, undefined, undefined, undefined, false, 'player')[0];
                     if (target) {
                         if (hiddenStatus.length > 0) {
                             let topContainer = target.container;

@@ -419,6 +419,15 @@ export const itemSlotMatches = (item: ItemInstance, slotId: string, normalize = 
 };
 
 /**
+ * Returns true if the item's procedural selections match the given procedural selections string.
+ * @param item - The item instance to match the procedural selections against.
+ * @param proceduralSelectionsString - The procedural selections string to match. This should be in the format "(procedural1 = poss1 + procedural2 = poss2 + ...)".
+ */
+export const itemProceduralSelectionsMatches = (item: ItemInstance, proceduralSelectionsString: string) => {
+    return item.proceduralSelectionsString === proceduralSelectionsString;
+};
+
+/**
  * Returns true if the puzzle's type matches the given type.
  * @param puzzle - The puzzle to match the type against.
  * @param type - The type to match.

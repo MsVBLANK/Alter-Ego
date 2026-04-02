@@ -272,7 +272,7 @@ export default class BotInteractionHandler {
             }
             else {
                 const args = interactable.actionDirective.getArgs();
-                if (args.length === 4 && args[0] === "II") {
+                if (args.length === 5 && args[0] === "II") {
                     const modal = await this.#game.botContext.interactableManager.createInstantiateInventoryItemActionModalInteractable(args as [string, string, string, string], player, user);
                     await interaction.showModal(modal.component);
                     return true;

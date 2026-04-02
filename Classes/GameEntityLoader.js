@@ -826,14 +826,16 @@ export default class GameEntityLoader extends GameEntityManager {
                 const proceduralName = proceduralSelections[0];
                 const possName = proceduralSelections[1];
                 const names = possibility[1];
+                if (names[0] === "" || names[0] === null || names[0] === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No name was given for possibility "${possName}" in procedural "${proceduralName}".`);
+                if (proceduralName === "")
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural name was given.`);
                 if (!prefab.proceduralOptions.has(proceduralName))
                     return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural with name "${proceduralName}" exists in its description.`);
                 if (possName === "" || possName === null || possName === undefined)
                     return new Error(`Couldn't load prefab on row ${prefab.row}. No possibility was given for procedural "${proceduralName}".`);
                 if (!prefab.proceduralOptions.get(proceduralName).has(possName))
                     return new Error(`Couldn't load prefab on row ${prefab.row}. Procedural "${proceduralName}" does not contain possibility "${possName}".`);
-                if (names[0] === "" || names[0] === null || names[0] === undefined)
-                    return new Error(`Couldn't load prefab on row ${prefab.row}. No name was given for possibility "${possName}" in procedural "${proceduralName}".`);
             }
         }
         if (prefab.possibleContainingPhrases.size > 1) {
@@ -842,14 +844,16 @@ export default class GameEntityLoader extends GameEntityManager {
                 const proceduralName = proceduralSelections[0];
                 const possName = proceduralSelections[1];
                 const containingPhrases = possibility[1];
+                if (containingPhrases[0] === "" || containingPhrases[0] === null || containingPhrases[0] === undefined)
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No single containing phrase was given for possibility "${possName}" in procedural "${proceduralName}".`);
+                if (proceduralName === "")
+                    return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural name was given.`);
                 if (!prefab.proceduralOptions.has(proceduralName))
                     return new Error(`Couldn't load prefab on row ${prefab.row}. No procedural with name "${proceduralName}" exists in its description.`);
                 if (possName === "" || possName === null || possName === undefined)
                     return new Error(`Couldn't load prefab on row ${prefab.row}. No possibility was given for procedural "${proceduralName}".`);
                 if (!prefab.proceduralOptions.get(proceduralName).has(possName))
                     return new Error(`Couldn't load prefab on row ${prefab.row}. Procedural "${proceduralName}" does not contain possibility "${possName}".`);
-                if (containingPhrases[0] === "" || containingPhrases[0] === null || containingPhrases[0] === undefined)
-                    return new Error(`Couldn't load prefab on row ${prefab.row}. No single containing phrase was given for possibility "${possName}" in procedural "${proceduralName}".`);
             }
         }
 		if (isNaN(prefab.size))

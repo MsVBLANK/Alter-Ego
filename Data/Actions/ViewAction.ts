@@ -328,8 +328,6 @@ export default class ViewAction extends Action {
                 "names",
                 "containingPhrases",
                 "discreet",
-                "containingPhrases",
-                "discreet",
                 "size",
                 "weight",
                 "usable",
@@ -354,7 +352,9 @@ export default class ViewAction extends Action {
      */
     async #getPrefabInteractables(entity: Prefab): Promise<Interactable[]> {
         let interactables: Interactable[];
-        const fields: PrefabField[] = ["description", "commandsString"];
+        const fields: PrefabField[] = ["description", "commandsString", "proceduralOptions"];
+        if (entity.possibleNames.size > 1) fields.push("possibleNames");
+        if (entity.possibleContainingPhrases.size > 1) fields.push("possibleContainingPhrases");
         let relatedEntities: PersistentGameEntity[] = [];
         entity.effects.forEach(status => relatedEntities.push(status));
         entity.cures.forEach(status => relatedEntities.push(status));
@@ -409,6 +409,8 @@ export default class ViewAction extends Action {
             fields = [
                 "prefab",
                 "identifier",
+                "names",
+                "containingPhrases",
                 "location",
                 "accessible",
                 "container",
@@ -425,7 +427,7 @@ export default class ViewAction extends Action {
      */
     async #getRoomItemInteractables(entity: RoomItem): Promise<Interactable[]> {
         let interactables: Interactable[];
-        const fields: RoomItemField[] = ["description"];
+        const fields: RoomItemField[] = ["description", "proceduralSelections"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.prefab);
         relatedEntities.push(entity.location);
@@ -619,6 +621,8 @@ export default class ViewAction extends Action {
                 "player",
                 "prefab",
                 "identifier",
+                "names",
+                "containingPhrases",
                 "equipmentSlot",
                 "container",
                 "quantity",
@@ -634,7 +638,7 @@ export default class ViewAction extends Action {
      */
     async #getInventoryItemInteractables(entity: InventoryItem): Promise<Interactable[]> {
         let interactables: Interactable[];
-        const fields: InventoryItemField[] = ["description"];
+        const fields: InventoryItemField[] = ["description", "proceduralSelections"];
         let relatedEntities: PersistentGameEntity[] = [];
         relatedEntities.push(entity.player);
         if (entity.prefab) relatedEntities.push(entity.prefab);

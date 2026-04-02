@@ -84,7 +84,7 @@ export default class InstantiateInventoryItemAction extends Action {
         const equipmentSlotId = args[1];
         const equipmentSlot = this.player.getEquipmentSlot(equipmentSlotId);
         const containerIdentifier = args[2];
-        const container = containerIdentifier ? this.getGame().entityFinder.getInventoryItem(containerIdentifier, this.player.name, undefined, equipmentSlotId) ?? null : undefined;
+        const container = containerIdentifier ? this.getGame().entityFinder.getInventoryItem(containerIdentifier, this.player.name, undefined, equipmentSlotId, args[4]) ?? null : undefined;
         const inventorySlotId = args[3];
         const inventorySlot = inventorySlotId ? container?.inventory?.get(inventorySlotId) ?? null : undefined;
         const prefab = this.getGame().entityFinder.getPrefab(prefabId);
@@ -132,6 +132,12 @@ export default class InstantiateInventoryItemAction extends Action {
             if (container.inventory.size === 0) throw new Error(`${container.getIdentifier()} cannot contain items.`);
             if (inventorySlot.capacityIsSmallerThan(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${this.player.name}'s ${container.getIdentifier()} because it is too large.`);
             if (inventorySlot.willBeOverFilledBy(prefab, quantity)) throw new Error(`${prefab.id} will not fit in ${inventorySlot.id} of ${this.player.name}'s ${container.getIdentifier()} because there isn't enough space left.`);
+        }
+        for (const [proceduralName, proceduralValue] of proceduralSelections.entries()) {
+            if (!prefab.proceduralOptions.has(proceduralName))
+                throw new Error(`${prefab.id} does not have procedural "${proceduralName}".`);
+            if (!prefab.proceduralOptions.get(proceduralName).has(proceduralValue))
+                throw new Error(`${prefab.id}'s procedural "${proceduralName}" does not have possibility "${proceduralValue}".`);
         }
         return [prefab, equipmentSlot.id, container ?? null, inventorySlot?.id ?? null, quantity, proceduralSelections, uses];
     }

@@ -32,7 +32,7 @@ export default class UnstashAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): [InventoryItem] {
-        const item = this.getGame().entityFinder.getInventoryItem(args[0], this.player.name, args[1], args[2]);
+        const item = this.getGame().entityFinder.getInventoryItem(args[0], this.player.name, args[1], args[2], args[3]);
         return [item];
     }
 

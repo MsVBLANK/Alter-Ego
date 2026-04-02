@@ -57,7 +57,7 @@ export default class DropAction extends Action {
 		let container: Puzzle | Fixture | RoomItem;
 		if (args[2] === 'Fixture') container = this.getGame().entityFinder.getFixture(args[3], args[5]);
 		if (args[2] === 'Puzzle') container = this.getGame().entityFinder.getPuzzle(args[3], args[5]);
-		if (args[2] === 'RoomItem') container = this.getGame().entityFinder.getRoomItem(args[3], args[5]);
+		if (args[2] === 'RoomItem') container = this.getGame().entityFinder.getRoomItem(args[3], args[5], undefined, undefined, args[6]);
 		let inventorySlot: InventorySlot<RoomItem>;
 		if (container instanceof RoomItem) inventorySlot = container.inventory.get(args[4]);
 		return [hand?.equippedItem, hand, container, inventorySlot];

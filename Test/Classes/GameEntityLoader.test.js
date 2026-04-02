@@ -337,6 +337,49 @@ describe('GameEntityLoader test', () => {
                     expect(errorStrings).toContain(errorString);
                 }
             });
+
+            test('invalid procedural prefabs', async () => {
+                sheets.__setMock(game.constants.prefabSheetDataCells, [
+                    ["aaa", "[vibe:evil:SCARY], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["bbb", "[vibe:evil: SCARY], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["ccc", "[vibe=mystery: MYSTERIOUS], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["ddd", "[nefarious=true: NEFARIOUS], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["eee", "[vibe: BROKEN], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["fff", "[: BROKEN], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["ggg", "[vibe=evil:], [vibe=evil: SCARY]", "aaa", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["hhh", "aaa", "[vibe:evil:a SCARY, SCARIES], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["iii", "aaa", "[vibe:evil: a SCARY, SCARIES], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["jjj", "aaa", "[vibe=mystery: a MYSTERY, MYSTERIES], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["lll", "aaa", "[nefarious=true: a NEFARIOUS, NEFARIOUSES], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["mmm", "aaa", "[vibe: a BROKEN PREFAB, BROKEN PREFABS], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["nnn", "aaa", "[: a BROKEN PREFAB, BROKEN PREFABS], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                    ["ooo", "aaa", "[vibe=evil:], [vibe=evil: a SCARY, SCARIES]", "FALSE", "123", "456", "FALSE", "", "", "", "", "", "FALSE", "", "", "", "", "", "<desc><s>This is a <procedural name=\"vibe\"><poss name=\"evil\" chance=\"50\">scary</poss><poss name=\"good\" chance=\"50\">not scary</poss></procedural> test.</s></desc>"],
+                ]);
+                const prefabCount = await game.entityLoader.loadPrefabs(true, errors);
+                const errorStrings = errors.join('\n').split('\n');
+                const expectedErrorStrings = [
+                    "Error: Couldn't load prefab on row 2. No procedural with name \"vibe:evil\" exists in its description.",
+                    "Error: Couldn't load prefab on row 3. No procedural with name \"vibe:evil\" exists in its description.",
+                    "Error: Couldn't load prefab on row 4. Procedural \"vibe\" does not contain possibility \"mystery\".",
+                    "Error: Couldn't load prefab on row 5. No procedural with name \"nefarious\" exists in its description.",
+                    "Error: Couldn't load prefab on row 6. No possibility was given for procedural \"vibe\".",
+                    "Error: Couldn't load prefab on row 7. No procedural name was given.",
+                    "Error: Couldn't load prefab on row 8. No prefab name was given.",
+                    "Error: Couldn't load prefab on row 9. No procedural with name \"vibe:evil\" exists in its description.",
+                    "Error: Couldn't load prefab on row 10. No procedural with name \"vibe:evil\" exists in its description.",
+                    "Error: Couldn't load prefab on row 11. Procedural \"vibe\" does not contain possibility \"mystery\".",
+                    "Error: Couldn't load prefab on row 12. No procedural with name \"nefarious\" exists in its description.",
+                    "Error: Couldn't load prefab on row 13. No possibility was given for procedural \"vibe\".",
+                    "Error: Couldn't load prefab on row 14. No procedural name was given.",
+                    "Error: Couldn't load prefab on row 15. No single containing phrase was given."
+                ];
+                expect(errors).not.toEqual([]);
+                expect(prefabCount).toBe(0);
+                expect(errorStrings).toHaveLength(expectedErrorStrings.length);
+                for (const errorString of expectedErrorStrings) {
+                    expect(errorStrings).toContain(errorString);
+                }
+            });
         });
 
         describe('standard prefab response', () => {

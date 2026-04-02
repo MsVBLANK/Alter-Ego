@@ -40,7 +40,7 @@ export default class DestroyInventoryItemAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): [InventoryItem] {
-        const item = this.getGame().entityFinder.getInventoryItem(args[1], this.player.name, args[2], args[3]);
+        const item = this.getGame().entityFinder.getInventoryItem(args[1], this.player.name, args[2], args[3], args[4]);
         return [item];
     }
 

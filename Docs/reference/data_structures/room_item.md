@@ -189,6 +189,10 @@ This is the description of the Item. Note that this can be completely different 
 Prefab. When a Player inspects this Item, they will receive a parsed version of this string. See the article
 on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
+### Procedural Selections
+
+- Class attribute: [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> `this.proceduralSelections`
+
 ### Row
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)

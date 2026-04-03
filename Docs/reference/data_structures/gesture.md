@@ -1,6 +1,6 @@
 # Gesture
 
-A Gesture is a data structure in the Neo World Program. It represents a form of body language that a
+A **Gesture** is a data structure in the Neo World Program. It represents a form of body language that a
 [Player](player.md) can use to communicate with other Players nonverbally.
 
 Gestures are static; once loaded from the spreadsheet, they do not change in any way. Thus,

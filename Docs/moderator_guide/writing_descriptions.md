@@ -345,7 +345,7 @@ the most helpful and commonly used.
 
 ### Finder conditionals
 
-The function which parses descriptions also has access to the 
+The function which evaluates scripts also has access to the 
 [finder module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/finder.js), which allows you to find almost 
 any game entity. The finder module includes the following functions (parameters listed in parentheses are optional):
 
@@ -360,6 +360,78 @@ any game entity. The finder module includes the following functions (parameters 
 - `findLivingPlayer('Player name')`
 - `findDeadPlayer('Player name')`
 - `findInventoryItem('ITEM IDENTIFIER OR PREFAB ID', ('Player name'), ('CONTAINER NAME(/INVENTORY SLOT ID)'), ('EQUIPMENT SLOT ID'))`
+- `findGesture('gesture ID')`
+- `findFlag('FLAG ID', (evaluate: true || false))`
+  - Fetches a [Flag's](../reference/data_structures/flag.md) value. If the second argument is `true`, the Flag's
+    [value script](../reference/data_structures/flag.md#value-script) will be evaluated first. Defaults to
+    `false`. Even if this is `true`, the Flag's set commands will not be executed when the Flag is set.
+
+There are also the following functions, which return an Array of entities that match the given criteria. Every
+parameter is optional, and can be used to filter the results. If you wish to omit one, simply enter
+`undefined` in its place. Omitting all arguments will fetch all of the given type of entity.
+
+- `findRooms('id', 'tag', occupied: true || false)`
+  - id - Filter the Rooms to only those whose ID matches the given ID.
+  - tag - Filter the Rooms to only those with the given tag.
+  - occupied - Filter the Rooms to only those who have at least one occupant. If this is `true`, includes
+    NPCs as occupants. If this is `false`, NPCs are not counted.
+- `findFixtures('name', 'location', accessible: true || false, 'recipeTag')`
+  - name - Filter the Fixtures to only those whose name matches the given name.
+  - location - Filter the Fixtures to only those whose location ID matches the given location ID.
+  - accessible - Filter the Fixtures to only those who are accessible or not.
+  - recipeTag - Filter the Fixtures to only those with the given Recipe tag.
+- `findPrefabs('id', 'effectsString', 'curesString', 'equipmentSlotsString')`
+  - id - Filter the Prefabs to only those whose ID matches the given ID.
+  - effectsString - Filter the Prefabs to only those who inflict the given comma-separated Status Effects.
+  - curesString - Filter the Prefabs to only those who cure the given comma-separated Status Effects.
+  - equipmentSlotsString - Filter the Prefabs to only those who are equippable to the given comma-separated Equipment Slots.
+- `findRecipes('type', 'fixtureTag', 'ingredientsString', 'productsString')`
+  - type - Filter the Recipes to only those of the given type.
+  - fixtureTag - Filter the Recipes to only those with the given Fixture tag.
+  - ingredientsString - Filter the Recipes to only those with the given comma-separated ingredients.
+  - productsString - Filter the Recipes to only those with the given comma-separated products.
+- `findRoomItems('identifier', 'location', accessible: true || false, 'containerType', 'containerName', 'slotId', 'proceduralSelections')`
+  - identifier - Filter the Room Items to only those whose identifier or Prefab ID matches the given identifier.
+  - location - Filter the Room Items to only those whose location ID matches the given location ID.
+  - accessible - Filter the Room Items to only those who are accessible or not.
+  - containerType - Filter the Room Items to only those with the given container type.
+  - containerName - Filter the Room Items to only those with the given container name. Does not include slot.
+  - slotId - Filter the Room Items to only those in the Inventory Slot with the given ID.
+  - proceduralSelections - Filter the Room Items to only those with the given procedural selections.
+- `findPuzzles('name', 'location', 'type', accessible: true || false)`
+  - name - Filter the Puzzles to only those whose name matches the given name.
+  - location - Filter the Puzzles to only those whose location ID matches the given location ID.
+  - type - Filter the Puzzles to only those of the given type.
+- `findEvents('id', ongoing: true || false, 'roomTag', 'effectsString', 'refreshesString')`
+  - id - Filter the Events to only those whose ID matches the given ID.
+  - ongoing - Filter the Events to only those that are ongoing or not.
+  - roomTag - Filter the Events to only those with the given Room tag.
+  - effectsString - Filter the Events to only those who inflict the given comma-separated Status Effects.
+  - refreshesString - Filter the Events to only those who refresh the given comma-separated Status Effects.
+- `findStatusEffects('id', 'modifiedStatsString', 'attributesString')`
+  - id - Filter the Status Effects to only those whose ID matches the given ID.
+  - modifiedStatsString - Filter the Status Effects to only those who modify the given stats.
+  - attributesString - Filter the Status Effects to only those with the given comma-separated behavior attributes.
+- `findLivingPlayers('name', isNPC: true || false, 'location', 'hidingSpot', 'statusString')`
+  - name - Filter the Players to only those whose name or display name matches the given name.
+  - isNPC - Filter the Players to only those who are NPCs or not.
+  - location - Filter the Players to only those whose location ID matches the given location ID.
+  - hidingSpot - Filter the Players to only those whose hiding spot matches the given hiding spot.
+  - statusString - Filter the Players to only those inflicted with all of the given comma-separated Status Effects.
+- `findDeadPlayers('name', isNPC: true || false)`
+  - name - Filter the Players to only those whose name or display name matches the given name.
+  - isNPC - Filter the Players to only those who are NPCs or not.
+- `findInventoryItems('identifier', 'player', 'containerName', 'slotId', 'equipmentSlotId', 'proceduralSelections')`
+  - identifier - Filter the Inventory Items to only those whose identifier or Prefab ID matches the given identifier.
+  - player - Filter the Inventory Items to only those belonging to the given player.
+  - containerName - Filter the Inventory Items to only those with the given container name. Does not include slot.
+  - slotId - Filter the Inventory Items to only those in the Inventory Slot with the given ID.
+  - equipmentSlotId - Filter the Inventory Items to only those belonging to the Equipment Slot with the given ID.
+  - proceduralSelections - Filter the Inventory Items to only those with the given procedural selections.
+- `findGestures('id')`
+  - id - Filters the Gestures to only those whose ID matches the given ID.
+- `findFlags('id')`
+  - id - Filters the Flags to only those whose ID matches the given ID.
 
 Here are just a few examples of ways to use the finder module in `if` tags:
 
@@ -392,6 +464,56 @@ Here are just a few examples of ways to use the finder module in `if` tags:
   ```xml
   <desc><s>It's a high-powered ceiling fan.</s> <if cond="findEvent('FAN OFF').ongoing === false"><s>It's humming away, circulating air through the vault and helping the dehumidifying system suck up any excess moisture.</s></if><if cond="findEvent('FAN OFF').ongoing === true"><s>It isn't on right now.</s></if></desc>
   ```
+- Display different text depending on the values of multiple Flags:
+  ```xml
+  <desc><s>It's an old balancing scale.</s> <s>It has a LEFT PLATE and a RIGHT PLATE.</s> <s>The idea is that by putting different items in each plate, you can tell their relative masses based on how far the scale tips in either direction.</s> <if cond="player.perception > 5"><s>If you had an item with a known mass, you could potentially determine the exact mass of multiple other items by testing various combinations of them in each plate.</s></if> <if cond="findFlag('LEFT PLATE WEIGHT', true) > findFlag('RIGHT PLATE WEIGHT', true)"><s>The scale is currently tipped to the left.</s></if><if cond="findFlag('LEFT PLATE WEIGHT') === findFlag('RIGHT PLATE WEIGHT')"><s>The scale is currently balanced.</s></if><if cond="findFlag('LEFT PLATE WEIGHT') < findFlag('RIGHT PLATE WEIGHT')"><s>The scale is currently tipped to the right.</s></if></desc>
+  ```
+  - In this example, the first time the `findFlag` function is called on each Flag, the `evaluate`
+    parameter is set to `true`, so that the Flag's value script will be evaluated before the condition
+    is checked. Subsequent calls to `findFlag` omit the `evaluate` parameter, because it can't be changed
+    in the middle of parsing a description, so you can assume it is the same since it was last evaluated.
+
+### Helper conditionals
+
+The function which evaluates scripts also has access to a few helper functions, which can be useful when
+writing `if` conditionals. The following functions are available:
+
+- `getRandomNumber(min: number, max: number)`
+  - Gets a random number between `min` and `max`, inclusive.
+- `getRandomString(['string1', 'string2', ...])`
+  - Outputs one of the given strings, chosen at random.
+- `doWithChance(chance: number)`
+  - Returns `true` only \\( \frac{1}{chance} \\) of the time.
+  - If no `chance` is given, returns `true` only \\( \frac{1}{100} \\) of the time.
+- `doWithChanceModifiedByPlayerStatus(baseChance: number, player: Player, statusId: 'string', statusDivisor: number)`
+  - Does the same thing as `doWithChance`, but `baseChance` is first divided by `statusDivisor` if the
+    Player has the Status Effect with the given ID.
+  - Effectively, this makes it more likely to be `true` if the Player has the given Status Effect.
+- `generateListString(['string1', 'string2', ...])`
+  - Generates a grammatically correct list with the given strings.
+  - If there are two strings, outputs "string1 and string2".
+  - If there are three or more strings, outputs "string1, string2, ..., and stringN".
+- `makeCopyable('string')`
+  - Inserts the given string into Discord's code block Markdown, making it easier to copy for the reader.
+- `capitalizeFirstLetter('string')`
+  - Capitalizes the first letter of the given string.
+- `endsWithPunctuation('string')`
+  - Returns `true` if the given string ends with a sentence-ending punctuation mark.
+  - Ignores Discord Markdown characters at the end of the string.
+
+Here are a few examples of ways to use the helper functions in `if` tags:
+
+- Display a string of text with a probability of 1/20:
+  ```xml
+  <desc><s>You step up to the right viewing platform, which is quite short.</s> <s>Here, you can look down at the ground through the window.</s> <s>You aren't terribly high up, but you still have quite a nice view of the ocean.</s> <s>You can look through binoculars to see even further.</s> <s>There isn't much to see aside from more ocean.</s> <if cond="doWithChance(20) === true"><s>Wait, no!</s> <s>You see a few dolphins jumping out of the water in the distance!</s></if></desc>
+  ```
+- Display a hallucination with a probability that increases if the inspecting Player has the `exhausted` Status Effect:
+  ```xml
+  <desc><s>You examine the rope.</s> <s>It looks fairly strong, and it's very long.</s> <s>You could use it for so many things.</s> <if cond="player.hasStatus('delirious') || doWithChanceModifiedByPlayerStatus(500, player, 'exhausted', 50) === true"><s>It feels like a giant worm in your hands.</s> <s>...Because it has transformed into a giant worm.</s></if></desc>
+  ```
+  - If the Player has the `delirious` Status, the hallucination will appear 100% of the time.
+  - If the Player has the `exhausted` Status, the base probability (`500`) will be divided by the divisor (`50`) for an effective probability of `1/10`.
+  - Otherwise, the hallucination will randomly appear with the base probability of `1/500`.
 
 ---
 
@@ -553,17 +675,10 @@ Because the `var` tag is able to access all of the game's data, it has many more
   ```xml
   <desc><s>Entering through GATE 1, you step into a lush and well-tended garden surrounded by a tall FENCE.</s> <s>It's rectangular in shape, and from where you enter, you can see GATE 2 on the wall to your left.</s> <s><var v="getRandomString(['', 'You see a butterfly gently flutter by. ', 'You hear the buzz of a bumblebee as it flies by. '])" /></s><s>A neat cobblestone path winds through the garden, which has plots for FRUITS, VEGETABLES, and HERBS, with FLOWERS spread liberally all around them.</s> <s>HANGING PLANTS are suspended from the ceiling by transparent wire, giving the eerie impression that they're floating.</s> <s>Just to your left, a thin HOSE hangs in loops from the side of the fence, stored neatly alongside other GARDENING EQUIPMENT.</s> <s>There's also a small wooden BENCH beside the path in an especially floral section of the garden.</s> <s>A small CAMERA stares down at you from the corner post, and there's a MONITOR on the north fence wall.</s></desc>
   ```
-- Display a string of text with a probability of 1/20:
+- Display the current value of a Flag:
   ```xml
-  <desc><s>You step up to the right viewing platform, which is quite short.</s> <s>Here, you can look down at the ground through the window.</s> <s>You aren't terribly high up, but you still have quite a nice view of the ocean.</s> <s>You can look through binoculars to see even further.</s> <s>There isn't much to see aside from more ocean.</s> <if cond="doWithChance(20) === true"><s>Wait, no!</s> <s>You see a few dolphins jumping out of the water in the distance!</s></if></desc>
+  <desc><s>You can't use the POTTERY WHEEL right now, because <var v="findFlag('POTTERY WHEEL USER')" /> is already using it.</s></desc>
   ```
-- Display a hallucination with a probability that increases if the inspecting Player has the `exhausted` Status Effect:
-  ```xml
-  <desc><s>You examine the rope.</s> <s>It looks fairly strong, and it's very long.</s> <s>You could use it for so many things.</s> <if cond="player.hasStatus('delirious') || doWithChanceModifiedByPlayerStatus(500, player, 'exhausted', 50) === true"><s>It feels like a giant worm in your hands.</s> <s>...Because it has transformed into a giant worm.</s></if></desc>
-  ```
-  - If the Player has the `delirious` Status, the hallucination will appear 100% of the time.
-  - If the Player has the `exhausted` Status, the base probability (`500`) will be divided by the divisor (`50`) for an effective probability of `1/10`.
-  - Otherwise, the hallucination will randomly appear with the base probability of `1/500`.
 
 ---
 

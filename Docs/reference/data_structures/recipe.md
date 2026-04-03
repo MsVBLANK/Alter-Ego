@@ -4,15 +4,17 @@ A **Recipe** is a data structure in the Neo World Program. Its primary purpose i
 transform [Room Items](room_item.md)
 or [Inventory Items](inventory_item.md) into other Items using game-like crafting mechanics.
 
-Recipes are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
-the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make changes to the
-Recipes sheet. As a result, the Recipes sheet can be freely edited
-without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
+Recipes are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus, the
+[GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never
+make changes to the Recipes sheet. As a result, the Recipes sheet can be freely edited without
+[edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
 This article will impose two terms:
 
-* **Crafting** is the act of transforming two Recipe Items into up to two Recipe Items using the [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
-* **Processing** is the act of transforming one or more Recipe Items into zero or more Recipe Items using a [Fixture](fixture.md).
+* **Crafting** is the act of transforming two Recipe Items into up to two Recipe Items using the
+  [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
+* **Processing** is the act of transforming one or more Recipe Items into zero or more Recipe Items using a
+  [Fixture](fixture.md).
 
 Every recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
 
@@ -25,17 +27,21 @@ attributes will be given in the "Class attribute" bullet point, preceded by thei
 _external_, it only exists on the spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
 point.
 
-### Ingredients
+### Ingredients Strings
 
 - Spreadsheet label: **Ingredient Prefab(s)**
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Prefab](prefab.md)>
-  `this.ingredients`
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.ingredientsStrings`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id), in Recipe Item format. When Recipes are loaded, Alter Ego will automatically
-convert these to actual references to the Prefabs. Ingredients determine what Items or Inventory Items are required for
-the Recipe. Multiple Recipes can have the same list of ingredients. There are different sets of rules for ingredients,
-depending on the Recipe's type.
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](#recipe-items). Ingredients
+determine what Room Items or Inventory Items are required for the Recipe. Multiple Recipes can have the same list
+of ingredients.
+
+Regardless of what order ingredients appear in on the sheet, they are stored in alphabetical order, sorted by
+Prefab ID. Additionally, ingredients that are contained inside of another ingredient are not included. This list
+includes only the top-level ingredients.
+
+There are different sets of rules for ingredients, depending on the Recipe's type.
 
 Crafting-type Recipes:
 
@@ -48,14 +54,30 @@ Processing-type Recipes:
 - Can have infinitely many ingredients, and
 - Must not have more than one of the same Prefab as ingredients.
 
-Note that the final rule only applies due to the way Items with the same Prefab ID are concatenated with
-the [quantity attribute](item.md#quantity). If the Items are on two different rows of the spreadsheet due to having some
-difference between them, such as different numbers of [uses](item.md#uses) or
-different [descriptions](item.md#description), then processing-type Recipes can be carried out with multiple of the same
-Prefab as ingredients. However, because this will rarely be the case, processing-type Recipes with more than one of the
-same Prefab as ingredients should be avoided.
+Note that the final rule does not prohibit a Recipe from requiring multiple instances of the same ingredient.
+See the section on [Recipe Item format](#recipe-items) for more information.
 
-Additionally, both Recipe types must not include ingredients that are containers with more than one inventory slot.
+Additionally, both Recipe types must not include ingredients that are containers with more than one
+[Inventory Slot](inventory_slot.md), or more than one container.
+
+### Ingredients
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Recipe Item](recipe_item.md)>
+  `this.ingredients`
+
+This is an internal attribute which consists of a list of Recipe Item objects created from the list of
+ingredients in `this.ingredientsStrings`. As with `this.ingredientsStrings`, they are stored in alphabetical
+order, sorted by Prefab ID. Contained ingredients are not included. This list includes only the top-level
+ingredients.
+
+### Ingredients Flat
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Recipe Item](recipe_item.md)>
+  `this.ingredientsFlat`
+
+This is an internal attribute which consists of a list of Recipe Item objects. It contains all of the ingredients
+in `this.ingredients`, but it also includes all ingredients contained inside of them, all listed in a flat array.
+They are stored in alphabetical order, sorted by Prefab ID.
 
 ### Uncraftable
 
@@ -75,50 +97,76 @@ Crafting-type Recipes with two products cannot be uncraftable.
 
 - Spreadsheet label: **Processed by Fixture With Tag**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.objectTag`
+  `this.fixtureTag`
 
-This is a simple phrase that determines which Fixtures can be used to process this Recipe, if any. There are no rules for
-how Fixture tags must be named, but a single Recipe can only have one Fixture tag. The presence of an Fixture tag
-determines the type of each Recipe. If an Fixture tag is given, it will be a processing-type Recipe. If no Fixture tag is
-given, it will be a crafting-type Recipe.
+This is a simple phrase that determines which Fixtures can be used to process this Recipe, if any. There are no rules
+for how Fixture tags must be named, but a single Recipe can only have one Fixture tag. The presence of a Fixture tag
+determines the type of each Recipe. If a Fixture tag is given, it will be a processing-type Recipe. If no Fixture tag
+is given, it will be a crafting-type Recipe.
 
 The tag should match exactly the [Recipe tag](fixture.md#recipe-tag) of any Fixtures that can be used to process this
-Recipe. For example, a Recipe with the Fixture tag "blender" can only be processed by an Fixture with the Recipe tag
+Recipe. For example, a Recipe with the Fixture tag "blender" can only be processed by a Fixture with the Recipe tag
 "blender" when it is activated.
+
+### Object Tag
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.objectTag`
+
+This internal attribute serves the same purpose as `this.fixtureTag`. It is still present to maintain compatibility
+with legacy game data, but it will eventually be removed. References to this attribute in game data should be
+replaced with `this.fixtureTag`.
 
 ### Duration
 
 - Spreadsheet label: **Process Duration**
-- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.duration`
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.durationString`
 
 This is a string which determines how long the Recipe will take to process before it is completed. This can only be
-given for processing-type Recipes. This should consist of a whole number (no decimals) with a letter immediately
+given for processing-type Recipes. This should consist of a number (i.e. `30`, `1.5`) with a letter immediately
 following it, with no space between them. There is a fixed set of predefined units that correspond with each letter.
 They are as follows:
-| Letter | Unit |
+
+| Letter | Unit    |
 | ------ | ------- |
-| s | seconds |
-| m | minutes |
-| h | hours |
-| d | days |
-| w | weeks |
-| M | months |
-| y | years |
+| s      | seconds |
+| m      | minutes |
+| h      | hours   |
+| d      | days    |
+| w      | weeks   |
+| M      | months  |
+| y      | years   |
 
 So, a Recipe that should take 30 seconds to process should have a duration of `30s`, one that should take 15 minutes
 should have a duration of `15m`, one that should take 2 hours should have a duration of `2h`, one that should take 1.5
-days should have a duration of `36h`, and so on.
+days should have a duration of `1.5d`, and so on.
 
-### Products
+### Duration
+
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.duration`
+
+This is an internal attribute which contains a Duration object created from the duration string. If the Recipe has no
+duration string, this is `null`.
+
+### Products Strings
 
 - Spreadsheet label: **Produces Prefab(s)**
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Prefab](prefab.md)>
-  `this.products`
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.productsStrings`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id), in Recipe Item format. When Recipes are loaded, Alter Ego will automatically
-convert these to actual references to the Prefabs. Products determine what the ingredients will be turned into upon
-completion of the Recipe. There are different sets of rules for products, depending on the Recipe's type.
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](#recipe-items).
+Products determine what the ingredients will be turned into upon completion of the Recipe.
+
+Unlike ingredients, products are not sorted. They are listed in the order they appear in on the sheet.
+However, products that are contained inside of another product are not included. This list
+includes only the top-level products.
+
+There are different sets of rules for products, depending on the Recipe's type.
 
 Crafting-type Recipes:
 
@@ -130,10 +178,32 @@ Processing-type Recipes:
 - Can have any number of products and
 - Can have multiple of the same Prefab as products.
 
-Note that although processing-type Recipes with multiple of the same Prefab as ingredients are typically not allowed,
-the same does not apply to products. A processing-type Recipe can produce as many of the same Prefab as desired.
+Note that although processing-type Recipes with multiple of the same Prefab as ingredients are typically not
+allowed, the same does not apply to products. A processing-type Recipe can produce as many of the same
+Prefab as desired. However, it usually makes more sense to express this as a quantity of the product, rather
+than listing the same Prefab as a product multiple times. See the section on
+[Recipe Item format](#recipe-items) for more information.
 
-Additionally, both Recipe types must not include products that are containers with more than one inventory slot, or more than one container.
+Additionally, both Recipe types must not include products that are containers with more than one Inventory Slot,
+or more than one container.
+
+### Products
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Recipe Item](recipe_item.md)>
+  `this.products`
+
+This is an internal attribute which consists of a list of Recipe Item objects created from the list of
+products in `this.productsStrings`. As with `this.productsStrings`, contained products are not included.
+This list includes only the top-level products.
+
+### Products Flat
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Recipe Item](recipe_item.md)>
+  `this.productsFlat`
+
+This is an internal attribute which consists of a list of Recipe Item objects. It contains all of the products
+in `this.products`, but it also includes all products contained inside of them, all listed in a flat array.
+Unlike `this.products`, they are stored in alphabetical order, sorted by Prefab ID.
 
 ### Initiated Description
 

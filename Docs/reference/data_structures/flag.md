@@ -43,9 +43,6 @@ However, the value can also be updated by evaluating its value script, explained
 
 ### Value Script
 
-- Spreadsheet label: **Value Computed By**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.valueScript`
-
 > [!CAUTION]
 > This feature has the ability to run code. In order to evaluate a Flag's value script, 
 > Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While
@@ -62,6 +59,9 @@ However, the value can also be updated by evaluating its value script, explained
 >
 > We, the Alter Ego developers, assume no responsibility for damage caused by malicious use of this feature.
 > You have been warned.
+
+- Spreadsheet label: **Value Computed By**
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.valueScript`
 
 This is a small script that allows a Flag's value to be generated dynamically. Value scripts are short
 snippets of [JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide) that return

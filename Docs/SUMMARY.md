@@ -42,6 +42,7 @@
     - [Prefab](reference/data_structures/prefab.md)
     - [Puzzle](reference/data_structures/puzzle.md)
     - [Recipe](reference/data_structures/recipe.md)
+    - [Recipe Item](reference/data_structures/recipe_item.md)
     - [Room](reference/data_structures/room.md)
     - [Room Item](reference/data_structures/room_item.md)
     - [Status](reference/data_structures/status.md)

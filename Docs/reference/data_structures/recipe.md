@@ -11,7 +11,7 @@ without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
 This article will impose two terms. **Crafting** is the act of transforming two Inventory Items into up to two Inventory
 Items using the [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
-**Processing** is the act of transforming one or more Items into zero or more Items using an [Fixture](fixture.md). Every
+**Processing** is the act of transforming one or more Items into zero or more Items using a [Fixture](fixture.md). Every
 Recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
 
 ## Attributes

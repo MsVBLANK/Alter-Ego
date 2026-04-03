@@ -9,10 +9,12 @@ the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Cla
 Recipes sheet. As a result, the Recipes sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
-This article will impose two terms. **Crafting** is the act of transforming two Inventory Items into up to two Inventory
-Items using the [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
-**Processing** is the act of transforming one or more Items into zero or more Items using a [Fixture](fixture.md). Every
-Recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
+This article will impose two terms:
+
+* **Crafting** is the act of transforming two Recipe Items into up to two Recipe Items using the [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
+* **Processing** is the act of transforming one or more Recipe Items into zero or more Recipe Items using a [Fixture](fixture.md).
+
+Every recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
 
 ## Attributes
 
@@ -30,7 +32,7 @@ point.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Prefab](prefab.md)>
   `this.ingredients`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id). When Recipes are loaded, Alter Ego will automatically
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in Recipe Item format. When Recipes are loaded, Alter Ego will automatically
 convert these to actual references to the Prefabs. Ingredients determine what Items or Inventory Items are required for
 the Recipe. Multiple Recipes can have the same list of ingredients. There are different sets of rules for ingredients,
 depending on the Recipe's type.
@@ -52,6 +54,8 @@ difference between them, such as different numbers of [uses](item.md#uses) or
 different [descriptions](item.md#description), then processing-type Recipes can be carried out with multiple of the same
 Prefab as ingredients. However, because this will rarely be the case, processing-type Recipes with more than one of the
 same Prefab as ingredients should be avoided.
+
+Additionally, both Recipe types must not include ingredients that are containers with more than one inventory slot.
 
 ### Uncraftable
 
@@ -112,7 +116,7 @@ days should have a duration of `36h`, and so on.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Prefab](prefab.md)>
   `this.products`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id). When Recipes are loaded, Alter Ego will automatically
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in Recipe Item format. When Recipes are loaded, Alter Ego will automatically
 convert these to actual references to the Prefabs. Products determine what the ingredients will be turned into upon
 completion of the Recipe. There are different sets of rules for products, depending on the Recipe's type.
 
@@ -128,6 +132,8 @@ Processing-type Recipes:
 
 Note that although processing-type Recipes with multiple of the same Prefab as ingredients are typically not allowed,
 the same does not apply to products. A processing-type Recipe can produce as many of the same Prefab as desired.
+
+Additionally, both Recipe types must not include products that are containers with more than one inventory slot, or more than one container.
 
 ### Initiated Description
 
@@ -172,6 +178,30 @@ cannot have an Fixture tag, the `this` keyword will always refer to the Recipe i
   `this.row`
 
 This is an internal attribute, but it can also be found on the spreadsheet. This is the row number of the Recipe.
+
+## Recipe Items
+
+A Recipe Item refers to the syntax used to define ingredients and products within Recipes.
+The syntax follows a very flexible format, of which some examples are as follows:
+
+* `PREFAB ID`
+  * Where "Prefab ID" is any given Prefab ID, consumed or produced similarly to Prefabs in recipes before Alter Ego 2.0.
+* `1 PREFAB ID`
+  * Where `1` can be any whole number representing the quanity of Prefabs to consume or produce for the entire Recipe, regardless of the amount of times the Recipe can be satisfied.
+* `1X PREFAB ID`
+  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the quanity of Prefabs to consume or produce relative to the amount of times the Recipe can be satisfied.
+* `PREFAB ID [1X]`
+  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the number of Prefab uses to consume or produce relative to the amount of times the Recipe can be satisfied.
+* `PREFAB ONE (PREFAB TWO)`
+  * Where `PREFAB ONE` can be any Prefab ID denoting a Prefab that can contain items, and `PREFAB TWO` can be any Prefab ID that can fit inside its container.
+  * Prefab Two can also utilize the syntax for variable quantity or uses consumption, like so: `PREFAB ONE (1X PREFAB TWO)`, `PREFAB ONE (PREFAB TWO [1X])`
+
+The "variable" of a Recipe Item, represented as X above, can be used to make ingredients and products related to each other in uses or quantity. Some examples and explanations of this behavior are as follows:
+
+* `1 BLENDER CUP OF MILK (1X BANANA CHUNK)` ➡️ `1 BANANA MILKSHAKE [1X]`
+  * This example is a Processing-type Recipe, which produces one BANANA MILKSHAKE with as many uses as BANANA CHUNKS were inside the BLENDER CUP OF MILK ingredient.
+
+<!--TODO: more examples!!!-->
 
 ## Crafting
 

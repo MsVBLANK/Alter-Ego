@@ -2,6 +2,7 @@ import type CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import ItemContainer from "./ItemContainer.ts";
+import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type Recipe from "./Recipe.ts";
 import type RoomItem from "./RoomItem.ts";
@@ -47,26 +48,27 @@ export default abstract class RecipeProcessor extends ItemContainer {
      * @param satisfactoryProcessCount - How many times the given ingredients satisfy the current recipe.
      * @param variableValues - The variable values to use when instantiating the products.
      * @param proceduralSelections - The procedural selections to instantiate the the products with.
+     * @param player - The player who caused this instantiation, if applicable.
      */
-    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map(), proceduralSelections: Map<string, string> = new Map()): void {
+    instantiateProducts(recipe: Recipe, satisfactoryProcessCount: number, variableValues: Map<string, number> = new Map(), proceduralSelections: Map<string, string> = new Map(), player?: Player): void {
         if (satisfactoryProcessCount < 1) return;
 		for (const product of recipe.products) {
 			if (recipe.isIngredientAndProduct(product))
 				continue;
 			const quantity = product.calculateQuantity(satisfactoryProcessCount);
 			const uses = product.calculateUses(satisfactoryProcessCount, variableValues);
-			const instantiatedProducts = this.instantiate(product.prefab, quantity, uses, proceduralSelections);
+			const instantiatedProducts = this.instantiate(product.prefab, quantity, uses, proceduralSelections, undefined, undefined, player);
             if (product.prefab.inventory.size > 0) {
                 for (const instantiatedProduct of instantiatedProducts) {
                     for (const childProduct of product.containedItems) {
                         const childQuantity = childProduct.calculateQuantity(satisfactoryProcessCount);
 						const childUses = childProduct.calculateUses(satisfactoryProcessCount, variableValues);
-						this.instantiate(childProduct.prefab, childQuantity, childUses, proceduralSelections, instantiatedProduct, instantiatedProduct.inventory.firstKey());
+						this.instantiate(childProduct.prefab, childQuantity, childUses, proceduralSelections, instantiatedProduct, instantiatedProduct.inventory.firstKey(), player);
 					}
                 }
 			}
 		}
     }
 
-    protected abstract instantiate(prefab: Prefab, quantity: number, uses: number, proceduralSelections: Map<string, string>, container?: RoomItemContainer|InventoryItem, inventorySlotId?: string): RoomItem[] | InventoryItem[];
+    protected abstract instantiate(prefab: Prefab, quantity: number, uses: number, proceduralSelections: Map<string, string>, container?: RoomItemContainer|InventoryItem, inventorySlotId?: string, player?: Player): RoomItem[] | InventoryItem[];
 }

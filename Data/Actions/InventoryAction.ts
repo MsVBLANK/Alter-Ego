@@ -29,9 +29,14 @@ export default class InventoryAction extends Action {
             interactables = interactables.concat(await interactableManager.getInstantiateInventoryItemInteractables(this.player, this.user));
             interactables = interactables.concat(await interactableManager.getDestroyInventoryItemInteractables(this.player, this.user));
         }
+        else {
+            const inventoryItems = this.player.getContainedItems().toSorted((a, b) => this.player.getEquipmentSlot(a.equipmentSlot).row - this.player.getEquipmentSlot(b.equipmentSlot).row);
+            interactables = interactables.concat(await interactableManager.createInspectActionInteractable(inventoryItems, this.player, this.user));
+        }
         interactables = interactables.concat(await interactableManager.getStashInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getUnstashInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getCraftInteractables(this.player, this.user));
+        interactables = interactables.concat(await interactableManager.getUncraftInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getUseInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getEquipInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getUnequipInteractables(this.player, this.user));

@@ -94,6 +94,6 @@ export async function execute(game, message, command, args, moderator) {
     }
 
     const action = new UncraftAction(game, message, player, player.location, true);
-    action.performUncraft(item, recipe);
+    await action.performUncraft(item, recipe);
 	action.sendSuccessMessageToCommandChannel();
 }

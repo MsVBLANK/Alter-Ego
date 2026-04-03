@@ -8,6 +8,7 @@ import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
+import UncraftAction from "../Data/Actions/UncraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
@@ -237,6 +238,17 @@ export default class BotInteractionHandler {
                 await action.performCraft(validatedArgs[0], validatedArgs[1], validatedArgs[2]);
                 this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("CraftAction", author, timestamp, validatedArgs);
+                return true;
+            }
+        }
+        if (action instanceof UncraftAction) {
+            const args = interactable.actionDirective.getArgs();
+            const parsedArgs = action.parseInteractionArgs(args);
+            const validatedArgs = action.validateInteractionArgs(parsedArgs);
+            if (validatedArgs.length === 2) {
+                await action.performUncraft(validatedArgs[0], validatedArgs[1]);
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
+                this.#logInteraction("UncraftAction", author, timestamp, validatedArgs);
                 return true;
             }
         }

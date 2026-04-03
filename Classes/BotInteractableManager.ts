@@ -27,6 +27,7 @@ import UnstashAction from "../Data/Actions/UnstashAction.ts";
 import EquipAction from "../Data/Actions/EquipAction.ts";
 import UnequipAction from "../Data/Actions/UnequipAction.ts";
 import CraftAction from "../Data/Actions/CraftAction.ts";
+import UncraftAction from "../Data/Actions/UncraftAction.ts";
 import UseAction from "../Data/Actions/UseAction.ts";
 import InstantiateInventoryItemAction from "../Data/Actions/InstantiateInventoryItemAction.ts";
 import InstantiateRoomItemAction from "../Data/Actions/InstantiateRoomItemAction.ts";
@@ -37,6 +38,7 @@ import ViewAction, { type EntityField } from "../Data/Actions/ViewAction.ts";
 import { removeInteractablesFromMessage } from "../Modules/messageHandler.js";
 import { ActionPriority} from "../Modules/enums.js";
 import { capitalizeFirstLetter, getSortedItems } from "../Modules/helpers.ts";
+import ItemInstance from "../Data/ItemInstance.ts";
 
 class InteractableOptions<T extends Action> {
     actionDirective: ActionDirective<T>;
@@ -278,8 +280,8 @@ export default class BotInteractableManager {
 		for (const entity of entities) {
             const actionDirective = await this.#createActionDirective(InspectAction, entity.getInspectActionDirectiveArgs(), player, user);
 			const label = entity instanceof Player ? entity.displayName : entity.name;
-			const containerString = entity instanceof RoomItem ?
-				entity.container instanceof RoomItem && entity.container.inventory.size > 1 ?
+			const containerString = entity instanceof ItemInstance  && entity.container ?
+				entity.container instanceof ItemInstance && entity.container.inventory.size > 1 ?
 					` ${entity.container.getPreposition()} ${entity.slot} of ${entity.container.name}`
 					: ` ${entity.container.getPreposition()} ${entity.container.name}`
 				: "";
@@ -469,6 +471,20 @@ export default class BotInteractableManager {
         const actionDirective = await this.#createActionDirective(CraftAction, player.getCraftActionDirectiveArgs(heldItems[0], heldItems[1], recipe), player, user);
         const interactableOptions = new InteractableOptions(actionDirective, `Craft ${heldItems[0].name} and ${heldItems[1].name}`);
         return [this.#createButtonInteractable(interactableOptions, ButtonStyle.Success, ActionPriority.CRAFT)];
+    }
+
+    /**
+     * Creates Interactables for an uncraftable recipe and adds them to the cache.
+     * @param recipe - The recipe that can be uncrafted.
+     * @param player - The player these interactables are being created for.
+     * @param user - The user these interactables are being created for. Defaults to the given player.
+     */
+    async createUncraftActionInteractables(recipe: Recipe, player: Player, user: User = player): Promise<ButtonInteractable[]> {
+        if (player.hasBehaviorAttribute("disable uncraft") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable uncraft")) return [];
+        const heldItems = getSortedItems(this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem));
+        const actionDirective = await this.#createActionDirective(UncraftAction, player.getUncraftActionDirectiveArgs(heldItems[0], recipe), player, user);
+        const interactableOptions = new InteractableOptions(actionDirective, `Uncraft ${heldItems[0].name}`);
+        return [this.#createButtonInteractable(interactableOptions, ButtonStyle.Secondary, ActionPriority.UNCRAFT)];
     }
 
     /**
@@ -918,6 +934,24 @@ export default class BotInteractableManager {
                     break;
                 }
             }
+        }
+        return interactables;
+    }
+
+    /**
+     * Generates an array of uncraft interactables based on what the player is currently able to uncraft. This is always just one uncraft interactable.
+     * @param player - The player who can perform an uncraft action.
+     * @param user - The user these interactables are being created for. Defaults to the given player.
+     */
+    async getUncraftInteractables(player: Player, user: User = player): Promise<Interactable[]> {
+        let interactables: Interactable[] = [];
+        const heldItems = this.#game.entityFinder.getPlayerHands(player).filter(hand => hand.equippedItem !== null).map(hand => hand.equippedItem);
+        const playerFreeHand = this.#game.entityFinder.getPlayerFreeHand(player);
+        if (heldItems.length === 1 && playerFreeHand) {
+            const item = heldItems[0];
+            const recipe = this.#game.entityFinder.getRecipes("uncraftable", undefined, undefined, item.prefab.id)[0];
+            if (recipe)
+                interactables = interactables.concat(await this.createUncraftActionInteractables(recipe, player, user));
         }
         return interactables;
     }

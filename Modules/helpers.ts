@@ -38,7 +38,7 @@ export function doWithChance(chance = 100): boolean {
 }
 
 /**
- * Returns true the given percent of the time, but the percent is multiplied by a given number if the given player has the given status effect.
+ * Returns true only 1/x of the time, but the x is divided by a given number if the given player has the given status effect.
  * @param baseChance - The denominator of the probability. Defaults to 100. If this is 100, returns true 1/100th of the time.
  * @param player - The player whose status we want to check.
  * @param statusId - The ID of the status to look for on the player.

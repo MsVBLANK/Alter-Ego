@@ -473,6 +473,20 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     }
 
     /**
+     * Returns a custom ID for the given uncraftable recipe.
+     * @param item - The sole item in the player's hands.
+     * @param recipe - The uncraftable recipe satisfied by this item.
+     */
+    getUncraftActionDirectiveArgs(item: InventoryItem, recipe: Recipe): string[] {
+        return [
+            item.getIdentifier(),
+            "uncraftable",
+            recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
+            recipe.productsFlat.map(product => product.prefab.id).join(",")
+        ];
+    }
+
+    /**
      * Moves the player to the desired room.
      *
      * @param isRunning - Whether the player is running.

@@ -660,6 +660,10 @@ describe('test scriptParser', () => {
                 expect(() => evaluate("require('fs')", null, null)).toThrow();
             });
 
+            test('import is not available', () => {
+                expect(() => evaluate("import('fs')", null, null)).toThrow();
+            });
+
             test('globalThis is not available', () => {
                 expect(() => evaluate('globalThis.process', null, null)).toThrow(/Unknown root identifier: globalThis/);
             });

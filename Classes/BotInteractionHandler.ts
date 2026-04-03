@@ -1,6 +1,7 @@
 import type Action from "../Data/Action.ts";
 import InspectAction from "../Data/Actions/InspectAction.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
+import StopAction from "../Data/Actions/StopAction.ts";
 import TakeAction from "../Data/Actions/TakeAction.ts";
 import DropAction from "../Data/Actions/DropAction.ts";
 import StashAction from "../Data/Actions/StashAction.ts";
@@ -147,12 +148,20 @@ export default class BotInteractionHandler {
 			const parsedArgs = action.parseInteractionArgs(args);
 			const validatedArgs = action.validateInteractionArgs(parsedArgs);
 			if (validatedArgs.length === 2) {
-				action.performQueueMove(validatedArgs[0], validatedArgs[1]);
+				await action.performQueueMove(validatedArgs[0], validatedArgs[1]);
 				this.#replyOrDeleteActionResponse(action, interaction, reply);
                 this.#logInteraction("QueueMoveAction", author, timestamp, validatedArgs);
 				return true;
 			}
 		}
+        if (action instanceof StopAction) {
+            if (player && player.isMoving) {
+                action.performStop();
+                this.#replyOrDeleteActionResponse(action, interaction, reply);
+                this.#logInteraction("StopAction", author, timestamp, []);
+                return true;
+            }
+        }
 		if (action instanceof InspectAction) {
 			const args = interactable.actionDirective.getArgs();
 			const parsedArgs = action.parseInteractionArgs(args);

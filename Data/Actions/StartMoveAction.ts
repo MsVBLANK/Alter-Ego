@@ -17,11 +17,14 @@ export default class StartMoveAction extends Action {
      * @param exit - The exit the player will leave their current room through.
      * @param entrance - The exit the player will enter the destination room from.
 	 */
-	performStartMove(isRunning: boolean, currentRoom: Room, destinationRoom: Room, exit: Exit, entrance: Exit): void {
+	async performStartMove(isRunning: boolean, currentRoom: Room, destinationRoom: Room, exit: Exit, entrance: Exit): Promise<void> {
 		if (this.performed) return;
 		super.perform();
 		const time = this.player.calculateMoveTime(exit, isRunning);
-		if (time > 1000) this.getGame().narrationHandler.narrateStartMove(this, isRunning, exit, this.player);
+		if (time > 1000) {
+            const interactables = await this.getGame().botContext.interactableManager.createStopActionInteractable(this.player, this.user);
+            this.getGame().narrationHandler.narrateStartMove(this, isRunning, exit, this.player, interactables);
+        }
 		this.player.move(isRunning, currentRoom, destinationRoom, exit, entrance, time, this.forced);
 	}
 }

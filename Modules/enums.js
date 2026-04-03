@@ -27,6 +27,7 @@ export const ActionPriority = {
     DESTROY: 5,
     QUEUE_MOVE: 7,
     QUEUE_RUN: 8,
+    STOP: 9,
     STASH: 10,
     UNSTASH: 11,
     CRAFT: 12,

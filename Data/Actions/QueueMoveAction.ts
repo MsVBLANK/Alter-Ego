@@ -16,7 +16,7 @@ export default class QueueMoveAction extends Action {
 	 * @param isRunning - Whether the player is running.
 	 * @param destinationString - The destination the user supplied.
 	 */
-	performQueueMove(isRunning: boolean, destinationString: string): void {
+	async performQueueMove(isRunning: boolean, destinationString: string): Promise<void> {
 		if (this.performed) return;
 		super.perform();
 		const currentRoom = this.player.location;
@@ -54,7 +54,7 @@ export default class QueueMoveAction extends Action {
 
 		if (exit) {
 			const startMoveAction = new StartMoveAction(this.getGame(), this.message, this.player, this.player.location, this.forced);
-			startMoveAction.performStartMove(isRunning, currentRoom, destinationRoom, exit, entrance);
+			await startMoveAction.performStartMove(isRunning, currentRoom, destinationRoom, exit, entrance);
 		}
 		else {
 			const moveAction = new MoveAction(this.getGame(), this.message, this.player, this.player.location, this.forced);

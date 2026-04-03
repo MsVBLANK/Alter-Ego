@@ -19,6 +19,7 @@ import Player from "../Data/Player.ts";
 import RoomItem from "../Data/RoomItem.ts";
 import ActionDirective from "./ActionDirective.ts";
 import QueueMoveAction from "../Data/Actions/QueueMoveAction.ts";
+import StopAction from "../Data/Actions/StopAction.ts";
 import InspectAction from "../Data/Actions/InspectAction.ts";
 import TakeAction from "../Data/Actions/TakeAction.ts";
 import DropAction from "../Data/Actions/DropAction.ts";
@@ -267,6 +268,18 @@ export default class BotInteractableManager {
 		}
 		return moveButtons.concat(runButtons);
 	}
+
+    /**
+     * Creates a StopAction interactable and adds it to the cache.
+     * @param player - The player these interactables are being created for.
+     * @param user - The user these interactables are being created for. Defaults to the given player.
+     */
+    async createStopActionInteractable(player: Player, user: User = player): Promise<ButtonInteractable[]> {
+        if (player.hasBehaviorAttribute("disable stop") || player.hasBehaviorAttribute("disable all") && !player.hasBehaviorAttribute("enable stop")) return [];
+        const actionDirective = await this.#createActionDirective(StopAction, [], player, user);
+        const interactableOptions = new InteractableOptions(actionDirective, `Stop`);
+        return [this.#createButtonInteractable(interactableOptions, ButtonStyle.Danger, ActionPriority.STOP)];
+    }
 
 	/**
 	 * Creates StringSelectMenuInteractable for a list of inspectable game entities and adds it to the cache.

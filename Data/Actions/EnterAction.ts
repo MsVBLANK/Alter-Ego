@@ -25,7 +25,7 @@ export default class EnterAction extends Action {
         this.player.moveQueue.splice(0, 1);
         if (this.player.moveQueue.length > 0) {
             const queueMoveAction = new QueueMoveAction(this.player.getGame(), undefined, this.player, this.player.location, this.forced);
-            queueMoveAction.performQueueMove(isRunning, this.player.moveQueue[0]);
+            await queueMoveAction.performQueueMove(isRunning, this.player.moveQueue[0]);
         }
 	}
 }

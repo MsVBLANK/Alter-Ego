@@ -1,6 +1,6 @@
 # Prefab
 
-A **Prefab** is a data structure in the Neo World Program. It represents the concept of an item, and is the underlying
+A **Prefab** is a data structure used by Alter Ego. It represents the concept of an item, and is the underlying
 data structure which gives [Room Items](room_item.md) and [Inventory Items](inventory_item.md) their properties.
 
 Prefabs are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
@@ -35,9 +35,9 @@ A Prefab's name is what will be shown to [Players](player.md). It is what they a
 interact with an Item. A Prefab must have a "single name" to refer to a single instance of it, but it can also have
 a "plural name" to refer to multiple instances of it.
 
-This is a collection of possible names that a Room Item or Inventory Item that uses this Prefab can have. The key of
-the collection is a procedural selection, which consists of a map where the key is the name of a procedural, and the
-value is a selected possibility. The value of the collection is a pair of strings, where the first will be the
+This attribute is a collection of possible names that a Room Item or Inventory Item that uses this Prefab can have.
+The key of the collection is a procedural selection, which consists of a map where the key is the name of a procedural,
+and the value is a selected possibility. The value of the collection is a pair of strings, where the first will be the
 Item's [single](room_item.md#single-name) [name](inventory_item.md#single-name), and the second (if supplied) will
 be the Item's [plural](room_item.md#plural-name) [name](inventory_item.md#plural-name).
 
@@ -92,11 +92,15 @@ grammar is important. This will be how the Item appears in [item lists](../../mo
 [Narrations](narration.md), and [Notifications](notification.md). A Prefab must have a "single containing phrase"
 to refer to a single instance of it, but it can also have a "plural containing phrase" to refer to multiple
 instances of it. The single containing phrase should almost always include the Prefab's single name, and the plural
-containing phrase should almost always include the Prefab's plural name, if it has one.
+containing phrase should almost always include the Prefab's plural name, if it has one. If the Prefab does not have a
+plural name because it would be the same as its single name, the plural containing phrase should contain the Prefab's
+single name instead.
 
-The structure, syntax, and behavior are mostly identical to that of the Prefab's possible names. The only difference
-worth noting is that if more than one Item instance of a Prefab is expected to exist, it _must_ have a plural
-containing phrase.
+The structure, syntax, and behavior are mostly identical to that of the Prefab's possible names. The only differences
+worth noting are:
+
+- If more than one Item instance of a Prefab is expected to exist, it _must_ have a plural containing phrase, and
+- A containing phrase can have lowercase text and symbols, because Players are not expected to enter these.
 
 If variable containing phrases are not desired, it is sufficient to simply enter a single containing phrase into the
 cell, like so:
@@ -158,10 +162,11 @@ containing phrase of the Prefab itself.
   `this.discreet`
 
 This is a simple Boolean value indicating whether interactions with Room Items and Inventory Items using this Prefab
-will be narrated or not. Specifically, if this is `false`, then Alter Ego will notify the Room if a Player inspects,
-takes, or drops a Room Item using this Prefab; or inspects, stashes, unstashes, or moves to another Room carrying an
-Inventory Item using this Prefab. Additionally, if this is `false`, then when an Inventory Item using this Prefab is
-moved to either of the Player's hands, it will appear in the "hands" item list in that Player's description.
+will be narrated or not. Specifically, if this is `false`, then Alter Ego will send a Narration to the Room if a Player
+inspects, takes, or drops a Room Item using this Prefab; or inspects, stashes, unstashes, steals, gives, crafts,
+uncrafts, or moves to another Room carrying an Inventory Item using this Prefab. Additionally, if this is `false`, then
+when an Inventory Item using this Prefab is moved to either of the Player's hands, it will appear in the `hands`
+item list in that Player's description.
 
 ### Size
 
@@ -170,9 +175,26 @@ moved to either of the Player's hands, it will appear in the "hands" item list i
   `this.size`
 
 This is a whole number representing how large the Prefab is. It is not associated with any particular unit of
-measurement, but instead represents relative sizes. For example, an ID card may have a size of 1 whereas a gun may have
-a size of 5 and a ladder may have a size of 30. There are no rules to determine what size a Prefab should have, however
-it should be non-negative.
+measurement, but instead represents relative sizes. For example, an ID card may have a size of 1 whereas a pistol may
+have a size of 5 and a ladder may have a size of 30. There are no hard rules to determine what size a Prefab should
+have, however it should be non-negative.
+
+In general, it is good practice to choose sizes based on the capacities of the most common [Inventory Slots](#inventory)
+in the game. For instance, if most equippable Prefabs with Inventory Slots such as pockets have capacities of 3 or 4,
+any Prefabs that should not be able to fit in those pockets should have a size of 5 or higher.
+
+It is also good to consider what each Prefab will be used for when deciding on its size. For example, if a Prefab is
+intended to be used as an ingredient in a [Recipe](recipe.md) that requires it to be contained inside of another
+ingredient, and it is possible to input one or more of that ingredient to create a product with that many uses, the
+Prefab's size should be set based on the capacity of the Inventory Slot it is expected to be in as part of the Recipe.
+
+As an example of the previous practice, consider a Recipe in which a Prefab `CLEAN BLENDER CUP` is an ingredient, and
+it must contain 1X quantity of the Prefab `APPLE SLICES`, in order to produce 1 `BLENDER CUP OF APPLE JUICE` with 1X
+uses. If the `CLEAN BLENDER CUP` has a single Inventory Slot with a capacity of 10, then it is possible to limit the
+maximum number of servings that can be produced at once by setting the size of the `APPLE SLICES` Prefab based on that
+capacity. For example, if the size is set to 2, then up to 5 `APPLE SLICES` can be put inside of the
+`CLEAN BLENDER CUP`, producing a `BLENDER CUP OF APPLE JUICE` with 5 uses. If it is instead set to 3, then the maximum
+number of servings would instead be 3, as no more than 3 `APPLE SLICES` would fit inside of the `CLEAN BLENDER CUP`.
 
 ### Weight
 
@@ -231,7 +253,7 @@ If no third person verb is given, "uses" will be used in its place.
 
 This is a phrase that will be used in Notifications when a Player uses an Inventory Item with this Prefab. It shares
 the same cell as the third person verb. To supply a second person verb, enter it after the third person verb,
-separating the two with a comma. Usage of an Inventory Item will always send a notification to the Player, and will
+separating the two with a comma. Usage of an Inventory Item will always send a Notification to the Player, and will
 use the following format:
 
 `You [this.secondPersonVerb] [InventoryItem singleContainingPhrase].`
@@ -283,7 +305,7 @@ when used.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](status.md)>
   `this.effects`
 
-This is an internal attribute which contains references to each of the Status Effect objects whose names are listed in
+This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in
 `this.effectsStrings`.
 
 ### Cures Strings
@@ -317,7 +339,7 @@ they should be listed in reverse order. In the above example, the cures string s
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](status.md)>
   `this.cures`
 
-This is an internal attribute which contains references to each of the Status Effect objects whose names are listed in
+This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in
 `this.curesStrings`.
 
 ### Next Stage ID
@@ -329,7 +351,8 @@ This is an internal attribute which contains references to each of the Status Ef
 This is the ID of the Prefab that Items using this Prefab will turn into once their number of uses reaches 0. Items
 with infinite uses will never access this attribute. When an Item turns into its next stage, all of its attributes
 will be replaced with that of the new Prefab. However, the Item's procedural selections will be carried over to
-the next stage. 
+the next stage. If any of its procedural selections do not satisfy the procedural options of the next stage Prefab,
+they will be discarded.
 
 Note that if an Item has a limited number of uses and this is blank, then it will simply be destroyed once it
 runs out of uses.
@@ -383,29 +406,37 @@ not appear in the `equipment` item list in the [Player's description](player.md#
 unequips all Inventory Items whose Prefabs cover that Equipment Slot will the single containing phrase of that
 Inventory Item appear in the Player description's `equipment` item list again.
 
-### Equipped Commands
+### Commands String
 
 - Spreadsheet label: **When Equipped / Unequipped**
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
-  `this.equipCommands`
-
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.commandsString`
+  
 This is a comma-separated list of [bot commands](../commands/bot_commands.md) that will be executed when an Inventory
-Item using this Prefab is equipped. Note that this shares the same spreadsheet cell as the Prefab's unequipped commands,
-with both sets of commands separated by a forward slash (`/`). If no unequipped commands are desired, the forward slash
-can be omitted from the cell.
+Item using this Prefab is equipped. A comma-separated list of bot commands that will be executed when the Inventory
+Item is unequipped can also be included, with both sets separated by a forward slash (`/`). If no unequipped commands
+are desired, then the forward slash can be omitted from the cell. If no equipped commands are desired, the forward
+slash should be the first character in the cell, with the unequipped commands following it.
+
+Note that when writing equipped and unequipped bot commands, the `player` argument will always refer to the Player the
+Inventory Item belongs to.
+
+### Equipped Commands
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.equippedCommands`
+
+This is an internal attribute which contains a list of commands that will be executed when an Inventory Item using this
+Prefab is equipped.
 
 ### Unequipped Commands
 
 - Spreadsheet label: **When Equipped / Unequipped**
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
-  `this.unequipCommands`
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+  `this.unequippedCommands`
 
-This is a comma-separated list of bot commands that will be executed when an Inventory Item using this Prefab is
-unequipped. Note that this shares the same spreadsheet cell as the Prefab's equipped commands, with both sets of
-commands separated by a forward slash (`/`). If no equipped commands are desired, the forward slash should be the first
-character in the cell, with the unequipped commands following it.
+This is an internal attribute which contains a list of commands that will be executed when an Inventory Item using this
+Prefab is unequipped.
 
 ### Inventory
 
@@ -414,9 +445,9 @@ character in the cell, with the unequipped commands following it.
   attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Inventory Slot](inventory_slot.md)>
   `this.inventory`
 
-This is a collection of Inventory Slot objects that instances of this Prefab will have. Room Items and Inventory Items
-with Inventory Slots are capable of containing other Items of the same type (i.e. a Room Item can contain other Room
-Items, and an Inventory Item can contain other Inventory Items).
+This is a collection of [Inventory Slot](inventory_slot.md) objects that instances of this Prefab will have. Room Items
+and Inventory Items with Inventory Slots are capable of containing other Items of the same type (i.e. a Room Item can
+contain other Room Items, and an Inventory Item can contain other Inventory Items).
 
 In order to define an Inventory Slot for a Prefab, the ID of the Inventory Slot and its `capacity` should be given,
 separated by a colon (`:`). For example, a Prefab with the ID "PANTS" might have two Inventory Slots, named "LEFT
@@ -454,8 +485,7 @@ the Room, Alter Ego will send "Seamus puts a MALLET in the GUITAR CASE."
 ### Description
 
 - Spreadsheet label: **Description**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.description`
+- Class attribute: [Description](description.md) `this.description`
 
 This is the description of the Prefab. When a Player inspects an instance of this Prefab, they will receive a parsed
 version of this string. Any item lists in a Prefab's description _must_ be blank. Note that when a Player inspects an
@@ -467,6 +497,53 @@ information.
 ### Procedural Options
 
 - Class attribute: [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>> `this.proceduralOptions`
+
+This is an internal attribute which contains a map where all of the keys are the named `procedural` tags in the
+Prefab's description, and the values are all of the named `poss` tags belonging to each one. For more information, see
+the [procedural](../../moderator_guide/writing_descriptions.md#procedural) and
+[poss](../../moderator_guide/writing_descriptions.md#poss) sections of the article on writing descriptions.
+
+Procedural options can only affect Prefabs aesthetically. They cannot affect the Prefab's functionality. So, for
+example, it is not possible to create procedural options that allow the Prefab to inflict or cure different Status
+Effects, or alter what Equipment Slots it can be equipped to. Additionally, if a Prefab is usable as an ingredient in a
+Recipe, or it is used as a requirement or solution to a Puzzle, or is otherwise referenced by other game entities, then
+all instances of that Prefab, regardless of procedural options, will be treated the same.
+
+So, for example, it is not possible to create a generic `KEY` Prefab that can be used to unlock specific `LOCKER`
+Puzzles based on what procedural selections it was instantiated with. All instances of that `KEY` Prefab would be able
+to solve every Puzzle in which it was listed as a requirement. In such a scenario, they would need to be made into
+multiple entirely different Prefabs.
+
+Procedural options _can_ be used to create Prefabs with different descriptions; that is their primary purpose. However,
+they can also be used to create Prefabs with names and containing phrases that differ based on which procedural is
+selected when it is instantiated as an Item. For more information on how to do this, see the sections on
+[possible names](#possible-names) and [possible containing phrases](#possible-containing-phrases).
+
+Because procedural options can only affect Prefabs aesthetically, their primary use case is to allow Items to be
+created with small, minor variations, without making them entirely separate Prefabs. This is extremely useful in
+reducing the size of the spreadsheet---especially when these Prefabs are used in Recipes.
+
+To give an example, suppose there is a series of [crafting](recipe.md#crafting) Recipes that allow a Player to create
+a sandwich consisting of one slice of cheese and/or one slice of meat. Because of the mechanics of crafting Recipes,
+there must be a Prefab for every possible combination of cheese and meat. Assuming meat and cheese will always have the
+same number of varieties, \\(n\\), then the number of Prefabs that would be needed to account for every possible
+combination would be calculated with the formula:
+
+\\[ n^2 + 2n \\]
+
+And the number of crafting Recipes that would be required to create every variation (keeping in mind that ingredients
+can be added in any order) would be calculated with the formula:
+
+\\[ 2n^2 + 2n \\]
+
+In effect, this means that in order to allow the Player to create sandwiches with one of 4 different kinds of meat
+and/or one of 4 different kinds of cheese, 24 Prefabs and 40 Recipes would need to be created. In order to add just one
+more kind of meat and one more kind of cheese would necessitate _35_ Prefabs and _60_ Recipes.
+
+However, this can be avoided by creating just one `CHEESE` Prefab and one `MEAT` Prefab, with procedural options for
+the different kinds. Then, only 3 Prefabs and 4 Recipes need to be created. And since procedural options are
+significantly easier to add---it is as simple as adding a new tag in the Prefab's description---this also allows for
+more varieties of meat and cheese than would be feasible if they were all separate Prefabs. 
 
 ### Row
 

@@ -211,7 +211,7 @@ Unlike `this.products`, they are stored in alphabetical order, sorted by Prefab 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.initiatedDescription`
 
-This is a description that indicates when a Recipe has begun being processed. When a Player activates an Fixture that can
+This is a description that indicates when a Recipe has begun being processed. When a Player activates a Fixture that can
 process this Recipe and all of the ingredients required for it are contained within the Fixture, they will receive a
 parsed version of this string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md)
 for more information. Note that unlike most other data types, the `this` keyword does not refer to the Recipe, but
@@ -228,7 +228,7 @@ Crafting-type Recipes will never use this text because they are completed instan
   `this.completedDescription`
 
 This is a description that indicates when a Recipe has finished being processed. When a Player crafts two Inventory
-Items together or an Fixture finishes processing a Recipe that they initiated by activating the Fixture and they are still
+Items together or a Fixture finishes processing a Recipe that they initiated by activating the Fixture and they are still
 in the same Room as the Fixture, they will receive a parsed version of this string. Just like the initiated description,
 the `this` keyword refers to the Fixture processing the Recipe. However, in crafting-type Recipes, the `this` keyword
 does refer to the Recipe itself.
@@ -240,7 +240,7 @@ does refer to the Recipe itself.
   `this.uncraftedDescription`
 
 When a Player uncrafts an Inventory Item, they will receive a parsed version of this string. Because uncraftable Recipes
-cannot have an Fixture tag, the `this` keyword will always refer to the Recipe itself.
+cannot have a Fixture tag, the `this` keyword will always refer to the Recipe itself.
 
 ### Row
 
@@ -348,9 +348,9 @@ If both ingredients are non-discreet, then the Narration will instead be:
 Processing is a complex game mechanic that uses Recipes. It makes use of
 the [processRecipes Fixture method](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L96).
 
-Recipes can be processed in an Fixture as long as that Fixture is [activated](fixture.md#activated) and has
+Recipes can be processed in a Fixture as long as that Fixture is [activated](fixture.md#activated) and has
 a [Recipe tag](fixture.md#recipe-tag) that matches the Recipe's Fixture tag, regardless of how the Fixture was activated.
-There are four ways an Fixture can be activated:
+There are four ways a Fixture can be activated:
 
 - By a Player using the [use player command](../commands/player_commands.md#use),
 - By a moderator using the [object moderator command](../commands/moderator_commands.md#object),
@@ -358,7 +358,7 @@ There are four ways an Fixture can be activated:
   the [object bot command](../commands/bot_commands.md#object), or
 - By being loaded from the spreadsheet with its activation state being set to `true`.
 
-While an Fixture with a Recipe tag is activated, Alter Ego will attempt every second
+While a Fixture with a Recipe tag is activated, Alter Ego will attempt every second
 to [find a Recipe](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L140)
 that can be processed by the Fixture. In order to determine this, it looks for all Items contained in the Fixture, as well
 as any Items contained inside those Items (recursively). Next, it checks all Recipes whose Fixture tag matches the

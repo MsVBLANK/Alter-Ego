@@ -627,7 +627,7 @@ This is the Player's current Z coordinate.
   `this.hidingSpot`
 
 This is a string which contains the name of the Fixture the Player is currently hiding in. Since this is just a string,
-it can be set manually on the spreadsheet to anything, whether it's the name of an Fixture in the Room or not. If the
+it can be set manually on the spreadsheet to anything, whether it's the name of a Fixture in the Room or not. If the
 Player is not currently hidden, this should be left blank.
 
 ### Status

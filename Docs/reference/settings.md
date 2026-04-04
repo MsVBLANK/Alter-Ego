@@ -99,7 +99,7 @@ changed to any number higher than diceMin.
 ### DEFAULT_DROP_FIXTURE
 
 This is the name of the [Fixture](../data_structures/fixture.md) in each room that players will drop Items on if they
-don't specify one themselves. Every Room must have an Fixture with this name capable of holding Items.
+don't specify one themselves. Every Room must have a Fixture with this name capable of holding Items.
 
 *Default: `FLOOR`*
 

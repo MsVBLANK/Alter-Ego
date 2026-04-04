@@ -308,7 +308,7 @@ write descriptions that change:
   <s>You step out of the TRUCK into a <if cond="this.getExit('BLAST DOOR').unlocked === false">dark cave, which is illuminated only by flashlight</if><if cond="this.getExit('BLAST DOOR').unlocked === true">dimly lit cave, with the only light coming from outside</if>.</s>
   ```
 
-If the description belongs to an [Fixture](../reference/data_structures/fixture.md), you can write descriptions that
+If the description belongs to a [Fixture](../reference/data_structures/fixture.md), you can write descriptions that
 change:
 
 - Based on whether the Fixture's child Puzzle has been solved:

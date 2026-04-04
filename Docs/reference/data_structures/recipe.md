@@ -33,7 +33,7 @@ point.
 - Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.ingredientsStrings`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](#recipe-items). Ingredients
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](recipe_item.md). Ingredients
 determine what Room Items or Inventory Items are required for the Recipe. Multiple Recipes can have the same list
 of ingredients.
 
@@ -55,7 +55,6 @@ Processing-type Recipes:
 - Must not have more than one of the same Prefab as ingredients.
 
 Note that the final rule does not prohibit a Recipe from requiring multiple instances of the same ingredient.
-See the section on [Recipe Item format](#recipe-items) for more information.
 
 Additionally, both Recipe types must not include ingredients that are containers with more than one
 [Inventory Slot](inventory_slot.md), or more than one container.

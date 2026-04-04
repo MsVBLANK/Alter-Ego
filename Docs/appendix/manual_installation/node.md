@@ -311,4 +311,4 @@ you'll see:
 
 ![](../../images/KoETySR.png)
 
-You can now use Alter Ego to run a game of the Neo World Program. Good luck!
+You can now use Alter Ego. Good luck!

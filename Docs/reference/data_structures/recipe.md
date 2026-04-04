@@ -1,6 +1,6 @@
 # Recipe
 
-A **Recipe** is a data structure in the Neo World Program. Its primary purpose is to allow [Players](player.md) to
+A **Recipe** is a data structure used by Alter Ego. Its primary purpose is to allow [Players](player.md) to
 transform [Room Items](room_item.md)
 or [Inventory Items](inventory_item.md) into other Items using game-like crafting mechanics.
 

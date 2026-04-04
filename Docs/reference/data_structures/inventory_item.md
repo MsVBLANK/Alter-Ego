@@ -1,6 +1,6 @@
 # Inventory Item
 
-An Inventory Item is a data structure in the Neo World Program. It represents an item that is currently possessed by
+An Inventory Item is a data structure used by Alter Ego. It represents an item that is currently possessed by
 a [Player](player.md). It is an instance of a [Prefab](prefab.md), and is similar to a [Room Item](room_item.md).
 
 ## Attributes

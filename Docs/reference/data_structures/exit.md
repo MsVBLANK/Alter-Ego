@@ -1,6 +1,6 @@
 # Exit
 
-An **Exit** is a data structure in the Neo World Program. It represents an exit in a [Room](room.md).
+An **Exit** is a data structure used by Alter Ego. It represents an exit in a [Room](room.md).
 
 ## Attributes
 

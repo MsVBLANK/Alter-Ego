@@ -4,7 +4,7 @@
 
 # About
 
-- [Neo World Program](about/nwp.md)
+- [Alter Ego](about/alter_ego.md)
 - [Discord](about/discord.md)
 
 # Player Guide

@@ -1,6 +1,6 @@
 # Recipe Item
 
-A **Recipe Item** is a data structure in the Neo World Program. It represents an ingredient or product
+A **Recipe Item** is a data structure used by Alter Ego. It represents an ingredient or product
 [Prefab](prefab.md) in a [Recipe](recipe.md), with extra information to improve recipe flexibility.
 
 ## Attributes

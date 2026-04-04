@@ -1,6 +1,6 @@
 # Puzzle
 
-A **Puzzle** is a data structure in the Neo World Program. Its primary purpose is to allow [Players](player.md) to
+A **Puzzle** is a data structure used by Alter Ego. Its primary purpose is to allow [Players](player.md) to
 interact with the game world and change its state in predictable, predefined ways. While this can be in the form of a
 gameplay puzzle that the Player can solve, a Puzzle can be far simpler than what would traditionally be called a puzzle
 in most games.

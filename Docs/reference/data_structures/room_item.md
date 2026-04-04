@@ -1,6 +1,6 @@
 # Room Item
 
-A Room Item is a data structure in the Neo World Program. It represents an item in a [Room](room.md)
+A Room Item is a data structure used by Alter Ego. It represents an item in a [Room](room.md)
 that a [Player](player.md) can take with them. It is an instance of a [Prefab](prefab.md), and is similar to
 an [Inventory Item](inventory_item.md).
 

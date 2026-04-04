@@ -1,6 +1,6 @@
 # Event
 
-An Event is a data structure in the Neo World Program. Its primary purpose is to
+An Event is a data structure used by Alter Ego. Its primary purpose is to
 allow [moderators](../../moderator_guide/moderating.md) to create a more dynamic game world capable of automatically
 changing its state in predictable, predefined ways. [Players](player.md) cannot directly interact with Events. In most
 cases, Events are completely autonomous, requiring little to no intervention from Players or moderators.

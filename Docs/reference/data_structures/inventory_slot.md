@@ -1,6 +1,6 @@
 # Inventory Slot
 
-An **Inventory Slot** is a data structure in the Neo World Program.
+An **Inventory Slot** is a data structure used by Alter Ego.
 It represents an inventory slot on a [Prefab](prefab.md), [Inventory Item](inventory_item.md), or [Room Item](room_item.md).
 
 Inventory Slots are defined *entirely* within the **Contains Inventory Slots** column of a Spreadsheet.

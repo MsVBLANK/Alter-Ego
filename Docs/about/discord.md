@@ -27,9 +27,9 @@ even when they're offline.
 
 Discord members can also direct message each other outside of a server. They can create group DMs as well.
 
-## Neo World Program
+## Gameplay Implementation
 
-This section lists how Discord is used to facilitate the Neo World Program.
+This section lists how Discord is used to facilitate the game.
 
 A game is contained in one and only one Discord server. It is run by Alter Ego.
 
@@ -65,7 +65,7 @@ channel of the Room that Player is in.
 
 ## Limitations
 
-Discord servers have a number of limits. The following limitations are relevant to Alter Ego and the Neo World Program:
+Discord servers have a number of limits. The following limitations are relevant to Alter Ego and the game:
 
 * A server can have _at most_ **500 channels** - text, voice, and categories combined. Once 500 channels are reached, no
   more channels can be created.
@@ -88,7 +88,7 @@ Discord servers have a number of limits. The following limitations are relevant 
     * A Player's name must be 32 characters or fewer.
 
 Another limit involves the **Read Message History** permission. When a member doesn't have this permission (which is
-recommended for the Neo World Program), they will not be able to see messages sent any time they didn't have permission
+recommended for gameplay purposes), they will not be able to see messages sent any time they didn't have permission
 to read a channel during their current Discord session. A Discord session can loosely be defined as the period of time
 starting when a member opens the Discord application and ending when they close it. This can mean different things
 depending on what version of the Discord application the user is using:
@@ -103,12 +103,11 @@ depending on what version of the Discord application the user is using:
 
 When a session ends, all messages that a user without the Read Message History permission was previously able to read
 will disappear when the user opens Discord again. For this reason, the Discord desktop app provides the best experience
-when playing the Neo World Program because it most easily retains a session. The Discord browser app also works somewhat
-well for this purpose. However, using the Discord mobile app to play the Neo World Program is _severely_ not
-recommended. Unless the user keeps the app open constantly, never switches to another app, and never locks their device,
-a continuous session cannot be guaranteed, and thus the message history they have access to will clear _very_
-frequently. If you would like to see this issue
-resolved, [upvote this thread in the Discord Feedback forums](https://support.discordapp.com/hc/en-us/community/posts/360046946331-Change-read-message-history-permission).
+when playing the game because it most easily retains a session. The Discord browser app also works somewhat well for
+this purpose. However, using the Discord mobile app to play is _severely_ not recommended. Unless the user keeps the
+app open constantly, never switches to another app, and never locks their device, a continuous session cannot be
+guaranteed, and thus the message history they have access to will clear _very_ frequently. If you would like to see
+this issue resolved, [upvote this thread in the Discord Feedback forums](https://support.discordapp.com/hc/en-us/community/posts/360046946331-Change-read-message-history-permission).
 
 ## Known bugs
 

@@ -1,6 +1,6 @@
 # Equipment Slot
 
-An Equipment Slot is a data structure in the Neo World Program. It represents a part of a [Player's](player.md) body
+An Equipment Slot is a data structure used by Alter Ego. It represents a part of a [Player's](player.md) body
 that they can equip [Inventory Items](inventory_item.md) to.
 
 Equipment Slots do not have a dedicated sheet on the spreadsheet. Rather, they are derived from data on the Inventory

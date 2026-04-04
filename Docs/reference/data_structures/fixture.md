@@ -3,7 +3,7 @@
 > NOTE: These were previously called Objects, but were renamed to avoid confusion with
 > JavaScript's [Object data type](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object).
 
-A Fixture is a data structure in the Neo World Program. It represents a fixed structure within a [Room](room.md) that
+A Fixture is a data structure used by Alter Ego. It represents a fixed structure within a [Room](room.md) that
 cannot be taken or moved by a [Player](player.md). Their primary purpose is to give structure and interactivity to a
 Room.
 

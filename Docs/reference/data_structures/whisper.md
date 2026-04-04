@@ -1,6 +1,6 @@
 # Whisper
 
-A **Whisper** is a data structure in the Neo World Program. It represents a group of two or more [Players](player.md)
+A **Whisper** is a data structure used by Alter Ego. It represents a group of two or more [Players](player.md)
 speaking quietly to each other such that no one else in the [Room](room.md) can hear them.
 
 A normal Whisper can only be created when a Player or [moderator](../../moderator_guide/moderating.md) uses

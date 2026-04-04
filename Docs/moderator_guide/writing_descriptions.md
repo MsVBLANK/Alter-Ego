@@ -1,7 +1,7 @@
 # Writing Descriptions
 
-Writing for the Neo World Program is somewhat complex, but thanks to Alter Ego's
-custom [parser module](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Modules/parser.js),
+Writing for Alter Ego is somewhat complex, but thanks to its custom
+[parser module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/parser.js),
 it is incredibly flexible. Alter Ego makes use of [XML](https://en.wikipedia.org/wiki/XML) formatting to understand what
 the [moderator](moderating.md) has written so that it can make changes as necessary.
 

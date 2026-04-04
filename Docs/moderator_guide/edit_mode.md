@@ -1,12 +1,12 @@
 # Edit Mode
 
-Edit mode is a special mode in the Neo World Program that drastically limits gameplay. It can be toggled on and off by
-a [moderator](moderating.md) at will using the [editmode command](../reference/commands/moderator_commands.md#editmode).
+Edit mode is a special mode of Alter Ego that drastically limits gameplay. It can be toggled on and off by a
+[moderator](moderating.md) at will using the [editmode command](../reference/commands/moderator_commands.md#editmode).
 
 ## Purpose
 
 Most of the game world data is stored on a Google Sheets spreadsheet. However, this data is useless by itself. Alter Ego
-uses this data to facilitate the Neo World Program, but reading it directly from the spreadsheet would be inefficient,
+uses this data to facilitate gameplay, but reading it directly from the spreadsheet would be inefficient,
 as doing so would necessitate making frequent requests to
 the [Google Sheets API](https://developers.google.com/sheets/api/guides/concepts), which would introduce additional
 latency and increase the potential for data asynchrony due to the inherent unpredictability of making requests over the

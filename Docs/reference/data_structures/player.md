@@ -1,6 +1,6 @@
 # Player
 
-A Player is a data structure in the Neo World Program. It represents a player that can interact with the game world in a
+A Player is a data structure used by Alter Ego. It represents a player that can interact with the game world in a
 variety of ways.
 
 There are two types of Players: full Players and NPCs. A full Player is associated with a Discord account, and can be

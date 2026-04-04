@@ -1,6 +1,6 @@
 # Status
 
-A **Status**, also called a **Status Effect**, is a data structure in the Neo World Program. It represents a condition
+A **Status**, also called a **Status Effect**, is a data structure used by Alter Ego. It represents a condition
 that affects a [Player](player.md).
 
 Status Effects that are loaded from the [spreadsheet](index.md) are static; once loaded, they do not change in any way.

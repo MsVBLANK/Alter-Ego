@@ -1,6 +1,6 @@
 # Data Structures
 
-In the Neo World Program, all of the map data is stored on a Google Sheet. There are a number of reasons for this:
+All game data is stored on a Google Sheet. There are a number of reasons for this:
 
 1. It allows multiple [moderators](../../moderator_guide/moderating.md) to collaborate and develop the map together.
 1. It requires the data be organized in a consistent way which is easily readable by a bot such as Alter Ego.
@@ -17,7 +17,7 @@ that are not saved to the spreadsheet.
 ## Creation
 
 In order to create a workable spreadsheet, the latest version template should be duplicated into a moderator's Google
-Drive
-by [accessing this link](https://docs.google.com/spreadsheets/d/1ZA7LZL3XIvw7QieVcEAURpacvznr3ceNd60128vCA_I/edit?usp=sharing),
+Drive by
+[accessing this link](https://docs.google.com/spreadsheets/d/1ZA7LZL3XIvw7QieVcEAURpacvznr3ceNd60128vCA_I/edit?usp=sharing),
 opening the **File** menu, and selecting **Make a copy**. At this point, they will have a copy that they can edit as
 they please.

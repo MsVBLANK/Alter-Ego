@@ -348,7 +348,7 @@ alterego  | AlterEgo-test is online on 1 server.
 alterego  | Loaded all commands.
 ```
 
-Congratulations! If everything went well, you can now use Alter Ego to run a game of the Neo World Program. Good luck!
+Congratulations! If everything went well, you can now use Alter Ego. Good luck!
 
 ### Updating Alter Ego
 

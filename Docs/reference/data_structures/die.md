@@ -1,6 +1,6 @@
 # Die
 
-A Die is a data structure in the Neo World Program. Its purpose is to add a degree of randomness to gameplay. The result
+A Die is a data structure used by Alter Ego. Its purpose is to add a degree of randomness to gameplay. The result
 of a Die roll can be modified based on various factors, most notably a [Player's](player.md) [stats](player.md#stats).
 Players cannot directly interact with Dice, and their very presence is hidden from a Player's view; there are no
 circumstances in which a Player will see the results of a Die roll directly. Currently, there are only two cases where

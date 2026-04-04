@@ -1,11 +1,11 @@
 # Moderating
 
-Moderating a Neo World Program game is a difficult endeavor. Although Alter Ego was designed to make that process
+Moderating is a difficult endeavor. Although Alter Ego was designed to make the process
 easier, it presents its own challenges. In this tutorial, the process will be explained.
 
 ## Purpose
 
-The purpose of a moderator in the Neo World Program is to facilitate gameplay. While Alter Ego does most of the heavy
+The purpose of a moderator is to facilitate gameplay. While Alter Ego does most of the heavy
 lifting, there are many things it cannot do. A moderator must draw the Map, program the game world on the spreadsheet,
 create and manage the server, host Alter Ego, respond to player inquiries, handle player actions that aren't automated,
 handle combat, fix bugs, and much more.
@@ -16,20 +16,20 @@ have multiple moderators running a game so that the responsibilities are not all
 
 ## Motivation
 
-Before you can become a moderator, you should think about whether it's right for you. Moderating a Neo World Program
+Before you can become a moderator, you should think about whether it's right for you. Moderating a
 game is not easy, and it takes a specific kind of person to excel at it. Consider why you want to do so before setting
-anything in stone. Do you have a story you want to tell that would be best told in a Neo World Program game? Do you have
+anything in stone. Do you have a story you want to tell that would be best told in a game using Alter Ego? Do you have
 experience in game design or an interest in learning about it? Do you easily grasp basic programming concepts? Do you
 find repetitive tasks enjoyable? Do you have enough free time to dedicate months of your life to programming, writing,
 and testing a game world? Will you have enough free time and energy to moderate game sessions for several hours every
 day? Will you be able to financially support yourself and tend to your physical needs during that time? If you can
-answer yes to all of these questions, then you're a perfect fit to moderate a Neo World Program game. If you answer no
-to any of them, consider whether the Neo World Program is right for you. If you simply want to host a Danganronpa-style
-killing game role play, there are much simpler alternatives that you could use instead.
+answer yes to all of these questions, then you're a perfect fit to moderate a game with Alter Ego. If you answer no
+to any of them, consider whether this style of gameplay is right for you. If you simply want to host a role play,
+there are much simpler alternatives that you could use instead.
 
 ## First steps
 
-Once you've decided that you want to be a Neo World Program moderator, your first step should be to install and set up
+Once you've decided that you want to be a moderator, your first step should be to install and set up
 Alter Ego. To do that, see the following articles:
 
 - [Installation and Setup](installation.md)
@@ -52,13 +52,13 @@ loading, parsing, testing, and fixing your game until it's second nature to you.
 ## Planning a game
 
 Once you're intimately familiar with Alter Ego's workings, you can begin planning a real game. Consider what kind of
-story you want to tell. The best kinds of stories told through the Neo World Program have many moving pieces that are
+story you want to tell. The best kinds of stories told in this game environment have many moving pieces that are
 gradually revealed throughout the course of the game. This style of storytelling lends itself well to the nature of the
-Neo World Program, where players are only aware of things they've personally seen. It allows each player to attempt to
-piece together the clues in order to shine light on the overarching mysteries. The specifics of what story you want to
-tell are up to you, but you should at least have a general plan before formally announcing your game.
+Alter Ego's gameplay style, where players are only aware of things they've personally seen. It allows each player to
+attempt to piece together the clues in order to shine light on the overarching mysteries. The specifics of what story
+you want to tell are up to you, but you should at least have a general plan before formally announcing your game.
 
-Due to how much work it takes to develop a Neo World Program game, it is strongly recommended that you select your
+Due to how much work it takes to develop a game for Alter Ego, it is strongly recommended that you select your
 players several months in advance. Having a cast of characters set in stone long before the game is held makes it
 significantly easier to tailor the game world to them.
 
@@ -121,7 +121,7 @@ their data in advance without loading them into the game world before the game b
 the server.
 
 This section of this tutorial is a work in progress. There is always more to consider when writing your game. Writing is
-a learned skill in general, as it is for the Neo World Program.
+a learned skill in general, as it is for games using Alter Ego.
 
 ## Preparing a game
 
@@ -159,7 +159,7 @@ you should keep Alter Ego running _without_ having any game data loaded until it
 testing, you can simply reboot Alter Ego to unload everything.
 
 During this step, you should consult with all of the players and decide when the game sessions will be held. For a
-killing game role play, the Neo World Program works best in daily 8-hour sessions, with break days between chapters.
+killing game role play, the Alter Ego works best with daily 8-hour sessions, with break days between chapters.
 This is a huge time commitment, and coordinating the schedules of 16 or more people is a difficult task. Try to find the
 time that consistently works for the most people possible. Of course, choosing the date that the role play begins on is
 hard, too - arguably even more so than selecting a time for the sessions to begin. The first day of the session is one
@@ -318,6 +318,6 @@ they may want to make and give them set options to choose from so that you're no
 
 The final moments of the game will be filled with emotion as the players reflect on everything they've been through and
 resolve to face the future they chose. Let yourself be emotional with them. Be proud of them for making it this far, and
-be proud of yourself for everything you've accomplished, too. Running a game of the Neo World Program is a difficult
+be proud of yourself for everything you've accomplished, too. Running a game of with Alter Ego is a difficult
 endeavor, but if you've made it to this point, then you've succeeded. It feels immensely rewarding to reach the ending,
 to say that you finished a game. Enjoy it. And when everyone is ready, end the game by issuing the command, `.endgame`.

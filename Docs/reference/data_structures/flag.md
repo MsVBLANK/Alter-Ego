@@ -130,7 +130,7 @@ function with the `evaluate` parameter set to `true`.
 
 ### Command Sets
 
-- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<FlagCommandSet> `this.commandSets`
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)\<FlagCommandSet> `this.commandSets`
 
 This is an internal attribute which consists of a list of command set objects. Command set objects
 have the following structure:

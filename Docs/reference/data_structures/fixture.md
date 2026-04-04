@@ -71,7 +71,7 @@ This is an internal attribute which simply contains a reference to the actual Pu
   `this.recipeTag`
 
 This a keyword or phrase assigned to a Fixture that allows it to carry out [Recipes](recipe.md) that require that tag.
-An Fixture can only have a single Recipe tag. There are no rules for how Recipe tags must be named.
+A Fixture can only have a single Recipe tag. There are no rules for how Recipe tags must be named.
 
 ### Activatable
 
@@ -94,7 +94,7 @@ activated.
 This is another Boolean value indicating whether the Fixture is currently checking for and processing Recipes. If this is
 `true`, then the Fixture will check every second if it contains the necessary ingredients for any Recipe with a matching
 tag. If it does, then the Recipe will be processed and the Recipe's products will be instantiated in the Fixture when it
-is complete. An Fixture can only process one Recipe at a time. If it is found that the Fixture is able to process multiple
+is complete. A Fixture can only process one Recipe at a time. If it is found that the Fixture is able to process multiple
 Recipes with the ingredients it contains, then the Fixture will process whichever Recipe has the highest number of
 matched ingredients, and the remaining Items will be left untouched. If the Fixture is still able to carry out a Recipe
 with the remaining Items, then it will do so upon finishing the first one, as long as it is not automatically

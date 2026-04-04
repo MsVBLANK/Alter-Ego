@@ -128,7 +128,7 @@ Generates an item or inventory item in the specified location. The prefab ID mus
 If the prefab has procedural options, they can be manually set in parentheses.
 
 To instantiate an item, the name of the room must be given at the end, following "at". The name of the container to put
-it in must also be given. If the container is an fixture with a child puzzle, the puzzle will be its container. If the
+it in must also be given. If the container is a Fixture with a child puzzle, the puzzle will be its container. If the
 container is another item, the item's name or container identifier can be used. The name of the inventory slot to
 instantiate the item in can also be specified.
 

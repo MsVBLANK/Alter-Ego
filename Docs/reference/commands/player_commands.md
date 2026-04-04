@@ -118,7 +118,7 @@ Performs a gesture.
 Performs one of a set of predefined gestures. Everybody in the room with you will see you do this gesture. This allows
 you to communicate during times where you are unable to speak for some reason, though you can gesture at any time, with
 few exceptions. Certain gestures may require a target to perform them. For example, a gesture might require you specify
-an Exit, an Fixture, another Player, etc. A gesture can only be performed with one target at a time. Gestures can be made
+an Exit, a Fixture, another Player, etc. A gesture can only be performed with one target at a time. Gestures can be made
 impossible if you are inflicted with certain Status Effects. For example, if you are concealed, you cannot smile, frown,
 etc. as nobody would be able to see it. To see a list of all possible gestures, send `.gesture list`.
 

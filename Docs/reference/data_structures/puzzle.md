@@ -85,8 +85,8 @@ This is the Room the Puzzle can be found in. This must match the Room's name exa
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.parentObjectName`
 
-This is the name of an [Fixture](fixture.md) that is associated with the Puzzle, if any. The parent Fixture must be in the
-same Room as the Puzzle referencing it. If the name of an Fixture is supplied, then a Player will be able to supply the
+This is the name of a [Fixture](fixture.md) that is associated with the Puzzle, if any. The parent Fixture must be in the
+same Room as the Puzzle referencing it. If the name of a Fixture is supplied, then a Player will be able to supply the
 name of the parent Fixture as an argument in the use command instead of the name of the
 Puzzle. [Narrations](narration.md) involving the Puzzle will also use the parent Fixture's name instead of the Puzzle's
 name. This is particularly useful if every Puzzle is given a unique name. For example, if the Puzzle is named "PANIC
@@ -96,7 +96,7 @@ Ego will send "Haru uses the YELLOW BUTTON." to the PANIC BUTTON's Room channel.
 
 Additionally, by assigning a Puzzle a parent Fixture, it becomes possible for the Puzzle to contain [Room Items](room_item.md).
 This allows Items to be made inaccessible until the Puzzle is solved, while also allowing Players to take and drop Items
-from/into the parent Fixture if the Puzzle is solved. When an Fixture capable of containing Items is assigned a child
+from/into the parent Fixture if the Puzzle is solved. When a Fixture capable of containing Items is assigned a child
 Puzzle, the [item list](../../moderator_guide/writing_descriptions.md#il) must be in the Puzzle's already solved
 description. If no parent Fixture is needed, this cell can simply be left blank on the spreadsheet.
 

@@ -94,7 +94,7 @@ BUTTON" and the parent Fixture is named "YELLOW BUTTON", then a Player will be a
 sending `.use YELLOW BUTTON` or `.use PANIC BUTTON`. When the Puzzle is interacted with by a Player named Haru, Alter
 Ego will send "Haru uses the YELLOW BUTTON." to the PANIC BUTTON's Room channel.
 
-Additionally, by assigning a Puzzle a parent Fixture, it becomes possible for the Puzzle to contain [Items](item.md).
+Additionally, by assigning a Puzzle a parent Fixture, it becomes possible for the Puzzle to contain [Room Items](room_item.md).
 This allows Items to be made inaccessible until the Puzzle is solved, while also allowing Players to take and drop Items
 from/into the parent Fixture if the Puzzle is solved. When an Fixture capable of containing Items is assigned a child
 Puzzle, the [item list](../../moderator_guide/writing_descriptions.md#il) must be in the Puzzle's already solved

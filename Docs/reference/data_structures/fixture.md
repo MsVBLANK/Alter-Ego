@@ -48,7 +48,7 @@ exist when a player tries to interact with it in any way.
   `this.childPuzzleName`
 
 This is the name of a [Puzzle](puzzle.md) that is associated with the Fixture, if any. The child Puzzle must be in the
-same Room as the Fixture referencing it. If the name of a Puzzle is supplied, then any [Items](item.md) contained within
+same Room as the Fixture referencing it. If the name of a Puzzle is supplied, then any [Room Items](room_item.md) contained within
 the Fixture will technically be contained within the child Puzzle. This allows Items to be made inaccessible until the
 child Puzzle is solved, while also allowing players to take and drop Items from/into the Fixture if the child Puzzle is
 solved. Additionally, when a Fixture containing Items is assigned a child Puzzle,

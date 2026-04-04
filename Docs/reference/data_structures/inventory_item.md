@@ -1,7 +1,7 @@
 # Inventory Item
 
 An Inventory Item is a data structure in the Neo World Program. It represents an item that is currently possessed by
-a [Player](player.md). It is an instance of a [Prefab](prefab.md), and is similar to an [Item](item.md).
+a [Player](player.md). It is an instance of a [Prefab](prefab.md), and is similar to a [Room Item](room_item.md).
 
 ## Attributes
 
@@ -167,7 +167,7 @@ the [use command](../commands/player_commands.md#use) Although this number is de
 it can be manually set to differ on the spreadsheet. If no number of uses is given, the Inventory Item can be used
 infinitely. If the Inventory Item is dropped, its uses will be retained when it's converted into an Item. This number
 can then be used when the subsequent Item is processed as part of a [Recipe](recipe.md). For more details, see the
-section about [Item uses](item.md#uses).
+section about [Room Item uses](room_item.md#uses).
 
 When this Inventory Item is used (assuming its Prefab is [usable](prefab.md#usable)) different things will happen
 depending on certain factors. First, it will inflict the Player with all of the [Status Effects](status.md) listed in

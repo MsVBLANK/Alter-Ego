@@ -106,7 +106,7 @@ contain [conditional formatting](../../moderator_guide/writing_descriptions.md#i
 ### Target
 
 - Class
-  attribute: [Exit](exit.md)|[Fixture](fixture.md)|[Item](item.md)|[Player](player.md)|[Inventory Item](inventory_item.md)
+  attribute: [Exit](exit.md)|[Fixture](fixture.md)|[Room Item](room_item.md)|[Player](player.md)|[Inventory Item](inventory_item.md)
   `this.target`
 
 This is an internal attribute which is only assigned when a Gesture is instantiated in the gesture Player method. It
@@ -115,4 +115,4 @@ to [make use of the target's class attributes](../../moderator_guide/writing_des
 Gesture requires an Fixture as a target, then the tag `<var v="this.target.name" />` can be used to insert
 the [name](fixture.md#name) of the Fixture in the Narration; if a Gesture requires an Item as a target, then the tag
 `<var v="this.target.singleContainingPhrase" />` can be used to insert
-the [single containing phrase](item.md#single-containing-phrase) of the Item in the Narration; and so on.
+the [single containing phrase](room_item.md#single-containing-phrase) of the Item in the Narration; and so on.

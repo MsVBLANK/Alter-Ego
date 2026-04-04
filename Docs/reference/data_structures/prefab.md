@@ -1,7 +1,7 @@
 # Prefab
 
 A **Prefab** is a data structure in the Neo World Program. It represents the concept of an item, and is the underlying
-data structure which gives [Items](item.md)
+data structure which gives [Room Items](room_item.md)
 and [Inventory Items](inventory_item.md) their properties.
 
 Prefabs are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
@@ -104,7 +104,7 @@ it should be non-negative.
 
 This is a whole number representing roughly how much the Prefab weighs in kilograms. This number determines whether a
 Player is capable of taking an Item using this Prefab with their [strength stat](player.md#strength). For more details,
-see the sections about [Item](item.md#weight)
+see the sections about [Room Item](room_item.md#weight)
 and [Inventory Item](inventory_item.md#weight) weights.
 
 ### Usable
@@ -146,7 +146,7 @@ See the following table for some examples of the resulting Narration:
   `this.uses`
 
 This is a whole number indicating how many times a single instance of this Prefab can be used. For more details, see the
-sections about [Item uses](item.md#uses) and [Inventory Item uses](inventory_item.md#uses).
+sections about [Room Item uses](room_item.md#uses) and [Inventory Item uses](inventory_item.md#uses).
 
 ### Effects Strings
 

@@ -445,9 +445,10 @@ Prefab is unequipped.
   attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Inventory Slot](inventory_slot.md)>
   `this.inventory`
 
-This is a collection of [Inventory Slot](inventory_slot.md) objects that instances of this Prefab will have. Room Items
-and Inventory Items with Inventory Slots are capable of containing other Items of the same type (i.e. a Room Item can
-contain other Room Items, and an Inventory Item can contain other Inventory Items).
+This is a collection of [Inventory Slot](inventory_slot.md) objects that instances of this Prefab will have, where the
+key is the Inventory Slot's ID. Room Items and Inventory Items with Inventory Slots are capable of containing other 
+Items of the same type (i.e. a Room Item can contain other Room Items,
+and an Inventory Item can contain otherInventory Items).
 
 In order to define an Inventory Slot for a Prefab, the ID of the Inventory Slot and its `capacity` should be given,
 separated by a colon (`:`). For example, a Prefab with the ID "PANTS" might have two Inventory Slots, named "LEFT

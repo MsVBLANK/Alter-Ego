@@ -1,21 +1,55 @@
 # Recipe Item
 
 A **Recipe Item** is a data structure used by Alter Ego. It represents an ingredient or product
-[Prefab](prefab.md) in a [Recipe](recipe.md), with extra information to improve recipe flexibility.
+[Prefab](prefab.md) in a [Recipe](recipe.md), with extra information to improve recipe flexibility. It is unrelated to
+[Room Items](room_item.md) and [Inventory Items](inventory_item.md), instead defining the ways in which these Items
+can be transformed via a Recipe.
+
+Recipe Items were created to better articulate the added complexity of Recipes as reworked in Alter Ego 2.0. These
+objects represent the necessary sheet data for Alter Ego to perform the transformations specified by a Recipe.
 
 ## Attributes
 
 Recipe Items are the internal data structure representing ingredients and products, and their technical information,
-in a Recipe. As such, most of their attributes serve this purpose. Note that if an attribute is _internal_, that
-means it only exists within the [RecipeItem class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/RecipeItem.ts). Internal
-attributes will be given in the "Class attribute" bullet point, preceded by their data type.
+in a Recipe. As such, all of their attributes serve this purpose, correlating to either the Ingredients column or
+Products column of a Recipe row.
 
 ### Recipe Item String
 
 - Class Attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.recipeItemString`
 
-This is the name of the Recipe Item, as entered on the spreadsheet.
+This is the name of the Recipe Item, as entered on the spreadsheet. This follows the "Recipe Item Syntax" of a
+Recipe's Products or Ingredients. The syntax follows a very flexible format which is a difficult format to wholly
+demonstrate in a human-readable manner, so some examples are provided here:
+
+* `PREFAB ID`
+  * Where "Prefab ID" is any given Prefab ID, consumed or produced similarly to Prefabs in recipes before
+  Alter Ego 2.0.
+* `1 PREFAB ID`
+  * Where `1` can be any whole number representing the quanity of Prefabs to consume or produce for the entire Recipe,
+  regardless of the amount of times the Recipe can be satisfied.
+* `1X PREFAB ID`
+  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the quanity
+  of Prefabs to consume or produce relative to the amount of times the Recipe can be satisfied.
+* `PREFAB ID [1X]`
+  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the number of
+  Prefab uses to consume or produce relative to the amount of times the Recipe can be satisfied.
+* `PREFAB ONE (PREFAB TWO)`
+  * Where `PREFAB ONE` can be any Prefab ID denoting a Prefab that can contain items, and `PREFAB TWO` can be any
+  Prefab ID that can fit inside its container.
+  * Prefab Two can also utilize the syntax for variable quantity or uses consumption, like so:
+  `PREFAB ONE (1X PREFAB TWO)`, `PREFAB ONE (PREFAB TWO [1X])`
+* `PREFAB ONE (PREFAB TWO + PREFAB THREE)`
+  * Where `PREFAB ONE` can be any Prefab ID denoting a Prefab that can contain items, `PREFAB TWO` can be any
+  Prefab ID that can fit inside its container, and `PREFAB THREE` is another Prefab ID that can fit inside its
+  container.
+
+The "variable" of a Recipe Item, represented as X above, can be used to make ingredients and products related to each other in uses or quantity. Some examples and explanations of this behavior are as follows:
+
+* `1 BLENDER CUP OF MILK (1X BANANA CHUNK)` ➡️ `1 BANANA MILKSHAKE [1X]`
+  * This example is a Processing-type Recipe, which produces one BANANA MILKSHAKE with as many uses as BANANA CHUNKS
+  were inside the BLENDER CUP OF MILK ingredient.
 
 ### Prefab ID
 

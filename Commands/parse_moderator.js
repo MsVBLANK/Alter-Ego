@@ -1,6 +1,7 @@
 ﻿import fs from 'fs';
 import Player from '../Data/Player.ts';
 import { parseDescriptionWithErrors } from '../Modules/parser.js';
+import { makeCopyable } from '../Modules/helpers.ts';
 import { EOL } from 'os';
 import { Collection } from 'discord.js';
 import {loadPlayerDefaults} from "../Modules/settingsLoader.ts";
@@ -84,7 +85,7 @@ export async function execute(game, message, command, args, moderator) {
     for (let i = 0; i < result.warnings.length; i++) {
         for (let j = 0; j < result.warnings[i].warnings.length; j++) {
             result.warnings[i].warnings[j] = result.warnings[i].warnings[j].replace(/\t/g, " ").replace(/\n/g, " ");
-            warnings.push(`Warning on ${result.warnings[i].cell}: ${result.warnings[i].warnings[j]}`);
+            warnings.push(`Warning on ${makeCopyable(result.warnings[i].cell)}: ${result.warnings[i].warnings[j]}`);
         }
     }
     if (warnings.length > 0) {
@@ -100,7 +101,7 @@ export async function execute(game, message, command, args, moderator) {
     for (let i = 0; i < result.errors.length; i++) {
         for (let j = 0; j < result.errors[i].errors.length; j++) {
             result.errors[i].errors[j] = result.errors[i].errors[j].replace(/\t/g, " ").replace(/\n/g, " ");
-            errors.push(`Error on ${result.errors[i].cell}: ${result.errors[i].errors[j]}`);
+            errors.push(`Error on ${makeCopyable(result.errors[i].cell)}: ${result.errors[i].errors[j]}`);
         }
     }
     if (errors.length > 0) {

@@ -244,7 +244,7 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
             const pluralName = namePair[1];
             const namesString = `${pluralName ? `${name}, ${pluralName}` : name}`;
             if (proceduralKey && proceduralValue)
-                possibleNamesStrings.push(`[${proceduralKey}=${proceduralValue}]: ${namesString}]`);
+                possibleNamesStrings.push(`[${proceduralKey}=${proceduralValue}: ${namesString}]`);
             else possibleNamesStrings.push(namesString);
         });
         return possibleNamesStrings.join(", ");

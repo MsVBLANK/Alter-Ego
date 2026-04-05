@@ -43,7 +43,6 @@ This is not a parameter, but a value derived from the attacker's specified stat.
 subtracted from the base roll. The stat roll modifier, \\(M\\), is calculated with the following formula:
 
 \\[ M = \left\lfloor \Bigl\lfloor \frac{1}{2}s - \frac{10}{6} \Bigr\rfloor + \frac{a - i}{a} \right\rfloor \\]
-Stat roll modifier = floor(floor( ( (s - 10) / 3) / 2 ) + (a - i) / a)
 
 In this formula are several variables:
 

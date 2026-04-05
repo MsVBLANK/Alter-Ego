@@ -248,30 +248,6 @@ cannot have a Fixture tag, the `this` keyword will always refer to the Recipe it
 
 This is an internal attribute, but it can also be found on the spreadsheet. This is the row number of the Recipe.
 
-## Recipe Items
-
-A Recipe Item refers to the syntax used to define ingredients and products within Recipes.
-The syntax follows a very flexible format, of which some examples are as follows:
-
-* `PREFAB ID`
-  * Where "Prefab ID" is any given Prefab ID, consumed or produced similarly to Prefabs in recipes before Alter Ego 2.0.
-* `1 PREFAB ID`
-  * Where `1` can be any whole number representing the quanity of Prefabs to consume or produce for the entire Recipe, regardless of the amount of times the Recipe can be satisfied.
-* `1X PREFAB ID`
-  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the quanity of Prefabs to consume or produce relative to the amount of times the Recipe can be satisfied.
-* `PREFAB ID [1X]`
-  * Where `1` can be any whole number, and `X` can be any uppercase basic Latin character, to represent the number of Prefab uses to consume or produce relative to the amount of times the Recipe can be satisfied.
-* `PREFAB ONE (PREFAB TWO)`
-  * Where `PREFAB ONE` can be any Prefab ID denoting a Prefab that can contain items, and `PREFAB TWO` can be any Prefab ID that can fit inside its container.
-  * Prefab Two can also utilize the syntax for variable quantity or uses consumption, like so: `PREFAB ONE (1X PREFAB TWO)`, `PREFAB ONE (PREFAB TWO [1X])`
-
-The "variable" of a Recipe Item, represented as X above, can be used to make ingredients and products related to each other in uses or quantity. Some examples and explanations of this behavior are as follows:
-
-* `1 BLENDER CUP OF MILK (1X BANANA CHUNK)` ➡️ `1 BANANA MILKSHAKE [1X]`
-  * This example is a Processing-type Recipe, which produces one BANANA MILKSHAKE with as many uses as BANANA CHUNKS were inside the BLENDER CUP OF MILK ingredient.
-
-<!--TODO: more examples!!!-->
-
 ## Crafting
 
 Crafting is a simple game mechanic that uses Recipes. It makes use of

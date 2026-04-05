@@ -52,3 +52,51 @@ another item.
 - Class Attribute: [Recipe Item](recipe_item.md) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.container`
 
+This is the Recipe Item that contains this Recipe Item. If this Recipe Item is not contained in another, then this is
+`null`.
+
+### Quantity
+
+- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+  `this.quantity`
+
+This is the quantity of the item to be used or created. Defaults to 1 if not given.
+
+### Quantity Variable Name
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.quantityVariableName`
+
+This is the variable name to use for the quantity of this item when processing the recipe. It must be either an empty
+string, or a single basic Latin character. Defaults to an empty string.
+
+### Uses
+
+- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+  `this.uses`
+
+This is the number of uses the item requires or will be produced with.
+
+### Uses Variable Name
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.usesVariableName`
+
+This is the variable name to use for the uses of this item when processing the recipe. It must be either an empty
+string, or a single basic Latin character. Defaults to an empty string.
+
+### Quantity Is Constant
+
+- Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+  `this.quantityIsConstant`
+
+Whether or not the quantity of this recipe item is constant. If a quantity is given, but it is not accompanied by a
+variable, it is assumed to be constant.
+
+### Uses Is Constant
+
+- Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+  `this.usesIsConstant`
+
+Whether or not the uses of this recipe item is constant. If a number of uses is given, but it is not accompanied by a
+variable, it is assumed to be constant.

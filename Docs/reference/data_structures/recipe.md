@@ -11,12 +11,12 @@ make changes to the Recipes sheet. As a result, the Recipes sheet can be freely 
 
 This article will impose two terms:
 
-* **Crafting** is the act of transforming two Recipe Items into up to two Recipe Items using the
-  [craft](../commands/player_commands.md#craft) [command](../commands/moderator_commands.md#craft).
+* **Crafting** is the act of transforming two Recipe Items into up to two Recipe Items in a
+  [Craft Action](action.md#craft-action).
 * **Processing** is the act of transforming one or more Recipe Items into zero or more Recipe Items using a
   [Fixture](fixture.md).
 
-Every recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
+Every Recipe is either a crafting-type Recipe or a processing-type Recipe, but not both.
 
 ## Attributes
 
@@ -54,7 +54,8 @@ Processing-type Recipes:
 - Can have infinitely many ingredients, and
 - Must not have more than one of the same Prefab as ingredients.
 
-Note that the final rule does not prohibit a Recipe from requiring multiple instances of the same ingredient.
+Note that the final rule does not prohibit a Recipe from requiring multiple instances of the same ingredient. For more
+information, see the article on [Recipe Items](recipe_item.md).
 
 Additionally, both Recipe types must not include ingredients that are containers with more than one
 [Inventory Slot](inventory_slot.md), or more than one container.
@@ -85,9 +86,8 @@ They are stored in alphabetical order, sorted by Prefab ID.
   `this.uncraftable`
 
 This is a Boolean value indicating whether or not this Recipe can be reversed. If this is `true`, then
-the [uncraft](../commands/player_commands.md#uncraft) [command](../commands/moderator_commands.md#uncraft) can be used
-to convert the [product](recipe.md#products) into its [ingredients](recipe.md#ingredients). If this value is `false`,
-then the Recipe cannot be reversed.
+an [Uncraft Action](action.md#uncraft-action) can be performed to convert the [product](recipe.md#products) into its
+[ingredients](recipe.md#ingredients). If this value is `false`, then the Recipe cannot be reversed.
 
 Note that in order for a Recipe to be uncraftable, it must be a crafting-type Recipe with only one product.
 Crafting-type Recipes with two products cannot be uncraftable.
@@ -119,7 +119,7 @@ This internal attribute serves the same purpose as `this.fixtureTag`. It is stil
 with legacy game data, but it will eventually be removed. References to this attribute in game data should be
 replaced with `this.fixtureTag`.
 
-### Duration
+### Duration String
 
 - Spreadsheet label: **Process Duration**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
@@ -154,11 +154,10 @@ duration string, this is `null`.
 ### Products Strings
 
 - Spreadsheet label: **Produces Prefab(s)**
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.productsStrings`
 
-This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](#recipe-items).
+This is a comma-separated list of [Prefab IDs](prefab.md#id), in [Recipe Item format](recipe_item.md).
 Products determine what the ingredients will be turned into upon completion of the Recipe.
 
 Unlike ingredients, products are not sorted. They are listed in the order they appear in on the sheet.
@@ -180,8 +179,8 @@ Processing-type Recipes:
 Note that although processing-type Recipes with multiple of the same Prefab as ingredients are typically not
 allowed, the same does not apply to products. A processing-type Recipe can produce as many of the same
 Prefab as desired. However, it usually makes more sense to express this as a quantity of the product, rather
-than listing the same Prefab as a product multiple times. See the section on
-[Recipe Item format](#recipe-items) for more information.
+than listing the same Prefab as a product multiple times. See the article on [Recipe Items](recipe_item.md)
+for more information.
 
 Additionally, both Recipe types must not include products that are containers with more than one Inventory Slot,
 or more than one container.
@@ -207,39 +206,41 @@ Unlike `this.products`, they are stored in alphabetical order, sorted by Prefab 
 ### Initiated Description
 
 - Spreadsheet label: **Description When Initiated**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.initiatedDescription`
+- Class attribute: [Description](description.md) `this.initiatedDescription`
 
 This is a description that indicates when a Recipe has begun being processed. When a Player activates a Fixture that can
 process this Recipe and all of the ingredients required for it are contained within the Fixture, they will receive a
 parsed version of this string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md)
-for more information. Note that unlike most other data types, the `this` keyword does not refer to the Recipe, but
-rather the Fixture processing the Recipe. For example, in the description
+for more information.
+
+Note that unlike most other game entities, the `this` keyword does not refer to the Recipe, but rather the Fixture
+processing the Recipe. For example, in the description
 `<desc><s>You begin filling up the GLASS in the <var v="this.name" />.</s></desc>`, the variable `<var v="this.name" />`
-would be replaced with the name of the Fixture processing the Recipe.
+would be replaced with the name of the Fixture processing the Recipe. This also means that you can access the Fixture's
+[process attribute](fixture.md#process), and the ingredients contained inside. However, keep in mind that doing so may
+result in errors when the [parse command](../commands/moderator_commands.md#parse) is used, unless guards are
+implemented to prevent accessing data that doesn't exist when the command is used.
 
 Crafting-type Recipes will never use this text because they are completed instantaneously.
 
 ### Completed Description
 
 - Spreadsheet label: **Description When Completed**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.completedDescription`
+- Class attribute: [Description](description.md) `this.completedDescription`
 
 This is a description that indicates when a Recipe has finished being processed. When a Player crafts two Inventory
-Items together or a Fixture finishes processing a Recipe that they initiated by activating the Fixture and they are still
+Items together, or a Fixture finishes processing a Recipe that they initiated by activating the Fixture and they are still
 in the same Room as the Fixture, they will receive a parsed version of this string. Just like the initiated description,
 the `this` keyword refers to the Fixture processing the Recipe. However, in crafting-type Recipes, the `this` keyword
-does refer to the Recipe itself.
+refers to the Recipe itself, and not the Player, as one might assume.
 
 ### Uncrafted Description
 
 - Spreadsheet label: **Description When Uncrafted**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.uncraftedDescription`
+- Class attribute: [Description](description.md) `this.uncraftedDescription`
 
-When a Player uncrafts an Inventory Item, they will receive a parsed version of this string. Because uncraftable Recipes
-cannot have a Fixture tag, the `this` keyword will always refer to the Recipe itself.
+When a Player uncrafts an Inventory Item, they will receive a parsed version of this string. Because uncraftable
+Recipes cannot have a Fixture tag, the `this` keyword will always refer to the Recipe itself.
 
 ### Row
 
@@ -248,69 +249,61 @@ cannot have a Fixture tag, the `this` keyword will always refer to the Recipe it
 
 This is an internal attribute, but it can also be found on the spreadsheet. This is the row number of the Recipe.
 
-## Crafting
+## Mechanics
 
-Crafting is a simple game mechanic that uses Recipes. It makes use of
-the [craft Player method](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Player.js#L1586).
+### Crafting
+
+Crafting is a simple game mechanic that uses Recipes. It is performed via a [Craft Action](action.md#craft-action).
 Whether the action is initiated [by a Player](../commands/player_commands.md#craft)
 or [by a moderator](../commands/moderator_commands.md#craft), the rules are the same:
 
 - The Player must have [Equipment Slots](equipment_slot.md) named "RIGHT HAND" and "LEFT HAND".
 - The Player must have two Inventory Items, one equipped to their RIGHT HAND and one equipped to their LEFT HAND.
-- There must be a crafting-type Recipe whose ingredients are the Prefabs underlying the Player's two held Inventory
-  Items.
+- There must be a crafting-type Recipe whose top-level ingredients are the Prefabs underlying the Player's two held
+  Inventory Items.
+  - If the Recipe requires a held Inventory Item to contain one or more Inventory Items inside of it, then the Player
+    must have those Inventory Items stashed inside of it.
+- The quantities and uses of the Player's Inventory Items must all satisfy those specified by the Recipe's ingredients
+  at least once.
 
 If all of the above requirements are met, the Player will craft the two Inventory Items together.
+See [this section](#how-ingredients-become-products) for more details on how this happens.
 
-First, Alter Ego checks to see if any of the ingredients are also products. If that is the case, it then checks if the
-Inventory Item only has 1 use left. If so, the Inventory Item will be replaced with
-its [next stage](prefab.md#next-stage). If it doesn't have a next stage, it will simply be destroyed. If the Inventory
-Item has a limited number of uses but it has more than 1 use left, its number of uses will be decreased by 1.
+Once the products have been created, Alter Ego will send the Player the Recipe's completed description.
+Additionally, if any of the product Prefabs are [non-discreet](prefab.md#discreet), Alter Ego will
+[narrate](narration.md) the Player crafting them.
 
-As an example of the above condition, suppose there is a crafting-type Recipe whose ingredients are a CLEAN GLASS and a
-JUG OF ORANGE JUICE, and whose products are a GLASS OF ORANGE JUICE and a JUG OF ORANGE JUICE. The JUG OF ORANGE JUICE
-has 6 uses. Each time it is used to produce a GLASS OF ORANGE JUICE, its number of uses decreases by 1. If its number of
-uses decreases to 0, then it will be replaced with its next stage, an EMPTY JUG OF ORANGE JUICE, at which point it can
-no longer be crafted.
+### Uncrafting
 
-The respective Inventory Items will then
-be [replaced](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Modules/itemManager.js#L126)
-with the properties of the product Prefabs. When Inventory Items are replaced, any Inventory Items contained inside them
-will be
-recursively [destroyed](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Modules/itemManager.js#L163).
-If there is only 1 product, then the second ingredient will simply be destroyed, and only the first ingredient will be
-replaced. If there are 0 products, then both ingredients will be destroyed, and no products will be created.
-
-Once the ingredients are finished being crafted, Alter Ego will send the Player the Recipe's completed description.
-Additionally, if any of the product Prefabs are [non-discreet](prefab.md#discreet), Alter Ego
-will [narrate](narration.md) the Player crafting them.
-
-## Uncrafting
-
-Uncrafting is a simplified reversal of the crafting mechanic. It makes use of
-the [uncraft Player method](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Player.js#L1644).
-Whether the action is initiated by a Player or by a moderator, the rules are the same:
+Uncrafting is a simplified reversal of the crafting mechanic.
+It is performed via an [Uncraft Action](action.md#uncraft-action). Whether the action is initiated
+[by a Player](../commands/player_commands.md#uncraft) or [by a moderator](../commands/moderator_commands.md#uncraft),
+the rules are the same:
 
 - The Player must have Equipment Slots named "RIGHT HAND" and "LEFT HAND".
 - The Player must have one Inventory Item equipped to their RIGHT HAND or LEFT HAND.
 - The Player's other hand must be empty.
-- There must be a crafting-type Recipe whose only product is the Prefab underlying the Player held Inventory Item.
+- There must be a crafting-type Recipe whose only product is the Prefab underlying the Player's held Inventory Item.
 
 If all of the above requirements are met, the Player will uncraft their held Inventory Item.
 
-First, Alter Ego checks the Recipe's ingredients to see if only one of them is discreet. If so, then the ingredient with
-the discreet Prefab will be ingredient 1, and the non-discreet Prefab will be ingredient 2. If both are discreet or both
+First, Alter Ego checks the Recipe's ingredients to see if only one of them is discreet. If so, the ingredient with the
+discreet Prefab will be ingredient 1, and the non-discreet Prefab will be ingredient 2. If both are discreet or both
 are non-discreet, ingredients 1 and 2 will be the ingredient Prefabs in alphabetical order by their IDs.
 
 Next, the Player's held Inventory Item will be replaced with the properties of ingredient 1's Prefab, and any Inventory
 Items contained inside of it will be recursively destroyed. The Prefab of ingredient 2 will then be instantiated in the
 Player's free hand. Note that even if the original Inventory Item had a limited number of uses, both of the ingredients
-will be created with the default number of uses of their respective Prefabs.
+will be created with the default number of uses of their respective Prefabs. They will also both be created with the
+original held Inventory Item's [procedural selections](inventory_item.md#procedural-selections).
+
+Note that even if any of the Recipe's ingredients are required to contain Inventory Items inside of them, those
+contained Items will _not_ be instantiated when the product is uncrafted.
 
 Alter Ego will then send the Player the Recipe's uncrafted description.
 
-If either of the ingredients are non-discreet, Alter Ego will narrate the Player uncrafting them. If only one of them is
-discreet, then the Narration will be as follows:
+If the product or either of the ingredients are non-discreet, Alter Ego will narrate the Player uncrafting them. If
+only one of the ingredients is discreet, then the Narration will be as follows:
 
 - `[Player displayName] removes [ingredient 1 singleContainingPhrase] from [ingredient 2 singleContainingPhrase].`
 
@@ -318,63 +311,114 @@ If both ingredients are non-discreet, then the Narration will instead be:
 
 - `[Player displayName] separates [product singleContainingPhrase] into [ingredient 1 singleContainingPhrase] and [ingredient 2 singleContainingPhrase].`
 
-## Processing
+### Processing
 
-Processing is a complex game mechanic that uses Recipes. It makes use of
-the [processRecipes Fixture method](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L96).
+Processing is a complex game mechanic that uses Recipes.
 
-Recipes can be processed in a Fixture as long as that Fixture is [activated](fixture.md#activated) and has
-a [Recipe tag](fixture.md#recipe-tag) that matches the Recipe's Fixture tag, regardless of how the Fixture was activated.
+Recipes can be processed in a Fixture as long as that Fixture is [activated](fixture.md#activated) and has a
+[Recipe tag](fixture.md#recipe-tag) that matches the Recipe's Fixture tag, regardless of how the Fixture was activated.
 There are four ways a Fixture can be activated:
 
 - By a Player using the [use player command](../commands/player_commands.md#use),
-- By a moderator using the [object moderator command](../commands/moderator_commands.md#object),
-- By a Puzzle or Event's solved/unsolved or triggered/ended commands using
-  the [object bot command](../commands/bot_commands.md#object), or
+- By a moderator using the [fixture moderator command](../commands/moderator_commands.md#fixture),
+- By a game entity that can issue bot commands using the [fixture bot command](../commands/bot_commands.md#fixture), or
 - By being loaded from the spreadsheet with its activation state being set to `true`.
 
-While a Fixture with a Recipe tag is activated, Alter Ego will attempt every second
-to [find a Recipe](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L140)
-that can be processed by the Fixture. In order to determine this, it looks for all Items contained in the Fixture, as well
-as any Items contained inside those Items (recursively). Next, it checks all Recipes whose Fixture tag matches the
-Fixture's Recipe tag. For each Recipe, it compares the list of Items contained within the Fixture (including child Items)
-to the Recipe's ingredients list. If an exact match is found, it begins processing the Items. If the list of Items in
-the Fixture does not exactly match any Recipe's ingredients list, Alter Ego collects a list of all Recipes whose
-ingredients can all be found among the Fixture's Items. When it finishes, it chooses to process the Recipe that uses the
-highest number of Items contained in the Fixture; i.e., the Recipe that will leave the fewest Items unprocessed.
+While a Fixture with a Recipe tag is activated, Alter Ego will attempt every second to
+[find a Recipe](fixture.md#recipe-interval) that can be processed by the Fixture. In order to determine this, it looks 
+for all Room Items contained in the Fixture, as well as any Room Items contained inside those Room Items (recursively).
+Next, it checks all Recipes whose Fixture tag matches the Fixture's Recipe tag. For each Recipe, it compares the list
+of Room Items contained within the Fixture (including child Room Items) to the Recipe's ingredients list. If an exact
+match is found, it begins processing the Room Items. If the list of Room Items in the Fixture does not exactly match
+any Recipe's ingredients list, Alter Ego collects a list of all Recipes whose ingredients can all be found among the
+Fixture's contained Room Items. When it finishes, it chooses to process the Recipe that uses the highest number of
+Room Items contained in the Fixture; i.e., the Recipe that will leave the fewest Room Items unprocessed.
 
-If Alter Ego finds a Recipe that it can process using the Fixture, it will begin processing the Recipe. If the Fixture was
-activated by a Player, whether forcibly or by their own will, they will be sent the Recipe's initiated description.
+If Alter Ego finds a Recipe that it can process using the Fixture, it will begin processing the Recipe. If the Fixture
+was activated by a Player, whether forcibly or by their own will, they will be sent the Recipe's initiated description.
 However, even if the Fixture was not activated by a Player for the current Recipe being processed, it will still be
-processed. If a Recipe was already being processed and a different one that uses more of the Fixture's Items is found,
-then it will be canceled in favor of the new one.
+processed. If a Recipe was already being processed and a different one that uses more of the Fixture's contained Room
+Items is found, then it will be canceled in favor of the new one.
 
 A Recipe being processed means that the [Fixture's process variable](fixture.md#process) has been assigned, and that Alter
-Ego will decrement the process's duration by 1 every second. When the duration reaches 0, the Items
-are [processed](https://github.com/MolSnoo/Alter-Ego/blob/8432696144b167993d299b8ddec5958e10fc649d/Data/Object.js#L208).
+Ego will decrement the process's duration by 1 every second. When the duration reaches 0, the Recipe is carried out
+using the ingredients stored in the Fixture's process variable. See [this section](#how-ingredients-become-products)
+for more details on how this happens.
 
-Alter Ego checks that all of the Items required for the Recipe are still contained in the Fixture. If it is, it then
-checks to see if any of the ingredients are also products. If that is the case, it then checks if the Item only has 1
-use left. If so, the Item will be replaced with its [next stage](prefab.md#next-stage). If the Item has a limited number
-of uses but it has more than 1 use left, its number of uses will be decreased by 1. This follows the same logic as in
-crafting-type Recipes.
+Keep in mind that Recipe Items in processing-type Recipes that are not explicitly set with a constant quantity
+are considered to have a variable quantity. This can be convenient for many Recipes. For example, consider this Recipe:
 
-If all of the Items are still in the Fixture, it destroys all of them regardless of quantity. So, even if a Recipe with
-multiple ingredients only requires 1 of a certain ingredient, all copies of that ingredient will be destroyed. Items
-contained inside of an ingredient will be recursively destroyed as well.
+`RAW EGG` ➡️ `COOKED EGG`
 
-Then, all of the products are instantiated inside the Fixture. The only exception is that if an Item that is both an
-ingredient and a product has a limited number of uses and would reach 0 uses and its Prefab does not have a next stage,
-it will simply be destroyed.
+Both the ingredient and product Recipe Items are considered to have variable quantities. This means that if the Fixture
+contained 3 `RAW EGGS`, then it would produce 3 `COOKED EGGS`. On the other hand, if the Recipe was instead:
 
-If the Recipe being processed has only one ingredient and only one product, the quantity of the product will match the
-quantity of the ingredient. This is why the use of cooking utensils in Recipes is discouraged. For example, if a Player
-wants to cook 3 RAW EGG Items simultaneously using the same Fixture, they will be unable to do so if the Recipe also
-includes a FRYING PAN as an ingredient. In such a scenario, only 1 COOKED EGG would be produced. However, if the only
-ingredient is 1 RAW EGG and the only product is 1 COOKED EGG, then the Player can cook as many RAW EGG Items into an
-equivalent number of COOKED EGG items in a single processing cycle.
+`RAW EGG, SPATULA` ➡️ `COOKED EGG, SPATULA`
 
-Once Items are finished being processed, the Player who activated the Fixture and started the process will be sent the
-Recipe's completed description, if it was a Player who did so and they are still in the same Room as the Fixture. If the
-Fixture is set to automatically deactivate, it will be deactivated. If not, it will continue attempting to process
-Recipes with the Items contained inside it, which may include the Items instantiated during the previous process.
+Then the `SPATULA` ingredient and product would also have variable quantities, meaning that for every `RAW EGG` the
+Fixture contained, it would also need to contain an equal number of `SPATULAS` in order for the Recipe to be processed.
+In order to modify this Recipe such that the Fixture only needs to contain 1 `SPATULA` and any amount of `RAW EGGS`,
+the ideal syntax would be:
+
+`1X RAW EGG, 1 SPATULA` ➡️ `1X COOKED EGG, 1 SPATULA`
+
+For more information, see the article on [Recipe Items](recipe_item.md).
+
+Once Room Items are finished being processed, the Player who activated the Fixture and started the process will be sent
+the Recipe's completed description, if it was a Player who did so and they are still alive and in the same Room as the
+Fixture. If the Fixture is set to automatically deactivate, it will be deactivated. If not, it will continue attempting
+to process Recipes with the Room Items contained inside of it, which may include the Room Items instantiated
+at the end of the previous process.
+
+### How Ingredients Become Products
+
+First, Alter Ego prepares to carry out the Recipe. Before anything else, the actual Items being used as ingredients
+are collated, including all of the Items contained inside of them. This means that all Items with the same
+identifier (or Prefab ID), container type, container name, and procedural selections are considered the same Item, and
+are grouped together. Their quantities and uses are all added together. This allows multiple instances of the same
+Prefab to be considered the same ingredient, and makes it easier to determine which ones to consume when the Items are
+transformed as part of the Recipe.
+
+Then, it calculates how many times the Recipe can be carried out with the given quantities and uses of the collated
+Items. This number is referred to as the **satisfactory process count**. It also creates a map of variable names
+assigned to each of the Recipe's ingredients, and calculates the actual value of each variable using the quantity or
+uses of the corresponding Inventory Item. It also combines the
+[procedural selections](inventory_item.md#procedural-selections) of all of the ingredients. Even if any procedural
+selections have clashing values, one procedural can only be assigned to one possibility. The selected possibility when
+collisions occur will be the one belonging to the ingredient whose Prefab ID is sorted the latest alphabetically.
+
+Once the preparations are complete, Alter Ego iterates through the collated Items. For each one, it checks to see if
+the ingredient is also a product. If that is the case, it decreases the Inventory Item's uses by the satisfactory
+process count. If its uses is decreased to 0, then it will be replaced with its [next stage](prefab.md#next-stage).
+If it doesn't have a next stage, it will simply be destroyed. If the collated Items contain multiple of the same Item,
+it will divide the consumed uses among them as evenly as possible---even splitting one off of the stack into a new Item
+if necessary---in order to ensure that the total number of uses remaining is exactly what it should be. Likewise, it
+will not destroy any more of the used ingredients than it needs to.
+
+As a demonstration of the above condition, suppose there is a Recipe with the following ingredients and products:
+
+`DIRTY PLATE, DETERGENT` ➡️ `CLEAN PLATE, DETERGENT`
+
+Now suppose that there is a Fixture `SINK` containing `DETERGENT` with a quantity of 2, and 10 uses. When the Room
+Items are collated, the `DETERGENT` is considered to have 20 uses in total. Here are three examples of what would
+happen if various quantities of `DIRTY PLATES` are added to the `SINK`:
+- If `DIRTY PLATE` has a quantity of 10, then when the ingredients are processed, the `SINK` will contain 10
+  `CLEAN PLATES` and 2 `DETERGENTS` with 5 uses.
+- If the `DIRTY PLATE` has a quantity of 11, then when the ingredients are processed, the `SINK` will contain 11
+  `CLEAN PLATES`, 1 `DETERGENT` with 4 uses, and 1 `DETERGENT` with 5 uses (for a total of 9 uses).
+- If the `DIRTY PLATE` has a quantity of 19, then when the ingredients are processed, the `SINK` will contain 19
+  `CLEAN PLATES`, 1 `DETERGENT` with 1 use, and 1 `EMPTY DETERGENT` with no uses.
+
+If an ingredient is _not_ also a product, then it is destroyed. This occurs in a similar manner to how an ingredient's
+uses are decreased if it is an ingredient and a product. Alter Ego will destroy only as many instances as it is
+required to according to the specifications of the Recipe, even if the ingredient is a collated Item comprised of
+multiple Items with varying quantities. However, keep in mind that any Items contained inside of the ingredient Item
+will also be destroyed when this occurs.
+
+Once all of the ingredients have either been destroyed or had their uses decreased appropriately, the products are
+instantiated. Alter Ego iterates through all of the products in the Recipe and instantiates them with the quantities
+and uses specified by the Recipe. If the quantity and/or uses of an individual product are variable, then the number
+will be multiplied by the satisfactory process count. For uses specifically, if the product has a variable number of
+uses that was specified with a named variable, then the actual value of that variable will be multiplied by the
+[Recipe Item's uses](recipe_item.md#uses) instead of the satisfactory process count. If a product is specified to
+contain Items, then those Items will be instantiated inside of it after it is created.

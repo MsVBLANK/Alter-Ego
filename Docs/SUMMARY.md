@@ -30,7 +30,8 @@
     - [Persistent Game Data]()
         - [Room](reference/data_structures/room.md)
             - [Exit](reference/data_structures/exit.md)
-        - [Fixture](reference/data_structures/fixture.md)
+          - [Fixture](reference/data_structures/fixture.md)
+            - [Hiding Spot](reference/data_structures/hiding_spot.md)
         - [Prefab](reference/data_structures/prefab.md)
             - [Inventory Slot](reference/data_structures/inventory_slot.md)
         - [Recipe](reference/data_structures/recipe.md)
@@ -50,7 +51,7 @@
         - [Description](reference/data_structures/description.md)
         - [Die](reference/data_structures/die.md)
         - [Narration](reference/data_structures/narration.md)
-        - [Notification](reference/data_structures/notification.md)        
+        - [Notification](reference/data_structures/notification.md)
         - [Whisper](reference/data_structures/whisper.md)
 - [Settings](reference/settings.md)
 

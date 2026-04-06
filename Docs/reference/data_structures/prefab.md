@@ -232,12 +232,12 @@ an Inventory Item will always be narrated, and will use the following format:
 
 See the following table for some examples of the resulting Narration:
 
-| Player displayName           | Single Containing Phrase     | Third Person Verb    | Narration                                            |
-| ---------------------------- | -----------------------------| -------------------- | ---------------------------------------------------- |
-| Florian                      | a STRAWBERRY TART            | eats                 | Florian eats a STRAWBERRY TART.                      |
-| Kyra                         | a glass of LEMONADE          | drinks               | Kyra drinks a glass of LEMONADE.                     |
-| An individual wearing a MASK | a TOWEL                      | dries off with       | An individual wearing a MASK dries off with a TOWEL. |
-| Michio                       | a TOOTHBRUSH with toothpaste | brushes with         | Michio brushes with a TOOTHBRUSH with toothpaste.    |
+| Player displayName           | Single Containing Phrase     | Third Person Verb | Narration                                            |
+|------------------------------|------------------------------|-------------------|------------------------------------------------------|
+| Florian                      | a STRAWBERRY TART            | eats              | Florian eats a STRAWBERRY TART.                      |
+| Kyra                         | a glass of LEMONADE          | drinks            | Kyra drinks a glass of LEMONADE.                     |
+| An individual wearing a MASK | a TOWEL                      | dries off with    | An individual wearing a MASK dries off with a TOWEL. |
+| Michio                       | a TOOTHBRUSH with toothpaste | brushes with      | Michio brushes with a TOOTHBRUSH with toothpaste.    |
 
 It's important to note that this is specifically the verb to use to refer to the player in third person. However, this
 is strictly a static string. As such, it cannot use the Player's [pronouns](player.md#pronoun-string). Third person
@@ -261,7 +261,7 @@ use the following format:
 See the following table for some examples of the resulting Notification:
 
 | Single Containing Phrase     | Second Person Verb    | Notification                                            |
-| ---------------------------- | --------------------- | ------------------------------------------------------- |
+|------------------------------|-----------------------|---------------------------------------------------------|
 | a STRAWBERRY TART            | eat                   | You eat a STRAWBERRY TART.                              |
 | a glass of LEMONADE          | drink                 | You drink a glass of LEMONADE.                          |
 | a TOWEL                      | dry off with          | You dry off with a TOWEL.                               |
@@ -359,7 +359,8 @@ runs out of uses.
 
 ### Next Stage
 
-- Class attribute: [Prefab](prefab.md) `this.nextStage`
+- Class attribute: [Prefab](prefab.md) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.nextStage`
 
 This is an internal attribute which simply contains a reference to the actual Prefab object whose ID matches
 `this.nextStageId`. If no next stage ID is given, this will be `null` instead.
@@ -411,7 +412,7 @@ Inventory Item appear in the Player description's `equipment` item list again.
 - Spreadsheet label: **When Equipped / Unequipped**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.commandsString`
-  
+
 This is a comma-separated list of [bot commands](../commands/bot_commands.md) that will be executed when an Inventory
 Item using this Prefab is equipped. A comma-separated list of bot commands that will be executed when the Inventory
 Item is unequipped can also be included, with both sets separated by a forward slash (`/`). If no unequipped commands
@@ -446,7 +447,7 @@ Prefab is unequipped.
   `this.inventory`
 
 This is a collection of [Inventory Slot](inventory_slot.md) objects that instances of this Prefab will have, where the
-key is the Inventory Slot's ID. Room Items and Inventory Items with Inventory Slots are capable of containing other 
+key is the Inventory Slot's ID. Room Items and Inventory Items with Inventory Slots are capable of containing other
 Items of the same type (i.e. a Room Item can contain other Room Items,
 and an Inventory Item can contain otherInventory Items).
 
@@ -544,7 +545,7 @@ more kind of meat and one more kind of cheese would necessitate _35_ Prefabs and
 However, this can be avoided by creating just one `CHEESE` Prefab and one `MEAT` Prefab, with procedural options for
 the different kinds. Then, only 3 Prefabs and 4 Recipes need to be created. And since procedural options are
 significantly easier to add---it is as simple as adding a new tag in the Prefab's description---this also allows for
-more varieties of meat and cheese than would be feasible if they were all separate Prefabs. 
+more varieties of meat and cheese than would be feasible if they were all separate Prefabs.
 
 ### Row
 

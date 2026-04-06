@@ -69,7 +69,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     childPuzzle: Puzzle;
     /**
-     * A keyword or phrase assigned to an fixture's recipe that allows it to carry out recipes that require it.
+     * A keyword or phrase assigned to a fixture's recipe that allows it to carry out recipes that require it.
      */
     private _recipeTag: string;
     /**
@@ -138,7 +138,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         this.hidingSpot = this.hidingSpotCapacity > 0 ? new HidingSpot(this, this.hidingSpotCapacity, this.row, this.getGame()) : null;
         this.preposition = preposition;
 
-        this.process = { recipe: null, ingredients: [], duration: null, timer: null };
+        this.process = { recipe: null, ingredients: [], satisfactoryProcessCount: 0, duration: null, timer: null };
         let fixture = this;
         this.recipeInterval = this.recipeTag ? new Timer(1000, { start: true, loop: true }, function () { if (fixture.activated) fixture.processRecipes(); }) : null;
     }

@@ -1,5 +1,9 @@
 # Room Item
 
+> [!NOTE]
+> These were previously called Items, but were renamed in Alter Ego 2.0 to better
+> differentiate them from Inventory Items.
+
 A Room Item is a data structure used by Alter Ego. It represents an item in a [Room](room.md)
 that a [Player](player.md) can take with them. It is an instance of a [Prefab](prefab.md), and is similar to
 an [Inventory Item](inventory_item.md).
@@ -7,7 +11,7 @@ an [Inventory Item](inventory_item.md).
 ## Attributes
 
 Room Items themselves have relatively few attributes. However, being instances of Prefabs, they inherit many attributes
-as a result. Note that if an attribute is _internal_, that means it only exists within the 
+as a result. Note that if an attribute is _internal_, that means it only exists within the
 [RoomItem class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/RoomItem.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on
 the spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
@@ -41,7 +45,7 @@ but there are no naming rules for identifiers. No two Room Items or Inventory It
 For an example of how this looks, see the following table:
 
 | Prefab ID       | Container Identifier | Location | Container                                   | Quantity |
-| --------------- | -------------------- | -------- | ------------------------------------------- | -------- |
+|-----------------|----------------------|----------|---------------------------------------------|----------|
 | VINYL GLOVE BOX | VINYL GLOVE BOX 1    | Kitchen  | Fixture: HAND WASH STATION 1                | 1        |
 | VINYL GLOVE BOX | VINYL GLOVE BOX 2    | Kitchen  | Fixture: HAND WASH STATION 2                | 1        |
 | VINYL GLOVES    |                      | Kitchen  | RoomItem: VINYL GLOVE BOX 1/VINYL GLOVE BOX | 10       |
@@ -141,8 +145,8 @@ For the example above, the Room Item's plural containing phrase would be:
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.locationDisplayName`
 
-This is the [display name](room.md#display-name) of the Room the Room Item can be found in. This must match the Room's
-display name on the spreadsheet exactly, or its [ID](room.md#id).
+This is the [display name](room.md#display-name) of the Room that the Room Item can be found in. This must match the
+Room's display name on the spreadsheet exactly, or its [ID](room.md#id).
 
 ### Location
 
@@ -176,11 +180,11 @@ the container's name. However, if the container is another Room Item, then its i
 name, and so must the ID of the [Inventory Slot](inventory_slot.md) this Room Item is in, with both separated by a
 forward slash (`/`). For some examples of correct container names, see the following table:
 
-| Type       | Name / Identifier | Inventory Slot ID | Container Name                | Cell Contents                           |
-| ---------- | ----------------- | ----------------- | ----------------------------- | --------------------------------------- |
-| Fixture    | SHELF             |                   | SHELF                         | Fixture: SHELF                          |
-| Puzzle     | LOCKER 1          |                   | LOCKER 1                      | Puzzle: LOCKER 1                        |
-| RoomItem   | KIARAS BACKPACK 1 | MAIN POCKET       | KIARAS BACKPACK 1/MAIN POCKET | RoomItem: KIARAS BACKPACK 1/MAIN POCKET |
+| Type     | Name / Identifier | Inventory Slot ID | Container Name                | Cell Contents                           |
+|----------|-------------------|-------------------|-------------------------------|-----------------------------------------|
+| Fixture  | SHELF             |                   | SHELF                         | Fixture: SHELF                          |
+| Puzzle   | LOCKER 1          |                   | LOCKER 1                      | Puzzle: LOCKER 1                        |
+| RoomItem | KIARAS BACKPACK 1 | MAIN POCKET       | KIARAS BACKPACK 1/MAIN POCKET | RoomItem: KIARAS BACKPACK 1/MAIN POCKET |
 
 Keep in mind that this attribute contains _only_ the container name, as shown in the table. However, when entering this
 cell manually, it must be input as specified in the **Cell Contents** column of the table above.

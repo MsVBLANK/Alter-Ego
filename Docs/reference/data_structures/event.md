@@ -1,6 +1,6 @@
 # Event
 
-An Event is a data structure used by Alter Ego. Its primary purpose is to
+An **Event** is a data structure used by Alter Ego. Its primary purpose is to
 allow [moderators](../../moderator_guide/moderating.md) to create a more dynamic game world capable of automatically
 changing its state in predictable, predefined ways. [Players](player.md) cannot directly interact with Events. In most
 cases, Events are completely autonomous, requiring little to no intervention from Players or moderators.
@@ -20,9 +20,20 @@ spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
   `this.id`
 
 This is the ID of the Event. All letters should be capitalized, and spaces are allowed. Every Event must have a unique
-name. This will only be used when Events are triggered or ended
+ID. This is how Events can be identified so that they can be triggered or ended
 with [moderator](../commands/moderator_commands.md#trigger) [commands](../commands/moderator_commands.md#end)
 or [bot](../commands/bot_commands.md#trigger) [commands](../commands/bot_commands.md#end).
+
+### Name
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.name`
+
+This internal attribute is a copy of the Event's ID. It was how Events were identified prior to Alter Ego version 2.0.
+This attribute will be removed in the future.
 
 ### Ongoing
 
@@ -44,7 +55,7 @@ consist of a number (i.e. `30`, `1.5`) with a letter immediately following it, w
 fixed set of predefined units that correspond with each letter. They are as follows:
 
 | Letter | Unit    |
-| ------ | ------- |
+|--------|---------|
 | s      | seconds |
 | m      | minutes |
 | h      | hours   |
@@ -59,7 +70,8 @@ have a duration of `1.5d`, and so on.
 
 ### Duration
 
-- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.duration`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.duration`
 
 This is an internal attribute which contains a Duration object created from the duration string. If the Event has no
 duration string, this is `null`.
@@ -85,7 +97,8 @@ of `0:59:00`.
 
 ### Remaining
 
-- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) `this.remaining`
+- Class attribute: [Duration](https://moment.github.io/luxon/api-docs/index.html#duration) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.remaining`
 
 This is an internal attribute which contains a Duration object indicating how much time is remaining until the Event
 ends. If the Event has no duration or the Event is not currently ongoing, this is `null`. While the Event is ongoing,
@@ -139,20 +152,20 @@ same time every day. However, it is not possible to set a trigger time with only
 In this case, the date must always precede the time. This is the full table of acceptable formats grouped by date
 format, as well as an example and a note indicating when the given example will cause the Event to trigger:
 
-|              |               |                 |                   | Example                 | Triggers on                            |
-| ------------ | ------------- | --------------- | ----------------- | ----------------------- | -------------------------------------- |
-| `p`          | `pp`          | `HH:mm`         | `hh:mm a`         | `8:30 PM`               | Every day at 8:30 PM                   |
-| `ccc p`      | `ccc pp`      | `ccc HH:mm`     | `ccc hh:mm a`     | `Wed 8:30:00 PM`        | Every Wednesday at 8:30 PM             |
-| `cccc p`     | `cccc pp`     | `cccc HH:mm`    | `cccc hh:mm a`    | `Wednesday 20:30`       | Every Wednesday at 8:30 PM             |
-| `do p`       | `do pp`       | `do HH:mm`      | `do hh:mm a`      | `16th 08:30 PM`         | The 16th day of every month at 8:30 PM |
-| `do MMM p`   | `do MMM pp`   | `do MMM HH:mm`  | `do MMM hh:mm a`  | `16th Apr 8:30 PM`      | The 16th of April at 8:30 PM           |
-| `do MMMM p`  | `do MMMM pp`  | `do MMMM HH:mm` | `do MMMM hh:mm a` | `16th April 8:30:00 PM` | The 16th of April at 8:30 PM           |
-| `d MMM p`    | `d MMM pp`    | `d MMM HH:mm`   | `d MMM hh:mm a`   | `16 Apr 20:30`          | The 16th of April at 8:30 PM           |
-| `d MMMM p`   | `d MMMM pp`   | `d MMMM HH:mm`  | `d MMMM hh:mm a`  | `16 April 08:30 PM`     | The 16th of April at 8:30 PM           |
-| `MMM do p`   | `MMM do pp`   | `MMM do HH:mm`  | `MMM do hh:mm a`  | `Apr 16th 8:30 PM`      | The 16th of April at 8:30 PM           |
-| `MMMM do p`  | `MMMM do pp`  | `MMMM do HH:mm` | `MMMM do hh:mm a` | `April 16th 8:30:00 PM` | The 16th of April at 8:30 PM           |
-| `MMM d p`    | `MMM d pp`    | `MMM d HH:mm`   | `MMM d hh:mm a`   | `Apr 16 20:30`          | The 16th of April at 8:30 PM           |
-| `MMMM d p`   | `MMMM d pp`   | `MMMM d HH:mm`  | `MMMM d hh:mm a`  | `April 16 08:30 PM`     | The 16th of April at 8:30 PM           |
+|             |              |                 |                   | Example                 | Triggers on                            |
+|-------------|--------------|-----------------|-------------------|-------------------------|----------------------------------------|
+| `p`         | `pp`         | `HH:mm`         | `hh:mm a`         | `8:30 PM`               | Every day at 8:30 PM                   |
+| `ccc p`     | `ccc pp`     | `ccc HH:mm`     | `ccc hh:mm a`     | `Wed 8:30:00 PM`        | Every Wednesday at 8:30 PM             |
+| `cccc p`    | `cccc pp`    | `cccc HH:mm`    | `cccc hh:mm a`    | `Wednesday 20:30`       | Every Wednesday at 8:30 PM             |
+| `do p`      | `do pp`      | `do HH:mm`      | `do hh:mm a`      | `16th 08:30 PM`         | The 16th day of every month at 8:30 PM |
+| `do MMM p`  | `do MMM pp`  | `do MMM HH:mm`  | `do MMM hh:mm a`  | `16th Apr 8:30 PM`      | The 16th of April at 8:30 PM           |
+| `do MMMM p` | `do MMMM pp` | `do MMMM HH:mm` | `do MMMM hh:mm a` | `16th April 8:30:00 PM` | The 16th of April at 8:30 PM           |
+| `d MMM p`   | `d MMM pp`   | `d MMM HH:mm`   | `d MMM hh:mm a`   | `16 Apr 20:30`          | The 16th of April at 8:30 PM           |
+| `d MMMM p`  | `d MMMM pp`  | `d MMMM HH:mm`  | `d MMMM hh:mm a`  | `16 April 08:30 PM`     | The 16th of April at 8:30 PM           |
+| `MMM do p`  | `MMM do pp`  | `MMM do HH:mm`  | `MMM do hh:mm a`  | `Apr 16th 8:30 PM`      | The 16th of April at 8:30 PM           |
+| `MMMM do p` | `MMMM do pp` | `MMMM do HH:mm` | `MMMM do hh:mm a` | `April 16th 8:30:00 PM` | The 16th of April at 8:30 PM           |
+| `MMM d p`   | `MMM d pp`   | `MMM d HH:mm`   | `MMM d hh:mm a`   | `Apr 16 20:30`          | The 16th of April at 8:30 PM           |
+| `MMMM d p`  | `MMMM d pp`  | `MMMM d HH:mm`  | `MMMM d hh:mm a`  | `April 16 08:30 PM`     | The 16th of April at 8:30 PM           |
 
 ### Room Tag
 
@@ -201,7 +214,7 @@ This is an internal attribute which contains a list of commands that will be exe
 
 ### Inflicted Status Effects Strings
 
-- Spreadsheet label: **Inflict Status Effect(s)**
+- Spreadsheet label: **Inflicts Status Effect(s)**
 - Class
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.effectsStrings`
@@ -218,12 +231,12 @@ unless they have a Status Effect which [overrides](status.md#overriders) it.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](../data_structuresstatus.md)>
   `this.effects`
 
-This is an internal attribute which contains references to each of the Status Effect objects whose names are listed in
+This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in
 `this.effectsStrings`.
 
 ### Refreshed Status Effects Strings
 
-- Spreadsheet label: **Refresh Status Effect(s)**
+- Spreadsheet label: **Refreshes Status Effect(s)**
 - Class
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.refreshesStrings`
@@ -239,13 +252,13 @@ second when its duration is refreshed. Effectively, this makes it so that the Pl
 cannot expire or develop into its [next stage](status.md#next-stage) because its duration can never reach 0.
 
 This is particularly useful if the Event is intended to inflict a Status Effect upon all Players who enter certain Rooms
-that should not expire while the Player continues to stay in one of the affected Rooms (such as "soaking wet" for a RAIN
-Event and "blinded" for a BLACKOUT Event). However, due to the asynchronous nature of the JavaScript language, it may
-still be possible for a refreshed Status Effect to expire if its duration is only 1 second. For that reason, refreshed
-Status Effects that are intended to expire immediately after a Player leaves an affected Room should have a duration of
-2 seconds or more. It should also be noted that a Status Effect being refreshed does **not** mean it will be inflicted
-upon all Players who are in an affected Room. It must be inflicted by some other means, such as being listed as one of
-the Event's inflicted Status Effects.
+that should not expire while the Player continues to stay in one of the affected Rooms (such as `soaking wet` for a
+`RAIN` Event and `blinded` for a `BLACKOUT` Event). However, due to the asynchronous nature of the JavaScript language,
+it may still be possible for a refreshed Status Effect to expire if its duration is only 1 second. For that reason,
+refreshed Status Effects that are intended to expire immediately after a Player leaves an affected Room should have a
+duration of 5 seconds or more. It should also be noted that a Status Effect being refreshed does **not** mean it will
+be inflicted upon all Players who are in an affected Room. It must be inflicted by some other means, such as being
+listed as one of the Event's inflicted Status Effects.
 
 ### Refreshed Status Effects
 
@@ -253,14 +266,13 @@ the Event's inflicted Status Effects.
   attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](status.md)>
   `this.refreshes`
 
-This is an internal attribute which contains references to each of the Status Effect objects whose names are listed in
+This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in
 `this.refreshesStrings`.
 
 ### Triggered Narration
 
 - Spreadsheet label: **Narration When Triggered**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.triggeredNarration`
+- Class attribute: [Description](description.md) `this.triggeredNarration`
 
 This is the [Narration](narration.md) that will be parsed and then sent to the channels of all occupied Rooms that the
 Event is affected by when it is triggered. If no Players are in one of the Rooms affected by the Event, the Narration
@@ -272,8 +284,7 @@ for more information. However, note that because this is a Narration and not a d
 ### Ended Narration
 
 - Spreadsheet label: **Narration When Ended**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.endedNarration`
+- Class attribute: [Description](description.md) `this.endedNarration`
 
 This is the Narration that will be parsed and then sent to the channels of all occupied Rooms that the Event is affected
 by when it is ended. If no Players are in one of the Rooms affected by the Event, the Narration will not be sent to that
@@ -290,7 +301,8 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
 
 ### Timer
 
-- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.timer`
+- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.timer`
 
 This is an internal attribute which contains a timer counting down until the Event ends. Every 1000 milliseconds, 1
 second is subtracted from the Event's [remaining Duration](event.md#remaining) until it reaches 0. When it does, the
@@ -298,7 +310,8 @@ Event ends, and this attribute becomes `null`.
 
 ### Effects Timer
 
-- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null) `this.effectsTimer`
+- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.effectsTimer`
 
 This is an internal attribute which contains a timer that inflicts and refreshes Status Effects while the Event is
 ongoing. Every 1000 milliseconds, Alter Ego iterates through all Rooms tagged with this

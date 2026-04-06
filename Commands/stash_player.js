@@ -89,7 +89,7 @@ export async function execute(game, message, command, args, player) {
     input = args.join(" ");
 
     // Now find the item in the player's inventory.
-    const hand = game.entityFinder.getPlayerHandHoldingItem(player, input, containerItem.row, "player");
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, input, undefined, containerItem.row, "player");
     // Make sure item and containerItem aren't the same item.
     if (!hand && game.entityFinder.getPlayerHandHoldingItem(player, input))
         return game.communicationHandler.reply(message, `You can't stash ${containerItem.name} ${containerItem.prefab.preposition} itself.`);

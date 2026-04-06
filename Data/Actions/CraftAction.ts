@@ -49,7 +49,7 @@ export default class CraftAction extends Action {
      */
     parseInteractionArgs(args: string[]): [InventoryItem, InventoryItem, Recipe] {
         const hand1 = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
-        const hand2 = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[1], hand1?.row);
+        const hand2 = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[1], undefined, hand1?.row);
         const recipes = this.getGame().entityFinder.getRecipes(args[2], "", args[3], args[4]);
         return [hand1?.equippedItem, hand2?.equippedItem, recipes[0] ?? undefined];
     }

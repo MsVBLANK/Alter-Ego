@@ -428,33 +428,33 @@ describe("GameEntityFinder test", () => {
     describe("getPlayerHandHoldingItem test", () => {
         test("Get player holding item by name", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
-            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "COFFEE", undefined, "player");
+            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "COFFEE", undefined, undefined, "player");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
             expect(equipmentSlot.equippedItem.name).toBe("COFFEE");
         });
         test("Get player holding item by prefab id", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
-            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "MUG OF COFFEE", undefined, "moderator");
+            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "MUG OF COFFEE", undefined, undefined, "moderator");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
             expect(equipmentSlot.equippedItem.prefab.id).toBe("MUG OF COFFEE");
         });
         test("Get player holding item by mixed case name", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
-            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "COFFee", undefined, "player");
+            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "COFFee", undefined, undefined, "player");
             expect(equipmentSlot).toBeInstanceOf(EquipmentSlot);
             expect(equipmentSlot.equippedItem).toBeInstanceOf(InventoryItem);
             expect(equipmentSlot.equippedItem.name).toBe("COFFEE");
         });
         test("Get player holding invalid item by name", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
-            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "INVALID", undefined, "combined");
+            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "INVALID", undefined, undefined, "combined");
             expect(equipmentSlot).toBeUndefined();
         });
         test("Get player holding invalid item by prefab id", () => {
             let player = game.entityFinder.getLivingPlayer("Kyra");
-            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "INVALID", undefined, "combined");
+            const equipmentSlot = game.entityFinder.getPlayerHandHoldingItem(player, "INVALID", undefined, undefined, "combined");
             expect(equipmentSlot).toBeUndefined();
         });
     });

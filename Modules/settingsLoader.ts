@@ -118,6 +118,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
     const hiddenIconUrl = process.env.HIDDEN_ICON_URL ?? DEFAULT_GAME_SETTINGS.hiddenIconURL;
 
     const autoDeleteWhisperChannels = pushErrors(stringToBoolOrDefault(process.env.AUTO_DELETE_WHISPER_CHANNELS, DEFAULT_GAME_SETTINGS.autoDeleteWhisperChannels), errors);
+    const readMessageHistory = pushErrors(stringToBoolOrDefault(process.env.READ_MESSAGE_HISTORY, DEFAULT_GAME_SETTINGS.readMessageHistory), errors);
 
     const colorRegex = /^[\dA-F]{6}$/i;
     let embedAccentColor = process.env.EMBED_ACCENT_COLOR ?? DEFAULT_GAME_SETTINGS.embedAccentColor;
@@ -176,8 +177,6 @@ export function loadGameSettings(): [GameSettings, string[]] {
         url: gameInProgressActivityUrl
     }
 
-    const readMessageHistory = pushErrors(stringToBoolOrDefault(process.env.READ_MESSAGE_HISTORY, DEFAULT_GAME_SETTINGS.readMessageHistory), errors);
-
     let settings = new GameSettings(
         commandPrefix,
         debug,
@@ -193,6 +192,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
         defaultConcealedIconUrl,
         hiddenIconUrl,
         autoDeleteWhisperChannels,
+        readMessageHistory,
         embedAccentColor,
         standardMessageDisplayAccentColor,
         warningMessageDisplayAccentColor,
@@ -201,8 +201,7 @@ export function loadGameSettings(): [GameSettings, string[]] {
         autoLoad,
         onlineActivity,
         debugModeActivity,
-        gameInProgressActivity,
-        readMessageHistory
+        gameInProgressActivity
     );
 
     return [settings, errors];

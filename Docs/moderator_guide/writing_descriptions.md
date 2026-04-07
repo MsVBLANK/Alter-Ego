@@ -43,7 +43,7 @@ meaning.
 
 ## `<desc>`
 
-Example: 
+Example:
 
 ```xml
 <desc>This is the simplest description you can write.</desc>
@@ -51,6 +51,18 @@ Example:
 
 The `desc` tag is used to mark the beginning and ending of a description. It _must_ be included in every single
 description.
+
+`desc` tags are capable of having attributes. There is one attribute with defined behavior, the `type` attribute.
+This allows you to set the [message display type](../about/discord.md#display-components) that the parsed description
+will be sent with. This will override the default message display type of the description.
+
+Only five message display types can be set with the `type` attribute:
+
+- `STANDARD`
+- `WARNING`
+- `ALERT`
+- `MINOR`
+- `PLAIN_TEXT`
 
 ---
 
@@ -103,15 +115,15 @@ Example:
 <desc><s>The floor beneath you is soft and earthy.</s> <s>You find <il></il> haphazardly placed on it.</s></desc>
 ```
 
-The `il` tag, short for **item list**, is used to mark where items will be inserted into a description. Items are 
-inserted between the opening and closing `il` tags whenever a description is sent to a player. They are generated 
+The `il` tag, short for **item list**, is used to mark where items will be inserted into a description. Items are
+inserted between the opening and closing `il` tags whenever a description is sent to a player. They are generated
 on-demand by fetching the list of items that are currently contained in the game entity that the description belongs to.
 
-If an item list is empty, the entire sentence containing the item list will be removed from the parsed description. 
-So, in the example above, if the item list is determined to be empty, the player will be sent: 
+If an item list is empty, the entire sentence containing the item list will be removed from the parsed description.
+So, in the example above, if the item list is determined to be empty, the player will be sent:
 `The floor beneath you is soft and earthy.`
 
-If you want to prevent an item list sentence from being removed from the parsed description when the container it 
+If you want to prevent an item list sentence from being removed from the parsed description when the container it
 belongs to contains no items, you can enter text between the opening and closing `il` tags, like so:
 
 ```xml
@@ -127,24 +139,24 @@ allows you to insert multiple item lists into a description, giving each a name.
 <desc><s>It's a plain pair of black jeans.</s> <s>It has four pockets in total.</s> <s>In the right pocket, you find <il name="RIGHT POCKET"></il>.</s> <s>In the left pocket, you find <il name="LEFT POCKET"></il>.</s> <s>In the right back pocket, you find <il name="RIGHT BACK POCKET"></il>.</s> <s>In the left back pocket, you find <il name="LEFT BACK POCKET"></il>.</s></desc>
 ```
 
-Note that only [Prefabs](../reference/data_structures/prefab.md), 
+Note that only [Prefabs](../reference/data_structures/prefab.md),
 [Room Items](../reference/data_structures/room_item.md),
-[Inventory Items](../reference/data_structures/inventory_item.md), 
+[Inventory Items](../reference/data_structures/inventory_item.md),
 and [Players](../reference/data_structures/player.md) support multiple `il` tags in a single description.
 
 `il` tags can only be used in a certain number of places, and each one has its own limitations. They can be used
 in:
 
-- A [Fixture](../reference/data_structures/fixture.md)'s description. A single Fixture can only have one item list 
+- A [Fixture](../reference/data_structures/fixture.md)'s description. A single Fixture can only have one item list
   in its description.
 - A [Prefab](../reference/data_structures/prefab.md)'s description. A single Prefab can have multiple item lists;
   however, there must be one for each [Inventory Slot](../reference/data_structures/inventory_slot.md), with names to
-  match each slot's ID. Item lists in a Prefab's description will never have items inserted into them, since players 
+  match each slot's ID. Item lists in a Prefab's description will never have items inserted into them, since players
   cannot directly inspect Prefabs. They simply serve as a base for instances of that Prefab.
 - A [Room Item](../reference/data_structures/room_item.md)
   or [Inventory Item](../reference/data_structures/inventory_item.md)'s description. The same rules that Prefabs have
   apply, however these item lists can actually display items.
-- A [Puzzle](../reference/data_structures/puzzle.md)'s Already Solved Description. A single Puzzle can only have one 
+- A [Puzzle](../reference/data_structures/puzzle.md)'s Already Solved Description. A single Puzzle can only have one
   item list in its Already Solved Description.
 - A [Player](../reference/data_structures/player.md)'s description. A single Player can only have two item lists in
   their description, and they must be named `equipment` and `hands`. Any other item lists will never be updated.
@@ -161,28 +173,28 @@ Example:
 <desc><s>You open the locker.</s> <s>Inside, you find <il><item>a SWIMSUIT</item></il>.</s></desc>
 ```
 
-The `item` tag is used to mark the beginning and ending of items. In previous versions of Alter Ego, it was necessary 
-to include these when writing item lists in descriptions. However, **as of version 2.0, you should not enter these 
+The `item` tag is used to mark the beginning and ending of items. In previous versions of Alter Ego, it was necessary
+to include these when writing item lists in descriptions. However, **as of version 2.0, you should not enter these
 manually**.
 
 `item` tags are generated on-demand whenever a description containing an item list is parsed and sent to a player.
-They do not persist within the description after that. Additionally, if `item` tags are found to already be in a 
-description when it is created, Alter Ego will attempt to remove them in a grammatically correct manner. However, 
-it may not be able to do so completely perfectly. Therefore, if you already have `item` tags in your descriptions, 
+They do not persist within the description after that. Additionally, if `item` tags are found to already be in a
+description when it is created, Alter Ego will attempt to remove them in a grammatically correct manner. However,
+it may not be able to do so completely perfectly. Therefore, if you already have `item` tags in your descriptions,
 you should remove them manually.
 
-When an item list is generated for a given `il` tag, the parser module retrieves all items currently contained inside 
-the game entity the item list corresponds with, and collates them so that any item with the same 
-[Prefab ID](../reference/data_structures/prefab.md#id) and 
+When an item list is generated for a given `il` tag, the parser module retrieves all items currently contained inside
+the game entity the item list corresponds with, and collates them so that any item with the same
+[Prefab ID](../reference/data_structures/prefab.md#id) and
 [containing](../reference/data_structures/room_item.md#single-containing-phrase)
-[phrases](../reference/data_structures/inventory_item.md#single-containing-phrase) are considered the same item. Then, 
+[phrases](../reference/data_structures/inventory_item.md#single-containing-phrase) are considered the same item. Then,
 for each item in the list, it creates an `item` tag, whose contents are as follows:
 
 - The item's plural containing phrase, if it has an infinite quantity and isn't already mentioned in the sentence,
 - The item's quantity and plural containing phrase if it has a quantity greater than 1, or
 - The item's single containing phrase, if it has a quantity of 1.
 
-`item` tags are inserted into the description in the order they appear in on the sheet. They are inserted so as to 
+`item` tags are inserted into the description in the order they appear in on the sheet. They are inserted so as to
 follow several grammatical rules:
 
 - If there are two items, they will be separated by the word "and", like so:
@@ -190,13 +202,13 @@ follow several grammatical rules:
 - If there are three or more items, the `item` tags will be comma-separated, and an Oxford comma will be inserted
   before the word "and" preceding the last `item` tag, like so:
     - `<il><item>ITEM 1</item>, <item>ITEM 2</item>, and <item>ITEM 3</item></il>`
-- If the word "is" or the word "are" is the last word in the clause just before an item list or the first word in the 
-  clause just after an item list, it will be changed to the other word in order to properly reflect the plurality of 
-  the referenced items. For example, if a sentence like `<s>There is <il></il> on the desk.</s>` contains an item with 
+- If the word "is" or the word "are" is the last word in the clause just before an item list or the first word in the
+  clause just after an item list, it will be changed to the other word in order to properly reflect the plurality of
+  the referenced items. For example, if a sentence like `<s>There is <il></il> on the desk.</s>` contains an item with
   a quantity greater than 1, or multiple items, it will be changed like so:
-    - `<s>There are <il><item>2 PENCILS</item></il> on the desk.</s>`, or 
+    - `<s>There are <il><item>2 PENCILS</item></il> on the desk.</s>`, or
     - `<s>There are <il><item>a PENCIL</item> and <item>an ERASER</item></il> on the desk.</s>`
-- If an item list contains non-items, they will be updated according to the same rules that `item` tags follow. For 
+- If an item list contains non-items, they will be updated according to the same rules that `item` tags follow. For
   example, in the sentence `<s>The shelves are lined with <il>different ingredients for baking and dough mixes</il>.</s>`,
   if the description's container contains an item, an Oxford comma will be inserted before the final "and", like so:
     - `<s>The shelves are lined with <il><item>2 bags of RICE</item>, different ingredients for baking, and dough mixes</il>.</s>`
@@ -324,7 +336,7 @@ change:
   <desc><s>It's a queen bed with perfectly white sheets<if cond="this.containsItem('COMFORTER') === true"> and a thick, black comforter tucked neatly under the mattress</if>.</s> <s>On it, you find <il></il>.</s></desc>
   ```
 
-If the description belongs to a [Room Item](../reference/data_structures/room_item.md) or 
+If the description belongs to a [Room Item](../reference/data_structures/room_item.md) or
 [Inventory Item](../reference/data_structures/inventory_item.md), you can write descriptions that change:
 
 - Based on the number of uses the Item has left:
@@ -345,8 +357,8 @@ the most helpful and commonly used.
 
 ### Finder conditionals
 
-The function which evaluates scripts also has access to the 
-[finder module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/finder.js), which allows you to find almost 
+The function which evaluates scripts also has access to the
+[finder module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/finder.js), which allows you to find almost
 any game entity. The finder module includes the following functions (parameters listed in parentheses are optional):
 
 - `findRoom('room-id')`
@@ -520,7 +532,7 @@ Here are a few examples of ways to use the helper functions in `if` tags:
 ## `<var>`
 
 > [!CAUTION]
-> This tag has the ability to run code. In order to display the output of the script in the `v` attribute, 
+> This tag has the ability to run code. In order to display the output of the script in the `v` attribute,
 > Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While
 > it has been tested to prevent access to many functions which can cause severe damage, its security cannot
 > be guaranteed, especially if Alter Ego is run outside of a Docker container. Given that the only way to
@@ -755,19 +767,19 @@ Because `procedural` `A3` is nested inside `procedural` `A2` — which is itself
 probability of `A3` generating will be dependent on `A2` generating, which is dependent on `A1` generating. In other
 words, the parser module's generated output will be:
 
-- **50%** of the time: 
+- **50%** of the time:
   ```xml
   <desc><s>Sentence.</s></desc>
   ```
-- **25%** of the time: 
+- **25%** of the time:
   ```xml
   <desc><s>Sentence.</s> <procedural name="A1"><s>A1.</s></procedural></procedural></desc>
   ```
-- **12.5%** of the time: 
+- **12.5%** of the time:
   ```xml
   <desc><s>Sentence.</s> <procedural name="A1"><s>A1.</s> <procedural name="A2"><s>A2.</s></procedural></procedural></desc>
   ```
-- **12.5%** of the time: 
+- **12.5%** of the time:
   ```xml
   <desc><s>Sentence.</s> <procedural name="A1"><s>A1.</s> <procedural name="A2"><s>A2.</s> <procedural name="A3"><s>A3.</s></procedural></procedural></procedural></desc>
   ```
@@ -780,8 +792,8 @@ is supplied when the output is generated, then the chosen stat will affect the c
 contained within this `procedural` tag.
 - When instantiating a Prefab as an Inventory Item, the Player will always be the
 Player who the Inventory Item belongs to.
-- When instantiating a Prefab as a Room Item, the Player will be the one who activated the Fixture processing the 
-Recipe in which the Prefab is a product, as long as they're still alive and in the same Room as the Fixture. 
+- When instantiating a Prefab as a Room Item, the Player will be the one who activated the Fixture processing the
+Recipe in which the Prefab is a product, as long as they're still alive and in the same Room as the Fixture.
 Otherwise, it is only possible to supply a Player in the bot version of the instantiate command;
 this is the Player who caused the command to be executed.
 
@@ -937,7 +949,7 @@ Before reading this section, please read the section on
 [Room Item](../reference/data_structures/room_item.md#procedural-selections)
 [Inventory Item](../reference/data_structures/inventory_item.md#procedural-selections) procedural selections.
 
-Because procedural selections are carried over when an Item is transformed, it can be useful to have procedurals and 
+Because procedural selections are carried over when an Item is transformed, it can be useful to have procedurals and
 possibilities that never have a chance of generating when an Item is instantiated, and can only appear in instances
 of that Item that were created by passing procedural selections down through repeated transformations
 (for instance, in a chain of Recipes). In this case, it can be useful to create default `procedural` and `poss` tags.
@@ -1002,7 +1014,7 @@ following description:
 ```
 
 Because the `secondary base color` `procedural` is nested inside of both `poss` tags inside of the main
-`base color` `procedural`, and the `secondary base color` `procedural` has only one `poss` tag that 
+`base color` `procedural`, and the `secondary base color` `procedural` has only one `poss` tag that
 matches the `poss` it's nested in, each `base color` possibility can carry over an additional procedural
 selection.
 
@@ -1024,7 +1036,7 @@ On the other hand, if the WET CLAY is processed into a WET CLAY TEACUP with the 
 <desc><s>This is a teacup and saucer set made of <procedural name="secondary base color"><poss name="red" chance="50">red</poss><poss name="white" chance="50">white</poss></procedural> clay.</s> <s>They were made on a pottery wheel.</s> <procedural name="secondary quality" stat="dex"><s><poss name="terrible" chance="30">They're of *terrible* quality. They're both lumpy and misshapen, with wildly uneven circumferences. The cup's handle is thin and flimsy, and feels like it might break off. Worse yet, the bottom of the cup is crooked, which makes it impossible for it to sit level on a flat surface; not that it matters, since the saucer has a rugged, bumpy surface itself. You'd be sure to spill whatever you put in this cup.</poss><poss name="poor" chance="30">They're of poor quality. The bottom of the saucer is decently sturdy, but it's not perfectly flat, preventing it from sitting completely level. It has a fairly flat surface, but the bottom of the cup is also a bit uneven, making it rock back and forth slightly. The saucer has a mostly even circumference at least, but the same cannot be said of the cup, which is lumpy all around. The handle is attached alright, but it's a little small, making it somewhat difficult to hold. You could probably drink out of this, but you'd have to be careful, or you'd make a mess.</poss><poss name="decent" chance="30">The craftsmanship is fairly decent. The cup and saucer both have sturdy bottoms that sit perfectly level on a flat surface. The saucer has a nice, even circumference with a concave rim. The sides and lip of the teacup are *mostly* even, but there are a few small divots and bumps here and there. The handle has a good thickness, with just enough room for your fingers. You could probably drink out of this just fine.</poss><poss name="excellent" chance="10">The craftsmanship is *excellent*. The cup and saucer both have sturdy bottoms that sit level on any surface. The rim of the saucer is perfectly circular, and flares out to give it a concave shape, but its surface still has a completely flat indentation, in which the cup fits snugly. The body of the cup itself has perfect radial symmetry, and a very smooth texture. The handle is attached seamlessly, with the ideal shape to be held with just one finger. The cup's rim flares out to meet your lips, making it easy to sip from.</poss></s></procedural> <s>The clay is still wet.</s> <s>It needs time to dry before it can be put in the kiln.</s></desc>
 ```
 
-Then the `base color` procedural selection that the WET CLAY Prefab transferred over will be 
+Then the `base color` procedural selection that the WET CLAY Prefab transferred over will be
 discarded instead, since no `procedural` with that tag exists in this description. The
 `secondary quality` `procedural` will also be evaluated independently.
 

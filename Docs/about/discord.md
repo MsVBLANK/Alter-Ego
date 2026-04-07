@@ -58,10 +58,99 @@ the Spectator category. If not, it will create one with that Player's name. It w
 spectate channels in the category.
 
 When a Player enters a Room, inspects a [Fixture](../reference/data_structures/fixture.md) or
-[Item](../reference/data_structures/room_item.md), or otherwise does something that requires text from
+[Room Item](../reference/data_structures/room_item.md), or otherwise does something that requires text from
 the [Spreadsheet](../reference/data_structures/index.md) be sent, Alter Ego will send the text to that Player via DM.
 Any [Narration](../reference/data_structures/narration.md) regarding a Player action will generally be sent to the
 channel of the Room that Player is in.
+
+## Displaying Content
+
+Discord offers many ways to display content. Alter Ego makes use of several of these.
+
+### Markdown
+
+Discord has its own implementation of
+[Markdown](https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline).
+This allows users to style text in various ways. Alter Ego interacts with Discord Markdown in the following ways:
+
+- When a Player sends a message to a Room channel as a Header of any size, Alter Ego considers this to be shouted
+  dialog, and communicates it to neighboring Rooms.
+- When a Player sends a message to a Room channel as Subtext, Alter Ego considers this to be quiet dialog, and will not
+  communicate it to neighboring Rooms, even if it is in all uppercase letters.
+
+### Display Components
+
+Discord has a variety of [Display Components](https://discordjs.guide/legacy/popular-topics/display-components), which
+allow bots to send messages with highly customizable appearances.
+
+Alter Ego has its own system of message display types. These are pre-defined sets of Display Components that can be sent
+by Alter Ego with ease. They are detailed here.
+
+#### STANDARD
+
+The `STANDARD` message display type is used in standard [Narrations](../reference/data_structures/narration.md). It
+consists of text inside of a [Container Component](https://docs.discord.com/developers/components/reference#container).
+The accent color used is set by the
+[`STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#standard_message_display_accent_color).
+
+![An example of a message sent using the STANDARD message display type](../images/message_display_type_standard.png)
+
+#### WARNING
+
+The `WARNING` message display type is used in Narrations meant to warn Players. It
+consists of text inside of a Container Component. The accent color used is set by the
+[`WARNING_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#warning_message_display_accent_color).
+
+![An example of a message sent using the WARNING message display type](../images/message_display_type_warning.png)
+
+#### ALERT
+
+The `ALERT` message display type is used in Narrations meant to convey a sense of danger or urgency. It
+consists of text inside of a Container Component. The accent color used is set by the
+[`ALERT_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#alert_message_display_accent_color).
+
+![An example of a message sent using the ALERT message display type](../images/message_display_type_alert.png)
+
+#### MINOR
+
+The `MINOR` message display type is used in Narrations meant to communicate information that isn't important. It uses
+Markdown, consisting of Subtext in a Block Quote. Messages sent with the `MINOR` message display type are sent with the
+[`SUPPRESS_NOTIFICATIONS` Flag](https://docs.discord.com/developers/resources/message#message-object-message-flags),
+so that they will not trigger a notification for users.
+
+![An example of a message sent using the MINOR message display type](../images/message_display_type_minor.png)
+
+#### PLAIN_TEXT
+
+The `PLAIN_TEXT` message display type is used to send a message as plain text, with no Display Components.
+
+![An example of a message sent using the PLAIN_TEXT message display type](../images/message_display_type_plain_text.png)
+
+#### PLAYER
+
+The `PLAYER` message display type is used to send Narrations on behalf of a Player. They are used when a Player performs
+a [Gesture](../reference/data_structures/gesture.md) or sends a Narration with the
+[narrate](../reference/commands/player_commands.md#narrate) [command](../reference/commands/moderator_commands.md#narrate).
+It consists of a [Webhook message](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
+in which the username is the Player's [display name](../reference/data_structures/player.md#display-name), and the
+avatar is their current [display icon](../reference/data_structures/player.md#display-icon) or Discord avatar. The
+content of the Narration consists of text inside of a Container Component. It uses the same accent color as a
+message sent with the `STANDARD` message display type.
+
+![An example of a message sent using the PLAYER message display type](../images/message_display_type_player.png)
+
+#### MONOLOG
+
+The `MONOLOG` message display type is used to send [Monologs](../reference/data_structures/action.md#monolog-action) on
+behalf of a Player. It consists of a Webhook message that functions identically to the `PLAYER` message display type.
+However, the Container Component does not have an accent color.
+
+![An example of a message sent using the MONOLOG message display type](../images/message_display_type_monolog.png)
+
+### Interactive Components
+
+> [!CAUTION]
+> TODO
 
 ## Limitations
 

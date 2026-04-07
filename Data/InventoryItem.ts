@@ -156,14 +156,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * @param container - The container to drop the inventory item into.
      * @param inventorySlot - The inventory slot to drop the inventory item into.
      */
-    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): string[] {
+    getDropActionDirectiveArgs(containerType: 'Fixture' | 'RoomItem' | 'Puzzle', container: RoomItemContainer, inventorySlot: InventorySlot<RoomItem>): [string, string, string, string, string, string, string, string] {
         let containerName = container.name;
         let containerProceduralSelectionsString = "";
         if (container instanceof ItemInstance) {
             containerName = container.getIdentifier();
             containerProceduralSelectionsString = container.proceduralSelectionsString;
         }
-        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id, containerProceduralSelectionsString];
+        return [this.getIdentifier(), this.equipmentSlot, containerType, containerName, inventorySlot?.id ?? undefined, container.location.id, containerProceduralSelectionsString, this.proceduralSelectionsString];
     }
 
 	/**
@@ -172,8 +172,8 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
 	 * @param container - The container to stash the inventory item into.
 	 * @param inventorySlot - The inventory slot to stash the inventory item into.
 	 */
-	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string, string] {
-		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot, container.proceduralSelectionsString];
+	getStashActionDirectiveArgs(container: InventoryItem, inventorySlot: InventorySlot<InventoryItem>): [string, string, string, string, string, string, string, string] {
+		return [this.getIdentifier(), this.equipmentSlot, container.getIdentifier(), inventorySlot?.id ?? undefined, container.containerName, container.equipmentSlot, container.proceduralSelectionsString, this.proceduralSelectionsString];
 	}
 
 	/**
@@ -191,8 +191,8 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * @param equipmentSlot - The equipment slot to equip the inventory item to.
      * @returns [identifier, equipmentSlot, handEquipmentSlot]
      */
-    getEquipActionDirectiveArgs(equipmentSlot: EquipmentSlot): [string, string, string] {
-        return [this.getIdentifier(), equipmentSlot.id, this.equipmentSlot];
+    getEquipActionDirectiveArgs(equipmentSlot: EquipmentSlot): [string, string, string, string] {
+        return [this.getIdentifier(), equipmentSlot.id, this.equipmentSlot, this.proceduralSelectionsString];
     }
 
     /**
@@ -210,8 +210,8 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
      * @param target - The player to use the inventory item on.
      * @returns [identifier, targetName]
      */
-    getUseActionDirectiveArgs(target: Player): [string, string] {
-        return [this.getIdentifier(), target.name];
+    getUseActionDirectiveArgs(target: Player): [string, string, string] {
+        return [this.getIdentifier(), target.name, this.proceduralSelectionsString];
     }
 
     /**

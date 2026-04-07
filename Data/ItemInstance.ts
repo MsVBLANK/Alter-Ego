@@ -108,7 +108,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	}
     
     public get size(): number {
-        return this.prefab.size;
+        return this.prefab?.size ?? 0;
     }
 
 	/**

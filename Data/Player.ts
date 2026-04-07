@@ -1548,10 +1548,11 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
 
     /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {Notification} notification - The notification to send.
+     * @param notification - The notification to send.
+     * @param force - If true, the message will be sent even if the player is unconscious. Defaults to false.
      */
-    notify(notification: Notification): void {
-        if (this.isConscious() && !this.isNPC)
+    notify(notification: Notification, force = false): void {
+        if (!this.isNPC && (force || this.isConscious()))
             this.getGame().communicationHandler.notifyPlayer(notification);
     }
 

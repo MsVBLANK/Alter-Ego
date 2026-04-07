@@ -53,7 +53,7 @@ export default class DropAction extends Action {
 	 * @param args - The args as strings.
 	 */
 	parseInteractionArgs(args: string[]): [InventoryItem, EquipmentSlot, Puzzle | Fixture | RoomItem, InventorySlot<RoomItem>] {
-		const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
+		const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0], args[7]);
 		let container: Puzzle | Fixture | RoomItem;
 		if (args[2] === 'Fixture') container = this.getGame().entityFinder.getFixture(args[3], args[5]);
 		if (args[2] === 'Puzzle') container = this.getGame().entityFinder.getPuzzle(args[3], args[5]);

@@ -31,7 +31,7 @@ export default class UseAction extends Action {
      * @param args - The args as strings. 
      */
     parseInteractionArgs(args: string[]): [InventoryItem, Player] {
-        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
+        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0], args[2]);
         const player = this.getGame().entityFinder.getLivingPlayer(args[1]);
         return [hand?.equippedItem, player];
     }

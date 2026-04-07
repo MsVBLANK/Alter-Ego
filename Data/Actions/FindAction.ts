@@ -47,7 +47,7 @@ export default class FindAction extends Action {
         if (this.performed) return;
         super.perform();
         const dataTypeMatch = query.match(FindAction.dataTypeRegex);
-        if (!dataTypeMatch && !dataTypeMatch.groups) throw new Error(`Couldn't find a valid data type in "${query}".`);
+        if (!dataTypeMatch || !dataTypeMatch.groups) throw new Error(`Couldn't find a valid data type in "${query}".`);
         if (dataTypeMatch.groups.search) query = query.substring(query.indexOf(dataTypeMatch.groups.search)).trim();
         else query = '';
         let results: PersistentGameEntity[] = [];

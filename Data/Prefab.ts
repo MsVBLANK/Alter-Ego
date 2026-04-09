@@ -307,6 +307,14 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
     }
 
     /**
+     * Prefabs themselves cannot have procedural selections, so this will always return false.
+     * This is only used for item instances that have prefabs with procedural selections, and is not used for prefabs directly.
+     */
+    hasProceduralSelection(proceduralOption: [string, string]): boolean {
+        return false;
+    }
+
+    /**
      * Sets the next stage.
      */
     setNextStage(nextStage: Prefab): void {

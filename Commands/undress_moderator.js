@@ -73,7 +73,7 @@ export async function execute(game, message, command, args, moderator) {
                 fixture = fixtures[i];
                 parsedInput = parsedInput.substring(0, parsedInput.lastIndexOf(fixtures[i].name)).trimEnd();
                 // Check if the fixture has a puzzle attached to it.
-                if (fixture.childPuzzle !== null && fixture.childPuzzle.type !== "weight" && fixture.childPuzzle.type !== "container" && (!fixture.childPuzzle.accessible || !fixture.childPuzzle.solved) && player.hidingSpot !== fixture.name)
+                if (fixture.childPuzzle !== null && !fixture.childPuzzle.isAlwaysAccessible() && (!fixture.childPuzzle.accessible || !fixture.childPuzzle.solved) && player.hidingSpot !== fixture.name)
                     return game.communicationHandler.reply(message, `You cannot put items ${fixture.preposition} ${fixture.name} right now.`);
                 break;
             }
@@ -116,7 +116,7 @@ export async function execute(game, message, command, args, moderator) {
     let slot = null;
     if (fixture !== null && fixture.childPuzzle === null && containerItem === null)
         container = fixture;
-    else if (fixture !== null && fixture.childPuzzle !== null && (fixture.childPuzzle.type === "weight" || fixture.childPuzzle.type === "container" || fixture.childPuzzle.accessible && fixture.childPuzzle.solved || player.hidingSpot === fixture.name) && containerItem === null)
+    else if (fixture !== null && fixture.childPuzzle !== null && (fixture.childPuzzle.isAlwaysAccessible() || fixture.childPuzzle.accessible && fixture.childPuzzle.solved || player.hidingSpot === fixture.name) && containerItem === null)
         container = fixture.childPuzzle;
     else if (containerItem !== null) {
         container = containerItem;

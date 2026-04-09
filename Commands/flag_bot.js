@@ -9,7 +9,7 @@ export const config = {
 	name: "flag_bot",
 	description: "Set and clear flags.",
 	details: 'Set and clear flags.\n\n'
-		+ '-**set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
+		+ '- **set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
 		+ 'will be created with the specified name. The specified value must be a boolean, number, or string. '
 		+ 'String values must be surrounded by quotation marks. If a string contains "player", and the command was '
 		+ 'executed because of a player\'s actions, it will be replaced with their display name. '
@@ -17,8 +17,11 @@ export const config = {
 		+ 'If you want to set the flag\'s value script, surround your input with `` `tics` ``. This script will immediately '
 		+ 'be evaluated, and the flag\'s value will be set accordingly. Whether the flag\'s value or value script '
 		+ 'is set, the flag\'s set commands will be executed, unless the flag was set by another flag.\n\n'
-		+ '-**clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
-		+ 'When this is cleared, the flag\'s cleared commands will be executed, unless the flag was cleared by another flag.',
+		+ '- **clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
+		+ 'When this is cleared, the flag\'s cleared commands will be executed, unless the flag was cleared by another flag.\n\n'
+        + 'For both sub-commands, if the command was executed because of a player\'s actions, and the ID of the flag contains '
+        + '"player" (case-sensitive), "player" will be replaced with the player\'s name. If a flag with that ID exists, it '
+        + 'will have its value set or cleared accordingly. Otherwise, "player" will be treated as a literal part of the ID.',
 	usableBy: "Bot",
 	aliases: ["flag", "setflag", "clearflag"],
 	requiresGame: true
@@ -35,12 +38,16 @@ export function usage(settings) {
 		+ `setflag INDOOR TEMPERATURE {THERMOSTAT}\n`
 		+ `flag set TV PROGRAMMING += 1\n`
 		+ `setflag INDOOR TEMPERATURE -= 4.1\n`
+        + `flag set player BALANCE += 150\n`
+        + `setflag player BALANCE -= 21.5\n`
 		+ `flag set SOUP OF THE DAY "French Onion"\n`
 		+ `setflag BLOOD SPLATTER “player WAS HERE”\n`
 		+ `flag set PRECIPITATION \`\` \`findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true\` \`\`\n`
 		+ `setflag RANDOM ANIMAL \`\` \`getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])\` \`\`\n`
 		+ `flag clear BLOOD SPLATTER\n`
-		+ `clearflag TV PROGRAMMING\n`;
+		+ `clearflag TV PROGRAMMING\n`
+        + `flag clear player DEBT\n`
+        + `clearflag player DEBT`;
 }
 
 /**
@@ -103,6 +110,11 @@ export async function execute(game, command, args, player, callee) {
 			return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find a valid value in "${input}". The value must be a string, number, or boolean.`);
 
 		let flag = game.entityFinder.getFlag(input);
+        // If no flag was found and a player was provided, and the ID of the flag includes "player", replace it with the player's name.
+        if (!flag && player && input.includes("player")) {
+            const newInput = input.replace(/player/g, player.name);
+            flag = game.entityFinder.getFlag(newInput);
+        }
 		// If no flag was found, create a new one.
 		let newFlag = false;
 		if (!flag) {
@@ -145,7 +157,12 @@ export async function execute(game, command, args, player, callee) {
 		}
 	}
 	else if (command === "clearflag") {
-		const flag = game.entityFinder.getFlag(input);
+		let flag = game.entityFinder.getFlag(input);
+        // If no flag was found and a player was provided, and the ID of the flag includes "player", replace it with the player's name.
+        if (!flag && player && input.includes("player")) {
+            const newInput = input.replace(/player/g, player.name);
+            flag = game.entityFinder.getFlag(newInput);
+        }
 		if (!flag) return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". Couldn't find flag "${input}".`);
 
 		flag.clearValue(doCommands, player);

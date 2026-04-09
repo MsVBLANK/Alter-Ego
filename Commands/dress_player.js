@@ -64,7 +64,7 @@ export async function execute(game, message, command, args, player) {
         if (fixtures[i].name === parsedInput) {
             container = fixtures[i];
             // Check if the fixture has a puzzle attached to it.
-            if (container.childPuzzle !== null && container.childPuzzle.type !== "weight" && container.childPuzzle.type !== "container" && (!container.childPuzzle.accessible || !container.childPuzzle.solved) && player.hidingSpot !== container.name)
+            if (container.childPuzzle !== null && !container.childPuzzle.isAlwaysAccessible() && (!container.childPuzzle.accessible || !container.childPuzzle.solved) && player.hidingSpot !== container.name)
                 return game.communicationHandler.reply(message, `You cannot take items from ${container.name} right now.`);
             else if (container.childPuzzle !== null)
                 container = fixtures[i].childPuzzle;

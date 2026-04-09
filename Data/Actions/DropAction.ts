@@ -42,6 +42,11 @@ export default class DropAction extends Action {
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "drop", "");
         }
+        // Container is a drop puzzle.
+        else if (container instanceof Puzzle && container.type === "drop") {
+            const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
+            attemptAction.performAttempt(container, item, item.getIdentifier(), "drop", "");
+        }
         const preposition = container.getPreposition() ? container.getPreposition() : "in";
         const containerPhrase = container instanceof RoomItem ? `${inventorySlot.id} of ${container.identifier}` : container.name;
         this.successMessage = `Successfully dropped ${item.getIdentifier()} ${preposition} ${containerPhrase} for ${this.player.name}.`;

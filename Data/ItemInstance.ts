@@ -144,7 +144,7 @@ export default abstract class ItemInstance extends ItemContainer {
      * Returns true if the item has the given procedural selection.
      * @param proceduralOption - A procedural name and possibility name.
      */
-    private hasProceduralSelection(proceduralOption: [string, string]): boolean {
+    hasProceduralSelection(proceduralOption: [string, string]): boolean {
         if (!this.proceduralSelections.has(proceduralOption[0])) return false;
         return this.proceduralSelections.get(proceduralOption[0]) === proceduralOption[1];
     }

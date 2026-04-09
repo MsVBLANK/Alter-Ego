@@ -418,7 +418,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
 	 * @returns The instantiated room item.
 	 */
 	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
-        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = "", player?: Player): RoomItem[] {
+        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this.childPuzzle ?? this, inventorySlotId: string = "", player?: Player): RoomItem[] {
         const instantiatingPlayer = player && player.alive && player.location.id === this.location.id ? player : undefined;
 		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, instantiatingPlayer, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
@@ -454,7 +454,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     findRecipe(): FindRecipeResult {
         // Get all the items contained within this fixture.
-        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
+        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, this.childPuzzle ? "Puzzle" : "Fixture", this.childPuzzle ? this.childPuzzle.name : this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
         const collatedItems = CollatedItem.collate(items);

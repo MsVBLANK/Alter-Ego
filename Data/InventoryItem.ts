@@ -279,6 +279,19 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     }
 
     /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return item;
+        }
+        return undefined;
+    }
+
+    /**
      * Executes the inventory item's equipped commands.
      */
     executeEquippedCommands(): void {

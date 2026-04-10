@@ -7,6 +7,7 @@ import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.ts";
 import HidingSpot from "./HidingSpot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type Puzzle from "./Puzzle.ts";
@@ -265,6 +266,15 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
             if (itemIdentifierMatches(item, identifier, true)) return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getRoomItem(identifier, this.location.id, 'Fixture', this.name);
     }
 
     /**

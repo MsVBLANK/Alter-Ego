@@ -21,6 +21,7 @@ import Game from "./Game.ts";
 import type GameEntity from "./GameEntity.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type InventorySlot from "./InventorySlot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import Notification from "./Notification.ts";
 import type Prefab from "./Prefab.ts";
 import Puzzle from "./Puzzle.ts";
@@ -1036,6 +1037,15 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             if (itemIdentifierMatches(item, identifier, true)) return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getInventoryItem(identifier, this.name);
     }
 
     override getContainedItemsWeight(): number {

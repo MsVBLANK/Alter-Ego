@@ -240,6 +240,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     }
 
     /**
+     * Returns true if the owner of this item instance is the given player.
+     * @param player - The player to check ownership against.
+     */
+    override ownerIs(player: Player): boolean {
+        return this.player.name === player.name;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {

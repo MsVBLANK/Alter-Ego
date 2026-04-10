@@ -224,6 +224,11 @@ export default abstract class ItemInstance extends ItemContainer {
 		}
 	}
 
+    /**
+     * Returns true if the owner of this item instance is the given player.
+     */
+    abstract ownerIs(player: Player): boolean;
+
 	/**
 	 * Returns true if the item instance's container matches the given recipe item's container.
 	 */

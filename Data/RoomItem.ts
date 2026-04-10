@@ -260,6 +260,14 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
     }
 
     /**
+     * Returns true if the owner of this item instance is the given player. For room items, always returns false.
+     * @param player - The player to check ownership against.
+     */
+    override ownerIs(player: Player): boolean {
+        return false;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): RoomItem[] {

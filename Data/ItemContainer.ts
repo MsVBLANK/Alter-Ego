@@ -62,6 +62,13 @@ export default abstract class ItemContainer extends GameEntity {
      */
     abstract containsItem(identifier: string): boolean;
 
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    abstract getContainedItem(identifier: string): ItemInstance;
+
 	/**
      * Gets the combined weight of all the items this entity contains.
      */

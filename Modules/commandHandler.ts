@@ -134,7 +134,8 @@ export async function parseAndExecuteBotCommands(commandSet: string[], game: Gam
             if (callee instanceof Puzzle && callee.type === "matrix") {
                 const regex = /{([^{},/]+?)}/g;
                 let match: RegExpExecArray;
-                while (match = regex.exec(command)) {
+                const originalCommand = command;
+                while (match = regex.exec(originalCommand)) {
                     for (const requirement of callee.requirements) {
                         if (requirement instanceof Puzzle && requirement.name.toUpperCase() === match[1].toUpperCase() && requirement.outcome !== "")
                             command = command.replace(match[0], requirement.outcome);

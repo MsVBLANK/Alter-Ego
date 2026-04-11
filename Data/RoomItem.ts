@@ -261,6 +261,14 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
     }
 
     /**
+     * Returns true if the owner of this item instance is the given player. For room items, always returns false.
+     * @param player - The player to check ownership against.
+     */
+    override ownerIs(player: Player): boolean {
+        return false;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): RoomItem[] {
@@ -288,6 +296,19 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
             if (itemIdentifierMatches(item, identifier, true)) return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return item;
+        }
+        return undefined;
     }
 
     descriptionCell(): string {

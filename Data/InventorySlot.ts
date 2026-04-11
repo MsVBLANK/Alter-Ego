@@ -65,6 +65,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 	insertItem(item: T): void {
 		let matchedItem = this.items.find(inventoryItem =>
 			inventoryItem.prefab !== null && item.prefab !== null &&
+            inventoryItem.prefab !== undefined && item.prefab !== undefined &&
 			inventoryItem.prefab.id === item.prefab.id &&
 			inventoryItem.identifier === item.identifier &&
 			inventoryItem.containerName === item.containerName &&
@@ -75,7 +76,7 @@ export default class InventorySlot<T extends ItemInstance | RoomItem | Inventory
 		if (!matchedItem || isNaN(matchedItem.quantity)) this.items.push(item);
 		if (!isNaN(item.quantity)) {
 			this.weight += item.weight * item.quantity;
-			this.takenSpace += item.prefab.size * item.quantity;
+			this.takenSpace += item.size * item.quantity;
 		}
 	}
 

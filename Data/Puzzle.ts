@@ -231,6 +231,14 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
     }
 
     /**
+     * Returns true if the puzzle is always accessible, meaning it doesn't require being made accessible through solving or other interactions.
+     * Weight, container, take, and drop puzzles are always accessible.
+     */
+    isAlwaysAccessible(): boolean {
+        return this.type === "weight" || this.type === "container" || this.type === "take" || this.type === "drop";
+    }
+
+    /**
      * Returns the args for the InstantiateRoomItem ActionDirective for this puzzle.
      * @returns ["PZ", name, location, preposition, type]
      */
@@ -266,7 +274,7 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
      * @param bypassLimitations - Whether limitations should be bypassed. If true, the puzzle does not need to be accessible or solved. Defaults to false.
      */
     canCurrentlyContainItems(requireEmptySpace = true, bypassLimitations = false): boolean {
-        return this.type === "weight" || this.type === "container" || bypassLimitations || this.accessible && this.solved;
+        return this.isAlwaysAccessible() || bypassLimitations || this.accessible && this.solved;
     }
 
     /**
@@ -296,6 +304,15 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
             if (itemIdentifierMatches(item, identifier, true)) return true;
         }
         return false;
+    }
+
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getRoomItem(identifier, this.location.id, 'Puzzle', this.name);
     }
 
     /**

@@ -79,6 +79,11 @@ export default class GameSettings {
 	 * @type {boolean}
 	 */
 	autoDeleteWhisperChannels;
+    /**
+	 * Whether or not @everyone should have the Read Message History permission.
+	 * @type {boolean}
+	 */
+	readMessageHistory;
 	/**
 	 * The accent color that will be used in Discord Embeds.
 	 * @type {string}
@@ -141,6 +146,7 @@ export default class GameSettings {
 	 * @param {string} defaultConcealedIconURL - The URL of an image that will be used as the display icon of a player with the `concealed` behavior attribute if a custom one isn't set.
 	 * @param {string} hiddenIconURL - The URL of an image that will be used as the display icon when a player with the `hidden` behavior attribute speaks in the room.
 	 * @param {boolean} autoDeleteWhisperChannels - Whether or not Whisper channels will be automatically deleted when all Players have been removed from it.
+     * @param {boolean} readMessageHistory - Whether or not @everyone should have the Read Message History permission.
 	 * @param {string} embedAccentColor - The accent color that will be used in Discord Embeds.
 	 * @param {string} standardMessageDisplayAccentColor - The accent color that will be used in standard-type message displays.
 	 * @param {string} warningMessageDisplayAccentColor - The accent color that will be used in warning-type message displays.
@@ -166,6 +172,7 @@ export default class GameSettings {
 		defaultConcealedIconURL,
 		hiddenIconURL,
 		autoDeleteWhisperChannels,
+		readMessageHistory,
 		embedAccentColor,
 		standardMessageDisplayAccentColor,
 		warningMessageDisplayAccentColor,
@@ -190,6 +197,7 @@ export default class GameSettings {
 		this.defaultConcealedIconURL = defaultConcealedIconURL;
 		this.hiddenIconURL = hiddenIconURL;
 		this.autoDeleteWhisperChannels = autoDeleteWhisperChannels;
+        this.readMessageHistory = readMessageHistory;
 		this.embedAccentColor = embedAccentColor;
 		this.standardMessageDisplayAccentColor = standardMessageDisplayAccentColor;
 		this.warningMessageDisplayAccentColor = warningMessageDisplayAccentColor;

@@ -37,6 +37,7 @@ export default class CraftAction extends Action {
         const interactableManager = this.getGame().botContext.interactableManager;
         interactables = interactables.concat(await interactableManager.createInspectActionInteractable(createdItems, this.player))
         interactables = interactables.concat(await interactableManager.getCraftInteractables(this.player));
+        interactables = interactables.concat(await interactableManager.getUncraftInteractables(this.player, this.user));
         interactables = interactables.concat(await interactableManager.getUseInteractables(this.player));
         return interactables;
     }

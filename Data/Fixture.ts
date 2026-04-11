@@ -7,6 +7,7 @@ import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.ts";
 import HidingSpot from "./HidingSpot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type Puzzle from "./Puzzle.ts";
@@ -268,6 +269,15 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     }
 
     /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getRoomItem(identifier, this.location.id, 'Fixture', this.name);
+    }
+
+    /**
      * Returns true if the fixture is activated and deactivates automatically.
      */
     isProcessingItems(): boolean {
@@ -418,7 +428,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
 	 * @returns The instantiated room item.
 	 */
 	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
-        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = "", player?: Player): RoomItem[] {
+        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this.childPuzzle ?? this, inventorySlotId: string = "", player?: Player): RoomItem[] {
         const instantiatingPlayer = player && player.alive && player.location.id === this.location.id ? player : undefined;
 		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, instantiatingPlayer, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
@@ -454,7 +464,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     findRecipe(): FindRecipeResult {
         // Get all the items contained within this fixture.
-        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
+        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, this.childPuzzle ? "Puzzle" : "Fixture", this.childPuzzle ? this.childPuzzle.name : this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
         const collatedItems = CollatedItem.collate(items);

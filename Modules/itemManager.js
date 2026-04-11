@@ -31,7 +31,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
-        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
+        if (!container.isAlwaysAccessible()) accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";
@@ -265,7 +265,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
-        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
+        if (!container.isAlwaysAccessible()) accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";

@@ -5,6 +5,7 @@ import GameEntity from "./GameEntity.ts";
 import type InventorySlot from "./InventorySlot.ts";
 import type ItemInstance from "./ItemInstance.ts";
 import type Status from "./Status.ts";
+import type Player from "./Player.ts";
 
 export type PrefabField = "id"|"names"|"possibleNames"|"containingPhrases"|"possibleContainingPhrases"|"discreet"|"size"|"weight"|"usable"|"useVerb"|"uses"|"inflicts"|"cures"|"nextStage"|"equippable"|"equipmentSlots"|"coveredEquipmentSlots"|"commandsString"|"inventorySlots"|"preposition"|"description"|"proceduralOptions";
 export type PrefabPossibleNames = Collection<Map<string, string>, [string, string]>;
@@ -244,7 +245,7 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
             const pluralName = namePair[1];
             const namesString = `${pluralName ? `${name}, ${pluralName}` : name}`;
             if (proceduralKey && proceduralValue)
-                possibleNamesStrings.push(`[${proceduralKey}=${proceduralValue}]: ${namesString}]`);
+                possibleNamesStrings.push(`[${proceduralKey}=${proceduralValue}: ${namesString}]`);
             else possibleNamesStrings.push(namesString);
         });
         return possibleNamesStrings.join(", ");
@@ -307,6 +308,14 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
     }
 
     /**
+     * Prefabs themselves cannot have procedural selections, so this will always return false.
+     * This is only used for item instances that have prefabs with procedural selections, and is not used for prefabs directly.
+     */
+    hasProceduralSelection(proceduralOption: [string, string]): boolean {
+        return false;
+    }
+
+    /**
      * Sets the next stage.
      */
     setNextStage(nextStage: Prefab): void {
@@ -327,10 +336,33 @@ export default class Prefab extends GameEntity implements PersistentGameEntity {
 	}
 
     /**
+     * Returns true if the owner of this item instance is the given player. For prefabs, always returns false.
+     * @param player - The player to check ownership against.
+     */
+    ownerIs(player: Player): boolean {
+        return false;
+    }
+
+    /**
      * Returns true if the prefab contains no items.
      */
     containsNoItems(): boolean {
         return true;
+    }
+
+    /**
+     * Returns true if this entity contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    containsItem(identifier: string): boolean {
+        return false;
+    }
+
+    /**
+     * Gets the combined weight of all the items this entity contains.
+     */
+    getContainedItemsWeight(): number {
+        return 0;
     }
 
     descriptionCell(): string {

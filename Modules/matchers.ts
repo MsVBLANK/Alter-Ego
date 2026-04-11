@@ -281,6 +281,58 @@ export const recipeProductsMatches = (recipe: Recipe, productsString: string, no
 };
 
 /**
+ * Returns true if any of the prefabs possible names matches the given name.
+ * @param prefab - The prefab to match the name against.
+ * @param name - The name to match.
+ * @param [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
+export const prefabNameMatches = (prefab: Prefab, name: string, normalize = false) => {
+    if (normalize) name = Game.generateValidEntityName(name);
+    for (let [prefabSingleName, prefabPluralName] of prefab.possibleNames.values()) {
+        if (prefabSingleName === name || prefabPluralName && prefabPluralName === name) return true;
+    }
+    return false;
+};
+
+/**
+ * Returns true if the prefab's ID or any of its possible names matches the given identifier.
+ * @param prefab - The prefab to match the identifier or name against.
+ * @param identifier - The identifier to match.
+ * @param [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
+ */
+export const prefabIdOrNameMatches = (prefab: Prefab, identifier: string, normalize = false) => {
+    if (normalize) identifier = Game.generateValidEntityName(identifier);
+    if (entityIdMatches(prefab, identifier)) return true;
+    return prefabNameMatches(prefab, identifier);
+};
+
+/**
+ * Returns true if any of the prefabs possible names contains the given name.
+ * @param prefab - The prefab to match the name against.
+ * @param name - The name to match.
+ * @param [normalize] - Whether or not to normalize the name before matching. Defaults to false.
+ */
+export const prefabNameContains = (prefab: Prefab, name: string, normalize = false) => {
+    if (normalize) name = Game.generateValidEntityName(name);
+    for (let [prefabSingleName, prefabPluralName] of prefab.possibleNames.values()) {
+        if (prefabSingleName.includes(name) || prefabPluralName && prefabPluralName.includes(name)) return true;
+    }
+    return false;
+};
+
+/**
+ * Returns true if the prefab's ID or any of its possible names contains the given identifier.
+ * @param prefab - The prefab to match the identifier or name against.
+ * @param identifier - The identifier to match.
+ * @param [normalize] - Whether or not to normalize the identifier before matching. Defaults to false.
+ */
+export const prefabIdOrNameContains = (prefab: Prefab, identifier: string, normalize = false) => {
+	if (normalize) identifier = Game.generateValidEntityName(identifier);
+	if (entityIdContains(prefab, identifier)) return true;
+    return prefabNameContains(prefab, identifier);
+};
+
+/**
  * Returns true if the item's name matches the given name.
  * @param item - The item instance to match the name against.
  * @param name - The name to match.

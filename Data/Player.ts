@@ -21,6 +21,7 @@ import Game from "./Game.ts";
 import type GameEntity from "./GameEntity.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type InventorySlot from "./InventorySlot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import Notification from "./Notification.ts";
 import type Prefab from "./Prefab.ts";
 import Puzzle from "./Puzzle.ts";
@@ -467,6 +468,20 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             item1.getIdentifier(),
             item2.getIdentifier(),
             "crafting",
+            recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
+            recipe.productsFlat.map(product => product.prefab.id).join(",")
+        ];
+    }
+
+    /**
+     * Returns a custom ID for the given uncraftable recipe.
+     * @param item - The sole item in the player's hands.
+     * @param recipe - The uncraftable recipe satisfied by this item.
+     */
+    getUncraftActionDirectiveArgs(item: InventoryItem, recipe: Recipe): string[] {
+        return [
+            item.getIdentifier(),
+            "uncraftable",
             recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
             recipe.productsFlat.map(product => product.prefab.id).join(",")
         ];
@@ -1024,6 +1039,15 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         return false;
     }
 
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getInventoryItem(identifier, this.name);
+    }
+
     override getContainedItemsWeight(): number {
         const containedItems = this.inventory.map(equipmentSlot => equipmentSlot.equippedItem).filter(item => item !== null);
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
@@ -1534,10 +1558,11 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
 
     /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {Notification} notification - The notification to send.
+     * @param notification - The notification to send.
+     * @param force - If true, the message will be sent even if the player is unconscious. Defaults to false.
      */
-    notify(notification: Notification): void {
-        if (this.isConscious() && !this.isNPC)
+    notify(notification: Notification, force = false): void {
+        if (!this.isNPC && (force || this.isConscious()))
             this.getGame().communicationHandler.notifyPlayer(notification);
     }
 

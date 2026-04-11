@@ -108,7 +108,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	}
     
     public get size(): number {
-        return this.prefab.size;
+        return this.prefab?.size ?? 0;
     }
 
 	/**
@@ -144,7 +144,7 @@ export default abstract class ItemInstance extends ItemContainer {
      * Returns true if the item has the given procedural selection.
      * @param proceduralOption - A procedural name and possibility name.
      */
-    private hasProceduralSelection(proceduralOption: [string, string]): boolean {
+    hasProceduralSelection(proceduralOption: [string, string]): boolean {
         if (!this.proceduralSelections.has(proceduralOption[0])) return false;
         return this.proceduralSelections.get(proceduralOption[0]) === proceduralOption[1];
     }
@@ -223,6 +223,11 @@ export default abstract class ItemInstance extends ItemContainer {
 			container = container.container;
 		}
 	}
+
+    /**
+     * Returns true if the owner of this item instance is the given player.
+     */
+    abstract ownerIs(player: Player): boolean;
 
 	/**
 	 * Returns true if the item instance's container matches the given recipe item's container.

@@ -150,7 +150,7 @@ export async function execute(game, command, args, player, callee) {
     if (command !== "tag" && fixture.recipeTag === "") return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". ${fixture.name} cannot be ${command}d because it has no recipe tag.`);
 
     let narrate = false;
-    if (announcement === "" && player !== null) narrate = true;
+    if (announcement !== "" || player !== null) narrate = true;
 
     if (command === "activate") {
         const activateAction = new ActivateAction(game, undefined, player, fixture.location, true);

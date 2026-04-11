@@ -114,6 +114,8 @@ export const SCRIPT_SCOPE_OPTIONS = {
 		'deactivate',
 		'processRecipes',
 		'processRecipe',
+        '_clearProcess',
+        'clearProcess',
 		'stop',
 		'findRecipe',
         'deleteWhisper',

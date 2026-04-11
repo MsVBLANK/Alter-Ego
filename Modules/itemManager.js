@@ -153,7 +153,8 @@ export function replaceInventoryItem(item, newPrefab) {
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the items it contains as well.
  */
 export function destroyRoomItem(item, quantity, getChildren) {
-    item.quantity -= quantity;
+    if (isNaN(quantity)) item.quantity = 0;
+    else item.quantity -= quantity;
     const container = item.container;
 
     if (container instanceof RoomItem)

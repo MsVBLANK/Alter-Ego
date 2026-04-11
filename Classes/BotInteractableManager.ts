@@ -810,9 +810,10 @@ export default class BotInteractableManager {
      */
     async getTakeInteractables(container: RoomItemContainer, containedItems: RoomItem[], player: Player, user: User = player): Promise<Interactable[]> {
         let interactables: Interactable[] = [];
+        const playerFreeHand = this.#game.entityFinder.getPlayerFreeHand(player);
         let dropContainer = container;
         if (dropContainer instanceof Fixture && dropContainer.childPuzzle !== null && dropContainer.childPuzzle.isItemContainer()) dropContainer = container;
-        if (dropContainer.canCurrentlyContainItems(false, user instanceof Moderator))
+        if (playerFreeHand && dropContainer.canCurrentlyContainItems(false, user instanceof Moderator))
             interactables = interactables.concat(await this.createTakeActionInteractable(containedItems, player, user));
         return interactables;
     }

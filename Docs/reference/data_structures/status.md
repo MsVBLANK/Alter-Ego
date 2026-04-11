@@ -17,6 +17,12 @@ the [Status class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Status.
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
+### Id
+
+- Class Attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.id`
+
+The unique ID of the status.
+
 ### Name
 
 - Spreadsheet label: **Effect Name**
@@ -51,6 +57,12 @@ So, a Status Effect that should last 30 seconds should have a duration of `30s`,
 have a duration of `15m`, one that should last 2 hours should have a duration of `2h`, one that should last 1.5 days
 should have a duration of `36h`, and so on. If no duration is provided, this will be `null`, and the Status Effect will
 not expire on its own.
+
+### Duration String
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.durationString`
+
+How long it takes for the status to expire after it is inflicted. Accepted units: s, m, h, d, w, M, y.
 
 ### Remaining
 
@@ -100,6 +112,12 @@ currently has any of the Status Effects listed here, then they cannot be inflict
 circumstances. However, it should be noted that overriders do not automatically cure Status Effects that they override
 when they are inflicted on a Player.
 
+### Overriders Strings
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> `this.overridersStrings`
+
+The IDs of statuses that prevent this status from being inflicted.
+
 ### Cures
 
 - Spreadsheet label: **Cures**
@@ -112,6 +130,12 @@ on a Player. Among other things, this allows particular Status Effects to be mut
 where a Player can only be inflicted with one Status Effect in the cycle at any given time. For that reason, if the
 Status Effect is being inflicted due to being a previous Status Effect's next stage
 or [cured condition](status.md#cured-condition), it will not cure any Status Effects on this list.
+
+### Cures Strings
+
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> `this.curesStrings`
+
+The IDs of statuses that cure this status when they are inflicted.
 
 ### Next Stage
 
@@ -141,6 +165,12 @@ Effect cannot be duplicated if the Player is inflicted with one of its overrider
 It is not possible for a Status Effect to have more than one duplicated Status. If the Status Effect has no duplicated
 Status, this is `null`.
 
+### Duplicated Status Id
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.duplicatedStatusId`
+
+The ID of the status that this Status will turn into if it is inflicted on a player who already has it.
+
 ### Cured Condition
 
 - Spreadsheet label: **When Cured**
@@ -157,11 +187,17 @@ will not receive its inflicted description; they will be sent the cured Status E
 It is not possible for a Status Effect to have more than one cured condition. If the Status Effect has no cured
 condition, this is `null`.
 
+### Cured Condition Id
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.curedConditionId`
+
+The ID of the status that will be inflicted on the player if this one is cured.
+
 ### Stat Modifiers
 
 - Spreadsheet label: **Stat Modifiers**
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)[StatModifier](statmodifier.md)
   `this.statModifiers`
 
 This is a comma-separated list of stat modifier objects that an instance of this Status Effect will apply to a Player
@@ -170,14 +206,14 @@ inflicted with it. Stat modifier objects have the following structure:
 `{ Boolean modifiesSelf, String stat, Boolean assignValue, Number value }`
 
 In order to define a stat modifier, the name or abbreviation of the stat to modify must be listed. This must be
-`strength`, `intelligence`, `dexterity`, `speed`, or `stamina`; or their abbreviations, `str`, `int`, `dex`, `spd`, or
+`strength`, `perception`, `dexterity`, `speed`, or `stamina`; or their abbreviations, `str`, `per`, `dex`, `spd`, or
 `sta`. It must then be followed by an operator: `+`, `-`, or `=`. Next must be an integer value from `1` to `10`.
 Finally, if the stat is meant to modify the attacker's stat in a [Die roll](die.md) where a Player inflicted with this
 Status Effect is the defender, prefix the modifier with `@`.
 
 Valid examples of stat modifiers for a single Status Effect are:
 
-- `int-1`. This decreases the Player's [intelligence](player.md#intelligence) stat by 1.
+- `per-1`. This decreases the Player's [perception](player.md#perception) stat by 1.
 - `str-2, dex-2, spd-2, sta-2`. This decreases the
   Player's [strength](player.md#strength), [dexterity](player.md#dexterity), [speed](player.md#speed),
   and [stamina](player.md#stamina) stats by 2.
@@ -197,11 +233,22 @@ added together before being applied to the stat. However, stat modifiers which a
 overrule all other modifiers to that stat. So, even if a Player has one Status Effect with a stat modifier of `sta+9`,
 if they have a Status Effect with a stat modifier of `sta=1`, their stamina stat will be set to 1.
 
+### Attributes
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+>
+> Use [Behavior Attributes](#behavior-attributes) instead.
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.attributes`
+
+The behavior attributes this status applies to the player.
+
 ### Behavior Attributes
 
 - Spreadsheet label: **Attributes**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.attributes`
+- Class attribute: [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)> `this.behaviorAttributes`
 
 This is a comma-separated list of keywords that give the Status Effect predefined behavior when it is inflicted on a
 Player. Through the combination of different behavior attributes, the Status Effect can transform gameplay for the
@@ -431,7 +478,7 @@ explaining entirely how it works and what it does to a Player inflicted with it.
 ### Inflicted Description
 
 - Spreadsheet label: **Message When Inflicted**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+- Class attribute: [Description](description.md)
   `this.inflictedDescription`
 
 When a Player is inflicted with this Status Effect, they will receive a parsed version of this string. See the article
@@ -440,7 +487,7 @@ on [writing descriptions](../../moderator_guide/writing_descriptions.md) for mor
 ### Cured Description
 
 - Spreadsheet label: **Message When Cured**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+- Class attribute: [Description](description.md)
   `this.curedDescription`
 
 When a Player is cured of this Status Effect, they will receive a parsed version of this string.
@@ -454,7 +501,7 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
 
 ### Timer
 
-- Class attribute: [moment-timer](https://momentjs.com/docs/#/plugins/timer/) `this.timer`
+- Class attribute: [Timer](https://momentjs.com/docs/#/plugins/timer/) `this.timer`
 
 This is an internal attribute which contains a timer counting down until the Status Effect expires. This is `null` for
 all Status Effects loaded from the spreadsheet. This is only assigned to an instantiated Status Effect that has a

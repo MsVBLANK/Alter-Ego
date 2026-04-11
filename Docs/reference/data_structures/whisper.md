@@ -27,16 +27,22 @@ Whispers have few attributes.
 ### Players
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Player](player.md)>
+  attribute: [Collection](https://discord.js.org/docs/packages/collection/main/Collection:Class)<[Player](player.md)>
   `this.players`
 
-This is an array of all Players currently in the Whisper.
+A collection of players in the whisper. The key for each entry is the player's name.
 
 ### Location
 
 - Class attribute: [Room](room.md) `this.location`
 
 This is the Room the Whisper exists in. All of the Players in the Whisper must be in this Room.
+
+### Hiding Spot Name
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.hidingSpotName`
+
+The name of the hiding spot the whisper belongs to.
 
 ### Channel Name
 
@@ -68,3 +74,9 @@ channel will be deleted as well. If it is `false`, then the channel's name will 
 Discord only allows a single category to have up to 50 channels. Therefore, if Whisper channels are not automatically
 deleted, they must be moved to another category or manually deleted before this limit is reached. Otherwise, no new
 Whispers can be created.
+
+### Deleted
+
+- Class Attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) `this.deleted`
+
+Whether or not the whisper has been deleted.

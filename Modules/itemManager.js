@@ -153,7 +153,8 @@ export function replaceInventoryItem(item, newPrefab) {
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the items it contains as well.
  */
 export function destroyRoomItem(item, quantity, getChildren) {
-    item.quantity -= quantity;
+    if (isNaN(quantity)) item.quantity = 0;
+    else item.quantity -= quantity;
     const container = item.container;
 
     if (container instanceof RoomItem)
@@ -247,6 +248,32 @@ export function convertRoomItem(item, player, equipmentSlotId, quantity) {
  */
 export function copyInventoryItem(item, player, equipmentSlotId, quantity) {
     return convertRoomItem(item, player, equipmentSlotId, quantity);
+}
+
+/**
+ * Makes an exact copy of the given inventory item and returns it.
+ * Does not copy any contained items.
+ * @param {InventoryItem} item 
+ */
+export function cloneInventoryItem(item) {
+    let createdItem = new InventoryItem(
+        item.player.name,
+        item.prefab.id,
+        item.identifier,
+        item.equipmentSlot,
+        item.containerType,
+        item.containerName,
+        item.quantity,
+        item.uses,
+        item.description.text,
+        item.row,
+        item.getGame()
+    );
+    createdItem.player = item.player;
+    createdItem.setPrefab(item.prefab);
+    createdItem.setNames();
+    createdItem.initializeInventory();
+    return createdItem;
 }
 
 /**

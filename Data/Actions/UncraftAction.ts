@@ -23,11 +23,12 @@ export default class UncraftAction extends Action {
         const originalItemSingleContainingPhrase = item.singleContainingPhrase;
 		const itemId = item.getIdentifier();
 		const uncraftingResult = this.player.uncraft(item, recipe);
-		const uncraftedDescription = recipe.uncraftedDescription.parseFor(this.player, recipe);
+		const uncraftedDescription = recipe.uncraftedDescription.parseFor(this.player, this.player);
         const interactables = await this.#getInteractables([uncraftingResult.ingredient1, uncraftingResult.ingredient2].filter(ingredient => ingredient !== null));
-		this.player.sendDescription(uncraftedDescription, recipe, recipe.uncraftedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
+		this.player.sendDescription(uncraftedDescription, this.player, recipe.uncraftedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
 		this.getGame().narrationHandler.narrateUncraft(this, recipe, originalItemDiscreet, originalItemSingleContainingPhrase, item, uncraftingResult, this.player);
 		this.getGame().logHandler.logUncraft(itemId, uncraftingResult, this.player, this.forced);
+        this.player.clearProcess();
         this.successMessage = `Successfully uncrafted ${itemId} for ${this.player.name}.`;
 	}
 

@@ -220,12 +220,14 @@ async function testparse (game, fileName, player) {
             text += "   ";
             text += "ROW " + recipe.row + EOL;
 
-            const taggedFixture = game.fixtures.find(fixture => fixture.recipeTag === recipe.fixtureTag);
+            const container = game.fixtures.find(fixture => fixture.recipeTag === recipe.fixtureTag) ?? player;
+            const tempRecipe = !container.process || !container.process.recipe ? recipe : undefined;
+            if (tempRecipe) container.process.recipe = recipe;
             // First, do the initiated text.
             if (recipe.initiatedDescription.text !== "") {
                 text += "      MESSAGE WHEN INITIATED:" + EOL;
 
-                const parsedDescription = parseDescriptionWithErrors(recipe.initiatedDescription, taggedFixture ? taggedFixture : recipe, player);
+                const parsedDescription = parseDescriptionWithErrors(recipe.initiatedDescription, container, player);
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.initiatedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.initiatedCell(), errors: parsedDescription.errors });
 
@@ -240,7 +242,7 @@ async function testparse (game, fileName, player) {
             if (recipe.completedDescription.text !== "") {
                 text += "      MESSAGE WHEN COMPLETED:" + EOL;
 
-                const parsedDescription = parseDescriptionWithErrors(recipe.completedDescription, taggedFixture ? taggedFixture : recipe, player);
+                const parsedDescription = parseDescriptionWithErrors(recipe.completedDescription, container, player);
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.completedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.completedCell(), errors: parsedDescription.errors });
 
@@ -255,7 +257,7 @@ async function testparse (game, fileName, player) {
             if (recipe.uncraftedDescription.text !== "") {
                 text += "      MESSAGE WHEN UNCRAFTED:" + EOL;
 
-                const parsedDescription = parseDescriptionWithErrors(recipe.uncraftedDescription, recipe, player);
+                const parsedDescription = parseDescriptionWithErrors(recipe.uncraftedDescription, container, player);
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.uncraftedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.uncraftedCell(), errors: parsedDescription.errors });
 
@@ -265,6 +267,7 @@ async function testparse (game, fileName, player) {
                 text += "         ";
                 text += parsedDescription.text + EOL;
             }
+            if (tempRecipe) container.process.recipe = null;
         }
         await appendFile(fileName, text);
     }

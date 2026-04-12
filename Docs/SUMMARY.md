@@ -9,7 +9,12 @@
 
 # Player Guide
 
-- [Playing the Game]()
+- [Getting Started](player_guide/getting_started.md)
+- [Getting to Know Alter Ego](player_guide/getting_to_know_alter_ego.md)
+- [Inspecting Things](player_guide/inspecting_things.md)
+- [Interacting with Objects](player_guide/interacting.md)
+- [Moving Around](player_guide/moving_around.md)
+- [Expressing Yourself](player_guide/expressing_yourself.md)
 
 # Moderator Guide
 

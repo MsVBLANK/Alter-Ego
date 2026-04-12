@@ -38,7 +38,8 @@ The action associated with this notification.
 
 ### Content
 
-- Class Attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.content`
+- Class Attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+`this.content`
 
 The text content for the notification.
 

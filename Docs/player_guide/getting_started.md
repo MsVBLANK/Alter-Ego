@@ -1,5 +1,9 @@
 # Getting Started
 
+> [!NOTE]
+> This guide assumes that you know how to use Discord.
+> If you are unfamiliar with Discord, please first refer to the [Beginner's Guide to Discord](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord).
+
 Congratulations! If you are reading this, it probably means that you have been invited to play in an Alter Ego game.
 Learning to play Alter Ego may seem intimidating at first, but once you get the hang of it, you'll be able to explore and interact in a rich game world like it's your second nature.
 

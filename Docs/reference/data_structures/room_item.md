@@ -405,6 +405,19 @@ this.containsItem(identifier);
   - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
     `identifier` - The identifier or prefab ID to search for.
 
+### getContainedItem
+
+```ts
+this.getContainedItem(identifier);
+```
+
+- Purpose: Returns the item contained inside of this container with the given identifier or prefab ID.
+  If no such item exists, returns undefined.
+- Returns: [Room Item](room_item.md)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `identifier` - The identifier or prefab ID to search for.
+
 ### getContainedItemsWeight
 
 ```ts
@@ -414,3 +427,26 @@ this.getContainedItemsWeight();
 - Purpose: Gets the combined weight of all the items this entity contains.
 - Returns: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
 - Parameters: None
+
+### ownerIs
+
+```ts
+this.ownerIs(player);
+```
+
+- Purpose: Returns true if the owner of this item instance is the given player. For room items, always returns false.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+    - [Player](player.md) `player` - The player to check ownership against.
+
+### hasProceduralSelection
+
+```ts
+this.hasProceduralSelection([proceduralName, possName]);
+```
+
+- Purpose: Returns true if the item has the given procedural selection.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+    - \[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)\]
+      `proceduralOption` - A procedural name and possibility name, expressed as a tuple array.

@@ -210,6 +210,8 @@ interface Process {
     recipe: Recipe;
     /** The ingredients used in the recipe. */
     ingredients: Array<CollatedItem<RoomItem>>;
+    /** The products created during recipe processing. */
+    products: Array<RoomItem>;
     /** How many times the given ingredients satisfy the recipe. Only set right before products are instantiated. */
     satisfactoryProcessCount: number;
     /** The duration of the recipe. */
@@ -286,7 +288,6 @@ this.getContainedItemsForItemList(itemListName?, player?);
     - [Player](player.md)
       `player` - The player the description is being sent to. Unused.
 
-
 ### containsNoItems
 
 ```ts
@@ -308,6 +309,19 @@ this.containsItem(identifier);
 - Parameters:
     - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
       `identifier` - The identifier or prefab ID to search for.
+
+### getContainedItem
+
+```ts
+this.getContainedItem(identifier);
+```
+
+- Purpose: Returns the item contained inside of this container with the given identifier or prefab ID.
+  If no such item exists, returns undefined.
+- Returns: [Room Item](room_item.md)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `identifier` - The identifier or prefab ID to search for.
 
 ### getContainedItemsWeight
 
@@ -348,3 +362,31 @@ this.getPreposition();
 - Purpose: Gets the fixture's preposition. If no preposition is set, returns "in".
 - Returns: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
 - Parameters: None
+
+### getIngredientItem
+
+```ts
+this.getIngredientItem(prefabId);
+```
+
+- Purpose: Gets the actual ingredient item instance that was used as an ingredient in the currently processed recipe.
+  If no such item exists, returns the corresponding ingredient prefab of the currently processed recipe.
+  If no recipe is currently being processed, returns undefined.
+- Returns: [Prefab](prefab.md) | [Room Item](room_item.md)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `prefabId` - The prefab ID to search for.
+
+### getProductItem
+
+```ts
+this.getProductItem(prefabId);
+```
+
+- Purpose: Gets the actual product item instance that was instantiated in the currently processed recipe.
+  If no such item exists, returns the corresponding product prefab of the currently processed recipe.
+  If no recipe is currently being processed, returns undefined.
+- Returns: [Prefab](prefab.md) | [Room Item](room_item.md)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `prefabId` - The prefab ID to search for.

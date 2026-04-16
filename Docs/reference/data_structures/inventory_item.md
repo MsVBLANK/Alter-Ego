@@ -401,6 +401,19 @@ this.containsItem(identifier);
   - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
     `identifier` - The identifier or prefab ID to search for.
 
+### getContainedItem
+
+```ts
+this.getContainedItem(identifier);
+```
+
+- Purpose: Returns the item contained inside of this container with the given identifier or prefab ID.
+  If no such item exists, returns undefined.
+- Returns: [Inventory Item](inventory_item.md)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `identifier` - The identifier or prefab ID to search for.
+
 ### getContainedItemsWeight
 
 ```ts
@@ -422,6 +435,17 @@ this.usableOn(player);
 - Parameters:
   - [Player](player.md) `player`
 
+### ownerIs
+
+```ts
+this.ownerIs(player);
+```
+
+- Purpose: Returns true if the owner of this item instance is the given player.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [Player](player.md) `player` - The player to check ownership against.
+
 ### isCoveredByEquippedItem
 
 ```ts
@@ -431,3 +455,15 @@ this.isCoveredByEquippedItem();
 - Purpose: Returns true if the item is covered by an equipped inventory item. Also returns true if it's stashed.
 - Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 - Parameters: None
+
+### hasProceduralSelection
+
+```ts
+this.hasProceduralSelection([proceduralName, possName]);
+```
+
+- Purpose: Returns true if the item has the given procedural selection.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - \[[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)\]
+  `proceduralOption` - A procedural name and possibility name, expressed as a tuple array.

@@ -297,3 +297,48 @@ this.isVideoMonitoring();
 - Purpose: Returns true if the room has the `video monitoring` tag.
 - Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
 - Parameters: None
+
+### getContainedItems
+
+```ts
+this.getContainedItems();
+```
+
+- Purpose:Gets all of the items in this room.
+- Returns: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Room Item](room_item.md)>
+- Parameters: None
+
+### containsNoItems
+
+```ts
+this.containsNoItems();
+```
+
+- Purpose: Returns true if this room contains no items.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
+
+### containsItem
+
+```ts
+this.containsItem(identifier);
+```
+
+- Purpose: Returns true if this room contains an item with the given identifier or prefab ID.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `identifier` - The identifier or prefab ID to search for.
+
+### getContainedItem
+
+```ts
+this.getContainedItem(identifier);
+```
+
+- Purpose: Returns the item contained inside of this room with the given identifier or prefab ID.
+  If no such item exists, returns undefined.
+- Returns: [Room Item](room_item.md)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `identifier` - The identifier or prefab ID to search for.

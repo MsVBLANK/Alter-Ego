@@ -41,6 +41,44 @@ tags are not predefined like HTML tags are. For example, entering `<b>text</b>` 
 ** in a bold font. Entering that in an XML document, however, will have no effect because XML tags have no inherent
 meaning.
 
+## How parsing works
+
+When Alter Ego is instructed to parse a [Description](../reference/data_structures/description.md), the Description
+object is passed to the parser module, along with the [Game Entity](../reference/data_structures/persistent.md) it
+belongs to (referred to as the `container`), and the [Player](../reference/data_structures/player.md) the
+parsed Description will be sent to.
+
+An exact copy of the Description object is created, so that the original is not modified whatsoever. When this occurs,
+the text of the Description is converted to a [Document](https://developer.mozilla.org/en-US/docs/Web/API/Document).
+
+Alter Ego then evaluates all [`if` tag](#if) [Elements](https://developer.mozilla.org/en-US/docs/Web/API/Element) in the
+Document, populates any [item lists](#il) and removes ones that are empty, evaluates all [`var` tags](#var), and
+replaces all [`br` tags](#br) with line breaks.
+
+Finally, after all of these operations, it converts the Document into a plain-text
+[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String). This is what will be
+sent to the Player that the Description was parsed for.
+
+It is important to note that most of the time, when a Description is sent to a Player with
+[Interactables](../player_guide/getting_to_know_alter_ego.md#clicking-on-interactables), those Interactables will be
+generated using only the text that exists in the final parsed Description. Any text contained inside of tags whose
+contents were removed during parsing will not be used to generate Interactables. This is to ensure that Interactables
+are generated based strictly on what the Player can see in the parsed Description.
+
+How Interactables are generated is beyond the scope of this article. However, to give a brief overview, all strings in
+the parsed Description consisting entirely of non-lowercase letters are considered potential Game Entities. Alter Ego
+takes these uppercase strings and attempts to find the Game Entities that they are referring to, and generates
+Interactables for them if they are found.
+
+Since this is done using the text exactly as it appears in the parsed Description, this means that you have to write
+Descriptions to refer to Game Entities by name directly if you want Interactables to be generated for them. For example,
+suppose you have three [Fixtures](../reference/data_structures/fixture.md) named `LOCKER 1`, `LOCKER 2`, and `LOCKER 3`.
+If, in a Description, you refer to them as: "LOCKERS 1 - 3", Interactables will not be generated for them, as none of
+their names will appear in the parsed Description. To generate Interactables for them, they must be referred to
+individually by their names, like so: "LOCKER 1, LOCKER 2, and LOCKER 3".
+
+The remainder of this article will document every tag Alter Ego supports, and how to use it effectively.
+
 ## `<desc>`
 
 Example:

@@ -755,6 +755,9 @@ with additional detail that makes use of static pronouns where possible might lo
 
 `<desc><s>You examine <var v="container.displayName"/>.</s> <if cond="container.hasAttribute('concealed')"><s>They are somewhat tall, but their face is concealed.</s></if><if cond="!container.hasAttribute('concealed')"><s>She's somewhat tall and has a pale complexion.</s> <s>She has long, creamsicle-orange hair with bangs in the middle.</s> <s>She has brown eyes and light brown eyebrows.</s> <s>She has a near-permanent smile, giving you the impression that she's very friendly - perhaps even a bit *too* friendly.</s> <s>She's somewhat thin with a very large chest.</s> <s>All of her fingernails are painted black.</s></if> <s><var v="container.pronouns.Sbj"/> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"><item>a BLACK HAIRBAND</item>, <item>a WHITE DRESS SHIRT</item>, <item>a BLACK TIE</item>, <item>a BLACK SUIT JACKET</item>, <item>a BLACK PENCIL SKIRT</item>, <item>a set of PANTYHOSE</item>, and <item>a pair of BLACK PUMPS</item></il>.</s> <s>You see <var v="container.pronouns.obj"/> carrying <il name="hands"></il>.</s> <if cond="container.statusString.includes('stinky')"><s><var v="container.pronouns.Sbj"/>'<if cond="container.pronouns.plural">re</if><if cond="!container.pronouns.plural">s</if> a little stinky.</s></if><if cond="container.statusString.includes('rancid')"><s><var v="container.pronouns.Sbj"/> smell<if cond="!container.pronouns.plural">s</if> absolutely **rancid**.</s></if></desc>`
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+
 ### Inventory
 
 - Class

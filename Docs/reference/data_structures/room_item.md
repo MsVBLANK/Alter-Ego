@@ -288,6 +288,9 @@ contain the procedurals and possibilities that were selected.
 
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+
 ### Procedural Selections
 
 - Class attribute: [Map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>

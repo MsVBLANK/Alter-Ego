@@ -172,6 +172,8 @@ a message comprised of [Discord Components](https://docs.discord.com/developers/
 ![An example of a Room's description Components.](../../images/room_display_v2.png)
 
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
+Note that because this uses its own custom set of Display Components, it is not possible to manually set the
+[message display type](../../about/discord.md#display-components) for this Description.
 
 ### Row
 

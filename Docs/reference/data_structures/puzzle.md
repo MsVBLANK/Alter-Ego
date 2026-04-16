@@ -510,6 +510,10 @@ solutions, it can be beneficial to make this vary based on the outcome the Playe
 should be noted that solutions are all strings, even if they're numbers. Therefore, solutions in if conditionals should
 be surrounded with single quote characters (`'`).
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components). However, the accompanying
+[Narration](narration.md) will be sent using the `STANDARD` message display type.
+
 ### Already Solved Description
 
 - Spreadsheet label: **Description When Already Solved**
@@ -520,6 +524,9 @@ When a Player attempts to solve the Puzzle and it is already solved, they will r
 However, the exact situation that this description is used in can vary based on the Puzzle type. For Puzzles that
 contain Items, the item list must be contained in this description.
 
+Unless it is manually specified, this Description will be sent using the `PLAIN_TEXT` message display type.
+However, the accompanying Narration will be sent using the `MINOR` message display type.
+
 ### Unsolved Description
 
 - Spreadsheet label: **Description When Unsolved**
@@ -527,6 +534,9 @@ contain Items, the item list must be contained in this description.
   `this.unsolvedDescription`
 
 When a Player unsolves the Puzzle, they will receive a parsed version of this string.
+
+Unless it is manually specified, this Description will be sent using the `PLAIN_TEXT` message display type.
+However, the accompanying Narration will be sent using the `STANDARD` message display type.
 
 ### Incorrect Description
 
@@ -537,6 +547,9 @@ When a Player unsolves the Puzzle, they will receive a parsed version of this st
 When a Player attempts to solve the Puzzle and enters the wrong solution, they will receive a parsed version of this
 string.
 
+Unless it is manually specified, this Description will be sent using the `PLAIN_TEXT` message display type.
+However, the accompanying Narration will be sent using the `MINOR` message display type.
+
 ### No More Attempts Description
 
 - Spreadsheet label: **No More Attempts**
@@ -545,6 +558,9 @@ string.
 
 When a Player attempts to solve the Puzzle but it has 0 remaining attempts, they will receive a parsed version of this
 string.
+
+Unless it is manually specified, this Description will be sent using the `PLAIN_TEXT` message display type.
+However, the accompanying Narration will be sent using the `MINOR` message display type.
 
 ### Requirements Not Met Description
 
@@ -555,6 +571,9 @@ string.
 When a Player attempts to solve the Puzzle but all of the requirements are not met, they will receive a parsed version
 of this string. However, if the Puzzle is not accessible and this is blank, then Alter Ego will pretend as if the Puzzle
 doesn't exist.
+
+Unless it is manually specified, this Description will be sent using the `PLAIN_TEXT` message display type.
+However, the accompanying Narration will be sent using the `MINOR` message display type.
 
 ### Row
 

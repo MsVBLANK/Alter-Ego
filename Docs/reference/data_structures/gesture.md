@@ -86,6 +86,9 @@ and use as few words as possible.
 This is the [Narration]() that will be parsed and then sent to the Player's Room channel when this Gesture is performed.
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Narration will be sent
+using the [`PLAYER` message display type](../../about/discord.md#display-components).
+
 ### Row
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)

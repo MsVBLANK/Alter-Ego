@@ -281,6 +281,9 @@ on [writing descriptions](../../moderator_guide/writing_descriptions.md)
 for more information. However, note that because this is a Narration and not a description, it cannot make use of the
 `player` variable under any circumstances.
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Narration will be sent
+using the [`STANDARD` message display type](../../about/discord.md#display-components).
+
 ### Ended Narration
 
 - Spreadsheet label: **Narration When Ended**
@@ -291,6 +294,8 @@ by when it is ended. If no Players are in one of the Rooms affected by the Event
 Room's channel. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more
 information. However, note that because this is a Narration and not a description, it cannot make use of the `player`
 variable under any circumstances.
+
+Unless it is manually specified, this Narration will be sent using the `STANDARD` message display type.
 
 ### Row
 

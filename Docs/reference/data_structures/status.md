@@ -44,7 +44,7 @@ should consist of a whole number (no decimals) with a letter immediately followi
 is a fixed set of predefined units that correspond with each letter. They are as follows:
 
 | Letter | Unit    |
-| ------ | ------- |
+|--------|---------|
 | s      | seconds |
 | m      | minutes |
 | h      | hours   |
@@ -484,6 +484,9 @@ explaining entirely how it works and what it does to a Player inflicted with it.
 When a Player is inflicted with this Status Effect, they will receive a parsed version of this string. See the article
 on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`STANDARD` message display type](../../about/discord.md#display-components).
+
 ### Cured Description
 
 - Spreadsheet label: **Message When Cured**
@@ -491,6 +494,8 @@ on [writing descriptions](../../moderator_guide/writing_descriptions.md) for mor
   `this.curedDescription`
 
 When a Player is cured of this Status Effect, they will receive a parsed version of this string.
+
+Unless it is manually specified, this Description will be sent using the `STANDARD` message display type.
 
 ### Row
 

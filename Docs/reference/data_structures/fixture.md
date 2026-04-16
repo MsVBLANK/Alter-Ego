@@ -187,6 +187,9 @@ A preposition of "on top of" or just simply "on" would result in a better senten
 This is the description of the Fixture. When a Player inspects this Fixture, they will receive a parsed version of this
 string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+
 ### Row
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)

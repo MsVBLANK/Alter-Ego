@@ -118,7 +118,7 @@ link. That is, Exits must link back to one another in both directions. For examp
 one Exit only, their Exit tables must look like this:
 
 | Room Display Name | Exit Name | Leads To Room | From Exit |
-| ----------------- | --------- | ------------- | --------- |
+|-------------------|-----------|---------------|-----------|
 | Room 1            | DOOR      | Room 2        | EXIT      |
 | Room 2            | EXIT      | Room 1        | DOOR      |
 
@@ -144,6 +144,8 @@ they will be sent a message comprised of
 ![An example of a Room's description Components.](../../images/room_display_v2.png)
 
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
+Note that because this uses its own custom set of Display Components, it is not possible to manually set the
+[message display type](../../about/discord.md#display-components) for this Description.
 
 ### Row
 

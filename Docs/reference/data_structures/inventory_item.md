@@ -64,7 +64,7 @@ naming rules for identifiers. No two Room Items or Inventory Items can have the 
 this looks, see the following table:
 
 | Player Name | Prefab ID   | Container Identifier | Equipment Slot | Container                  | Quantity |
-| ----------- | ----------- | -------------------- | -------------- | -------------------------- | -------- |
+|-------------|-------------|----------------------|----------------|----------------------------|----------|
 | Astrid      | BLACK PARKA | BLACK PARKA 1        | RIGHT HAND     |                            | 1        |
 | Astrid      | BLACK PARKA | BLACK PARKA 2        | JACKET         |                            | 1        |
 | Astrid      | COIN        |                      | RIGHT HAND     | BLACK PARKA 1/RIGHT POCKET | 10       |
@@ -303,6 +303,9 @@ Its item lists will actually mention the Inventory Items contained inside, but i
 than the one it belongs to, all sentences containing item lists will be removed. Also if the Prefab has
 [procedural options](prefab.md#procedural-options), then when the Inventory Item is instantiated, its description will
 only contain the procedurals and possibilities that were selected.
+
+Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
+using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
 
 ### Procedural Selections
 

@@ -28,6 +28,8 @@ or [bot](../commands/bot_commands.md#trigger) [commands](../commands/bot_command
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.id` instead.
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.name`
@@ -50,8 +52,8 @@ is ongoing. If it is `false`, then the Event is not ongoing.
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.durationString`
 
-This is a string which determines how long after the Event is triggered it will be ongoing until it ends. This should
-consist of a number (i.e. `30`, `1.5`) with a letter immediately following it, with no space between them. There is a
+This is a string which determines how long an Event will be ongoing after it is triggered. This should consist of a
+number (i.e. `30`, `1.5`) with a letter immediately following it, with no space between them. There is a
 fixed set of predefined units that correspond with each letter. They are as follows:
 
 | Letter | Unit    |
@@ -66,7 +68,7 @@ fixed set of predefined units that correspond with each letter. They are as foll
 
 So, an Event that should last 30 seconds should have a duration of `30s`, one that should last 15 minutes should have a
 duration of `15m`, one that should last 2 hours should have a duration of `2h`, one that should last 1.5 days should
-have a duration of `1.5d`, and so on.
+have a duration of `1.5d`, and so on. If no duration is provided, the Event will not end on its own.
 
 ### Duration
 
@@ -228,7 +230,7 @@ unless they have a Status Effect which [overrides](status.md#overriders) it.
 ### Inflicted Status Effects
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](../data_structuresstatus.md)>
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status](../data_structuresstatus.md)>
   `this.effects`
 
 This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in
@@ -263,7 +265,7 @@ listed as one of the Event's inflicted Status Effects.
 ### Refreshed Status Effects
 
 - Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status Effect](status.md)>
+  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Status](status.md)>
   `this.refreshes`
 
 This is an internal attribute which contains references to each of the Status Effect objects whose IDs are listed in

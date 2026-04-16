@@ -111,6 +111,8 @@ Recipe. For example, a Recipe with the Fixture tag "blender" can only be process
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.fixtureTag` instead.
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.objectTag`
@@ -131,7 +133,7 @@ following it, with no space between them. There is a fixed set of predefined uni
 They are as follows:
 
 | Letter | Unit    |
-| ------ | ------- |
+|--------|---------|
 | s      | seconds |
 | m      | minutes |
 | h      | hours   |
@@ -325,7 +327,7 @@ There are four ways a Fixture can be activated:
 - By being loaded from the spreadsheet with its activation state being set to `true`.
 
 While a Fixture with a Recipe tag is activated, Alter Ego will attempt every second to
-[find a Recipe](fixture.md#recipe-interval) that can be processed by the Fixture. In order to determine this, it looks 
+[find a Recipe](fixture.md#recipe-interval) that can be processed by the Fixture. In order to determine this, it looks
 for all Room Items contained in the Fixture, as well as any Room Items contained inside those Room Items (recursively).
 Next, it checks all Recipes whose Fixture tag matches the Fixture's Recipe tag. For each Recipe, it compares the list
 of Room Items contained within the Fixture (including child Room Items) to the Recipe's ingredients list. If an exact

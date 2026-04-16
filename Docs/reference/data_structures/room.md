@@ -37,6 +37,8 @@ Internally, this is used as the actual ID of the Room. That is, when a Room is l
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.id` for identification instead, or `this.displayName` for display purposes.
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.name`
@@ -131,7 +133,7 @@ This is an optional image URL that will accompany a Room's description. The URL 
 - Spreadsheet labels: **Exit Name**, **Exit Phrase**, **Exit Tags**, **X**, **Y**, **Z**,
   **Unlocked?**, **Leads To Room**, **From Exit**, **Description When Entering From This Exit**
 - Class attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Exit](exit.md)>
-  `this.exit`
+  `this.exits`
 
 This is a collection of all of the Room's Exits, where the key is the Exit's name.
 All Rooms that can be accessed via a given Room's Exits are considered **adjacent** to the given Room,
@@ -144,6 +146,8 @@ For more information, see the article on [Exits](exit.md).
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.exits` instead.
 
 - Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Exit](exit.md)>
   `this.exit`

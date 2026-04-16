@@ -273,6 +273,8 @@ If no second person verb is given, "use" will be used in its place.
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.thirdPersonVerb` or `this.secondPersonVerb` instead.
 
 - Spreadsheet label: **Use Verb**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)

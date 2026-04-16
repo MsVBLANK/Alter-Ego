@@ -9,9 +9,9 @@ Players can initiate a Die roll of their own volition:
 - A Die roll is initiated when a Player uses the [steal command](../commands/player_commands.md#steal). The roll is
   modified by their [dexterity stat](../data_structures/player.md#dexterity) and whether or not they have the
   [`thief` behavior attribute](../data_structures/status.md#thief).
-- A Die roll is initiated when a Player solves a [`probability`-type](../data_structures/puzzle.md#probability) or [
-  `stat probability`-type](../data_structures/puzzle.md#stat-probability) Puzzle. The roll is modified by the stat used,
-  if applicable. The result is then used to determine which solution is used to solve the Puzzle.
+- A Die roll is initiated when a Player solves a [`probability`-type](../data_structures/puzzle.md#probability) or
+  [`stat probability`-type](../data_structures/puzzle.md#stat-probability) Puzzle. The roll is modified by the stat
+  used, if applicable. The result is then used to determine which solution is used to solve the Puzzle.
 
 Dice are predominantly used by [moderators](../../moderator_guide/moderating.md) in order to determine the result of a
 given Player's action. This is done with the [roll command](../commands/moderator_commands.md#roll).
@@ -47,8 +47,8 @@ subtracted from the base roll. The stat roll modifier, \\(M\\), is calculated wi
 In this formula are several variables:
 
 - \\(s\\) is the attacker's specified stat.
-- \\(a\\) is the [diceMax setting](../settings/docker_settings.md#dice_max).
-- \\(i\\) is the [diceMin setting](../settings/docker_settings.md#dice_min).
+- \\(a\\) is the [diceMax setting](../settings.md#dice_max).
+- \\(i\\) is the [diceMin setting](../settings.md#dice_min).
 
 ## Attributes
 
@@ -91,7 +91,7 @@ If the attacker has the `coin flipper` behavior attribute, and they have
 an [Inventory Item](../data_structures/inventory_item.md)
 whose [single name](../data_structures/inventory_item.md#single-name)
 contains the string "COIN", a coin flip is performed to determine if they will have a +1 added to the Die's modifier,
-independent of stat. Effectively, this has a 50% chance of occuring if the given conditions are met.
+independent of stat. Effectively, this has a 50% chance of occurring if the given conditions are met.
 
 If the Die is being rolled with a defender and uses the [strength stat](../data_structures/player.md#strength), this is
 interpreted as the attacker physically attacking the defender. Thus, the defender's ability to dodge the attack is taken

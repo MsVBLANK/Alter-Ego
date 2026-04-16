@@ -113,15 +113,20 @@ instead. If the server icon is not set, then no image will be sent in the descri
 
 *Default: blank*
 
-### DEFAULT_CONCEAL_ICON_URL
+### DEFAULT_CONCEALED_ICON_URL
 
-This is the URL of an image that will be used as
-the default icon for a player or NPC whose identity is concealed, if the concealing effect does not have a unique icon URL.
+This is the URL of an image that will be used as the display icon for a player or NPC whose identity is concealed.
+However, a new display icon can also be set with moderator or bot commands.
 This must end in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, or `.avif`.
-If this is left blank and the Room does not have a unique icon URL, then Alter Ego will use the server icon
-instead. If the server icon is not set, then no image will be sent in the description message.
 
-*Default: blank*
+*Default: `https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png`*
+
+### HIDDEN_ICON_URL
+
+This is the URL of an image that will be used as the display icon for a player or NPC speaks in the room while hidden.
+This must end in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, or `.avif`.
+
+*Default: `https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png`*
 
 ### AUTO_DELETE_WHISPER_CHANNELS
 
@@ -173,7 +178,7 @@ Alter Ego will set its status to Do Not Disturb.
 
 ### GAME_IN_PROGRESS_ACTIVITY_TYPE, GAME_IN_PROGRESS_ACTIVITY_STRING, GAME_IN_PROGRESS_ACTIVITY_URL
 
-This is the activity that Alter Ego will set for itself when a game has begun. 
+This is the activity that Alter Ego will set for itself when a game has begun.
 Alter Ego's status will be set to Online, however if a valid URL is set, it will appear
 to be streaming. The number of players online will be appended and updated periodically if `SHOW_ONLINE_PLAYER_COUNT` is set to `true`.
 

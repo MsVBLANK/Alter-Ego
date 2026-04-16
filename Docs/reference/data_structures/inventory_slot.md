@@ -34,6 +34,8 @@ This corresponds to the "SLOT ID" part of the **Contains Inventory Slots** colum
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.id` instead.
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.name`
@@ -85,6 +87,8 @@ If this belongs to a Prefab, it will always be empty.
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.items` instead.
 
 - Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[RoomItem](room_item.md) | [InventoryItem](inventory_item.md)>
   `this.item`

@@ -41,6 +41,8 @@ attribute of the Inventory Item equipped to it. All letters should be capitalize
 
 > [!WARNING]
 > This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.id` instead.
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.name`

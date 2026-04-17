@@ -37,8 +37,8 @@ export default class AttemptAction extends Action {
             this.#handleInaccessiblePuzzle(puzzle, input, command);
             return;
         }
-        if (puzzle.requiresMod && !puzzle.solved) {
-            if (this.message && !this.forced) this.getGame().communicationHandler.reply(this.message, "You need moderator assistance to do that.");
+        if (puzzle.requiresMod && !puzzle.solved && !this.forced) {
+            if (this.message) this.getGame().communicationHandler.reply(this.message, "You need moderator assistance to do that.");
             return;
         }
         if (puzzle.remainingAttempts === 0) {
@@ -280,10 +280,10 @@ export default class AttemptAction extends Action {
             for (let i = 0; i < puzzle.solutions.length; i++) {
                 const solution = puzzle.solutions[i];
                 if (solution.startsWith("Item:") || solution.startsWith("InventoryItem:") || solution.startsWith("Prefab:")) {
-                    if (item !== null && item.prefab.id === solution.substring(solution.indexOf(':') + 1).trim()) {
+                    if (item && item.prefab.id === solution.substring(solution.indexOf(':') + 1).trim()) {
                         return solution;
                     }
-                    else if (item === null) {
+                    else if (!item) {
                         const requiredItem = this.player.findItem(solution.substring(solution.indexOf(':') + 1).trim());
                         if (requiredItem) {
                             if (!requiredItems.includes(requiredItem))

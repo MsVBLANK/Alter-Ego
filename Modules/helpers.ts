@@ -9,6 +9,28 @@ import type Player from '../Data/Player.ts';
 /** @import { DurationObjectUnits } from "luxon" */
 
 /**
+ * Divides two numbers, throwing an error if the denominator is zero.
+ * Useful for bot commands, the division operator `/` is used to denote an alternate set of commands, meaning it can't be used.
+ * @param numerator - The number to be divided.
+ * @param denominator - The number to divide by. Must not be zero.
+ */
+export function divide(numerator: number, denominator: number): number {
+    if (denominator === 0) throw new Error("Cannot divide by zero.");
+    return numerator / denominator;
+}
+
+/**
+ * Clamps a number between a minimum and maximum value, inclusive.
+ * @param value - The number to clamp.
+ * @param min - The minimum value to clamp to.
+ * @param max - The maximum value to clamp to.
+ */
+export function clamp(value: number, min: number, max: number): number {
+    if (min > max) throw new Error("Minimum cannot be greater than maximum.");
+    return Math.min(Math.max(value, min), max);
+}
+
+/**
  * Gets a random number between min and max, inclusive.
  * @param min - The minimum possible number.
  * @param max - The maximum possible number.

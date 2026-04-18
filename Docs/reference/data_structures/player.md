@@ -962,10 +962,9 @@ watch the game happen in real time, or read it at any point in the future, even 
 
 There are some things that do not appear in spectate channels, however. Out-Of-Character (OOC) messages---messages that
 begin with `(`---are not sent, as
-the [messageHandler module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/messageHandler.js) does not count
-these as dialog. The Player's commands are also not sent, nor are error messages about command syntax. When the Player
-uses the [status command](../commands/player_commands.md#status) [time command](../commands/player_commands.md#time),
-the responses will not appear in their spectate channel.
+they are not considered true dialog. The Player's commands are also not sent, nor are error messages about command
+syntax. When the Player uses the [status command](../commands/player_commands.md#status) or
+[time command](../commands/player_commands.md#time), the responses will not appear in their spectate channel.
 
 ### Max Carry Weight
 
@@ -1095,44 +1094,241 @@ tags in descriptions.
 
 ### calculateMoveRate
 
+```ts
+this.calculateMoveRate(isRunning?);
+```
+
+- Purpose: Calculates the player's movement rate in meters per second, irrespective of distance or slope.
+- Returns: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+- Parameters:
+  - [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+    `isRunning` - Whether the player is running or not. Defaults to false.
+
 ### hasStatus
+
+```ts
+this.hasStatus(statusId);
+```
+
+- Purpose: Returns true if the player has a status with the specified ID.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `statusId` - The ID of the status to look for.
 
 ### hasBehaviorAttribute
 
+```ts
+this.hasBehaviorAttribute(behaviorAttribute);
+```
+
+- Purpose: Returns true if the player has a status with the specified behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `behaviorAttribute` - The name of the behavior attribute.
+
 ### hasAttribute
+
+> [!WARNING]
+> This method is deprecated and will be removed in a future release.
+>
+> Use `this.hasBehaviorAttribute` instead.
+
+```ts
+this.hasAttribute(attribute);
+```
+
+- Purpose: Returns true if the player has a status with the specified behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `attribute` - The name of the behavior attribute.
 
 ### canSee
 
+```ts
+this.canSee();
+```
+
+- Purpose: Returns true if the player doesn't have the `no sight` behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
+
 ### canHear
+
+```ts
+this.canHear();
+```
+
+- Purpose: Returns true if the player doesn't have the `no hearing` behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
 
 ### knows
 
+```ts
+this.knows(playerName);
+```
+
+- Purpose: Returns true if the player has the `knows ${playerName}` behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `playerName` - The name of a player.
+
 ### isConscious
+
+```ts
+this.isConscious();
+```
+
+- Purpose: Returns true if the player doesn't have the `unconscious` behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
 
 ### isHidden
 
+```ts
+this.isHidden();
+```
+
+- Purpose: Returns true if the player has the `hidden` behavior attribute.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
+
 ### getStatModifier
+
+```ts
+this.getStatModifier(stat);
+```
+
+- Purpose: Calculates dice roll modifier based on the specified stat value.
+- Returns: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+- Parameters:
+  - [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+    `stat` - The stat value.
 
 ### getContainedItems
 
+```ts
+this.getContainedItems();
+```
+
+- Purpose: Gets all of the items this entity contains.
+- Returns: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Inventory Item](inventory_item.md)>
+- Parameters: None
+
 ### getContainedItemsForItemList
+
+```ts
+this.getContainedItemsForItemList(itemListName?, player?);
+```
+
+- Purpose: Gets all of the items that should appear in the given item list.
+- Returns: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[Inventory Item](inventory_item.md)>
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `itemListName` - The name of the item list. Either "equipment" or "hands".
+  - [Player](player.md)
+    `player` - The player the description is being sent to. Unused.
 
 ### containsNoItems
 
+```ts
+this.containsNoItems();
+```
+
+- Purpose: Returns true if this entity contains no items.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters: None
+
 ### containsItem
+
+```ts
+this.containsItem(identifier);
+```
+
+- Purpose: Returns true if this entity contains an item with the given identifier or prefab ID.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `identifier` - The identifier or prefab ID to search for.
 
 ### getContainedItem
 
+```ts
+this.getContainedItem(identifier);
+```
+
+- Purpose: Returns the item contained inside of this container with the given identifier or prefab ID.
+  If no such item exists, returns undefined.
+- Returns: [Inventory Item](inventory_item.md)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `identifier` - The identifier or prefab ID to search for.
+
 ### getContainedItemsWeight
+
+```ts
+this.getContainedItemsWeight();
+```
+
+- Purpose: Gets the combined weight of all the items this entity contains.
+- Returns: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+- Parameters: None
 
 ### getIngredientItem
 
+```ts
+this.getIngredientItem(prefabId);
+```
+
+- Purpose: Gets the actual ingredient item instance that was used as an ingredient in the currently processed recipe.
+  If no such item exists, returns the corresponding ingredient prefab of the currently processed recipe.
+  If no recipe is currently being processed, returns undefined.
+- Returns: [Prefab](prefab.md) | [Inventory Item](inventory_item.md)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `prefabId` - The prefab ID to search for.
+
 ### getProductItem
 
-### findItem
+```ts
+this.getProductItem(prefabId);
+```
 
-### hasItem
+- Purpose: Gets the actual product item instance that was instantiated in the currently processed recipe.
+  If no such item exists, returns the corresponding product prefab of the currently processed recipe.
+  If no recipe is currently being processed, returns undefined.
+- Returns: [Prefab](prefab.md) | [Inventory Item](inventory_item.md)
+- Parameters:
+    - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+      `prefabId` - The prefab ID to search for.
 
 ### getEquipmentSlot
 
+```ts
+this.getEquipmentSlot(equipmentSlotId);
+```
+
+- Purpose: Gets the equipment slot in the player's inventory with the given ID. If it doesn't exist, returns undefined.
+- Returns: [Equipment Slot](equipment_slot.md)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `equipmentSlotId` - The equipment slot ID to search for.
+
 ### hasEquippedItem
+
+```ts
+this.hasEquippedItem(identifier, equipmentSlotId);
+```
+
+- Purpose: Returns true if the player has an item with the given identifier or prefab ID
+  equipped to the given equipment slot.
+- Returns: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+- Parameters:
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `identifier` - The item identifier to search for.
+  - [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+    `equipmentSlotId` - The equipment slot ID it should be equipped to.

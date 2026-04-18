@@ -767,7 +767,7 @@ describe('GameEntityLoader test', () => {
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
-                    "Error: Couldn't load status effect on row 2. No status effect ID was given."
+                    "Error: Couldn't load status effect on row 2. No status effect ID was given.",
                     "Error: Mandatory status effect \"heated\" not found.",
                     "Error: Mandatory status effect \"weary\" not found.",
                     "Error: Mandatory status effect \"asleep\" not found.",

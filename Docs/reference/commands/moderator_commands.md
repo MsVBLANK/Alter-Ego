@@ -1,14 +1,19 @@
 # Moderator commands
 
 Moderator commands are usable by users with
-the [Moderator role](../../appendix/manual_installation/channel_and_role_creation.md#moderator). These commands
-allow [moderators](../../moderator_guide/moderating.md) to control the game world and Players. They allow many built-in
+the [Moderator role](../settings.md#moderator_role). These commands allow
+[moderators](../../moderator_guide/moderating.md) to control the game world and Players. They allow many built-in
 restrictions placed on Players' actions to be bypassed.
 
-Most moderator commands can only be used when a game is in progress, but some are able to be used when this isn't the
-case. With the exception of the delete command, all moderator commands must be sent to the [bot commands channel](../../appendix/manual_installation/channel_and_role_creation.md#channel-bot-commands).
+Most moderator commands can only be used when a game is in progress, but some can be used when this isn't the case.
+With the exception of the delete command (which can be used in any channel), all moderator commands must either be sent
+to the [bot commands channel](../settings.md#command_channel) or in a [Room channel](../settings.md#room_categories).
 
-## addplayer
+If a command is issued in the bot commands channel, the message does not need to begin with the
+[command prefix](../settings.md#command_prefix) (`.` by default). However, if it is sent in a Room channel, then the
+command prefix is required.
+
+### addplayer
 
 Adds a player to the game.
 
@@ -20,17 +25,18 @@ Adds a player to the game.
 
     .addplayer @cella
 
-#### Description
+#### Details
 
 Adds a user to the list of players for the current game. This command will give the specified user the Player role and
-add their data to the players and inventory items spreadsheets. This will be generated using the data in the
-playerdefaults config file. Note that edit mode must be turned on in order to use this command. After using this
-command, you may edit the new Player's data. Then, the players sheet must be loaded, otherwise the new player will not
-be created correctly, and their data may be overwritten.
+add their data to the Players and Inventory Items spreadsheets. This will be generated using the data in your
+`playerdefaults.json` configuration file. However, their name will be set as whatever their current nickname is in the
+server. So, you should set their nickname to their character's name before using this command. Note that edit mode must
+be turned on in order to use this command. After using this command, you may edit the new player's data. Then, the
+Players sheet must be loaded, otherwise the new player will not be created correctly, and their data may be overwritten.
 
-## clean
+### clean
 
-Cleans the items and inventory items sheets.
+Cleans the room items and inventory items sheets.
 
 #### Aliases
 
@@ -41,36 +47,39 @@ Cleans the items and inventory items sheets.
     .clean
     .autoclean
 
-#### Description
+#### Details
 
-Combs through all items and inventory items and deletes any whose quantity is 0. All game data will then be saved to the
-spreadsheet, not just items and inventory items. This process will effectively clean the spreadsheet of items and
-inventory items that no longer exist, reducing the size of both sheets. Note that edit mode must be turned on in order
-to use this command. The items and inventory items sheets must be loaded after this command finishes executing,
-otherwise data may be overwritten on the sheet during gameplay.
+Combs through all room items and inventory items and deletes any whose quantity is 0. All game data will then be saved
+to the spreadsheet, not just room items and inventory items. This process will effectively clean the spreadsheet of room
+items and inventory items that no longer exist, reducing the size of both sheets. Note that edit mode must be turned on
+in order to use this command. The room items and inventory items sheets must be loaded after this command finishes
+executing, otherwise data may be overwritten on the sheet during gameplay.
 
-## craft
+### craft
 
 Crafts two items in a player's inventory together.
 
 #### Aliases
 
-`.craft` `.combine` `.mix`
+`.craft` `.combine` `.mix` `.c`
 
 #### Examples
 
-    .craft chris drain cleaner and plastic bottle
-    .combine keiko's bread and cheese
-    .mix finn red vial with blue vial
-    .craft dayne's soap with knife
+    .craft Kris DRAIN CLEANER and PLASTIC BOTTLE
+    .combine Colette's SLICE OF BREAD and SLICE OF CHEESE
+    .mix Flint RED VIAL with BLUE VIAL
+    .c Sid's BAR OF SOAP with CARVING KNIFE
 
-#### Description
+#### Details
 
-Creates a new item using the two items in the given player's hand. The prefab IDs or container identifiers of the items
-must be separated by "with" or "and". If no recipe for those two items exists, the items cannot be crafted together.
-Note that this command can also be used to use one item on another item, which may produce something new.
+Creates a new item using the two items in the given player's hands. The prefab IDs or container identifiers of the items
+must be separated by "with" or "and". If no recipe for those two items exists, the items cannot be crafted together. If
+any of the resulting items is non-discreet, this will be narrated in the room, so other players will see the player
+craft them.
 
-## createroomcategory
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### createroomcategory
 
 Creates a room category.
 
@@ -83,14 +92,18 @@ Creates a room category.
     .createroomcategory Floor 1
     .register Floor 2
 
-#### Description
+#### Details
 
 Creates a room category channel with the given name. The ID of the new category channel will automatically be added to
-the roomCategories setting in the serverconfig file. If a room category with the given name already exists, but its ID
-hasn't been registered in the roomCategories setting, it will automatically be added. Note that if you create a room
-category in Discord without using this command, you will have to add its ID to the roomCategories setting manually.
+the `roomCategories` setting in your `serverconfig.json` file. If a room category with the given name already exists,
+but its ID hasn't been registered in the `roomCategories` setting, it will automatically be added.
 
-## dead
+Keep in mind that if `ROOM_CATEGORIES` is set in your `.env` file, room categories registered with this command will not
+persist when the bot is rebooted. For that reason, the `ROOM_CATEGORIES` setting should not be set unless you plan to
+manage room category IDs manually. To do this, you will have to create a category channel in Discord without using this
+command, and add its ID to the `ROOM_CATEGORIES` setting manually, then reboot the bot.
+
+### dead
 
 Lists all dead players.
 
@@ -103,11 +116,11 @@ Lists all dead players.
     .dead
     .died
 
-#### Description
+#### Details
 
 Lists all dead players.
 
-## delete
+### delete
 
 Deletes multiple messages at once.
 
@@ -122,51 +135,59 @@ Deletes multiple messages at once.
     .delete @Alter Ego 5
     .delete @MolSno 75
 
-#### Description
+#### Details
 
 Deletes multiple messages at once. You can delete up to 100 messages at a time. Only messages from the past 2 weeks can
 be deleted. You can also choose to only delete messages from a certain user. Note that if you specify a user and for
 example, 5 messages, it will not delete that user's last 5 messages. Rather, it will search through the past 5 messages,
 and if any of those 5 messages were sent by the given user, they wil be deleted.
 
-## destroy
+This command can be used in any channel in the server.
+
+### destroy
 
 Destroys an item.
 
 #### Aliases
 
-`.destroy`
+`.destroy` `.ds`
 
 #### Examples
 
-    .destroy volleyball at beach
-    .destroy gasoline on shelves at warehouse
-    .destroy note in locker 1 at mens locker room
-    .destroy wrench in tool box at beach house
-    .destroy gloves in breast pocket of tuxedo at dressing room
-    .destroy all in trash can at lounge
-    .destroy nero's katana
-    .destroy yuda's glasses
-    .destroy vivians laptop in vivian's vivians satchel
-    .destroy shotput ball in cassie's main pocket of large backpack
-    .destroy all in hitoshi's trousers
-    .destroy all in charlotte's right pocket of dress
+    .destroy VOLLEYBALL at beach
+    .ds CAN OF GASOLINE on SHELVES at Warehouse
+    .destroy NOTE in LOCKER 1 at Men's Locker Room
+    .ds WRENCH in TOOL BOX 1 at beach-house
+    .destroy WHITE GLOVES in BREAST POCKET of TUXEDO 3 at dressing room
+    .ds all in TRASH CAN at lounge
+    .destroy Nero's KATANA
+    .ds Yuda's RIGHT HAND
+    .destroy Vivian's VIVIANS LAPTOP in VIVIANS SATCHEL
+    .ds SHOTPUT BALL in Cassie's MAIN POCKET of LARGE BACKPACK 1
+    .destroy all in Hitoshi's HITOSHIS TROUSERS
+    .ds all in Evad's FRONT POCKET of DENIM OVERALLS 6
 
-#### Description
+#### Details
 
 Destroys an item in the specified location or in the player's inventory. The prefab ID or container identifier of the
-item must be given. In order to destroy an item, the name of the room must be given, following "at". The name of the
-container it belongs to can also be specified. If the container is another item, the identifier of the item or its
-prefab ID must be used. The name of the inventory slot to destroy the item from can also be specified.
+item must be given.
 
-To destroy an inventory item, the name of the player must be given followed by "'s". A container item can also be
-specified, as well as which slot to delete the item from. The player will not be notified if a container item is
-specified. An equipment slot can also be specified instead of a container item. This will destroy whatever item is
-equipped to it. The player will be notified in this case, and the item's unequipped commands will be run.
+To destroy a room item, the display name or ID of the room it's in must be given at the end of the command, following
+"at". To destroy an inventory item, the name of the player must be given followed by `'s` before the item's identifier.
 
-Note that using the "all" argument with a container will destroy all items in that container.
+It is possible to specify the container from which to destroy the item. To do so, add the container's preposition or
+"in" after the item's identifier, followed by the container's name. If the container is another item, its identifier or
+prefab ID must be used. The ID of the inventory slot to destroy the item from can also be specified, followed by "of".
+If you enter "all" in place of an item's identifier and specify a container, all items in that container will be
+destroyed.
 
-## dress
+It is also possible to destroy an inventory item by specifying only the ID of the equipment slot it's equipped to
+instead of the item's identifier. This will destroy whatever is equipped to that equipment slot.
+
+Note that if you destroy an inventory item, the player will be notified if it is an item they have equipped, and its
+unequipped commands will be executed. The player will not be notified if it is an item they have stashed.
+
+### dress
 
 Takes and equips all items from a container for a player.
 
@@ -176,43 +197,57 @@ Takes and equips all items from a container for a player.
 
 #### Examples
 
-    .dress ezekiel wardrobe
-    .dress kelly laundry basket
-    .redress luna main pocket of backpack
+    .dress Ezekiel WARDROBE
+    .dress Kelly LAUNDRY BASKET 7
+    .redress Luna MAIN POCKET of BLUE BACKPACK
 
-#### Description
+#### Details
 
-Takes all items from a container of your choosing and equips them for the given player, if possible. They must have a
-free hand to take an item. Items will be equipped in the order in which they appear on the spreadsheet. If an item is
-equippable to an equipment slot, but the player already has something equipped to that slot, it will not be equipped,
-and they will not be notified when this happens. If the container you choose has multiple inventory slots, you can
-specify which slot to dress from. Otherwise, the player will dress from all slots.
+Takes all room items from the given container and equips them for the given player, if possible. The container's name
+must be given, or its container identifier if it is a room item. The specified player must have a free hand to take an
+item. The player dressing will be narrated in the room they're in.
 
-## drop
+Items will be equipped in the order in which they appear on the spreadsheet. If an item is equippable to an equipment
+slot, but the player already has something equipped to that slot, it will not be equipped, and they will not be notified
+when this happens. If the container has multiple inventory slots, you can specify which slot to dress from by entering
+the ID of the inventory slot followed by "of" before the container. Otherwise, the player will dress from all slots.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### drop
 
 Drops the given item from a player's inventory.
 
 #### Aliases
 
-`.drop` `.discard` `.d`
+`.drop` `.discard` `.put` `.place` `.d`
 
 #### Examples
 
-    .drop emily's knife
-    .drop veronica knife on counter
-    .drop colin's fish sticks in oven
-    .drop aria yellow key in large purse
-    .drop devyn wrench on top rack of tool box
+    .drop Fable's LARGE KNIFE
+    .discard Fable LARGE KNIFE on COUNTER
+    .put Kyra's COOKIE SHEET 3 in OVEN
+    .place Kanda's WATERMELON in CRATE 1
+    .d Ava WRENCH on TOP RACK of TOOL BOX
 
-#### Description
+#### Details
 
-Forcibly drops an item for a player. The item must be in either of the player's hands. You can specify where in the room
-to drop the item into by putting the name of an object or item in the room after the item. If you want to discard the
-item in an item with multiple inventory slots, you can specify which slot to put it in. If no object or item is
-specified, they will drop it on the FLOOR. This can be changed in the settings file. Only objects and item in the same
-room as the player can be specified.
+Discards an item from the given player's inventory and leaves it in the room they're in. The item must be in one of the
+player's hands. The item's prefab ID or container identifier must be used. If the player discards a non-discreet item,
+this will be narrated in the room, so other players will see them drop it.
 
-## dumplog
+A container to drop the item into can be specified. To do so, add the container's preposition or "in" after the item's
+identifier, followed by the container's name. If the container is a room item, its prefab ID or container identifier
+must be used. If you don't specify a container, the player will leave the item on the `DEFAULT_DROP_FIXTURE` defined in
+the game's settings.
+
+If the container has multiple inventory slots, you can also specify which slot to put the item in. To do this, enter the
+ID of the inventory slot followed by "of" before the container's identifier. If an inventory slot is not specified, the
+player will put the item in the container's first inventory slot.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### dumplog
 
 Dump current game state to file.
 
@@ -224,7 +259,7 @@ Dump current game state to file.
 
     .dumplog
 
-#### Description
+#### Details
 
 Dumps a log of the most recently used commands, as well as current internal game state. This will generate two files.
 The data_commands file will contain all successfully-issued commands that have been used recently, but keep in mind that
@@ -234,52 +269,38 @@ large, and Discord has a maximum file size limit of 10 MiB, they will be compres
 If the file size exceeds this, they will instead be saved to disk.
 
 This command is for debugging purposes, and has no use during regular gameplay. If you discover a bug that was not
-caused by Moderator error, please use this command and attach these files to a new Issue on
+caused by moderator error, please use this command and attach these files to a new Issue on
 the [Alter Ego GitHub page](https://github.com/MolSnoo/Alter-Ego/issues).
 
-## editmode
+### editmode
 
 Toggles edit mode for editing the spreadsheet.
 
 #### Aliases
 
-`.editmode`
+`.editmode` `.em`
 
 #### Examples
 
     .editmode
+    .em
     .editmode on
+    .em on
     .editmode off
+    .em off
 
-#### Description
+#### Details
 
 Toggles edit mode on or off, allowing you to make edits to the spreadsheet. When edit mode is turned on, Alter Ego will
 no longer save the game to the spreadsheet automatically. Additionally, all player activity, aside from speaking in room
-channels or in whispers, will be disabled. Players will be notified when edit mode is enabled, so use it sparingly. Data
-will be saved to the spreadsheet before edit mode is enabled, so be sure to wait until the confirmation message has been
-sent before making any edits. When you are finished making edits, be sure to load the updated spreadsheet data before
-disabling edit mode.
+channels or in whispers, will be disabled. Players who don't have the `unconscious` behavior attribute will be notified
+when edit mode is enabled, so use it sparingly. Data will be saved to the spreadsheet before edit mode is enabled, so
+you must wait until the confirmation message has been sent before making any edits, or your edits will be overwritten.
+When you are finished making edits, be sure to load the updated spreadsheet data before disabling edit mode.
 
-## end
+### endgame
 
-Ends an event.
-
-#### Aliases
-
-`.end`
-
-#### Examples
-
-    .end rain
-    .end explosion
-
-#### Description
-
-Ends the specified event. The event must be ongoing. If the event has any ended commands, they will be run.
-
-## endgame
-
-Ends a game.
+Ends the game.
 
 #### Aliases
 
@@ -289,12 +310,15 @@ Ends a game.
 
     .endgame
 
-#### Description
+#### Details
 
-Ends the game. All players will be removed from whatever room channels they were in. The Player and Dead roles will be
-removed from all players.
+Ends the game. All players will be removed from whatever room and whisper channels they were in. The Player and Dead
+roles will be removed from all players, and they will be given the Spectator role.
 
-## equip
+**This command will clear all game data in memory.** While it is possible to load all data from the spreadsheet again
+after using this command, players will need to have their roles reassigned manually.
+
+### equip
 
 Equips an item for a player.
 
@@ -304,18 +328,46 @@ Equips an item for a player.
 
 #### Examples
 
-    .equip lavris's mask
-    .equip keiko lab coat
-    .equip cara's sweater to shirt
-    .equip aria large purse to glasses
+    .equip Kyra's PLAGUE DOCTOR MASK
+    .wear Lain WHITE PARKA
+    .e Dexter KNIT WOOL SWEATER to SHIRT
 
-#### Description
+#### Details
 
-Equips an item currently in the given player's hand. You can specify which equipment slot you want the item to be
-equipped to, if you want. Any item (whether equippable or not) can be equipped to any slot using this command. People in
-the room will see the player equip an item, regardless of its size.
+Equips an item to one of the given player's equipment slots. The item to equip must be in one of the player's hands.
+When an item is equipped, it will be narrated in the room, regardless of whether it is discreet or not. If the item's
+prefab has any equipped commands, they will be executed when it is equipped.
 
-## exit
+Any item can be equipped to any equipment slot with this command, regardless of whether its prefab is equippable or what
+equipment slots it is restricted to. To specify which equipment slot to equip the item to, enter "to" after the prefab
+ID or container identifier of the item, followed by the ID of the equipment slot. If no equipment slot is specified, the
+player will equip it to the first equipment slot its prefab is restricted to.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### event
+
+Triggers or ends an event.
+
+#### Aliases
+
+`.event` `.trigger` `.end`
+
+#### Examples
+
+    .event trigger RAIN
+    .event end EXPLOSION
+    .trigger INTRUDER LOOSE ALERT
+    .end BLACKOUT
+
+#### Details
+
+Triggers or ends the specified event.
+
+If `trigger` is used, the event must not already be ongoing. Its triggered commands will be executed. If `end` is used,
+the event must be ongoing. Its ended commands will be executed.
+
+### exit
 
 Locks or unlocks an exit.
 
@@ -325,61 +377,219 @@ Locks or unlocks an exit.
 
 #### Examples
 
-    .exit lock carousel door
-    .exit unlock headmasters quarters door
-    .lock warehouse door 3
-    .unlock trial grounds elevator
+    .exit lock Carousel DOOR
+    .exit unlock Chancellor's Quarters DOOR
+    .lock warehouse DOOR 3
+    .unlock floor-b1-hall-3 ELEVATOR
 
-#### Description
+#### Details
 
 Locks or unlocks an exit in the specified room. The corresponding entrance in the room the exit leads to will also be
-locked, so that it goes both ways. When an exit is locked, players will be unable to enter the room that exit leads to,
-and will be unable to enter through the exit from another room. If the exit can also be locked or unlocked via a puzzle,
-you should NOT lock/unlock it with this command. Instead, use the puzzle command to solve/unsolve it.
+locked/unlocked. When an exit is locked, players will be unable to move through that exit.
 
-## gesture
+If the exit can also be locked or unlocked using the bot commands of a puzzle, you should not lock/unlock it with this
+command. Instead, use the `puzzle` command to solve/unsolve it, so that the exit remains in sync with the puzzle that
+controls it.
+
+### find
+
+Search in-game data.
+
+#### Aliases
+
+`.find` `.search` `.f`
+
+#### Examples
+
+    .find room dorm 201
+    .search rooms stoke-hall
+    .f fixture DESK
+    .find fixtures at Chancellor's Office
+    .search prefab FRIED RICE
+    .f items THIGH HIGH
+    .find room item LIFE PRESERVER at beach
+    .search items in TRASH CAN
+    .f room items on PREP STATIONS at dining-hall-kitchen
+    .find roomitems COLORED PENCILS in MAIN POUCH of BACKPACK at school store
+    .search recipes uncraftable
+    .f recipes crafting producing GLASS OF ORANGE JUICE
+    .find recipes processing using MILK, RAW EGG producing PANCAKE BATTER, EGGSHELL
+    .search puzzles LOCK
+    .f puzzle COMPUTER at infirmary
+    .find events snow
+    .search status effects medicated
+    .f players an individual wearing a
+    .find inventory items on JACKET
+    .search inventoryitems in RIGHT POCKET of DEFAULT PANTS
+    .f inventoryitem in Phoebe's RIGHT HAND
+    .find inventory item in julie's MAIN POCKET of LUNA PURSE
+    .search inventoryitem Lillie's BLUE FLANNEL
+    .f gestures smile
+    .find flag SEASON FLAG
+
+#### Details
+
+Search in-game data and display results with row numbers. You can search for any entry on the spreadsheet, but you must
+specify which kind of data to find. With no arguments, all entries of that data type will be displayed. Results will be
+divided into pages, with no more than 15 entries per page, or however many will fit in one Discord message. To narrow
+down the results, you can add a search query. Queries are case-insensitive, and any entries which contain the search
+query will be displayed. To examine an entry in more detail, use the view command.
+
+It is also possible to add specifiers to your search for certain data types. Fixtures, Room Items, and Puzzles can be
+filtered by location by ending your search query with "at" followed by the name of a Room. Recipes can be filtered by
+type by starting your search with "crafting", "uncraftable", or "processing". It is also possible to filter Recipes by
+comma-separated lists of ingredients and products. To filter by ingredients, prefix the list with "using"; to filter by
+products, prefix the list with "producing". When using specifiers, it is not actually necessary to provide a search
+query; the results will simply be all entries that match the specified criteria.
+
+Room Items and Inventory Items can be filtered by container name and slot, by entering "[preposition] ([slot name]
+of) [container name]". The container name is also a search query, so any container whose name, plural name, Prefab ID,
+or container identifier contains the given string will be displayed; the same is not true for the slot, however. It is
+also possible to filter Inventory Items by Equipment Slot and Player. To filter by Equipment Slot, enter "in" or "on",
+followed by the name of an Equipment Slot. To filter by Player, enter their name followed by `'s`, directly after the
+preposition, if there is one. Keep in mind that it is not possible to filter by Equipment Slot and container at the same
+time.
+
+To view search results in more detail, use the `view` command.
+
+### fixture
+
+Activates or deactivates a fixture, or sets its recipe tag.
+
+#### Aliases
+
+`.fixture` `.object` `.activate` `.deactivate`
+
+#### Examples
+
+    .fixture activate BLENDER
+    .fixture deactivate MICROWAVE
+    .fixture tag BLENDER puree
+    .activate KEURIG Kyra
+    .deactivate OVEN Noko
+    .fixture activate FIREPLACE Log Cabin
+    .fixture deactivate FOUNTAIN flower-garden
+    .fixture tag BLENDER puree kitchen
+    .activate FREEZER gabriella "Gabriella plugs in the FREEZER."
+    .deactivate WASHER 1 laundry-room "WASHER 1 turns off"
+
+#### Details
+
+This command has three sub-commands:
+
+- **activate**: Activates the specified fixture. When a fixture is activated, it will begin processing the recipe with
+  the highest count of ingredients satisfied by the room items contained inside of it. If no recipe is found, it will
+  look for one that it can process every second while it is activated.
+- **deactivate**: Deactivates the specified fixture. It will stop processing and looking for recipes.
+- **tag**: Sets the fixture's recipe tag. This will immediately stop any ongoing recipe processes. If it is currently
+  activated, it will begin looking for recipes it can process that satisfy the new tag. The spreadsheet will be updated
+  with the new tag on the next save.
+
+Keep in mind that a fixture can only be activated/deactivated if it has a recipe tag. If there is a puzzle whose state
+is supposed to match that of the fixture's, you must use the `puzzle` command to update it separately.
+
+If there are multiple fixtures with the same name, you can specify the room the fixture is in.
+
+Alternatively, you may specify a player to activate/deactivate the fixture. In this case, only fixtures in the same room
+as the player can be activated/deactivated. When a player is supplied, a narration will be sent.
+
+It is possible to supply a custom narration for the fixture being activated/deactivated. Simply add a string of text
+surrounded by quotation marks at the end of the command. This can be done even without supplying a player.
+
+The **activate** and **deactivate** sub-commands support NPC latching. For more information, see the help details for
+the `latch` command.
+
+### flag
+
+Set and clear flags.
+
+#### Aliases
+
+`.flag` `.setflag` `.clearflag`
+
+#### Examples
+
+    .flag set COLD SEASON FLAG true
+    .setflag HOT SEASON FLAG False
+    .flag set TV PROGRAMMING 4
+    .setflag INDOOR TEMPERATURE 25.3
+    .flag set TV PROGRAMMING += 1
+    .setflag INDOOR TEMPERATURE -= 4.1
+    .flag set SOUP OF THE DAY "French Onion"
+    .setflag BLOOD SPLATTER “TWO MILKMEN GO COMEDY”
+    .flag set PRECIPITATION `` `findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true` ``
+    .setflag RANDOM ANIMAL `` `getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])` ``
+    .flag clear BLOOD SPLATTER
+    .clearflag TV PROGRAMMING
+
+#### Details
+
+Set and clear flags.
+
+- **set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one will be
+  created with the specified name. The specified value must be a boolean, number, or string. String values must be
+  surrounded by quotation marks. To add or subtract from the flag's current number value, prefix the number to add or
+  subtract with `+=` or `-=`. If you want to set the flag's value script, surround your input with `` `tics` ``. This
+  script will immediately be evaluated, and the flag's value will be set accordingly. Whether the flag's value or value
+  script is set, the flag's set commands will be executed, unless the flag was set by another flag.
+
+- **clear**: Clears the flag value. This will replace the flag's current value with `null`. When this is cleared, the
+  flag's cleared commands will be executed unless the flag was cleared by another flag.
+
+### gesture
 
 Performs a gesture for the given player.
 
 #### Aliases
 
-`.gesture`
+`.gesture` `.g`
 
 #### Examples
 
-    .gesture astrid smile
-    .gesture akira point at door 1
-    .gesture holly wave johnny
+    .gesture Astrid smile
+    .g Ezekiel point at DOOR 1
+    .gesture Holly wave Johnny
+    .g Dexter sit CHAIR
+    .gesture list
+    .g list Kyra
 
-#### Description
+#### Details
 
-Makes the given player perform one of a set of predefined gestures. Everybody in the room with them will see them do
-this gesture. Certain gestures may require a target to perform them. For example, a gesture might require you specify an
-Exit, a Fixture, another Player, etc. A gesture can only be performed with one target at a time. Gestures can be made
-impossible if the given player is inflicted with certain Status Effects. For example, if they are concealed, they cannot
-smile, frown, etc. as nobody would be able to see it. To see a list of all possible gestures, send `.gesture list`.
+Makes the given player perform one of a set of pre-defined gestures. Everybody in the room with them will see them do
+this gesture. This allows them to communicate non-verbally, though they cannot perform a gesture if they have one of the
+gesture's disabled statuses. To see a list of all of the gestures they can currently perform, send the `gesture` command
+followed by "list" and the name of the player. Omitting the name of a player after "list" will simply list all gestures
+on the sheet.
 
-## give
+Certain gestures may require a target to perform them. To specify a target, enter the identifier of the target directly
+after the ID of the gesture. For a room item or inventory item, this must be its container identifier or prefab ID. For
+any other type of target, it should be its name. Note that a gesture can only be performed with one target at a time.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### give
 
 Gives a player's item to another player.
 
 #### Aliases
 
-`.give` `.g`
+`.give`
 
 #### Examples
 
-    .give vivian's yellow key to aria
-    .give natalie night vision goggles to shiori
+    .give Kanda's EMBALMING FLUID to Astrid
+    .give Lucia BIRTHDAY PRESENT BOX 9 to Flint
 
-#### Description
+#### Details
 
 Transfers an item from the first player's inventory to the second player's inventory. Both players must be in the same
 room. The item selected must be in one of the first player's hands. The receiving player must also have a free hand, or
-else they will not be able to receive the item. If a particularly large item (a chainsaw, for example) is given, people
-in the room with you will see the player giving it to the recipient.
+else they will not be able to receive the item. If the giving player gives a non-discreet item to the receiving player,
+it will be narrated in the room.
 
-## help
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### help
 
 Lists all commands available to you.
 
@@ -392,13 +602,13 @@ Lists all commands available to you.
     .help
     .help status
 
-#### Description
+#### Details
 
 Lists all commands available to the user. If a command is specified, displays the help menu for that command.
 
-## hide
+### hide
 
-Hides a player in the given object.
+Hides a player in the given fixture.
 
 #### Aliases
 
@@ -406,17 +616,19 @@ Hides a player in the given object.
 
 #### Examples
 
-    .hide nero beds
-    .hide cleo bleachers
-    .unhide scarlet
+    .hide Xenia DESK
+    .hide Kiara SHOWER 1
+    .unhide Aisha
 
-#### Description
+#### Details
 
-Forcibly hides a player in the specified object. They will be able to hide in the specified object even if it is
+Forcibly hides a player in the specified fixture. They will be able to hide in the specified fixture even if it is
 attached to a lock-type puzzle that is unsolved, and even if the hiding spot is beyond its capacity. To force them out
-of hiding, use the unhide command.
+of hiding, use the `unhide` command.
 
-## inspect
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### inspect
 
 Inspects something for a player.
 
@@ -426,64 +638,83 @@ Inspects something for a player.
 
 #### Examples
 
-    .inspect akio desk
-    .examine florian knife
-    .look florian knife on desk
-    .x florian knife in main pouch of red backpack 1
-    .investigate blake blake's knife
-    .look jun amadeus
-    .examine nestor jae-seong
-    .look roma lain's glasses
-    .x haruka binita's shirt
-    .inspect ambrosia room
+    .inspect Michio DESK
+    .examine Fable LARGE KNIFE
+    .look Ava JUG OF ORANGE JUICE in REFRIGERATOR
+    .x Florian WOOLEN MITTENS in MAIN POUCH of RED BACKPACK 1
+    .investigate Ai AIS PISTOL
+    .look Jun Amadeus
+    .examine Kanda Huiyu
+    .look Jackie Kyra's KYRAS GLASSES
+    .x Unit_026 Jackie's JACKIES NECKLACE
+    .inspect Aisha room
 
-#### Description
+#### Details
 
-Inspect something for the given player. The target must be the "room" argument, an object, an item, a player, or an
+Inspect something for the given player. The target must be the "room" argument, a fixture, a room item, a player, or an
 inventory item, and it must be in the same room as the given player. The description will be parsed and sent to the
-player in DMs. If the target is an object, or a non-discreet item or inventory item, a narration will be sent about the
-player inspecting it to the room channel. Items and inventory items should use the prefab ID or container identifier. If
-there are multiple items in the room with the same ID, you can specify which one to inspect using its container's name
-(if the container is an object or puzzle), or its prefab ID or container identifier (if it's an item). The player can be
-forced to inspect items and inventory items belonging to a specific player (including themself) using the player's name
-followed by "'s". If inspecting a different player's inventory items, a narration will not be sent.
+player. If the target is a fixture, or a non-discreet room item or inventory item belonging to the player, a narration
+will be sent in the room.
 
-## instantiate
+When inspecting a room item or inventory item, the prefab ID or container identifier must be used. If the target is a
+room item, you can specify which one to inspect by appending its container's preposition or "in" after the item's
+identifier, followed by the container's name (if the container is a fixture or puzzle) or prefab ID or container
+identifier (if the container is a room item).
+
+If the target is an inventory item, you can specify the player that the inventory item belongs to by preceding the
+item's identifier with the player's name followed by `'s`. The player can even inspect their own inventory items this
+way. However, a player cannot inspect another player's non-discreet or stashed inventory items. Note that if a player
+inspects a different player's inventory items, a narration will not be sent.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### instantiate
 
 Generates an item.
 
 #### Aliases
 
-`.instantiate` `.create` `.generate`
+`.instantiate` `.create` `.generate` `.is` `.gn`
 
 #### Examples
 
-    .instantiate raw fish on floor at beach
-    .create pickaxe in locker 1 at mining hub
-    .generate 3 empty drain cleaner in cupboards at kitchen
-    .instantiate green book in main pocket of large backpack 1 at dorm library
-    .create 4 screwdriver in tool box at beach house
-    .instantiate gacha capsule (color=metal + character=upa) in gacha slot at arcade
-    .generate katana in nero's right hand
-    .instantiate gorilla mask on seamus's face
-    .create laptop in vivian's vivians satchel
-    .generate 2 shotput ball in cassie's main pocket of large backpack
-    .instantiate 3 capsulebeast card (species=lavazard) in asuka's left pocket of gamer hoodie
+    .instantiate RAW FISH on FLOOR at Beach
+    .create PICKAXE in LOCKER 1 at mining-hub
+    .generate 3 EMPTY DRAIN CLEANER in CUPBOARDS at Kitchen
+    .instantiate GREEN BOOK in MAIN POCKET of LARGE BACKPACK 1 at dorm-library
+    .is 4 SCREWDRIVER in TOOL BOX at Beach House
+    .gn WET CLAY POT (quality = excellent) on POTTERY WHEEL at Art Studio
+    .instantiate KATANA in Nero's RIGHT HAND
+    .create GORILLA MASK on Evad's FACE
+    .generate VIVIANS LAPTOP in Vivian's VIVIANS SATCHEL
+    .is 2 SHOTPUT BALL in Cassie's MAIN POCKET of LARGE BACKPACK
+    .gn 3 GACHA CAPSULE (color=metal + character=upa) in Asuka's LEFT POCKET of GAMER HOODIE
 
-Generates an item or inventory item in the specified location. The prefab ID must be used. A quantity can also be set.
-If the prefab has procedural options, they can be manually set in parentheses.
+#### Details
 
-To instantiate an item, the name of the room must be given at the end, following "at". The name of the container to put
-it in must also be given. If the container is an object with a child puzzle, the puzzle will be its container. If the
-container is another item, the item's name or container identifier can be used. The name of the inventory slot to
-instantiate the item in can also be specified.
+Generates a room item or inventory item in the specified location. The prefab ID must be used. A quantity can also be
+set by supplying a number before the prefab ID. If no quantity is given, the item will be instantiated with a quantity
+of 1.
 
-To instantiate an inventory item, the name of the player must be given followed by "'s". A container item can be
-specified, as well as which slot to instantiate the item into. The player will not be notified if a container item is
-specified. An equipment slot can also be chosen instead of a container item. The player will be notified of obtaining
-the item in this case, and the prefab's equipped commands will be run.
+If the prefab has procedural options, they can be manually selected in parentheses. To do this, write the name of the
+procedural tag and the poss tag to select within it, separated by an equal sign (`=`). Multiple procedural selections
+can be made, separated by a plus sign (`+`).
 
-## inventory
+To instantiate a room item, the display name or ID of the room must be given at the end, following "at". The container
+to put it in must also be specified after the prefab's ID, preceded by the container's preposition or "in". If the
+container is a fixture with a child puzzle, the puzzle will be its container. If the container is another room item, the
+container's identifier, prefab ID, or name can be used.
+
+To instantiate an inventory item, the name of the player must be given followed by `'s`. It is possible to instantiate
+an inventory item directly to a player's equipment slot by specifying the equipment slot's ID. In this case, the player
+will be notified that they equipped the item, and the prefab's equipped commands will be executed. However, a container
+item can be specified instead by entering its preposition or "in" followed by its identifier, prefab ID, or name. The
+player will not be notified when the item is instantiated this way.
+
+If the container to instantiate the item into is a room item or inventory item, the ID of the inventory slot to
+instantiate the item into can be specified, followed by "of" before the container's identifier.
+
+### inventory
 
 Lists a given player's inventory.
 
@@ -493,15 +724,23 @@ Lists a given player's inventory.
 
 #### Examples
 
-    .inventory nero
+    .inventory Nero
+    .i Aisha
 
-#### Description
+#### Details
 
-Lists the given player's inventory.
+Lists all of the given player's equipment slots, and any items equipped to each one. The player's stashed items will be
+listed underneath the container they're inside of, in parentheses. They will be preceded by the ID of the inventory slot
+they're in.
 
-## kill
+In the player's inventory, the identifiers of all items will be contained in code blocks. This makes it easier to copy
+them and paste them into other commands.
 
-Makes a player dead.
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### kill
+
+Kills a player.
 
 #### Aliases
 
@@ -509,17 +748,28 @@ Makes a player dead.
 
 #### Examples
 
-    .kill chris
-    .die micah joshua amber devyn veronica
+    .kill Platt
+    .die Strickland Wu Obi Katou
 
-#### Description
+#### Details
 
-Moves the listed players from the living list to the dead list. The player will be removed from whatever room channel
-they're in as well as any whispers. A dead player will retain any items they had in their inventory, but they will not
-be accessible unless they are manually added to the spreadsheet. A dead player will retain the Player role. When a dead
-player's body is officially discovered, use the reveal command to remove the Player role and give them the Dead role.
+Kills the listed players. Player names must be separated by a space.
 
-## knock
+When a player is killed, they are removed from the list of living players and added to the list of dead players. This
+prevents them from using any player commands, thus making them unable to interact with the game world. When a player
+dies, they are dead permanently. To bring them back to life, they must be manually edited on the spreadsheet. Only use
+this command if you are absolutely sure.
+
+Upon death, the player will be removed from whatever room and whisper channels they were in. The player will be
+notified, and a narration will be sent indicating that they have died. All status effects the player had will be
+cleared. They will retain any items they had in their inventory, but they will not be accessible in any way. In order to
+make the player's corpse inspectable, it must be manually added to the appropriate location as a fixture, and their
+inventory items must be manually added as room items.
+
+A dead player will retain the Player role. To remove the Player role and give them the Dead role, use the `reveal`
+command.
+
+### knock
 
 Knocks on a door for a player.
 
@@ -529,13 +779,44 @@ Knocks on a door for a player.
 
 #### Examples
 
-    .knock kanda door 1
+    .knock Kanda DORM 2
 
-#### Description
+#### Details
 
-Knocks on a door for the given player
+Knocks on an exit for the given player. This will be narrated in the room they're in, and in the room that the exit
+leads to. If an exit has the `not knockable` exit tag, it cannot be knocked on.
 
-## living
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### latch
+
+Latches onto an NPC.
+
+#### Aliases
+
+`.latch` `.unlatch`
+
+#### Examples
+
+    .latch unit_050
+    .latch Haru
+    .latch
+    .unlatch
+
+#### Details
+
+Latches onto an NPC player. If you issue a player-controlling command in a channel that the selected NPC is in while you
+are latched, you do not have to specify which player to control. However, if you wish to control a different player in
+that channel, you must still specify their name.
+
+While latched, you can also speak for that NPC without using the `say` command. However, keep in mind that this prevents
+you from sending narrations as a moderator in that channel.
+
+Note that you cannot latch onto any player that is not an NPC.
+
+To clear your latch, send the `latch` command without specifying an NPC, or use the `unlatch` alias.
+
+### living
 
 Lists all living players.
 
@@ -548,62 +829,84 @@ Lists all living players.
     .living
     .alive
 
-#### Description
+#### Details
 
 Lists all living players.
 
-## load
+### load
 
 Loads game data.
 
 #### Aliases
 
-`.load` `.reload` `.gethousedata`
+`.load` `.reload` `.las` `.lar`
 
 #### Examples
 
     .load all start
+    .las
     .load all resume
+    .lar
     .load all
     .load rooms
-    .load objects
+    .load fixtures
     .load prefabs
     .load recipes
-    .load items
+    .load room items
+    .load roomitems
     .load puzzles
     .load events
     .load status effects
     .load players
+    .load inventory items
     .load inventories
     .load gestures
+    .load flags
 
-#### Description
+#### Details
 
-Gathers the game data by reading it off the spreadsheet. Can specify what data to collect. "all start" must be used at
-the beginning of the game after the startgame timer is over, as it will gather all the data and send the room
-description of the room they start in to each player. If at any point you restart the bot, use "all resume". Any data
-that was previously gathered will be updated. Any data you edit manually, including descriptions, will require use of
-this command.
+Loads game data from the spreadsheet and stores it in memory. You must specify what spreadsheet tab to load from. When
+data from a particular tab is loaded, all data that was previously in memory for that tab will be cleared and replaced
+with the newly-loaded data.
 
-## location
+If there are any errors with the loaded game data, you will be warned, and the game cannot progress until they are fixed
+and reloaded. However, some game data cannot be checked for errors with the load command. To check for errors in your
+descriptions, use the `parse` command. At this time, it is not possible to check for errors in bot commands that appear
+on the spreadsheet, until they are executed.
+
+If game entities referenced data that has been reloaded (for example, fixtures reference the room they're located in),
+the references will be updated to point to the new data, if possible. However, references can be broken, if newly-loaded
+data does not contain the entities that other entities reference, and you will not be warned when this occurs. So, it is
+good practice to load all game data together periodically.
+
+To start the game, load all data and append "start" or "resume". When "start" is used, each living player will be sent
+the description of the room they load into. When "resume" is used, the game is still started, but room descriptions will
+not be sent to players. In general, "start" should be used when starting a game for the first time, and "resume" should
+be used whenever the bot is rebooted. However, you do not have to do this if the `AUTO_LOAD` setting in your `.env` file
+is set to `true`.
+
+If you are loading data while a game is in progress, you should use the `editmode` command first.
+
+### location
 
 Tells you a player's location.
 
 #### Aliases
 
-`.location`
+`.location` `.l`
 
 #### Examples
 
-    .location faye
+    .location Gabriella
+    .l Amy
 
-#### Description
+#### Details
 
 Tells you the given player's location, with a link to the channel.
 
-## move
+### move
 
-Moves the given player(s) to the specified room or exit.
+Moves the given player to the specified room or exit.
 
 #### Aliases
 
@@ -611,50 +914,56 @@ Moves the given player(s) to the specified room or exit.
 
 #### Examples
 
-    .move joshua door 2
-    .move val amber devyn trial grounds
-    .move living diner
-    .move all elevator
+    .move Kiki DOOR 2
+    .enter Kiki Lingling Maple Wally biosphere-garden
+    .go living Dining Hall
+    .m all ELEVATOR
 
-#### Description
+#### Details
 
-Forcibly moves the specified players to the specified room or exit. If you use "living" or "all" in place of the
-players, it will move all living players to the specified room (skipping over players who are already in that room as
-well as players with the Free Movement role). All of the same things that happen when a player moves to a room of their own
-volition apply, however you can move players to non-adjacent rooms this way. The bot will not announce which exit the
-player leaves through or which entrance they enter from when a player is moved to a non-adjacent room.
+Forcibly moves the given players to the specified room or exit. When a player is moved, they will be removed from the
+room channel they were already in and added to the destination room channel. They will move to the given destination
+immediately, without consuming any stamina, and with no regard for whether the room is adjacent to their current room or
+the exit leading to it is locked.
 
-## object
+You can select multiple players by separating their names with a space. If instead of providing the names of players,
+you enter "living" or "all", all living players will be moved to the specified room, except for players who are already
+in that room, NPCs, and players with the Free Movement role.
 
-Activates or deactivates an object.
+When this command is used to move a player to a room that is not adjacent to their current room, the narration in the
+destination room will not specify which exit they entered from.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### narrate
+
+Narrates an NPC's non-verbal actions.
 
 #### Aliases
 
-`.object` `.activate` `.deactivate`
+`.narrate` `.n`
 
 #### Examples
 
-    .object activate blender
-    .object deactivate microwave
-    .activate keurig kyra
-    .deactivate oven noko
-    .object activate fireplace log cabin
-    .object deactivate fountain flower garden
-    .activate freezer zoran "Zoran plugs in the FREEZER."
-    .deactivate washer 1 laundry room "WASHER 1 turns off"
+    .narrate Ai She lands with a curtsy while balancing a tray with a tall stack of tablets on it in one hand.
+    .n Unit_050 It sits up straight on the piano bench and prepares to play.
+    .narrate Sid She is utterly perplexed by the $100 bill that's suddenly in the tip jar.
+    .n Haru He walks over to the plushie rack and takes the used dog plushie. He puts it under the counter for safekeeping. Definitely not for easy access.
 
-#### Description
+#### Details
 
-Activates or deactivates an object. You may specify a player to activate/deactivate the object. If you do, players in
-the room will be notified, so you should generally give a string for the bot to use, otherwise the bot will
-say "[player] turns on/off the [object]." which may not sound right. If you specify a player, only objects in the room
-that player is in can be activated/deactivated. You can also use a room name instead of a player name. In that case,
-only objects in the room you specify can be activated/deactivated. This is useful if you have multiple objects with the
-same name spread across the map. This command can only be used for objects with a recipe tag. If there is a puzzle with
-the same name as the object whose state is supposed to be the same as the object, use the puzzle command to update it as
-well.
+Narrates non-verbal actions for an NPC. The name of an NPC must be specified. This narration will be sent to the room or
+hiding spot the NPC is currently in. This behaves similarly to the `gesture` command, but it allows you to write more
+complex narrations. Please note that you cannot send a narration that exceeds Discord's character limit, which is 2000
+characters.
 
-## occupants
+This command cannot be used to narrate actions for a non-NPC player. To do that, send a message in the room or whisper
+channel they're currently in. This will be treated as a narration, but it will be clearly indicated as having been
+written by you.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### occupants
 
 Lists all occupants in a room.
 
@@ -665,17 +974,17 @@ Lists all occupants in a room.
 #### Examples
 
     .occupants floor-b1-hall-1
-    .o ultimate conference hall
+    .o Ultimate Conference Hall
 
-#### Description
+#### Details
 
 Lists all occupants currently in the given room. If an occupant is in the process of moving, their move queue will be
 included, along with the time remaining until they reach the next room in their queue. Note that the displayed time
-remaining will not be adjusted according to the heatedSlowdownRate setting. If a player in the game has the heated
+remaining will not be adjusted according to the `HEATED_SLOWDOWN_RATE` setting. If a player in the game has the `heated`
 status effect, movement times for all players will be displayed as shorter than they actually are. Occupants with the
-`hidden` behavior attributes will also be listed alongside their hiding spots.
+`hidden` behavior attribute will also be listed alongside their hiding spots.
 
-## ongoing
+### ongoing
 
 Lists all ongoing events.
 
@@ -688,11 +997,11 @@ Lists all ongoing events.
     .ongoing
     .events
 
-#### Description
+#### Details
 
 Lists all events which are currently ongoing, along with the time remaining on each one, if applicable.
 
-## online
+### online
 
 Lists all online players.
 
@@ -704,11 +1013,36 @@ Lists all online players.
 
     .online
 
-#### Description
+#### Details
 
 Lists all players who are currently online.
 
-## puzzle
+### parse
+
+Checks your descriptions for errors.
+
+#### Aliases
+
+`.parse` `.testparser`
+
+#### Examples
+
+    .parse
+    .parse Kyra
+    .testparser
+
+#### Details
+
+Runs all of your descriptions through the parser module. It will parse every single one and output the plain-text
+results to a text file that will be sent to the command channel. If there are any errors with your descriptions, they
+will be listed alongside the resulting file. It is important to fix all errors and warnings, or undesired behavior may
+occur during gameplay.
+
+You can input a player name to parse the text as if that player is reading it. This is useful if you want to see how
+descriptions will appear to a given player. If you do not supply one, descriptions will be parsed as if they are being
+read by a player named Cella.
+
+### puzzle
 
 Solves or unsolves a puzzle.
 
@@ -718,29 +1052,41 @@ Solves or unsolves a puzzle.
 
 #### Examples
 
-    .puzzle solve button
-    .puzzle unsolve keypad
-    .solve binder taylor
-    .unsolve lever colin
-    .solve computer PASSWORD1
-    .solve computer PASSWORD2
-    .puzzle solve keypad tool shed
-    .puzzle unsolve lock men's locker room
-    .solve paintings emily "Emily removes the PAINTINGS from the wall."
-    .unsolve lock men's locker room "The LOCK on LOCKER 1 locks itself"
-    .puzzle attempt cyptex lock 05-25-99 scarlet
+    .puzzle solve TERMINAL
+    .puzzle unsolve SEARCH QUERY
+    .solve AISHA PROGRAM Ava
+    .unsolve BURIED TREASURE Jackie
+    .solve USERNAME jl
+    .solve USERNAME doublehelix
+    .puzzle solve CALL BUTTON Floor B2 Hall 1
+    .puzzle unsolve SWITCH dorm-6
+    .solve IRONWOOD TREES Jackie "Jackie takes a sturdy stance, holding her ax with confidence. With one-! two-! *three-!* swings, she chops through an IRONWOOD TREE, and it falls out of the way."
+    .unsolve LOGIN infirmary "The COMPUTER automatically logs out"
+    .puzzle attempt AISHA PROGRAM 05 4C 91 F1 04 1F AB F0 Ava
+    .attempt 3D PRINTER rabbit Huiyu
 
-#### Description
+#### Details
 
-Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. You may specify a
-player to solve the puzzle. If you do, players in the room will be notified, so you should generally give a string for
-the bot to use, otherwise the bot will say "[player] uses the [puzzle]." which may not sound right. If you specify a
-player, only puzzles in the room that player is in can be solved/unsolved. Additionally, if you specify a player, you
-can make them attempt to solve a puzzle. You can also use a room name instead of a player name. In that case, only
-puzzles in the room you specify can be solved/unsolved. This is useful if you have multiple puzzles with the same name
-spread across the map. This should generally only be used for puzzles which require moderator intervention.
+Solves or unsolves a puzzle. You may specify an outcome, if the puzzle has more than one solution. When a puzzle is
+solved, it will execute the solved commands for the outcome it was solved with. When a puzzle is unsolved, it will
+execute the unsolved commands for the outcome it currently has. If there is a fixture whose state is supposed to match
+that of the puzzle's, you must use the `fixture` command to update it separately.
 
-## restore
+If there are multiple puzzles with the same name, you can specify the room the puzzle is in.
+
+Alternatively, you may specify a player to solve/unsolve the puzzle. In this case, only puzzles in the same room as the
+player can be solved/unsolved. When a player is supplied, a narration will be sent.
+
+It is possible to supply a custom narration for the puzzle being solved/unsolved. Simply add a string of text surrounded
+by quotation marks at the end of the command. This can be done even without supplying a player.
+
+Additionally, if you specify a player, you can make them attempt the puzzle with the `attempt` option. This makes it
+possible to force the player to fail the puzzle because they didn't provide a correct solution or they didn't satisfy
+the requirements for the puzzle to be solved/unsolved.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### restore
 
 Restores a player's stamina.
 
@@ -750,14 +1096,14 @@ Restores a player's stamina.
 
 #### Examples
 
-    .restore flint
+    .restore Flint
 
-#### Description
+#### Details
 
-Sets the given player's stamina to its maximum value. Note that this does not automatically cure the weary status
-effect.
+Sets the given player's stamina to its maximum value. This is based on their current max stamina, not their default
+stamina. Note that this does not automatically cure the `weary` status effect.
 
-## reveal
+### reveal
 
 Gives a player the Dead role.
 
@@ -767,14 +1113,14 @@ Gives a player the Dead role.
 
 #### Examples
 
-    .reveal chris
-    .reveal micah joshua amber devyn veronica
+    .reveal Platt
+    .reveal Strickland Wu Obi Katou
 
-#### Description
+#### Details
 
 Removes the Player role from the listed players and gives them the Dead role. All listed players must be dead.
 
-## roll
+### roll
 
 Rolls a die.
 
@@ -785,24 +1131,34 @@ Rolls a die.
 #### Examples
 
     .roll
-    .roll int colin
-    .roll faye devyn
-    .roll str seamus terry
-    .roll strength shinobu shiori
-    .roll sta evad
-    .roll dexterity agiri
+    .roll Sadie
+    .roll Christopher Nero
+    .roll str Ai
+    .roll strength Aisha Huiyu
+    .roll perception Kanda
+    .roll per Kyra Amadeus
+    .roll dexterity Flint
+    .roll dex Elijah Lucia
+    .roll spd Luna
+    .roll speed Xenia Fury
+    .roll stamina Danica
+    .roll sta Ezekiel Kelly
 
-#### Description
+#### Details
 
-Rolls a d6. If a stat and a player are specified, calculates the result plus the modifier of the player's specified
-stat. If two players are specified, any status effects the second player has which affect the first player will be
-applied to the first player, whose stats will be recalculated before their stat modifier is applied. Additionally, if a
-strength roll is performed using two players, the second player's dexterity stat will be inverted and applied to the
-first player's roll. Any modifiers will be mentioned in the result, but please note that the result sent has already had
-the modifiers applied. Valid stat inputs include: `str`, `strength`, `int`, `intelligence`, `dex`, `dexterity`, `spd`,
-`speed`, `sta`, `stamina`.
+Rolls a die. You can set the minimum and maximum possible values in your `.env` file with the `DICE_MIN` and `DICE_MAX`
+settings, respectively.
 
-## save
+If a stat and a player are specified, the result will have the modifier of the player's specified stat added to it. If
+two players are specified, any status effects the second player has which affect the first player will be applied to the
+first player, whose stats will be recalculated before their stat modifier is applied. Additionally, if a strength roll
+is performed using two players, the second player's dexterity modifier will be inverted and applied to the first player'
+s roll. Any modifiers will be mentioned in the result, but please note that the result sent has already had the
+modifiers applied.
+
+Valid stat inputs are: `str`, `strength`, `per`, `perception`, `dex`, `dexterity`, `spd`, `speed`, `sta`, `stamina`.
+
+### save
 
 Saves the game data to the spreadsheet.
 
@@ -814,13 +1170,13 @@ Saves the game data to the spreadsheet.
 
     .save
 
-#### Description
+#### Details
 
-Manually saves the game data to the spreadsheet. Ordinarily, game data is automatically saved to the spreadsheet every
-30 seconds, as defined in the settings file. However, this command allows you to save at any time, even when edit mode
-is enabled.
+Manually saves the game data to the spreadsheet. Ordinarily, game data is automatically saved to the spreadsheet
+periodically, as defined by the `AUTOSAVE_INTERVAL` in your `.env` file. However, this command allows you to save at any
+time, even when edit mode is enabled.
 
-## say
+### say
 
 Sends a message.
 
@@ -830,21 +1186,25 @@ Sends a message.
 
 #### Examples
 
-    .say #park Hello. My name is Alter Ego.
-    .say #general Thank you for speaking with me today.
+    .say #general Hello. My name is Alter Ego.
+    .say #park Haru taps the left part of the wall in certain locations in order, and it begins descending, revealing the entrance to PATH 10.
     .say amy One appletini, coming right up.
 
-#### Description
+#### Details
 
-Sends a message. A channel or player must be specified. Messages can be sent to any channel, but if it is sent to a room
-channel, it will be treated as a narration so that players with the "see room" attribute can see it. If the name of a
-player is specified and that player has the talent "NPC", the player will speak in the channel of the room they're in.
-Their dialog will be treated just like that of any normal player's. The image URL set in the player's Discord ID will be
-used for the player's avatar.
+Sends a message. A channel or player must be specified. Messages can be sent to any channel in the server, but if it is
+sent to a room channel, it will be treated as a narration.
 
-## set
+If the name of a player is specified and that player is an NPC, the player will speak in the channel of the room they're
+in. Their dialog will be treated just like that of any normal player's. The image URL set in the player's Discord ID
+will be used for the player's avatar. It is not possible to use this command on a non-NPC player.
 
-Sets an object, puzzle, or set of items as accessible or inaccessible.
+It is possible to speak for an NPC without using this command. For more information, see the help details for the
+`latch` command.
+
+### set
+
+Sets a fixture, puzzle, or group of room items as accessible or inaccessible.
 
 #### Aliases
 
@@ -852,21 +1212,50 @@ Sets an object, puzzle, or set of items as accessible or inaccessible.
 
 #### Examples
 
-    .set accessible puzzle button
-    .set inaccessible object terminal
-    .set accessible object keypad tool shed
-    .set accessible object items medicine cabinet
-    .set inaccessible puzzle items lock men's locker room
+    .set accessible puzzle ROCK CLIMBING WALL
+    .set inaccessible puzzle LOGIN Infirmary
+    .set accessible fixture BUNSEN BURNER
+    .set inaccessible fixture UNDERBRUSH path-2
+    .set accessible puzzle items LOCK robotics-lab
+    .set inaccessible puzzle items LOOSE CRATE
+    .set accessible fixture items DOLLHOUSE
+    .set inaccessible fixture items TOP OF THE SHELVES Library
 
-#### Description
+#### Details
 
-Sets an object, puzzle, or set of items as accessible or inaccessible. You have to specify whether to set an object or
-puzzle, even if you want to set a set of items. When you use the optional "items" argument, it will set all of the items
-contained in that object or puzzle as accessible/inaccessible at once. Individual items cannot be set. You can also
-specify a room name. If you do, only object/items/puzzles in the room you specify can be set as accessible/
-inaccessible. This is useful if you have multiple objects or puzzles with the same name spread across the map.
+Sets a fixture, puzzle, or group of room items as accessible or inaccessible. You have to specify whether to set a
+fixture or puzzle, even if you want to set a group of room items. When you use the optional "items" argument, it will
+set all of the items contained in that fixture or puzzle as accessible/inaccessible at once. This will also update the
+accessibility of all child items contained inside of those room items. It is not possible to set the accessibility of
+individual room items.
 
-## setdest
+You can also specify a room display name or ID at the end of the command. If you do, only fixtures/puzzles/room items in
+the room you specify can be set as accessible/inaccessible. This is useful if you have multiple fixtures or puzzles with
+the same name in different locations.
+
+### setdefaultroomicon
+
+Sets the default room icon.
+
+#### Aliases
+
+`.setdefaultroomicon`
+
+#### Examples
+
+    .setdefaultroomicon https://media.discordapp.net/attachments/1290826220367249489/1441259427411001455/sLPkDhP.png
+    .setdefaultroomicon
+
+#### Details
+
+Sets the icon that will display by default when the given room's information is sent to a player, if there exists no
+specific icon for that room. The icon given must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension. To
+reset the default icon, simply do not specify a new icon.
+
+Note that this will not persist across bot reboots. When the bot is rebooted, the default room icon will be reverted to
+whatever is set for the `DEFAULT_ROOM_ICON_URL` setting in your `.env` file.
+
+### setdest
 
 Updates an exit's destination.
 
@@ -876,81 +1265,108 @@ Updates an exit's destination.
 
 #### Examples
 
-    .setdest corolla DOOR wharf VEHICLE
-    .setdest motor boat PORT docks BOAT
+    .setdest Truck DOOR Mountain Cave TRUCK
+    .setdest Mountain Entrance TRUCK Mountain Entrance TRUCK
+    .setdest motor-boat PORT docks BOAT
     .setdest wharf MOTOR BOAT wharf MOTOR BOAT
 
-#### Description
+#### Details
 
 Replaces the destination for the specified room's exit. Given the following initial room setup:
 
-    Room Name|Exits |Leads To|From
-    ---------------------------------
-    room-1   |EXIT A|room-2  | EXIT B
-    ---------------------------------
-    room-2   |EXIT B|room-1  | EXIT A
-    	 |EXIT C|room-3  | EXIT D
-    ---------------------------------
-    room-3   |EXIT D|room-2  | EXIT C
+| Room ID | Exits  | Leads To | From   |
+|---------|--------|----------|--------|
+| room-1  | EXIT A | room-2   | EXIT B |
+| room-2  | EXIT B | room-1   | EXIT A |
+|         | EXIT C | room-3   | EXIT D |
+| room-3  | EXIT D | room-2   | EXIT C |
 
-If the destination for room-1's EXIT A is set to room-3's EXIT D, players passing through EXIT A would emerge from EXIT
-D from that point onward. The Rooms sheet will be updated to reflect the updated destination, like so:
+If the destination for room-1's EXIT A is set to room-3's EXIT D, players passing through EXIT A would emerge from
+EXIT D from that point onward. The Rooms sheet will be updated to reflect the updated destination, like so:
 
-    room-1   |EXIT A|room-3  | EXIT D
-    ---------------------------------
-    ...
-    ---------------------------------
-    room-3   |EXIT D|room-1  | EXIT A
+| Room ID | Exits  | Leads To | From              |
+|---------|--------|----------|-------------------|
+| room-1  | EXIT A | room-3   | EXIT D <- updated |
+| room-2  | EXIT B | room-1   | EXIT A            |
+|         | EXIT C | room-3   | EXIT D            |
+| room-3  | EXIT D | room-1   | EXIT A <- updated |
 
 Note that this will leave room-2's EXIT B and EXIT C without exits that lead back to them, which will result in errors
 next time rooms are loaded. To prevent this, this command should be used sparingly, and all affected exits should have
 their destinations reassigned.
 
-## setdisplayicon
+### setdisplayicon
 
 Sets a player's display icon.
 
 #### Aliases
 
-`.setdisplayicon`
+`.setdisplayicon` `.sdi`
 
 #### Examples
 
     .setdisplayicon kyra https://cdn.discordapp.com/attachments/697623260736651335/912103115241697301/mm.png
     .setdisplayicon kyra
 
-#### Description
+#### Details
 
-Sets the icon that will display when the given player's dialog appears in spectator channels. It will also appear in
-Room channels when the player uses the say command. The icon given must be a URL with a .jpg or .png extension. When
-player data is reloaded, their display icon will be reverted to their Discord avatar. Note that if the player is
-inflicted with or cured of a status effect with the concealed attribute, their display icon will be updated, thus
-overwriting one that was set manually. However, this command can be used to overwrite their new display icon afterwards
-as well. Note that this command will not change the player's avatar when they send messages to Room channels normally.
-To reset a player's display icon to their Discord avatar, simply do not specify a new display icon.
+Sets the icon that will appear as the given player's avatar when their communications are mirrored as webhook messages.
+Webhook messages are primarily sent in spectate channels to reflect a player's dialog, narrations, and monologs.
+However, webhook messages are also sent in room and whisper channels when a player uses the `say`, `gesture`, and
+`narrate` commands. Because NPCs don't have Discord accounts, *all* of their communications are sent as webhook
+messages.
 
-## setdisplayname
+To set a player's display icon, you must provide an image URL with an extension of .jpg, .jpeg, .png, .webp, or .avif.
+To reset a player's display icon to their default display icon, simply specify the player without providing an image
+URL.
+
+When player data is reloaded, all players will have their display icon reverted to their default display icon. For
+standard players, this is their server avatar, or their account avatar if they don't have one set. For NPCs, this is the
+display icon given for them on the sheet in lieu of a Discord user ID.
+
+Note that if the player is inflicted with a status effect with the `concealed` behavior attribute, their display icon
+will be updated to the image URL set in the `DEFAULT_CONCEALED_ICON_URL` setting in your `.env` file, thus overwriting
+one that was set manually. However, this command can be used to update their display icon again afterwards. When the
+status is cured, it will be reset to their default display icon.
+
+This command will not change the player's avatar when they send messages to room channels normally.
+
+### setdisplayname
 
 Sets a player's display name.
 
 #### Aliases
 
-`.setdisplayname`
+`.setdisplayname` `.sdn`
 
 #### Examples
 
-    .setdisplayname usami Monomi
-    .setdisplayname faye An individual wearing a MINOTAUR MASK
+    .setdisplayname Sadie Zinnia
+    .sdn Kyra an individual wearing a PLAGUE DOCTOR MASK
+    .setdisplayname Sadie Sadie
 
-#### Description
+#### Details
 
-Sets the name that will display whenever the given player does something in-game. This will not change their name on the
-spreadsheet, and when player data is reloaded, their display name will be reverted to their true name. Note that if the
-player is inflicted with or cured of a status effect with the concealed attribute, their display name will be updated,
-thus overwriting one that was set manually. However, this command can be used to overwrite their new display name
-afterwards as well. Note that this command will not change the player's nickname in the server.
+Sets the name that will be used to refer to a player in narrations in lieu of their actual name. It will also be set as
+their username when their communications are reflected with webhook messages. Webhook messages are primarily sent in
+spectate channels to reflect a player's dialog, narrations, and monologs. However, webhook messages are also sent in
+room and whisper channels when a player uses the `say`, `gesture`, and `narrate` commands. Because NPCs don't have
+Discord accounts, *all* of their communications are sent as webhook messages.
 
-## setpronouns
+To set a player's display name, enter their actual name, followed by the new display name. Display names can contain
+spaces, but they have a maximum length of 32 characters. If the display name does not begin with a proper noun, the
+first letter should not be capitalized.
+
+Setting a player's display name will not change their name on the spreadsheet, and when player data is reloaded, their
+display name will be reverted to their actual name.
+
+Note that if the player is inflicted with a status effect with the `concealed` behavior attribute, their display name
+will be updated, thus overwriting one that was set manually. However, this command can be used to update their display
+name again afterwards. When the status is cured, their display name will be reset.
+
+This command will not change the player's nickname in the server.
+
+### setpronouns
 
 Sets a player's pronouns.
 
@@ -960,25 +1376,53 @@ Sets a player's pronouns.
 
 #### Examples
 
-    .setpronouns sadie female
-    .setpronouns roma neutral
-    .setpronouns platt male
-    .setpronouns monokuma it/it/its/its/itself/false
-    .setpronouns sadie she/her/her/hers/herself/false
-    .setpronouns roma they/them/their/theirs/themself/true
-    .setpronouns platt he/him/his/his/himself/false
+    .setpronouns Lain female
+    .setpronouns Amadeus neutral
+    .setpronouns Platt male
+    .setpronouns Unit_050 it/it/its/its/itself/false
+    .setpronouns Asuka she/it/her/its/herself/false
+    .setpronouns Hollow ey/em/eir/eirs/emself/true
+    .setpronouns Aeries xey/xem/xeir/xeirs/xemself/true
 
-#### Description
+#### Details
 
 Sets the pronouns that will be used in the given player's description and other places where pronouns are used. This
 will not change their pronouns on the spreadsheet, and when player data is reloaded, their pronouns will be reverted to
-their original pronouns. Note that if the player is inflicted with or cured of a status effect with the concealed
-attribute, their pronouns will be updated, thus overwriting the ones that were set manually. However, this command can
-be used to overwrite their new pronouns afterwards as well. Temporary custom pronoun sets can be applied with this
-method. They must adhere to the following format:
-`subjective/objective/dependent possessive/independent possessive/reflexive/plural`.
+their original pronouns.
 
-## setupdemo
+To set a player's pronouns, enter their name, followed by a set of pronouns. Pronoun sets must be given in the form:
+`subjective/objective/dependent possessive/independent possessive/reflexive/plural`.
+However, you can use shorthand for the most common pronoun sets:
+
+- "female" (`she/her/her/hers/herself/false`),
+- "male" (`he/him/his/his/himself/false`), and
+- "neutral" (`they/them/their/theirs/themself/true`).
+
+Note that if the player is inflicted with a status effect with the `concealed` behavior attribute, their pronouns will
+be set to "neutral", thus overwriting any that were set manually. However, this command can be used to update their
+pronouns again afterwards. When the status is cured, their pronouns will be reset.
+
+### setroomicon
+
+Sets a room's icon.
+
+#### Aliases
+
+`.setroomicon`
+
+#### Examples
+
+    .setroomicon Living Room https://media.discordapp.net/attachments/1290826220367249489/1441259427411001455/sLPkDhP.png
+    .setroomicon kitchen
+
+#### Details
+
+Sets the icon that will display when the given room's information is sent to a player. This will override whatever is
+set as the `DEFAULT_ROOM_ICON_URL` setting in your `.env` file, but only for the given room. The icon given must be an
+attachment or URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension. To reset a room's icon, simply do not
+specify a new icon. When this command is used, the new icon will be saved to the sheet in place of the old one.
+
+### setupdemo
 
 Sets up a demo game.
 
@@ -990,18 +1434,21 @@ Sets up a demo game.
 
     .setupdemo
 
-#### Description
+#### Details
 
-Populates an empty spreadsheet with default game data as defined in the demodata config file. This will create a game
-environment to demonstrate most of the basics of Neo World Program gameplay. By default, it will generate 2 rooms, 8
-objects, 14 prefabs, 3 recipes, 3 items, 1 puzzle, 1 event, 13 status effects, and 6 gestures. If the channels for the
-demo game's rooms don't exist, they will be created automatically. It will not create any players for you. Once this
-command is used you can use the .startgame command to add players, or manually add them on the spreadsheet. It is
-recommended that you have at least one other Discord account to use as a player. Once the spreadsheet has been fully
-populated, you can use .load all start to begin the demo. **If there is already data on the spreadsheet, it will be
-overwritten. Only use this command if the spreadsheet is currently blank.**
+Populates an empty spreadsheet with default game data as defined in the `demodata.json` config file. This will create a
+game environment to demonstrate most of the basic game mechanics.
 
-## setvoice
+If the channels for the demo game's rooms don't exist, they will be created automatically. This command will not create
+any players for you. Once the demo data has been saved to the spreadsheet, you can use the `startgame` or `addplayer`
+commands to add players, or manually add them to the spreadsheet. It is recommended that you have at least one other
+Discord account to use as a player. Once the spreadsheet has been fully populated, you can use the `load` command with
+the arguments `all start` to begin the demo.
+
+**If there is already data on the spreadsheet, it will be overwritten. Only use this command if the spreadsheet is
+currently blank.**
+
+### setvoice
 
 Sets a player's voice.
 
@@ -1011,26 +1458,33 @@ Sets a player's voice.
 
 #### Examples
 
-    .setvoice kyra a deep modulated voice
-    .setvoice spektrum a high digitized voice
-    .setvoice persephone multiple overlapping voices
-    .setvoice ghost a disembodied voice
-    .setvoice typhos pollux
-    .setvoice nero haru
-    .setvoice kyra
+    .setvoice Kyra a deep modulated voice
+    .setvoice Spektrum a high digitized voice
+    .setvoice Persephone multiple overlapping voices
+    .setvoice Ghost a disembodied voice
+    .setvoice Typhos Diego
+    .setvoice Nero Haru
+    .setvoice Kyra
 
-#### Description
+#### Details
 
-Sets a player's voice descriptor that will be used when the player uses the .say command or speaks in a room with a
-player who can't view the room channel. This will not change their voice descriptor on the spreadsheet, and when player
-data is reloaded, their voice descriptor will be reverted to what appears on the spreadsheet. You can also supply
-another player's name instead of a voice descriptor. In this case, the first player's voice will sound exactly like the
-second player's, which they can use to deceive other players. Note that unlike other commands which change a player's
-characteristics, the player's voice will **not** be changed by being inflicted or cured of a status effect with the
-concealed attribute. If this command is used to change a character's voice, it must be used again to change it back to
-normal. It can be reset to their original voice descriptor by omitting a voice descriptor in the commands.
+Sets a player's voice descriptor that will be used when the player's dialog is heard by someone who can't see their
+face.
 
-## startgame
+To set a player's voice, enter their name, followed by a voice descriptor. It is assumed that voice descriptors will be
+written in the form "a(n) [adjective] voice". It is also possible to enter the name of another player (living or dead)
+instead of a voice descriptor. In this case, the first player's voice will sound exactly like the second player's, which
+they can use to deceive other players.
+
+Setting a player's voice will not change their voice descriptor on the spreadsheet, and when player data is reloaded,
+their voice will be reverted to their original voice descriptor.
+
+Note that unlike other commands which change a player's characteristics, the player's voice will **not** be changed by
+being inflicted or cured of a status effect with the `concealed` behavior attribute. If this command is used to change a
+character's voice, it must be used again to change it back to normal. It can be reset to their original voice descriptor
+by specifying the player without providing a voice descriptor.
+
+### startgame
 
 Starts a game.
 
@@ -1041,16 +1495,28 @@ Starts a game.
 #### Examples
 
     .startgame 24h
+    .start 1h
+    .startgame 30m
     .start 0.25m
 
-#### Description
+#### Details
 
-Starts a new game. You must specify a timer using either hours (h) or minutes (m). During this time, any players with
-the Eligible role will be able to join using the PLAY command, at which point they will be given the Player role. When
-the timer reaches 0, all of the players will be uploaded to the Players spreadsheet. After making any needed
-modifications, use ".load all start" to begin the game.
+Starts a new game with a timed delay. You must specify an amount of time as a number followed by a unit, either hours
+(`h`) or minutes (`m`). During this time, server members with the Eligible role will be able to voluntarily add
+themselves to the game as players using the `play` command in the general channel. If debug mode is on, they must have
+the Tester role, and send the command in the testing channel. When this occurs, they will be given the Player role, and
+they will be added to the game's data as players with default player data as defined in your `playerdefaults.json`
+configuration.
 
-## stash
+When the timer you set reaches 0, all of the player data will be saved to the Players sheet. After that, you can edit
+their data to accurately reflect their characters. If you edit their data before the timer expires, it will be
+overwritten. When you are ready to begin the game, use the `load` command with the `all start` arguments.
+
+**Only use this command if you are not planning to add players to the sheet yourself.** Any data already on the Players
+and Inventory Items sheets will be overwritten by this command. If you just want an easier way to populate those sheets
+without having to fill them out manually, use the `addplayer` command.
+
+### stash
 
 Stores a player's inventory item inside another inventory item.
 
@@ -1060,21 +1526,26 @@ Stores a player's inventory item inside another inventory item.
 
 #### Examples
 
-    .stash vivian laptop in satchel
-    .store nero's sword in sheath
-    .stash antimony's old key in right pocket of pants
-    .store cassie water bottle in side pouch of backpack
+    .stash Vivian VIVIANS LAPTOP in VIVIANS SATCHEL
+    .store Nero's KATANA in KATANA SHEATH
+    .s Kyra's MASTER KEY in RIGHT POCKET of KYRAS LAB COAT 5
+    .s Haru WATER BOTTLE in SIDE POUCH of GREEN BACKPACK 1
 
-#### Description
+#### Details
 
-Moves an item from the given player's hand to another item in their inventory. You can specify any item in their
-inventory that has the capacity to hold items. If the inventory item you choose has multiple slots for items (such as
-multiple pockets), you can specify which slot you want to store the item in. Note that each slot has a maximum capacity
-that it can hold, so if it's too full or too small to contain the item you're trying to stash, you won't be able to
-stash it there. If you attempt to stash a very large item (a sword, for example), people in the room with the player
-will see them doing so.
+Moves an item from the given player's hand into an inventory slot of one of their container items. The held item and
+container item's prefab ID or container identifier must be used. If the player stashes a non-discreet item, this will be
+narrated in the room.
 
-## stats
+The container item's identifier must be preceded by its preposition or "in". If the container item has multiple
+inventory slots, you can also specify which slot to stash the item in. To do so, enter the ID of the inventory slot
+followed by "of" before the container's identifier. If an inventory slot is not specified, the player will stash the
+item in the container's first inventory slot. Note that it is not possible to stash an item in an inventory slot if
+doing so would make it exceed its capacity.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### stats
 
 Lists a given player's stats.
 
@@ -1084,143 +1555,119 @@ Lists a given player's stats.
 
 #### Examples
 
-    .stats ayaka
+    .stats Lucia
 
-#### Description
+#### Details
 
-Lists the given player's default and current stats, as well as the roll modifiers they have based on each current stat.
-The maximum weight the player can carry will be listed, as well as how much weight they are currently carrying.
-Additionally, the player's current maximum stamina will be listed, as this can differ if the player is inflicted with
-any status effects that modify the stamina stat.
+Lists the given player's default and current stats, as well as the roll modifiers they have based on each of their
+current stats, in square brackets. The maximum weight the player can currently carry will be listed, as well as how much
+weight they are currently carrying. Additionally, the player's current stamina will be listed as a numerator over their
+current maximum stamina. This shows how much stamina they have remaining.
 
-## status
+### status
 
-Deals with status effects on players.
+Inflict, cure, or view status effects on players.
 
 #### Aliases
 
-`.status` `.inflict` `.cure` `.view`
+`.status` `.inflict` `.cure`
 
 #### Examples
 
-    .status add mari heated
-    .inflict yume heated
-    .status add aki saay yuko haru asleep
+    .status add Ava Huiyu Kyra heated
+    .inflict Xenia heated
+    .status add Florian Michio Kanda Jackie asleep
     .inflict all deafened
-    .status remove flint injured
-    .cure elijah injured
-    .status remove astrid ryou juneau drunk
+    .status remove Flint injured
+    .cure Elijah injured
+    .status remove Astrid Kiara drunk
     .cure living asleep
-    .status view jordan
-    .view jordan
+    .status view Amadeus
+    .status Mara
 
-#### Description
+#### Details
 
-Deals with status effects on players.
+This command has three sub-commands:
 
--**add**/**inflict**: Inflicts the specified players with the given status effect. Those players will receive the
-"Message When Inflicted" message for the specified status effect. If the status effect has a timer, the players will
-be cured and then inflicted with the status effect in the "Develops Into" column when the timer reaches 0. If the
-status effect is fatal, then they will simply die when the timer reaches 0 instead.
+- **add**/**inflict**: Inflicts the specified players with the given status effect. Those players will receive the
+  "Description When Inflicted" message for the specified status effect. If they already have that status effect and
+  there is a status listed in the "When Duplicated" column, they will be cured of the given status effect and inflicted
+  with that instead. If the inflicted status has a timer, the players will be cured and then inflicted with the status
+  effect in the "Develops Into" column when the timer reaches 0, if there is one. If the status effect is fatal, they
+  will simply die when the timer reaches 0 instead.
+- **remove**/**cure**: Cures the specified players of the given status effect. Those players will receive the
+  "Description When Cured" message for the specified status effect. If there is a status listed in the "When Cured"
+  column, they will then be inflicted with that status effect.
+- **view**/**status**: Views all of the status effects that one player currently has, along with the time remaining on
+  each one, if applicable. This sub-command supports NPC latching. For more information, see the help details for the
+  `latch` command.
 
--**remove**/**cure**: Cures the specified players of the given status effect. Those players will receive the "Message
-When Cured" message for the specified status effect. If the status effect develops into another effect when cured, the
-players will be inflicted with that status effect.
+If, when using the **inflict** or **cure** sub-commands, you enter "living" or all" instead of providing the names of
+players, all living players will be inflicted/cured of the given status effect, except for NPCs and players with the
+Free Movement role.
 
--**view**: Views all of the status effects that a player is currently afflicted with, along with the time remaining on
-each one, if applicable.
-
-## tag
+### tag
 
 Adds, removes, or lists a room's tags.
 
 #### Aliases
 
-`tag` `addtag` `removetag` `tags`
+`.tag` `.addtag` `.removetag` `.tags`
 
 #### Examples
 
-    tag add kitchen video surveilled
-    tag remove kitchen audio surveilled
-    addtag vault soundproof
-    removetag freezer cold
-    addtag command-center video monitoring, audio monitoring
-    removetag command-center video monitoring, audio monitoring
-    tag list kitchen
-    tags kitchen
+    .tag add Kitchen video surveilled
+    .tag remove Kitchen audio surveilled
+    .addtag vault soundproof
+    .removetag freezer cold
+    .addtag Command Center video monitoring, audio monitoring
+    .removetag command-center video monitoring, audio monitoring
+    .tag list Kitchen
+    .tags Kitchen
 
-#### Description
+#### Details
 
--**add**/**addtag**: Adds a comma-separated list of tags to the given room. Events that affect rooms with that tag will
-immediately apply to the given room, and any tags that give a room special behavior will immediately activate those
-functions.
+This command has three sub-commands:
 
--**remove**/**removetag**: Removes a comma-separated list of tags from the given room. Events that affect rooms with
-that tag will immediately stop applying to the given room, and any tags that give a room special behavior will
-immediately stop functioning.
+- **add**/**addtag**: Adds a comma-separated list of tags to the given room. Events that affect rooms with that tag will
+  immediately apply to the given room, and any tags that give a room special behavior will immediately activate those
+  functions. The new tags will be added to the spreadsheet on the next save.
+- **remove**/**removetag**: Removes a comma-separated list of tags from the given room. Events that affect rooms with
+  that tag will immediately stop applying to the given room, and any tags that give a room special behavior will
+  immediately stop functioning. The tags will be removed from the spreadsheet on the next save.
+- **list**/**tags**: Displays the list of tags currently applied to the given room.
 
--**list**/**tags**: Displays the list of tags currently applied to the given room.
-
-## take
+### take
 
 Takes the given item for a player.
 
 #### Aliases
 
-`.take` `.get` `.t`
+`.take` `.get` `.grab` `.t`
 
 #### Examples
 
-    .take nero food
-    .take livida food from floor
-    .take cleo sword from desk
-    .take taylor hammer from tool box
-    .take aria green key from large purse
-    .take veronica game system from main pocket of backpack
+    .take Nero BUTCHERS KNIFE
+    .get Unit_039 FIRST AID KIT
+    .t Olavi BOTTLE OF MIDAZOLAM from MEDICINE CABINET
+    .take Sadie TOWEL from BENCHES
+    .grab Evad HAMMER from TOP RACK OF TOOLBOX 1
+    .t Vivian CHEST KEY from RIGHT POCKET of VIVIANS SKIRT 4
 
-#### Description
+#### Details
 
-Forcibly takes an item for a player. The player must have a free hand to take an item. You can specify which object or
-item to take the item from, but only items in the same room as the player can be taken. Additionally, if the item is
-contained in another item with multiple inventory slots (such as pockets), you can specify which slot to take it from.
+Takes an item from the room the given player is in and puts it in their inventory. They must have a free hand to take an
+item. The item's prefab ID or container identifier must be used. If the player takes a non-discreet item, this will be
+narrated in the room.
 
-## testparser
+You can specify a container to take the item from. To do so, enter "from" after the item's identifier, followed by the
+container's name. If the container is a room item, its prefab ID or container identifier must be used. If the container
+item has multiple inventory slots, you can also specify which slot to take the item from. To do so, enter the ID of the
+inventory slot followed by "of" before the container's identifier.
 
-Tests the parsing module on your descriptions.
+This command supports NPC latching. For more information, see the help details for the `latch` command.
 
-#### Aliases
-
-`.testparser`
-
-#### Examples
-
-    .testparser parse
-    .testparser parse nero
-    .testparser add
-    .testparser add vivian
-    .testparser add formatted
-    .testparser remove
-    .testparser remove aria
-    .testparser remove formatted
-
-#### Description
-
-Tests the parsing algorithm responsible for interpreting and editing descriptions. Sends the results as a text file to
-the command channel. If testing the add or remove function, you can add "formatted" to display the formatted
-descriptions. Otherwise, it will display the parsed versions. For all functions, you can input a player name to parse
-the text as if that player is reading it. Note that if using the "formatted" argument, a player name cannot be used.
-This command should be used to make sure you've written properly formatted descriptions.
-
--**parse**: Outputs the formatted and parsed descriptions.
-
--**add**: Goes through each object, item, puzzle, player, and inventory item description with item containers and adds
-random items.
-
--**remove**: Goes through each room, object, item, puzzle, player, and inventory item description with items and removes
-each item in the list. In "formatted" mode, items will be removed in every possible order. However, it will only remove
-up to 4 items in a description.
-
-## testspeeds
+### testspeeds
 
 Checks the move times between each exit.
 
@@ -1233,17 +1680,17 @@ Checks the move times between each exit.
     .testspeeds players
     .testspeeds stats
 
-#### Description
+#### Details
 
-Tests the amount of time it takes to move between every exit in the game. Sends the results as a text file to the
+Calculates the amount of time it takes to move between every exit in the game. Sends the results as a text file to the
 command channel. An argument must be provided. If the "players" argument is given, then the move times will be
 calculated for each player in the game. Note that the weight of any items the players are carrying will affect their
 calculated speed. If the "stats" argument is given, then the move times will be calculated for hypothetical players with
 speed from 1-10.
 
-## text
+### text
 
-Sends a text message from an NPC.
+Sends a text message from an NPC to a player.
 
 #### Aliases
 
@@ -1251,57 +1698,45 @@ Sends a text message from an NPC.
 
 #### Examples
 
-    .text amy florian I work at the bar.
-    .text amy florian Here's a picture of me at work. (attached image)
-    .text ??? keiko This is a message about your car's extended warranty.
-    .text ??? hibiki (attached image)
+    .text Amy Florian I work at the bar.
+    .text Amy Florian Here's a picture of me at work. (attached image)
+    .text ??? Sadie This is a message about your car's extended warranty.
+    .text ??? Lisa (attached image)
 
-#### Description
+#### Details
 
-Sends a text message from the first player to the second player. The first player must have the talent "NPC". If an
-image is attached, it will be sent as well.
+Sends a text message from the given NPC to a player. If an image is attached, it will be sent as well. It is possible to
+send a text message to any player, even those that don't have a status effect with the `enable text` behavior attribute.
 
-## trigger
+This command supports NPC latching. For more information, see the help details for the `latch` command. However, keep in
+mind that if you send a text with an attached image in the NPC's room channel, the message will be deleted, and the
+attachment may not send properly.
 
-Triggers an event.
+### uncraft
 
-#### Aliases
-
-`.trigger`
-
-#### Examples
-
-    .trigger rain
-    .trigger explosion
-
-#### Description
-
-Triggers the specified event. The event must not already be ongoing. If the event has any triggered commands, they will
-be run.
-
-## uncraft
-
-Separates an item in a player's inventory into its component parts.
+Uncrafts an item for a player.
 
 #### Aliases
 
-`.uncraft` `.dismantle` `.disassemble`
+`.uncraft` `.dismantle` `.disassemble` `.uc`
 
 #### Examples
 
-    .uncraft olavi shovel
-    .dismantle avani crossbow
-    .disassemble juno pistol
+    .uncraft Olavi SHOVEL
+    .dismantle Avani ASSEMBLED CROSSBOW
+    .disassemble Juno LOADED PISTOL
+    .uc Ray RING STAND WITH SUPPORT RING
 
-#### Description
+#### Details
 
-Separates an item in one of the given player's hands into its component parts, assuming they can be separated. This
-reverses the process of a crafting recipe, using the product of the recipe as an ingredient, and creating its
-ingredients as products. This will produce two items, so they will need a free hand in order for this command to be
-usable. If there is no crafting recipe that produces the supplied item which allows it to be uncrafted again, this
-command cannot be used.
+Separates an item in one of the given player's hands into its component parts. This reverses the process of a crafting
+recipe, using the product of the recipe as an ingredient, and creating its ingredients as products. This will produce
+two items, so they will need a free hand in order for this command to be usable. If there is no crafting recipe that
+produces the given item which allows it to be uncrafted again, this command cannot be used.
 
-## undress
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### undress
 
 Unequips and drops all items for a player.
 
@@ -1311,39 +1746,56 @@ Unequips and drops all items for a player.
 
 #### Examples
 
-    .undress haru
-    .undress yuko locker 1
-    .undress aki laundry basket
-    .undress stella main pocket of backpack
+    .undress Haru
+    .undress Aisha LOCKER 1
+    .undress Astrid LAUNDRY BASKET 17
+    .undress Xenia MAIN POCKET of XENIAS BACKPACK
 
-#### Description
+#### Details
 
-Unequips all items the given player has equipped and drops them into a container of your choosing. If no container is
-chosen, then items will be dropped on the FLOOR. The given container must have a large enough capacity to hold all of
-the items in the given player's inventory. This command will also drop any items in their hands.
+Unequips all of the player's equipped items and drops them in the room they're currently in. They will undress
+completely, including any items in their hands. However, any items whose prefab is not equippable will not be removed
+with this command. They can be forcibly removed with the `unequip` command. When the player undresses, it will narrated
+in the room.
 
-## unequip
+A container to drop the items into can be specified. To do so, enter the container's name. No preposition is necessary.
+If the container is a room item, its prefab ID or container identifier must be used. If you don't specify a container,
+they will leave the items on the `DEFAULT_DROP_FIXTURE` defined in the game's settings.
+
+If the container has multiple inventory slots, you can also specify which slot to put the items in. To do this, enter
+the ID of the inventory slot followed by "of" before the container's identifier. If an inventory slot is not specified,
+the player will put the items in the container's first inventory slot. However, they will not be able to undress into an
+inventory slot if the combined size of their items would overfill it.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### unequip
 
 Unequips an item for a player.
 
 #### Aliases
 
-`.unequip` `.u`
+`.unequip` `.remove` `.u`
 
 #### Examples
 
-    .unequip lavris's mask
-    .unequip keiko lab coat
-    .unequip cara's sweater from shirt
-    .unequip aria large purse from glasses
+    .unequip Kyra's PLAGUE DOCTOR MASK
+    .remove Lain WHITE PARKA
+    .u Dexter KNIT WOOL SWEATER from SHIRT
 
-#### Description
+#### Details
 
-Unequips an item the given player currently has equipped. The unequipped item will be placed in one of the player's free
-hands. You can specify which equipment slot you want the item to be unequipped from. Any item can be unequipped, whether
-it's equippable or not. People in the room will see the player unequip an item, regardless of its size.
+Unequips an item from one of the given player's equipment slots. The item will be placed in their hand, so they must
+have a free hand. When an item is unequipped, it will be narrated in the room, regardless of whether it is discreet or
+not. If the item's prefab has any unequipped commands, they will be executed when it is unequipped.
 
-## unstash
+You can unequip any item with this command, even if its prefab is not equippable. You can also specify which equipment
+slot to unequip the item from. To do so, enter "from" after the prefab ID or container identifier of the item, followed
+by the ID of the equipment slot.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### unstash
 
 Moves an inventory item into a player's hand.
 
@@ -1353,19 +1805,25 @@ Moves an inventory item into a player's hand.
 
 #### Examples
 
-    .unstash vivian's laptop
-    .retrieve nero sword from sheath
-    .unstash antimony's old key from right pocket of pants
-    .retrieve cassie water bottle from side pouch of backpack
+    .unstash Vivian's VIVIANS LAPTOP
+    .retrieve Nero KATANA from KATANA SHEATH
+    .r Kyra's MASTER KEY from RIGHT POCKET of KYRAS LAB COAT 5
+    .r Haru WATER BOTTLE from SIDE POUCH of GREEN BACKPACK 1
 
-#### Description
+#### Details
 
-Moves a player's inventory item from another item in their inventory into their hand. You can specify which item to
-remove it from, if they have multiple items with the same name. If the inventory item you choose to move it from has
-multiple slots for items (such as multiple pockets), you can specify which slot you want to take it from as well. If you
-attempt to unstash a very large item (a sword, for example), people in the room with the player will see them doing so.
+Moves an inventory item from a container item in the given player's inventory into their hand. They must have a free
+hand to unstash an item. The item's prefab ID or container identifier must be used. If the player unstashes a
+non-discreet item, this will be narrated in the room.
 
-## use
+It is possible to specify a container to unstash an item from. To do so, enter "from" after the item's identifier,
+followed by the container item's prefab ID or container identifier. If the container item has multiple inventory slots,
+you can also specify which slot to unstash the item from. To do so, enter the ID of the inventory slot followed by "of"
+before the container's identifier.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### use
 
 Uses an item in the given player's inventory.
 
@@ -1375,40 +1833,98 @@ Uses an item in the given player's inventory.
 
 #### Examples
 
-    .use princeton first aid kit
-    .use celia's food
-    .use pollux first aid spray ximena "Pollux uncaps and applies a can of FIRST AID SPRAY to Ximena's wounds."
-    .use ayaka's black lipstick on wynne "Ayaka applies a tube of BLACK LIPSTICK to Wynne's lips."
+    .use Princeton FIRST AID KIT
+    .use Michio TOOTHBRUSH WITH TOOTHPASTE
+    .use Unit_039 ADHESIVE BANDAGE Huiyu "It applies an ADHESIVE BANDAGE over the wound, to prevent it from becoming infected again."
+    .use Kanda's SYRINGE OF ESTRADIOL on Florian "Count Kanda quickly pushes the needle the rest of the way, injecting all of the fluid into Florian's body."
 
-#### Description
+#### Details
 
-Uses an item in one of the given player's hands. You can specify a second player for the first player to use their item
-on. If you do, players in the room will be notified, so you should generally give a string for the bot to use, otherwise
-the bot will say "[player] uses [item single containing phrase] on [target]." which may not sound right. Both players
-must be in the same room. If no second player is given, the first player will use the item on themself. Note that you
-cannot solve puzzles using this command. To do that, use the puzzle command.
+Uses an item in one of the given player's hands. You can specify a second player for the first player to use the item
+on. Both players must be in the same room. If no second player is given, the first player will use the item on themself.
 
-## whisper
+When an item is used, it will inflict or cure the targeted player of any status effects listed under the "Gives Status
+Effect(s)" and "Cures Status Effect(s)" columns for its prefab. If it has a limited number of uses, its uses will be
+decremented by 1. If it reaches 0, the item will transform into its next stage prefab, or be destroyed if it doesn't
+have one.
 
-Initiates a whisper with the given players.
+When a player uses an item, a narration will be sent in the room. It is possible to supply a custom narration for the
+item being used. Simply add a string of text surrounded by quotation marks at the end of the command.
+
+Note that you cannot solve puzzles using this command. To do that, use the `puzzle` command.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.
+
+### view
+
+View a game entity.
 
 #### Aliases
 
-`.whisper`
+`.view` `.v`
 
 #### Examples
 
-    .whisper nestor jun
-    .whisper sadie elijah flint
-    .whisper amy hibiki Clean it up.
-    .whisper amy hibiki The mess you made. Clean it up now.
+    .view room 496
+    .v room chancellors-office
+    .view exit 497
+    .v fixture 21
+    .view prefab 75
+    .v prefab COMBAT BOOTS
+    .view recipe 43
+    .v room item 1173
+    .view item 692
+    .v puzzle 81
+    .view event 16
+    .v event SUNRISE
+    .view status effect 92
+    .v status refreshed
+    .view player 4
+    .v player Sid
+    .view inventory item 70
+    .v inventoryitem 381
+    .view gesture 102
+    .v gesture point at
+    .view flag 7
+    .v flag AUTO LIGHTS
 
-#### Description
+#### Details
 
-Creates a channel for the given players to speak in. Only the selected players will be able to read messages posted in
-the new channel, but everyone in the room will be notified that they've begun whispering to each other. You can select
-as many players as you want as long as they're all in the same room. When a player in the whisper leaves the room, they
-will be removed from the channel. If everyone leaves the room, the whisper channel will be deleted. If one of the
-players listed has the talent "NPC", the remaining string after the list of players will be sent in the whisper channel.
-Once the channel is created, NPC players can only speak in the whisper using this command and the list of players in the
-whisper.
+View in-game data. You can view any entry on the spreadsheet, but you must specify which kind of data to find, as well
+as its row number. If the entity has a unique ID, you can also view it using that. You will be shown most of the data
+visible on the spreadsheet for that entity. To avoid exceeding Discord's character limit, some fields may be omitted.
+These can be viewed with the interactables that are sent alongside the result.
+
+To view a game entity that doesn't have a unique ID with this command, you must know its row number, which can be found
+on the spreadsheet. Alternatively, you can obtain it with the `find` command.
+
+### whisper
+
+Initiates a whisper between the given players.
+
+#### Aliases
+
+`.whisper` `.w`
+
+#### Examples
+
+    .whisper Nestor Jun
+    .w Sadie Elijah Flint
+    .whisper Amy Asuka Clean it up.
+    .w Amy Asuka The mess you made. Clean it up now.
+
+#### Details
+
+Creates a channel for the given players to whisper in. Only the selected players will be able to read messages posted in
+the new channel, but a narration will be sent in the room indicating that they've begun whispering to each other. You
+can select as many players as you want as long as they're all in the same room.
+
+When a player in the whisper leaves the room, they will be removed from the channel. If everyone leaves the room, the
+whisper channel will be deleted or archived, depending on the `AUTO_DELETE_WHISPER_CHANNELS` setting in your `.env`
+file.
+
+If one of the players listed is an NPC, any text that remains after the list of players will be sent to the new whisper
+channel as dialog from that NPC. After the channel has been created, sending the command again with a different string
+of text at the end will make the NPC whisper that text as dialog in the channel.
+
+This command supports NPC latching. For more information, see the help details for the `latch` command.

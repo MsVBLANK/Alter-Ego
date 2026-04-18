@@ -1752,7 +1752,7 @@ export default class GameEntityLoader extends GameEntityManager {
 					if (error instanceof Error) errors.push(error);
 				}
 			});
-            for (const status of GameEntityLoader.mandatoryStatusEffects) {
+            for (const status of this.mandatoryStatusEffects) {
                 if (!this.game.statusEffects.has(status)) {
                     errors.push(new Error(`Mandatory status effect "${status}" not found.`))
                 }

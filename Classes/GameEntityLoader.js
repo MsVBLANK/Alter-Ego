@@ -31,8 +31,11 @@ import RecipeItem from '../Data/RecipeItem.ts';
 export default class GameEntityLoader extends GameEntityManager {
     /**
      * An array of all mandatory Status Effects by ID. If there exists no Status Effect by an ID in this array, Alter Ego will log an error when loading Status Effects.
+     * @static
+     * @readonly
+     * @type {string[]}
      */
-    static readonly mandatoryStatusEffects = ["heated", "weary", "asleep", "hidden", "concealed"]
+    mandatoryStatusEffects = ["heated", "weary", "asleep", "hidden", "concealed"]
 
 	/**
 	 * @constructor

@@ -26,7 +26,7 @@ spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
 
 For full Players, this is the [unique ID](https://discord.js.org/docs/packages/discord.js/14.25.1/Snowflake:TypeAlias)
 assigned to their Discord account. [Developer Mode](../../moderator_guide/installation.md#enable-developer-mode) must be
-enabled in order to obtain this ID by right clicking on a Discord user and selecting **Copy ID**. When Player data is
+enabled in order to obtain this ID by right-clicking on a Discord user and selecting **Copy ID**. When Player data is
 loaded, Alter Ego will fetch the [guild member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class)
 whose account has this ID. That Discord user will then be able to control this Player. Because Alter Ego requires guild
 member data, this account must belong to a Discord user in the server. If the user associated with a particular Player
@@ -34,8 +34,8 @@ leaves the server, Alter Ego will be unable to load that Player's data; they mus
 spreadsheet, converted to an NPC, or reassigned a different ID.
 
 Because NPCs aren't associated with a Discord account, this attribute is repurposed for them. Instead of a Discord user
-ID, this must be an image URL with a `.png`, `.jpg`, `.jpeg`, `.webp`, or `.avif` file extension. This image will be used as the NPC's avatar when
-they speak; it will appear in [Room](room.md), [Whisper](whisper.md),
+ID, this must be an image URL with a `.png`, `.jpg`, `.jpeg`, `.webp`, or `.avif` file extension. This image will be
+used as the NPC's avatar when they speak; it will appear in [Room](room.md), [Whisper](whisper.md),
 and [spectate channels](player.md#spectate-channel).
 
 ### Member
@@ -58,17 +58,22 @@ symbols, and punctuation are not. This should generally match the Player's nickn
 have to. For that reason, this should be 32 characters or fewer. This conventionally follows naming customs: the first
 letter is capitalized, and the rest is in lowercase. However, this is not a requirement.
 
+Within the [Game's](game.md) data, Players are indexed by their name. As such, it must be unique. However, keep in mind
+that the version of their name that will be used as a key within the Game's data will be converted to all uppercase, and
+all quotation characters will be removed. So, the key may not match what their actual name is exactly.
+
 ### Display Name
 
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.displayName`
 
 This internal attribute is the string which Alter Ego uses to refer to the Player during most gameplay scenarios. It is
-used instead of the name in [Narrations](), spectate channels, and more. The reason this is used is that unlike the
-Player's name, this can change during gameplay. It is automatically changed when the Player is inflicted with
-a [Status Effect](status.md) that has the
-[`concealed` behavior attribute](status.md#concealed), and it can be manually changed with
-the [setdisplayname](../commands/moderator_commands.md#setdisplayname) [command](../commands/bot_commands.md#setdisplayname).
+used instead of the name in [Narrations](narration.md), spectate channels, and more. The reason this is used is that
+unlike the Player's name, this can change during gameplay. It is automatically changed when the Player is inflicted with
+a [Status Effect](status.md) that has the [`concealed` behavior attribute](status.md#concealed), and it can be manually
+changed with the [setdisplayname](../commands/moderator_commands.md#setdisplayname)
+[command](../commands/bot_commands.md#setdisplayname).
+
 When Player data is loaded, this is the same as the Player's name. For that reason, moderators should be careful when
 loading Player data during gameplay, as any Players with different display names will have their display names reset.
 
@@ -80,25 +85,22 @@ loading Player data during gameplay, as any Players with different display names
 This is an internal attribute which contains an image URL that will be used as an avatar when the Player uses
 the [say](../commands/player_commands.md#say) [command](../commands/moderator_commands.md#say), and when their dialog
 appears in a spectate channel. It is also used when NPCs use
-the [whisper command](../commands/moderator_commands.md#whisper). For full Players, this is most often `null` -
-their [display avatar](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class#displayAvatarURL) is used
-instead. Only NPCs have this set to a non-`null` value by default: the image URL in their ID. Much like the Player's
-display name, this can change during gameplay. It is automatically set
-to [this image](https://cdn.discordapp.com/attachments/697623260736651335/911381958553128960/questionmark.png) when the
-Player is inflicted with a Status Effect that has the `concealed` behavior attribute, and it can be manually changed
-with
-the [setdisplayicon](../commands/moderator_commands.md#setdisplayicon) [command](../commands/bot_commands.md#setdisplayicon).
+the [whisper command](../commands/moderator_commands.md#whisper). For full Players, this is most often `null` - their
+[display avatar](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class#displayAvatarURL) is used
+instead. Only NPCs have this set to a non-`null` value by default: the image URL in their ID.
+
+Much like the Player's display name, this can change during gameplay. It is automatically set to the
+[`defaultConcealedIconURL`](../settings.md#default_concealed_icon_url) defined in Alter Ego's settings when the Player
+is inflicted with a Status Effect that has the `concealed` behavior attribute, and it can be manually changed with the
+[setdisplayicon](../commands/moderator_commands.md#setdisplayicon) [command](../commands/bot_commands.md#setdisplayicon).
 However, it should be noted this will **not** replace a full Player's avatar when they speak in a Room or Whisper
 channel by sending a message to it; it will only appear in spectate channels when this is the case.
 
-### Talent
+### Title
 
 - Spreadsheet label: **Title or "NPC"**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.title`
-
-> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.talent`.
-  This alias is deprecated, and will be removed in a future release of Alter Ego.
 
 This is primarily a relic from older versions of Alter Ego which used this attribute to produce behavior that has since
 been re-implemented using Status Effect behavior attributes. For full Players, this can be left blank without issue.
@@ -106,11 +108,32 @@ However, its main benefit is that it can be used as a variable
 in [descriptions](../../moderator_guide/writing_descriptions.md#if).
 
 There is one programmed use case for this attribute. If this is set to `NPC`, then the Player will become an NPC. If the
-Player has the `NPC` talent, then Alter Ego will not do anything to them that would require a Discord account, such as
+Player has the `NPC` title, then Alter Ego will not do anything to them that would require a Discord account, such as
 sending them DMs, granting/revoking them permission to read channels, and adding/removing roles. NPC Players also will
 not be counted in the online Player count, will not be inflicted with or cured of Status Effects when the "all" argument
 is used in the [status](status.md) [command](../commands/bot_commands.md#status), and will not be moved when the "all"
 argument is used in the [move](../commands/moderator_commands.md#move) [command](../commands/bot_commands.md#move).
+
+### Talent
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.title` instead.
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.talent`
+
+This was the previous name of the title attribute. It was renamed in Alter Ego version 2.0 to be more general-use. This
+attribute contains a copy of the Player's title. However, it will be removed entirely in a future release.
+
+### Is NPC
+
+- Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
+  `this.isNPC`
+
+This internal attribute denotes whether or not the Player is an NPC. If the Player's title is `NPC`, this is `true`.
+Otherwise, it is `false`. Once a Player is loaded, this cannot be changed.
 
 ### Pronoun String
 
@@ -118,7 +141,7 @@ argument is used in the [move](../commands/moderator_commands.md#move) [command]
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
   `this.pronounString`
 
-This is a string which determines what set of third person
+This is a string which determines what set of third-person
 singular [personal pronouns](https://en.wikipedia.org/wiki/English_personal_pronouns#Basic) will be used to refer to the
 Player by default. This must adhere to a strict format:
 `subjective/objective/dependent possessive/independent possessive/reflexive/plural`, although there are shorthands for
@@ -177,7 +200,32 @@ from their original pronouns will have their pronouns reset.
 
 This, as well as the original pronouns attribute, has the following structure:
 
-` { String sbj, String Sbj, String obj, String Obj, String dpos, String Dpos, String ipos, String Ipos, String ref, String Ref, Boolean plural }`
+```ts
+interface Pronouns {
+    /** The subjective pronoun. */
+    sbj?: string;
+    /** The subjective pronoun with first letter capitalized. */
+    Sbj?: string;
+    /** The objective pronoun. */
+    obj?: string;
+    /** The objective pronoun with first letter capitalized. */
+    Obj?: string;
+    /** The dependent possessive pronoun. */
+    dpos?: string;
+    /** The dependent possessive pronoun with first letter capitalized. */
+    Dpos?: string;
+    /** The independent possessive pronoun. */
+    ipos?: string;
+    /** The independent possessive pronoun with first letter capitalized. */
+    Ipos?: string;
+    /** The reflexive pronoun. */
+    ref?: string;
+    /** The reflexive pronoun with first letter capitalized. */
+    Ref?: string;
+    /** Whether this set of pronouns turns verbs into their plural form. */
+    plural?: boolean;
+}
+```
 
 This essentially groups what would be multiple class attributes into one. They are listed below:
 
@@ -269,12 +317,12 @@ This is a phrase that will be used in Narrations when the Player speaks while th
 All Narrations which use this are written with the assumption that this string will begin with "a" or "an" and end
 with "voice". Here are some examples with the Player's voice string in bold:
 
-- You hear **a bitter voice** in the room say "...What are you looking at?".
-- You hear **a brash voice** from a nearby room shout "HEY! IS ANYONE IN THERE!?".
+- You hear **a bitter voice** in the room say "...What are you looking at?"
+- You hear **a brash voice** from a nearby room shout "HEY! IS ANYONE IN THERE!?"
 - You overhear an individual wearing a PLAGUE DOCTOR MASK, with **a crisp voice** you recognize to be Kyra's, whisper
-  "Yes, everything is going according to plan.".
+  "Yes, everything is going according to plan."
 - **A deep modulated voice** coming from Amy's WALKIE TALKIE says "That is correct. I am hidden somewhere in this
-  facility.".
+  facility."
 
 ### Voice String
 
@@ -330,7 +378,7 @@ The result is rounded down to the nearest whole number.
 In effect, each strength stat value corresponds with a predetermined max carry weight, as shown in this chart:
 
 | Strength Value | Max Carry Weight (kg) | Max Carry Weight (lb) |
-| -------------- | --------------------- | --------------------- |
+|----------------|-----------------------|-----------------------|
 | 1              | 21                    | 46                    |
 | 2              | 25                    | 55                    |
 | 3              | 32                    | 70                    |
@@ -353,9 +401,6 @@ dodge the Player's attack.
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.defaultPerception`
 
-> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.defaultIntelligence`.
-  This alias is deprecated, and will be removed in a future release of Alter Ego.
-
 This is the Player's default perception stat. This quantifies the Player's perceptiveness. It must be a whole
 number from 1 - 10.
 
@@ -363,9 +408,6 @@ number from 1 - 10.
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.perception`
-
-> To aid in migrating from previous versions of Alter Ego, this attribute has an alias under `this.intelligence`.
-  This alias is deprecated, and will be removed in a future release of Alter Ego.
 
 This internal attribute is the Player's current perception stat. By default, this equals their default perception,
 however it can be changed by Status Effects with stat modifiers.
@@ -387,8 +429,8 @@ And a Player with a high perception stat might see this:
 `It's a small compartment below the dartboard. Written on it is "Prime x Prime x Prime = 266". There doesn't seem to be any way to open it. Maybe it will open if you hit three prime numbers on the dartboard that multiply together to make 266. If that's the case, then you know a prime number is a number whose only products are 1 and itself. You don't even have to try any of the double or triple point values, or 50 for that matter. The only prime numbers on this board would be 2, 3, 5, 7, 11, 13, 17, and 19. Better yet, 266 is an even number, so you know one of the products MUST be 2, and you only need to find the other two numbers. This should be easy.`
 
 It should be noted that because this stat has no programmed use, it doesn't necessarily have to correlate with the
-Player's perceptiveness. It could correlate with the Player's logical intelligence, or anything else. How this stat is used
-is entirely up to the moderator's discretion when writing descriptions.
+Player's perceptiveness. It could correlate with the Player's logical intelligence, or anything else. How this stat is
+used is entirely up to the moderator's discretion when writing descriptions.
 
 ### Default Dexterity
 
@@ -441,7 +483,7 @@ in a [Room](room.md).
 The flat distance in pixels between the Player's current position and the desired Exit's position is calculated using
 the [distance formula](https://en.wikipedia.org/wiki/Euclidean_distance#Two_dimensions) with the two positions'
 respective [X](exit.md#x) and [Z](exit.md#z) coordinates. The flat distance is then converted to meters by dividing this
-value by the [pixelsPerMeter setting](../settings/docker_settings.md#pixels_per_m). The rise of the Exit's position
+value by the [pixelsPerMeter setting](../settings.md#pixels_per_m). The rise of the Exit's position
 relative to the Player's is calculated by subtracting the Player's [Y coordinate](player.md#y)
 from [the Exit's](exit.md#y) and dividing the resulting value by the pixels per meter setting. The slope between the two
 positions is then calculated by dividing the rise in meters by the flat distance in meters.
@@ -534,7 +576,7 @@ In this formula are several variables:
 
 - \\(d\\) is the flat distance in meters the Player has moved in the past 100 milliseconds.
 - \\(m\\) is \\(1\\) if the Player is walking and \\(3\\) if the Player is running.
-- \\(u\\) is the [staminaUseRate setting](../settings/docker_settings.md#stamina_use_rate).
+- \\(u\\) is the [staminaUseRate setting](../settings.md#stamina_use_rate).
 - \\(s\\) is the slope of the Player's movement, calculated by dividing the number of meters they've risen in meters by
   the flat distance in meters they've moved in the past 100 milliseconds.
 
@@ -556,6 +598,33 @@ tired. If it reaches \\(0\\), they will stop moving and be inflicted with the `w
 When the Player is not moving, their stamina is gradually restored. Every 30 seconds, they recover \\( \frac{1}{20} \\)
 of their max stamina.
 
+### Default Intelligence
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.defaultPerception` instead.
+
+- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+  `this.defaultIntelligence`
+
+This was the previous name of the perception stat. It was renamed in Alter Ego version 2.0 to reflect its modern usage.
+This attribute contains a copy of the Player's default perception. However, it will eventually be removed.
+
+### Intelligence
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+>
+> Use `this.perception` instead.
+
+- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+  `this.intelligence`
+
+This was the previous name of the perception stat. It was renamed in Alter Ego version 2.0 to reflect its modern usage.
+This attribute contains a copy of the Player's perception. Whenever the Player's perception is updated, this is also
+updated to match it. However, it will eventually be removed.
+
 ### Alive
 
 - Spreadsheet label: **Alive?**
@@ -568,12 +637,20 @@ dies, some of their data is lost. In particular, their location, hiding spot, an
 they retain everything else, including their Inventory Items. However, because dead Players cannot be inspected or
 interacted with, all of their data is inaccessible.
 
-### Location
+### Location Display Name
 
 - Spreadsheet label: **Location**
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.locationDisplayName`
+
+This is the [display name](room.md#display-name) of the Room that the Player is currently in. This must match the
+Room's display name on the spreadsheet exactly.
+
+### Location
+
 - Class attribute: [Room](room.md) `this.location`
 
-This is the Room that the Player is currently in. This must match the Room's name exactly on the spreadsheet.
+This internal attribute is a reference to the actual Room object the Player is currently in.
 
 ### Position
 
@@ -595,7 +672,13 @@ to a non-adjacent Room, their position is set to the average position of all Exi
 
 The Player's position has the following structure:
 
-` { Number x, Number y, Number z }`
+```ts
+interface Pos {
+    x: number;
+    y: number;
+    z: number;
+}
+```
 
 This essentially groups what would be multiple class attributes into one. They are listed below:
 
@@ -604,21 +687,22 @@ This essentially groups what would be multiple class attributes into one. They a
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.pos.x`
 
-This is the Player's current X coordinate.
+This is the Player's current X coordinate. This corresponds with the X-axis on a 3D grid.
 
 #### Y
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.pos.y`
 
-This is the Player's current Y coordinate.
+This is the Player's current Y coordinate. This corresponds with the Y-axis on a 3D grid,
+which represents vertical height.
 
 #### Z
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.pos.z`
 
-This is the Player's current Z coordinate.
+This is the Player's current Z coordinate. This corresponds with the Z-axis on a 3D grid.
 
 ### Hiding Spot
 
@@ -630,22 +714,13 @@ This is a string which contains the name of the Fixture the Player is currently 
 it can be set manually on the spreadsheet to anything, whether it's the name of a Fixture in the Room or not. If the
 Player is not currently hidden, this should be left blank.
 
-### Status
-
-- Class
-  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Status Effect](status.md)>
-  `this.status`
-
-This internal attribute contains a collection of all instantiated Status Effects that the Player currently has. Every time a
-Status Effect is inflicted or cured, the Player's stats are recalculated.
-
-### Status String
+### Status Displays
 
 - Spreadsheet label: **Status Effects**
-- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
-  `this.statusString`
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)>
+  `this.statusDisplays`
 
-This string is a comma-separated list of the names of all Status Effects that the Player currently has, including those
+This string is a comma-separated list of the IDs of all Status Effects that the Player currently has, including those
 that aren't [visible](status.md#visible). If a Status Effect has a [duration](status.md#duration), it can be listed here
 by putting the duration in parentheses. The duration must follow a specific format:
 
@@ -663,109 +738,212 @@ duration. If the Status Effect has a limited duration, it will automatically hav
 when Alter Ego saves the game data. The Player's status string is regenerated with updated durations every second of
 gameplay.
 
+The status display object has the following structure:
+
+```ts
+interface StatusDisplay {
+    /** The ID of the status effect. */
+    id: string;
+    /** The remaining time for the status effect. */
+    timeRemaining: string;
+}
+```
+
+When Player data is loaded from the sheet, the Status Effects listed, as well their Durations, are parsed and converted
+into these objects. When data is saved to the sheet, all of the status displays are converted to strings and separated
+by a comma.
+
+### Status String
+
+> [!WARNING]
+> This attribute is deprecated and will be removed in a future release.
+>
+> If this is used to check whether or not a Player has a Status with the given ID, use the
+> [`this.hasStatus`](#hasStatus) method instead.
+
+- Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+  `this.statusString`
+
+This internal attribute was used prior to Alter Ego version 2.0 to display all of the Player's current Status Effects
+as a string, with representations of their time remaining. However, it has since been replaced by `this.statusDisplays`,
+and now it is always an empty string. This will be removed in a future release.
+
+### Status
+
+- Class attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Status](status.md)>
+  `this.status`
+
+This internal attribute contains a collection of all instantiated Status Effects that the Player currently has, keyed
+by Status ID. Every time a Status Effect is inflicted or cured, the Player's stats are recalculated.
+
 ### Description
 
 - Spreadsheet label: **Description**
-- Class attribute: [Description](description.md)
-  `this.description`
+- Class attribute: [Description](description.md) `this.description`
 
 This is the description of the Player. When another Player inspects this Player, they will receive a parsed version of
 this string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more
 information.
 
-<!--TODO: Definitely need help with updating this!-->
-
 Player descriptions have a few peculiarities that set them apart from other descriptions, mostly due to the complexity
 of Players. In this section, Player descriptions will be explained in full detail.
-The [default Player description](../settings/docker_settings.md#default_description) provided in the default
-playerdefaults file is:
+The [default Player description](../settings.md#default_description) provided in the playerdefaults file is:
 
-`<desc><s>You examine <var v="container.displayName" />.</s> <if cond="container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /> <if cond="container.pronouns.plural">are</if><if cond="!container.pronouns.plural">is</if> [HEIGHT], but <var v="container.pronouns.dpos" /> face is concealed.</s></if><if cond="!container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /><if cond="container.pronouns.plural">'re</if><if cond="!container.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s></if> <s><var v="container.pronouns.Sbj" /> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"><item>a SHIRT</item>, <item>a pair of PANTS</item>, and <item>a pair of TENNIS SHOES</item></il>.</s> <s>You see <var v="container.pronouns.obj" /> carrying <il name="hands"></il>.</s></desc>`
+```xml
+<desc><s>You examine <var v="this.displayName"/>.</s> <if cond="this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /> <if cond="this.pronouns.plural">are</if><if cond="!this.pronouns.plural">is</if> [HEIGHT], but <var v="this.pronouns.dpos" /> face is concealed.</s></if><if cond="!this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /><if cond="this.pronouns.plural">'re</if><if cond="!this.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s> <if cond="this.hasStatus('tired')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> bags under <var v="this.pronouns.dpos"/> eyes.</s></if><if cond="this.hasStatus('exhausted')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> dark bags under <var v="this.pronouns.dpos"/> eyes.</s> <s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> absolutely **exhausted**.</s></if><if cond="this.hasStatus('delirious')"><s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> completely **delirious**, like <var v="this.pronouns.sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if>n't slept in days.</s></if></if><br /><br /><s><var v="this.pronouns.Sbj" /> wear<if cond="!this.pronouns.plural">s</if> <il name="equipment"></il>.</s><if cond="this.getContainedItemsForItemList('equipment').length === 0"><s><var v="this.pronouns.Sbj" /> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> completely naked.</s></if> <s>You see <var v="this.pronouns.obj"/> carrying <il name="hands"></il>.</s> <if cond="this.hasStatus('stinky')"><s><var v="this.pronouns.Sbj"/>'<if cond="this.pronouns.plural">re</if><if cond="!this.pronouns.plural">s</if> a little stinky.</s></if><if cond="this.hasStatus('rancid')"><s><var v="this.pronouns.Sbj"/> smell<if cond="!this.pronouns.plural">s</if> absolutely **rancid**.</s></if> <if cond="this.hasStatus('soaking wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> soaking wet.</s></if><if cond="this.hasStatus('wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> a bit wet.</s></if></desc>
+```
 
 This description always refers to the Player with the correct name and pronouns according to the situation, and it does
-so by making use of the Player's class attributes with `if` and `var` tags. However, unlike descriptions of other data
-structures, the class attributes of the Player being described are not being accessed with the typical `this` keyword.
-Instead, they are accessed by the `container` keyword. This is done so that the Player can view their own description
-when inspecting a MIRROR Fixture, for example. Because
-the [parser module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/parser.js) replaces the `this` keyword
-in [evaluated](../../moderator_guide/writing_descriptions.md#if) [expressions](../../moderator_guide/writing_descriptions.md#var)
-with `container`, the name of the variable referring to the data structure being described, and because the container
-variable when a Player inspects a mirror is the MIRROR Fixture itself, the `this` keyword cannot be used in Player
-descriptions while allowing for this functionality. Instead, the `container` keyword must be used, and a MIRROR Fixture
-cannot simply use the Player's description in a variable tag without modifications. It must replace all instances of the
-`container` keyword with the `player` keyword, which describes the Player inspecting the MIRROR Fixture, like so:
+so by making use of the Player's class attributes with `if` and `var` tags. While prior to Alter Ego version 2.0, it was
+necessary to replace the `this` keyword in Player descriptions with `container` in order to access a Player's
+attributes, this is no longer the case. Now, Player descriptions can use the `this` keyword like any other description,
+and allowing a Player to view their own description in a MIRROR or some other reflective Fixture is as simple as:
 
-`<desc><s>You look at your reflection in the mirror.</s> <var v="player.description.replace(/container./g, 'player.')" /></desc>`
+```xml
+<desc><s>It's a mirror hung on the wall above the sink.</s> <s>You can see your reflection in it:</s><br /><s> >>> </s><var v="player.description.parseFor(player)" /></desc>
+```
 
-Within the `desc` tags of the Player's description, there are five sections:
+Within the `desc` tags of the Player's description, there are eight main sections:
 
-- `<s>You examine <var v="container.displayName" />.</s>`
+- Section 1: Player display name
+  ```xml
+  <s>You examine <var v="this.displayName"/>.</s>
+  ```
     - This refers to the Player by their current display name. This should never be changed.
 
-- `<if cond="container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /> <if cond="container.pronouns.plural">are</if><if cond="!container.pronouns.plural">is</if> [HEIGHT], but <var v="container.pronouns.dpos" /> face is concealed.</s></if>`
+- Section 2: Concealed description
+  ```xml
+  <if cond="this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /> <if cond="this.pronouns.plural">are</if><if cond="!this.pronouns.plural">is</if> [HEIGHT], but <var v="this.pronouns.dpos" /> face is concealed.</s></if>
+  ```
     - This section describes the Player with very little detail in order to avoid revealing their identity when they
       have the `concealed` behavior attribute.
     - The `concealed` behavior attribute automatically changes the Player's pronouns to the `neutral` set. Consequently,
-      this section could be written as
-      `<if cond="container.hasAttribute('concealed')"><s>They are [HEIGHT], but their face is concealed.</s></if>` for
-      simplicity's sake. However, doing so removes the possibility of using the setpronouns command after the Player is
+      for the sake of simplicity, this section could be written as:
+      ```xml
+      <if cond="this.hasBehaviorAttribute('concealed')"><s>They are [HEIGHT], but their face is concealed.</s></if>
+      ```
+      However, doing so removes the possibility of using the setpronouns command after the Player is
       inflicted with the `concealed` behavior attribute. It can still be used, but the new pronouns will not be
       reflected in the Player's description.
 
-- `<if cond="!container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /><if cond="container.pronouns.plural">'re</if><if cond="!container.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s></if>`
+- Section 3: Non-concealed description
+  ```xml
+  <if cond="!this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /><if cond="this.pronouns.plural">'re</if><if cond="!this.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s> <if cond="this.hasStatus('tired')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> bags under <var v="this.pronouns.dpos"/> eyes.</s></if><if cond="this.hasStatus('exhausted')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> dark bags under <var v="this.pronouns.dpos"/> eyes.</s> <s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> absolutely **exhausted**.</s></if><if cond="this.hasStatus('delirious')"><s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> completely **delirious**, like <var v="this.pronouns.sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if>n't slept in days.</s></if></if>
+  ```
     - This section describes the Player in more detail. It's used when the Player doesn't have the `concealed` behavior
       attribute.
     - Because the Player's pronouns do not automatically change unless they are inflicted with the `concealed` behavior
       attribute, this section could be written without making use of the Player's pronouns in `var` tags. Instead, the
-      Player's pronouns could be written as plain text. This would allow a Player who uses multiple pronouns interchangeably
-      to be referred to with alternating pronouns, for example. However, this would hamper the use of the setpronouns
-      command for the Player unless additional logic checking is added.
-    - In this section, the Player can be described in much more detail than the default description allows for, and detail
-      can be added throughout the course of the game if the Player's appearance changes in significant ways. However, Player
-      descriptions should ideally be kept as short as possible so as to not overwhelm Players with too much irrelevant
-      information.
-    - An example of this section that makes use of static pronouns, extra detail, and extra conditionals, might look like
-      this:
-      `<if cond="!container.hasAttribute('concealed')"><s>It's a fairly young individual of average height with very pale skin.</s> <s>He's quite scrawny and frail-looking, with a very small chest.</s> <s>She has black eyes and short, red hair with bangs falling a little into her face and shoulder-length fringes on both sides, with the rest of its hair <if cond="findInventoryItem('BLAKES RIBBONS', container.name, '', 'HAT') !== undefined">done up in two buns held together with a pair of black ribbons</if><if cond="findInventoryItem('BLAKES RIBBONS', container.name, '', 'HAT') === undefined">coming down to about the shoulders</if>.</s> <s>He looks easy enough to get along with, if a little nervous.</s></if>`
+      Player's pronouns could be written as plain text. This would allow a Player who uses multiple pronouns
+      interchangeably to be referred to with alternating pronouns, for example. However, this would hamper the use of
+      the setpronouns command for the Player unless additional logic checking is added.
+    - This section can be further divided into two subsections:
+      - Subsection 1: Main description
+        ```xml
+        <s><var v="this.pronouns.Sbj" /><if cond="this.pronouns.plural">'re</if><if cond="!this.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s>
+        ```
+          - In this subsection, the Player can be described in much more detail than the default description allows for,
+            and detail can be added throughout the course of the game if the Player's appearance changes in significant
+            ways. However, Player descriptions should ideally be kept short to not overwhelm Players with
+            too much irrelevant information.
+          - An example of this section that makes use of static pronouns, extra detail, and extra conditionals, might
+            look like this:
+            ```xml
+            <s>She's very tall with moderately light skin.</s> <s>She's quite scrawny, and a bit lanky, with a small bust.</s> <if cond="this.hasEquippedItem('FLORIANS EYEPATCH', 'GLASSES')"><s>It only has one eye, which is deep red in color.</s> <s>Its left eye is covered with an eyepatch.</s></if><if cond="!this.hasEquippedItem('FLORIANS EYEPATCH', 'GLASSES')"><s>Her eyes are deep red in color<if cond="player.name === 'Florian' || player.perception > 6">, but on closer inspection, her left eye appears to be made of glass, and doesn't quite match the color of her right eye</if>.</s></if> <s>They have short, dark mauve hair <if cond="this.hasEquippedItem('PAIR OF HAIR TIES', 'HAT')">that's tied into two small pigtails,</if><if cond="!this.hasEquippedItem('PAIR OF HAIR TIES', 'HAT')"> that goes down to her upper chest,</if> with bangs swept to the right.</s> <s>She has a wavy side fringe that goes down to her shoulder.</s> <s>The tips of this fringe and some scattered strands of his hair are dyed black.</s> <s>His nails are painted black, as well.</s> <s>Its face bears a skeptical look to it, as if it's either judging or analyzing you.</s>
+            ```
+      - Subsection 2: Tiredness indicator
+        ```xml
+        <if cond="this.hasStatus('tired')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> bags under <var v="this.pronouns.dpos"/> eyes.</s></if><if cond="this.hasStatus('exhausted')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> dark bags under <var v="this.pronouns.dpos"/> eyes.</s> <s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> absolutely **exhausted**.</s></if><if cond="this.hasStatus('delirious')"><s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> completely **delirious**, like <var v="this.pronouns.sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if>n't slept in days.</s></if>
+        ```
+          - In this subsection are several `if` conditionals that appear if the Player has one of several mutually
+            exclusive Status Effects: `tired`, `exhausted`, or `delirious`. This indicates that the Player hasn't slept
+            in a while.
+          - This subsection can be safely removed if it is not desired.
 
-- `<s><var v="container.pronouns.Sbj" /> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"><item>a SHIRT</item>, <item>a pair of PANTS</item>, and <item>a pair of TENNIS SHOES</item></il>.</s>`
-    - This sentence lists all Inventory Items that the Player currently has [equipped](equipment_slot.md), except for those
-      equipped to their "RIGHT HAND" and "LEFT HAND" Equipment Slots and those whose Equipment Slot
-      is [covered](prefab.md#covered-equipment-slots) by another equipped Inventory Item.
-    - If the Player's equipped Inventory Items are manually changed on the spreadsheet, the contents of the `il` tag must be
-      manually updated with the [single containing phrases](prefab.md#single-containing-phrase) of the respective Inventory
-      Items in `item` tags.
-    - If nothing is listed in the `il` tag, this sentence will not appear in the parsed description.
+- Section 4: Equipment item list
+  ```xml
+  <br /><br /><s><var v="this.pronouns.Sbj" /> wear<if cond="!this.pronouns.plural">s</if> <il name="equipment"></il>.</s>
+  ```
+    - Right before this sentence is a pair of line breaks. This breaks up the description into two separate parts,
+      making it easier to read.
+    - This sentence lists all Inventory Items that the Player currently has [equipped](equipment_slot.md), except for
+      those equipped to their `RIGHT HAND` and `LEFT HAND` Equipment Slots and those whose Equipment Slot
+      is [covered](prefab.md#covered-equipment-slots) by another equipped Inventory Item. These items will be
+      automatically inserted based on the Player's current inventory whenever they are inspected.
+    - If nothing appears in the `il` tag, this sentence will not appear in the parsed description.
     - Because this sentence appears regardless of whether or not the Player has the `concealed` behavior attribute,
       `var` tags should be used to reference the Player's pronouns. They should not be replaced with static pronouns.
 
-- `<s>You see <var v="container.pronouns.obj" /> carrying <il name="hands"></il>.</s>`
+- Section 5: No equipped items indicator
+  ```xml
+  <if cond="this.getContainedItemsForItemList('equipment').length === 0"><s><var v="this.pronouns.Sbj" /> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> completely naked.</s></if>
+  ```
+    - This `if` conditional calls the [`getContainedItemsForItemList` method](#getContainedItemsForItemList) for the
+      `equipment` item list, and if it returns an empty array (meaning the Player has no equipped Inventory Items), then
+      the sentence indicating that the Player is completely naked will appear in their description.
+    - Because this only evaluates as true if the `equipment` item list is empty, this sentence will appear even if the
+      Player's `hands` item list is not empty.
+    - Since the sentence before this will have been removed if this sentence appears, there is no need to insert a space
+      between the two sentences.
+    - Because this sentence appears regardless of whether or not the Player has the `concealed` behavior attribute,
+      `var` tags should be used to reference the Player's pronouns. They should not be replaced with static pronouns.
+    - This section can be safely removed if it is not desired.
+
+- Section 6: Hands item list
+  ```xml
+  <s>You see <var v="this.pronouns.obj"/> carrying <il name="hands"></il>.</s>
+  ```
     - This sentence lists all [non-discreet](prefab.md#discreet) Inventory Items that the Player currently has equipped
-      to their "RIGHT HAND" or "LEFT HAND" Equipment Slots.
-    - If the Player's held Inventory Items are manually changed on the spreadsheet, the contents of the `il` tag must be
-      manually updated with the single containing phrases of the respective Inventory Items in `item` tags.
-    - If nothing is listed in the `il` tag, this sentence will not appear in the parsed description.
+      to their `RIGHT HAND` or `LEFT HAND` Equipment Slots. These items will be
+      automatically inserted based on the Player's current inventory whenever they are inspected.
+    - If nothing appears in the `il` tag, this sentence will not appear in the parsed description.
     - Because this sentence appears regardless of whether or not the Player has the `concealed` behavior attribute,
       `var` tags should be used to reference the Player's pronouns. They should not be replaced with static pronouns.
+
+- Section 7: Odor indicator
+  ```xml
+  <if cond="this.hasStatus('stinky')"><s><var v="this.pronouns.Sbj"/>'<if cond="this.pronouns.plural">re</if><if cond="!this.pronouns.plural">s</if> a little stinky.</s></if><if cond="this.hasStatus('rancid')"><s><var v="this.pronouns.Sbj"/> smell<if cond="!this.pronouns.plural">s</if> absolutely **rancid**.</s></if>
+  ```
+    - In this section are two `if` conditionals that appear if the Player has one of two mutually exclusive Status
+      Effects: `stinky` or `rancid`. This indicates that the Player hasn't bathed in a while.
+    - Because this sentence appears regardless of whether or not the Player has the `concealed` behavior attribute,
+      `var` tags should be used to reference the Player's pronouns. They should not be replaced with static pronouns.
+    - This section can be safely removed if it is not desired.
+
+- Section 8: Wetness indicator
+  ```xml
+  <if cond="this.hasStatus('soaking wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> soaking wet.</s></if><if cond="this.hasStatus('wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> a bit wet.</s></if>
+  ```
+    - In this section are two `if` conditionals that appear if the Player has one of two mutually exclusive Status
+      Effects: `soaking wet` or `wet`. This indicates that the Player was recently soaked with water.
+    - Because this sentence appears regardless of whether or not the Player has the `concealed` behavior attribute,
+      `var` tags should be used to reference the Player's pronouns. They should not be replaced with static pronouns.
+    - This section can be safely removed if it is not desired.
 
 Additional information can be added to the Player's description as needed. However, when doing so, precautions should be
 taken to ensure that it does not conflict with the effects of the `concealed` behavior attribute. If additional sections
-are added, they generally must use `var` tags to reference the Player's pronouns. A full example of a Player description
-with additional detail that makes use of static pronouns where possible might look like this:
-
-`<desc><s>You examine <var v="container.displayName"/>.</s> <if cond="container.hasAttribute('concealed')"><s>They are somewhat tall, but their face is concealed.</s></if><if cond="!container.hasAttribute('concealed')"><s>She's somewhat tall and has a pale complexion.</s> <s>She has long, creamsicle-orange hair with bangs in the middle.</s> <s>She has brown eyes and light brown eyebrows.</s> <s>She has a near-permanent smile, giving you the impression that she's very friendly - perhaps even a bit *too* friendly.</s> <s>She's somewhat thin with a very large chest.</s> <s>All of her fingernails are painted black.</s></if> <s><var v="container.pronouns.Sbj"/> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"><item>a BLACK HAIRBAND</item>, <item>a WHITE DRESS SHIRT</item>, <item>a BLACK TIE</item>, <item>a BLACK SUIT JACKET</item>, <item>a BLACK PENCIL SKIRT</item>, <item>a set of PANTYHOSE</item>, and <item>a pair of BLACK PUMPS</item></il>.</s> <s>You see <var v="container.pronouns.obj"/> carrying <il name="hands"></il>.</s> <if cond="container.statusString.includes('stinky')"><s><var v="container.pronouns.Sbj"/>'<if cond="container.pronouns.plural">re</if><if cond="!container.pronouns.plural">s</if> a little stinky.</s></if><if cond="container.statusString.includes('rancid')"><s><var v="container.pronouns.Sbj"/> smell<if cond="!container.pronouns.plural">s</if> absolutely **rancid**.</s></if></desc>`
+are added, they generally must use `var` tags to reference the Player's pronouns.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
 using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
 
 ### Inventory
 
-- Class
-  attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[string](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Equipment Slot](equipment_slot.md)>
+- Class attribute: [Collection](https://discord.js.org/docs/packages/discord.js/14.25.1/Collection:Class)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String), [Equipment Slot](equipment_slot.md)>
   `this.inventory`
 
-This internal attribute is a collection of Equipment Slots that the Player has. See the article
-on [Equipment Slots](equipment_slot.md) for more information.
+This internal attribute is a collection of Equipment Slots that the Player has, keyed by Equipment Slot ID. See the
+article on [Equipment Slots](equipment_slot.md) for more information.
+
+### Notification Channel
+
+- Class attribute: [DMChannel](https://discord.js.org/docs/packages/discord.js/14.25.1/DMChannel:Class) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+  `this.notificationChannel`
+
+This is an internal attribute. When Player data is loaded, Alter Ego will attempt to create a DM channel with the guild
+member corresponding to this Player. This channel is where all messages intended to be sent to only this Player will be
+sent. This includes parsed Descriptions, [Notifications](notification.md), error messages, and so on. If the Player is
+an NPC, this is `null`.
 
 ### Spectate Channel
 
@@ -782,12 +960,12 @@ A spectate channel replicates the experience of being this Player. Everything th
 Narrations, dialog, and more, is sent to this channel in chronological order. Here, spectators and dead Players can
 watch the game happen in real time, or read it at any point in the future, even after the game has concluded.
 
-There are some things that do not appear in spectate channels, however. Out-Of-Character (OOC) messages—messages that
-begin with `(`—are not sent, as
+There are some things that do not appear in spectate channels, however. Out-Of-Character (OOC) messages---messages that
+begin with `(`---are not sent, as
 the [messageHandler module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/messageHandler.js) does not count
 these as dialog. The Player's commands are also not sent, nor are error messages about command syntax. When the Player
-uses the [status command](../commands/player_commands.md#status), their status will not appear in their spectate
-channel.
+uses the [status command](../commands/player_commands.md#status) [time command](../commands/player_commands.md#time),
+the responses will not appear in their spectate channel.
 
 ### Max Carry Weight
 
@@ -795,13 +973,13 @@ channel.
   `this.maxCarryWeight`
 
 This internal attribute is the maximum weight the Player can currently carry in kilograms. How it is calculated is
-described in more detail in the [strength stat section](player.md#strength). If the Player attempts to take an Item that
-is heavier than this number, they will be told it is too heavy to lift, and if the Item is non-discreet, their attempt
-to take it will be Narrated in the Room channel. Likewise, if they attempt to take an Item that would make their current
-carry weight exceed this value, they will be told that they're carrying too much weight; however, this will not be
-Narrated. The same happens if another Player attempts to give this Player an Inventory Item that would exceed this
-value. If the Player uses the [dress command](../commands/player_commands.md#dress), they will be unable to dress
-themself in any Items that would exceed this value, although they will not be notified of it.
+described in more detail in the [strength stat section](player.md#strength). If the Player attempts to take a Room Item
+that is heavier than this number, they will be told it is too heavy to lift, and if the Room Item is non-discreet, their
+attempt to take it will be Narrated in the Room channel. Likewise, if they attempt to take a Room Item that would make
+their current carry weight exceed this value, they will be told that they're carrying too much weight; however, this
+will not be Narrated. The same happens if another Player attempts to give this Player an Inventory Item that would
+exceed this value. If the Player uses the [dress command](../commands/player_commands.md#dress), they will be unable to dress
+themself in any Room Items that would exceed this value, although they will not be notified of it.
 
 ### Carry Weight
 
@@ -829,24 +1007,23 @@ then they are currently moving. If this is `false`, then they are resting.
 
 It should be noted that the Player can be forcibly stopped from moving in many ways. If Player data is reloaded,
 if [edit mode](../../moderator_guide/edit_mode.md) is enabled, if the Player is inflicted with a Status Effect with the
-`disable all`, `disable move`, or
-`disable run` behavior attributes, if the Player is forcibly moved using moderator or bot commands, or if the Player
-dies, they will stop moving, and all class attributes associated with movement will be reset.
+`disable all`, `disable move`, or `disable run` behavior attributes, if the Player is forcibly moved using moderator or
+bot commands, or if the Player dies, they will stop moving, and all class attributes associated
+with movement will be reset.
 
 ### Move Timer
 
 - Class attribute: [Timeout](https://nodejs.org/api/timers.html#class-timeout) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.moveTimer`
 
-This internal attribute uses the [setInterval method](https://nodejs.org/api/timers.html#setintervalcallback-delay-args) to
-handle the Player's movement. Every 100 milliseconds, 100 milliseconds are subtracted from the
-Player's [remaining time](player.md#remaining-time), and the Player's position and stamina are updated. However, if at
-least one Player in the game has the "heated" Status Effect, the amount of milliseconds subtracted from the Player's
-remaining time is first multiplied by
-the [heatedSlowdownRate setting](../settings/docker_settings.md#heated_slowdown_rate), effectively making the Player
-move more slowly. If the Player stops moving for any reason,
-the [clearInterval method](https://nodejs.org/api/timers.html#clearintervaltimeout) is used on this so that the
-Player's movement will no longer continue. When Player data is loaded, this is `null`.
+This internal attribute uses the [setInterval method](https://nodejs.org/api/timers.html#setintervalcallback-delay-args)
+to handle the Player's movement. Every 100 milliseconds, 100 milliseconds are subtracted from the Player's
+[remaining time](player.md#remaining-time), and the Player's position and stamina are updated. However, if at least one
+Player in the game has the `heated` Status Effect, the amount of milliseconds subtracted from the Player's remaining
+time is first multiplied by the [heatedSlowdownRate setting](../settings.md#heated_slowdown_rate), effectively making
+the Player move more slowly. If the Player stops moving for any reason, the
+[clearInterval method](https://nodejs.org/api/timers.html#clearintervaltimeout) is used on this so that the Player's
+movement will no longer continue. When Player data is loaded, this is `null`.
 
 ### Remaining Time
 
@@ -858,8 +1035,7 @@ currently moving to. If the Player stops moving for any reason, this is set to `
 
 ### Move Queue
 
-- Class
-  attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
+- Class attribute: [Array](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)<[String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)>
   `this.moveQueue`
 
 This internal attribute is a list of all movements the Player wishes to make in sequential order. When the Player uses
@@ -873,48 +1049,90 @@ queue is emptied.
 This class attribute is unused if the Player is moved with the moderator or bot command, because those commands move the
 Player instantaneously. As such, NPCs cannot have queued movements.
 
-### Reached Half Stamina
-
-<!--TODO: this documents a private attribute? consider removing-->
-
-- Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
-  `this.#reachedHalfStamina`
-
-This internal attribute indicates whether or not the Player has depleted half of their stamina while moving. When the
-Player's stamina first dips below half of their maximum stamina, they will be warned that they're starting to become
-tired, and this is set to `true`. Once this is `true`, the warning message is not sent again until Player data is
-reloaded, where it is set to `false` by default.
-
-### Interval
-
-<!--TODO: this documents a private attribute? consider removing-->
-
-- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
-  `this.interval`
-
-This internal attribute uses the setInterval method to handle stamina regeneration. Every 30 seconds, Alter Ego checks
-if the Player is moving. If they aren't, and if their current stamina is less than their max stamina, they recover
-1/20th of their max stamina.
-
 ### Online
 
 - Class attribute: [Boolean](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean)
   `this.online`
 
 This internal attribute determines whether or not the Player is included in the count of online Players in Alter
-Ego's [status message](../settings/docker_settings.md#in_progress_type-in_progress_string). If this is `true`, then the
+Ego's [status message](../settings.md#online_activity_type-online_activity_string). If this is `true`, then the
 Player is counted. If this is `false`, then they are not. A Player is set as online whenever they use a command or speak
 in-game. NPCs are never considered online.
 
-### Online Interval
+### Process
 
-<!--TODO: this documents a private attribute? consider removing-->
+- Class attribute: [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
+  `this.process`
 
-- Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
-  `this.onlineInterval`
+This is an internal attribute used to process [Recipes](recipe.md). It has the following structure:
 
-This internal attribute uses the [setTimeout method](https://developer.mozilla.org/en-US/docs/Web/API/setTimeout) to
-count down until the Player is no longer considered online. Every time the Player is set as online, the online interval
-is reset using the [clearTimeout method](https://developer.mozilla.org/en-US/docs/Web/API/clearTimeout) and then
-restarted from the beginning. If the timer reaches 0, then the Player is set as offline. This takes 15 minutes. When
-Player data is loaded, this is `null`.
+```ts
+interface Process {
+    /** The recipe being processed. **/
+    recipe: Recipe;
+    /** The ingredients used in the recipe. */
+    ingredients: Array<CollatedItem<InventoryItem>>;
+    /** The products created during recipe processing. */
+    products: Array<InventoryItem>;
+    /** How many times the given ingredients satisfy the recipe. Only set right before products are instantiated. */
+    satisfactoryProcessCount: number;
+    /** The duration of the recipe. */
+    duration: null;
+    /** The timer used to track the duration of the recipe. */
+    timer: null;
+}
+```
+
+Unlike [Fixtures](fixture.md), the duration and timer are never set. The Player's process is only set during
+[crafting](action.md#craft-action) and [uncrafting](action.md#uncraft-action), and it is cleared immediately after.
+
+## Methods
+
+Players have a number of functions that can be useful to moderators. This is not an exhaustive list of publicly
+accessible methods; only ones that are likely to be useful when writing [Flag value scripts](flag.md#value-script), or
+[`if`](../../moderator_guide/writing_descriptions.md#if) and [`var`](../../moderator_guide/writing_descriptions.md#var)
+tags in descriptions.
+
+### calculateMoveRate
+
+### hasStatus
+
+### hasBehaviorAttribute
+
+### hasAttribute
+
+### canSee
+
+### canHear
+
+### knows
+
+### isConscious
+
+### isHidden
+
+### getStatModifier
+
+### getContainedItems
+
+### getContainedItemsForItemList
+
+### containsNoItems
+
+### containsItem
+
+### getContainedItem
+
+### getContainedItemsWeight
+
+### getIngredientItem
+
+### getProductItem
+
+### findItem
+
+### hasItem
+
+### getEquipmentSlot
+
+### hasEquippedItem

@@ -54,8 +54,17 @@ More Exit tags will be added in future releases.
 - Class attribute: [object](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object)
   `this.pos`
 
-This is an internal attribute whose properties are the X, Y, and Z coordinates of the Exit. For more information, see
-the article on [Maps](../../moderator_guide/mapmaking.md).
+This is an internal attribute whose properties are the X, Y, and Z coordinates of the Exit.
+It has the following structure:
+```ts
+interface Pos {
+    x: number;
+    y: number;
+    z: number;
+}
+```
+
+For more information, see the article on [Maps](../../moderator_guide/mapmaking.md).
 
 #### X
 

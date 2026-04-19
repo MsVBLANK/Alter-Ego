@@ -5,16 +5,19 @@
 # About
 
 - [Alter Ego](about/alter_ego.md)
-- [Discord](about/discord.md)
 
 # Player Guide
 
+- [How to Use This Guide]()
 - [Getting Started](player_guide/getting_started.md)
 - [Getting to Know Alter Ego](player_guide/getting_to_know_alter_ego.md)
-- [Inspecting Things](player_guide/inspecting_things.md)
-- [Interacting with Objects](player_guide/interacting.md)
+- [Interacting with Things](player_guide/interacting.md)
 - [Moving Around](player_guide/moving_around.md)
 - [Expressing Yourself](player_guide/expressing_yourself.md)
+- [Crafting]()
+- [Solving Puzzles]()
+- [Your Moderator and You]()
+- [Next Steps]()
 
 # Moderator Guide
 
@@ -26,6 +29,7 @@
 
 # Reference
 
+- [Discord](about/discord.md)
 - [Commands](reference/commands/index.md)
     - [Player Commands](reference/commands/player_commands.md)
     - [Eligible Commands](reference/commands/eligible_commands.md)

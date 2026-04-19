@@ -1,6 +1,6 @@
 # Getting Started
 
-> [!NOTE]
+> [!IMPORTANT]
 > This guide assumes that you know how to use Discord.
 > If you are unfamiliar with Discord, please first refer to the [Beginner's Guide to Discord](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord).
 

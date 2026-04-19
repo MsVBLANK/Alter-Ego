@@ -25,18 +25,19 @@ players and also send commands. One important thing to note is that your room ch
 a new location, so remember to switch to the new room channel! You don't want to miss the conversation every time you
 switch rooms!
 
-One tip to make your life easier is to have *two instances of Alter Ego open at the same time.*
-To do this, open the Discord app on your computer while being logged in to Discord on your web browser.
-Alternatively, you can have the Discord app open on both your computer or your smart device.
-One of them will be open to the Alter Ego bot's DMs while the other will be open to the current room channel.
-This makes it a lot easier to interact with others and send commands simultaneously.
+> [!TIP]
+> To make your life easier, try having *two instances of Discord open at the same time* while playing Alter Ego.
+> To do this, open the Discord app on your computer while being logged in to Discord on your web browser.
+> Alternatively, you can have the Discord app open on both your computer or your smart device.
+> One of them will be open to the Alter Ego bot's DMs while the other will be open to the current room channel.
+> This makes it a lot easier to interact with others and send commands simultaneously.
 
 ## Using Commands
 
 **Commands** are the primary way you interact with Alter Ego. You can use commands in *both* in DMs and in
 room channels.
 
-To use a command, enter the **command prefix** (by default `.`) and append it with the command you wish to use.
+To use a command, enter the **command prefix** (by default `.`)[^1] and append it with the command you wish to use.
 For instance, if we want to use the [*inspect* command](../reference/commands/player_commands.html#inspect), we send
 the following in Discord.
 
@@ -63,7 +64,7 @@ Awesome! It seems that we're in the ceramics studio, maybe we can make a vase fo
 The *inspect* command is one of the many commands you can use to interact with Alter Ego.
 While all of them are different, they all work in essentially the same way:
 
-1. Enter the command prefix (`.`).
+1. Enter the command prefix[^2] (`.`).
 2. Enter the command (e.g. `inspect`, `give`).
 3. Enter one or more arguments (e.g. `room`, `kyra bottle`).
 4. Send the command string in either the bot DM or a room channel.
@@ -84,18 +85,25 @@ Let's try and have a look at the utility cart by clicking on the dropdown menu i
 
 ![TODO screenshot of inspect output](../images/inspect_utility_cart.png)
 
-Now let's try clicking on one of the buttons. We will click on the *Move HALL* button and see what happens.
+Nice, we know what the utility cart looks like now! Ignore the *Drop* dropdown for now, we will cover that in a later
+chapter.
+
+Now let's try clicking on one of the buttons in the original message. We will click on the blue *Move HALL* button and
+see what happens.
 
 ![TODO screenshot of move output](../images/move_interactable_output.png)
 
-Awesome! All of that without sending a single command. Convenient right?
+Awesome! We've moved to the basement hall---all without sending a single command. Convenient right?
 
 At the moment, interactables allow you to inspect things, move to rooms, pick up objects, craft items, and more.
 This means that most of what you will do in Alter Ego can be replaced with interactables.
-Note however that not *all* functions can be replaced by interactables (such as using items or solving puzzles),
-so there are still some commands that you will have to learn.
+
 
 ## Seeking Help
+
+> [!IMPORTANT]
+> Not all functions can be replaced by interactables. Just because something isn't possible to do with interactables,
+> doesn't mean it's not possible. Always see if there is a command for what you're trying to do before giving up!
 
 Even though interactables can do a lot, not *all* functions can be replaced by interactables
 (such as using items or solving puzzles), so there are still some commands that you will have to learn.
@@ -131,3 +139,6 @@ but other commands may have more complex example usages.
 
 Finally, each help entry has **details** about the command. In this case, it explains what the inventory command does
 and the specifics on using it. With this information, we can list our character's inventory no problem!
+
+[^1]: The command prefix is customizable by the moderator. If your moderator uses another prefix, use that instead.
+[^2]: This is not strictly necessary in **bot DMs**. They are still required in room channels.

@@ -311,7 +311,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     usableOn(player: Player): boolean {
         let canEffect = false, canCure = false;
 		for (const effect of this.prefab.effects) {
-			if (!player.hasStatus(effect.id) || effect.duplicatedStatus !== null)
+			if ((!player.hasStatus(effect.id) || effect.duplicatedStatus !== null) && effect.overriders.every(overrider => !player.hasStatus(overrider.id)))
                 canEffect = true;
 		}
 		for (const cure of this.prefab.cures) {

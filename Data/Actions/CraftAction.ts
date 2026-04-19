@@ -23,12 +23,13 @@ export default class CraftAction extends Action {
 		const item1Id = item1.getIdentifier();
 		const item2Id = item2.getIdentifier();
 		const craftingResult = this.player.craft(recipe);
-		const completedDescription = recipe.completedDescription.parseFor(this.player, recipe);
+		const completedDescription = recipe.completedDescription.parseFor(this.player, this.player);
         const createdItems = [craftingResult.product1, craftingResult.product2].filter(item => item !== null);
         const interactables = await this.#getInteractables(createdItems);
-		this.player.sendDescription(completedDescription, recipe, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
+		this.player.sendDescription(completedDescription, this.player, recipe.completedDescription.messageDisplayType ?? MessageDisplayType.STANDARD, interactables);
 		this.getGame().narrationHandler.narrateCraft(this, craftingResult, this.player);
 		this.getGame().logHandler.logCraft(item1Id, item2Id, craftingResult, this.player, this.forced);
+        this.player.clearProcess();
         this.successMessage = `Successfully crafted ${item1Id} and ${item2Id} for ${this.player.name}.`;
 	}
 

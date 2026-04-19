@@ -1,10 +1,12 @@
 import { Collection, type TextChannel } from "discord.js";
 import { generatePlayerListString, sortPlayersByDisplayName } from "../Modules/helpers.ts";
+import { itemIdentifierMatches } from "../Modules/matchers.ts";
 import Description from "./Description.ts";
 import type Exit from "./Exit.ts";
 import type Game from "./Game.ts";
 import GameEntity from "./GameEntity.ts";
 import Player from "./Player.ts";
+import type RoomItem from "./RoomItem.ts";
 
 export type RoomField = "id"|"displayName"|"tags"|"iconURL"|"exits"|"description";
 
@@ -273,6 +275,41 @@ export default class Room extends GameEntity implements PersistentGameEntity {
      */
     getFindActionDirectiveArgs(entityType: "Fixtures" | "RoomItems" | "Puzzles"): [string] {
         return [`${entityType} at ${this.displayName}`];
+    }
+
+    /**
+     * Gets all of the items in this room.
+     */
+    getContainedItems(): RoomItem[] {
+        return this.getGame().entityFinder.getRoomItems(undefined, this.id);
+    }
+
+    /**
+	 * Returns true if this room contains no items.
+	 */
+	containsNoItems(): boolean {
+		return this.getContainedItems().length === 0;
+	}
+
+    /**
+     * Returns true if this room contains an item with the given identifier or prefab ID.
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    containsItem(identifier: string): boolean {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the item contained inside of this room with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    getContainedItem(identifier: string): RoomItem {
+        return this.getGame().entityFinder.getRoomItem(identifier, this.id);
     }
 
     descriptionCell(): string {

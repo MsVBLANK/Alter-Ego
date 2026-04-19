@@ -507,11 +507,17 @@ export default class GameEntityFinder {
 	 * @param {string} [curesString] - Filter the prefabs to only those who cure the given comma-separated status effects.
 	 * @param {string} [equipmentSlotsString] - Filter the prefabs to only those who are equippable to the given comma-separated equipment slots.
 	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose ID only contains the given ID. Defaults to false.
+     * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 */
-	getPrefabs(id, effectsString, curesString, equipmentSlotsString, fuzzySearch = false) {
+	getPrefabs(id, effectsString, curesString, equipmentSlotsString, fuzzySearch = false, resultContext = 'moderator') {
 		/** @type {Collection<string, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
-		if (id) selectedFilters.set(Game.generateValidEntityName(id), fuzzySearch ? matchers.entityIdContains : matchers.entityIdMatches);
+		if (id) {
+            if (fuzzySearch) selectedFilters.set(Game.generateValidEntityName(id), matchers.prefabIdOrNameContains)
+			else if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(id), matchers.prefabNameMatches);
+			else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(id), matchers.prefabIdOrNameMatches);
+			else selectedFilters.set(Game.generateValidEntityName(id), matchers.entityIdMatches);
+        }
 		if (effectsString) {
 			let effects = effectsString.split(',');
 			effects.forEach((effect, i) => effects[i] = Status.generateValidId(effect));

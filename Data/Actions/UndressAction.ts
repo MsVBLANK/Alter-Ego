@@ -37,9 +37,15 @@ export default class UndressAction extends Action {
 		const droppedItems: InventoryItem[] = [];
 		for (const equipmentSlot of this.player.inventory.values()) {
 			if (equipmentSlot.equippedItem !== null && equipmentSlot.equippedItem.prefab.equippable) {
-				droppedItems.push(equipmentSlot.equippedItem);
+                const droppedItem = equipmentSlot.equippedItem;
+				droppedItems.push(droppedItem);
 				this.player.unequip(equipmentSlot.equippedItem, equipmentSlot, rightHand);
 				this.player.drop(rightHand.equippedItem, rightHand, container, inventorySlot);
+                // Container is a drop puzzle.
+                if (container instanceof Puzzle && container.type === "drop") {
+                    const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
+                    attemptAction.performAttempt(container, droppedItem, droppedItem.getIdentifier(), "drop", "");
+                }
 			}
 		}
 		this.getGame().narrationHandler.narrateUndress(this, droppedItems, container, this.player);

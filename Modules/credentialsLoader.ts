@@ -1,5 +1,4 @@
 import {readFileSync} from "fs";
-import {readFile} from "fs/promises";
 
 const CREDENTIALS_FILE_PATH = "./Configs/credentials.json";
 

@@ -7,29 +7,17 @@ import InstantiateRoomItemAction from "./Actions/InstantiateRoomItemAction.ts";
 import CollatedItem from "./CollatedItem.ts";
 import type Game from "./Game.ts";
 import HidingSpot from "./HidingSpot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import type Player from "./Player.ts";
 import type Prefab from "./Prefab.ts";
 import type Puzzle from "./Puzzle.ts";
 import type Recipe from "./Recipe.ts";
-import RecipeProcessor from "./RecipeProcessor.ts";
+import RecipeProcessor, { type Process } from "./RecipeProcessor.ts";
 import type Room from "./Room.ts";
 import type RoomItem from "./RoomItem.ts";
 import { itemIdentifierMatches } from "../Modules/matchers.ts";
 
 export type FixtureField = "name"|"location"|"accessible"|"childPuzzle"|"recipeTag"|"activatable"|"activated"|"autoDeactivate"|"hidingSpotCapacity"|"preposition"|"description";
-
-interface Process {
-    /** The recipe being processed. */
-    recipe?: Recipe;
-    /** The ingredients used in the recipe. */
-    ingredients?: CollatedItem<RoomItem>[];
-    /** How many times the given ingredients satisfy the recipe. Only set right before products are instantiated. */
-    satisfactoryProcessCount?: number;
-    /** The duration of the recipe. */
-    duration?: Duration;
-    /** The timer used to track the duration of the recipe. */
-    timer?: Timer | null;
-}
 
 interface FindRecipeResult {
     /** The recipe found. */
@@ -97,9 +85,9 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     preposition: string;
     /**
-     * The current recipe being processed, the ingredients being processed, the recipe's duration, and a timer counting down until the recipe finishes.
+     * The current recipe being processed, the ingredients being processed, the products being instantiated, the recipe's duration, and a timer counting down until the recipe finishes.
      */
-    process: Process;
+    process: Process<RoomItem>;
     /**
      * A timer that checks for recipes that the fixture can process every second.
      */
@@ -138,7 +126,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         this.hidingSpot = this.hidingSpotCapacity > 0 ? new HidingSpot(this, this.hidingSpotCapacity, this.row, this.getGame()) : null;
         this.preposition = preposition;
 
-        this.process = { recipe: null, ingredients: [], duration: null, timer: null };
+        this.process = { recipe: null, ingredients: [], products: [], satisfactoryProcessCount: 0, duration: null, timer: null };
         let fixture = this;
         this.recipeInterval = this.recipeTag ? new Timer(1000, { start: true, loop: true }, function () { if (fixture.activated) fixture.processRecipes(); }) : null;
     }
@@ -186,7 +174,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      * @param tag - The tag to set.
      */
     setRecipeTag(tag: string): void {
-        this.#clearProcess();
+        this._clearProcess();
         this._recipeTag = tag?.trim();
     }
 
@@ -268,6 +256,15 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     }
 
     /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getRoomItem(identifier, this.location.id, 'Fixture', this.name);
+    }
+
+    /**
      * Returns true if the fixture is activated and deactivates automatically.
      */
     isProcessingItems(): boolean {
@@ -294,6 +291,15 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
     }
 
     /**
+     * Sets the fixture's process with the instantiated products.
+     * 
+     * @param products - The products to set for the process.
+     */
+    #setProcessProducts(products: RoomItem[]): void {
+        this.process.products = products;
+    }
+
+    /**
      * Starts the process timer, and executes the given callback when its timer expires.
      */
     #whenProcessTimerExpires(callback: () => void): void {
@@ -306,18 +312,6 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
                 }
             }
         });
-    }
-
-    /**
-     * Sets the current process's recipe and duration to null, empties the process's list of ingredients, and stops the process timer.
-     */
-    #clearProcess(): void {
-        this.process.recipe = null;
-        this.process.ingredients.length = 0;
-        this.process.satisfactoryProcessCount = 0;
-        if (this.process.timer !== null)
-            this.process.timer.stop();
-        this.process.duration = null;
     }
 
     /**
@@ -335,7 +329,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
 	#endProcess(): void {
 		if (this.autoDeactivate) this.#performDeactivate();
-        else this.#clearProcess();
+        else this._clearProcess();
 	}
 
     /**
@@ -365,7 +359,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     deactivate(): void {
         this.activated = false;
-        this.#clearProcess();
+        this._clearProcess();
     }
 
     /**
@@ -377,7 +371,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
             return this.#startProcessTimerForAutoDeactivateFixtureWithNoRecipe();
         // If the current recipe being processed is no longer the one it found, cancel it.
         if (this.process.recipe !== null && (result.recipe === null || result.recipe !== null && this.process.recipe.row !== result.recipe.row))
-            this.#clearProcess();
+            this._clearProcess();
         // Start a new process.
         if (this.process.recipe === null && result.recipe !== null) {
             this.#setProcess(result);
@@ -401,7 +395,8 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
         const variableValues = this.process.recipe.getIngredientVariableValues(this.process.ingredients);
         const proceduralSelections = combineProceduralSelections(this.process.ingredients);
         this.destroyIngredients(this.process.recipe, this.process.ingredients, this.process.satisfactoryProcessCount);
-		this.instantiateProducts(this.process.recipe, this.process.satisfactoryProcessCount, variableValues, proceduralSelections, player);
+		const instantiatedProducts = this.instantiateProducts<RoomItem>(this.process.recipe, this.process.satisfactoryProcessCount, variableValues, proceduralSelections, player);
+        this.#setProcessProducts(instantiatedProducts);
 		this.#sendRecipeCompletedDescription(player);
     }
 
@@ -417,12 +412,37 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      * @param player - The player who caused this instantiation, if applicable.
 	 * @returns The instantiated room item.
 	 */
-	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses,
-        proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this, inventorySlotId: string = "", player?: Player): RoomItem[] {
+	protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: RoomItemContainer = this.childPuzzle ?? this, inventorySlotId: string = "", player?: Player): RoomItem[] {
         const instantiatingPlayer = player && player.alive && player.location.id === this.location.id ? player : undefined;
 		const instantiateAction = new InstantiateRoomItemAction(this.getGame(), undefined, instantiatingPlayer, this.location, true);
 		return instantiateAction.performInstantiateRoomItem(prefab, container, inventorySlotId, quantity, proceduralSelections, uses);
 	}
+
+    /**
+     * Gets the actual ingredient item instance that was used as an ingredient in the currently processed recipe.
+     * If no such item exists, returns the corresponding ingredient prefab of the currently processed recipe.
+     * If no recipe is currently being processed, returns undefined.
+     * @param prefabId - The prefab ID to search for.
+     */
+    public override getIngredientItem(prefabId: string): Prefab | RoomItem {
+        for (const ingredient of this.process.ingredients) {
+            if (itemIdentifierMatches(ingredient.items[0], prefabId, true)) return ingredient.items[0];
+        }
+        return this.process.recipe?.ingredientsFlat.find(ingredient => ingredient.prefab.id === prefabId)?.prefab;
+    }
+
+    /**
+     * Gets the actual product item instance that was instantiated in the currently processed recipe.
+     * If no such item exists, returns the corresponding product prefab of the currently processed recipe.
+     * If no recipe is currently being processed, returns undefined.
+     * @param prefabId - The prefab ID to search for.
+     */
+    public override getProductItem(prefabId: string): Prefab | RoomItem {
+        for (const product of this.process.products) {
+            if (itemIdentifierMatches(product, prefabId, true)) return product;
+        }
+        return this.process.recipe?.productsFlat.find(product => product.prefab.id === prefabId)?.prefab;
+    }
 
 	/**
 	 * If a player is given and they are still alive and in the same room as the fixture, sends them the processed recipe's completed description.
@@ -454,7 +474,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     findRecipe(): FindRecipeResult {
         // Get all the items contained within this fixture.
-        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, "Fixture", this.name);
+        const items = this.getGame().entityFinder.getRoomItems(undefined, this.location.id, undefined, this.childPuzzle ? "Puzzle" : "Fixture", this.childPuzzle ? this.childPuzzle.name : this.name);
         for (let i = 0; i < items.length; i++)
             getChildItems(items, items[i]);
         const collatedItems = CollatedItem.collate(items);

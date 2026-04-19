@@ -297,12 +297,14 @@ function getMediaGalleryComponents(originalMessageText, fileURLs = []) {
 
 /**
  * Returns an array of action row components to attach to the message.
- * @param {Interactable[]} interactables - An array of interactables. 
+ * @param {Interactable[]} interactables - An array of interactables.
+ * @param {number} [componentCount] - The number of components already in the message. Defaults to 0.
  */
-function generateActionRows(interactables) {
+function generateActionRows(interactables, componentCount = 0) {
     /** @typedef {{actionRow: ActionRowBuilder<ButtonBuilder|StringSelectMenuBuilder>, priority: number}} ActionRowIntermediary */
     /** @typedef {{button: ButtonBuilder, priority: number}} ButtonIntermediary */
     
+    const maxComponentCount = 40;
     const buttonInteractables = interactables.filter(interactable => interactable.type === InteractableType.BUTTON);
     const stringSelectInteractables = interactables.filter(interactable => interactable.type === InteractableType.STRING_SELECT_MENU);
 
@@ -314,11 +316,12 @@ function generateActionRows(interactables) {
     let buttons = [];
     for (let i = 0; i < buttonInteractables.length && includedInteractables.size < 25; i++) {
         const interactable = buttonInteractables[i];
-        if (!includedInteractables.has(interactable.customId) && (interactable.component instanceof ButtonBuilder)) {
+        if (componentCount < maxComponentCount && !includedInteractables.has(interactable.customId) && (interactable.component instanceof ButtonBuilder)) {
             buttons.push({ button: interactable.component, priority: interactable.priority });
             includedInteractables.add(interactable.customId);
+            componentCount++;
         }
-        if (i === buttonInteractables.length - 1 || buttons.length === 5) {
+        if (i === buttonInteractables.length - 1 || buttons.length === 5 || componentCount === 40) {
             buttons.sort((a, b) => a.priority - b.priority);
             /** @type {ActionRowBuilder<ButtonBuilder>} */
             const actionRow = new ActionRowBuilder();
@@ -329,12 +332,18 @@ function generateActionRows(interactables) {
             if (actionRows.length === 5) break;
         }
     }
-    for (let i = 0; i < stringSelectInteractables.length && actionRows.length < 5 && includedInteractables.size < 25; i++) {
+    for (let i = 0; i < stringSelectInteractables.length && actionRows.length < 5 && includedInteractables.size < 25 && componentCount + 2 < maxComponentCount; i++) {
         const interactable = stringSelectInteractables[i];
         if (!includedInteractables.has(interactable.customId) && interactable instanceof StringSelectMenuInteractable) {
+            // If this would exceed the maximum number of components, remove excess options.
+            if (componentCount + 1 + interactable.component.options.length >= maxComponentCount) {
+                const excess = maxComponentCount - componentCount - 1;
+                interactable.component.options.splice(excess);
+            }
             /** @type {ActionRowBuilder<StringSelectMenuBuilder>} */
             const actionRow = new ActionRowBuilder();
             actionRow.addComponents(interactable.component);
+            componentCount += 1 + interactable.component.options.length;
             includedInteractables.add(interactable.customId);
             actionRows.push({ actionRow: actionRow, priority: interactable.priority });
         }

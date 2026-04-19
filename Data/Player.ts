@@ -21,11 +21,12 @@ import Game from "./Game.ts";
 import type GameEntity from "./GameEntity.ts";
 import type InventoryItem from "./InventoryItem.ts";
 import type InventorySlot from "./InventorySlot.ts";
+import type ItemInstance from "./ItemInstance.ts";
 import Notification from "./Notification.ts";
 import type Prefab from "./Prefab.ts";
 import Puzzle from "./Puzzle.ts";
 import type Recipe from "./Recipe.ts";
-import RecipeProcessor from "./RecipeProcessor.ts";
+import RecipeProcessor, { type Process } from "./RecipeProcessor.ts";
 import Room from "./Room.ts";
 import RoomItem from "./RoomItem.ts";
 import Status from "./Status.ts";
@@ -254,6 +255,10 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      */
     #staminaRegenerationInterval: NodeJS.Timeout;
     /**
+     * The current recipe being processed, the ingredients being processed, and the products being instantiated for the recipe, if applicable.
+     */
+    process: Process<InventoryItem>;
+    /**
      * Whether or not the player is considered online.
      * This is automatically set to `false` after 15 minutes of inactivity.
      */
@@ -349,16 +354,15 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         this.remainingTime = 0;
         this.moveQueue = [];
 
-        /** @private */
         this.#reachedHalfStamina = false;
         let player = this;
-        /** @private */
         this.#staminaRegenerationInterval = setInterval(function () {
             if (!player.isMoving) player.#regenerateStamina();
         }, 30000);
 
+        this.process = { recipe: null, ingredients: [], products: [], satisfactoryProcessCount: 0, duration: null, timer: null };
+
         this.online = false;
-        /** @private */
         this.#onlineInterval = null;
     }
 
@@ -1041,6 +1045,15 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         return false;
     }
 
+    /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        return this.getGame().entityFinder.getInventoryItem(identifier, this.name);
+    }
+
     override getContainedItemsWeight(): number {
         const containedItems = this.inventory.map(equipmentSlot => equipmentSlot.equippedItem).filter(item => item !== null);
         return containedItems.reduce((total, item) => total + (!isNaN(item.quantity) ? item.quantity * item.weight : 0), 0);
@@ -1343,6 +1356,26 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     }
 
     /**
+     * Sets the player's process with the current recipe and ingredients.
+     *
+     * @param recipe - The recipe being processed.
+     * @param ingredients - The collated ingredients being processed.
+     * @param products - The products being processed. Unused, but included for use in descriptions.
+     */
+    #setProcess(recipe: Recipe, ingredients: CollatedItem<InventoryItem>[], products: InventoryItem[]): void {
+        this.process.recipe = recipe;
+        this.process.ingredients = ingredients;
+        this.process.products = products;
+    }
+
+    /**
+     * Sets the current process's recipe and duration to null, empties the process's lists of ingredients and products, and stops the process timer.
+     */
+    clearProcess(): void {
+        this._clearProcess();
+    }
+
+    /**
      * Crafts held items according to a recipe.
      *
      * @param recipe - The recipe that describes how these ingredients are crafted.
@@ -1357,7 +1390,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
         const variableValues = recipe.getIngredientVariableValues(ingredientsFlat);
         const proceduralSelections = itemManager.combineProceduralSelections(ingredientsFlat);
         this.destroyIngredients(recipe, ingredientsFlat, satisfactoryProcessCount);
-        this.instantiateProducts(recipe, satisfactoryProcessCount, variableValues, proceduralSelections);
+        const products = this.instantiateProducts<InventoryItem>(recipe, satisfactoryProcessCount, variableValues, proceduralSelections);
+        this.#setProcess(recipe, ingredientsFlat, products);
         heldItems = this.getGame().entityFinder.getPlayerHands(this).map(hand => hand.equippedItem).filter(item => item !== null);
         this.updateCarryWeight();
 
@@ -1372,6 +1406,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      * @returns The resulting ingredients.
      */
     uncraft(item: InventoryItem, recipe: Recipe): UncraftingResult {
+        // Make a copy of the original item for use later.
+        const products = [itemManager.cloneInventoryItem(item)];
         // If only one ingredient is discreet, the first ingredient should be the discreet one.
         const oneDiscreet = !recipe.ingredients[0].prefab.discreet && recipe.ingredients[1].prefab.discreet ||
             recipe.ingredients[0].prefab.discreet && !recipe.ingredients[1].prefab.discreet;
@@ -1392,6 +1428,11 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             ingredient2.prefab.uses,
             false
         );
+        let ingredients: InventoryItem[] = [];
+        if (ingredient1Instance) ingredients.push(ingredient1Instance);
+        if (ingredient2Instance) ingredients.push(ingredient2Instance[0]);
+        const ingredientsFlat = this.#collateItems(ingredients);
+        this.#setProcess(recipe, ingredientsFlat, products);
         this.updateCarryWeight();
 
         return { ingredient1: ingredient1Instance ? ingredient1Instance : null, ingredient2: ingredient2Instance ? ingredient2Instance[0] : null };
@@ -1409,10 +1450,36 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      * @param player - The player to instantiate the item for. Defaults to the player calling the method.
      * @returns The instantiated inventory item.
      */
-    protected instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = "", player = this): InventoryItem[] {
+    protected override instantiate(prefab: Prefab, quantity: number, uses: number = prefab.uses, proceduralSelections: Map<string, string> = new Map(), container: InventoryItem = null, inventorySlotId: string = "", player = this): InventoryItem[] {
         const equipmentSlotId = container === null ? this.getGame().entityFinder.getPlayerFreeHand(player).id : container.equipmentSlot;
         const instantiateAction = new InstantiateInventoryItemAction(this.getGame(), undefined, player, player.location, true);
-        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false);
+        return instantiateAction.performInstantiateInventoryItem(prefab, equipmentSlotId, container, inventorySlotId, quantity, proceduralSelections, uses, false) as InventoryItem[];
+    }
+
+    /**
+     * Gets the actual ingredient item instance that was used as an ingredient in the currently processed recipe.
+     * If no such item exists, returns the corresponding ingredient prefab of the currently processed recipe.
+     * If no recipe is currently being processed, returns undefined.
+     * @param prefabId - The prefab ID to search for.
+     */
+    public override getIngredientItem(prefabId: string): Prefab | InventoryItem {
+        for (const ingredient of this.process.ingredients) {
+            if (itemIdentifierMatches(ingredient.items[0], prefabId, true)) return ingredient.items[0];
+        }
+        return this.process.recipe?.ingredientsFlat.find(ingredient => ingredient.prefab.id === prefabId)?.prefab;
+    }
+
+    /**
+     * Gets the actual product item instance that was instantiated in the currently processed recipe.
+     * If no such item exists, returns the corresponding product prefab of the currently processed recipe.
+     * If no recipe is currently being processed, returns undefined.
+     * @param prefabId - The prefab ID to search for.
+     */
+    public override getProductItem(prefabId: string): Prefab | InventoryItem {
+        for (const product of this.process.products) {
+            if (itemIdentifierMatches(product, prefabId, true)) return product;
+        }
+        return this.process.recipe?.productsFlat.find(product => product.prefab.id === prefabId)?.prefab;
     }
 
     /**
@@ -1551,10 +1618,11 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
 
     /**
      * Sends a direct message to the player. Sends nothing if the player is unconscious or an NPC.
-     * @param {Notification} notification - The notification to send.
+     * @param notification - The notification to send.
+     * @param force - If true, the message will be sent even if the player is unconscious. Defaults to false.
      */
-    notify(notification: Notification): void {
-        if (this.isConscious() && !this.isNPC)
+    notify(notification: Notification, force = false): void {
+        if (!this.isNPC && (force || this.isConscious()))
             this.getGame().communicationHandler.notifyPlayer(notification);
     }
 

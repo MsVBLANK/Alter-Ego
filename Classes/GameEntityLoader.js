@@ -1431,6 +1431,8 @@ export default class GameEntityLoader extends GameEntityManager {
 			puzzle.type !== "channels" &&
 			puzzle.type !== "weight" &&
 			puzzle.type !== "container" &&
+            puzzle.type !== "take" &&
+            puzzle.type !== "drop" &&
 			puzzle.type !== "voice" &&
 			puzzle.type !== "switch" &&
 			puzzle.type !== "option" &&
@@ -1455,8 +1457,14 @@ export default class GameEntityLoader extends GameEntityManager {
 		for (let solution of puzzle.solutions) {
 			if (puzzle.type === "weight" && isNaN(parseInt(solution)))
 				return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a weight-type puzzle, but the solution "${solution}" is not an integer.`);
-			if (puzzle.type === "media" && !solution.startsWith("Item: ") && !solution.startsWith("Prefab: "))
-				return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a media-type puzzle, but the solution "${solution}" does not have the "Item: " or "Prefab: " prefix.`);
+			if (!solution.startsWith("Item: ") && !solution.startsWith("Prefab: ")) {
+                if (puzzle.type === "media")
+                    return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a media-type puzzle, but the solution "${solution}" does not have the "Item: " or "Prefab: " prefix.`);
+                if (puzzle.type === "take")
+                    return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a take-type puzzle, but the solution "${solution}" does not have the "Item: " or "Prefab: " prefix.`);
+                if (puzzle.type === "drop")
+                    return new Error(`Couldn't load puzzle on row ${puzzle.row}. The puzzle is a drop-type puzzle, but the solution "${solution}" does not have the "Item: " or "Prefab: " prefix.`);
+            }
 			if (puzzle.type === "container") {
 				const requiredItems = solution.split('+');
 				for (let requiredItem of requiredItems) {

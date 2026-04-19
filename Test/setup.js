@@ -1,11 +1,8 @@
 import { beforeAll, afterEach, vi, expect } from 'vitest';
 import { plugins } from '@vitest/pretty-format';
 
-import credentials from './__mocks__/configs/credentials.js';
 import demodata from './__mocks__/configs/demodata.js';
-import playerdefaults from './__mocks__/configs/playerdefaults.js';
 import serverconfig from './__mocks__/configs/serverconfig.js';
-import settings from './__mocks__/configs/settings.js';
 
 import toBeWithinRange from './__extenders__/toBeWithinRange.js';
 import toBeLength from './__extenders__/toBeLength.ts';
@@ -32,17 +29,13 @@ vi.mock(import('discord.js'), async (importOriginal) => {
 /** @import EligibleCommand from '../Classes/EligibleCommand.ts' */
 
 import GuildContext from '../Classes/GuildContext.ts';
-import GameSettings from '../Classes/GameSettings.js';
 import Game from '../Data/Game.ts';
 import BotContext from '../Classes/BotContext.ts';
 import { ChannelType, Collection } from 'discord.js';
 import {DEFAULT_GAME_SETTINGS} from "../Modules/settingsLoader.ts";
 
-vi.mock('../Configs/credentials.json', () => ({ default: credentials }));
 vi.mock('../Configs/demodata.json', () => ({ default: demodata }));
-vi.mock('../Configs/playerdefaults.json', () => ({ default: playerdefaults }));
 vi.mock('../Configs/serverconfig.json', () => ({ default: serverconfig }));
-vi.mock('../Configs/settings.json', () => ({ default: settings }));
 
 beforeAll(() => {
     /** @type {any} */ const client = discordMock.createMockClient();

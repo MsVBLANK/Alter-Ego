@@ -1029,7 +1029,7 @@ export default class GameNotificationGenerator {
 	 * @param puzzle - The puzzle that was attempted.
 	 */
 	generateAttemptPuzzleWithoutItemSolutionNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
-		if (puzzle.type === "weight" || puzzle.type === "container") return "";
+		if (puzzle.isAlwaysAccessible()) return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let predicate = secondPerson ? `attempt to use` : `attempts to use`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
@@ -1051,7 +1051,7 @@ export default class GameNotificationGenerator {
 	 * @param item - The item the puzzle was solved with, if applicable.
 	 */
 	generateSolvePuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, outcome: string, item?: ItemInstance) {
-		if (puzzle.type === "weight" || puzzle.type === "container" || puzzle.type === "restricted exit") return "";
+		if (puzzle.isAlwaysAccessible() || puzzle.type === "restricted exit") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
@@ -1082,7 +1082,7 @@ export default class GameNotificationGenerator {
 	 * @param puzzle - The puzzle that was unsolved.
 	 */
 	generateUnsolvePuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
-		if (puzzle.type === "weight" || puzzle.type === "container") return "";
+		if (puzzle.isAlwaysAccessible()) return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
@@ -1104,7 +1104,7 @@ export default class GameNotificationGenerator {
 	 * @param puzzle - The puzzle that was attempted.
 	 */
 	generateAttemptAlreadySolvedPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
-		if (puzzle.type === "weight" || puzzle.type === "container") return "";
+		if (puzzle.isAlwaysAccessible()) return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
@@ -1128,7 +1128,7 @@ export default class GameNotificationGenerator {
 	 * @param item - The item the puzzle was attempted with, if applicable.
 	 */
 	generateAttemptAndFailPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, item?: ItemInstance) {
-		if (puzzle.type === "weight" || puzzle.type === "container") return "";
+		if (puzzle.isAlwaysAccessible()) return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();

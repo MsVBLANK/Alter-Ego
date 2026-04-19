@@ -31,7 +31,7 @@ export function instantiateRoomItem(prefab, location, container, inventorySlotId
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
-        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
+        if (!container.isAlwaysAccessible()) accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";
@@ -153,7 +153,8 @@ export function replaceInventoryItem(item, newPrefab) {
  * @param {boolean} getChildren - Whether or not to recursively destroy all of the items it contains as well.
  */
 export function destroyRoomItem(item, quantity, getChildren) {
-    item.quantity -= quantity;
+    if (isNaN(quantity)) item.quantity = 0;
+    else item.quantity -= quantity;
     const container = item.container;
 
     if (container instanceof RoomItem)
@@ -250,6 +251,32 @@ export function copyInventoryItem(item, player, equipmentSlotId, quantity) {
 }
 
 /**
+ * Makes an exact copy of the given inventory item and returns it.
+ * Does not copy any contained items.
+ * @param {InventoryItem} item 
+ */
+export function cloneInventoryItem(item) {
+    let createdItem = new InventoryItem(
+        item.player.name,
+        item.prefab.id,
+        item.identifier,
+        item.equipmentSlot,
+        item.containerType,
+        item.containerName,
+        item.quantity,
+        item.uses,
+        item.description.text,
+        item.row,
+        item.getGame()
+    );
+    createdItem.player = item.player;
+    createdItem.setPrefab(item.prefab);
+    createdItem.setNames();
+    createdItem.initializeInventory();
+    return createdItem;
+}
+
+/**
  * Converts an inventory item to a room item and recursively converts all of the inventory items it contains.
  * @param {ItemInstance} item - The inventory item to convert.
  * @param {Player} player - The player the inventory item currently belongs to.
@@ -265,7 +292,7 @@ export function convertInventoryItem(item, player, container, inventorySlotId, q
     if (container instanceof Puzzle) {
         containerType = "Puzzle";
         containerName = container.name;
-        if (container.type !== "weight" && container.type !== "container") accessible = container.accessible && container.solved;
+        if (!container.isAlwaysAccessible()) accessible = container.accessible && container.solved;
     }
     else if (container instanceof Fixture) {
         containerType = "Fixture";

@@ -1,6 +1,5 @@
-﻿import { createRequire } from 'node:module';
-import { google } from 'googleapis';
-import {loadCredentials} from "./credentialsLoader.ts";
+﻿import { google } from 'googleapis';
+import { loadCredentials } from "./credentialsLoader.ts";
 const sheets = google.sheets({ version: 'v4' });
 
 /**

@@ -9,14 +9,14 @@ export const config = {
 	name: "flag_moderator",
 	description: "Set and clear flags.",
 	details: 'Set and clear flags.\n\n'
-		+ '-**set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
+		+ '- **set**: Sets the flag value as the specified input. If the flag does not already exist, then a new one '
 		+ 'will be created with the specified name. The specified value must be a boolean, number, or string. '
 		+ 'String values must be surrounded by quotation marks. To add or subtract from the flag\'s current number value, '
 		+ 'prefix the number to add or subtract with `+=` or `-=`. If you want to set the flag\'s value script, '
 		+ 'surround your input with `` `tics` ``. This script will immediately be evaluated, '
 		+ 'and the flag\'s value will be set accordingly. Whether the flag\'s value or value script '
 		+ 'is set, the flag\'s set commands will be executed, unless the flag was set by another flag.\n\n'
-		+ '-**clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
+		+ '- **clear**: Clears the flag value. This will replace the flag\'s current value with `null`. '
 		+ 'When this is cleared, the flag\'s cleared commands will be executed unless the flag was cleared by another flag.',
 	usableBy: "Moderator",
 	aliases: ["flag", "setflag", "clearflag"],

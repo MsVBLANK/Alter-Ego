@@ -20,6 +20,7 @@ export default class ButtonInteractable extends ActionDirectiveInteractable {
 	 * The button component created from this interactable.
 	 */
     readonly component: ButtonBuilder;
+    static readonly LABEL_CHARACTER_LIMIT = 80;
 
 	/**
 	 * @constructor
@@ -31,7 +32,7 @@ export default class ButtonInteractable extends ActionDirectiveInteractable {
 	 */
 	constructor(actionDirective: ActionDirective, label: string, style = ButtonStyle.Primary, priority = 0, respondWithModal = false) {
 		super(InteractableType.BUTTON, actionDirective, priority, respondWithModal);
-		this.label = label;
+		this.label = label?.substring(0, ButtonInteractable.LABEL_CHARACTER_LIMIT);
 		this.style = style;
 		this.component = new ButtonBuilder().setCustomId(this.customId).setLabel(this.label).setStyle(this.style);
 	}

@@ -83,10 +83,11 @@ export default class GameNarrationHandler {
 	 * @param attachments - The attachments to send. Optional.
 	 * @param interactables - An array of interactables to send in the message. Optional.
 	 * @param embeds - An array of embeds to send in the message. Optional.
+     * @param force - If true, the message will be sent even if the player is unconscious. Defaults to false.
 	 */
-	sendNotification(player: Player, action: Action, notificationText: string, messageDisplayType: MessageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel: boolean = true, attachments: Collection<string, Attachment> = new Collection(), interactables: Interactable[] = [], embeds: Embed[] = []) {
+	sendNotification(player: Player, action: Action, notificationText: string, messageDisplayType: MessageDisplayType = MessageDisplayType.PLAIN_TEXT, mirrorInSpectateChannel: boolean = true, attachments: Collection<string, Attachment> = new Collection(), interactables: Interactable[] = [], embeds: Embed[] = [], force = false) {
 		const notification = new Notification(this.#game, player, action, notificationText, messageDisplayType, mirrorInSpectateChannel, attachments, interactables, embeds);
-		player.notify(notification);
+		player.notify(notification, force);
 	}
 
 	/**

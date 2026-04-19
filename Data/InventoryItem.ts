@@ -240,6 +240,14 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     }
 
     /**
+     * Returns true if the owner of this item instance is the given player.
+     * @param player - The player to check ownership against.
+     */
+    override ownerIs(player: Player): boolean {
+        return this.player.name === player.name;
+    }
+
+    /**
      * Gets all of the items this entity contains.
      */
     override getContainedItems(): InventoryItem[] {
@@ -271,6 +279,19 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     }
 
     /**
+     * Returns the item contained inside of this container with the given identifier or prefab ID.
+     * If no such item exists, returns undefined. 
+     * @param identifier - The identifier or prefab ID to search for.
+     */
+    override getContainedItem(identifier: string): ItemInstance {
+        const containedItems = this.getContainedItems();
+        for (const item of containedItems) {
+            if (itemIdentifierMatches(item, identifier, true)) return item;
+        }
+        return undefined;
+    }
+
+    /**
      * Executes the inventory item's equipped commands.
      */
     executeEquippedCommands(): void {
@@ -290,7 +311,7 @@ export default class InventoryItem extends ItemInstance implements PersistentGam
     usableOn(player: Player): boolean {
         let canEffect = false, canCure = false;
 		for (const effect of this.prefab.effects) {
-			if (!player.hasStatus(effect.id) || effect.duplicatedStatus !== null)
+			if ((!player.hasStatus(effect.id) || effect.duplicatedStatus !== null) && effect.overriders.every(overrider => !player.hasStatus(overrider.id)))
                 canEffect = true;
 		}
 		for (const cure of this.prefab.cures) {

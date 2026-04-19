@@ -48,6 +48,11 @@ export default class TakeAction extends Action {
 			const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
 			attemptAction.performAttempt(container, undefined, containerItemsString, "take", "");
 		}
+        // Container is a take puzzle.
+        else if (container instanceof Puzzle && container.type === "take") {
+            const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
+            attemptAction.performAttempt(container, item, item.getIdentifier(), "take", "");
+        }
         const slotPhrase = inventorySlot ? `${inventorySlot.id} of ` : ``;
         this.successMessage = `Successfully took ${item.getIdentifier()} from ${slotPhrase}${container.getEntityID()} for ${this.player.name}.`;
 	}

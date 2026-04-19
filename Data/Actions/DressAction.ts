@@ -36,6 +36,11 @@ export default class DressAction extends Action {
 					this.player.take(item, handEquipmentSlot, container, inventorySlot);
 					this.player.equip(handEquipmentSlot.equippedItem, this.player.inventory.get(slotId), handEquipmentSlot);
 					equippedItems.push(this.player.inventory.get(slotId).equippedItem);
+                    // Container is a take puzzle.
+                    if (container instanceof Puzzle && container.type === "take") {
+                        const attemptAction = new AttemptAction(this.getGame(), undefined, this.player, this.location, this.forced);
+                        attemptAction.performAttempt(container, item, item.getIdentifier(), "take", "");
+                    }
 					break;
 				}
 			}

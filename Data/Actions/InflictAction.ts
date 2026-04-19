@@ -36,7 +36,7 @@ export default class InflictAction extends Action {
 				const cureAction = new CureAction(this.getGame(), undefined, this.player, this.player.location, true);
 				cureAction.performCure(status, false, false, false);
 				const duplicatedStatusAction = new InflictAction(this.getGame(), undefined, this.player, this.player.location, true);
-				duplicatedStatusAction.performInflict(status.duplicatedStatus, true, false, true);
+				duplicatedStatusAction.performInflict(status.duplicatedStatus, true, true, true);
 				if (this.message) this.successMessage = `Status was duplicated, so inflicted ${this.player.name} with ${status.duplicatedStatus.id} instead.`;
 				return;
 			}

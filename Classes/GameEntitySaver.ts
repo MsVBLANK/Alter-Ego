@@ -1,4 +1,4 @@
-import demodata from "../Defaults/default_demodata.json" with { type: 'json' };
+import demodata from "../Configs/demodata.json" with { type: 'json' };
 import { batchUpdateSheetValues } from "../Modules/sheets.js";
 import type Game from "../Data/Game.ts";
 

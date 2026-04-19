@@ -1,6 +1,7 @@
 # Bot files
 credentials.json
 serverconfig.json
+settings.json
 settings-*.json
 *.bat
 Old_Commands/

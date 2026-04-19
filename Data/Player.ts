@@ -472,7 +472,9 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             item2.getIdentifier(),
             "crafting",
             recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
-            recipe.productsFlat.map(product => product.prefab.id).join(",")
+            recipe.productsFlat.map(product => product.prefab.id).join(","),
+            item1.proceduralSelectionsString,
+            item2.proceduralSelectionsString
         ];
     }
 
@@ -486,7 +488,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             item.getIdentifier(),
             "uncraftable",
             recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
-            recipe.productsFlat.map(product => product.prefab.id).join(",")
+            recipe.productsFlat.map(product => product.prefab.id).join(","),
+            item.proceduralSelectionsString
         ];
     }
 

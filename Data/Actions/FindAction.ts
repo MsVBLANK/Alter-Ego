@@ -367,9 +367,13 @@ export default class FindAction extends Action {
                 else if (key === 'id' && result instanceof ItemInstance)
                     cellContents = result.getIdentifier();
                 else if (key === 'ingredients' && result instanceof Recipe)
-                    cellContents = result.ingredients.map(ingredient => ingredient.prefab.id).join(',');
+                    cellContents = result.ingredients.map(ingredient =>
+                        ingredient.prefab.id + (ingredient.containedItems.length !== 0 ? ` (${ingredient.containedItems.map(containedItem => containedItem.prefab.id).join('+')})` : ``)
+                    ).join(',');
                 else if (key === 'products' && result instanceof Recipe)
-                    cellContents = result.products.map(product => product.prefab.id).join(',');
+                    cellContents = result.products.map(product =>
+                        product.prefab.id + (product.containedItems.length !== 0 ? ` (${product.containedItems.map(containedItem => containedItem.prefab.id).join('+')})` : ``)
+                    ).join(',');
                 else
                     cellContents = String(result[key]);
                 // If the cellContents exceed the preset character limit, truncate it.

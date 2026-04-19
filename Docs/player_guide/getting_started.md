@@ -11,11 +11,15 @@ This guide will teach you the basics for playing Alter Ego. The following chapte
 
 ## Creating Your Character
 
-To play an Alter Ego game, you must have a character. Your character represents your persona in the game world and everything you do in the game will be done through your character.
+To play an Alter Ego game, you must have a **character**. Your character represents your persona in the game world and
+everything you do in the game will be done through your character.
 
-Your moderator may have already given guidelines on creating your character. If that is the case, follow their instructions.
-Typically, your moderator will ask you several questions, or ask you to complete a questionnaire, outlining your preferences for your character.
-An Alter Ego character has several attributes, of which can be broadly broken down into basic info, appearance, inventory, and stats. The questions that your moderator will ask should cover most of these.
+Your moderator may have already given you guidelines on how to create your character. If that is the case, follow
+their instructions.
+Typically, your moderator will ask you several questions, or ask you to complete a questionnaire, outlining your
+preferences for your character.
+An Alter Ego character has several attributes, of which can be broadly broken down into **basic information**,
+**appearance**, **inventory**, and **stats**. The questions that your moderator will ask should cover most of these.
 
 When creating a character, you will need to decide on their basic information. This consists of their name and pronouns.
 When choosing a name, it would be wise to consider their nationality and the language they speak.
@@ -51,18 +55,25 @@ Therefore, instead of bringing a fully completed character to your moderator and
 
 ## Joining a Game
 
-Before you are able to play Alter Ego, you must join the game.
-You have probably already been invited to the Discord server where the game will be taking place. If you haven't already, ask your moderator about being invited into the server.
+Before you are able to play Alter Ego, you must join the game. You have probably already been invited to the Discord
+server where the game will be taking place. If you haven't already, ask your moderator about being invited into
+the server.
 
 Once you are in the game server, your moderator will give you the
-[Eligible role](../appendix/manual_installation/channel_and_role_creation.html#eligible).
-When your moderator is ready to start the player registration process, an announcement with instructions on how to join the game will be posted in the `#general` channel of the server.
+[*Eligible* role](../appendix/manual_installation/channel_and_role_creation.html#eligible).
+When your moderator is ready to start the player registration process, an announcement with instructions on how to
+join the game will be posted in the `#general` channel of the server.
 
 ![A Discord message from Amadeus that reads: "Narrator has started a game. You have 6 hours to join the game with .play"](../images/startgame.png)
 
-To join the game, send `.play` to the `#general` channel within the time limit. If everything went well, another message confirming your registration will be posted in the same channel.
+To join the game, send the [*play* command](../reference/commands/eligible_commands.html#play) to the `#general`
+channel within the time limit.
+```txt
+.play
+```
 
 ![A Discord message from Amadeus that reads: "@Ava joined the game!"](../images/joingame.png)
 
+If everything went well, another message confirming your registration will be posted in the same channel.
 Now that you have been registered, all you have to do is wait for the game to begin!
 Before doing that though, make sure to continue reading to learn about how to play a game with Alter Ego.

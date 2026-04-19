@@ -24,6 +24,9 @@ export default class StringSelectMenuOptionInteractable extends ActionDirectiveI
 	 * The string select menu option component created from this interactable.
 	 */
     readonly component: StringSelectMenuOptionBuilder;
+    static readonly LABEL_CHARACTER_LIMIT = 100;
+    static readonly VALUE_CHARACTER_LIMIT = 100;
+    static readonly DESCRIPTION_CHARACTER_LIMIT = 100;
 
 	/**
 	 * @constructor
@@ -36,9 +39,9 @@ export default class StringSelectMenuOptionInteractable extends ActionDirectiveI
 	 */
 	constructor(actionDirective: ActionDirective, label: string, value: string, description?: string, priority: number = 1, respondWithModal = false) {
 		super(InteractableType.STRING_SELECT_MENU_OPTION, actionDirective, priority, respondWithModal);
-		this.label = label;
-		this.value = value;
-		this.description = description;
+		this.label = label?.substring(0, StringSelectMenuOptionInteractable.LABEL_CHARACTER_LIMIT);
+		this.value = value?.substring(0, StringSelectMenuOptionInteractable.VALUE_CHARACTER_LIMIT);
+		this.description = description?.substring(0, StringSelectMenuOptionInteractable.DESCRIPTION_CHARACTER_LIMIT);
 		this.component = new StringSelectMenuOptionBuilder().setValue(value);
 		if (this.description) this.component.setDescription(this.description);
 	}

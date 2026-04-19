@@ -15,6 +15,8 @@ export default abstract class ModalComponentInteractable extends Interactable {
 	 * The component created from this interactable.
 	 */
     readonly component: LabelBuilder;
+    static readonly LABEL_CHARACTER_LIMIT = 45;
+    static readonly DESCRIPTION_CHARACTER_LIMIT = 100;
 
     /**
      * @param type - The type of interactive message component to create.
@@ -25,8 +27,8 @@ export default abstract class ModalComponentInteractable extends Interactable {
      */
     protected constructor(type: InteractableType, customId: string, label: string, description?: string, priority: number = 1) {
         super(type, customId, priority);
-        this.label = label;
-        this.description = description;
+        this.label = label?.substring(0, ModalComponentInteractable.LABEL_CHARACTER_LIMIT);
+        this.description = description?.substring(0, ModalComponentInteractable.DESCRIPTION_CHARACTER_LIMIT);
         this.component = new LabelBuilder().setLabel(this.label);
         if (this.description) this.component.setDescription(this.description);
     }

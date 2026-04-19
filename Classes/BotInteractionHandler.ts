@@ -143,6 +143,8 @@ export default class BotInteractionHandler {
         const author = user instanceof Moderator ? player ? `${player.name} (${user.member.user.username})` : user.member.user.username : player.name
         const forced = user instanceof Moderator;
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player?.location, forced, undefined, user);
+        if (this.#game.editMode && !forced)
+            return false;
 		if (action instanceof QueueMoveAction) {
 			const args = interactable.actionDirective.getArgs();
 			const parsedArgs = action.parseInteractionArgs(args);

@@ -363,9 +363,9 @@ the Moderator role issues a command or sends a message in a Game channel.
 - Class attribute: PriorityQueue `this.messageQueue`
 
 This is a queue of messages Alter Ego has yet to send. In order to avoid being
-[rate limited](https://docs.discord.com/developers/topics/rate-limits), messages are stored in a queue and sent when
-possible. This queue has five priority levels, to ensure that the most important messages are sent first.
-In order of highest to lowest, these priority levels are:
+[rate limited](https://docs.discord.com/developers/topics/rate-limits), messages are stored in a queue corresponding
+to the destination channel and sent when possible. This queue has five priority levels, to ensure that the most
+important messages are sent first. In order of highest to lowest, these priority levels are:
 
 - `mod`: Messages intended to be sent to the [command channel](../settings.md#command_channel) to communicate
   information to Moderators.

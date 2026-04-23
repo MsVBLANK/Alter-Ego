@@ -37,7 +37,7 @@ of the Description---it is what allows the Description to appear as if it is dyn
 
 - Class Attribute: [Enum (number)](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
-This is the [message display type](../../about/discord.md#display-components) that is set for the Description in the
+This is the [message display type](../discord.md#display-components) that is set for the Description in the
 opening `desc` tag. If no message display type was manually set, this is `undefined`.
 
 ### Procedurals

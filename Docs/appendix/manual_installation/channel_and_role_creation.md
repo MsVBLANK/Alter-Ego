@@ -1,9 +1,9 @@
 # Manual Channel and Role Creation
 
-This article details the process of manually setting up a [Discord](../../about/discord.md) server for the Neo World
-Program. If you use the server template provided in
-the [official tutorial](../../moderator_guide/installation.md#step-4-create-a-discord-server), you can skip this process
-entirely.
+This article details the process of manually setting up a [Discord](../../reference/discord.md) server for Alter Ego.
+If you use the server template provided in
+the [official tutorial](../../moderator_guide/installation.md#step-4-create-a-discord-server),
+you can skip this process entirely.
 
 ## Create roles
 

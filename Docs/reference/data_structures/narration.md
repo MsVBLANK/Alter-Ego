@@ -21,7 +21,7 @@ The display type of the message to send for this Narration, this is represented 
 | MONOLOG    | 5     |
 | PLAIN_TEXT | 6     |
 
-How the notification is displayed in Discord depends on its message display type. For examples on how this will look like, refer to the [Display Components](../../about/discord.md#display-components) section in the Discord page.
+How the notification is displayed in Discord depends on its message display type. For examples on how this will look like, refer to the [Display Components](../discord.md#display-components) section in the Discord page.
 
 ### Action
 

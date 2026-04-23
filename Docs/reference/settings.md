@@ -147,7 +147,7 @@ This must end in `.jpg`, `.jpeg`, `.png`, `.gif`, `.webp`, or `.avif`.
 
 This is a Boolean value that determines whether or not [Whisper](../reference/data_structures/whisper.md) channels will
 be automatically deleted when all players have left the room. If this is `true`, they will be deleted. If this is
-`false`, they will be renamed `archived-(Room ID)`. Because [Discord](../about/discord.md) only allows a single category
+`false`, they will be renamed `archived-(Room ID)`. Because [Discord](discord.md) only allows a single category
 to have up to 50 channels, this should be `true` unless you plan on manually deleting Whisper channels when you no
 longer need to see them.
 
@@ -181,7 +181,7 @@ format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
 ### STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR
 
 This is a string that determines the accent color of messages sent by Alter Ego that use its
-[`STANDARD` message display type](../about/discord.md#standard).
+[`STANDARD` message display type](discord.md#standard).
 String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `1F8B4C`.
 
 *Default: `1F8B4C`*
@@ -189,7 +189,7 @@ String should be in the format of a 24-bit hexadecimal number without a hash sym
 ### WARNING_MESSAGE_DISPLAY_ACCENT_COLOR
 
 This is a string that determines the accent color of messages sent by Alter Ego that use its
-[`WARNING` message display type](../about/discord.md#warning).
+[`WARNING` message display type](discord.md#warning).
 String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `FFC107`.
 
 The default color was chosen to be attention-grabbing, with a clear meaning. It is recommended to leave this alone.
@@ -199,7 +199,7 @@ The default color was chosen to be attention-grabbing, with a clear meaning. It 
 ### ALERT_MESSAGE_DISPLAY_ACCENT_COLOR
 
 This is a string that determines the accent color of messages sent by Alter Ego that use its
-[`ALERT` message display type](../about/discord.md#alert).
+[`ALERT` message display type](discord.md#alert).
 String should be in the format of a 24-bit hexadecimal number without a hash symbol, e.g. `FF0E0E`.
 
 The default color was chosen to be attention-grabbing, with a clear meaning. It is recommended to leave this alone.

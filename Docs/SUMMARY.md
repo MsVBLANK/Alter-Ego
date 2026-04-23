@@ -29,7 +29,7 @@
 
 # Reference
 
-- [Discord](about/discord.md)
+- [Discord](reference/discord.md)
 - [Commands](reference/commands/index.md)
     - [Player Commands](reference/commands/player_commands.md)
     - [Eligible Commands](reference/commands/eligible_commands.md)

@@ -26,7 +26,7 @@ as well as all of the parts of it that are relevant to Alter Ego. This includes 
 
 This is a [singleton](https://en.wikipedia.org/wiki/Singleton_pattern) class which contains a reference to Alter Ego's
 [Client](https://discord.js.org/docs/packages/discord.js/14.25.1/Client:Class), and a number of attributes and functions
-that help it interface with [Discord](../../about/discord.md).
+that help it interface with [Discord](../discord.md).
 For example, this is where all of its [commands](../commands/index.md) are stored.
 
 ### Settings

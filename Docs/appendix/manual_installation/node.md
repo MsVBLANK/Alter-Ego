@@ -57,14 +57,15 @@ GNOME Archive Manager, Keka), and extract the contents into your folder of choic
 If you already have Node.js installed, you can skip this step.
 
 Node.js is the programming language that Alter Ego was coded in. Without installing it to your computer, you won't be
-able to run Alter Ego. You can install it using the link below. Alter Ego is currently developed and tested for the v24 LTS version.
+able to run Alter Ego. You can install it using the link below. Alter Ego is currently developed and tested for the v24
+LTS version.
 
 https://nodejs.org/en/
 
 ## Step 3: Install dependencies
 
 Alter Ego requires a few dependencies in order to run properly. These are things like
-the [Discord](../../about/discord.md) and the Google Sheets API which allow it to facilitate a game.
+the [Discord](../../reference/discord.md) and the Google Sheets API which allow it to facilitate a game.
 
 First, open the Node.js command prompt. It should look like this:
 

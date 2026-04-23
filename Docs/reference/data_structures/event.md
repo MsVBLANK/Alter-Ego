@@ -284,7 +284,7 @@ for more information. However, note that because this is a Narration and not a d
 `player` variable under any circumstances.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Narration will be sent
-using the [`STANDARD` message display type](../../about/discord.md#display-components).
+using the [`STANDARD` message display type](../discord.md#display-components).
 
 ### Ended Narration
 

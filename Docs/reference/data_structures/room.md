@@ -27,7 +27,7 @@ most contexts. It will also appear in the heading component when the Room descri
 This is an internal attribute which serves as the unique identifier of the Room. This is automatically generated from
 the Room's display name. It consists of the display name converted to all lowercase with special characters removed,
 and all spaces converted to hyphens (`-`). This is to make it align as closely as possible with the characters that
-are permitted in the names of [Discord](../../about/discord.md) text channels. It should align perfectly with the
+are permitted in the names of [Discord](../discord.md) text channels. It should align perfectly with the
 name of the Room's corresponding channel, but as Discord does not have any documentation about exactly what characters
 are permitted in the name of a text channel, this cannot be 100% guaranteed.
 
@@ -177,7 +177,7 @@ a message comprised of [Discord Components](https://docs.discord.com/developers/
 
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 Note that because this uses its own custom set of Display Components, it is not possible to manually set the
-[message display type](../../about/discord.md#display-components) for this Description.
+[message display type](../discord.md#display-components) for this Description.
 
 ### Row
 

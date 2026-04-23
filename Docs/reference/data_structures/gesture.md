@@ -102,7 +102,7 @@ when this Gesture is performed. See the article on [writing descriptions](../../
 for more information.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Narration will be sent
-using the [`PLAYER` message display type](../../about/discord.md#display-components).
+using the [`PLAYER` message display type](../discord.md#display-components).
 
 ### Row
 

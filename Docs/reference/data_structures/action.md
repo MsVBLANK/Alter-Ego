@@ -325,7 +325,7 @@ not lock the Exit's corresponding [link](exit.md#link)---that must be done with 
 
 ### Monolog Action
 
-A **Monolog Action** displays the given text in a [`MONOLOG` message display](../../about/discord.md#monolog) in the
+A **Monolog Action** displays the given text in a [`MONOLOG` message display](../discord.md#monolog) in the
 [notification channel](player.md#notification-channel) and [spectate channel](player.md#spectate-channel) of the
 character performing it. It represents the Player's inner thoughts. It is performed when the
 [monolog command](../commands/player_commands.md#monolog) is used.
@@ -412,7 +412,7 @@ all [audio monitoring](room.md#audio-monitoring) Rooms, and mirrored in the spec
 `voice`-type Puzzles in these Rooms will also be attempted.
 
 Next, if the dialog was shouted---either by the contents being in all uppercase, or by being preceded with
-[heading characters](../../about/discord.md#markdown)---it will be narrated in any non-soundproof neighboring Rooms,
+[heading characters](../discord.md#markdown)---it will be narrated in any non-soundproof neighboring Rooms,
 as well as all audio monitoring Rooms if one of the neighboring Rooms is audio surveilled. `voice`-type Puzzles in
 these Rooms will be attempted, and the dialog will be mirrored in the spectate channels of all of their occupants.
 
@@ -485,7 +485,7 @@ It can also be performed with [interactables](../interactables.md).
 ### Text Action
 
 A **Text Action** sends a text message from the sending Player to a recipient Player. The message is sent as a
-[`PLAIN_TEXT`](../../about/discord.md#plain_text) [Notification](notification.md) to both the recipient and sender
+[`PLAIN_TEXT`](../discord.md#plain_text) [Notification](notification.md) to both the recipient and sender
 along with any [Attachments](https://discord.js.org/docs/packages/discord.js/14.25.1/Attachment:Class) and
 [Embeds](https://discord.js.org/docs/packages/discord.js/14.25.1/Embed:Class) that were sent in the original message.
 This Notification will be sent even to [unconscious](status.md#unconscious) Players.

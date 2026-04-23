@@ -188,7 +188,7 @@ This is the description of the Fixture. When a Player inspects this Fixture, the
 string. See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
-using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+using the [`PLAIN_TEXT` message display type](../discord.md#display-components).
 
 ### Row
 

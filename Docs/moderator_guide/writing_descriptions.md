@@ -60,7 +60,7 @@ Finally, after all of these operations, it converts the Document into a plain-te
 sent to the Player that the Description was parsed for.
 
 It is important to note that most of the time, when a Description is sent to a Player with
-[Interactables](../player_guide/getting_to_know_alter_ego.md#clicking-on-interactables), those Interactables will be
+[Interactables](../reference/interactables.md), those Interactables will be
 generated using only the text that exists in the final parsed Description. Any text contained inside of tags whose
 contents were removed during parsing will not be used to generate Interactables. This is to ensure that Interactables
 are generated based strictly on what the Player can see in the parsed Description.
@@ -91,8 +91,8 @@ The `desc` tag is used to mark the beginning and ending of a description. It _mu
 description.
 
 `desc` tags are capable of having attributes. There is one attribute with defined behavior, the `type` attribute.
-This allows you to set the [message display type](../about/discord.md#display-components) that the parsed description
-will be sent with. This will override the default message display type of the description.
+This allows you to set the [message display type](../reference/discord.md#display-components) that the
+parsed description will be sent with. This will override the default message display type of the description.
 
 Only five message display types can be set with the `type` attribute:
 

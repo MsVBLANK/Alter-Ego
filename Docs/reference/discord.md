@@ -33,34 +33,34 @@ This section lists how Discord is used to facilitate the game.
 
 A game is contained in one and only one Discord server. It is run by Alter Ego.
 
-Every [Player](../reference/data_structures/player.md) is represented by
+Every [Player](data_structures/player.md) is represented by
 a [Discord server member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class). Each Player must have
 their own Discord account. A single account cannot be used for multiple Players.
 
-Every [Room](../reference/data_structures/room.md) is represented by
+Every [Room](data_structures/room.md) is represented by
 a [Discord text channel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class). When a Player moves to
 a given Room, they will be granted permission to read that channel, and their permission to read the channel of the Room
 they were previously in will be revoked. This creates the effect of only being in one Room at a time. In a Room, a
 Player can see all of the other Players that are in the Room on the user list on the right side of the screen. Messages
 sent by a Player to a Room channel act as dialogue from that Player, enabling communication between Players in a Room.
 
-Every [Whisper](../reference/data_structures/whisper.md) is also represented by a Discord text channel. When a Whisper
+Every [Whisper](data_structures/whisper.md) is also represented by a Discord text channel. When a Whisper
 is created between two or more Players, a new channel will be created in the Whisper category, and only the Players in
 the Whisper will be granted read access to that channel. When a Player leaves the Room or is otherwise removed from the
 Room's channel, their read access to all Whispers they were in will be revoked. Their name will also be removed from the
 Whisper name, whose channel name will be edited accordingly. When all Players in a Whisper leave the Room, the Whisper
 channel will either be archived or immediately deleted, depending on the
-[autoDeleteWhisperChannels setting](../reference/settings.md#auto_delete_whisper_channels).
+[autoDeleteWhisperChannels setting](settings.md#auto_delete_whisper_channels).
 
-Every [spectate channel](../reference/data_structures/player.md#spectate-channel) also has a Discord text channel. When
+Every [spectate channel](data_structures/player.md#spectate-channel) also has a Discord text channel. When
 Player data is loaded from the spreadsheet, Alter Ego will check to see if that Player already has a spectate channel in
 the Spectator category. If not, it will create one with that Player's name. It will not do this if there are already 50
 spectate channels in the category.
 
-When a Player enters a Room, inspects a [Fixture](../reference/data_structures/fixture.md) or
-[Room Item](../reference/data_structures/room_item.md), or otherwise does something that requires text from
-the [Spreadsheet](../reference/data_structures/index.md) be sent, Alter Ego will send the text to that Player via DM.
-Any [Narration](../reference/data_structures/narration.md) regarding a Player action will generally be sent to the
+When a Player enters a Room, inspects a [Fixture](data_structures/fixture.md) or
+[Room Item](data_structures/room_item.md), or otherwise does something that requires text from
+the [Spreadsheet](data_structures/index.md) be sent, Alter Ego will send the text to that Player via DM.
+Any [Narration](data_structures/narration.md) regarding a Player action will generally be sent to the
 channel of the Room that Player is in.
 
 ## Displaying Content
@@ -88,10 +88,10 @@ by Alter Ego with ease. They are detailed here.
 
 #### STANDARD
 
-The `STANDARD` message display type is used in standard [Narrations](../reference/data_structures/narration.md). It
+The `STANDARD` message display type is used in standard [Narrations](data_structures/narration.md). It
 consists of text inside of a [Container Component](https://docs.discord.com/developers/components/reference#container).
 The accent color used is set by the
-[`STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#standard_message_display_accent_color).
+[`STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR` setting](settings.md#standard_message_display_accent_color).
 
 ![An example of a message sent using the STANDARD message display type](../images/message_display_type_standard.png)
 
@@ -99,7 +99,7 @@ The accent color used is set by the
 
 The `WARNING` message display type is used in Narrations meant to warn Players. It
 consists of text inside of a Container Component. The accent color used is set by the
-[`WARNING_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#warning_message_display_accent_color).
+[`WARNING_MESSAGE_DISPLAY_ACCENT_COLOR` setting](settings.md#warning_message_display_accent_color).
 
 ![An example of a message sent using the WARNING message display type](../images/message_display_type_warning.png)
 
@@ -107,7 +107,7 @@ consists of text inside of a Container Component. The accent color used is set b
 
 The `ALERT` message display type is used in Narrations meant to convey a sense of danger or urgency. It
 consists of text inside of a Container Component. The accent color used is set by the
-[`ALERT_MESSAGE_DISPLAY_ACCENT_COLOR` setting](../reference/settings.md#alert_message_display_accent_color).
+[`ALERT_MESSAGE_DISPLAY_ACCENT_COLOR` setting](settings.md#alert_message_display_accent_color).
 
 ![An example of a message sent using the ALERT message display type](../images/message_display_type_alert.png)
 
@@ -129,11 +129,11 @@ The `PLAIN_TEXT` message display type is used to send a message as plain text, w
 #### PLAYER
 
 The `PLAYER` message display type is used to send Narrations on behalf of a Player. They are used when a Player performs
-a [Gesture](../reference/data_structures/gesture.md) or sends a Narration with the
-[narrate](../reference/commands/player_commands.md#narrate) [command](../reference/commands/moderator_commands.md#narrate).
+a [Gesture](data_structures/gesture.md) or sends a Narration with the
+[narrate](commands/player_commands.md#narrate) [command](commands/moderator_commands.md#narrate).
 It consists of a [Webhook message](https://support.discord.com/hc/en-us/articles/228383668-Intro-to-Webhooks)
-in which the username is the Player's [display name](../reference/data_structures/player.md#display-name), and the
-avatar is their current [display icon](../reference/data_structures/player.md#display-icon) or Discord avatar. The
+in which the username is the Player's [display name](data_structures/player.md#display-name), and the
+avatar is their current [display icon](data_structures/player.md#display-icon) or Discord avatar. The
 content of the Narration consists of text inside of a Container Component. It uses the same accent color as a
 message sent with the `STANDARD` message display type.
 
@@ -141,7 +141,7 @@ message sent with the `STANDARD` message display type.
 
 #### MONOLOG
 
-The `MONOLOG` message display type is used to send [Monologs](../reference/data_structures/action.md#monolog-action) on
+The `MONOLOG` message display type is used to send [Monologs](data_structures/action.md#monolog-action) on
 behalf of a Player. It consists of a Webhook message that functions identically to the `PLAYER` message display type.
 However, the Container Component does not have an accent color.
 

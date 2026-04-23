@@ -154,7 +154,7 @@ they will be sent a message comprised of
 
 See the article on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 Note that because this uses its own custom set of Display Components, it is not possible to manually set the
-[message display type](../../about/discord.md#display-components) for this Description.
+[message display type](../discord.md#display-components) for this Description.
 
 ### Row
 

@@ -925,7 +925,7 @@ taken to ensure that it does not conflict with the effects of the `concealed` be
 are added, they generally must use `var` tags to reference the Player's pronouns.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
-using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+using the [`PLAIN_TEXT` message display type](../discord.md#display-components).
 
 ### Inventory
 

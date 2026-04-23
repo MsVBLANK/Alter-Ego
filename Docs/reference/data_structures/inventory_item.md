@@ -305,7 +305,7 @@ than the one it belongs to, all sentences containing item lists will be removed.
 only contain the procedurals and possibilities that were selected.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
-using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components).
+using the [`PLAIN_TEXT` message display type](../discord.md#display-components).
 
 ### Procedural Selections
 

@@ -96,7 +96,7 @@ In this channel, Players can speak to each other freely without others in the Ro
 
 If a Player is part of a Whisper but has the `no channel` behavior attribute, they will not be given permission to view
 the channel. This is helpful for Players with the `concealed` behavior attribute, for example, because having that
-permission would allow other Players in the Whisper to see their [Discord](../../about/discord.md) account, thus
+permission would allow other Players in the Whisper to see their [Discord](../discord.md) account, thus
 revealing their identity. Similarly, Players in the Whisper with the `no hearing` behavior attribute are not given
 permission to view the channel. NPCs are also not given permission to view the channel, because they don't have Discord
 accounts. When a Player is removed from the Whisper, their permission to view the channel is revoked.

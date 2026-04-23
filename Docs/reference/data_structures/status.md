@@ -533,7 +533,7 @@ When a Player is inflicted with this Status Effect, they will receive a parsed v
 on [writing descriptions](../../moderator_guide/writing_descriptions.md) for more information.
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
-using the [`STANDARD` message display type](../../about/discord.md#display-components).
+using the [`STANDARD` message display type](../discord.md#display-components).
 
 ### Cured Description
 

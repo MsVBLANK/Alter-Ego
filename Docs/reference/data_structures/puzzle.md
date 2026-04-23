@@ -62,7 +62,7 @@ then a Player will be able to attempt to solve the Puzzle freely.
 
 A Puzzle that requires moderator intervention to solve can be useful in a few situations. A few examples are:
 
-- A Puzzle whose solution cannot be entered in a [Discord](../../about/discord.md) message and interpreted by Alter Ego,
+- A Puzzle whose solution cannot be entered in a [Discord](../discord.md) message and interpreted by Alter Ego,
   such as an image or an arrangement of items in a certain order,
 - A Puzzle with an open-ended solution that requires a Player to think creatively,
 - A Puzzle that can only be attempted under certain conditions,
@@ -688,7 +688,7 @@ should be noted that solutions are all strings, even if they're numbers. Therefo
 should be surrounded with single quote characters (`'`).
 
 Unless it is [manually specified](../../moderator_guide/writing_descriptions.md#desc), this Description will be sent
-using the [`PLAIN_TEXT` message display type](../../about/discord.md#display-components). However, the accompanying
+using the [`PLAIN_TEXT` message display type](../discord.md#display-components). However, the accompanying
 [Narration](narration.md) will be sent using the `STANDARD` message display type.
 
 ### Already Solved Description

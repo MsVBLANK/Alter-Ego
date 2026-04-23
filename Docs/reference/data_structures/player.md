@@ -1020,7 +1020,10 @@ to handle the Player's movement. Every 100 milliseconds, 100 milliseconds are su
 [remaining time](player.md#remaining-time), and the Player's position and stamina are updated. However, if at least one
 Player in the game has the `heated` Status Effect, the amount of milliseconds subtracted from the Player's remaining
 time is first multiplied by the [heatedSlowdownRate setting](../settings.md#heated_slowdown_rate), effectively making
-the Player move more slowly. If the Player stops moving for any reason, the
+the Player move more slowly. When the remaining time reaches 0, the Player [moves](action.md#move-action) to their
+destination, as long as the Exit leading to it is unlocked or [passable](puzzle.md#restricted-exit).
+
+If the Player stops moving for any reason, the
 [clearInterval method](https://nodejs.org/api/timers.html#clearintervaltimeout) is used on this so that the Player's
 movement will no longer continue. When Player data is loaded, this is `null`.
 

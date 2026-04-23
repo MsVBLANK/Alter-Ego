@@ -35,6 +35,7 @@
     - [Eligible Commands](reference/commands/eligible_commands.md)
     - [Moderator Commands](reference/commands/moderator_commands.md)
     - [Bot Commands](reference/commands/bot_commands.md)
+- [Interactables](reference/interactables.md)
 - [Data Structures](reference/data_structures/index.md)
     - [Persistent Game Data](reference/data_structures/persistent.md)
         - [Room](reference/data_structures/room.md)

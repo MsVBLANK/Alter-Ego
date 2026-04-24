@@ -33,16 +33,17 @@ This section lists how Discord is used to facilitate the game.
 
 A game is contained in one and only one Discord server. It is run by Alter Ego.
 
-Every [Player](data_structures/player.md) is represented by
-a [Discord server member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class). Each Player must have
-their own Discord account. A single account cannot be used for multiple Players.
+Every [Player](data_structures/player.md), is represented by
+a [Discord server member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class), aside from NPCs.
+Each Player must have their own Discord account, unless they are an NPC.
+A single account cannot be used for multiple Players.
 
 Every [Room](data_structures/room.md) is represented by
-a [Discord text channel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class). When a Player moves to
-a given Room, they will be granted permission to read that channel, and their permission to read the channel of the Room
-they were previously in will be revoked. This creates the effect of only being in one Room at a time. In a Room, a
+a [Discord text channel](https://discord.js.org/docs/packages/discord.js/14.25.1/TextChannel:Class). When a Player moves
+to a given Room, they will be granted permission to read that channel, and their permission to read the channel of the
+Room they were previously in will be revoked. This creates the effect of only being in one Room at a time. In a Room, a
 Player can see all of the other Players that are in the Room on the user list on the right side of the screen. Messages
-sent by a Player to a Room channel act as dialogue from that Player, enabling communication between Players in a Room.
+sent by a Player to a Room channel act as dialog from that Player, enabling communication between Players in a Room.
 
 Every [Whisper](data_structures/whisper.md) is also represented by a Discord text channel. When a Whisper
 is created between two or more Players, a new channel will be created in the Whisper category, and only the Players in
@@ -54,7 +55,7 @@ channel will either be archived or immediately deleted, depending on the
 
 Every [spectate channel](data_structures/player.md#spectate-channel) also has a Discord text channel. When
 Player data is loaded from the spreadsheet, Alter Ego will check to see if that Player already has a spectate channel in
-the Spectator category. If not, it will create one with that Player's name. It will not do this if there are already 50
+the Spectate category. If not, it will create one with that Player's name. It will not do this if there are already 50
 spectate channels in the category.
 
 When a Player enters a Room, inspects a [Fixture](data_structures/fixture.md) or
@@ -149,8 +150,13 @@ However, the Container Component does not have an accent color.
 
 ### Interactive Components
 
-> [!CAUTION]
-> TODO
+Discord has several Interactive Components that Alter Ego uses to simplify many common tasks. The two main categories
+that Alter Ego uses are [Action Rows](https://discordjs.guide/legacy/interactive-components/action-rows)
+and [Modals](https://discordjs.guide/legacy/interactions/modals).
+
+For more information, see the article on [Interactables](interactables.md).
+
+![An example of a message sent using Action Rows](../images/interactables_action_rows_example.png)
 
 ## Limitations
 

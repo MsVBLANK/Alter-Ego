@@ -1,6 +1,6 @@
 # Commands
 
-Commands are messages sent to Alter Ego in order to interface with the game. In general, they allow a Discord user to
+**Commands** are messages sent to Alter Ego in order to interface with the game. In general, they allow a Discord user to
 influence the game world in some way.
 
 Commands are loaded from the commands directory when Alter Ego is booted up. Each command is a JavaScript file with a

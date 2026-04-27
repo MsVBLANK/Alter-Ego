@@ -122,7 +122,7 @@ export async function execute(game, command, args, player, callee) {
     // If a player wasn't specified, check if a room name was.
     /** @type {Room} */
     let room = null;
-    if (player === null) {
+    if (player === null || command === "tag") {
         for (let i = args.length - 1; i >= 0; i--) {
             const parsedInput = Room.generateValidId(args.slice(i).join(" "));
             room = game.entityFinder.getRoom(parsedInput);

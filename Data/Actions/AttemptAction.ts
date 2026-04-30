@@ -210,7 +210,7 @@ export default class AttemptAction extends Action {
             if (puzzle.solved && item === null)
                 this.#unsolvePuzzle(puzzle);
             else if (puzzle.solved && item !== null)
-                return this.#reply(`You cannot insert ${item.singleContainingPhrase} into the ${puzzleName} as something is already inside it. Eject it first by sending \`${this.getGame().settings.commandPrefix}use ${puzzleName}\`.`);
+                this.#narrateAndLogAlreadySolvedPuzzle(puzzle, item);
             else if (!puzzle.solved && item !== null) {
                 const solution = puzzle.getSolutionSatisfiedByItem(item);
                 if (solution)
@@ -388,9 +388,10 @@ export default class AttemptAction extends Action {
      * Sends the narration and log message indicating the puzzle is already solved.
      *
      * @param puzzle - The puzzle being attempted.
+     * @param item - The item that was used to attempt the puzzle, if any.
      * @param customNarration - The custom narration to use, if any. Defaults to a notification that's automatically generated based on the type of puzzle.
      */
-    #narrateAndLogAlreadySolvedPuzzle(puzzle: Puzzle, customNarration: string = this.getGame().notificationGenerator.generateAttemptAlreadySolvedPuzzleNotification(this.player, false, puzzle)): void {
+    #narrateAndLogAlreadySolvedPuzzle(puzzle: Puzzle, item?: ItemInstance, customNarration: string = this.getGame().notificationGenerator.generateAttemptAlreadySolvedPuzzleNotification(this.player, false, puzzle, item)): void {
         this.getGame().narrationHandler.narrateAttempt(this, puzzle, this.player, puzzle.alreadySolvedDescription, customNarration);
         this.getGame().logHandler.logAttemptAlreadySolvedPuzzle(puzzle, this.player, this.forced);
     }

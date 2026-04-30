@@ -1051,7 +1051,7 @@ export default class GameNotificationGenerator {
 	 * @param item - The item the puzzle was solved with, if applicable.
 	 */
 	generateSolvePuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, outcome: string, item?: ItemInstance) {
-		if (puzzle.isAlwaysAccessible() || puzzle.type === "restricted exit") return "";
+		if (puzzle.isAlwaysAccessible() || puzzle.type === "restricted exit" || puzzle.type === "voice") return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
 		const puzzlePhrase = puzzle.getContainingPhrase();
@@ -1103,7 +1103,7 @@ export default class GameNotificationGenerator {
 	 * @param secondPerson - Whether or not the player should be referred to in second person.
 	 * @param puzzle - The puzzle that was attempted.
 	 */
-	generateAttemptAlreadySolvedPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle) {
+	generateAttemptAlreadySolvedPuzzleNotification(player: Player, secondPerson: boolean, puzzle: Puzzle, item?: ItemInstance) {
 		if (puzzle.isAlwaysAccessible()) return "";
 		const subject = secondPerson ? `You` : capitalizeFirstLetter(player.displayName);
 		let verb = secondPerson ? `use` : `uses`;
@@ -1117,6 +1117,11 @@ export default class GameNotificationGenerator {
 			verb = secondPerson ? `set` : `sets`;
 			appendString = `, but nothing changes`
 		}
+        else if (puzzle.type === "media") {
+            const itemPhrase = item.prefab.discreet ? `an item into` : `${item.singleContainingPhrase} into`;
+			verb = secondPerson ? `attempt to insert ${itemPhrase}` : `attempts to insert ${itemPhrase}`;
+            appendString = `, but something is already inside`;
+        }
 		return `${subject} ${verb} ${puzzlePhrase}${appendString}.`;
 	}
 

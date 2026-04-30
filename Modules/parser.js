@@ -338,7 +338,7 @@ export function generateProceduralOutput(description, proceduralSelections, play
             // This will be handled in the rolling function, if a possibility chance was not provided or invalid, set it to null.
             if (isNaN(possibilityChance) || possibilityChance < 0 || possibilityChance > 100)
                 possibilityChance = null;
-            possibilityArr.push({ index: j, chance: possibilityChance });
+            possibilityArr.push({ index: j, chance: possibilityChance, name: possibilityName });
         }
         if (winningPossibilityIndex === undefined) {
             /** @type {number} */
@@ -353,9 +353,16 @@ export function generateProceduralOutput(description, proceduralSelections, play
             }
             possibilityArr = calculateModifiedPossibilityArr(possibilityArr, statValue);
             winningPossibilityIndex = choosePossibilityIndex(possibilityArr);
+            if (!proceduralSelections.has(proceduralName)) {
+                for (const possibility of possibilityArr) {
+                    if (possibility.index === winningPossibilityIndex && possibility.name)
+                        proceduralSelections.set(proceduralName, possibility.name);
+                    if (possibility.index === winningPossibilityIndex) break;
+                }
+            }
         }
         for (let possibility of possibilityArr) {
-            if (possibility.index !== winningPossibilityIndex)
+            if (possibility.index !== winningPossibilityIndex || !!proceduralSelections.get(proceduralName) && proceduralSelections.get(proceduralName) !== possibility.name)
                 possibilitiesToRemove.push(possibilities[possibility.index]);
         }
         // Remove poss tags that failed the roll.

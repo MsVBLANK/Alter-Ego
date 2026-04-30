@@ -18,7 +18,8 @@ const acceptableDeviation = 200;
 function generateActual(text, proceduralSelections, player) {
     const description = new Description(text, game.entityFinder.getPrefab('SIGN IN SHEET'), game);
 	for (let i = 0; i < 10000; i++) {
-		const generatedText = generateProceduralOutput(description, proceduralSelections, player);
+        const proceduralSelectionsCopy = new Map(proceduralSelections);
+		const generatedText = generateProceduralOutput(description, proceduralSelectionsCopy, player);
 		if (actual.has(generatedText))
 			actual.set(generatedText, actual.get(generatedText) + 1);
 		else actual.set(generatedText, 1);
@@ -258,24 +259,22 @@ describe('test_parser_generateProceduralOutput', () => {
 
             test('select P1 = A4', () => {
                 proceduralSelections = new Map([["p1", "a4"]]);
-                expected.set(`<desc><s>Sentence.</s> <procedural name="P1"><poss name="A1"><s>Possibility 1.</s></poss></procedural> <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 5000);
-                expected.set(`<desc><s>Sentence.</s> <procedural name="P1"><poss name="A2"><s>Possibility 2.</s></poss></procedural> <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 5000);
+                expected.set(`<desc><s>Sentence.</s>  <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 10000);
 
                 generateActual(text, proceduralSelections);
                 expect(actual).toHaveSize(expected.size);
                 for (const [text, count] of actual)
-                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
+                    expect(count).toBe(expected.get(text));
             });
 
             test('multiple selections for P1', () => {
                 proceduralSelections = new Map([["p1", "a1"], ["p1", "a4"]]);
-                expected.set(`<desc><s>Sentence.</s> <procedural name="P1"><poss name="A1"><s>Possibility 1.</s></poss></procedural> <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 5000);
-                expected.set(`<desc><s>Sentence.</s> <procedural name="P1"><poss name="A2"><s>Possibility 2.</s></poss></procedural> <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 5000);
+                expected.set(`<desc><s>Sentence.</s>  <procedural name="P1"><poss name="A4"><s>Possibility 4.</s></poss></procedural></desc>`, 10000);
 
                 generateActual(text, proceduralSelections);
                 expect(actual).toHaveSize(expected.size);
                 for (const [text, count] of actual)
-                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
+                    expect(count).toBe(expected.get(text));
             });
         });
     });
@@ -742,6 +741,84 @@ describe('test_parser_generateProceduralOutput', () => {
                 expect(actual).toHaveSize(expected.size);
                 for (const [text, count] of actual)
                     expect(count).toBe(expected.get(text));
+            });
+        });
+
+        describe('repeated procedurals', () => {
+            test('repeated procedurals with identical possibilities yield non-conflicting results', () => {
+                const text = `<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss><poss name="b1">B1.</poss></procedural> <procedural name="p1"><poss name="a1">A1.</poss><poss name="b1">B1.</poss></procedural></s></desc>`;
+                expected.set(`<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss></procedural> <procedural name="p1"><poss name="a1">A1.</poss></procedural></s></desc>`, 5000);
+                expected.set(`<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="b1">B1.</poss></procedural> <procedural name="p1"><poss name="b1">B1.</poss></procedural></s></desc>`, 5000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
+            });
+
+            test('procedural P1 with possibilities A1, B1 and repeat with only B1 will not have two A1', () => {
+                const text = `<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss><poss name="b1">B1.</poss></procedural> <procedural name="p1"><poss name="b1">B1.</poss></procedural></s></desc>`;
+                expected.set(`<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss></procedural> </s></desc>`, 5000);
+                expected.set(`<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="b1">B1.</poss></procedural> <procedural name="p1"><poss name="b1">B1.</poss></procedural></s></desc>`, 5000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
+            });
+
+            test('procedural P1 with possibility A1 and repeat with possibilities A1, B1 will never result in B1', () => {
+                const text = `<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss></procedural> <procedural name="p1"><poss name="a1">A1.</poss><poss name="b1">B1.</poss></procedural></s></desc>`;
+                expected.set(`<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss></procedural> <procedural name="p1"><poss name="a1">A1.</poss></procedural></s></desc>`, 10000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBe(expected.get(text));
+            });
+
+            test('procedural P1 with possibility A1 and repeat with possibilities A1, B1 will result in B1 if manually selected', () => {
+                proceduralSelections = new Map([["p1", "b1"]]);
+                const text = `<desc><s>Sentence.</s> <s><procedural name="p1"><poss name="a1">A1.</poss></procedural> <procedural name="p1"><poss name="a1">A1.</poss><poss name="b1">B1.</poss></procedural></s></desc>`;
+                expected.set(`<desc><s>Sentence.</s> <s> <procedural name="p1"><poss name="b1">B1.</poss></procedural></s></desc>`, 10000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBe(expected.get(text));
+            });
+
+            test('wet clay nested repeated procedurals', () => {
+                const text = `<desc><s>This is a lump of wet <procedural name="base color"><poss name="red"><procedural name="secondary base color"><poss name="red">red</poss></procedural></poss><poss name="white"><procedural name="secondary base color"><poss name="white">white</poss></procedural></poss></procedural> clay.</s></desc>`;
+                expected.set(`<desc><s>This is a lump of wet <procedural name="base color"><poss name="red"><procedural name="secondary base color"><poss name="red">red</poss></procedural></poss></procedural> clay.</s></desc>`, 5000);
+                expected.set(`<desc><s>This is a lump of wet <procedural name="base color"><poss name="white"><procedural name="secondary base color"><poss name="white">white</poss></procedural></poss></procedural> clay.</s></desc>`, 5000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
+            });
+
+            test('base glaze nested repeated procedurals', () => {
+                const text = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="glaze color"><poss name="clear" chance="100"><procedural name="secondary glaze color"><poss name="clear">clear</poss></procedural></poss><poss name="red"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="red"><procedural name="secondary base color"><poss name="obscured">red</poss></procedural></poss></procedural></poss></procedural></poss><poss name="orange"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="orange"><procedural name="secondary base color"><poss name="obscured">orange</poss></procedural></poss></procedural></poss></procedural></poss><poss name="brown"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="brown"><procedural name="secondary base color"><poss name="obscured">brown</poss></procedural></poss></procedural></poss></procedural></poss><poss name="yellow"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="yellow"><procedural name="secondary base color"><poss name="obscured">yellow</poss></procedural></poss></procedural></poss></procedural></poss><poss name="green"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="green"><procedural name="secondary base color"><poss name="obscured">green</poss></procedural></poss></procedural></poss></procedural></poss><poss name="teal"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="teal"><procedural name="secondary base color"><poss name="obscured">teal</poss></procedural></poss></procedural></poss></procedural></poss><poss name="light blue"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="light blue"><procedural name="secondary base color"><poss name="obscured">light blue</poss></procedural></poss></procedural></poss></procedural></poss><poss name="indigo"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="indigo"><procedural name="secondary base color"><poss name="obscured">indigo</poss></procedural></poss></procedural></poss></procedural></poss><poss name="violet"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="violet"><procedural name="secondary base color"><poss name="obscured">violet</poss></procedural></poss></procedural></poss></procedural></poss><poss name="pink"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="pink"><procedural name="secondary base color"><poss name="obscured">pink</poss></procedural></poss></procedural></poss></procedural></poss><poss name="white"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="white"><procedural name="secondary base color"><poss name="obscured">white</poss></procedural></poss></procedural></poss></procedural></poss><poss name="gray"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="gray"><procedural name="secondary base color"><poss name="obscured">gray</poss></procedural></poss></procedural></poss></procedural></poss><poss name="black"><procedural name="base color"><poss name="obscured"><procedural name="secondary glaze color"><poss name="black"><procedural name="secondary base color"><poss name="obscured">black</poss></procedural></poss></procedural></poss></procedural></poss></procedural>.</s></desc>`;
+                expected.set(`<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="glaze color"><poss name="clear"><procedural name="secondary glaze color"><poss name="clear">clear</poss></procedural></poss></procedural>.</s></desc>`, 10000);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBe(expected.get(text));
+            });
+
+            test('pattern glaze nested repeated procedurals', () => {
+                const text = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="pattern color"><poss name="red"><procedural name="secondary pattern color"><poss name="red">red</poss></procedural></poss><poss name="orange"><procedural name="secondary pattern color"><poss name="orange">orange</poss></procedural></poss><poss name="brown"><procedural name="secondary pattern color"><poss name="brown">brown</poss></procedural></poss></procedural>.</s></desc>`;
+                expected.set(`<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="pattern color"><poss name="red"><procedural name="secondary pattern color"><poss name="red">red</poss></procedural></poss></procedural>.</s></desc>`, 3334);
+                expected.set(`<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="pattern color"><poss name="orange"><procedural name="secondary pattern color"><poss name="orange">orange</poss></procedural></poss></procedural>.</s></desc>`, 3333);
+                expected.set(`<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="pattern color"><poss name="brown"><procedural name="secondary pattern color"><poss name="brown">brown</poss></procedural></poss></procedural>.</s></desc>`, 3333);
+
+                generateActual(text, proceduralSelections);
+                expect(actual).toHaveSize(expected.size);
+                for (const [text, count] of actual)
+                    expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
             });
         });
     });

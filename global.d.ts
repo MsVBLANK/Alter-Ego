@@ -383,6 +383,7 @@ declare global {
 	interface Possibility {
 		index: number;
 		chance: number;
+        name: string;
 	}
 
 	interface DayJsDurationInput {

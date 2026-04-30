@@ -63,8 +63,11 @@ export default class GameEntityFinder {
 	 */
 	getFixture(name, location) {
 		if (!name) return;
-		if (location) return this.game.fixtures.find(fixture => fixture.name === Game.generateValidEntityName(name) && fixture.location.id === Room.generateValidId(location));
-		else return this.game.fixtures.find(fixture => fixture.name === Game.generateValidEntityName(name));
+        /** @type {Collection<string, GameEntityMatcher>} */
+		let selectedFilters = new Collection();
+		selectedFilters.set(Game.generateValidEntityName(name), matchers.entityNameMatches);
+		if (location) selectedFilters.set(Room.generateValidId(location), matchers.entityLocationIdMatches);
+		return this.game.fixtures.find(fixture => selectedFilters.every((filterFunction, key) => filterFunction(fixture, key)));
 	}
 
 	/**

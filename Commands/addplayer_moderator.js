@@ -13,7 +13,7 @@ export const config = {
     description: "Adds a player to the game.",
     details: "Adds a user to the list of players for the current game. This command will give the specified user the "
         + "Player role and add their data to the Players and Inventory Items spreadsheets. This will be generated "
-        + "using the data in your `playerdefaults.json` configuration file. However, their name will be set as "
+        + "using the data in the \`Player Defaults\` section of your \`.env\` file. However, their name will be set as "
         + "whatever their current nickname is in the server. So, you should set their nickname to their character's "
         + "name before using this command. Note that edit mode must be turned on in order to use this command. "
         + "After using this command, you may edit the new player's data. Then, the Players sheet must be loaded, "

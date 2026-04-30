@@ -413,6 +413,7 @@ declare global {
 	interface TestParserResults {
 		warnings: TestParserWarningOrError[];
 		errors: TestParserWarningOrError[];
+        gameDictionary: Set<string>;
 	}
 
 	interface TestParserError {

@@ -290,6 +290,7 @@ __pycache__/
 convert.js
 convertedText.txt
 parsedText.xml
+gameDictionary.txt
 
 # Docker Files
 *.env

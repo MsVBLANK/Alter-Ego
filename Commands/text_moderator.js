@@ -10,7 +10,7 @@ export const config = {
     description: "Sends a text message from an NPC to a player.",
     details: `Sends a text message from the given NPC to a player. If an image is attached, it will be sent as well. `
         + `It is possible to send a text message to any player, even those that don't have a status effect with the `
-        + `\`enable text\` behavior attribute.\n\n`
+        + `\`receive text\` behavior attribute.\n\n`
         + `This command supports NPC latching. For more information, see the help details for the \`latch\` command. `
         + `However, keep in mind that if you send a text with an attached image in the NPC's room channel, the message `
         + `will be deleted, and the attachment may not send properly.`,

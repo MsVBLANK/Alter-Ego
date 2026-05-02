@@ -568,8 +568,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             if (player.remainingTime <= 0 && player.stamina !== 0) {
                 clearInterval(player.moveTimer);
                 player.isMoving = false;
-                const exitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
-                const exitPuzzlePassable = exitPuzzle && exitPuzzle.solutions.includes(player.name);
+                const restrictedExitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
+                const exitPuzzlePassable = restrictedExitPuzzle && restrictedExitPuzzle.solutions.includes(player.name);
                 if (exit.unlocked || exitPuzzlePassable) {
                     const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
                     moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);

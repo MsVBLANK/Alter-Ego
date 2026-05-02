@@ -1447,6 +1447,7 @@ export default class GameEntityLoader extends GameEntityManager {
 			puzzle.type !== "player" &&
 			puzzle.type !== "player toggle" &&
 			puzzle.type !== "room player" &&
+            puzzle.type !== "exit" &&
 			puzzle.type !== "restricted exit" &&
 			puzzle.type !== "matrix")
 			return new Error(`Couldn't load puzzle on row ${puzzle.row}. "${puzzle.type}" is not a valid puzzle type.`);

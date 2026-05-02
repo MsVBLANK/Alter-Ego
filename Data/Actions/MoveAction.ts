@@ -27,11 +27,17 @@ export default class MoveAction extends Action {
 
 		// If there is an exit puzzle, solve it.
 		if (exit) {
-			const exitPuzzle = this.getGame().entityFinder.getPuzzle(exit.name, currentRoom.id, "restricted exit", true);
-			if (exitPuzzle && exitPuzzle.solutions.includes(this.player.name)) {
-				const solveAction = new SolveAction(this.getGame(), undefined, this.player, exitPuzzle.location, this.forced);
-				solveAction.performSolve(exitPuzzle, this.player.name);
+			const restrictedExitPuzzle = this.getGame().entityFinder.getPuzzle(exit.name, currentRoom.id, "restricted exit", true);
+			const exitPuzzle = this.getGame().entityFinder.getPuzzle(exit.name, currentRoom.id, "exit", true);
+			if (restrictedExitPuzzle && restrictedExitPuzzle.solutions.includes(this.player.name)) {
+				const solveAction = new SolveAction(this.getGame(), undefined, this.player, restrictedExitPuzzle.location, this.forced);
+				solveAction.performSolve(restrictedExitPuzzle, this.player.name);
 			}
+            else if (exitPuzzle && (exitPuzzle.solutions.length === 0 || exitPuzzle.solutions.includes(this.player.name))) {
+                const outcome = exitPuzzle.solutions.includes(this.player.name) ? this.player.name : undefined;
+                const solveAction = new SolveAction(this.getGame(), undefined, this.player, exitPuzzle.location, this.forced);
+                solveAction.performSolve(exitPuzzle, outcome);
+            }
 		}
 
 		// Exit the current room.

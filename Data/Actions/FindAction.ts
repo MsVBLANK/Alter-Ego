@@ -247,8 +247,8 @@ export default class FindAction extends Action {
      */
     #getPlayerResults(query: string): Player[] {
         this.#fields = { row: 'Row', name: 'Name' };
-        if (!query) return this.getGame().entityFinder.getLivingPlayers();
-        else return this.getGame().entityFinder.getLivingPlayers(query, undefined, undefined, undefined, undefined, true);
+        if (!query) return this.getGame().entityFinder.getPlayers();
+        else return this.getGame().entityFinder.getPlayers(query, undefined, true);
     }
 
     /**

@@ -676,6 +676,20 @@ export default class GameEntityFinder {
 		return this.game.statusEffects.filter(status => selectedFilters.every((filterFunction, key) => filterFunction(status, key))).map(status => status);
 	}
 
+    /**
+	 * Gets all players that match the given search queries.
+	 * @param {string} [name] - Filter the players to only those whose name or display name matches the given name.
+	 * @param {boolean} [isNPC] - Filter the players to only those who are NPCs or not.
+	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose name or display name only contains the given name. Defaults to false.
+	 */
+	getPlayers(name, isNPC, fuzzySearch = false) {
+		/** @type {Collection<string|boolean, GameEntityMatcher>} */
+		let selectedFilters = new Collection();
+		if (name) selectedFilters.set(name.toLowerCase().trim(), fuzzySearch ? matchers.playerNameOrDisplayNameContains : matchers.playerNameOrDisplayNameMatches);
+		if (isNPC !== undefined && isNPC !== null) selectedFilters.set(isNPC, matchers.playerNPCMatches);
+		return this.game.players.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
+	}
+
 	/**
 	 * Gets all living players that match the given search queries.
 	 * @param {string} [name] - Filter the players to only those whose name or display name matches the given name.

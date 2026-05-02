@@ -154,8 +154,8 @@ export default class Dialog extends GameConstruct {
         this.cleanContent = cleanContent;
         this.unformattedContent = this.content.replace(/^(-#|#{1,3}) /, '');
         this.alphanumericContent = this.cleanContent.replace(/[^a-zA-Z0-9 ]+/g, "").toLowerCase().trim();
-        this.attachments = this.message.attachments;
-        this.embeds = this.message.embeds;
+        this.attachments = this.message?.attachments ?? new Collection();
+        this.embeds = this.message?.embeds ?? [];
         this.speakerDisplayName = this.speaker.displayName;
         this.speakerDisplayIcon = this.speaker.displayIcon ? this.speaker.displayIcon : this.speaker.member.displayAvatarURL();
         this.speakerVoiceString = this.speaker.voiceString;

@@ -6,6 +6,14 @@
 
 - [Alter Ego](about/alter_ego.md)
 
+# Moderator Guide
+
+- [Installation and Setup](moderator_guide/installation.md)
+- [Moderating](moderator_guide/moderating.md)
+- [Writing Descriptions](moderator_guide/writing_descriptions.md)
+- [Edit Mode](moderator_guide/edit_mode.md)
+- [Mapmaking]()
+
 # Player Guide
 
 - [How to Use This Guide]()
@@ -19,14 +27,6 @@
 - [Your Moderator and You]()
 - [Next Steps]()
 
-# Moderator Guide
-
-- [Installation and Setup](moderator_guide/installation.md)
-- [Moderating](moderator_guide/moderating.md)
-- [Writing Descriptions](moderator_guide/writing_descriptions.md)
-- [Edit Mode](moderator_guide/edit_mode.md)
-- [Mapmaking]()
-
 # Reference
 
 - [Discord](reference/discord.md)
@@ -37,7 +37,7 @@
     - [Bot Commands](reference/commands/bot_commands.md)
 - [Interactables](reference/interactables.md)
 - [Data Structures](reference/data_structures/index.md)
-    - [Persistent Game Data](reference/data_structures/persistent.md)
+    - [Persistent Game Entities](reference/data_structures/persistent.md)
         - [Room](reference/data_structures/room.md)
             - [Exit](reference/data_structures/exit.md)
         - [Fixture](reference/data_structures/fixture.md)
@@ -55,7 +55,7 @@
             - [Equipment Slot](reference/data_structures/equipment_slot.md)
         - [Gesture](reference/data_structures/gesture.md)
         - [Flag](reference/data_structures/flag.md)
-    - [Transient Game Data](reference/data_structures/transient.md)
+    - [Transient Game Entities](reference/data_structures/transient.md)
         - [Game](reference/data_structures/game.md)
         - [Action](reference/data_structures/action.md)
         - [Description](reference/data_structures/description.md)

@@ -52,7 +52,7 @@ export async function execute(game, message, command, args, player) {
     const itemName = newArgs[0].trim();
     let slotName = newArgs[1] ? newArgs[1] : "";
 
-    const hand = game.entityFinder.getPlayerHandHoldingItem(player, itemName, undefined, "player");
+    const hand = game.entityFinder.getPlayerHandHoldingItem(player, itemName, undefined, undefined, "player");
     const item = hand ? hand.equippedItem : undefined;
     if (item === undefined) return game.communicationHandler.reply(message, `Couldn't find item "${itemName}" in either of your hands. If this item is elsewhere in your inventory, please unequip or unstash it before trying to equip it.`);
     if (!item.prefab.equippable || item.prefab.equipmentSlots.length === 0) return game.communicationHandler.reply(message, `${itemName} is not equippable.`);

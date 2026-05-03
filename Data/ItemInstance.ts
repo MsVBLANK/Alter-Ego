@@ -14,7 +14,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	/**
 	 * The ID of the prefab this item is an instance of.
 	 */
-    readonly prefabId: string;
+    prefabId: string;
 	/**
 	 * The prefab this item is an instance of.
 	 */
@@ -116,6 +116,7 @@ export default abstract class ItemInstance extends ItemContainer {
 	 */
 	setPrefab(prefab: Prefab): void {
 		this.prefab = prefab;
+        this.prefabId = prefab.id;
 		this.weight = prefab ? prefab.weight : 0;
 	}
 

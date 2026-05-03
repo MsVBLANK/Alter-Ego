@@ -221,7 +221,7 @@ export async function createServerConfigFileIfNotExists() {
     }
 
     if (!fileExists) {
-        console.log("No serverconfigs.json found, creating empty file.");
+        console.log("No serverconfig.json found, creating empty file.");
         let emptyServerConfig: ServerConfig = {
             announcementChannel: "",
             commandChannel: "",

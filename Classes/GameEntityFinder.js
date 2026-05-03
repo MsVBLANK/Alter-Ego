@@ -63,8 +63,11 @@ export default class GameEntityFinder {
 	 */
 	getFixture(name, location) {
 		if (!name) return;
-		if (location) return this.game.fixtures.find(fixture => fixture.name === Game.generateValidEntityName(name) && fixture.location.id === Room.generateValidId(location));
-		else return this.game.fixtures.find(fixture => fixture.name === Game.generateValidEntityName(name));
+        /** @type {Collection<string, GameEntityMatcher>} */
+		let selectedFilters = new Collection();
+		selectedFilters.set(Game.generateValidEntityName(name), matchers.entityNameMatches);
+		if (location) selectedFilters.set(Room.generateValidId(location), matchers.entityLocationIdMatches);
+		return this.game.fixtures.find(fixture => selectedFilters.every((filterFunction, key) => filterFunction(fixture, key)));
 	}
 
 	/**
@@ -213,17 +216,19 @@ export default class GameEntityFinder {
 	/** Gets a player's hand equipment slot whose equipped item has the given identifier.
 	 * @param {Player} player - The player.
 	 * @param {string} identifier - The item identifier or prefab ID in moderator contexts, or its name or plural name in player contexts.
+     * @param {string} [proceduralSelections] - The inventory item's procedural selections expressed as a string. Optional.
 	 * @param {number} [excludedItemRow] - The row number of an inventory item to exclude from the search. Optional.
 	 * @param {string} [resultContext] - Either `moderator`, `player`, or `combined`. Determines whether to search only identifiers, names, or both. Defaults to `moderator`.
 	 * @returns The hand equipment slot holding the specified item. Returns undefined if no such equipment slot exists.
 	 */
-	getPlayerHandHoldingItem(player, identifier, excludedItemRow, resultContext = 'moderator') {
+	getPlayerHandHoldingItem(player, identifier, proceduralSelections, excludedItemRow, resultContext = 'moderator') {
 		if (!player || !identifier) return;
 		/** @type {Collection<string|number, GameEntityMatcher>} */
 		let selectedFilters = new Collection();
 		if (resultContext === 'player') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemNameMatches);
 		else if (resultContext === 'combined') selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierOrNameMatches);
 		else selectedFilters.set(Game.generateValidEntityName(identifier), matchers.itemIdentifierMatches);
+        if (proceduralSelections !== undefined) selectedFilters.set(proceduralSelections, matchers.itemProceduralSelectionsMatches);
 		if (excludedItemRow !== undefined) selectedFilters.set(excludedItemRow, matchers.entityRowDiffers);
 		return this.getPlayerHands(player).find(equipmentSlot => equipmentSlot.equippedItem ? selectedFilters.every((filterFunction, key) => filterFunction(equipmentSlot.equippedItem, key)) : false);
 	}
@@ -669,6 +674,20 @@ export default class GameEntityFinder {
 			selectedFilters.set(attributes.join(','), matchers.statusAttributeMatches);
 		}
 		return this.game.statusEffects.filter(status => selectedFilters.every((filterFunction, key) => filterFunction(status, key))).map(status => status);
+	}
+
+    /**
+	 * Gets all players that match the given search queries.
+	 * @param {string} [name] - Filter the players to only those whose name or display name matches the given name.
+	 * @param {boolean} [isNPC] - Filter the players to only those who are NPCs or not.
+	 * @param {boolean} [fuzzySearch] - Whether or not to include results whose name or display name only contains the given name. Defaults to false.
+	 */
+	getPlayers(name, isNPC, fuzzySearch = false) {
+		/** @type {Collection<string|boolean, GameEntityMatcher>} */
+		let selectedFilters = new Collection();
+		if (name) selectedFilters.set(name.toLowerCase().trim(), fuzzySearch ? matchers.playerNameOrDisplayNameContains : matchers.playerNameOrDisplayNameMatches);
+		if (isNPC !== undefined && isNPC !== null) selectedFilters.set(isNPC, matchers.playerNPCMatches);
+		return this.game.players.filter(player => selectedFilters.every((filterFunction, key) => filterFunction(player, key))).map(player => player);
 	}
 
 	/**

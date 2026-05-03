@@ -3,6 +3,7 @@
 /** @import Moderator from '../Data/Moderator.ts' */
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
+/** @import Player from '../Data/Player.ts' */
 
 /** @type {CommandConfig} */
 export const config = {
@@ -46,6 +47,7 @@ export async function execute(game, message, command, args, moderator) {
         return game.communicationHandler.reply(message, `You need to specify at least one player. Usage:\n${usage(game.settings)}`);
 
     // Get all listed players first.
+    /** @type {Player[]} */
     const players = [];
     for (let i = args.length - 1; i >= 0; i--) {
         const player = game.entityFinder.getLivingPlayer(args[i]);

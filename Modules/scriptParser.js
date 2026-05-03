@@ -72,6 +72,7 @@ export const SCRIPT_SCOPE_OPTIONS = {
 		'__proto__',
 		'prototype',
 		'constructor',
+        'getGame',
 		'game',
 		'guildContext',
 		'botContext',

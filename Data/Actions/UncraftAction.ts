@@ -47,7 +47,7 @@ export default class UncraftAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): [InventoryItem, Recipe] {
-        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
+        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0], args[4]);
         const recipes = this.getGame().entityFinder.getRecipes(args[1], "", args[2], args[3]);
         return [hand?.equippedItem, recipes[0] ?? undefined];
     }

@@ -32,7 +32,7 @@ export default class EquipAction extends Action {
      * @param args - The args as strings.
      */
     parseInteractionArgs(args: string[]): [InventoryItem, EquipmentSlot, EquipmentSlot] {
-        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0]);
+        const hand = this.getGame().entityFinder.getPlayerHandHoldingItem(this.player, args[0], args[3]);
         const equipmentSlot = this.player.inventory.get(args[1]);
         return [hand?.equippedItem, equipmentSlot, hand];
     }

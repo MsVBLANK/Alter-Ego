@@ -65,7 +65,7 @@ export async function execute(game, message, command, args, player) {
     /** @type {InventoryItem} */
     let item;
     for (let i = args.length; i > 0; i--) {
-        hand = game.entityFinder.getPlayerHandHoldingItem(player, args.slice(0, i).join(" "), undefined, "player");
+        hand = game.entityFinder.getPlayerHandHoldingItem(player, args.slice(0, i).join(" "), undefined, undefined, "player");
         if (hand) {
             item = hand.equippedItem;
             args = args.slice(i);

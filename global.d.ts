@@ -383,6 +383,7 @@ declare global {
 	interface Possibility {
 		index: number;
 		chance: number;
+        name: string;
 	}
 
 	interface DayJsDurationInput {
@@ -412,6 +413,7 @@ declare global {
 	interface TestParserResults {
 		warnings: TestParserWarningOrError[];
 		errors: TestParserWarningOrError[];
+        gameDictionary: Set<string>;
 	}
 
 	interface TestParserError {

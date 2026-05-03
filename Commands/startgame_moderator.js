@@ -14,7 +14,7 @@ export const config = {
         + `able to voluntarily add themselves to the game as players using the \`play\` command in the general channel. `
         + `If debug mode is on, they must have the Tester role, and send the command in the testing channel. `
         + `When this occurs, they will be given the Player role, and they will be added to the game's data as players `
-        + `with default player data as defined in your \`playerdefaults.json\` configuration.\n\n`
+        + `with default player data as defined in the \`Player Defaults\` section of your \`.env\` file.\n\n`
         + `When the timer you set reaches 0, all of the player data will be saved to the Players sheet. After that, you `
         + `can edit their data to accurately reflect their characters. If you edit their data before the timer expires, `
         + `it will be overwritten. When you are ready to begin the game, use the \`load\` command `

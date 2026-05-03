@@ -602,8 +602,10 @@ export default class ViewAction extends Action {
         let interactables: Interactable[];
         const fields: PlayerField[] = ["description"];
         let relatedEntities: PersistentGameEntity[] = [];
-        relatedEntities.push(entity.location);
-        entity.status.forEach(status => relatedEntities.push(status));
+        if (entity.alive) {
+            relatedEntities.push(entity.location);
+            entity.status.forEach(status => relatedEntities.push(status));
+        }
         interactables = await this.#interactableManager.getViewInteractables(entity, fields, relatedEntities, this.user);
         return interactables;
     }

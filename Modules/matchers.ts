@@ -172,7 +172,7 @@ export const entityIdContains = (entity: Event | Flag | Prefab, id: string, norm
  */
 export const entityLocationIdMatches = (entity: RoomItemContainer | Player, id: string, normalize = false) => {
 	if (normalize) id = Room.generateValidId(id);
-	return entity.location.id === id;
+	return entity.location && entity.location.id === id;
 };
 
 /**

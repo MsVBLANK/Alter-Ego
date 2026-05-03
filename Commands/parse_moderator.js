@@ -20,7 +20,13 @@ export const config = {
         + `warnings, or undesired behavior may occur during gameplay.\n\n`
         + `You can input a player name to parse the text as if that player is reading it. This is useful if you want to `
         + `see how descriptions will appear to a given player. If you do not supply one, descriptions will be parsed as `
-        + `if they are being read by a player named Cella.`,
+        + `if they are being read by a player named Cella.\n\n`
+        + `You can specify "plain" or "plaintext" to output a file which consists only of plain text, with no XML. `
+        + `If you do, a dictionary file will be generated and sent with the results. This dictionary will consist of `
+        + `all words that comprise the IDs and names of in-game entities. Alter Ego will not run spellchecking for `
+        + `you, but you can use these files in your preferred spellchecking program to look for errors. You will `
+        + `likely still need to add more words to the dictionary yourself in order to avoid false flags in your `
+        + `preferred spellchecker; the dictionary Alter Ego generates will simply act as a useful base.`,
     usableBy: "Moderator",
     aliases: ["parse", "testparser"],
     requiresGame: false
@@ -33,6 +39,8 @@ export const config = {
 export function usage(settings) {
     return `${settings.commandPrefix}parse\n`
         + `${settings.commandPrefix}parse Kyra\n`
+        + `${settings.commandPrefix}parse plaintext\n`
+        + `${settings.commandPrefix}parse Ezekiel plain\n`
         + `${settings.commandPrefix}testparser`;
 }
 
@@ -49,11 +57,13 @@ export async function execute(game, message, command, args, moderator) {
         if (err) return console.log(err);
     });
 
+    let plainText = false;
     /** @type {Player} */
     let player;
-    if (args[0] && args[0] !== "formatted") {
+    if (args[0] && args[0] !== "plaintext" && args[0] !== "plain-text" && args[0] !== "plain") {
         player = game.entityFinder.getLivingPlayer(args[0]);
         if (player === undefined) return game.communicationHandler.reply(message, `Couldn't find player "${args[0]}".`);
+        args.splice(0, 1);
     }
     else {
         const [playerdefaults] = loadPlayerDefaults();
@@ -79,8 +89,10 @@ export async function execute(game, message, command, args, moderator) {
         player.setPronouns(player.originalPronouns, player.pronounString);
         player.setPronouns(player.pronouns, player.pronounString);
     }
+    if (args[0] && args[0] === "plaintext" || args[0] === "plain-text" || args[0] === "plain")
+        plainText = true;
 
-    const result = await testparse(game, file, player);
+    const result = await testparse(game, file, player, plainText);
     let warnings = [];
     for (let i = 0; i < result.warnings.length; i++) {
         for (let j = 0; j < result.warnings[i].warnings.length; j++) {
@@ -104,6 +116,7 @@ export async function execute(game, message, command, args, moderator) {
             errors.push(`Error on ${makeCopyable(result.errors[i].cell)}: ${result.errors[i].errors[j]}`);
         }
     }
+
     if (errors.length > 0) {
         // Trim excess errors to not exceed Discord's 2000 character limit.
         const tooManyErrors = errors.length > 20 || errors.join('\n').length >= 1980;
@@ -114,14 +127,26 @@ export async function execute(game, message, command, args, moderator) {
         game.communicationHandler.sendToCommandChannel(errors.join('\n'));
     }
 
+    const files = [{
+        attachment: file,
+        name: `parsedText.xml`
+    }];
+
+    if (plainText) {
+        const dictionary = "./gameDictionary.txt";
+        fs.writeFile(dictionary, Array.from(result.gameDictionary).sort().join('\n'), function (err) {
+            if (err) return console.log(err);
+        });
+
+        files.push({
+            attachment: dictionary,
+            name: `gameDictionary.txt`
+        });
+    }
+
     game.guildContext.commandChannel.send({
         content: "Text parsed.",
-        files: [
-            {
-                attachment: file,
-                name: `parsedText.xml`
-            }
-        ]
+        files: files
     });
 }
 
@@ -131,21 +156,25 @@ export async function execute(game, message, command, args, moderator) {
  * @param {Game} game - The game being tested.
  * @param {string} fileName - The name of the file to write the results to.
  * @param {Player} player - The player to pass into the parser module.
+ * @param {boolean} plainText - Whether or not to output as plain-text only.
  * @returns {Promise<TestParserResults>} All of the warnings and errors found when parsing descriptions.
  */
-async function testparse (game, fileName, player) {
+async function testparse (game, fileName, player, plainText) {
     const warnings = [];
     const errors = [];
+    let dictionary = [];
 
     // Get rooms first.
     {
         await appendFile(fileName, "ROOMS:");
         let text = "";
         for (const room of game.rooms.values()) {
+            if (plainText) dictionary = dictionary.concat(room.displayName.split(' '));
             text += "   ";
             text += room.displayName + EOL;
 
             for (const exit of room.exits.values()) {
+                if (plainText) dictionary = dictionary.concat(exit.name.split(' '));
                 text += "      ";
                 text += exit.name + EOL;
 
@@ -154,8 +183,10 @@ async function testparse (game, fileName, player) {
                     if (parsedDescription.warnings.length !== 0) warnings.push({ cell: exit.descriptionCell(), warnings: parsedDescription.warnings });
                     if (parsedDescription.errors.length !== 0) errors.push({ cell: exit.descriptionCell(), errors: parsedDescription.errors });
 
-                    text += "         ";
-                    text += exit.description.text + EOL;
+                    if (!plainText) {
+                        text += "         ";
+                        text += exit.description.text + EOL;
+                    }
 
                     text += "         ";
                     text += parsedDescription.text + EOL;
@@ -171,6 +202,7 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "FIXTURES:");
         let text = "";
         for (let i = 0; i < game.fixtures.length; i++) {
+            if (plainText) dictionary = dictionary.concat(game.fixtures[i].name.split(' '));
             text += "   ";
             text += game.fixtures[i].name + EOL;
 
@@ -179,8 +211,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: game.fixtures[i].descriptionCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: game.fixtures[i].descriptionCell(), errors: parsedDescription.errors });
 
-                text += "      ";
-                text += game.fixtures[i].description.text + EOL;
+                if (!plainText) {
+                    text += "      ";
+                    text += game.fixtures[i].description.text + EOL;
+                }
 
                 text += "      ";
                 text += parsedDescription.text + EOL;
@@ -194,6 +228,17 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "PREFABS:");
         let text = "";
         for (const prefab of game.prefabs.values()) {
+            if (plainText) {
+                dictionary = dictionary.concat(prefab.id.split(' '));
+                for (const [possibleName, possiblePluralName] of prefab.possibleNames.values()) {
+                    if (possibleName) dictionary = dictionary.concat(possibleName.split(' '));
+                    if (possiblePluralName) dictionary = dictionary.concat(possiblePluralName.split(' '));
+                }
+                for (const [possibleSingleContainingPhrase, possiblePluralContainingPhrase] of prefab.possibleContainingPhrases.values()) {
+                    if (possibleSingleContainingPhrase) dictionary = dictionary.concat(possibleSingleContainingPhrase.split(' '));
+                    if (possiblePluralContainingPhrase) dictionary = dictionary.concat(possiblePluralContainingPhrase.split(' '));
+                }
+            }
             text += "   ";
             text += prefab.id + EOL;
 
@@ -202,8 +247,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: prefab.descriptionCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: prefab.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "      ";
-                text += prefab.description.text + EOL;
+                if (!plainText) {
+                    text += "      ";
+                    text += prefab.description.text + EOL;
+                }
 
                 text += "      ";
                 text += parsedDescription.text + EOL;
@@ -231,8 +278,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.initiatedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.initiatedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += recipe.initiatedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += recipe.initiatedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -246,8 +295,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.completedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.completedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += recipe.completedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += recipe.completedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -261,8 +312,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: recipe.uncraftedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: recipe.uncraftedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += recipe.uncraftedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += recipe.uncraftedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -285,8 +338,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: roomItem.descriptionCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: roomItem.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "      ";
-                text += roomItem.description.text + EOL;
+                if (!plainText) {
+                    text += "      ";
+                    text += roomItem.description.text + EOL;
+                }
 
                 text += "      ";
                 text += parsedDescription.text + EOL;
@@ -300,6 +355,7 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "PUZZLES:");
         let text = "";
         for (const puzzle of game.puzzles) {
+            if (plainText) dictionary = dictionary.concat(puzzle.name.split(' '));
             text += "   ";
             text += puzzle.name + EOL;
 
@@ -311,8 +367,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.correctCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.correctCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.correctDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.correctDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -326,8 +384,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.alreadySolvedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.alreadySolvedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.alreadySolvedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.alreadySolvedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -341,8 +401,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.unsolvedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.unsolvedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.unsolvedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.unsolvedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -356,8 +418,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.incorrectCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.incorrectCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.incorrectDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.incorrectDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -371,8 +435,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.noMoreAttemptsCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.noMoreAttemptsCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.noMoreAttemptsDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.noMoreAttemptsDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -386,8 +452,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: puzzle.requirementsNotMetCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: puzzle.requirementsNotMetCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += puzzle.requirementsNotMetDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += puzzle.requirementsNotMetDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -403,6 +471,7 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "EVENTS:");
         let text = "";
         for (const event of game.events.values()) {
+            if (plainText) dictionary = dictionary.concat(event.id.split(' '));
             text += "   ";
             text += event.id + EOL;
 
@@ -414,8 +483,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: event.triggeredCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: event.triggeredCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += event.triggeredNarration + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += event.triggeredNarration + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -429,8 +500,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: event.endedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: event.endedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += event.endedNarration + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += event.endedNarration + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -446,6 +519,7 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "STATUS EFFECTS:");
         let text = "";
         for (const statusEffect of game.statusEffects.values()) {
+            if (plainText) dictionary = dictionary.concat(statusEffect.id.split(' '));
             text += "   ";
             text += statusEffect.id + EOL;
 
@@ -457,8 +531,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: statusEffect.inflictedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: statusEffect.inflictedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += statusEffect.inflictedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += statusEffect.inflictedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -472,8 +548,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: statusEffect.curedCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: statusEffect.curedCell(), errors: parsedDescription.errors });
 
-                text += "         ";
-                text += statusEffect.curedDescription.text + EOL;
+                if (!plainText) {
+                    text += "         ";
+                    text += statusEffect.curedDescription.text + EOL;
+                }
 
                 text += "         ";
                 text += parsedDescription.text + EOL;
@@ -489,6 +567,14 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, "PLAYERS:");
         let text = "";
         for (const gamePlayer of game.players.values()) {
+            if (plainText) {
+                const splitName = gamePlayer.name.split('_');
+                for (const name of splitName) {
+                    dictionary = dictionary.concat(name);
+                    dictionary = dictionary.concat(`${name}'s`);
+                    dictionary = dictionary.concat(`${name}s`);
+                }
+            }
             text += "   ";
             text += gamePlayer.name + EOL;
 
@@ -497,8 +583,10 @@ async function testparse (game, fileName, player) {
                 if (parsedDescription.warnings.length !== 0) warnings.push({ cell: gamePlayer.descriptionCell(), warnings: parsedDescription.warnings });
                 if (parsedDescription.errors.length !== 0) errors.push({ cell: gamePlayer.descriptionCell(), errors: parsedDescription.errors });
 
-                text += "      ";
-                text += gamePlayer.description.text + EOL;
+                if (!plainText) {
+                    text += "      ";
+                    text += gamePlayer.description.text + EOL;
+                }
 
                 text += "      ";
                 text += parsedDescription.text + EOL;
@@ -521,8 +609,10 @@ async function testparse (game, fileName, player) {
                     if (parsedDescription.warnings.length !== 0) warnings.push({ cell: inventoryItem.descriptionCell(), warnings: parsedDescription.warnings });
                     if (parsedDescription.errors.length !== 0) errors.push({ cell: inventoryItem.descriptionCell(), errors: parsedDescription.errors });
 
-                    text += "      ";
-                    text += inventoryItem.description.text + EOL;
+                    if (!plainText) {
+                        text += "      ";
+                        text += inventoryItem.description.text + EOL;
+                    }
 
                     text += "      ";
                     text += parsedDescription.text + EOL;
@@ -532,7 +622,7 @@ async function testparse (game, fileName, player) {
         await appendFile(fileName, text);
     }
 
-    return { warnings: warnings, errors: errors };
+    return { warnings: warnings, errors: errors, gameDictionary: new Set(dictionary) };
 }
 
 /**

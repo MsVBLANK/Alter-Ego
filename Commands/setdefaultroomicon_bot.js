@@ -1,5 +1,3 @@
-import {writeFile} from 'fs/promises';
-
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
 /** @import Player from '../Data/Player.ts' */
@@ -42,7 +40,4 @@ export async function execute(game, command, args, player, callee) {
     if (!iconURLSyntax.test(input) && input !== "") return game.communicationHandler.sendToCommandChannel(`Error: Couldn't execute command "${cmdString}". The display icon must be a URL with a .jpg, .jpeg, .png, .gif, .webp, or .avif extension.`);
 
     game.settings.defaultRoomIconURL = input;
-
-    const json = JSON.stringify(game.settings, undefined, 4);
-    await writeFile('Configs/settings.json', json, 'utf8');
 }

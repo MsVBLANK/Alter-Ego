@@ -472,7 +472,9 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             item2.getIdentifier(),
             "crafting",
             recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
-            recipe.productsFlat.map(product => product.prefab.id).join(",")
+            recipe.productsFlat.map(product => product.prefab.id).join(","),
+            item1.proceduralSelectionsString,
+            item2.proceduralSelectionsString
         ];
     }
 
@@ -486,7 +488,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             item.getIdentifier(),
             "uncraftable",
             recipe.ingredientsFlat.map(ingredient => ingredient.prefab.id).join(","),
-            recipe.productsFlat.map(product => product.prefab.id).join(",")
+            recipe.productsFlat.map(product => product.prefab.id).join(","),
+            item.proceduralSelectionsString
         ];
     }
 
@@ -565,8 +568,8 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
             if (player.remainingTime <= 0 && player.stamina !== 0) {
                 clearInterval(player.moveTimer);
                 player.isMoving = false;
-                const exitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
-                const exitPuzzlePassable = exitPuzzle && exitPuzzle.solutions.includes(player.name);
+                const restrictedExitPuzzle = player.getGame().entityFinder.getPuzzle(exit.name, player.location.id, "restricted exit", true);
+                const exitPuzzlePassable = restrictedExitPuzzle && restrictedExitPuzzle.solutions.includes(player.name);
                 if (exit.unlocked || exitPuzzlePassable) {
                     const moveAction = new MoveAction(player.getGame(), undefined, player, player.location, forced);
                     moveAction.performMove(isRunning, currentRoom, destinationRoom, exit, entrance);

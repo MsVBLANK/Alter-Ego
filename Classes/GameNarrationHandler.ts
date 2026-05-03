@@ -812,7 +812,7 @@ export default class GameNarrationHandler {
 	 */
 	narrateAttempt(action: Action, puzzle: Puzzle, player: Player, description: Description, narration: string = this.#game.notificationGenerator.generateAttemptPuzzleDefaultNotification(player.displayName, puzzle.getContainingPhrase())) {
 		if (description.text !== "" && description.text.includes("<desc>")) description.parseAndSendTo(player, puzzle);
-		if (narration  !== "") this.#sendNarration(MessageDisplayType.MINOR, action, player, narration);
+		if (narration !== "") this.#sendNarration(MessageDisplayType.MINOR, action, player, narration);
 	}
 
 	/**

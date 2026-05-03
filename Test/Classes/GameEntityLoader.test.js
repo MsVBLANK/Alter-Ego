@@ -767,7 +767,12 @@ describe('GameEntityLoader test', () => {
                 const statusEffectCount = await game.entityLoader.loadStatusEffects(true, errors);
                 const errorStrings = errors.join('\n').split('\n');
                 const expectedErrorStrings = [
-                    "Error: Couldn't load status effect on row 2. No status effect ID was given."
+                    "Error: Couldn't load status effect on row 2. No status effect ID was given.",
+                    "Error: Mandatory status effect \"heated\" not found.",
+                    "Error: Mandatory status effect \"weary\" not found.",
+                    "Error: Mandatory status effect \"asleep\" not found.",
+                    "Error: Mandatory status effect \"hidden\" not found.",
+                    "Error: Mandatory status effect \"concealed\" not found.",
                 ];
                 expect(errors).not.toEqual([]);
                 expect(statusEffectCount).toBe(0);
@@ -803,6 +808,11 @@ describe('GameEntityLoader test', () => {
                     "Error: Couldn't load status effect on row 9. Next stage \"invalid\" is not a status effect.",
                     "Error: Couldn't load status effect on row 10. Duplicated status \"invalid\" is not a status effect.",
                     "Error: Couldn't load status effect on row 11. Cured condition \"invalid\" is not a status effect.",
+                    "Error: Mandatory status effect \"heated\" not found.",
+                    "Error: Mandatory status effect \"weary\" not found.",
+                    "Error: Mandatory status effect \"asleep\" not found.",
+                    "Error: Mandatory status effect \"hidden\" not found.",
+                    "Error: Mandatory status effect \"concealed\" not found.",
                 ];
                 expect(errors).not.toEqual([]);
                 expect(statusEffectCount).toBe(0);

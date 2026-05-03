@@ -1,3 +1,4 @@
+import DieAction from '../Data/Actions/DieAction.ts';
 import Event from "../Data/Event.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
@@ -55,6 +56,7 @@ export async function execute(game, command, args, player, callee) {
     }
 
     // Determine which player(s) are being killed.
+    /** @type {Player[]} */
     let players = [];
     if (args[0].toLowerCase() === "player" && player !== null)
         players.push(player);
@@ -81,6 +83,8 @@ export async function execute(game, command, args, player, callee) {
         }
     }
 
-    for (let i = 0; i < players.length; i++)
-        players[i].die();
+    for (let i = 0; i < players.length; i++) {
+        const action = new DieAction(game, undefined, players[i], players[i].location, true);
+        action.performDie();
+    }
 }

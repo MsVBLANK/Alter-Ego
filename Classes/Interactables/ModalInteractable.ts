@@ -24,6 +24,10 @@ export default class ModalInteractable extends ActionDirectiveInteractable {
      * The sub-components for this modal.
      */
     readonly subComponents: ModalComponentInteractable[];
+    static readonly TITLE_CHARACTER_LIMIT = 45;
+    static readonly SUB_COMPONENT_LIMIT_WITHOUT_DESCRIPTION = 5;
+    static readonly SUB_COMPONENT_LIMIT_WITH_DESCRIPTION = 4;
+    static readonly DESCRIPTION_CHARACTER_LIMIT = 4000;
 
     /**
      * @param actionDirective - The action directive of the interactable.
@@ -34,10 +38,10 @@ export default class ModalInteractable extends ActionDirectiveInteractable {
      */
     constructor(actionDirective: ActionDirective, title: string, subComponents: ModalComponentInteractable[], priority = 1, description?: string) {
         super(InteractableType.MODAL, actionDirective, priority);
-        this.title = title;
+        this.title = title?.substring(0, ModalInteractable.TITLE_CHARACTER_LIMIT);
         this.subComponents = [];
-        this.description = description;
-        const maxSubComponentsSize = this.description ? 4 : 5;
+        this.description = description?.substring(0, ModalInteractable.DESCRIPTION_CHARACTER_LIMIT);
+        const maxSubComponentsSize = this.description ? ModalInteractable.SUB_COMPONENT_LIMIT_WITH_DESCRIPTION : ModalInteractable.SUB_COMPONENT_LIMIT_WITHOUT_DESCRIPTION;
         for (let i = 0; i < subComponents.length && i < maxSubComponentsSize; i++)
             this.subComponents.push(subComponents[i]);
         this.component = new ModalBuilder().setTitle(this.title).setCustomId(this.customId);

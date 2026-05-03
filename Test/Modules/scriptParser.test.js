@@ -136,6 +136,11 @@ describe('test scriptParser', () => {
                     const script = "findRoom('general-managers-office').getExit('DOOR').lock()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
+
+                test('findRoom().getGame() prohibited', () => {
+                    const script = "findRoom('general-managers-office').getGame()";
+                    expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
+                });
             });
         });
 

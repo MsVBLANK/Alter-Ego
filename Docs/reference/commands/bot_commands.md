@@ -380,6 +380,35 @@ Additionally, if you specify a player, you can make them attempt the puzzle with
 possible to force the player to fail the puzzle because they didn't provide a correct solution or they didn't satisfy
 the requirements for the puzzle to be solved/unsolved.
 
+### say
+
+Sends a message.
+
+#### Aliases
+
+`say`
+
+#### Examples
+
+    say Unit_050 Welcome. If you would like to listen to piano music, you may request a song, and I will perform it for you.
+    say Trash Disposal A strange smell begins emanating from the INCINERATOR.
+
+#### Details
+
+Sends a message. A room or player must be specified.
+
+If a message is sent to a room, it will be treated as a narration.
+
+If the name of a player is specified and that player is an NPC, the player will speak in the channel of the room
+they're in. Their dialog will be treated just like that of any normal player's. The image URL set in the player's
+Discord ID will be used for the player's avatar. It is not possible to use this command on a non-NPC player.
+
+It is recommended that you do not add line breaks to cells on the sheet. To add line breaks to the command,
+enter `\n`. It will be replaced with an actual line break in the sent message.
+
+Likewise, because the normal comma character is used as a delimiter in lists of bot commands, you can use the
+full-width comma character instead (`，`), and it will be replaced with a normal comma in the message.
+
 ### set
 
 Sets a fixture, puzzle, or group of room items as accessible or inaccessible.

@@ -44,7 +44,7 @@ However, the value can also be updated by evaluating its value script, explained
 ### Value Script
 
 > [!CAUTION]
-> This feature has the ability to run code. In order to evaluate a Flag's value script, 
+> This feature has the ability to run code. In order to evaluate a Flag's value script,
 > Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While
 > it has been tested to prevent access to many functions which can cause severe damage, its security cannot
 > be guaranteed, especially if Alter Ego is run outside of a Docker container. Given that the only way to
@@ -78,10 +78,10 @@ Scripts are evaluated using the same function that evaluates `if` and `var` tags
 As such, value scripts are beholden to the same rules, and have access to all of the same functions.
 However, keep in mind that the `this` keyword in a value script will always refer to the Flag the
 value script belongs to. Additionally, the `player` keyword is only accessible when a Flag's value
-script is evaluated by the `findFlag` function, or when a Player attempts or solves a Puzzle. This
-means that when value scripts are evaluated when Flags are loaded from the sheet, an error will be
-thrown if any of them use the `player` keyword without being guarded against with a clause such as
-`player !== undefined`.
+script is evaluated by the `findFlag` function, when a Player attempts or solves a Puzzle, or when the
+flag Bot command is called with a `player` passed along. This means that when value scripts are evaluated
+when Flags are loaded from the sheet, an error will be thrown if any of them use the `player` keyword
+without being guarded against with a clause such as `player !== undefined`.
 
 Note that for security, scripts are evaluated in a heavily restricted context. A Flag's value script
 can only contain a single expression, and it cannot return a value of any type that a Flag cannot be
@@ -104,13 +104,13 @@ For more information on writing value scripts, see the
 - Spreadsheet label: **When Set / Cleared**
 - Class attribute: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String) `this.commandSetsString`
 
-This is a comma-separated list of sets of [bot commands](../commands/bot_commands.md) that will be
+This is a comma-separated list of sets of [Bot commands](../commands/bot_commands.md) that will be
 executed when the Flag is set or cleared. Set and cleared commands are separated by a forward
 slash (`/`). If no cleared commands are desired, then the forward slash can be omitted from the
 cell. If no set commands are desired but cleared commands are, the forward slash should be the first
 character in the cell, with the cleared commands following it.
 
-Note that when writing bot commands, it is good practice to be as precise as possible and provide
+Note that when writing Bot commands, it is good practice to be as precise as possible and provide
 room IDs if they are permitted, in order to prevent potential bugs. It should also be noted that
 when a Flag's commands set or clear another Flag, its commands will not be executed.
 
@@ -121,9 +121,11 @@ executed. Multiple values can share the same command set. The command set format
 `[value 1(, value 2(, value N)): set commands / cleared commands]`
 
 They share the same syntax as [Puzzle command sets](puzzle.md#command-sets-string). However, keep in
-mind that the "player" or "room" argument usable in many bot commands will only be available if the
+mind that the "player" or "room" argument usable in many Bot commands will only be available if the
 Flag is being set or cleared because a Player attempted or solved a Puzzle that listed it as a
-requirement, or if the flag bot command was executed and passed the initiating Player along.
+requirement, or if the flag Bot command was executed and passed the initiating Player along. It is
+possible to keep a Player in scope through the use of Puzzle-Flag-Puzzle
+[command chaining](puzzle.md#command-chaining).
 
 Set and cleared commands are not executed when a Flag is set or cleared by calling the `findFlag`
 function with the `evaluate` parameter set to `true`.

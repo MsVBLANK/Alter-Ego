@@ -304,10 +304,6 @@ Bracket characters (`[]`) should not be included when assigning behavior attribu
 
 - Enables the say command, which is disabled by default.
 
-#### `enable text`
-
-- Enables the text command, which is disabled by default.
-
 #### `no channel`
 
 - Removes the Player from the channel of the [Room](room.md) they're in.
@@ -373,6 +369,17 @@ Bracket characters (`[]`) should not be included when assigning behavior attribu
 - Non-Whispered dialog spoken by the Player with the `sender` attribute will be narrated in the Room of the
   `receiver` Player, regardless of the respective Players' locations. Example:
   `[sender Player voice string] coming from [receiver Player display name]'s [receiver Item name] says "[Message]".`
+
+#### `send text`
+
+- The Player can use the [text command](../commands/player_commands.md#text) to send
+  [text messages](action.md#text-action) to another Player, as long as the command isn't [disabled](#disable-command).
+- The recipient must have the `receive text` behavior attribute, unless the text is being sent with the
+  [text Moderator command](../commands/moderator_commands.md#text).
+
+#### `receive text`
+
+- The Player can selected by another Player with the `send text` behavior attribute as a recipient for a text message.
 
 #### `no speech`
 

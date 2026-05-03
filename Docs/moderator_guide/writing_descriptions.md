@@ -539,6 +539,12 @@ writing `if` conditionals. The following functions are available:
   - Does the same thing as `doWithChance`, but `baseChance` is first divided by `statusDivisor` if the
     Player has the Status Effect with the given ID.
   - Effectively, this makes it more likely to be `true` if the Player has the given Status Effect.
+- `divide(numerator: number, denominator: number)`
+  - Divides two numbers. This is especially useful when setting [Flag value scripts] in
+    [Bot commands](../reference/commands/bot_commands.md), as the character normally used to do division (`/`) is used
+    as a delimiter in command sets, making it otherwise impossible to do division in Bot commands.
+- `clamp(value: number, min: number, max: number)`
+  - Clamps a number between a minimum and maximum value, inclusive.
 - `generateListString(['string1', 'string2', ...])`
   - Generates a grammatically correct list with the given strings.
   - If there are two strings, outputs "string1 and string2".
@@ -942,6 +948,19 @@ have the description:
 ```xml
 <desc><s>It's a capsule from your favorite game, Capsulebeasts!</s> <s>This is a <procedural name="color"><poss name="black">black</poss></procedural> <procedural name="species"><poss name="tortide">Tortide</poss></procedural>.</s> <s><procedural name="finish"><poss name="metal">This one has a metallic finish.</poss></procedural></s></desc>
 ```
+
+It is important to note that that when a named `poss` tag contained inside of a named `procedural` tag is selected
+during procedural generation, then if there is another `procedural` tag with the same name in the same description, it
+will match the `poss` that was selected. So, given the description:
+
+```xml
+<desc><s><procedural name="P1"><poss name="A1">A1.</poss><poss name="B1">B1.</poss></procedural> <procedural name="P1"><poss name="B1">B1.</poss></procedural></s></desc>
+```
+
+If the `poss` tag that was selected in the `procedural` `P1` is `B1`, then in the second `procedural` `P1`, the `poss`
+that is selected will also be `B1`. Conversely, if `A1` is selected first, then the second `procedural` cannot be
+satisfied, as it does not have a `poss` tag named `A1`. So, it will be removed in the generated description. This is to
+ensure that procedural selections don't ever conflict within the same description.
 
 #### Poss attribute: `chance`
 

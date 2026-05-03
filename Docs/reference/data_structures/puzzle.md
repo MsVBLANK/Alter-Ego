@@ -429,7 +429,9 @@ can refer to that, or the name of the Puzzle's parent Fixture, if it has one.
 - If a Player unsolves the Puzzle, they will be sent the Puzzle's unsolved description, and Alter Ego will narrate
   `[Player displayName] presses eject on the [PUZZLE NAME].` in the Puzzle's Room channel.
 - If the Puzzle is already solved and a Player attempts to solve the Puzzle again with one of the Puzzle's solutions,
-  they will be sent an error message.
+  they will be sent the Puzzle's already solved description, and Alter Ego will narrate
+  `[Player displayName] attempts to insert [item phrase] into the [PUZZLE NAME], but something is already inside.`
+  in the Puzzle's Room channel.
 - If a Player fails to solve the Puzzle, Alter Ego will narrate
   `[Player displayName] attempts to insert [item phrase] into the [PUZZLE NAME], but it doesn't fit.` in the Puzzle's
   Room channel. The item phrase can be one of two things: if the Inventory Item's Prefab is discreet, it will simply be
@@ -438,9 +440,22 @@ can refer to that, or the name of the Puzzle's parent Fixture, if it has one.
   requirements not met description, and Alter Ego will narrate
   `[Player displayName] attempts to use the [PUZZLE NAME], but struggles.` in the Puzzle's Room channel.
 
-#### `restricted exit`
+#### `exit`
 
 - A Player must exit the Puzzle's location through the [Exit](exit.md) whose name matches the name of this Puzzle in
+  order to solve it. However, if the Exit is locked, they will still be unable to pass through it, and thus unable to
+  solve it. They will only solve the Puzzle if it has no listed solutions, or if their name is listed as a solution.
+- If the Player solves the Puzzle and their name is listed as a solution, their name will be set as the Puzzle's
+  outcome. If the Puzzle has no solutions, they will still solve it, but the outcome will be set as `undefined`.
+- Once the Puzzle has been solved, it can never be directly unsolved by a Player without moderator intervention.
+- Even if the Puzzle has been solved, it will be repeatedly solved any time a Player moves through the Exit, if they
+  would be able to solve it otherwise.
+- When a Player interacts with the Puzzle in any way, whether they solve it or not, Alter Ego will not narrate anything
+  in the Puzzle's Room channel.
+
+#### `restricted exit`
+
+- A Player must exit the Puzzle's location through the Exit whose name matches the name of this Puzzle in
   order to solve it. However, the Player's name must match one of the Puzzle's solutions, and the Puzzle must be
   accessible. The Exit must be in the same Room as the Puzzle.
 - If the Player solves the Puzzle, they will be able to move through the Exit, even if it's [locked](exit.md#unlocked).
@@ -499,7 +514,10 @@ then it must be solved in order for the requirement to be considered met.
 Prefabs can also be listed as requirements. However, they **must** be prefixed with `Prefab: `, `Item: `, `RoomItem: `,
 or `InventoryItem: `, followed by the Prefab ID. None of these aliases affect the requirement in any way --- they will
 all be interpreted as a Prefab requirement. If a Prefab is a requirement, then the Player must have an Inventory
-Item based on that Prefab for the requirement to be considered met.
+Item based on that Prefab for the requirement to be considered met. Additionally, if a Prefab requirement is present,
+and the Item being used to solve the Puzzle has a [limited number](room_item.md#uses) [of uses](inventory_item.md#uses),
+its uses will be decremented. This can result in it being transformed into its [next stage](prefab.md#next-stage-id),
+or even destroyed, if its uses is decremented to 0.
 
 Events can additionally be listed as requirements. However, they **must** be prefixed with `Event: `, followed by the
 Event ID. If an Event is a requirement, then it must be ongoing for the requirement to be considered met.

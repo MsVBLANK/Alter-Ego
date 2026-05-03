@@ -28,10 +28,10 @@ Adds a player to the game.
 #### Details
 
 Adds a user to the list of players for the current game. This command will give the specified user the Player role and
-add their data to the Players and Inventory Items spreadsheets. This will be generated using the data in your
-`playerdefaults.json` configuration file. However, their name will be set as whatever their current nickname is in the
-server. So, you should set their nickname to their character's name before using this command. Note that edit mode must
-be turned on in order to use this command. After using this command, you may edit the new player's data. Then, the
+add their data to the Players and Inventory Items spreadsheets. This will be generated using the data in the
+`Player Defaults` section of your `.env` file. However, their name will be set as whatever their current nickname is in
+the server. So, you should set their nickname to their character's name before using this command. Note that edit mode
+must be turned on in order to use this command. After using this command, you may edit the new player's data. Then, the
 Players sheet must be loaded, otherwise the new player will not be created correctly, and their data may be overwritten.
 
 ### clean
@@ -1029,6 +1029,8 @@ Checks your descriptions for errors.
 
     .parse
     .parse Kyra
+    .parse plaintext
+    .parse Ezekiel plain
     .testparser
 
 #### Details
@@ -1041,6 +1043,13 @@ occur during gameplay.
 You can input a player name to parse the text as if that player is reading it. This is useful if you want to see how
 descriptions will appear to a given player. If you do not supply one, descriptions will be parsed as if they are being
 read by a player named Cella.
+
+You can specify "plain" or "plaintext" to output a file which consists only of plain text, with no XML. If you do, a
+dictionary file will be generated and sent with the results. This dictionary will consist of all words that comprise
+the IDs and names of in-game entities. Alter Ego will not run spellchecking for you, but you can use these files in
+your preferred spellchecking program to look for errors. You will likely still need to add more words to the dictionary
+yourself in order to avoid false flags in your preferred spellchecker; the dictionary Alter Ego generates will
+simply act as a useful base.
 
 ### puzzle
 
@@ -1505,8 +1514,8 @@ Starts a new game with a timed delay. You must specify an amount of time as a nu
 (`h`) or minutes (`m`). During this time, server members with the Eligible role will be able to voluntarily add
 themselves to the game as players using the `play` command in the general channel. If debug mode is on, they must have
 the Tester role, and send the command in the testing channel. When this occurs, they will be given the Player role, and
-they will be added to the game's data as players with default player data as defined in your `playerdefaults.json`
-configuration.
+they will be added to the game's data as players with default player data as defined in the `Player Defaults` section
+of your `.env` file.
 
 When the timer you set reaches 0, all of the player data will be saved to the Players sheet. After that, you can edit
 their data to accurately reflect their characters. If you edit their data before the timer expires, it will be
@@ -1706,7 +1715,8 @@ Sends a text message from an NPC to a player.
 #### Details
 
 Sends a text message from the given NPC to a player. If an image is attached, it will be sent as well. It is possible to
-send a text message to any player, even those that don't have a status effect with the `enable text` behavior attribute.
+send a text message to any player, even those that don't have a status effect with the `receive text`
+behavior attribute.
 
 This command supports NPC latching. For more information, see the help details for the `latch` command. However, keep in
 mind that if you send a text with an attached image in the NPC's room channel, the message will be deleted, and the

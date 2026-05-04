@@ -98,7 +98,7 @@ export default class GameLogHandler {
 		else if (target instanceof Fixture || target instanceof Player) targetString = `${target.name}`;
 		else if (target instanceof RoomItem) {
 			const preposition = target.getContainerPreposition();
-			const containerPhrase = target.getContainerPhrase();
+			const containerPhrase = target.container instanceof RoomItem ? target.container.getIdentifier() : target.getContainerPhrase();
 			targetString = `${target.getIdentifier()} ${preposition} ${containerPhrase}`;
 		}
 		else if (target instanceof InventoryItem) {

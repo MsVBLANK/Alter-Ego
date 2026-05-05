@@ -327,14 +327,14 @@ This is the stamina stat that each player will have by default. For more informa
 This is the ID of the [Room](../reference/data_structures/room.md) that all players will start in at the
 beginning of the game.
 
-*Default: `living-room`*
+*Default: `Dorm 1`*
 
 ### DEFAULT_STATUS_EFFECTS
 
 This is a comma-separated list of [Status Effects](../reference/data_structures/status.md) that will be inflicted on
 all players at the beginning of the game.
 
-*Default: `satisfied, well rested`*
+*Default: `satisfied, well rested, clean, normal`*
 
 ### DEFAULT_INVENTORY
 
@@ -356,15 +356,16 @@ While the default is multiple lines, it is simpler to specify a compact, single-
     ["NULL", "", "GLASSES", "", "", "", ""],
     ["NULL", "", "FACE", "", "", "", ""],
     ["NULL", "", "NECK", "", "", "", ""],
+    ["NULL", "", "ACCESSORY", "", "", "", ""],
     ["NULL", "", "CHEST", "", "", "", ""],
-    ["DEFAULT SHIRT", "", "SHIRT", "", "1", "", "<desc><s>It's a plain, white T-shirt.</s></desc>"],
+    ["DEFAULT SHIRT", "", "SHIRT", "", "1", "", "<desc><s>It's a plain, <procedural name=\"clothing color\"><poss name=\"white\">white</poss></procedural> T-shirt.</s></desc>"],
     ["NULL", "", "JACKET", "", "", "", ""],
     ["NULL", "", "BAG", "", "", "", ""],
     ["NULL", "", "GLOVES", "", "", "", ""],
-    ["DEFAULT PANTS", "DEFAULT PANTS #", "PANTS", "", "1", "", "<desc><s>It's a plain pair of blue jeans.</s> <s>It has two pockets on the front.</s> <s>In the left pocket, you find <il name=\"LEFT POCKET\"></il>.</s> <s>In the right pocket, you find <il name=\"RIGHT POCKET\"></il>.</s></desc>"],
-    ["DEFAULT UNDERWEAR", "", "UNDERWEAR", "", "1", "", "<desc><s>It's a plain, white pair of underwear.</s></desc>"],
-    ["DEFAULT SOCKS", "", "SOCKS", "", "1", "", "<desc><s>It's a pair of plain, white ankle socks.</s></desc>"],
-    ["DEFAULT SHOES", "", "SHOES", "", "1", "", "<desc><s>It's a pair of plain, white tennis shoes.</s></desc>"]
+    ["DEFAULT PANTS", "DEFAULT PANTS #", "PANTS", "", "1", "", "<desc><s>It's a plain pair of <procedural name=\"clothing color\"><poss name=\"light blue\">light blue</poss></procedural> jeans.</s> <s>It has two pockets on the front.</s> <s>In the right pocket, you find <il name=\"RIGHT POCKET\"></il>.</s> <s>In the left pocket, you find <il name=\"LEFT POCKET\"></il>.</s></desc>"],
+    ["DEFAULT UNDERWEAR", "", "UNDERWEAR", "", "1", "", "<desc><s>It's a plain, <procedural name=\"clothing color\"><poss name=\"white\">white</poss></procedural> pair of underwear.</s></desc>"],
+    ["DEFAULT SOCKS", "", "SOCKS", "", "1", "", "<desc><s>It's a pair of plain, <procedural name=\"clothing color\"><poss name=\"white\">white</poss></procedural> ankle socks.</s></desc>"],
+    ["DEFAULT SHOES", "", "SHOES", "", "1", "", "<desc><s>It's a pair of plain, <procedural name=\"clothing color\"><poss name=\"white\">white</poss></procedural> tennis shoes.</s></desc>"]
 ]
 ```
 
@@ -377,7 +378,7 @@ lists should also be filled out to contain the containing phrases for the defaul
 *Default:*
 
 ```xml
-<desc><s>You examine <var v="container.displayName" />.</s> <if cond="container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /> <if cond="container.pronouns.plural">are</if><if cond="!container.pronouns.plural">is</if> [HEIGHT], but <var v="container.pronouns.dpos" /> face is concealed.</s></if><if cond="!container.hasAttribute('concealed')"><s><var v="container.pronouns.Sbj" /><if cond="container.pronouns.plural">'re</if><if cond="!container.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s></if> <s><var v="container.pronouns.Sbj" /> wear<if cond="!container.pronouns.plural">s</if> <il name="equipment"><item>a SHIRT</item>, <item>a pair of PANTS</item>, and <item>a pair of TENNIS SHOES</item></il>.</s> <s>You see <var v="container.pronouns.obj" /> carrying <il name="hands"></il>.</s></desc>
+<desc><s>You examine <var v="this.displayName"/>.</s> <if cond="this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /> <if cond="this.pronouns.plural">are</if><if cond="!this.pronouns.plural">is</if> [HEIGHT], but <var v="this.pronouns.dpos" /> face is concealed.</s></if><if cond="!this.hasBehaviorAttribute('concealed')"><s><var v="this.pronouns.Sbj" /><if cond="this.pronouns.plural">'re</if><if cond="!this.pronouns.plural">'s</if> [HEIGHT] with [SKIN TONE], [HAIR], and [EYES].</s> <if cond="this.hasStatus('tired')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> bags under <var v="this.pronouns.dpos"/> eyes.</s></if><if cond="this.hasStatus('exhausted')"><s><var v="this.pronouns.Sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if> dark bags under <var v="this.pronouns.dpos"/> eyes.</s> <s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> absolutely **exhausted**.</s></if><if cond="this.hasStatus('delirious')"><s><var v="this.pronouns.Sbj"/> look<if cond="!this.pronouns.plural">s</if> completely **delirious**, like <var v="this.pronouns.sbj"/> <if cond="this.pronouns.plural">have</if><if cond="!this.pronouns.plural">has</if>n't slept in days.</s></if></if><br /><br /><s><var v="this.pronouns.Sbj" /> wear<if cond="!this.pronouns.plural">s</if> <il name="equipment"></il>.</s><if cond="this.getContainedItemsForItemList('equipment').length === 0"><s><var v="this.pronouns.Sbj" /> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> completely naked.</s></if> <s>You see <var v="this.pronouns.obj"/> carrying <il name="hands"></il>.</s> <if cond="this.hasStatus('stinky')"><s><var v="this.pronouns.Sbj"/>'<if cond="this.pronouns.plural">re</if><if cond="!this.pronouns.plural">s</if> a little stinky.</s></if><if cond="this.hasStatus('rancid')"><s><var v="this.pronouns.Sbj"/> smell<if cond="!this.pronouns.plural">s</if> absolutely **rancid**.</s></if> <if cond="this.hasStatus('soaking wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> soaking wet.</s></if><if cond="this.hasStatus('wet')"><s>Also, <var v="this.pronouns.sbj"/> <if cond="!this.pronouns.plural">is</if><if cond="this.pronouns.plural">are</if> a bit wet.</s></if></desc>
 ```
 
 ## Role IDs

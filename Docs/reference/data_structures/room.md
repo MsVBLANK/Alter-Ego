@@ -211,6 +211,16 @@ accessible methods; only ones that are likely to be useful when writing [Flag va
 [`if`](../../moderator_guide/writing_descriptions.md#if) and [`var`](../../moderator_guide/writing_descriptions.md#var)
 tags in descriptions.
 
+### getChannelId
+
+```ts
+this.getChannelId();
+```
+
+- Purpose: Gets the ID of the channel associated with this room.
+- Returns: [String](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String)
+- Parameters: None
+
 ### generateOccupantsString
 
 ```ts

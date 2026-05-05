@@ -1,7 +1,8 @@
 # Edit Mode
 
 Edit mode is a special mode of Alter Ego that drastically limits gameplay. It can be toggled on and off by a
-[moderator](moderating.md) at will using the [editmode command](../reference/commands/moderator_commands.md#editmode).
+[moderator](../reference/settings.md#moderator_role) at will using the
+[editmode command](../reference/commands/moderator_commands.md#editmode).
 
 ## Purpose
 
@@ -17,22 +18,24 @@ by a moderator with the [load command](../reference/commands/moderator_commands.
 the game data, it is able to more efficiently access and modify that data, thus allowing for a much faster and smoother
 gameplay experience. However, at any given time, Alter Ego has more data than actually appears on the spreadsheet
 (typically to allow for faster access to data it needs - many of the internal attributes found on the Data Structures
-pages on this Wiki serve this purpose), and more importantly, that data is out of sync with the data on the spreadsheet.
+pages in this documentation serve this purpose), and more importantly,
+that data is out of sync with the data on the spreadsheet.
 
 During gameplay, this is typically not a problem. However, in the event of an error, or a crash, or a power outage, or
 some other incident which causes Alter Ego to shut down during gameplay, its internal data will be lost. In order to
 combat this, Alter Ego regularly updates the spreadsheet with the most recent copy of its internal data using
-the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval at which this occurs
-can be set with the [autoSaveInterval setting](../reference/settings.md#autosave_interval). While this
-still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a fairly recent
-backup to load from in order to minimize the amount of data loss.
+the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval
+at which this occurs can be set with the [autoSaveInterval setting](../reference/settings.md#autosave_interval). While
+this still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a fairly
+recent backup to load from in order to minimize the amount of data loss.
 
 However, because Alter Ego updates the entire spreadsheet at once (only
-the [Prefab](../reference/data_structures/prefab.md), [Recipe](../reference/data_structures/recipe.md), [Status Effect](../reference/data_structures/status.md),
-and [Gesture](../reference/data_structures/gesture.md) sheets remain unaffected by the saving process), this can make it
-difficult for a moderator to edit the spreadsheet during gameplay, both because their changes will be overwritten if
-they're not fast enough, and because attempting to edit the spreadsheet during gameplay can result in outdated game data
-being stored during the next load. The solution to this problem is edit mode.
+the [Prefab](../reference/data_structures/prefab.md), [Recipe](../reference/data_structures/recipe.md),
+[Status Effect](../reference/data_structures/status.md), and [Gesture](../reference/data_structures/gesture.md) sheets
+remain unaffected by the saving process), this can make it difficult for a moderator to edit the spreadsheet during
+gameplay, both because their changes will be overwritten if they're not fast enough, and because attempting to edit the
+spreadsheet during gameplay can result in outdated game data being stored during the next load.
+The solution to this problem is edit mode.
 
 ## Functionality
 
@@ -51,10 +54,11 @@ act autonomously, their restriction during edit mode drastically reduces the amo
 game state without the moderator's awareness.
 
 To be clear, edit mode does **not** prevent Alter Ego's copy of the game data stored in its internal memory from
-changing. Timers on [Events](../reference/data_structures/event.md)
-and [Status Effects](../reference/data_structures/status.md) will continue to count down, for example, and any
-consequences that result from those changes will still be present when edit mode is disabled. Edit mode simply
-temporarily reduces the amount of unpredictable changes caused by Player actions.
+changing. Status Effects inflicted on Players will have their timers paused, but any other timers, such as those on
+[Events](../reference/data_structures/event.md#timer) and [Fixtures](../reference/data_structures/fixture.md#process)
+will continue to count down, for example, and any consequences that result from those changes will still be present
+when edit mode is disabled. Edit mode simply temporarily reduces the amount of
+unpredictable changes caused by Player actions.
 
 Edit mode is not a perfect solution to this problem. Data asynchrony can still occur when edit mode is used, and the
 amount of asynchrony within the game data will accumulate the more frequently edit mode is used in conjunction with the
@@ -66,8 +70,8 @@ game data consistent are:
 * Use edit mode sparingly - only when needed.
 * Only load the manually edited data structures before disabling edit mode in order to avoid reloading old game data.
 * When applicable, load related data structures. For example, if manually
-  editing [Items](../reference/data_structures/room_item.md), load the [Fixtures](../reference/data_structures/fixture.md)
-  and [Puzzles](../reference/data_structures/puzzle.md) which contain them.
+  editing [Room Items](../reference/data_structures/room_item.md), load the Fixtures and
+  [Puzzles](../reference/data_structures/puzzle.md) which contain them.
 * Avoid loading Players unless absolutely necessary.
 * Every so often, load all game data to get everything back in sync.
 * Every once in a while, reboot Alter Ego entirely in order to clear out its internal memory.

@@ -18,23 +18,24 @@ permissions.
 This should be one of two roles in your server at the moment. Disable all permissions for it. There are some optional
 permissions you can enable for it, however. Doing this will enable them for every role:
 
-* Embed Links _(optional)_
-* Attach Files _(optional)_
-* Add Reactions _(optional)_
-* Use External Emojis _(optional)_
-    * If this permission is not enabled, then any external emojis that are sent in a Room channel, whether by a Player
-      or a [moderator](../../moderator_guide/moderating.md), will not be sent
-      in [spectate channels](../../reference/data_structures/player.md#spectate-channel). Instead, they will be replaced
-      with the name of the emoji.
-* Use External Stickers _(optional)_
-    * Stickers will not show up in spectate channels under any circumstances.
+- Embed Links _(optional)_
+- Attach Files _(optional)_
+- Add Reactions _(optional)_
+- Use External Emoji _(optional)_
+  - Whether this permission is enabled or not, any external emoji that are sent in Room or Whisper channels, whether
+    by a Player or a [moderator](../../reference/settings.md#moderator_role), will not be sent
+    in [spectate channels](../../reference/data_structures/player.md#spectate-channel). Instead, they will be
+    replaced with the name of the emoji. This is because Discord does not allow bots to use emoji from servers they
+    are not in, and Alter Ego can only be in one server.
+- Use External Stickers _(optional)_
+  - Stickers will not show up in spectate channels under any circumstances.
 
 ### [Bot name]
 
 This will have been automatically created when you added your bot to the server and will be the name of your bot. You
-can change the role's name if you wish, but be sure to give enable the following setting:
+can change the role's name if you wish, but be sure to enable the following setting:
 
-* Display role members separately from online members
+- Display role members separately from online members
 
 You can leave everything else as it is.
 
@@ -49,9 +50,9 @@ permissions for it.
 This is a new role you'll have to create. You can call it whatever you want, but remember that it's supposed to be the
 role for dead players. These are the settings you'll need to enable:
 
-* Display role members separately from online members
-* Allow anyone to **@mention** this role
-* Read Message History
+- Display role members separately from online members
+- Allow anyone to **@mention** this role
+- Read Message History
 
 Disable everything else.
 
@@ -60,9 +61,9 @@ Disable everything else.
 This is the role for spectators. Once again, you can call this (and all of the new roles) whatever you like, but the
 names given here are what's recommended for clarity's sake. Enable these settings:
 
-* Display role members separately from online members
-* Allow anyone to **@mention** this role
-* Read Message History
+- Display role members separately from online members
+- Allow anyone to **@mention** this role
+- Read Message History
 
 Disable everything else.
 
@@ -70,29 +71,31 @@ Disable everything else.
 
 This is the role for testers. This role is only necessary if you use debug mode. Enable these settings:
 
-* Allow anyone to **@mention** this role
-* Send Messages
+- Allow anyone to **@mention** this role
+- Send Messages and Create Posts
 
 Disable everything else.
 
 ### Eligible
 
-This is the role for users who allowed to play the game. If a user doesn't have this role, they won't be able to use the
-play command when you start the game. Enable these settings:
+This is the role for users who allowed to play the game. If a user doesn't have this role, they won't be able to use
+the [play command](../../reference/commands/eligible_commands.md#play) when you issue the
+[startgame command](../../reference/commands/moderator_commands.md#startgame). Enable these settings:
 
-* Allow anyone to **@mention** this role
-* Send Messages
+- Allow anyone to **@mention** this role
+- Send Messages and Create Posts
 
 Disable everything else.
 
 ### Player
 
 This is the role for players in an ongoing game. Users with the Eligible role will be given this role as soon as they
-use the play command. Enable these settings:
+use the play command, or when you use the [addplayer command](../../reference/commands/moderator_commands.md#addplayer).
+Enable these settings:
 
-* Display role members separately from online members
-* Allow anyone to **@mention** this role
-* Send Messages
+- Display role members separately from online members
+- Allow anyone to **@mention** this role
+- Send Messages and Create Posts
 
 Disable everything else.
 
@@ -101,10 +104,10 @@ Disable everything else.
 This role allows a player to move to any room they wish, adjacent or not. This should generally not be given out freely.
 Enable these settings:
 
-* Display role members separately from online members
-* Allow anyone to **@mention** this role
-* Send Messages
-* Read Message History
+- Display role members separately from online members
+- Allow anyone to **@mention** this role
+- Send Messages and Create Posts
+- Read Message History
 
 Disable everything else.
 
@@ -113,24 +116,24 @@ Disable everything else.
 This is the last role you need to make. This should be given to your moderator(s), including yourself. Enable these
 settings:
 
-* Display role members separately from online members
-* Allow anyone to **@mention** this role
+- Display role members separately from online members
+- Allow anyone to **@mention** this role
 
 From here, you have two options: you can either give them the Administrator permission, which automatically gives them
 all permissions, or grant the following permissions:
 
-* View Channels
-* Manage Channels
-* Manage Roles
-* View Audit Log
-* Change Nickname
-* Manage Nicknames
-* Send Messages
-* Embed Links
-* Attach Files
-* Mention @everyone, @here, and All Roles
-* Manage Messages
-* Read Message History
+- View Channels
+- Manage Channels
+- Manage Roles
+- View Audit Log
+- Change Nickname
+- Manage Nicknames
+- Send Messages and Create Posts
+- Embed Links
+- Attach Files
+- Mention @everyone, @here, and All Roles
+- Manage Messages
+- Read Message History
 
 Whether you give them Administrator privileges or not depends on whether or not you want any other moderators to be able
 to do things like change the server name or add emojis. All other permissions are optional.
@@ -140,7 +143,18 @@ to do things like change the server name or add emojis. All other permissions ar
 A good thing to do is to organize your roles. You can give them special colors if you want, too. An order like this is
 ideal:
 
-![](../../images/roles.png)
+![
+Moderator
+Alter Ego
+Free Movement
+Player
+Eligible
+Tester
+Dead
+Spectator
+Hidden
+@everyone
+](../../images/roles.png)
 
 **Ensure that the role that was created when you invited Alter Ego to the server (which was automatically assigned to
 it) is the second highest role in the list.** If it's not, it may have issues with permissions.
@@ -153,45 +167,45 @@ anything you want, but the ones listed here are recommended for clarity's sake.
 ### Category: Important
 
 This category is where you should put all of the important channels that will be viewable to everyone. You can put all
-kinds of channels here such as rules for the killing game, a list of players and their
-talents, [maps](../../moderator_guide/mapmaking.md), etc. Before anything else, though, you'll have to set the
+kinds of channels here such as rules for the role play, a list of players,
+[maps](../../moderator_guide/mapmaking.md), etc. Before anything else, though, you'll have to set the
 permission overrides for this category. Be sure to assign the following roles the listed permission overrides for this
 category:
 
-* @everyone
-    * View Channels: Enabled
-    * Send Messages: Disabled
-    * Read Message History: Enabled
-* Hidden
-    * View Channels: Disabled
-* Free Movement
-    * Send Messages: Enabled
-* Moderator
-    * Send Messages: Enabled _(only needed if Moderator doesn't have Administrator permission)_
+- @everyone
+  - View Channels: Enabled
+  - Send Messages and Create Posts: Disabled
+  - Read Message History: Enabled
+- Hidden
+  - View Channels: Disabled
+- Free Movement
+  - Send Messages and Create Posts: Enabled
+- Moderator
+  - Send Messages and Create Posts: Enabled _(only needed if Moderator doesn't have Administrator permission)_
 
 #### Channel: announcements
 
 This channel will be used by the bot in very limited circumstances. If a message is sent in this channel by a player
 with the Free Movement role, it will be sent to the spectate channels of all players. You can use this channel to post
-general announcements, announcements from the killing game host (e.g. morning and night announcements, body discovery
-announcements, etc.), and anything else you want to inform everyone about. You don't need to set any permission
-overrides for this channel.
+general announcements, announcements from the host of the role play (e.g. morning and night announcements, etc.),
+and anything else you want to inform everyone about. You don't need to set any permission overrides for this channel.
 
 ### Category: Out of Character
 
 This category is for people to talk outside of the game. You should set the following permission overrides for this
 category:
 
-* @everyone
-    * View Channels: Enabled
-    * Send Messages: Enabled
-    * Embed Links: Enabled
-    * Attach Files: Enabled
-    * Add Reactions: Enabled
-    * Use External Emojis: Enabled
-    * Read Message History: Enabled
-* Hidden
-    * View Channels: Disabled
+- @everyone
+  - View Channels: Enabled
+  - Send Messages and Create Posts: Enabled
+  - Embed Links: Enabled
+  - Attach Files: Enabled
+  - Add Reactions: Enabled
+  - Use External Emojis: Enabled
+  - Read Message History: Enabled
+  - Any others that you want
+- Hidden
+  - View Channels: Disabled
 
 #### Channel: general
 
@@ -205,42 +219,48 @@ channel.
 This channel is where dead players and spectators can discuss the game. Meta-gaming here is completely fine, as living
 players won't be able to see it. You should set the following permission overrides for this channel:
 
-* @everyone
-    * View Channel: Neutral
-* Dead
-    * View Channel: Enabled
-* Spectator
-    * View Channel: Enabled
+- @everyone
+  - View Channel: Disabled
+- Hidden
+  - View Channel: Your choice
+- Dead
+  - View Channel: Enabled
+- Spectator
+  - View Channel: Enabled
+- Moderator
+  - View Channel: Enabled
 
 #### Channel: testing
 
 This channel is only necessary if you use debug mode. If you do, the startgame and endgame announcements will be made in
 this channel instead of in general. You should set the following permission overrides for this channel:
 
-* @everyone
-    * View Channel: Disabled
-* Tester
-    * View Channel: Enabled
-* Moderator
-    * View Channel: Enabled
+- @everyone
+  - View Channel: Disabled
+- Hidden
+  - View Channel: Your choice
+- Tester
+  - View Channel: Enabled
+- Moderator
+  - View Channel: Enabled
 
 ### Category: Control Center
 
 This category is for the moderator(s) only. You should set the following permission override for this category:
 
-* Moderator
-    * View Channels: Enabled
+- Moderator
+  - View Channels: Enabled
 
 #### Channel: bot-log
 
-This channel is where Alter Ego will post the time and location in which players perform actions. For example, every
-time a player moves to another room, it will be posted here. Every time a player inspects a Fixture or item, it will be
-posted here. Due to the sheer number of messages that will be posted in this channel, it is strongly recommended you
-mute it.
+This channel is where Alter Ego will post the time and location of almost every in-game action. This keeps every in-game
+occurrence in one place, in a linear order, which is useful for moderator reference.
+
+Due to the sheer number of messages that will be posted in this channel, it is strongly recommended you mute it.
 
 #### Channel: bot-commands
 
-This channel is the only place where Alter Ego will accept commands from a moderator.
+This channel is where Alter Ego will accept commands from a moderator.
 
 ### Category: Rooms
 
@@ -256,22 +276,22 @@ set any permission overrides for room categories or the channels that belong to 
 This category is where Alter Ego will create [Whisper](../../reference/data_structures/whisper.md) channels. There is
 only one permission override you should make, but it is optional:
 
-* Player
-    * Read Message History: Enabled
+- Player
+  - Read Message History: Enabled
 
-### Category: Spectators
+### Category: Spectate
 
 This category is where Alter Ego will create and post to spectate channels for each player. These will allow spectators
 to view the game for any player they choose, seeing everything they see in real time. You should set the following
 permission override for this category:
 
-* @everyone
-    * Send Messages: Disabled
-    * Read Message History: Enabled
-* Dead
-    * View Channels: Enabled
-* Spectator
-    * View Channels: Enabled
+- @everyone
+  - Send Messages: Disabled
+  - Read Message History: Enabled
+- Dead
+  - View Channels: Enabled
+- Spectator
+  - View Channels: Enabled
 
 ### Other
 

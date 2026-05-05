@@ -142,6 +142,13 @@ export default class Room extends GameEntity implements PersistentGameEntity {
     }
 
     /**
+     * Gets the ID of the channel associated with this room.
+     */
+    getChannelId(): string {
+        return this.channel.id;
+    }
+
+    /**
      * Gets a list of the room's occupants excluding the given player, sorted alphabetically by display name.
      *
      * @param player - The player to exclude.

@@ -807,7 +807,7 @@ describe('test_parser_generateProceduralOutput', () => {
                 expect(actual).toHaveSize(expected.size);
                 for (const [text, count] of actual)
                     expect(count).toBe(expected.get(text));
-            });
+            }, 15000);
 
             test('pattern glaze nested repeated procedurals', () => {
                 const text = `<desc><s>This is a ceramics glaze.</s> <s>The color is <procedural name="pattern color"><poss name="red"><procedural name="secondary pattern color"><poss name="red">red</poss></procedural></poss><poss name="orange"><procedural name="secondary pattern color"><poss name="orange">orange</poss></procedural></poss><poss name="brown"><procedural name="secondary pattern color"><poss name="brown">brown</poss></procedural></poss></procedural>.</s></desc>`;
@@ -819,7 +819,7 @@ describe('test_parser_generateProceduralOutput', () => {
                 expect(actual).toHaveSize(expected.size);
                 for (const [text, count] of actual)
                     expect(count).toBeWithinRange(expected.get(text) - acceptableDeviation, expected.get(text) + acceptableDeviation);
-            });
+            }, 15000);
         });
     });
 

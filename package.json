@@ -30,7 +30,7 @@
     "@xmldom/xmldom": "^0.8.11",
     "acorn": "^8.15.0",
     "date-fns": "^4.1.0",
-    "discord.js": "^14.25.1",
+    "discord.js": "^14.26.4",
     "googleapis": "^164.1.0",
     "luxon": "^3.7.2",
     "pretty-format": "^30.2.0",

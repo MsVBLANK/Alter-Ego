@@ -1,0 +1,31 @@
+version = 1
+
+# Code
+[[annotations]]
+path = [
+    "**.js",
+    "**.ts",
+    "**.json",
+    "**.css",
+    "**.yml",
+    "Dockerfile",
+    ".dockerignore",
+    ".editorconfig",
+    ".env.example",
+    ".gitignore",
+    ".gitattributes"
+]
+SPDX-FileCopyrightText = "2019 Alter Ego Contributors"
+SPDX-License-Identifier = "AGPL-3.0-or-later"
+
+# Docs
+[[annotations]]
+path = ["**.png", "**.jpg", "**.webp", "Docs/**/**.md"]
+SPDX-FileCopyrightText = "2019 Alter Ego Contributors"
+SPDX-License-Identifier = "CC-BY-SA-4.0"
+
+# Machine Generated
+[[annotations]]
+path = ["package-lock.json"]
+SPDX-FileCopyrightText = "NONE"
+SPDX-License-Identifier = "CC0-1.0"

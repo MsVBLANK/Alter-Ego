@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Alter Ego Contributors
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Getting to Know Alter Ego
 
 Now that you've joined an Alter Ego game, it would be a good idea to familiarize yourself with the user interface of Alter Ego before the game starts.

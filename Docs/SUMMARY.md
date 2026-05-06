@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Alter Ego Contributors
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Summary
 
 [Introduction](README.md)

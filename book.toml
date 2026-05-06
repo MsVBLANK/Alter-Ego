@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2025 Alter Ego Contributors
+#
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
 [book]
 title = "Alter Ego Docs"
 description = "Documentation for the Alter Ego Project"

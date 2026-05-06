@@ -24,11 +24,10 @@ Version: 2.0
 </div>
 
 Welcome to the Alter Ego Docs! This documentation website serves as a knowledge hub for Alter Ego, a Discord bot used to
-facilitate an in-depth, multiplayer text adventure role-playing game. It is an ongoing project maintained by Alter Ego's
-developer, MolSno. While development of Alter Ego has slowed significantly since its
-creation in 2019, these docs are kept up-to-date with the most recent changes.
+facilitate an in-depth, multiplayer text adventure role-playing game. It is an ongoing project maintained by Alter Ego
+Contributors since 2019.
 
-Alter Ego is an open-source project that anyone can fork and modify to suit their own purposes. These docs aim to
+Alter Ego is an open-source project licensed under the [AGPL-3.0-or-later](https://www.gnu.org/licenses/agpl-3.0.html) license that anyone can fork and modify to suit their own purposes. These docs aim to
 provide accurate, useful documentation and explanations for both casual users and developers.
 
 ## License

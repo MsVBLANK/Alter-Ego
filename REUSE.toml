@@ -20,7 +20,7 @@ SPDX-License-Identifier = "AGPL-3.0-or-later"
 
 # Docs
 [[annotations]]
-path = ["**.png", "**.jpg", "**.webp", "Docs/**/**.md"]
+path = ["Docs/**/**.png", "Docs/**/**.jpg", "Docs/**/**.webp", "Docs/**/**.md"]
 SPDX-FileCopyrightText = "2019 Alter Ego Contributors"
 SPDX-License-Identifier = "CC-BY-SA-4.0"
 

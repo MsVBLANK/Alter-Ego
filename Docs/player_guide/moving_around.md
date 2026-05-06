@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Alter Ego Contributors
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Moving Around
 
 Using Alter Ego, you can explore detailed game worlds and role play in them. To do that however, we must be able to

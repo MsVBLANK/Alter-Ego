@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2025 Alter Ego Contributors
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Contributing to Alter Ego
 
 Thank you for your interest in contributing to Alter Ego! The following are some

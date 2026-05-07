@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2026 Alter Ego Contributors
+SPDX-FileCopyrightText: 2026 Amy Poon <amy@amypoon.me>
 
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->

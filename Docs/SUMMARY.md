@@ -22,12 +22,13 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Player Guide
 
-- [How to Use This Guide]()
+- [How to Use This Guide](player_guide/how_to_use_this_guide.md)
 - [Getting Started](player_guide/getting_started.md)
 - [Getting to Know Alter Ego](player_guide/getting_to_know_alter_ego.md)
-- [Interacting with Things](player_guide/interacting.md)
+- [Interacting with Things](player_guide/interacting_with_things.md)
 - [Moving Around](player_guide/moving_around.md)
 - [Expressing Yourself](player_guide/expressing_yourself.md)
+- [Dressing Up]()
 - [Crafting]()
 - [Solving Puzzles]()
 - [Your Moderator and You]()

@@ -16,9 +16,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 - [Installation and Setup](moderator_guide/installation.md)
 - [Moderating](moderator_guide/moderating.md)
+- [Mapmaking](moderator_guide/mapmaking.md)
 - [Writing Descriptions](moderator_guide/writing_descriptions.md)
 - [Edit Mode](moderator_guide/edit_mode.md)
-- [Mapmaking]()
 
 # Player Guide
 

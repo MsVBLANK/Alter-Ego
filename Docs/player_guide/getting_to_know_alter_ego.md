@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2026 Alter Ego Contributors
+SPDX-FileCopyrightText: 2026 Amy Poon <amy@amypoon.me>
 
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
@@ -7,13 +7,14 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 # Getting to Know Alter Ego
 
 Now that you've joined an Alter Ego game, it would be a good idea to familiarize yourself with the user interface of Alter Ego before the game starts.
-After all, you don't want to be panicking and trying to hunt down channels and commands when you are trying to role play!
+After all, you don't want to be panicking and trying to hunt down channels and [*commands*](../reference/commands/index.md)
+when you are trying to role play!
 
 ## Getting Situated
 
 You play Alter Ego by interacting in **room channels** and **direct messages**.
 When a game of Alter Ego starts, you will get a direct message (DM) from the Alter Ego bot,
-which will be a description of the current room that you are in.
+which will be a description of the current [*room*](../reference/data_structures/room.md) that you are in.
 
 ![Screenshot of Discord direct messages side bar with user named "Test Bot".](../images/alter_ego_bot_dm.png)
 
@@ -29,10 +30,10 @@ has become accessible.
 This is the **room channel**, the primary way you interact with other players. In this channel, you can talk to other
 players and also send commands. One important thing to note is that your room channel changes *every time* you move to
 a new location, so remember to switch to the new room channel! You don't want to miss the conversation every time you
-switch rooms!
+switch *rooms*!
 
 > [!TIP]
-> To make your life easier, try having *two instances of Discord open at the same time* while playing Alter Ego.
+> To make your life easier, try having **two instances of Discord open at the same time** while playing Alter Ego.
 > To do this, open the Discord app on your computer while being logged in to Discord on your web browser.
 > Alternatively, you can have the Discord app open on both your computer or your smart device.
 > One of them will be open to the Alter Ego bot's DMs while the other will be open to the current room channel.
@@ -40,7 +41,7 @@ switch rooms!
 
 ## Using Commands
 
-**Commands** are the primary way you interact with Alter Ego. You can use commands in *both* in DMs and in
+**Commands** are the primary way you interact with Alter Ego. You can use commands in **both** in DMs and in
 room channels.
 
 To use a command, enter the **command prefix** (by default `.`)[^1] and append it with the command you wish to use.
@@ -51,13 +52,13 @@ the following in Discord.
 .inspect
 ```
 
-We should now see that Alter Ego has sent a response to our command.
+We should now see that Alter Ego has sent a response to our *command*.
 
 ![](../images/inspect_error.png)
 
 Whoops! It seems like we have to actually specify what we are trying to look at for the *inspect* command to work.
-Let's try again. How about we try inspecting the room we're in? To do this, append "room" as an **argument** after the
-command.
+Let's try again. How about we try *inspecting* the *room* we're in? To do this, append "room" as an **argument** after
+the command.
 
 ```txt
 .inspect room
@@ -80,38 +81,39 @@ If you wish to learn about what other commands are available, refer to the [comm
 ## Clicking on Interactables
 
 Have you noticed those blue and red buttons in the screenshot above? How about the dropdown menu?
-These are **interactables** and they allow you to perform common actions in Alter Ego with your mouse,
-all without using any commands! Let's try them out.
+These are [**interactables**](../reference/interactables.md) and they allow you to perform common actions in Alter Ego
+with your mouse or touch screen, all without using any commands! Let's try them out.
 
-If we click on the *inspect* dropdown, we see a list of items in the room that we can have a look at.
+If we click on the `Inspect` dropdown, we see a list of items in the *room* that we can have a look at.
 
-![TODO screenshot of dropdown](../images/inspect_interactable_dropdown.png)
+![](../images/inspect_interactable_dropdown.png)
 
-Let's try and have a look at the utility cart by clicking on the dropdown menu item.
+Let's try and have a look at the `UTILITY CART` by clicking on the dropdown menu item.
 
-![TODO screenshot of inspect output](../images/inspect_utility_cart.png)
+![](../images/inspect_utility_cart.png)
 
-Nice, we know what the utility cart looks like now! Ignore the *Drop* dropdown for now, we will cover that in a later
+Nice, we know what the `UTILITY CART` looks like now! Ignore the *Drop* dropdown for now, we will cover that in a later
 chapter.
 
-Now let's try clicking on one of the buttons in the original message. We will click on the blue *Move HALL* button and
+Now let's try clicking on one of the buttons in the original message. We will click on the blue `Move HALL` button and
 see what happens.
 
-![TODO screenshot of move output](../images/move_interactable_output.png)
+![](../images/move_interactable_output.png)
 
 Awesome! We've moved to the basement hall---all without sending a single command. Convenient right?
 
-At the moment, interactables allow you to inspect things, move to rooms, pick up objects, craft items, and more.
+At the moment, *interactables* allow you to *inspect* things, move to *rooms*, pick up objects, craft items, and more.
 This means that most of what you will do in Alter Ego can be replaced with interactables.
 
 
 ## Seeking Help
 
 > [!IMPORTANT]
-> Not all functions can be replaced by interactables. Just because something isn't possible to do with interactables,
-> doesn't mean it's not possible. Always see if there is a command for what you're trying to do before giving up!
+> Not all functions can be replaced by interactables. Just because something isn't possible to do with
+> interactables, doesn't mean it's not possible. Always see if there is a command for what you're trying to do
+> before giving up.
 
-Even though interactables can do a lot, not *all* functions can be replaced by interactables
+Even though interactables can do a lot, not **all** functions can be replaced by interactables
 (such as using items or solving puzzles), so there are still some commands that you will have to learn.
 Alter Ego has many commands and it's not always clear to a beginner on how to use them.
 That's where the [*help* command](../reference/commands/player_commands.md#help).
@@ -122,7 +124,7 @@ Let's try it out for ourselves. We'll type the *help* command in our Bot DMs.
 ```
 ![](../images/help_command.png)
 
-Wow! Isn't that neat? The help command gives us the entire list of commands that we can use!
+Wow! Isn't that neat? The *help* command gives us the entire list of commands that we can use!
 There are even interactable buttons on the bottom so we can go to the next page of commands.
 
 We see on the list that there is a command named *inventory* that let's us see what we are carrying.

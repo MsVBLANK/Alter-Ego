@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2026 Alter Ego Contributors
+SPDX-FileCopyrightText: 2026 Amy Poon <amy@amypoon.me>
 
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
@@ -46,7 +46,7 @@ Your character's inventory includes the clothes that they're wearing and what th
 It's a good idea to first consult your moderator on what clothing is appropriate for the setting, and what items your character can have.
 For instance, it may not be appropriate for your character to be wearing swimwear in the dead of winter or for them to carry a rocket launcher.
 A good inventory should both fit with the world and express your character's personality.
-Instead of thinking about how certain clothing or items may benefit your character (a form of [metagaming](https://en.wiktionary.org/wiki/metagaming)), think of how your character would *choose* to wear or carry in the game's setting.
+Instead of thinking about how certain clothing or items may benefit your character (a form of [metagaming](https://en.wiktionary.org/wiki/metagaming)), think of how your character would **choose** to wear or carry in the game's setting.
 Your moderator always has the final say on what your character is allowed to wear or have.
 
 Finally, your character will have statistics, which are numerical attributes that define your character's abilities in game.
@@ -66,7 +66,7 @@ server where the game will be taking place. If you haven't already, ask your mod
 the server.
 
 Once you are in the game server, your moderator will give you the
-[*Eligible* role](../appendix/manual_installation/channel_and_role_creation.html#eligible).
+[*eligible* role](../appendix/manual_installation/channel_and_role_creation.html#eligible).
 When your moderator is ready to start the player registration process, an announcement with instructions on how to
 join the game will be posted in the `#general` channel of the server.
 

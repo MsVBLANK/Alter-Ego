@@ -81,7 +81,7 @@ For instance, the coffee table that we inspected has a `TABLOID MAGAZINE` and a 
 
 ### The *Take* Command
 
-> [!NOTE]
+> [!TIP]
 > If there are multiple items with the same name in a room. You can specify which one by using the container it is from.
 > For instance, if there are many spoons in a dining room, we can take only the spoon in front of us:
 > ```
@@ -106,8 +106,9 @@ Nice, we now have a tabloid magazine in our possession. Wonder what kind of goss
 *inspect* the items in our hand!
 
 > [!TIP]
-> If there are multiples of an item in a room, you can *inspect* the one in your inventory by specifying that it's yours.
-> For instance, if there are a bunch of sandwiches on the counter and *inspect* the one you're holding:
+> If an item in a room has the same name as an item in your inventory, you can *inspect*  your item
+> by putting `my` before it.
+> For instance, if there are a bunch of sandwiches on the counter and you wish to *inspect* the one you're holding:
 > ```txt
 > .inspect my sandwich
 > ```
@@ -143,13 +144,9 @@ wearing.
 ### The *Inventory* Command
 
 To look at your inventory, you use the [*inventory* command](../reference/commands/player_commands.md#inventory).
-The inventory command lists everything that we are carrying and also items that are ***stashed*** in our inventory
-slots.
+The inventory command lists everything that we have equipped and also items that we have ***stashed***.
 
 Let's see what we are carrying with us by sending the `.inventory` command.
-
-> [!TIP]
-> Save time typing out the `.inventory` command by using its short form `.i` instead!
 
 ```txt
 .inventory
@@ -157,17 +154,20 @@ Let's see what we are carrying with us by sending the `.inventory` command.
 
 ![](../images/inventory_output.png)
 
-<!--TODO: Be more clear about distinguishing equipment slots from inventory slots-->
+> [!IMPORTANT]
+> Remember, we ***equip*** items in equipment slots and ***stash*** items in inventory slots.
 
 Nice! We can see that we're carrying the magazine and the TV guide in each of our hands. We also see that we have a
-number of inventory slots.[^1] Each row in the list represents a slot and brackets in each denote what item is contained
-within. Each slot can hold one item.
+number of **equipment slots** and **inventory slots**.[^1]
 
-For instance, we have a bag slot `BAG:[]` with nothing in it, whereas our socks slot `SOCKS:[WHITE SOCKS]` has a pair
-of white socks inside.
+Inventory entries with square brackets `[]` are equipment slots whereas those with round brackets `()` are inventory
+slots.
 
-Items in our inventory can also have sub-slots of their own. For instance, our pants have two slots: `LEFT POCKET:()`
-and `RIGHT POCKET:()`, both of which are empty.
+For instance, we have a `BAG` equipment slot with nothing `[]` equipped, whereas our `RIGHT HAND` and `LEFT HAND` have
+a `[TABLOID MAGAZINE]` and a `[TELEVISION GUIDE]` equipped respectively.
+
+Pieces of equipment can have inventory slots that we can *stash* items into. For instance, our `PANTS` have two
+inventory slots: `LEFT POCKET` and `RIGHT POCKET`.
 
 ### The *Stash* Command
 
@@ -293,9 +293,7 @@ they can be picked up. So go around, explore, and try and *use* stuff!
 
 To *use* an item, you use the [*use* command](../reference/commands/player_commands.md#use). As there are many ways to
 *use* something, this is a command that has many aliases. Some of them include `.eat`, `.drink`, and `.activate`.
-It doesn't matter which one you use, so feel free to use whichever one you prefer based on the situation!
-
-<!--TODO: Add footnote explaining that there are some restrictions based on what alias for `use` you enter-->
+It usually doesn't matter which one you use,[^2] so don't worry about which alias to use!
 
 Have you ever been in a situation where you find yourself holding a bass guitar? Well if you do, perhaps your first
 instinct is to *use* it. To *use* an item, type the `.use` command followed by the item or *fixture* (something in a
@@ -321,7 +319,7 @@ We can also use interactables to *use* things. Let's have a look at our inventor
 
 ![](../images/use_inventory.png)
 
-As we have the `BASS GUITAR` in our hands, we see that a `Use` dropdown menu[^2] has appeared at the bottom of our
+As we have the `BASS GUITAR` in our hands, we see that a `Use` dropdown menu[^3] has appeared at the bottom of our
 inventory!
 
 Let's open that dropdown by clicking on it.
@@ -335,7 +333,9 @@ Looks like the only thing we can use is our `BASS GUITAR`. Let's click on it.
 Nice! Now we're really making a name for ourselves in history or rock n' roll!
 
 [^1]: Inventory slots can be configured by your moderator, so don't worry if this inventory looks different from yours!
-[^2]: Wondering why it's a dropdown when you can only hold up to two items? Sometimes using an item can have dangerous,
+[^2]: This is true except for a few edge cases. For instance, it's not possible to `.lock` or `.unlock` a sandwich.
+In general, if the sentence makes sense, it should be possible!
+[^3]: Wondering why it's a dropdown when you can only hold up to two items? Sometimes using an item can have dangerous,
 irreversible effects. You wouldn't want to poison yourself by using a `CYANIDE PILL` because you accidentally pressed
 a button. Since it's a dropdown, you have to perform two clicks or taps to use it, making it less likely that you'll
 use something by accident.

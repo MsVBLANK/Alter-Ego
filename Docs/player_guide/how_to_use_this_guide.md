@@ -11,8 +11,10 @@ conversational tone to ease new players like you into Alter Ego. It contains man
 for you to follow along. We hope that you will find this guide helpful as you embark on your journey in mastering how
 to play Alter Ego!
 
-As Alter Ego is a game that is entirely played on Discord and this guide assumes that you are familiar in using it.
-If you are unfamiliar with Discord, please refer to the [Beginner's Guide to Discord](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord) first before proceeding.
+As Alter Ego is a game that is entirely played on Discord, this guide assumes that you are familiar with using it.
+If you are unfamiliar with Discord, please refer to the
+[Beginner's Guide to Discord](https://support.discord.com/hc/en-us/articles/360045138571-Beginner-s-Guide-to-Discord)
+first before proceeding.
 
 ## Navigating This Guide
 

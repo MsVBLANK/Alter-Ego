@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 # Interacting with Things
 
 Before you can interact with something in the game world, you must
-[***inspect***](../reference/data_structures/action.md#inspect-action) them.
+[***inspect***](../reference/data_structures/action.md#inspect-action) it.
 
 Why *inspect* things? That's because it would be almost impossible to interact with something if you don't know that it
 exists in the first place! This chapter will teach you how to *inspect* things in the world and how to interact with
@@ -25,7 +25,7 @@ We will dive deeper on how to use the command and more importantly how to interp
 
 To inspect something, you use the [*inspect* command](../reference/commands/player_commands.md#inspect).
 The first thing you should do when you're not sure what to do is to inspect the room that you're in. This is done
-automatically for you when you first enter a room and will give you information on what you can interact with.
+automatically for you when you first enter a room, giving you information on what you can interact with.
 
 > [!TIP]
 > Many commands have short form aliases! This can save you a lot of time when using commands repeatedly.
@@ -131,7 +131,7 @@ button, we can take that too!
 ![](../images/take_tv_guide.png)
 
 Now that we have the television guide, we can find the airing times for any show we want! Although... who even uses
-TV guides these days? Or even watch live TV?
+TV guides these days? Or even watches live TV?
 
 ## Your Inventory and You
 
@@ -156,6 +156,8 @@ Let's see what we are carrying with us by sending the `.inventory` command.
 ```
 
 ![](../images/inventory_output.png)
+
+<!--TODO: Be more clear about distinguishing equipment slots from inventory slots-->
 
 Nice! We can see that we're carrying the magazine and the TV guide in each of our hands. We also see that we have a
 number of inventory slots.[^1] Each row in the list represents a slot and brackets in each denote what item is contained
@@ -219,7 +221,7 @@ First, we have to ***unstash*** them from our inventory and return it to our han
 > While you **can** specify the container to unstash an item from (i.e. `.unstash television guide from right pocket of
 light blue jeans`), this is only necessary when you have multiple of the same item in your inventory.
 
-The [*unstash* command](../reference/commands/player_commands.md#unstash) let's you remove an item from one of your
+The [*unstash* command](../reference/commands/player_commands.md#unstash) lets you remove an item from one of your
 inventory slots and place it in your hand. To use it, send `.unstash` followed by the item you want to *unstash*.
 
 Let's try *unstashing* the TV guide.
@@ -293,6 +295,8 @@ To *use* an item, you use the [*use* command](../reference/commands/player_comma
 *use* something, this is a command that has many aliases. Some of them include `.eat`, `.drink`, and `.activate`.
 It doesn't matter which one you use, so feel free to use whichever one you prefer based on the situation!
 
+<!--TODO: Add footnote explaining that there are some restrictions based on what alias for `use` you enter-->
+
 Have you ever been in a situation where you find yourself holding a bass guitar? Well if you do, perhaps your first
 instinct is to *use* it. To *use* an item, type the `.use` command followed by the item or *fixture* (something in a
 room that can't be moved by a player e.g. a piano) you want to *use*.
@@ -317,7 +321,7 @@ We can also use interactables to *use* things. Let's have a look at our inventor
 
 ![](../images/use_inventory.png)
 
-As we have the `BASS GUITAR` in our hands, we see that a `Use` dropdown menu has appeared at the bottom of our
+As we have the `BASS GUITAR` in our hands, we see that a `Use` dropdown menu[^2] has appeared at the bottom of our
 inventory!
 
 Let's open that dropdown by clicking on it.
@@ -330,4 +334,8 @@ Looks like the only thing we can use is our `BASS GUITAR`. Let's click on it.
 
 Nice! Now we're really making a name for ourselves in history or rock n' roll!
 
-[^1]:  Inventory slots can be configured by your moderator, so don't worry if this inventory looks different from yours!
+[^1]: Inventory slots can be configured by your moderator, so don't worry if this inventory looks different from yours!
+[^2]: Wondering why it's a dropdown when you can only hold up to two items? Sometimes using an item can have dangerous,
+irreversible effects. You wouldn't want to poison yourself by using a `CYANIDE PILL` because you accidentally pressed
+a button. Since it's a dropdown, you have to perform two clicks or taps to use it, making it less likely that you'll
+use something by accident.

@@ -1,3 +1,5 @@
+Docs/**
+Test/**
 .idea/**/*
 cmake-build-*/
 *.iws

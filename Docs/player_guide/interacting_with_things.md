@@ -293,5 +293,41 @@ To *use* an item, you use the [*use* command](../reference/commands/player_comma
 *use* something, this is a command that has many aliases. Some of them include `.eat`, `.drink`, and `.activate`.
 It doesn't matter which one you use, so feel free to use whichever one you prefer based on the situation!
 
+Have you ever been in a situation where you find yourself holding a bass guitar? Well if you do, perhaps your first
+instinct is to *use* it. To *use* an item, type the `.use` command followed by the item or *fixture* (something in a
+room that can't be moved by a player e.g. a piano) you want to *use*.
+
+Let's try and *use* our `BASS GUITAR` and see what happens.
+
+```txt
+.use BASS GUITAR
+```
+
+![](../images/use_bass_guitar.png)
+
+Now we're ready to jam!
+
+#### Using with Interactables
+
+We can also use interactables to *use* things. Let's have a look at our inventory.
+
+```txt
+.i
+```
+
+![](../images/use_inventory.png)
+
+As we have the `BASS GUITAR` in our hands, we see that a `Use` dropdown menu has appeared at the bottom of our
+inventory!
+
+Let's open that dropdown by clicking on it.
+
+![](../images/use_bass_guitar_dropdown.png)
+
+Looks like the only thing we can use is our `BASS GUITAR`. Let's click on it.
+
+![](../images/use_bass_guitar.png)
+
+Nice! Now we're really making a name for ourselves in history or rock n' roll!
 
 [^1]:  Inventory slots can be configured by your moderator, so don't worry if this inventory looks different from yours!

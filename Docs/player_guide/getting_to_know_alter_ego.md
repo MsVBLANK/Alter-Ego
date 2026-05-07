@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 # Getting to Know Alter Ego
 
 Now that you've joined an Alter Ego game, it would be a good idea to familiarize yourself with the user interface of Alter Ego before the game starts.
-After all, you don't want to be panicking and trying to hunt down channels and [*commands*](../reference/commands/index.md)
+After all, you don't want to be panicking and trying to hunt down channels and [commands](../reference/commands/index.md)
 when you are trying to role play!
 
 ## Getting Situated
@@ -102,7 +102,7 @@ see what happens.
 
 Awesome! We've moved to the basement hall---all without sending a single command. Convenient right?
 
-At the moment, *interactables* allow you to *inspect* things, move to *rooms*, pick up objects, craft items, and more.
+At the moment, interactables allow you to *inspect* things, move to *rooms*, pick up objects, craft items, and more.
 This means that most of what you will do in Alter Ego can be replaced with interactables.
 
 

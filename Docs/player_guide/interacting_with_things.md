@@ -15,7 +15,7 @@ them.
 
 ## Inspecting Things
 
-One of the things you will do most in Alter Ego is *inspect* things. Whether it be an item, a *fixture*, or another
+One of the things you will do most in Alter Ego is *inspect* things. Whether it be an item, a fixture, or another
 player, *inspecting* allows you to get an idea of how you can interact with them.
 
 Remember when we learned how to use commands earlier? If you do, then you already know the basics of inspecting.
@@ -104,6 +104,13 @@ from the coffee table.
 
 Nice, we now have a tabloid magazine in our possession. Wonder what kind of gossip it has? Turns out that we can also
 *inspect* the items in our hand!
+
+> [!TIP]
+> If there are multiples of an item in a room, you can *inspect* the one in your inventory by specifying that it's yours.
+> For instance, if there are a bunch of sandwiches on the counter and *inspect* the one you're holding:
+> ```txt
+> .inspect my sandwich
+> ```
 
 ```txt
 .x tabloid magazine
@@ -281,13 +288,6 @@ Not only can you *use* items that are in your inventory, you can *use* items aro
 they can be picked up. So go around, explore, and try and *use* stuff!
 
 ### The *Use* Command
-
-> [!TIP]
-> If there are multiples of an item in a room, you can *use* the one in your inventory by specifying that it's yours.
-> For instance, if there are a bunch of sandwiches on the counter and you want to *eat* the one you're holding:
-> ```txt
-> .eat my sandwich
-> ```
 
 To *use* an item, you use the [*use* command](../reference/commands/player_commands.md#use). As there are many ways to
 *use* something, this is a command that has many aliases. Some of them include `.eat`, `.drink`, and `.activate`.

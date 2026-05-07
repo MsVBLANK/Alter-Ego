@@ -78,10 +78,10 @@ immediately following its invocation. This is so that you can see what the comma
 
 Footnotes are used to provide additional context or information about a term or concept.[^1]
 
-### Key Words
+### Key Words and Emphasis
 
 **Key words** are important terms and concepts that we will go over in this guide. The first time they're used, they
-are presented in **bold**. Some important concepts are also put in bold for emphasis.
+are presented in **bold**. Some important concepts are also put in **bold for emphasis**.
 
 ### Literals
 
@@ -97,7 +97,7 @@ When the name of a data structure[^2] that has an ordinary meaning is mentioned,
 This is to distinguish it from the word's meaning in everyday language.
 
 For instance, this is the [*inspect* command](../reference/commands/player_commands.md#inspect) and this is a
-[*Puzzle*](../reference/data_structures/puzzle.md). We *inspect* things to help us solve *puzzles*.
+[*puzzle*](../reference/data_structures/puzzle.md). We *inspect* things to help us solve *puzzles*.
 
 It's not necessary to go to one of those pages as they can get really technical, but a link to it is provided for it
 the first time it is mentioned in a chapter for your curiosity.

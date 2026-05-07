@@ -22,6 +22,11 @@ This DM will be the primary way for you to interact with Alter Ego. It is here t
 to Alter Ego and receive their outputs. It is also where most of the system messages that Alter Ego will send you will
 be.
 
+> [!WARNING]
+> If Alter Ego can't send you direct messages, you won't be able to play! Before the game begins, open the settings
+> menu for the game server, and select `Privacy Settings`. Check if `Direct Messages` from members of the server are
+> enabled. If they're disabled, you'll have to enable them before the game begins.
+
 Switching to the game server itself, you might notice that a channel with the name of the room your character is in
 has become accessible.
 
@@ -45,8 +50,8 @@ switch *rooms*!
 room channels.
 
 To use a command, enter the **command prefix** (by default `.`)[^1] and append it with the command you wish to use.
-For instance, if we want to use the [*inspect* command](../reference/commands/player_commands.html#inspect), we send
-the following in Discord.
+For instance, if we want to use the [*inspect* command](../reference/commands/player_commands#inspect), we send
+the following in Discord:
 
 ```txt
 .inspect
@@ -102,7 +107,7 @@ see what happens.
 
 Awesome! We've moved to the basement hall---all without sending a single command. Convenient right?
 
-At the moment, interactables allow you to *inspect* things, move to *rooms*, pick up objects, craft items, and more.
+At the moment, interactables allow you to *inspect* things, move to *rooms*, pick up items, craft held items, and more.
 This means that most of what you will do in Alter Ego can be replaced with interactables.
 
 
@@ -116,7 +121,7 @@ This means that most of what you will do in Alter Ego can be replaced with inter
 Even though interactables can do a lot, not **all** functions can be replaced by interactables
 (such as using items or solving puzzles), so there are still some commands that you will have to learn.
 Alter Ego has many commands and it's not always clear to a beginner on how to use them.
-That's where the [*help* command](../reference/commands/player_commands.md#help).
+That's where the [*help* command](../reference/commands/player_commands.md#help) comes in handy.
 Let's try it out for ourselves. We'll type the *help* command in our Bot DMs.
 
 ```txt

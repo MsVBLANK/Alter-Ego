@@ -87,7 +87,7 @@ export async function execute(game, message, command, args, moderator) {
                 + `their starting locations. Each dorm in the demo environment has a different set of clothing `
                 + `available. You can assign players to each dorm based on which set of clothing they might prefer.\n\n`
                 + "There are several `Moderator's note` comments spread throughout the demo data that you can search "
-                + `The most important ones that require your immediate attention are on the Puzzles sheet.\n\n`
+                + `for. The most important ones that require your immediate attention are on the Puzzles sheet.\n\n`
                 + `Disclaimer: You are free to use any of the data included in the demo environment in your own games. `
                 + `It has been provided for your benefit, so that you can study and build upon it.\n\n`
                 + `When you are ready to begin the demo, send \`${game.settings.commandPrefix}load all start\`.`

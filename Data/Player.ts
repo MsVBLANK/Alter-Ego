@@ -772,7 +772,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     cure(status: Status): void {
         let statusInstance: Status = this.status.get(status.id);
         // Stop the timer.
-        if (statusInstance.timer !== null)
+        if (statusInstance.timer)
             statusInstance.timer.stop();
         this.status.delete(status.id);
         this.#recalculateStats();

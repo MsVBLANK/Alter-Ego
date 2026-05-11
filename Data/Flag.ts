@@ -59,7 +59,7 @@ export default class Flag extends GameEntity implements PersistentGameEntity {
 	 * @param player - The player to evaluate the script with. Optional.
 	 */
 	evaluate(valueScript: string = this.valueScript, player?: Player): string | number | boolean {
-		return evaluateScript(valueScript, this, player);
+		return evaluateScript(valueScript, this, player ?? undefined);
 	}
 
 	/**

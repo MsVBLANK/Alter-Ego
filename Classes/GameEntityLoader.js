@@ -1942,7 +1942,12 @@ export default class GameEntityLoader extends GameEntityManager {
 			}
 
 			// Now load player inventories.
-			await this.#getInventoryItems(false);
+            try {
+			    await this.#getInventoryItems(false);
+            }
+            catch (error) {
+                errors.push(...error);
+            }
 			if (doErrorChecking) {
 				for (const player of this.game.players.values()) {
 					let error = await this.checkPlayer(player);
@@ -2492,7 +2497,7 @@ export default class GameEntityLoader extends GameEntityManager {
 				player.member.send('')
 				.then(() => resolve(true))
 				.catch(error => {
-					if (error.hasOwnProperty("code") && error.code === 50007)
+					if (error.hasOwnProperty("code") && (error.code === 50007 || error.code === 50278))
 						resolve(false);
 					else resolve(true);
 				});

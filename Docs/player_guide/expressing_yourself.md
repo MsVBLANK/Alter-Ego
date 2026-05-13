@@ -24,6 +24,8 @@ Hello Alter Ego!
 
 ### Yelling
 
+<!--TODO: Add section about heading text formatting (does not need to be all caps)-->
+
 Aren't there times where you're angry, or frightened, or just want to LET IT ALL OUT?! That's when you yell so loudly
 that everyone in the house can hear you right? Good news is that you can do that too in Alter Ego. Bad news is that
 it's just as embarrassing for everyone involved.
@@ -109,6 +111,8 @@ We're going to start a new whisper channel with all three of them.
 ```txt
 .whisper huiyu kyra aisha
 ```
+
+<!--TODO: Screenshot of new group whisper channel-->
 
 
 ## Making Gestures

@@ -1,0 +1,25 @@
+/*
+ * SPDX-FileCopyrightText: 2025 Alter Ego Contributors
+ *
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+code {
+    white-space: pre-wrap !important;
+}
+
+.content img {
+    margin: auto !important;
+    display: block !important;
+}
+
+.alter-ego-version {
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    background-color: var(--theme-popup-bg);
+    border-radius: 8px;
+    padding: 2px 5px 2px 5px;
+    border: 1px solid var(--theme-popup-border);
+    font-size: 0.9em;
+}

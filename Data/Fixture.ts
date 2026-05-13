@@ -57,7 +57,7 @@ export default class Fixture extends RecipeProcessor implements PersistentGameEn
      */
     childPuzzle: Puzzle;
     /**
-     * A keyword or phrase assigned to an fixture's recipe that allows it to carry out recipes that require it.
+     * A keyword or phrase assigned to a fixture's recipe that allows it to carry out recipes that require it.
      */
     private _recipeTag: string;
     /**

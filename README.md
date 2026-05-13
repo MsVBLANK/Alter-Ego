@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Alter Ego
 
 ![GitHub Release](https://img.shields.io/github/v/release/MolSnoo/Alter-Ego)
@@ -26,7 +32,7 @@ The possibilities are endless. To try it for yourself, [install Alter Ego using 
 
 Alter Ego
 
-Copyright (C) <2019> MolSnoo, The Alter Ego Contributors
+Copyright (C) <2019> Alter Ego Contributors
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as

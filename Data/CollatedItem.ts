@@ -100,7 +100,6 @@ export default class CollatedItem<T extends ItemInstance | RoomItem | InventoryI
 		this.location = items[0].getLocation();
         this.player = items[0] instanceof InventoryItem ? items[0].player : null;
         this.equipmentSlotId = items[0] instanceof InventoryItem ? items[0].equipmentSlot : null;
-        const item = items[0]
 		this.container = items[0].container as ContainerOf<T>;
 		this.slot = items[0].slot;
 		this.quantity = this.items.reduce((quantity, item) => quantity + (isNaN(item.quantity) ? NaN : item.quantity), 0);

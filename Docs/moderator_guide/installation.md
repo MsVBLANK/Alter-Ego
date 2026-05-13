@@ -1,7 +1,7 @@
 # Installation and Setup
 
 > [!NOTE]
-> These instructions are for installing Alter Ego using Docker. If you wish not use Docker, please refer
+> These instructions are for installing Alter Ego using Docker. If you wish to not use Docker, please refer
 > to the [node installation instructions](../appendix/manual_installation/node.md).
 
 Installation of Alter Ego is rather complicated, but is made significantly easier with Docker. This page will explain
@@ -14,7 +14,7 @@ the process in detail.
 > respective Docker Desktop [documentation](https://docs.docker.com/desktop/).
 
 |              | Minimum        | Recommended    |
-| ------------ | -------------- | -------------- |
+|--------------|----------------|----------------|
 | Architecture | x86_64 / ARM64 | x86_64 / ARM64 |
 | CPUs         | 1              | 2              |
 | Memory       | 512 MB         | 2 GB           |
@@ -30,18 +30,18 @@ and [Linode](https://www.linode.com/pricing/).
 ## Step 1: Download Alter Ego
 
 First, you need to download Alter Ego itself. Go to the Alter Ego GitHub page and download the latest release. Click the
-releases box and select the newest one (or whichever version you choose).
+releases box and select the latest one.
 
-![](../images/WxTbH1P.png)
+![Click on the most recent release](../images/github_releases_menu.png)
 
 There, you will see something like this.
 
-![](../images/vZOZdkb.jpg)
+![The page for the most recent release of Alter Ego](../images/github_release_page.png)
 
 ### Windows, Linux, Mac Desktop
 
 From this page, download the archive `Alter-Ego-[VERSION].tar.gz`. Use your favorite archive utility to open the
-archive (e.g. 7zip, GNOME Archive Manager, Keka), and extract the contents into your folder of choice.
+archive (e.g. 7zip, GNOME Archive Manager, PeaZip), and extract the contents into your folder of choice.
 
 ### Linux Terminal
 
@@ -52,7 +52,7 @@ version you want to download).
 wget https://github.com/molsnoo/Alter-Ego/releases/download/[VERSION]/Alter-Ego-[VERSION].tar.gz
 ```
 
-Unarchive the Alter-Ego folder by running this command (replace VERSION with Alter Ego version).
+Unarchive the Alter-Ego folder by running this command (replace VERSION with the version number).
 
 ```shell
 tar -xzvf Alter-Ego-[VERSION].tar.gz
@@ -65,25 +65,26 @@ If you already have Docker installed, you can skip this step.
 Docker is a container management platform that allows users to run applications on their machines regardless of
 operating system or dependencies. It has very low performance overhead, and provides isolation that improves security.
 
-Although Alter Ego can be installed bare-metal (i.e. without Docker), this is not recommended.
+Although Alter Ego can be installed bare-metal (i.e. without Docker), this is not recommended unless you plan to
+work on the source code as a developer.
 
 ### Linux
 
 To install Docker on your Linux system, refer to the link below:
 
-https://docs.docker.com/engine/install/
+[https://docs.docker.com/engine/install/](https://docs.docker.com/engine/install/)
 
 Most cloud/VPS providers offer a Docker installation image when you create your VM (e.g. Hetzner).
 
-![](../images/mUTb1hm.png)
+![An app image installation page on Hetzner's website, with Docker CE selected](../images/mUTb1hm.png)
 
-This saves you time and effort from installing docker yourself, and is highly recommended for new users.
+This saves you time and effort from installing Docker yourself, and is highly recommended for new users.
 
 ### Windows
 
 To install Docker on your Windows system, refer to the link below:
 
-https://docs.docker.com/desktop/install/windows-install/
+[https://docs.docker.com/desktop/install/windows-install/](https://docs.docker.com/desktop/install/windows-install/)
 
 You can also consult this [YouTube tutorial](https://www.youtube.com/watch?v=aCRMnDLnWmU) for a step-by-step guide.
 
@@ -91,33 +92,52 @@ You can also consult this [YouTube tutorial](https://www.youtube.com/watch?v=aCR
 
 To install Docker on your Mac system, refer to the link below:
 
-https://docs.docker.com/desktop/install/mac-install/
+[https://docs.docker.com/desktop/install/mac-install/](https://docs.docker.com/desktop/install/mac-install/)
 
 You can also consult this [YouTube tutorial](https://www.youtube.com/watch?v=SGmFGYCuJK4) for a step-by-step guide.
 
 ## Step 3: Create a Discord bot
 
 Now that you have Alter Ego installed, you'll need to create a new Discord bot to bind its functionality to. Navigate
-to https://discordapp.com/developers/applications/, and once you log in to your Discord account, create a new
-application. You can call it whatever you like. This example will use an application called "Test Bot". Once you create
-the application, you'll be taken to a page that looks like this:
+to [the Discord Developer Portal](https://discord.com/developers/applications), and once you log in to your Discord
+account, create a new application. You can call it whatever you like. This example will use an application called
+"Alter Ego", but you can call it whatever you want. Once you create the application, you'll be taken to a page
+that looks like this:
 
-![](../images/DRThFdI.png)
+![The General Information page of a Discord Application](../images/discord_app_general_page.png)
 
-You can ignore this for now. Navigate over to the Bot tab on the left-hand side, then click **Add Bot**. This will bring
-you to a page like this:
+You can ignore this for now. Navigate to the **Installation** tab on the left-hand side. This will bring you to this page:
 
-![](../images/f4fw8xo.png)
+![The Installation page of a Discord Application](../images/discord_app_installation_page.png)
 
-On this page, you can change the bot's name, set its profile picture, and a few other things. _Be sure to uncheck
-the **Public Bot** setting! Alter Ego can only be on one server, so you definitely don't want people inviting it to
-their own servers!_
+Under "Installation Contexts", _uncheck_ "User Install", and make sure "Guild Install" is _checked_.
+In the dropdown under "Install Link", select "None". You don't want other people to be able to install your bot to
+their servers, so there's no need to create a public installation URL.
 
-In order for Alter Ego to function properly, you _must_ check the three options under the **Privileged Gateway Intents**
-section, specifically the **Presence Intent**, **Server Members Intent**, and **Message Content Intent**. If you've done
-this right, it will look like this:
+Now navigate over to the **Bot** tab on the left-hand side. This will bring you to this page:
 
-![](../images/mj2Qx5l.png)
+![The Bot page of a Discord Application](../images/discord_app_bot_page.png)
+
+On this page, you can change the bot's name, set its profile picture, upload its banner image, and a few other things.
+Take note of the "Reset Token" button; you'll need to press it later, but you can ignore it for now.
+
+Scroll down a bit, and you'll find some settings. First, under "Authorization Flow":
+
+- **Disable** the "Public Bot" setting.
+  - Alter Ego can only be in one server, so this will prevent other people from inviting it to their servers.
+- **Disable** the "Requires OAuth2 Code Grant" setting.
+
+Next, you'll find more settings under "Privileged Gateway Intents":
+
+- **Enable** the "Presence Intent" setting.
+- **Enable** the "Server Members Intent" setting.
+- **Enable** the "Message Content Intent" setting.
+
+Without all of these set according to these instructions, Alter Ego will not function properly. If you've done
+everything right, your settings will look like this:
+
+!["Public Bot" and "Requires OAuth2 Code Grant" disabled; "Presence Intent", "Server Members Intent",
+"Message Content Intent" enabled](../images/discord_bot_authorization_and_intents.png)
 
 ## Step 4: Create a Discord server
 
@@ -131,29 +151,36 @@ to [this page](../appendix/manual_installation/channel_and_role_creation.md).
 ### Enable Developer Mode
 
 You'll have to enable Developer Mode for your account for the next few steps. To do this, navigate to your User Settings
-in Discord. Open the **Appearance** tab and scroll to the bottom. Under **Advanced**, you'll see a switch labeled
-**Developer Mode**. Turn it on if it's not already.
+in Discord. Open the **Developer** tab near the very bottom. You'll see a switch labeled **Developer Mode**.
+Turn it on if it's not already enabled.
 
 ## Step 5: Invite your bot to the server
 
-Back on the Discord Developer Portal, click on the **OAuth2** tab on the left-hand side. Scroll down to this section:
+Back on the Discord Developer Portal, click on the **OAuth2** tab on the left-hand side. Scroll down to the
+"OAuth2 URL Generator" section:
 
-![](../images/eG2rW4e.png)
+![The Discord OAuth2 URL Generator section with nothing selected](../images/discord_app_oauth2_url_generator.png)
 
-Check **bot**, then in the box that appears below, check **Administrator**. You should have something that looks like
-this:
+Under "Scopes", Check **bot**, then in the "Bot Permissions" section that appears below it, check **Administrator**.
+You should have something that looks like this:
 
-![](../images/NbnehLI.png)
+![Discord OAuth2 URL Generator with "bot" Scope and "Administrator" Permission checked](../images/discord_app_oauth2_url_generator_selections.png)
 
-Finally, copy that URL in the **Scopes** box and open it in your browser. It will take you to a page that looks like
-this:
+Finally, there will be two text boxes underneath the "Permissions" section:
 
-![](../images/k5gESaN.png)
+![The Integration Type dropdown with "Guild Install" selected, and a "Generated URL" beneath it](../images/discord_app_oauth2_generated_url.png)
 
-Select the server you just made, make sure **Administrator** is checked, and click **Authorize**.
+Under the "Integration Type", dropdown, select "Guild Install". Then, copy the URL in the "Generated URL" box,
+send it to a Discord channel in the server you just made (ideally to a channel that only you have access to), and click
+on it. It should display a menu that looks like this:
 
-With that, your bot will join your server! However, it doesn't do anything at the moment. You still need to do a few
-things.
+![Prompt to add the Alter Ego bot to your server](../images/discord_app_guild_installation.png)
+
+Make sure the server you just made is the one that's selected in the drop down, then click **Continue**.
+Make sure **Administrator** is checked, and confirm by clicking **Authorize**.
+
+With that, your bot will join your server! However, it doesn't do anything at the moment.
+You still need to do a few things.
 
 ## Step 6: Create a spreadsheet
 
@@ -163,31 +190,46 @@ on [spreadsheets](../reference/data_structures/index.md).
 ## Step 7: Enable the Google Sheets API
 
 In order for Alter Ego to work properly, you will need to create a new Google APIs project. The easiest way to do that
-is to navigate to
-the [Google Workspace project creation guide](https://developers.google.com/workspace/guides/create-project) and follow
-the instructions. For step 5 under the **Enable a Google Workspace API** section, search for **Google Sheets API**.
-Assuming you've done this correctly, you should arrive at a page that looks like this:
+is to navigate to the [Enable Google Workspace APIs page](https://developers.google.com/workspace/guides/enable-apis)
+and click the **Enable Sheets API** button near the bottom.
 
-![](../images/XhRe8il.png)
+That should bring you to a page that looks like this:
+
+![Google Cloud's "Enable API Wizard" page, prompting you to create a project](../images/google_enable_api_wizard.png)
+
+Create a project. You can call it anything you want. In the prompts that follow, confirm that you want to enable the
+Google Sheets API. If you did it right, you'll be shown a message that says
+"You have successfully enabled Google Sheets API."
 
 ## Step 8: Create a service account
 
-In order to allow Alter Ego to make changes to the spreadsheet, you'll need to create a service account for it to use.
-To do that, navigate to the **Credentials** tab on the left-hand side of the page you were just taken to. Click the
-**Create credentials** button and select **Service account**. You should be brought to a page like this:
+In order to allow Alter Ego to read and write to the spreadsheet, you'll need to create a service account for it to use.
+To do that, open the navigation menu in the top left corner and navigate to the **Credentials** tab under
+**APIs & Services**, like so:
 
-![](../images/xETtI3t.png)
+![Google Cloud's Navigation menu, with **Credentials** under **APIs & Services** selected](../images/google_cloud_navigation_menu.png)
 
-For the name, enter the bot's name; in this case, it's Test Bot. For the description, enter whatever you like. Next,
-grant it the "Owner" role. You can skip step 3.
+On the next page, click the link that says **Manage service accounts**:
 
-Once your service account is made, you should see it under the **Service Accounts** list. Click on the edit button for
-the service account, and then click on the **Keys** tab, so that it brings you to a page like this:
+![Google Cloud's Credentials page](../images/google_cloud_credentials_page.png)
 
-![](../images/XRC8QSC.png)
+On the next page, click the **Create service account**. You should be brought to a page like this:
 
-Click the **Add Key** button and select **Create new key**. Make sure the key type is JSON, then click **Create**. This
-will download a file to your computer. Don't touch that just yet - there's one thing to do first. Return to the
+![Google Cloud's Create service account page](../images/google_cloud_credentials_creation.png)
+
+For the name, enter the bot's name; in this case, it's Alter Ego. You can set its ID if you want, or just accept the
+one it generates. For the description, enter whatever you like. Click **Create and continue**.
+
+In the Permissions menu, grant it the "Owner" role. You can skip step 3. Once you're done, you'll be returned to the
+Service accounts page.
+
+Once your service account is made, you should see it under the service accounts list. There will be a meatball menu
+under the **Actions** column for it. Click on that, and select **Manage keys**. You'll be taken to this page:
+
+![Google Cloud's service account keys page](../images/google_cloud_keys_page.png)
+
+Click the **Add Key** button and select **Create new key**. Make sure the key type is **JSON**, then click **Create**.
+This will download a file to your computer. Don't touch that just yet - there's one thing to do first. Return to the
 **Service Accounts** page.
 
 ## Step 9: Share the spreadsheet
@@ -212,7 +254,7 @@ cd Alter-Ego
 cp .env.example .env
 ```
 
-Open the `.env` file on your computer. You should see something like this.
+Open the `.env` file in a text editor. You should see something like this:
 
 ```dotenv
 # This is an example of an environment file for docker compose.
@@ -231,16 +273,16 @@ Open the `.env` file on your computer. You should see something like this.
 TZ='America/New_York'
 
 # Credentials
-DISCORD_TOKEN=                      # String. Token of discord bot
-G_PROJECT_ID=                       # String. Google project ID
-G_PRIVATE_KEY_ID=                   # String. Google private key ID
-G_PRIVATE_KEY=                      # String. Google private key
-G_CLIENT_EMAIL=                     # String. Google client email
-G_CLIENT_ID=                        # String. Google client id
-G_CLIENT_X509_CERT_URL=             # String. Google cert url
+DISCORD_TOKEN=                                # String. Token of discord bot
+G_PROJECT_ID=                                 # String. Google project ID
+G_PRIVATE_KEY_ID=                             # String. Google private key ID
+G_PRIVATE_KEY=                                # String. Google private key
+G_CLIENT_EMAIL=                               # String. Google client email
+G_CLIENT_ID=                                  # String. Google client id
+G_CLIENT_X509_CERT_URL=                       # String. Google cert url
 
 # Settings
-SPREADSHEET_ID=                     # String. ID of spreadsheet
+SPREADSHEET_ID=                               # String. ID of spreadsheet
 ...
 (file continues on)
 ```
@@ -256,9 +298,12 @@ this [Wikipedia article](https://en.wikipedia.org/wiki/List_of_tz_database_time_
 
 ### Setting Credentials
 
-Navigate to the Discord Developer Portal once again and find the application you created earlier. Open the **Bot** tab.
-Under **Token**, click **Copy**. Paste it inside the single quotes after `DISCORD_TOKEN=` in your `.env` file. _This
-token must not be shared with **anyone**, as it grants access to your bot's account._
+Navigate back to the Discord Developer Portal once again and find the application you created earlier. Open the **Bot**
+tab. Under **Token**, click **Reset Token**. You may be asked to authenticate with 2FA before proceeding. Once the token
+has been created, click **Copy**. Paste it inside the single quotes after `DISCORD_TOKEN=` in your `.env` file.
+
+> [!CAUTION]
+> This token must not be shared with **anyone**, as it grants full access to your bot's account.
 
 Next, open the file you downloaded after creating the service account in any text editor. The file should look something
 like this:
@@ -274,13 +319,14 @@ like this:
     "auth_uri": "https://accounts.google.com/o/oauth2/auth",
     "token_uri": "https://oauth2.googleapis.com/token",
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "(CONFIDENTIAL)"
+    "client_x509_cert_url": "(CONFIDENTIAL)",
+    "universe_domain": "googleapis.com"
 }
 ```
 
-In case it wasn't clear,
-_**almost all of the data in this file is confidential. Don't share it with a single person, and make absolutely sure
-not to put it online somehow.**_
+> [!CAUTION]
+> **Almost all of the data in this file is confidential. Don't share it with a single person, and make absolutely sure
+not to put it online somehow.**
 
 Next, add the Google service account credentials to your `.env` file. Copy each corresponding value in the Google
 credentials file into your `.env` file. For instance, copy `project_id` into `PROJECT_ID=`. Replace the double quotes in
@@ -315,11 +361,11 @@ Copy the ID for the entire spreadsheet and paste it in single quotes after `SPRE
 SPREADSHEET_ID='1234567890'
 ```
 
-## (Optional) Fill out other settings
+### (Optional) Fill out other settings
 
 If you wish to change other settings other than the ones outlined above, you can edit their entries in the `.env` file.
 Remember to uncomment (i.e. remove the `#` before the line) for them to go into effect. For more information, see the
-article on [settings](../reference/settings/docker_settings.md).
+article on [settings](../reference/settings.md).
 
 ## Step 11: Run Alter Ego
 
@@ -331,9 +377,9 @@ In a terminal, run:
 docker compose up -d
 ```
 
-If you did everything right, this is what you'll see:
+If you did everything right, you'll see something like this:
 
-![](../images/MR2aUh2.png)
+![The command line output of running `docker compose up -d` and `docker compose logs`](../images/docker_compose_up_terminal_output.png)
 
 If you run the command `docker compose logs`, you should see this:
 
@@ -348,7 +394,7 @@ alterego  | AlterEgo-test is online on 1 server.
 alterego  | Loaded all commands.
 ```
 
-Congratulations! If everything went well, you can now use Alter Ego to run a game of the Neo World Program. Good luck!
+Congratulations! If everything went well, you can now use Alter Ego. Good luck!
 
 ### Updating Alter Ego
 
@@ -361,11 +407,9 @@ docker compose down
 Next, open `docker-compose.yml`. You should see something like this.
 
 ```yaml
-version: "3.8"
-
 services:
     alterego:
-        image: ghcr.io/molsnoo/alter-ego:1.8.0
+        image: ghcr.io/molsnoo/alter-ego:1.10.1
         container_name: alterego
         env_file:
             - .env
@@ -377,11 +421,11 @@ volumes:
     data:
 ```
 
-Then, change the `image:` line so that it corresponds to the new version of Alter Ego. For instance, change `1.8.0` to
-`1.9.0`. The line should now read something like this.
+Then, change the `image:` line so that it corresponds to the new version of Alter Ego. For instance, change `1.10.1` to
+`2.0.0`. The line should now read something like this.
 
 ```yaml
-image: ghcr.io/molsnoo/alter-ego:1.9.0
+image: ghcr.io/molsnoo/alter-ego:2.0.0
 ```
 
 Save the file and quit your text editor.
@@ -400,7 +444,7 @@ docker compose up -d
 
 ### Docker Commands
 
-To view the status of your container run:
+To view the status of your container, run:
 
 ```shell
 docker ps

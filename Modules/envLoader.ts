@@ -12,6 +12,6 @@ export function loadDotEnv(): void {
             console.error(`Error: Cannot load .env file: ${e.toString()}`);
         }
     } else if (!process.env.RUNNING_IN_DOCKER) { // Warn only when not running in Docker
-        console.warn(`Warning: .env file not found at ${dotenvPath}. You can ignore this warning if you are using Docker.`);
+        console.warn(`Warning: .env file not found at ${dotenvPath}.`);
     }
 }

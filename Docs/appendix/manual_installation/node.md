@@ -55,14 +55,23 @@ There, you will see something like this.
 Download the source code archive `Source code (zip)`. Use your favorite archive utility to open the archive (e.g. 7zip,
 GNOME Archive Manager, PeaZip), and extract the contents into your folder of choice.
 
-## Step 2: Install Node.js.
+## Step 2: Install Node.js with nvm
 
-If you already have Node.js installed, you can skip this step.
+Alter Ego runs on, Node.js a JavaScript runtime environment. Without installing it to your computer, you won't be able
+to run Alter Ego.
 
-Node.js is a JavaScript runtime environment. Without installing it to your computer, you won't be able to run Alter Ego.
-You can install it using the link below. Alter Ego is currently developed and tested for the v24 LTS version.
+To make installing Node.js simpler, we recommend using nvm (Node Version Manager). Nvm helps you match your node version
+with the project's version and allows you to use different versions of Node.js on different projects.
 
-[https://nodejs.org/](https://nodejs.org)
+To install nvm, follow the instructions on the [nvm GitHub page](https://github.com/nvm-sh/nvm#installing-and-updating).
+
+After installing nvm, open a terminal set to the project directory and run:
+
+```sh
+nvm install
+```
+
+This will install the Node.js version used by Alter Ego.
 
 ## Step 3: Install dependencies
 

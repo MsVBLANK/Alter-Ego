@@ -5,6 +5,7 @@ ARG image_commit
 ARG image_tag
 ENV IMAGE_COMMIT=${image_commit}
 ENV IMAGE_TAG=${image_tag}
+ENV RUNNING_IN_DOCKER=true
 
 WORKDIR /home/node/app
 

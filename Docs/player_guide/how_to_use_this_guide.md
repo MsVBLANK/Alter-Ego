@@ -6,6 +6,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # How to Use This Guide
 
+> [!NOTE]
+> This Player Guide is a work in progress. Further chapters will added as they are written.
+
 This guide is designed to help you get started with Alter Ego as a player. We wrote this guide in a casual,
 conversational tone to ease new players like you into Alter Ego. It contains many images and examples to make it easy
 for you to follow along. We hope that you will find this guide helpful as you embark on your journey in mastering how

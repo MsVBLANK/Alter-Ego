@@ -103,7 +103,7 @@ specific Inventory Item in that specific Inventory Slot. This built-in validatio
 Interactables in messages where they might be desired.
 
 A small number of these methods can only generate a Modal---these are a last resort, in case it is impossible to
-perform an Action Directive using only a Button or a String Select Menu, and they are only ever generated as a response
+perform an Action using only a Button or a String Select Menu, and they are only ever generated as a response
 to an Interaction with a different Interactable. Modals are reserved for open-ended Interactions
 where the user can enter any text they desire, like so:
 

@@ -186,7 +186,6 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
 
     /** Gets the item's container. */
     getContainer(): RoomItemContainer {
-        console.log(this.inventory)
         return this.container;
     }
 
@@ -300,7 +299,7 @@ export default class RoomItem extends ItemInstance implements PersistentGameEnti
 
     /**
      * Returns the item contained inside of this container with the given identifier or prefab ID.
-     * If no such item exists, returns undefined. 
+     * If no such item exists, returns undefined.
      * @param identifier - The identifier or prefab ID to search for.
      */
     override getContainedItem(identifier: string): ItemInstance {

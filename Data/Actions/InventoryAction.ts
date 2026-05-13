@@ -4,7 +4,7 @@ import Action from "../Action.ts";
 /**
  * Represents an inventory action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/inventory-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#inventory-action
  */
 export default class InventoryAction extends Action {
 	/**

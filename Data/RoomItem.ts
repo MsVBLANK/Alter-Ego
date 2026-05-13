@@ -13,7 +13,7 @@ export type RoomItemField = "prefab"|"identifier"|"names"|"containingPhrases"|"l
 /**
  * Represents an item in a room that a player can take with them.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room_item.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/room_item.html
  */
 export default class RoomItem extends ItemInstance implements PersistentGameEntity {
     /**

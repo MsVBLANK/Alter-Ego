@@ -4,7 +4,7 @@ import type Fixture from "../Fixture.ts";
 /**
  * Represents a deactivate action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/deactivate-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#deactivate-action
  */
 export default class DeactivateAction extends Action {
 	/**

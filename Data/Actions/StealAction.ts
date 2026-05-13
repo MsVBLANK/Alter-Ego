@@ -9,7 +9,7 @@ import type Player from "../Player.ts";
 /**
  * Represents a steal action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/steal-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#steal-action
  */
 export default class StealAction extends Action {
 	/**

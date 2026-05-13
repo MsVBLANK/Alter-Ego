@@ -4,7 +4,7 @@ A **Prefab** is a data structure used by Alter Ego. It represents the concept of
 data structure which gives [Room Items](room_item.md) and [Inventory Items](inventory_item.md) their properties.
 
 Prefabs are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus,
-the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never
+the [GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never
 make changes to the Prefabs sheet. As a result, the Prefabs sheet can be freely edited without
 [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
@@ -12,7 +12,7 @@ make changes to the Prefabs sheet. As a result, the Prefabs sheet can be freely 
 
 Due to the versatility of functions that different items can have, Prefabs have many attributes. Note that if an
 attribute is _internal_, that means it only exists within
-the [Prefab class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Prefab.ts). Internal attributes will be given
+the [Prefab class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Prefab.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

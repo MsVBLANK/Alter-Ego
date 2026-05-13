@@ -7,7 +7,7 @@ import Recipe from "../Recipe.ts";
 /**
  * Represents an uncraft action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/uncraft-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#uncraft-action
  */
 export default class UncraftAction extends Action {
 	/**

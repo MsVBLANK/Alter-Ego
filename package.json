@@ -14,14 +14,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/MolSnoo/Alter-Ego.git"
+    "url": "git+https://github.com/MsVBLANK/Alter-Ego.git"
   },
-  "author": "MolSnoo",
+  "author": "MsVBLANK",
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/MolSnoo/Alter-Ego/issues"
+    "url": "https://github.com/MsVBLANK/Alter-Ego/issues"
   },
-  "homepage": "https://github.com/MolSnoo/Alter-Ego",
+  "homepage": "https://github.com/MsVBLANK/Alter-Ego",
   "engines": {
     "node": ">=24.14.1"
   },

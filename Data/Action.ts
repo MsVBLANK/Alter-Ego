@@ -9,7 +9,7 @@ import type Whisper from "./Whisper.ts";
 /**
  * Represents an action taken by a player.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html
  */
 export default abstract class Action extends GameConstruct {
 	/**

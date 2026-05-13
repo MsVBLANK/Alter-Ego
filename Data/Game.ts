@@ -31,7 +31,7 @@ import type Moderator from "./Moderator.ts";
 /**
  * Represents a game managed by the bot.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/game.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/game.html
  */
 export default class Game {
 	/**

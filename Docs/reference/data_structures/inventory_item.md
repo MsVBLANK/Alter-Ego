@@ -7,7 +7,7 @@ a [Player](player.md). It is an instance of a [Prefab](prefab.md), and is simila
 
 Inventory Items themselves have relatively few attributes. However, being instances of Prefabs, they inherit many
 attributes as a result. Note that if an attribute is _internal_, that means it only exists within
-the [InventoryItem class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/InventoryItem.ts). Internal attributes
+the [InventoryItem class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/InventoryItem.ts). Internal attributes
 will be given in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only
 exists on the spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -59,7 +59,7 @@ This is a unique name given to the Inventory Item if it is capable of containing
 necessary when loading Inventory Items in order for Alter Ego to determine which container the child Inventory Items
 belong to, in case there are multiple container Inventory Items with the same Prefab. Typically, this is the Prefab ID
 followed by a number (the standard followed by
-the [itemManager module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/itemManager.js)), but there are no
+the [itemManager module](https://github.com/MsVBLANK/Alter-Ego/blob/master/Modules/itemManager.js)), but there are no
 naming rules for identifiers. No two Room Items or Inventory Items can have the same identifier. For an example of how
 this looks, see the following table:
 

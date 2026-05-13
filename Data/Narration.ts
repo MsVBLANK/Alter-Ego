@@ -12,7 +12,7 @@ import type Whisper from "./Whisper.ts";
 /**
  * Represents a narration in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/narration.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/narration.html
  */
 export default class Narration extends GameConstruct {
     /**

@@ -3,7 +3,7 @@ import Action from "../Action.ts";
 /**
  * Represents a die action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/die-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#die-action
  */
 export default class DieAction extends Action {
 	/**

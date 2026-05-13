@@ -9,7 +9,7 @@ cases, Events are completely autonomous, requiring little to no intervention fro
 
 Events have relatively few attributes. However, they are capable of quite a lot despite this. Note that if an attribute
 is _internal_, that means it only exists within
-the [Event class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Event.ts). Internal attributes will be given in
+the [Event class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Event.ts). Internal attributes will be given in
 the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 
@@ -308,7 +308,7 @@ This is an internal attribute, but it can also be found on the spreadsheet. This
 
 ### Timer
 
-- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+- Class attribute: [Timer](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.timer`
 
 This is an internal attribute which contains a timer counting down until the Event ends. Every 1000 milliseconds, 1
@@ -317,7 +317,7 @@ Event ends, and this attribute becomes `null`.
 
 ### Effects Timer
 
-- Class attribute: [Timer](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
+- Class attribute: [Timer](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/Timer.ts) | [null](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/null)
   `this.effectsTimer`
 
 This is an internal attribute which contains a timer that inflicts and refreshes Status Effects while the Event is

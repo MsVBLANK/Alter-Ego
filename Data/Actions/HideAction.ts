@@ -5,7 +5,7 @@ import InflictAction from "./InflictAction.ts";
 /**
  * Represents a hide action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/hide-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#hide-action
  */
 export default class HideAction extends Action {
 	/**

@@ -6,7 +6,7 @@ import Puzzle from "../Puzzle.ts";
 /**
  * Represents a solve action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/solve-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#solve-action
  */
 export default class SolveAction extends Action {
 	/**

@@ -13,7 +13,7 @@ export type RecipeField = "ingredientsString"|"uncraftable"|"fixtureTag"|"durati
 /**
  * Allows players to transform items or inventory items into other items or inventory items.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/recipe.html
  */
 export default class Recipe extends GameEntity implements PersistentGameEntity {
     /**

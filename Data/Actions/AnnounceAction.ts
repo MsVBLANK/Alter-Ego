@@ -4,7 +4,7 @@ import type Dialog from "../Dialog.ts";
 /**
  * Represents an announce action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/announce-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#announce-action
  */
 export default class AnnounceAction extends Action {
 	/**

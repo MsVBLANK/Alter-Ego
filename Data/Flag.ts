@@ -9,7 +9,7 @@ export type FlagField = "id"|"value"|"valueScript"|"commandSetsString";
 /**
  * Represents a flag that can hold various forms of data for easy access elsewhere in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/flag.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/flag.html
  */
 export default class Flag extends GameEntity implements PersistentGameEntity {
 	/**

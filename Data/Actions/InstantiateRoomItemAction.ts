@@ -12,7 +12,7 @@ import { generateListString, makeCopyable } from "../../Modules/helpers.ts";
 /**
  * Represents an instantiate room item action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/instantiate-room-item-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#instantiate-room-item-action
  */
 export default class InstantiateRoomItemAction extends Action {
     /**

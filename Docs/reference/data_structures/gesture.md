@@ -4,14 +4,14 @@ A **Gesture** is a data structure used by Alter Ego. It represents a form of bod
 [Player](player.md) can perform to communicate with other Players nonverbally.
 
 Gestures are static; once loaded from the spreadsheet, they do not change in any way. Thus, the
-[GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make
+[GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never make
 changes to the Gestures sheet. As a result, the Gestures sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
 ## Attributes
 
 Gestures have very few attributes. Note that if an attribute is _internal_, that means it only exists within
-the [Gesture class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Gesture.ts). Internal attributes will be given
+the [Gesture class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Gesture.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

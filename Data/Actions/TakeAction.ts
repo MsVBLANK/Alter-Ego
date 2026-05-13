@@ -11,7 +11,7 @@ import AttemptAction from "./AttemptAction.ts";
 /**
  * Represents a take action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/take-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#take-action
  */
 export default class TakeAction extends Action {
 	/**

@@ -20,7 +20,7 @@ type RecipeListEntry = {
  * @class RecipesAction
  * @classdesc Represents a recipes action.
  * @extends Action
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/recipes-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#recipes-action
  */
 export default class RecipesAction extends Action {
 	#craftingRecipesDescription: string;

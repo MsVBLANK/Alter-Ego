@@ -4,7 +4,7 @@ import Event from "../Event.ts";
 /**
  * Represents a trigger action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/trigger-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#trigger-action
  */
 export default class TriggerAction extends Action {
 	/**

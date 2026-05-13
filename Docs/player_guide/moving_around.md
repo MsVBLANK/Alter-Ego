@@ -1,6 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2026 Amy Poon <amy@amypoon.me>
-SPDX-FileCopyrightText: 2026 MolSnoo
+SPDX-FileCopyrightText: 2026 Ms. VBLANK <alteregomolly@pm.me>
 
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->

@@ -7,7 +7,7 @@ so it can be accessed by other data structures. They are primarily useful when
 ## Attributes
 
 As Flags are a relatively simple data type, they have few attributes. Note that if an attribute is _internal_,
-that means it only exists within the [Flag class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Flag.ts).
+that means it only exists within the [Flag class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Flag.ts).
 Internal attributes will be given in the "Class attribute" bullet point, preceded by their data type. If an
 attribute is _external_, it only exists on the spreadsheet. External attributes will be given in the
 "Spreadsheet label" bullet point.
@@ -94,7 +94,7 @@ things such as access the process in which Alter Ego is running, or require modu
 allow access to files on your computer. However, we, the Alter Ego developers, cannot guarantee
 that it is 100% secure. Please heed the warning above, and use this feature with caution. If you
 find vulnerabilities with the scriptParser, please report them by opening a new Issue on the
-[Alter Ego GitHub page](https://github.com/MolSnoo/Alter-Ego/issues) so they can be fixed.
+[Alter Ego GitHub page](https://github.com/MsVBLANK/Alter-Ego/issues) so they can be fixed.
 
 For more information on writing value scripts, see the
 [writing descriptions tutorial](../../moderator_guide/writing_descriptions.md#if).

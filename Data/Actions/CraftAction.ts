@@ -7,7 +7,7 @@ import Recipe from "../Recipe.ts";
 /**
  * Represents a craft action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/craft-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#craft-action
  */
 export default class CraftAction extends Action {
 	/**

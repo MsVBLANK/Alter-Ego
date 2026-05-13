@@ -5,7 +5,7 @@ import Player from "../Player.ts";
 /**
  * Represents a use action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/use-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#use-action
  */
 export default class UseAction extends Action {
 	/**

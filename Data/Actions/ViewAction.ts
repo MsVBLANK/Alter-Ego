@@ -34,7 +34,7 @@ export type EntityField<T extends PersistentGameEntity> =
 /**
  * Represents a view action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/view-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#view-action
  */
 export default class ViewAction extends Action {
     static readonly dataTypeRegex = /^((?<Room>room(?! ?item)s?)|(?<Exit>exits?)|(?<Fixture>objects?|fixtures?)|(?<Prefab>prefabs?)|(?<Recipe>recipes?)|(?<RoomItem>(room ?)?items?)|(?<Puzzle>puzzles?)|(?<Event>events?)|(?<Status>status(?:es)? ?(?:effects?)?)|(?<Player>players?)|(?<InventoryItem>inventory(?: ?items?)?)|(?<Gesture>gestures?)|(?<Flag>flags?))(?<search>.*)/i;

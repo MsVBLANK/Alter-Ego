@@ -8,7 +8,7 @@ import type RoomItem from "./RoomItem.ts";
 /**
  * Represents an ingredient or a product in a recipe.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe-item.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/recipe-item.html
  */
 export default class RecipeItem extends GameConstruct {
 	/**

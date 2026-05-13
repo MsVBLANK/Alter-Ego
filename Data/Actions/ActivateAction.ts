@@ -5,7 +5,7 @@ import type Fixture from "../Fixture.ts";
 /**
  * Represents an activate action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/activate-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#activate-action
  */
 export default class ActivateAction extends Action {
 	/**

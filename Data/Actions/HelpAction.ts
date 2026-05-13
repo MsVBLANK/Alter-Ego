@@ -8,7 +8,7 @@ type CommandHelp = { command: string, description: string };
 /**
  * Represents a help action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/help-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#help-action
  */
 export default class HelpAction extends Action {
     #roleName: string;

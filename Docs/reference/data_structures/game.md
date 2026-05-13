@@ -47,7 +47,7 @@ spreadsheet. These are used during saving and loading.
 - Class attribute: GameCommunicationHandler `this.communicationHandler`
 
 This class acts as an interface for Alter Ego's
-[message handler module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/messageHandler.js).
+[message handler module](https://github.com/MsVBLANK/Alter-Ego/blob/master/Modules/messageHandler.js).
 Instead of calling message handler functions directly, it is best to call the communication handler. It contains an
 internal cache of recently-performed [Actions](action.md) to ensure that only one message describing a given Action
 will be sent to each relevant channel, preventing redundant [Narrations](narration.md) and

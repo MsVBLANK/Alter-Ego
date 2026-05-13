@@ -6,7 +6,7 @@ import ItemInstance from "../ItemInstance.ts";
 /**
  * Represents a destroy inventory item action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/destroy-inventory-item-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#destroy-inventory-item-action
  */
 export default class DestroyInventoryItemAction extends Action {
 	/**

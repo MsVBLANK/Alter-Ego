@@ -7,7 +7,7 @@ import RoomItem from "../RoomItem.ts";
 /**
  * Represents an inspect action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/inspect-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#inspect-action
  */
 export default class InspectAction extends Action {
 	/**

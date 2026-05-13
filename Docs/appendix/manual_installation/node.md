@@ -11,7 +11,7 @@ game, many steps need to be taken. This page will explain them in detail.
 ## Step 1: Download Alter Ego
 
 First, you need to download Alter Ego itself. If you already have Git, you can clone the repository by entering
-`git clone https://github.com/MolSnoo/Alter-Ego.git` in Git. If not, you can simply download the ZIP file to your
+`git clone https://github.com/MsVBLANK/Alter-Ego.git` in Git. If not, you can simply download the ZIP file to your
 computer.
 
 ![The GitHub repository's "Clone with HTTPS" dialog menu](../../images/git_clone_dialog.png)

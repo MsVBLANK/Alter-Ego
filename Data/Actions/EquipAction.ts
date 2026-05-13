@@ -5,7 +5,7 @@ import InventoryItem from "../InventoryItem.ts";
 /**
  * Represents an equip action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/equip-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#equip-action
  */
 export default class EquipAction extends Action {
 	/**

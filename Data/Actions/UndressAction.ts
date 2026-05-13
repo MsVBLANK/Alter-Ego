@@ -11,7 +11,7 @@ import DropAction from "./DropAction.ts";
 /**
  * Represents an undress action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/undress-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#undress-action
  */
 export default class UndressAction extends Action {
 	/**

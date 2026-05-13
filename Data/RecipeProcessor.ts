@@ -27,7 +27,7 @@ export interface Process<T extends RoomItem | InventoryItem> {
 /**
  * Represents an item container that can process recipes.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/recipe-processor.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/recipe-processor.html
  */
 export default abstract class RecipeProcessor extends ItemContainer {
     /**

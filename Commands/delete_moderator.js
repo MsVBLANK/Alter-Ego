@@ -25,7 +25,7 @@ export function usage(settings) {
     return `${settings.commandPrefix}delete 3\n`
         + `${settings.commandPrefix}delete 100\n`
         + `${settings.commandPrefix}delete @Alter Ego 5\n`
-        + `${settings.commandPrefix}delete @MolSno 75`;
+        + `${settings.commandPrefix}delete @tobyp4904 75`;
 }
 
 /**

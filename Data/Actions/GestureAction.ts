@@ -7,7 +7,7 @@ import type { ButtonInteraction } from "discord.js";
 /**
  * Represents a gesture action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/gesture-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#gesture-action
  */
 export default class GestureAction extends Action {
 	/**

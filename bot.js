@@ -212,16 +212,16 @@ async function sendFirstBootMessage(settings) {
         + `to the server and use the \`${settings.commandPrefix}startgame\` command to add them as a Player so that you `
         + `can get a feel for gameplay.\n\n`
         + `For documentation and tutorials on how to use Alter Ego, check out the official docs:\n`
-        + `https://molsnoo.github.io/Alter-Ego/\n\n`
+        + `https://msvblank.github.io/Alter-Ego/\n\n`
         + `Good luck, and have fun!`
     );
 }
 
 async function checkVersion() {
-    const masterPackage = await fetch('https://raw.githubusercontent.com/MolSnoo/Alter-Ego/master/package.json').then(response => response.json()).catch();
+    const masterPackage = await fetch('https://raw.githubusercontent.com/MsVBLANK/Alter-Ego/master/package.json').then(response => response.json()).catch();
     const localPackage = JSON.parse(readFileSync('./package.json').toString())
     if (masterPackage.version !== localPackage.version && !localPackage.version.endsWith("d"))
-        guildContext.commandChannel.send(`This version of Alter Ego is out of date. Please update using Docker or download the latest version from https://github.com/MolSnoo/Alter-Ego at your earliest convenience.`);
+        guildContext.commandChannel.send(`This version of Alter Ego is out of date. Please update using Docker or download the latest version from https://github.com/MsVBLANK/Alter-Ego at your earliest convenience.`);
 }
 
 function sendStartupLog() {

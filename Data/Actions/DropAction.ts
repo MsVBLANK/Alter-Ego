@@ -11,7 +11,7 @@ import AttemptAction from "./AttemptAction.ts";
 /**
  * Represents a drop action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/drop-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#drop-action
  */
 export default class DropAction extends Action {
 	/**

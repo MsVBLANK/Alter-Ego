@@ -24,7 +24,7 @@ that data is out of sync with the data on the spreadsheet.
 During gameplay, this is typically not a problem. However, in the event of an error, or a crash, or a power outage, or
 some other incident which causes Alter Ego to shut down during gameplay, its internal data will be lost. In order to
 combat this, Alter Ego regularly updates the spreadsheet with the most recent copy of its internal data using
-the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval
+the [GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval
 at which this occurs can be set with the [autoSaveInterval setting](../reference/settings.md#autosave_interval). While
 this still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a fairly
 recent backup to load from in order to minimize the amount of data loss.

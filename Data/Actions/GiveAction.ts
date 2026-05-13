@@ -6,7 +6,7 @@ import type Player from "../Player.ts";
 /**
  * Represents a give action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/give-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#give-action
  */
 export default class GiveAction extends Action {
 	/**

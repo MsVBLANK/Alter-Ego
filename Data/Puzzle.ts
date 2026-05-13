@@ -35,7 +35,7 @@ export type PuzzleField =
 /**
  * Represents an interactable entity with correct, incorrect, and limited ways to engage with it.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html
  */
 export default class Puzzle extends ItemContainer implements PersistentGameEntity {
     /**
@@ -85,7 +85,7 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
     /**
      * The type of puzzle.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#type
      */
     readonly type: string;
     /**
@@ -148,7 +148,7 @@ export default class Puzzle extends ItemContainer implements PersistentGameEntit
      * @param requiresMod - Whether the puzzle requires a moderator to solve it.
      * @param locationDisplayName - The display name of the location the puzzle is found in.
      * @param parentFixtureName - The name of the fixture associated with the puzzle.
-     * @param type - The type of puzzle. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/puzzle.html#type}
+     * @param type - The type of puzzle. {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#type}
      * @param accessible - Whether the puzzle can be interacted with.
      * @param requirementsStrings - Puzzle names, event IDs, prefab IDs or flag IDs that are required for the puzzle to be made accessible.
      * @param solutions - The solutions to the puzzle.

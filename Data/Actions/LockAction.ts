@@ -4,7 +4,7 @@ import type Exit from "../Exit.js";
 /**
  * Represents a lock action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/lock-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#lock-action
  */
 export default class LockAction extends Action {
 	/**

@@ -5,7 +5,7 @@ transform [Room Items](room_item.md)
 or [Inventory Items](inventory_item.md) into other Items using game-like crafting mechanics.
 
 Recipes are static; once loaded from the [spreadsheet](index.md), they do not change in any way. Thus, the
-[GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never
+[GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will never
 make changes to the Recipes sheet. As a result, the Recipes sheet can be freely edited without
 [edit mode](../../moderator_guide/edit_mode.md) being enabled.
 
@@ -22,7 +22,7 @@ Every Recipe is either a crafting-type Recipe or a processing-type Recipe, but n
 
 Recipes have relatively few attributes. Their behavior is entirely static, incapable of changing. These attributes
 simply serve to provide instructions for Alter Ego to follow. Note that if an attribute is _internal_, that means it
-only exists within the [Recipe class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Recipe.ts). Internal
+only exists within the [Recipe class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Recipe.ts). Internal
 attributes will be given in the "Class attribute" bullet point, preceded by their data type. If an attribute is
 _external_, it only exists on the spreadsheet. External attributes will be given in the "Spreadsheet label" bullet
 point.

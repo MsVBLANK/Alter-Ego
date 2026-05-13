@@ -15,7 +15,7 @@ export type InventoryItemField = "player"|"prefab"|"identifier"|"names"|"contain
 /**
  * Represents an item that is currently possessed by a player.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/inventory_item.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/inventory_item.html
  */
 export default class InventoryItem extends ItemInstance implements PersistentGameEntity {
     /**

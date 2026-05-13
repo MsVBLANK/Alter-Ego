@@ -6,11 +6,11 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 
 # Alter Ego
 
-![GitHub Release](https://img.shields.io/github/v/release/MolSnoo/Alter-Ego)
+![GitHub Release](https://img.shields.io/github/v/release/MsVBLANK/Alter-Ego)
 
 Alter Ego is an open-source Discord bot that facilitates an in-depth, multiplayer text adventure role-playing game called the Neo World Program. The gameplay style is heavily influenced by [MUD games](https://en.wikipedia.org/wiki/Multi-user_dungeon). Alter Ego simplifies the game development process by allowing any user to create an immersive game world entirely on Google Sheets with little to no programming knowledge.
 
-For installation, setup, and documentation, check out the [the docs](https://molsnoo.github.io/Alter-Ego).
+For installation, setup, and documentation, check out the [the docs](https://msvblank.github.io/Alter-Ego).
 
 ## Gameplay
 
@@ -26,7 +26,7 @@ Players must all have a separate Discord account, but moderators can add NPCs to
 ![Screenshot of a room channel with players named Vivian, Kyra, and Amy. Vivian questions why Amy is wearing a hazmat suit, and Amy gives her a gas mask to put on](Docs/images/alteregodemo3.png)
 ![Screenshot of a room channel with players named Vivian, Kyra, and Amy. Vivian questions why Amy is wearing a hazmat suit, and Amy gives her a gas mask to put on, this time with all of the messages Alter Ego has sent Vivian included](Docs/images/alteregodemo4.png)
 
-The possibilities are endless. To try it for yourself, [install Alter Ego using Docker](https://molsnoo.github.io/Alter-Ego/moderator_guide/installation) and use the `.setupdemo` command to instantly create a small demo environment.
+The possibilities are endless. To try it for yourself, [install Alter Ego using Docker](https://msvblank.github.io/Alter-Ego/moderator_guide/installation) and use the `.setupdemo` command to instantly create a small demo environment.
 
 ## License
 

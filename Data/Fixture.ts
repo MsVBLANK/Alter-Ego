@@ -29,7 +29,7 @@ interface FindRecipeResult {
 /**
  * Represents a fixed structure in a room that cannot be taken or moved by a player.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/fixture.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/fixture.html
  */
 export default class Fixture extends RecipeProcessor implements PersistentGameEntity {
     /**

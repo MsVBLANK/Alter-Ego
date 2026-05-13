@@ -14,7 +14,7 @@ import RoomItem from "./RoomItem.ts";
 /**
  * Represents a game entity's description.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/description.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/description.html
  */
 export default class Description extends GameConstruct {
 	/**

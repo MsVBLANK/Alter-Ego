@@ -4,7 +4,7 @@ import type Exit from "../Exit.js";
 /**
  * Represents a stop action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/stop-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#stop-action
  */
 export default class StopAction extends Action {
 	/**

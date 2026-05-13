@@ -10,7 +10,7 @@ import SolveAction from "./SolveAction.ts";
 /**
  * Represents a say action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/say-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#say-action
  */
 export default class SayAction extends Action {
 	/**

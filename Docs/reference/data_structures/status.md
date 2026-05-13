@@ -4,7 +4,7 @@ A **Status**, also called a **Status Effect**, is a data structure used by Alter
 that affects a [Player](player.md).
 
 Status Effects that are loaded from the [spreadsheet](index.md) are static; once loaded, they do not change in any way.
-Thus, the [GameEntitySaver class](https://github.com/MolSnoo/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will
+Thus, the [GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts) will
 never make changes to the Status Effects sheet. As a result, the Status Effects sheet can be freely edited
 without [edit mode](../../moderator_guide/edit_mode.md) being enabled. Only _instantiated_ Status Effects — Status
 Effects that are inflicted on a Player — are dynamic.
@@ -13,7 +13,7 @@ Effects that are inflicted on a Player — are dynamic.
 
 Status Effects have several attributes. However, their behavior is relatively limited. Note that if an attribute is
 _internal_, that means it only exists within
-the [Status class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Status.ts). Internal attributes will be given
+the [Status class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Status.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

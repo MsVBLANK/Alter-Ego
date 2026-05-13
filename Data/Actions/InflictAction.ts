@@ -8,7 +8,7 @@ import CureAction from "./CureAction.ts";
 /**
  * Represents an inflict action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/inflict-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#inflict-action
  */
 export default class InflictAction extends Action {
 	/**

@@ -5,7 +5,7 @@ import RoomItem from "../RoomItem.ts";
 /**
  * Represents a destroy room item action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/destroy-room-item-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#destroy-room-item-action
  */
 export default class DestroyRoomItemAction extends Action {
     /**

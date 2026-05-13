@@ -49,7 +49,7 @@ Use `wget` to download the archive straight from the terminal. The following is 
 version you want to download).
 
 ```shell
-wget https://github.com/molsnoo/Alter-Ego/releases/download/[VERSION]/Alter-Ego-[VERSION].tar.gz
+wget https://github.com/MsVBLANK/Alter-Ego/releases/download/[VERSION]/Alter-Ego-[VERSION].tar.gz
 ```
 
 Unarchive the Alter-Ego folder by running this command (replace VERSION with the version number).
@@ -409,7 +409,7 @@ Next, open `docker-compose.yml`. You should see something like this.
 ```yaml
 services:
     alterego:
-        image: ghcr.io/molsnoo/alter-ego:1.10.1
+        image: ghcr.io/msvblank/alter-ego:1.10.1
         container_name: alterego
         env_file:
             - .env
@@ -425,7 +425,7 @@ Then, change the `image:` line so that it corresponds to the new version of Alte
 `2.0.0`. The line should now read something like this.
 
 ```yaml
-image: ghcr.io/molsnoo/alter-ego:2.0.0
+image: ghcr.io/msvblank/alter-ego:2.0.0
 ```
 
 Save the file and quit your text editor.

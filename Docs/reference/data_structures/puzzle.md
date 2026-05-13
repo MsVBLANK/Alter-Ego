@@ -9,7 +9,7 @@ in most games.
 
 In order to provide a versatile array of behaviors, Puzzles have many attributes. Note that if an attribute is
 _internal_, that means it only exists within
-the [Puzzle class](https://github.com/MolSnoo/Alter-Ego/blob/master/Data/Puzzle.ts). Internal attributes will be given
+the [Puzzle class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Data/Puzzle.ts). Internal attributes will be given
 in the "Class attribute" bullet point, preceded by their data type. If an attribute is _external_, it only exists on the
 spreadsheet. External attributes will be given in the "Spreadsheet label" bullet point.
 

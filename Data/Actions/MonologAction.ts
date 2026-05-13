@@ -4,7 +4,7 @@ import Action from "../Action.ts";
 /**
  * Represents a monolog action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/monolog-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#monolog-action
  */
 export default class MonologAction extends Action {
 	/**

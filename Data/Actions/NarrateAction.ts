@@ -7,7 +7,7 @@ import SayAction from "./SayAction.ts";
 /**
  * Represents a narrate action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/narrate-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#narrate-action
  */
 export default class NarrateAction extends Action {
 	/**

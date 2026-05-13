@@ -14,7 +14,7 @@ export type EventField = "id"|"ongoing"|"durationString"|"timeRemaining"|"trigge
 /**
  * Represents a timed event in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/event.html
  */
 export default class Event extends GameEntity implements PersistentGameEntity {
     /**
@@ -49,7 +49,7 @@ export default class Event extends GameEntity implements PersistentGameEntity {
     /**
      * The string representations of what times the event will be automatically triggered.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-strings
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-strings
      */
     triggerTimesStrings: string[];
     /**
@@ -108,7 +108,7 @@ export default class Event extends GameEntity implements PersistentGameEntity {
      * @param duration - The duration object of the event.
      * @param remainingString - The string representation of the remaining time of the event.
      * @param remaining - The remaining time of the event.
-     * @param triggerTimesStrings - The string representations of what times the event will be automatically triggered. Refer to this link for accepted formats: {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-string}
+     * @param triggerTimesStrings - The string representations of what times the event will be automatically triggered. Refer to this link for accepted formats: {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/event.html#trigger-times-string}
      * @param roomTag - The keyword or phrase assigned to the event that allows it to affect rooms.
      * @param commandsString - Forward slash separated list of comma-separated bot commands to be executed when the event is triggered or ended.
      * @param triggeredCommands - The bot commands to be executed when the event is triggered.

@@ -7,7 +7,7 @@ export type GestureField = "id"|"requires"|"disabledStatusesString"|"description
 /**
  * Represents a form of body language that a player can use to communicate non-verbally.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/gesture.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/gesture.html
  */
 export default class Gesture extends GameEntity implements PersistentGameEntity {
     /**

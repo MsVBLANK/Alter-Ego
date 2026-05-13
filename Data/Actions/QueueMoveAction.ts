@@ -7,7 +7,7 @@ import StartMoveAction from "./StartMoveAction.ts";
 /**
  * Represents a queue move action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/queue-move-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#queue-move-action
  */
 export default class QueueMoveAction extends Action {
 	/**

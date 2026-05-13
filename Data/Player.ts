@@ -51,7 +51,7 @@ export type PlayerField =
 /**
  * Represents a player in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html
  */
 export default class Player extends RecipeProcessor implements PersistentGameEntity, User {
     /**
@@ -91,7 +91,7 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     /**
      * The player's third person personal pronouns.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string
      */
     pronounString: string;
     /**
@@ -273,9 +273,9 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
      * @param member - The Discord member object of the player.
      * @param name - The name of the player.
      * @param title - The player's title.
-     * @param pronounString - The player's third person personal pronouns. For formatting, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string}
+     * @param pronounString - The player's third person personal pronouns. For formatting, see {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html#pronoun-string}
      * @param originalVoiceString - A phrase that will be used to describe the player's voice to other players when their identity is obscured in some way. This should begin with "a" or "an" and end with "voice".
-     * @param stats - The stats of the player. For more details, see {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/player.html#stats}
+     * @param stats - The stats of the player. For more details, see {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html#stats}
      * @param alive - Whether the player is alive or not.
      * @param locationDisplayName - The display name of the room the player was loaded into.
      * @param hidingSpot - The name of the fixture the player is currently hiding in. The fixture doesn't actually have to exist.

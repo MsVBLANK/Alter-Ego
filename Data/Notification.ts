@@ -9,7 +9,7 @@ import type Player from "./Player.ts";
 /**
  * Represents a notification to send to a player in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/notification.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/notification.html
  */
 export default class Notification extends GameConstruct {
 	/**

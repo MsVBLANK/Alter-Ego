@@ -133,7 +133,7 @@ Deletes multiple messages at once.
     .delete 3
     .delete 100
     .delete @Alter Ego 5
-    .delete @MolSno 75
+    .delete @tobyp4904 75
 
 #### Details
 
@@ -270,7 +270,7 @@ If the file size exceeds this, they will instead be saved to disk.
 
 This command is for debugging purposes, and has no use during regular gameplay. If you discover a bug that was not
 caused by moderator error, please use this command and attach these files to a new Issue on
-the [Alter Ego GitHub page](https://github.com/MolSnoo/Alter-Ego/issues).
+the [Alter Ego GitHub page](https://github.com/MsVBLANK/Alter-Ego/issues).
 
 ### editmode
 

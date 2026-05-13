@@ -5,7 +5,7 @@ import type Room from "../Room.ts";
 /**
  * Represents an exit action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/exit-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#exit-action
  */
 export default class ExitAction extends Action {
 	/**

@@ -1,7 +1,7 @@
 # Writing Descriptions
 
 Writing for Alter Ego is somewhat complex, but thanks to its custom
-[parser module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/parser.js),
+[parser module](https://github.com/MsVBLANK/Alter-Ego/blob/master/Modules/parser.js),
 it is incredibly flexible. Alter Ego makes use of [XML](https://en.wikipedia.org/wiki/XML) formatting to understand what
 the [moderator](moderating.md) has written so that it can make changes as necessary.
 
@@ -396,7 +396,7 @@ the most helpful and commonly used.
 ### Finder conditionals
 
 The function which evaluates scripts also has access to the
-[finder module](https://github.com/MolSnoo/Alter-Ego/blob/master/Modules/finder.js), which allows you to find almost
+[finder module](https://github.com/MsVBLANK/Alter-Ego/blob/master/Modules/finder.js), which allows you to find almost
 any game entity. The finder module includes the following functions (parameters listed in parentheses are optional):
 
 - `findRoom('room-id')`

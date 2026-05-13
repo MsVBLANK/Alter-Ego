@@ -6,7 +6,7 @@ import type Player from "./Player.ts";
 /**
  * Represents a moderator of the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/moderator.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/moderator.html
  */
 export default class Moderator extends GameConstruct implements User {
     /**

@@ -10,7 +10,7 @@ import type Whisper from "./Whisper.ts";
 /**
  * Represents dialog spoken aloud by a player.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/dialog.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/dialog.html
  */
 export default class Dialog extends GameConstruct {
     /**

@@ -9,7 +9,7 @@ import Room from "./Room.ts";
 /**
  * Represents a group of two or more players speaking quietly to each other such that no one else in the room can hear them.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/whisper.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/whisper.html
  */
 export default class Whisper extends GameConstruct {
     /**

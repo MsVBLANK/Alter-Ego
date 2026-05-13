@@ -8,7 +8,7 @@ import SolveAction from "./SolveAction.ts";
 /**
  * Represents a move action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/move-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#move-action
  */
 export default class MoveAction extends Action {
 	/**

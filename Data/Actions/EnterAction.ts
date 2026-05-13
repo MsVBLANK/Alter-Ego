@@ -6,7 +6,7 @@ import QueueMoveAction from "./QueueMoveAction.ts";
 /**
  * Represents an enter action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/enter-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#enter-action
  */
 export default class EnterAction extends Action {
 	/**

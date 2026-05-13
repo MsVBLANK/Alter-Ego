@@ -8,7 +8,7 @@ export type ExitField = "name"|"phrase"|"tags"|"x"|"y"|"z"|"unlocked"|"dest"|"li
 /**
  * Represents an exit in a room.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/exit.html
  */
 export default class Exit extends GameEntity implements PersistentGameEntity {
     /**
@@ -22,7 +22,7 @@ export default class Exit extends GameEntity implements PersistentGameEntity {
     /**
      * The tags associated with the exit.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/exit.html#tags
      */
     tags: Set<string>;
     /**
@@ -53,7 +53,7 @@ export default class Exit extends GameEntity implements PersistentGameEntity {
     /**
      * @param name - The name of the exit.
      * @param phrase - A phrase used to refer to the exit in narrations.
-     * @param tags - The tags associated with the exit. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/exit.html#tags}
+     * @param tags - The tags associated with the exit. {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/exit.html#tags}
      * @param pos - The position of the exit.
      * @param unlocked - Whether or not the exit is unlocked.
      * @param destDisplayName - The display name of the room that the exit leads to.

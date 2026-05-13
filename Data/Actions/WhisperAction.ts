@@ -6,7 +6,7 @@ import { generateListString } from "../../Modules/helpers.ts";
 /**
  * Represents a whisper action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/whisper-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#whisper-action
  */
 export default class WhisperAction extends Action {
 	/**

@@ -13,7 +13,7 @@ export type RoomField = "id"|"displayName"|"tags"|"iconURL"|"exits"|"description
 /**
  * Represents a room in the game.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/room.html
  */
 export default class Room extends GameEntity implements PersistentGameEntity {
     /**
@@ -37,7 +37,7 @@ export default class Room extends GameEntity implements PersistentGameEntity {
     /**
      * The tags associated with the room.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html#tags
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/room.html#tags
      */
     tags: Set<string>;
     /**
@@ -72,7 +72,7 @@ export default class Room extends GameEntity implements PersistentGameEntity {
      * @param id - The unique ID of the room.
      * @param displayName - The name of the room for display purposes. Can contain uppercase letters and special characters.
      * @param channel - The channel associated with the room.
-     * @param tags - The tags associated with the room. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/room.html#tags}
+     * @param tags - The tags associated with the room. {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/room.html#tags}
      * @param iconURL - The URL of the icon associated with the room.
      * @param exits - The exits of the room.
      * @param description - The default description of the room for when a player enters from the first listed exit or inspects the room.

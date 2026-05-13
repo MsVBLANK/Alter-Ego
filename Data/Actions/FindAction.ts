@@ -32,7 +32,7 @@ type GameEntityFields = {
 /**
  * Represents a find action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/find-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#find-action
  */
 export default class FindAction extends Action {
     static readonly dataTypeRegex = /^((?<Room>room(?! ?item)s?)|(?<Fixture>objects?|fixtures?)|(?<Prefab>prefabs?)|(?<Recipe>recipes?)|(?<RoomItem>(room ?)?items?)|(?<Puzzle>puzzles?)|(?<Event>events?)|(?<Status>status(?:es)? ?(?:effects?)?)|(?<Player>players?)|(?<InventoryItem>inventory(?: ?items?)?)|(?<Gesture>gestures?)|(?<Flag>flags?))(?<search>.*)/i;

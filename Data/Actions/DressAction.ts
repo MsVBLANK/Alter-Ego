@@ -11,7 +11,7 @@ import AttemptAction from "./AttemptAction.ts";
 /**
  * Represents a dress action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/dress-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#dress-action
  */
 export default class DressAction extends Action {
 	/**

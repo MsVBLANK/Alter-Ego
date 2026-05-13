@@ -6,7 +6,7 @@ import Status from "./Status.ts";
 /**
  * Represents a die that can be rolled for a semi-random number.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/die.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/die.html
  */
 export default class Die extends GameConstruct {
     /**

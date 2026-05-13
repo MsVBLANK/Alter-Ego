@@ -6,7 +6,7 @@ import InventorySlot from "../InventorySlot.ts";
 /**
  * Represents an unstash action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/unstash-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#unstash-action
  */
 export default class UnstashAction extends Action {
     /**

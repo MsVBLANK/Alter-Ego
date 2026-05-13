@@ -5,7 +5,7 @@ import CureAction from "./CureAction.ts";
 /**
  * Represents an unhide action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/unhide-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#unhide-action
  */
 export default class UnhideAction extends Action {
 	/**

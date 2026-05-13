@@ -5,7 +5,7 @@ import InventoryItem from "../InventoryItem.ts";
 /**
  * Represents an unequip action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/unequip-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#unequip-action
  */
 export default class UnequipAction extends Action {
 	/**

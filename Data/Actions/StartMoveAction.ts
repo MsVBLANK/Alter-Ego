@@ -5,7 +5,7 @@ import type Room from "../Room.ts";
 /**
  * Represents a start move action.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/start-move-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#start-move-action
  */
 export default class StartMoveAction extends Action {
 	/**

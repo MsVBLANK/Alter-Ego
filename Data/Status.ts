@@ -9,7 +9,7 @@ export type StatusField = "id"|"durationString"|"fatal"|"visible"|"overridersStr
 /**
  * Also referred to as a StatusEffect. Represents a condition that can be applied to a player.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html
  */
 export default class Status extends GameEntity implements PersistentGameEntity {
     /**
@@ -85,7 +85,7 @@ export default class Status extends GameEntity implements PersistentGameEntity {
     /**
      * Stat modifiers to apply to the player.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers
      */
     readonly statModifiers: StatModifier[];
     /**
@@ -97,7 +97,7 @@ export default class Status extends GameEntity implements PersistentGameEntity {
     /**
      * The behavior attributes this status applies to the player.
      *
-     * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes
+     * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes
      */
     readonly behaviorAttributes: Set<string>;
     /**
@@ -124,8 +124,8 @@ export default class Status extends GameEntity implements PersistentGameEntity {
      * @param nextStageId - The ID of the status that will be inflicted on the player when this one expires.
      * @param duplicatedStatusId - The ID of the status that this Status will turn into if it is inflicted on a player who already has it.
      * @param curedConditionId - The ID of the status that will be inflicted on the player if this one is cured.
-     * @param statModifiers - Stat modifiers to apply to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers}
-     * @param behaviorAttributes - The behavior attributes this status applies to the player. {@link https://molsnoo.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes}
+     * @param statModifiers - Stat modifiers to apply to the player. {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html#stat-modifiers}
+     * @param behaviorAttributes - The behavior attributes this status applies to the player. {@link https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html#behavior-attributes}
      * @param inflictedDescription - The description of the status when a player is inflicted with it.
      * @param curedDescription - The description of the status when a player is cured of it.
      * @param row - The row number of the status in the sheet.

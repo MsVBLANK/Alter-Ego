@@ -3,7 +3,7 @@ import Puzzle from "../Puzzle.ts";
 
 /**
  * Represents an unsolve action.
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/actions/unsolve-action.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#unsolve-action
  */
 export default class UnsolveAction extends Action {
 	/**

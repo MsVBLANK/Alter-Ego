@@ -5,7 +5,7 @@ import InventoryItem from "./InventoryItem.ts";
 /**
  * Represents a part of a player's body that they can equip inventory items to.
  *
- * @see https://molsnoo.github.io/Alter-Ego/reference/data_structures/equipment_slot.html
+ * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/equipment_slot.html
  */
 export default class EquipmentSlot extends GameEntity {
     /**

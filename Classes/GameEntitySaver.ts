@@ -226,7 +226,7 @@ export default class GameEntitySaver {
 	 * Sets up a small demo environment on the spreadsheet. Overwrites anything that may already be on the spreadsheet.
 	 * @returns A set of room data formatted as spreadsheet cells.
 	 */
-	async setupdemo(): Promise<string[][]> {
+	async setupDemo(): Promise<string[][]> {
 		return new Promise(async (resolve, reject) => {
 			let data: ValueRange[] = [];
 

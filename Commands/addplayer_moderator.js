@@ -110,8 +110,8 @@ export async function execute(game, message, command, args, moderator) {
     }
 
     try {
-        await appendRowsToSheet(game.constants.playerSheetDataCells, playerCells, game.settings.spreadsheetID);
-        await appendRowsToSheet(game.constants.inventorySheetDataCells, inventoryCells, game.settings.spreadsheetID);
+        await appendRowsToSheet(game.constants.playerSheetDataCells, playerCells, game.settings.spreadsheetID, true);
+        await appendRowsToSheet(game.constants.inventorySheetDataCells, inventoryCells, game.settings.spreadsheetID, true);
         game.loadedEntitiesWithErrors.add("Players");
 
         const successMessage = `<@${member.id}> has been added to the game. `

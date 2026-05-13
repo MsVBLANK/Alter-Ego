@@ -44,7 +44,7 @@ export async function execute(game, message, command, args, moderator) {
     if (game.inProgress) return game.communicationHandler.reply(message, `You can't use this command while a game is in progress.`);
 
     try {
-        const roomValues = await game.entitySaver.setupdemo();
+        const roomValues = await game.entitySaver.setupDemo();
 
         // Ensure that a room category exists.
         const roomCategories = game.guildContext.roomCategories;

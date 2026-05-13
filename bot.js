@@ -209,8 +209,8 @@ async function sendFirstBootMessage(settings) {
         + `\`${settings.commandPrefix}help\` command to learn what you can do. You can issue commands in this channel.\n\n`
         + `If this is your first time using Alter Ego, use the \`${settings.commandPrefix}setupdemo\` command to generate `
         + `a demo environment on the spreadsheet you supplied in your \`.env\` file. Then, you can invite another account `
-        + `to the server and use the \`${settings.commandPrefix}startgame\` command to add them as a Player so that you `
-        + `can get a feel for gameplay.\n\n`
+        + `to the server and use the \`${settings.commandPrefix}addplayer\` or \`${settings.commandPrefix}startgame\` `
+        + `command to add them as a player so that you can get a feel for gameplay.\n\n`
         + `For documentation and tutorials on how to use Alter Ego, check out the official docs:\n`
         + `https://msvblank.github.io/Alter-Ego/\n\n`
         + `Good luck, and have fun!`

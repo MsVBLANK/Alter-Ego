@@ -1,3 +1,4 @@
+import Room from '../Data/Room.ts';
 import { registerRoomCategory, createCategory } from '../Modules/serverManager.ts';
 import { ChannelType } from 'discord.js';
 
@@ -43,7 +44,7 @@ export async function execute(game, message, command, args, moderator) {
     if (game.inProgress) return game.communicationHandler.reply(message, `You can't use this command while a game is in progress.`);
 
     try {
-        const roomValues = await game.entitySaver.setupdemo();
+        const roomValues = await game.entitySaver.setupDemo();
 
         // Ensure that a room category exists.
         const roomCategories = game.guildContext.roomCategories;
@@ -62,10 +63,12 @@ export async function execute(game, message, command, args, moderator) {
         // Create the room channels, if they don't already exist.
         if (roomCategory) {
             for (let i = 0; i < roomValues.length; i++) {
-                const channel = game.guildContext.guild.channels.cache.find(channel => channel.name === roomValues[i][0]);
+                const roomId = Room.generateValidId(roomValues[i][0]);
+                if (roomId === "") continue;
+                const channel = game.guildContext.guild.channels.cache.find(channel => channel.name === roomId);
                 if (!channel) {
                     await game.guildContext.guild.channels.create({
-                        name: roomValues[i][0],
+                        name: roomId,
                         type: ChannelType.GuildText,
                         parent: roomCategory.id
                     });
@@ -73,9 +76,21 @@ export async function execute(game, message, command, args, moderator) {
             }
 
             game.communicationHandler.sendToCommandChannel(
-                "The spreadsheet was populated with demo data. Once you've populated the Players sheet, either manually or with the "
-                + `${game.settings.commandPrefix}startgame command in conjunction with the ${game.settings.commandPrefix}play command, `
-                + `use ${game.settings.commandPrefix}load all start to begin the demo.`
+                `The spreadsheet has been populated with demo data. You can now populate the Players and `
+                + `Inventory Items sheets. You can do this manually, or you can use one of two methods:\n\n`
+                + `1. Add them directly with the \`${game.settings.commandPrefix}addplayer\` command.\n`
+                + `2. Assign all desired players the `
+                + `<@&${game.settings.debug ? game.guildContext.testerRole.id : game.guildContext.eligibleRole.id}> `
+                + `role, then use the \`${game.settings.commandPrefix}startgame\` command, and let them add themselves `
+                + `with the \`${game.settings.commandPrefix}play\` command.\n\n`
+                + `Once all players have been added, you can manually tweak their descriptions to suit them and assign `
+                + `their starting locations. Each dorm in the demo environment has a different set of clothing `
+                + `available. You can assign players to each dorm based on which set of clothing they might prefer.\n\n`
+                + "There are several `Moderator's note` comments spread throughout the demo data that you can search "
+                + `for. The most important ones that require your immediate attention are on the Puzzles sheet.\n\n`
+                + `Disclaimer: You are free to use any of the data included in the demo environment in your own games. `
+                + `It has been provided for your benefit, so that you can study and build upon it.\n\n`
+                + `When you are ready to begin the demo, send \`${game.settings.commandPrefix}load all start\`.`
             );
         }
         else return game.communicationHandler.sendToCommandChannel("The spreadsheet was populated with demo data, but there was an error finding a room category to contain the new room channels.");

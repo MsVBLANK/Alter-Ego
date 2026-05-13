@@ -68,6 +68,7 @@ export default class GameNarrationHandler {
 	 * @param narrator - The player or guild member who wrote the narration. Optional.
 	 */
 	#sendNarration(type: MessageDisplayType, action: Action, player: Player, narrationText: string, location: Room = player.location, whisper?: Whisper, narrator?: User) {
+        if (narrationText === "") return;
 		const narration = new Narration(this.#game, type, action, player, location, capitalizeFirstLetter(narrationText), whisper, action.message, narrator);
 		const narrateAction = new NarrateAction(this.#game, action.message, player, location, action.forced, whisper);
 		narrateAction.performNarrate(narration);

@@ -147,9 +147,10 @@ export function batchUpdateSheet (requests, spreadsheetId) {
  * @param {string} sheetRange - The range to append rows to in {@link https://developers.google.com/workspace/sheets/api/guides/concepts#cell|A1 notation}.
  * @param {string[][]} data - An array of arrays of values to append to the spreadsheet after the specified sheetRange.
  * @param {string} spreadsheetId - The ID of the spreadsheet to update.
+ * @param {boolean} [overwrite] - Whether or not to overwrite existing values at the end of the range. Defaults to false.
  * @returns {Promise<any>} {@link https://developers.google.com/workspace/sheets/api/reference/rest/v4/spreadsheets.values/append#response-body}
  */
-export function appendRowsToSheet (sheetRange, data, spreadsheetId) {
+export function appendRowsToSheet (sheetRange, data, spreadsheetId, overwrite = false) {
     const request = {
         spreadsheetId: spreadsheetId,
 
@@ -157,7 +158,7 @@ export function appendRowsToSheet (sheetRange, data, spreadsheetId) {
 
         valueInputOption: 'RAW',
 
-        insertDataOption: 'INSERT_ROWS',
+        insertDataOption: overwrite ? 'OVERWRITE' : 'INSERT_ROWS',
 
         resource: {
             values: data,

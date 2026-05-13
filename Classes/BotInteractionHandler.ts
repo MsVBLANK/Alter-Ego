@@ -139,7 +139,9 @@ export default class BotInteractionHandler {
 	 */
 	async #processActionDirectiveInteractable(interactable: ActionDirectiveInteractable, user: User, interaction: BotInteraction, reply?: InteractionCallbackResponse<boolean>): Promise<boolean> {
         const timestamp = new Date();
-        const player = interactable.actionDirective.getPlayer();
+        const playerName = interactable.actionDirective.getPlayerName();
+        const player = this.#game.entityFinder.getLivingPlayer(playerName);
+        if (playerName && !player) throw new Error(`Invalid player.`);
         const author = user instanceof Moderator ? player ? `${player.name} (${user.member.user.username})` : user.member.user.username : player.name
         const forced = user instanceof Moderator;
 		const action = interactable.actionDirective.createAction(this.#game, undefined, player, player?.location, forced, undefined, user);

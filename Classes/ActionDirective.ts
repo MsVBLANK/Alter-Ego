@@ -67,8 +67,8 @@ export default class ActionDirective<T extends Action = Action> {
 		return new this.action(game, message, player, location, forced, whisper, user);
 	}
 
-    getPlayer() {
-        return this.#player;
+    getPlayerName() {
+        return this.#player?.name;
     }
 
 	getArgs() {

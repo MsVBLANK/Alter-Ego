@@ -85,5 +85,12 @@ describe('Description test', () => {
             const actualEntities = Description.getPotentialGameEntities(parsedDescription);
             expect(actualEntities).toStrictEqual(expectedEntities);
         });
+
+        test('getPotentialGameEntities test 11', () => {
+            const parsedDescription = `The base is metallic and painted to look like wood. It looks like a pretty ordinary pool table. On it are 2 POOL STICKS, a TRIANGLE, POOL CHALK, a CUE BALL, an 8 BALL, a 9 BALL, a 10 BALL, and an 11 BALL.`;
+            const expectedEntities = ["POOL STICKS", "TRIANGLE", "POOL CHALK", "CUE BALL", "8 BALL", "9 BALL", "10 BALL", "11 BALL"];
+            const actualEntities = Description.getPotentialGameEntities(parsedDescription);
+            expect(actualEntities).toStrictEqual(expectedEntities);
+        });
     });
 });

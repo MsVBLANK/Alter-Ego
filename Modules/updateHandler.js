@@ -21,8 +21,6 @@ export default async function autoUpdate(settings) {
  * @param {GameConstants} constants
  */
 async function v2_0Update(settings, constants) {
-    // TODO: Update files.
-
     // Update sheets and formatting.
     const batchUpdateRequests = [];
     

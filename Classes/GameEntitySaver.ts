@@ -69,9 +69,9 @@ export default class GameEntitySaver {
 			});
 			data.push({ range: this.#game.constants.fixtureSheetDataCells, values: fixtureValues });
 
-			let itemValues: string[][] = [];
+			let roomItemValues: string[][] = [];
 			this.#game.roomItems.forEach((roomItem, i) => {
-				itemValues.push([
+				roomItemValues.push([
 					roomItem.prefab.id,
 					roomItem.identifier,
 					roomItem.location.displayName,
@@ -88,7 +88,7 @@ export default class GameEntitySaver {
 				}
 			});
 			for (let i = 0; i < deletedItemsCount; i++)
-				itemValues.push([
+				roomItemValues.push([
 					"",
 					"",
 					"",
@@ -98,7 +98,7 @@ export default class GameEntitySaver {
 					"",
 					""
 				]);
-			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: itemValues });
+			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: roomItemValues });
 
 			let puzzleValues: string[][] = [];
 			this.#game.puzzles.forEach(puzzle => {
@@ -226,29 +226,31 @@ export default class GameEntitySaver {
 	 * Sets up a small demo environment on the spreadsheet. Overwrites anything that may already be on the spreadsheet.
 	 * @returns A set of room data formatted as spreadsheet cells.
 	 */
-	async setupdemo(): Promise<string[][]> {
+	async setupDemo(): Promise<string[][]> {
 		return new Promise(async (resolve, reject) => {
 			let data: ValueRange[] = [];
 
 			const roomValues = demodata.rooms;
-			const fixtureValues = demodata.objects;
+			const fixtureValues = demodata.fixtures;
 			const prefabValues = demodata.prefabs;
 			const recipeValues = demodata.recipes;
-			const itemValues = demodata.items;
+			const roomItemValues = demodata.roomItems;
 			const puzzleValues = demodata.puzzles;
 			const eventValues = demodata.events;
 			const statusValues = demodata.statusEffects;
 			const gestureValues = demodata.gestures;
+            const flagValues = demodata.flags;
 
 			data.push({ range: this.#game.constants.roomSheetDataCells, values: roomValues });
 			data.push({ range: this.#game.constants.fixtureSheetDataCells, values: fixtureValues });
 			data.push({ range: this.#game.constants.prefabSheetDataCells, values: prefabValues });
 			data.push({ range: this.#game.constants.recipeSheetDataCells, values: recipeValues });
-			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: itemValues });
+			data.push({ range: this.#game.constants.roomItemSheetDataCells, values: roomItemValues });
 			data.push({ range: this.#game.constants.puzzleSheetDataCells, values: puzzleValues });
 			data.push({ range: this.#game.constants.eventSheetDataCells, values: eventValues });
 			data.push({ range: this.#game.constants.statusSheetDataCells, values: statusValues });
 			data.push({ range: this.#game.constants.gestureSheetDataCells, values: gestureValues });
+            data.push({ range: this.#game.constants.flagSheetDataCells, values: flagValues });
 
 			try {
 				await batchUpdateSheetValues(data, this.#game.settings.spreadsheetID);

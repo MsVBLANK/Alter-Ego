@@ -226,7 +226,7 @@ function addItemsToItemList(document, sentence, container, player) {
         let itemAlreadyExists = false;
         for (const clause of sentence.clause) {
             const clauseText = clause.node.data.toLocaleUpperCase();
-            if (isNaN(item.quantity) && (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase) || clauseText.includes(item.pluralName) || clauseText.includes(item.name))) {
+            if (isNaN(item.quantity) && (pluralContainingPhrase && clauseText.includes(pluralContainingPhrase) || item.pluralName && clauseText.includes(item.pluralName) || clauseText.includes(item.name))) {
                 itemAlreadyExists = true;
                 break;
             }

@@ -242,7 +242,16 @@ export default class Game {
 
 		// Save data to the sheet periodically.
 		this.#autoSaveInterval = setInterval(
-			() => { if (this.inProgress && !this.editMode) this.entitySaver.saveGame(); },
+			() => {
+                try {
+                    if (this.inProgress && !this.editMode) this.entitySaver.saveGame();
+                }
+                catch (error) {
+                    if (error.hasOwnProperty("code") && error.code !== 503 && error.code !== 500) {
+                        console.log(error);
+                    }
+                }
+            },
 			this.settings.autoSaveInterval * 1000
 		);
 		// Check for any events that are supposed to trigger at this time of day.

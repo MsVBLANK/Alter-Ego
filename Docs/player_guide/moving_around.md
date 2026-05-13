@@ -1,5 +1,6 @@
 <!--
 SPDX-FileCopyrightText: 2026 Amy Poon <amy@amypoon.me>
+SPDX-FileCopyrightText: 2026 MsVBlank
 
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->

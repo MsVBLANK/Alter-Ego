@@ -64,11 +64,11 @@ equivalent of sending `load all resume`. This is useful if you reboot the bot fr
 
 ### PIXELS_PER_METER
 
-This is how many pixels it takes to represent 1 meter on your [Map](). When calculating the amount of time it takes a
-player to move from one room to another, Alter Ego needs to convert the distance between the two rooms from pixels to
-meters. In order to set this properly, find a part of your map with a standard size (for example, a basketball court
-must be 28 x 15 meters according to the International Basketball Federation). Divide the number of pixels making up its
-length by its length in meters. The result should go here.
+This is how many pixels it takes to represent 1 meter on your [Map](../moderator_guide/mapmaking.md). When calculating
+the amount of time it takes a player to move from one room to another, Alter Ego needs to convert the distance
+between the two rooms from pixels to meters. In order to set this properly, find a part of your map with a standard
+size (for example, a basketball court must be 28 x 15 meters according to the International Basketball Federation).
+Divide the number of pixels making up its length by its length in meters. The result should go here.
 
 *Default: `25`*
 
@@ -372,8 +372,7 @@ While the default is multiple lines, it is simpler to specify a compact, single-
 ### DEFAULT_DESCRIPTION
 
 This is the default description that will be applied to each player's Description cell on the Players sheet when the
-startgame timer ends. Once it is on the spreadsheet, it should be edited to describe each player's appearance. The item
-lists should also be filled out to contain the containing phrases for the default inventory, if it has been changed.
+startgame timer ends. Once it is on the spreadsheet, it should be edited to describe each player's appearance.
 
 *Default:*
 

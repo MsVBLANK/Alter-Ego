@@ -1003,7 +1003,7 @@ are removed from the description.
 ### Default possibilities
 
 Before reading this section, please read the section on
-[Room Item](../reference/data_structures/room_item.md#procedural-selections)
+[Room Item](../reference/data_structures/room_item.md#procedural-selections) and
 [Inventory Item](../reference/data_structures/inventory_item.md#procedural-selections) procedural selections.
 
 Because procedural selections are carried over when an Item is transformed, it can be useful to have procedurals and

@@ -27,7 +27,7 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 - [Getting to Know Alter Ego](player_guide/getting_to_know_alter_ego.md)
 - [Interacting with Things](player_guide/interacting_with_things.md)
 - [Moving Around](player_guide/moving_around.md)
-- [Expressing Yourself]()
+- [Expressing Yourself](player_guide/expressing_yourself.md)
 - [Dressing Up]()
 - [Crafting]()
 - [Solving Puzzles]()

@@ -126,6 +126,10 @@ number of matched ingredients, and the remaining Room Items will be left untouch
 process a Recipe with the remaining Room Items, then it will do so upon finishing the first one, as long as it is not
 automatically deactivated.
 
+> [!IMPORTANT]
+> If a Fixture has a child Puzzle, then the ingredients must be contained inside of the child Puzzle, rather than the
+> Fixture itself. Likewise, the products will be instantiated in the child Puzzle.
+
 ### Automatically Deactivated
 
 - Spreadsheet label: **Deactivate Automatically?**

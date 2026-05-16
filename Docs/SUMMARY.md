@@ -77,3 +77,4 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 - [Manual Installation](appendix/manual_installation/index.md)
     - [Node Installation](appendix/manual_installation/node.md)
     - [Manual Channel and Role Creation](appendix/manual_installation/channel_and_role_creation.md)
+- [Migration Guide](appendix/migration.md)

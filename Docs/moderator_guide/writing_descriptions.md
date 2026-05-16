@@ -5,6 +5,11 @@ Writing for Alter Ego is somewhat complex, but thanks to its custom
 it is incredibly flexible. Alter Ego makes use of [XML](https://en.wikipedia.org/wiki/XML) formatting to understand what
 the [moderator](moderating.md) has written so that it can make changes as necessary.
 
+> [!TIP]
+> [Alter Ego Tools](https://github.com/flufflesamy/alter-ego-tools) is a program that can make writing descriptions
+> much easier. Although it can't handle everything, it can save you a lot of time. It even has a very useful
+> procedural generator. Try it out, if you're able to!
+
 ## Basic concepts of XML
 
 XML, short for eXtensible Markup Language, was designed to store and transport data, and to be relatively simple to

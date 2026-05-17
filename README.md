@@ -4,15 +4,53 @@ SPDX-FileCopyrightText: 2019 Alter Ego Contributors
 SPDX-License-Identifier: CC-BY-SA-4.0
 -->
 
-# Alter Ego
+<h1 align="center">
+    Alter Ego
+</h1>
 
-![GitHub License](https://img.shields.io/github/license/MsVBLANK/Alter-Ego)
-![GitHub Release](https://img.shields.io/github/v/release/MsVBLANK/Alter-Ego)
+<p align="center">
+    <a href="#getting-started">Getting Started</a> |
+    <a href="https://msvblank.github.io/Alter-Ego/">Documentation</a> |
+    <a href="https://msvblank.github.io/Alter-Ego/player_guide/how_to_use_this_guide.html">Player Guide</a> |
+    <a href="#troubleshooting">Troubleshooting</a>
+</p>
+
+<div align="center">
+    <a href="https://github.com/MsVBLANK/Alter-Ego/blob/master/LICENSE.md">
+        <img alt="GitHub License" src="https://img.shields.io/github/license/MsVBLANK/Alter-Ego?style=flat-square"/>
+    </a>
+    <a href="https://github.com/MsVBLANK/Alter-Ego/releases">
+        <img alt="GitHub Release" src="https://img.shields.io/github/v/release/MsVBLANK/Alter-Ego?style=flat-square&logo=github"/>
+    </a>
+    <br /><br />
+</div>
 
 ![Animated webp demonstrating the act of moving from room to room. A player named Kyra finds herself stuck in the
 `#dorm-3` channel, so she flips a SWITCH, and the DOOR unlocks. She types ".move door", and her access to the `#dorm-3`
 channel is removed. Where it once was is a different channel, `#hall-0`. She clicks on it and finds a player named Ava,
 who says "Oh...! Hi..." to which Kyra responds with "Hello there. Who are you?"](Docs/images/alteregodemo-optimized.webp)
+
+## Table of Contents
+
+- [About](#about)
+- [Gameplay Features](#gameplay-features)
+  - [Moving Around](#moving-around)
+  - [Inspecting](#inspecting)
+  - [Solving Puzzles](#solving-puzzles)
+  - [Crafting and Cooking](#crafting-and-cooking)
+  - [Dressing Up](#dressing-up)
+  - [Killing](#killing)
+- [Role Play Features](#role-play-features)
+  - [Advanced Dialog System](#advanced-dialog-system)
+  - [Private Whispers](#private-whispers)
+  - [Spectate Channels](#spectate-channels)
+  - [Internal Monologuing](#internal-monologuing)
+- [Game Development](#game-development)
+- [Getting Started](#getting-started)
+- [Troubleshooting](#troubleshooting)
+- [Requesting Features](#requesting-features)
+- [Reporting Bugs and Contributing](#reporting-bugs-and-contributing)
+- [License](#license)
 
 ## About
 
@@ -26,11 +64,13 @@ belong to from each one, and more.](Docs/images/spreadsheet_example.png)
 
 ## Gameplay Features
 
-The basis of Alter Ego's gameplay is moving between rooms. Each room is represented by a Discord channel. When a player
-moves from one room to another, they will be removed from the room channel they are currently in and added to the
-channel corresponding to the desired room. Upon entering the new room, they will receive a written description of the
-room, noting its layout and anything they can interact with. Players can perform actions by sending text commands, or by
-using interactive Discord components like buttons and dropdowns.
+### Moving Around
+
+The basis of Alter Ego's gameplay is moving between rooms. Each room is represented by a Discord channel. When you
+move from one room to another, you will be removed from the room channel you're currently in and added to the
+desired room's channel. Upon entering, you'll receive a written description of the room, noting its layout and anything
+you can interact with. You can perform actions by sending text commands, or by using interactive Discord components
+like buttons and dropdowns.
 
 ![A message from Alter Ego split into several Discord components. On top, the name of the room is displayed: Rec Room.
 Underneath is a description of the room:
@@ -50,7 +90,7 @@ At the bottom of the message are two blue buttons: "Move DOOR 1" and "Move DOOR 
 
 ### Inspecting
 
-Players can inspect their surroundings to learn more about the environment, and discover things they can interact with.
+You can inspect your surroundings to learn more about the environment, and discover things you can interact with.
 
 ![A message from Kyra that says ".inspect dartboard". Alter Ego responds to it with
 "You inspect the DARTBOARD." and then
@@ -197,13 +237,14 @@ Alter Ego: "Kyra dies."
 ## Role Play Features
 
 The gameplay mechanics of Alter Ego give rise to spontaneous character interactions. Every moment of your role play
-occurs in a specific setting, with a specific context. This often leads to unexpected relationships between characters
-that occur organically, as they are built gradually over time. The linear progression of the core gameplay loop means
-your character naturally develops over time as new events unfold.
+occurs in a specific setting, with a specific context. This often leads to the development of unexpected relationships
+between characters that occur organically, as they are built gradually over time. The linear progression of the core
+gameplay loop means your character naturally develops over time as new events unfold.
 
-Of course, Alter Ego also offers a wide variety of tools to enhance your role playing experience even further.
+Of course, Alter Ego also offers a variety of tools to enhance your moment-to-moment
+role playing experience even further.
 
-### Robust Dialog System
+### Advanced Dialog System
 
 Alter Ego has an extensive dialog system with many interconnected mechanics. You can shout to be heard in other rooms,
 speak across great distances with wireless transceivers, mimic the voices of other characters, and more. There's even a
@@ -285,15 +326,48 @@ Ava (narration): "Ava puts her hand to her chin and thinks."
 Ava: "What makes a day wonderful for someone like you?"
 ](Docs/images/readme_monolog_example.png)
 
-The possibilities are endless. To try it for
-yourself, [install Alter Ego using Docker](https://msvblank.github.io/Alter-Ego/moderator_guide/installation) and use
-the `.setupdemo` command to instantly create a small demo environment.
-
 ## Game Development
+
+Alter Ego has a wide array of tools to develop exciting and unique game environments. All games are developed on a
+spreadsheet, and users require little to no programming knowledge to do so.
+
+It comes bundled with a small but fully-featured demo environment for new users to study and experiment with. On top of
+that, [the documentation](https://msvblank.github.io/Alter-Ego/) is detailed and thorough,
+with many examples and tutorials.
+
+For additional resources to make developing games with Alter Ego easier, try out
+[Alter Ego Tools](https://github.com/flufflesamy/alter-ego-tools).
 
 ## Getting Started
 
+Alter Ego is strictly self-hosted, so you will have to install it and host it yourself.
+
+The [installation and setup guide](https://msvblank.github.io/Alter-Ego/moderator_guide/installation.html)
+walks you through every step of the process.
+
+Once you have Alter Ego up and running, you can issue the `.setupdemo` command to set up a demo game environment
+for you and a small group of players to get a feel for its gameplay.
+
 ## Troubleshooting
+
+If you're having trouble with Alter Ego, check out [the Docs](https://msvblank.github.io/Alter-Ego/) to see if there's
+a solution in the article related to what you're trying to do.
+
+If you don't find an answer in the Docs, check the relevant category of the
+[Discussions board](https://github.com/MsVBLANK/Alter-Ego/discussions) to see if anyone else has had the same issue as
+you; there may already be a solution posted.
+
+If you don't find the issue you're facing in the Discussions board, feel free to open a new Discussion.
+
+## Requesting Features
+
+Do you have an idea or a request for a new feature?
+[Check to see if there's already an Issue for it.](https://github.com/MsVBLANK/Alter-Ego/issues?q=state%3Aopen%20AND%20(label%3A%22Planned%20Feature%3A%20major%22%20OR%20label%3A%22Planned%20Feature%3A%20minor%22%20OR%20label%3A%22Planned%20Feature%3A%20qol%22%20OR%20label%3A%22Category%3A%20feature%20request%22))
+If there isn't, feel free to create a new Issue to propose it.
+
+## Reporting Bugs and Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) to learn about reporting bugs and contributing to this project.
 
 ## License
 

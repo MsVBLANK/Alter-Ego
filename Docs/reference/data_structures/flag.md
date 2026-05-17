@@ -45,12 +45,12 @@ However, the value can also be updated by evaluating its value script, explained
 
 > [!CAUTION]
 > This feature has the ability to run code. In order to evaluate a Flag's value script,
-> Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While
-> it has been tested to prevent access to many functions which can cause severe damage, its security cannot
-> be guaranteed, especially if Alter Ego is run outside of a Docker container. Given that the only way to
-> insert code is to write it on the spreadsheet or use moderator commands, write access to the sheet
-> and access to the Moderator role should be given to as few people as possible.
-> There may exist exploits that allow malicious users to do such things as:
+> Alter Ego uses its scriptParser module, which evaluates code in a heavily restricted context. While we have confirmed
+> through tests that it explicitly blocks access to many functions which can cause severe damage, we make no guarantees
+> that it is 100% secure, especially if Alter Ego is run outside of a Docker container. Given that the only way to
+> insert code is to write it on the spreadsheet or use Moderator commands, write access to the sheet
+> and access to the Moderator role should be given to as few people as possible, and only people that you fully trust.
+> There may, possibly exist exploits that allow malicious users to do such things as:
 >
 > - Sending Alter Ego's authentication token to the server
 > - Killing a player in the game

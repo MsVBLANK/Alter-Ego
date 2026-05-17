@@ -7,6 +7,10 @@
 Installation of Alter Ego is rather complicated, but is made significantly easier with Docker. This page will explain
 the process in detail.
 
+> [!CAUTION]
+> Do not host Alter Ego for anyone you don't trust. For more information on why you shouldn't,
+> see the warning for [Flag value scripts](../reference/data_structures/flag.md#value-script).
+
 ## Step 0: System Requirements
 
 > [!NOTE]
@@ -240,6 +244,9 @@ over to the spreadsheet you made earlier.
 On the spreadsheet, press the **Share** button. Paste the service account's email address into the dialog box and make
 sure to give it permission to edit the spreadsheet. You can also do the same with any other moderators you have, if you
 haven't done so already. Once you've done that, you nearly have everything you need.
+
+> [!CAUTION]
+> Do not grant write access to the spreadsheet to any users that you don't fully trust.
 
 ## Step 10: Edit .env file
 

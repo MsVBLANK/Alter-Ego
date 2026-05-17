@@ -11,7 +11,8 @@ ways that you can contribute to Alter Ego.
 
 ## Bug Reports
 
-Please submit bug reports on our [GitHub Issue Tracker](https://github.com/MsVBLANK/Alter-Ego/issues).
+If you believe you've found a bug in Alter Ego's code, please use the `.dumplog` command,
+and then [open a new Issue](https://github.com/MsVBLANK/Alter-Ego/issues).
 
 Before submitting a bug report please ensure that you can reproduce the bug
 and you provide logs and screenshots in the issue. This helps us diagnose and

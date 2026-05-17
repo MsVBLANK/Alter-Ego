@@ -223,8 +223,16 @@ export default class Dialog extends GameConstruct {
                     }
                 }
             }
-            if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0)
-                this.audioMonitoringRooms = game.rooms.filter(room => room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id));
+            if (this.locationIsAudioSurveilled || this.neighboringAudioSurveilledRooms.size > 0 || this.receiverAudioSurveilledRooms.size > 0) {
+                for (const room of game.rooms.values()) {
+                    if (room.isAudioMonitoring() && room.occupants.length !== 0 && room.id !== this.location.id && !this.neighboringAudioSurveilledRooms.has(room.id) && !this.receiverAudioSurveilledRooms.has(room.id)) {
+                        this.audioMonitoringRooms.set(room.id, room);
+                        // If the audio monitoring room is also a neighboring room, delete it from the neighboring rooms collection to avoid duplicate messages.
+                        if (this.neighboringRooms.has(room.id)) this.neighboringRooms.delete(room.id);
+                    }
+                }
+            }
+
         }
     }
 

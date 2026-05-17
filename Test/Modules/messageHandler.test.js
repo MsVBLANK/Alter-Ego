@@ -3567,6 +3567,46 @@ describe('messageHandler test', () => {
                         }
                     });
 
+                    test('dialog shouted in neighboring audiovideo surveilled room is mirrored only once', async () => {
+                        await sendPlayerMessage(kiara, "HELLO?");
+                        expect(performSaySpy).toHaveBeenCalledTimes(1);
+                        expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(7);
+                        expect(amadeus.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(kyra.notificationChannel.messages.cache).toHaveSize(1);
+                        expect(luna.notificationChannel.messages.cache).toHaveSize(0);
+                        expect(asuka.notificationChannel.messages.cache).toHaveSize(0);
+                        for (const audioVideoMonitoringRoom of audioVideoMonitoringRooms) {
+                            if (audioVideoMonitoringRoom.id === amadeus.location.id) {
+                                expect(audioVideoMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                                continue;
+                            }
+                            expect(audioVideoMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                            const roomNarrationMessage = audioVideoMonitoringRoom.channel.messages.cache.first();
+                            expect(roomNarrationMessage).toBeWebhookMessage();
+                            expect(roomNarrationMessage).toBeMessageWith('[floor-1-hall-1] Kiara', kiara.member.avatarURL(), 'HELLO?');
+                            for (const occupant of audioVideoMonitoringRoom.occupants) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                                expect(spectateMessage).toBeWebhookMessage();
+                                expect(spectateMessage).toBeMessageWith('[floor-1-hall-1] Kiara', kiara.member.avatarURL(), 'HELLO?');
+                            }
+                        }
+                        for (const onlyAudioMonitoringRoom of onlyAudioMonitoringRooms) {
+                            expect(onlyAudioMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                            const roomNarrationMessage = onlyAudioMonitoringRoom.channel.messages.cache.first();
+                            expect(roomNarrationMessage).not.toBeWebhookMessage();
+                            expect(roomNarrationMessage.content).toBe('`[floor-1-hall-1]` Someone with a pretty voice shouts "HELLO?"');
+                            for (const occupant of onlyAudioMonitoringRoom.occupants) {
+                                expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                const spectateMessage = occupant.spectateChannel.messages.cache.first();;
+                                expect(spectateMessage).not.toBeWebhookMessage();
+                                expect(spectateMessage.content).toBe('`[floor-1-hall-1]` Someone with a pretty voice shouts "HELLO?"');
+                            }
+                        }
+                    });
+
                     test('display name of speaker does not match her name', async () => {
                         await sendPlayerMessage(kyra, "Hello.");
                         expect(performSaySpy).toHaveBeenCalledTimes(1);
@@ -4019,6 +4059,45 @@ describe('messageHandler test', () => {
                                 }
                             }
                         }
+                    });
+
+                    test('dialog shouted in neighboring audio surveilled room is mirrored only once', async () => {
+                        f1h1.tags.delete("video surveilled");
+
+                        await sendPlayerMessage(kiara, "HELLO?");
+                        expect(performSaySpy).toHaveBeenCalledTimes(1);
+                        expect(game.communicationHandler.getDialogSpectateMirrors(message)).toHaveLength(1);
+                        for (const occupant of kiara.location.occupants) {
+                            expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                            expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                            const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                            expect(spectateMessage).toBeWebhookMessage();
+                            expect(spectateMessage).toBeMessageWith("Kiara", kiara.member.avatarURL(), "HELLO?");
+                        }
+                        for (const audioVideoMonitoringRoom of audioVideoMonitoringRooms) {
+                            expect(audioVideoMonitoringRoom.channel.messages.cache).toHaveSize(1);
+                            const roomNarrationMessage = audioVideoMonitoringRoom.channel.messages.cache.first();
+                            expect(roomNarrationMessage).not.toBeWebhookMessage();
+                            expect(roomNarrationMessage.content).toBe('`[floor-1-hall-1]` Someone with a pretty voice shouts "HELLO?"');
+                            for (const occupant of audioVideoMonitoringRoom.occupants) {
+                                expect(occupant.spectateChannel.messages.cache).toHaveSize(1);
+                                const spectateMessage = occupant.spectateChannel.messages.cache.first();
+                                expect(spectateMessage).not.toBeWebhookMessage();
+                                if (occupant.knows("Kiara")) {
+                                    expect(occupant.notificationChannel.messages.cache).toHaveSize(1);;
+                                    expect(occupant.notificationChannel.messages.cache.first().content).toBe('`[floor-1-hall-1]` Kiara shouts "HELLO?"');
+                                    expect(spectateMessage.content).toBe('`[floor-1-hall-1]` Kiara shouts "HELLO?"');
+                                }
+                                else {
+                                    if (occupant.hasBehaviorAttribute("hear room"))
+                                        expect(occupant.notificationChannel.messages.cache).toHaveSize(1);
+                                    else
+                                        expect(occupant.notificationChannel.messages.cache).toHaveSize(0);
+                                    expect(spectateMessage.content).toBe('`[floor-1-hall-1]` Someone with a pretty voice shouts "HELLO?"');
+                                }
+                            }
+                        }
+                        f1h1.tags.add("video surveilled");
                     });
 
                     test('display name of speaker does not match his name', async () => {

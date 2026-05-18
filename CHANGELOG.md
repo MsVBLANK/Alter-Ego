@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2026 Ms. VBLANK <alteregomolly@pm.me>
+
+SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

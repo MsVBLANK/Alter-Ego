@@ -5,12 +5,10 @@ import type { InteractableType } from "../../Modules/enums.js";
 export default abstract class ActionDirectiveInteractable extends Interactable {
     /**
      * The action directive for this interactable.
-     * @type {ActionDirective}
      */
     readonly actionDirective: ActionDirective;
 
     /**
-	 * @constructor
 	 * @param type - The type of interactive message component to create.
 	 * @param actionDirective - The action directive for this interactable.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.

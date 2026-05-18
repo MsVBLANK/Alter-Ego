@@ -6,8 +6,7 @@ import type Whisper from "../Data/Whisper.ts";
 import { subtle } from "crypto";
 
 /**
- * @class ActionDirective
- * @classdesc Represents an action to perform when a Discord Interaction is executed.
+ * Represents an action to perform when a Discord Interaction is executed.
  */
 export default class ActionDirective<T extends Action = Action> {
 	/**
@@ -25,7 +24,6 @@ export default class ActionDirective<T extends Action = Action> {
 	customId: string;
 
 	/**
-	 * @constructor
 	 * @param action - The action this directive should create.
      * @param player - The player the action should be constructed with by default.
 	 * @param args - The raw arguments provided for this action. These will be used to generate the custom ID, and will be passed to the action's perform function.

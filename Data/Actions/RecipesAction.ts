@@ -17,9 +17,7 @@ type RecipeListEntry = {
 };
 
 /**
- * @class RecipesAction
- * @classdesc Represents a recipes action.
- * @extends Action
+ * Represents a recipes action.
  * @see https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html#recipes-action
  */
 export default class RecipesAction extends Action {

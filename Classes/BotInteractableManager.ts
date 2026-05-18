@@ -57,8 +57,7 @@ class InteractableOptions<T extends Action> {
 }
 
 /**
- * @class BotInteractableManager
- * @classdesc A set of functions for creating and managing Interactables.
+ * A set of functions for creating and managing Interactables.
  */
 export default class BotInteractableManager {
 	/**
@@ -88,7 +87,6 @@ export default class BotInteractableManager {
     readonly interactableValidTime = 5 * 60 * 1000;
 
 	/**
-	 * @constructor
 	 * @param game - The game this belongs to.
 	 */
 	constructor(game: Game) {

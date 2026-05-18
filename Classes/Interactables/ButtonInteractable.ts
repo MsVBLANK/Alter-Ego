@@ -4,8 +4,7 @@ import { ButtonBuilder, ButtonStyle } from "discord.js";
 import type ActionDirective from "../ActionDirective.ts";
 
 /**
- * @class ButtonInteractable
- * @classdesc Represents a button message component.
+ * Represents a button message component.
  */
 export default class ButtonInteractable extends ActionDirectiveInteractable {
 	/**
@@ -23,7 +22,6 @@ export default class ButtonInteractable extends ActionDirectiveInteractable {
     static readonly LABEL_CHARACTER_LIMIT = 80;
 
 	/**
-	 * @constructor
 	 * @param actionDirective - The action directive of the interactable.
 	 * @param label - The label of the component.
 	 * @param style - The style to apply to the button, if applicable. Defaults to Primary.

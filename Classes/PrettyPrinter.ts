@@ -141,8 +141,7 @@ export class StatusPlugin implements AEPlugin<Status> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -181,8 +180,7 @@ export class PuzzlePlugin implements AEPlugin<Puzzle> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -213,8 +211,7 @@ export class PrefabPlugin implements AEPlugin<Prefab> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -245,8 +242,7 @@ export class FixturePlugin implements AEPlugin<Fixture> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -277,8 +273,7 @@ export class InventorySlotPlugin implements AEPlugin<InventorySlot<ItemInstance>
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 4) {
 		this.processing = new Set();
@@ -310,8 +305,7 @@ export class RoomItemPlugin implements AEPlugin<RoomItem> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param {number} [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -354,8 +348,7 @@ export class InventoryItemPlugin implements AEPlugin<InventoryItem> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param {number} [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -394,8 +387,7 @@ export class RoomPlugin implements AEPlugin<Room> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param {number} [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -427,8 +419,7 @@ export class PlayerPlugin implements AEPlugin<Player> {
 	level: number;
 
 	/**
-	 * @constructor
-	 * @param {number} [level] Depth after which to truncate objects
+	 * @param level Depth after which to truncate objects
 	 */
 	constructor(level = 2) {
 		this.processing = new Set();
@@ -459,8 +450,7 @@ export class EquipmentSlotPlugin implements AEPlugin<EquipmentSlot> {
     level: number;
 
     /**
-     * @constructor
-     * @param {number} [level] Depth after which to truncate objects
+     * @param level Depth after which to truncate objects
      */
     constructor(level = 8) {
         this.processing = new Set();
@@ -491,8 +481,7 @@ export class RecipePlugin implements AEPlugin<Recipe> {
     level: number;
 
     /**
-     * @constructor
-     * @param {number} [level] Depth after which to truncate objects
+     * @param level Depth after which to truncate objects
      */
     constructor(level = 4) {
         this.processing = new Set();
@@ -519,7 +508,6 @@ export class CollectionPlugin implements AEPlugin<Collection<any, any>> {
 	/** Set of objects currently being processed by the CollectionPlugin to prevent recursion errors. */
 	processing: Set<Collection<any, any>>;
 
-	/** @constructor */
 	constructor() {
 		this.processing = new Set();
 	}

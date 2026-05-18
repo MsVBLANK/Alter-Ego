@@ -5,8 +5,7 @@ import { StringSelectMenuBuilder } from "discord.js";
 import type ActionDirective from "../ActionDirective.ts";
 
 /**
- * @class StringSelectMenuInteractable
- * @classdesc Represents a string select menu message component.
+ * Represents a string select menu message component.
  */
 export default class StringSelectMenuInteractable extends ActionDirectiveInteractable {
 	/**
@@ -25,7 +24,6 @@ export default class StringSelectMenuInteractable extends ActionDirectiveInterac
     static readonly PLACEHOLDER_CHARACTER_LIMIT = 150;
 
 	/**
-	 * @constructor
 	 * @param actionDirective - The action directive of the interactable.
 	 * @param options - An array of options. Maximum size is 25.
 	 * @param placeholder - The placeholder to apply for the string select menu. Optional.

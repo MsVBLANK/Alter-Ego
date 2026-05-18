@@ -26,8 +26,7 @@ import { ButtonInteraction, ModalSubmitInteraction, StringSelectMenuInteraction 
 import type { Interaction, InteractionCallbackResponse } from "discord.js";
 
 /**
- * @class InteractionHandler
- * @classdesc A set of functions for handling Interactions.
+ * A set of functions for handling Interactions.
  */
 export default class BotInteractionHandler {
 	/**
@@ -36,7 +35,6 @@ export default class BotInteractionHandler {
     readonly #game: Game;
 
 	/**
-	 * @constructor
 	 * @param game - The game this belongs to.
 	 */
 	constructor(game: Game) {

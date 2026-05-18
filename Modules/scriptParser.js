@@ -263,7 +263,7 @@ const UNARY_OPS = {
  * Safely evaluate a single JS-like expression string with restrictions.
  * @param {string} scriptText - The script to evaluate.
  * @param {GameEntity} container - The game entity this script is attached to.
- * @param {Player|PseudoPlayer} [player] - The player currently in scope.
+ * @param {Player} [player] - The player currently in scope.
  * @returns {string | number | boolean}
  */
 export default function evaluate (scriptText, container, player) {

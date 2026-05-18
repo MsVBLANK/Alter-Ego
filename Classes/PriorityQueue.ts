@@ -2,9 +2,7 @@ import { Collection } from 'discord.js';
 import StackQueue from './StackQueue.ts';
 
 /**
- * @class PriorityQueue
- * @classdesc Five-priority queue system for use by the message handler.
- * @constructor
+ * Five-priority queue system for use by the message handler.
  */
 export default class PriorityQueue {
 	/** Order of queues given as an array of strings. */

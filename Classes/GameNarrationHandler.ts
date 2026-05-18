@@ -450,9 +450,7 @@ export default class GameNarrationHandler {
     narrateFailedTake(action: Action, item: RoomItem, player: Player, notify: boolean = true) {
         const messageType = MessageDisplayType.STANDARD;
 		const containerPhrase = item.getContainerPhrase();
-        /** @type {string} */
         let notification: string;
-        /** @type {string} */
 		let narration: string;
         if (item.weight > player.maxCarryWeight) {
 			notification = this.#game.notificationGenerator.generateTakeTooHeavyNotification(player, true, item.singleContainingPhrase, containerPhrase);

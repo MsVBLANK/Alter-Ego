@@ -20,27 +20,27 @@ export { };
 declare global {
 	/**
 	 * Represents a Discord activity.
-	 * @property {string} name - The name of the activity.
-	 * @property {string} type - The type of activity. {@link https://discord.com/developers/docs/events/gateway-events#activity-object-activity-types}
-	 * @property {string} [url] - The URL of the activity, if applicable.
 	 */
 	interface Activity extends ActivitiesOptions {
+        /** The name of the activity. */
 		name: string;
+        /** The type of activity. {@link https://discord.com/developers/docs/events/gateway-events#activity-object-activity-types} */
 		type: ActivityType;
+        /** The URL of the activity, if applicable. */
 		url?: string;
 	}
 
     /**
      * Represents a user of the bot in a game context.
-     * @property id - The Discord ID of the user.
-     * @property member - The Discord member object of the user.
-     * @property displayName - The name that will be displayed for this user.
-     * @property displayIcon - An image URL that will be used as an avatar when the user's messages are mirrored in a webhook.
      */
     interface User {
+        /** The Discord ID of the user. */
         id: string;
+        /** The Discord member object of the user. */
         readonly member: GuildMember;
+        /** The name that will be displayed for this user. */
         displayName: string;
+        /** An image URL that will be used as an avatar when the user's messages are mirrored in a webhook. */
         displayIcon: string;
     }
 
@@ -73,6 +73,7 @@ declare global {
      * Represents a game entity that can be used as a target for gestures.
      */
     type GestureTarget = Exit|Fixture|RoomItem|Player|InventoryItem;
+
     /**
      * Represents an interaction that the bot can accept.
      */
@@ -80,79 +81,95 @@ declare global {
 
 	/**
 	 * A dialog message that has been mirrored in a spectate channel.
-	 * @property {Snowflake} messageId - The ID of the mirrored dialog message.
-	 * @property {Snowflake} webhookId - The ID of the webhook used to send the mirrored message to the spectate channel.
 	 */
 	interface DialogSpectateMirror {
+        /** The ID of the mirrored dialog message. */
 		messageId: Snowflake;
+        /** The ID of the webhook used to send the mirrored message to the spectate channel. */
 		webhookId: Snowflake;
 	}
 
 	/**
 	 * A message with Interactables on it that has been cached for tracking.
-	 * @property {Snowflake} channelId - The ID of the channel the message is in.
-	 * @property {Snowflake} messageId - The ID of the message.
 	 */
 	interface InteractableMessage {
+        /** The ID of the channel the message is in. */
 		channelId: Snowflake;
+        /** The ID of the message. */
 		messageId: Snowflake;
 	}
 
 	/**
 	 * The configuration for a command.
-	 * @property {string} name - The name of the command.
-	 * @property {string} description - A brief description of what the command does.
-	 * @property {string} details - Detailed information about the command.
-	 * @property {string} usableBy - The role that can use the command.
-	 * @property {string[]} aliases - Alternative names for the command.
-	 * @property {boolean} requiresGame - Indicates whether the command requires an ongoing game to be executed.
-	 * @property {boolean} [whitespaceSensitive] - Whether or not the command is sensitive to whitespace, and should not have argument whitespace altered.
 	 */
 	interface CommandConfig {
+        /** The name of the command. */
 		name: string;
+        /** A brief description of what the command does. */
 		description: string;
+        /** Detailed information about the command. */
 		details: string;
+        /** The role that can use the command. */
 		usableBy: string;
+        /** Alternative names for the command. */
 		aliases: string[];
+        /** Indicates whether the command requires an ongoing game to be executed. */
 		requiresGame: boolean;
+        /** Whether or not the command is sensitive to whitespace, and should not have argument whitespace altered. */
         whitespaceSensitive?: boolean;
 	}
 
 	/**
 	 * Represents an abstract command with its configuration.
-	 * @property {CommandConfig} config - The specific configuration of the command.
-	 * @property {(settings: GameSettings) => string} usage - Examples of the command's usage.
 	 */
 	interface ICommand {
+        /** The specific configuration of the command. */
 		config: CommandConfig;
+        /** Examples of the command's usage. */
 		usage: (settings: GameSettings) => string;
 	}
 
+    /**
+     * A command usable by the bot itself. Command sets can be written for some in-game data structures to be executed when certain conditions are met.
+     */
 	interface IBotCommand extends ICommand {
+        /** The code to execute when the command is called. */
 		execute: (game: Game, command: string, args: string[], player?: Player, callee?: Callee) => Promise<void>;
 	}
 
+    /**
+     * A command usable by a moderator.
+     */
 	interface IModeratorCommand extends ICommand {
+        /** The code to execute when the command is called. */
 		execute: (game: Game, message: UserMessage, command: string, args: string[], moderator: Moderator) => Promise<void>;
 	}
 
+    /**
+     * A command usable by a player.
+     */
 	interface IPlayerCommand extends ICommand {
+        /** The code to execute when the command is called. */
 		execute: (game: Game, message: UserMessage, command: string, args: string[], player: Player) => Promise<void>;
 	}
 
+    /**
+     * A command usable by someone with the eligible role.
+     */
 	interface IEligibleCommand extends ICommand {
+        /** The code to execute when the command is called. */
 		execute: (game: Game, message: UserMessage, command: string, args: string[]) => Promise<void>;
 	}
 
 	/**
 	 * Represents a log entry for a command executed in the game.
-	 * @property {Date} timestamp - The date and time when the command was executed.
-	 * @property {string} author - Who issued the command.
-	 * @property {string} content - The content of the command.
 	 */
 	interface CommandLogEntry {
+        /** The date and time when the command was executed. */
 		timestamp: Date;
+        /** Who issued the command. */
 		author: string;
+        /** The content of the command. */
 		content: string;
 	}
 
@@ -178,206 +195,143 @@ declare global {
         value: string
     }
 
-	/**
-	 * @callback GameEntityMatcher
-	 * @param {GameEntity} entity - The game entity to match the criteria against.
-	 * @param {string|number|boolean} criteria - The criteria to match.
-	 * @param {boolean} [normalize] - Whether or not to normalize the criteria before matching. Defaults to false.
-	 * @returns {boolean} - Whether the entity matches the criteria.
-	 */
 	type GameEntityMatcher = (entity: GameEntity, criteria: string | number | boolean, normalize?: boolean) => boolean;
 
 	/**
 	 * Represents a range of values in a spreadsheet.
-	 * @property {string} range - The A1 notation of the range.
-	 * @property {string} [majorDimension] - The major dimension of the values. Either 'ROWS' or 'COLUMNS'.
-	 * @property {string[][]} values - The values within the specified range.
 	 */
 	interface ValueRange {
+        /** The A1 notation of the range. */
 		range: string;
+        /** The major dimension of the values. Either 'ROWS' or 'COLUMNS'. Optional. */
 		majorDimension?: string;
+        /** The values within the specified range. */
 		values: string[][];
 	}
 
 	/**
 	 * Represents a 3D position.
-	 * @property x - X coordinate
-	 * @property y - Y coordinate
-	 * @property z - Z coordinate
 	 */
 	interface Pos {
+        /** X coordinate */
 		x: number;
+        /** Y coordinate */
 		y: number;
+        /** Z coordinate */
 		z: number;
 	}
 
 	/**
 	 * A player's third-person pronouns.
-	 * @property sbj - The subjective pronoun.
-	 * @property Sbj - The subjective pronoun with first letter capitalized.
-	 * @property obj - The objective pronoun.
-	 * @property Obj - The objective pronoun with first letter capitalized.
-	 * @property dpos - The dependent possessive pronoun.
-	 * @property Dpos - The dependent possessive pronoun with first letter capitalized.
-	 * @property ipos - The independent possessive pronoun.
-	 * @property Ipos - The independent possessive pronoun with first letter capitalized.
-	 * @property ref - The reflexive pronoun.
-	 * @property Ref - The reflexive pronoun with first letter capitalized.
-	 * @property plural - Whether this set of pronouns turns verbs into their plural form.
 	 */
 	interface Pronouns {
+        /** The subjective pronoun. */
 		sbj?: string;
+        /** The subjective pronoun with first letter capitalized. */
 		Sbj?: string;
+        /** The objective pronoun. */
 		obj?: string;
+        /** The objective pronoun with first letter capitalized. */
 		Obj?: string;
+        /** The dependent possessive pronoun. */
 		dpos?: string;
+        /** The dependent possessive pronoun with first letter capitalized. */
 		Dpos?: string;
+        /** The independent possessive pronoun. */
 		ipos?: string;
+        /** The independent possessive pronoun with first letter capitalized. */
 		Ipos?: string;
+        /** The reflexive pronoun. */
 		ref?: string;
+        /** The reflexive pronoun with first letter capitalized. */
 		Ref?: string;
+        /** Whether this set of pronouns turns verbs into their plural form. */
 		plural?: boolean;
 	}
 
 	/**
 	 * Represents a player's stats.
-	 * @property {number} strength - Physical strength.
-	 * @property {number} perception - Perception.
-	 * @property {number} [intelligence] - Alias for perception.
-	 * @property {number} dexterity - Agility or dexterity.
-	 * @property {number} speed - Movement speed.
-	 * @property {number} stamina - Physical stamina.
 	 */
 	interface Stats {
+        /** Physical strength. */
 		strength: number;
+        /** Perception. */
 		perception: number;
+        /**
+         * Alias for perception.
+         * @deprecated Use perception instead.
+         */
 		intelligence?: number;
+        /** Agility or dexterity. */
 		dexterity: number;
+        /** Movement speed. */
 		speed: number;
+        /** Physical stamina. */
 		stamina: number;
 	}
 
-	/**
-	 * @property {boolean} modifiesSelf - Whether the stat modifier modifies the player's own stat.
-	 * @property {string} stat - The stat to modify.
-	 * @property {boolean} assignValue - Whether it assigns the value or adds to it.
-	 * @property {number} value - The value to assign or add.
-	 */
 	interface StatModifier {
+        /** Whether the stat modifier modifies the player's own stat. */
 		modifiesSelf: boolean;
+        /** The stat to modify. */
 		stat: string;
+        /** Whether it assigns the value or adds to it. */
 		assignValue: boolean;
+        /** The value to assign or add. */
 		value: number;
 	}
 
-	/**
-	 * @property {string} id - The ID of the status effect.
-	 * @property {string} timeRemaining - The remaining time for the status effect.
-	 */
 	interface StatusDisplay {
+        /** The ID of the status effect. */
 		id: string;
+        /** The remaining time for the status effect. */
 		timeRemaining: string;
 	}
 
-	/**
-	 * @property {InventoryItem|null} product1 - The first product of the crafting result, or null if none.
-	 * @property {InventoryItem|null} product2 - The second product of the crafting result, or null if none.
-	 */
 	interface CraftingResult {
+        /** The first product of the crafting result, or null if none. */
 		product1: InventoryItem | null;
+        /** The second product of the crafting result, or null if none. */
 		product2: InventoryItem | null;
 	}
 
-	/**
-	 * @property {InventoryItem|null} ingredient1 - The first ingredient recovered from uncrafting, or null if none.
-	 * @property {InventoryItem|null} ingredient2 - The second ingredient recovered from uncrafting, or null if none.
-	 */
 	interface UncraftingResult {
+        /** The first ingredient recovered from uncrafting, or null if none. */
 		ingredient1: InventoryItem | null;
+        /** The second ingredient recovered from uncrafting, or null if none. */
 		ingredient2: InventoryItem | null;
 	}
 
 	interface PuzzleRequirement {
+        /** The type of entity required. */
 		type: string;
+        /** The ID of the entity required. */
 		entityId: string
 	}
 
-	/**
-	 * @property [outcomes] - Strings indicating which puzzle solutions will execute the commands in this command set.
-	 * @property solvedCommands - Bot commands that will be executed when the puzzle is solved.
-	 * @property unsolvedCommands - Bot commands that will be executed when the puzzle is unsolved.
-	 */
 	interface PuzzleCommandSet {
+        /** Strings indicating which puzzle solutions will execute the commands in this command set. Optional. */
 		outcomes?: string[];
+        /** Bot commands that will be executed when the puzzle is solved. */
 		solvedCommands: string[];
+        /** Bot commands that will be executed when the puzzle is unsolved. */
 		unsolvedCommands: string[];
 	}
 
-	/**
-	 * @property [values] - Strings indicating which flag values will execute the commands in this command set.
-	 * @property setCommands - Bot commands that will be executed when the flag is set.
-	 * @property clearedCommands - Bot commands that will be executed when the flag is cleared.
-	 */
 	interface FlagCommandSet {
+        /** Strings indicating which flag values will execute the commands in this command set. Optional. */
 		values?: string[];
+        /** Bot commands that will be executed when the flag is set. */        
 		setCommands: string[];
+        /** Bot commands that will be executed when the flag is cleared. */
 		clearedCommands: string[];
 	}
 
-	/**
-	 * @property {number} number - The total modifier value.
-	 * @property {string[]} strings - The modifier strings.
-	 */
 	interface ModifierResult {
+        /** The total modifier value. */
 		number: number;
+        /** The modifier strings. */
 		strings: string[];
-	}
-
-	/**
-	 * Represents a stripped down Item/InventoryItem for use in the parser module.
-	 * @property {string} [name] - The name of the item.
-	 * @property {string} [pluralName] - The plural name of the item.
-	 * @property {number} [quantity] - The quantity of the item.
-	 * @property {string} [singleContainingPhrase] - The phrase used when referring to a single item.
-	 * @property {string} [pluralContainingPhrase] - The phrase used when referring to multiple items.
-	 */
-	interface PseudoItem {
-		name?: string,
-		pluralName?: string,
-		quantity?: number,
-		singleContainingPhrase?: string,
-		pluralContainingPhrase?: string
-	}
-
-	/**
-	 * Represents a simplified player object for use in various places.
-	 * @property {string} [name] - The name of the player.
-	 * @property {string} [displayName] - The display name of the player.
-	 * @property {string} [displayIcon] - The display icon URL of the player.
-	 * @property {string} [title] - The title of the player.
-	 * @property {GuildMember} [member] - The Discord guild member associated with the player.
-	 * @property {number} [strength] - The strength stat of the player.
-	 * @property {number} [perception] - The perception stat of the player.
-	 * @property {number} [intelligence] - The perception stat of the player.
-	 * @property {number} [dexterity] - The dexterity stat of the player.
-	 * @property {number} [speed] - The speed stat of the player.
-	 * @property {number} [stamina] - The stamina stat of the player.
-	 * @property {Game} [game] - The game instance the player is part of.
-	 */
-	interface PseudoPlayer {
-		name?: string;
-		displayName?: string;
-		displayIcon?: string;
-		title?: string;
-		member?: GuildMember;
-		strength?: number;
-		perception?: number;
-		intelligence?: number;
-		dexterity?: number;
-		speed?: number;
-		stamina?: number;
-		game?: Game;
-		getGame: () => this["game"];
 	}
 
 	interface Possibility {
@@ -421,23 +375,17 @@ declare global {
         text: string;
     }
 
-	/**
-	 * @typedef ScriptEvaluationContext
-	 * @param {GameEntity} container - The game entity this script is attached to.
-	 * @param {Player|PseudoPlayer} player - The player currently in scope.
-	 */
 	type ScriptEvaluationContext = {
+        /** The game entity this script is attached to. */
 		container: GameEntity;
-		player: Player | PseudoPlayer;
+        /** The player currently in scope. */
+		player: Player;
 	};
 
-	/**
-	 * @typedef ScriptProxyHandler
-	 * @property {function} get - Function to handle property access.
-	 * @property {function} set - Function to handle property assignment.
-	 */
 	type ScriptProxyHandler = {
+        /** Function to handle property access. */
 		get: (targetObject: any, propKey: string | symbol, thisReceiver: any) => any;
+        /** Function to handle property assignment. */
 		set: () => any;
 		deleteProperty: () => any;
 		defineProperty: () => any;

@@ -199,8 +199,8 @@ export default class Game {
 	#eventTriggerInterval: NodeJS.Timeout;
 
 	/**
-	 * @param {GuildContext} guildContext - The guild this game is occurring in.
-	 * @param {GameSettings} settings - The settings for the game.
+	 * @param guildContext - The guild this game is occurring in.
+	 * @param settings - The settings for the game.
 	 */
 	constructor(guildContext: GuildContext, settings: GameSettings) {
 		this.guildContext = guildContext;

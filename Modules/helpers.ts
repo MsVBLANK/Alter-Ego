@@ -1,12 +1,7 @@
 import ItemInstance from '../Data/ItemInstance.ts';
 import { Duration } from 'luxon';
 import type Player from '../Data/Player.ts';
-
-/** @import Player from "../Data/Player.ts" */
-/** @import InventoryItem from "../Data/InventoryItem.ts" */
-/** @import ItemInstance from "../Data/ItemInstance.ts" */
-/** @import RoomItem from "../Data/RoomItem.ts" */
-/** @import { DurationObjectUnits } from "luxon" */
+import type { DurationObjectUnits } from 'luxon';
 
 /**
  * Divides two numbers, throwing an error if the denominator is zero.
@@ -207,10 +202,10 @@ export function parseDuration(durationString: string): Duration<true>|Duration<f
 
 /**
  * Converts a time string to a luxon duration input object.
- * @param {string} timeString - The string to convert. The format is `D? HH:mm:ss`, e.g. `1 23:59:59`.
+ * @param timeString - The string to convert. The format is `D? HH:mm:ss`, e.g. `1 23:59:59`.
  * @returns The input object to pass into the duration constructor.
  */
-export function convertTimeStringToDurationUnits(timeString: string): { days: number, hours: number, minutes: number, seconds: number } | undefined {
+export function convertTimeStringToDurationUnits(timeString: string): DurationObjectUnits | undefined {
 	const timeRegex = /^(?<days>\d+)? ?(?<hours>\d{2}):(?<minutes>\d{2}):(?<seconds>\d{2})$/;
 	const timeMatch = timeString.match(timeRegex);
 	if (timeMatch?.groups) {

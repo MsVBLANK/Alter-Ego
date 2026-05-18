@@ -221,7 +221,6 @@ export default class Player extends RecipeProcessor implements PersistentGameEnt
     spectateChannel: TextChannel | null;
     /**
      * The maximum weight of inventory items that the player can carry in kilograms.
-     * @type {number}
      */
     maxCarryWeight: number;
     /**

@@ -2,8 +2,7 @@ import type { ComponentBuilder, ModalBuilder, StringSelectMenuOptionBuilder } fr
 import type { InteractableType } from "../../Modules/enums.js";
 
 /**
- * @class Interactable
- * @classdesc Represents an interactive message component.
+ * Represents an interactive message component.
  */
 export default abstract class Interactable {
 	/**
@@ -29,7 +28,6 @@ export default abstract class Interactable {
     abstract readonly component: ComponentBuilder|StringSelectMenuOptionBuilder|ModalBuilder;
 
 	/**
-	 * @constructor
 	 * @param type - The type of interactive message component to create.
 	 * @param customId - The custom ID for this interactable.
 	 * @param priority - The priority level of the interactable. This determines how high up it will appear in a list of interactable components.

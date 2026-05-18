@@ -2,9 +2,7 @@ import { Duration } from 'luxon';
 import type { DurationUnit } from 'luxon';
 
 /**
- * @class Timer
- * @classdesc API-compatible replacement for moment.js, adapted to day.js.
- * @constructor
+ * API-compatible replacement for moment.js, adapted to day.js.
  */
 export default class Timer {
     /** Timer duration in milliseconds. */
@@ -116,8 +114,8 @@ export default class Timer {
 
     /**
      * Set or get the timer duration.
-     * @param [duration] - New duration.
-     * @param [unit] - Time unit if duration is a number.
+     * @param duration - New duration.
+     * @param unit - Time unit if duration is a number.
      * @returns Returns true if setting, nothing if getting.
      */
     duration(duration: number | Duration | undefined = undefined, unit: DurationUnit | undefined = undefined): boolean | void {

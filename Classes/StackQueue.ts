@@ -1,6 +1,5 @@
 /**
- * @class StackQueue
- * @classdesc Double-stack queue system for use in the priority queue, used by the message handler.
+ * Double-stack queue system for use in the priority queue, used by the message handler.
  */
 export default class StackQueue<T> {
 	/** Incoming stack for queued message entries. When messages are dequeued and the outStack is empty, this stack is flipped and emptied into the outStack. */
@@ -8,7 +7,6 @@ export default class StackQueue<T> {
 	/** Outgoing stack for queued message entries. Messages are dequeued from this outgoing stack, drawing from inStack if necessary. */
 	outStack: Array<T>;
 
-	/** @constructor */
 	constructor() {
 		this.inStack = [];
 		this.outStack = [];

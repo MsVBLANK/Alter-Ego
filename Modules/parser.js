@@ -285,7 +285,7 @@ function removeAllItemsFromItemList(document, sentence) {
  * Evaluates all of the procedural and poss tags in a description and randomly selects which ones to keep.
  * @param {Description} description - The description with procedurals.
  * @param {Map<string, string>} proceduralSelections - A Map of manually selected names of poss tags to keep.
- * @param {Player|PseudoPlayer} [player] - The player who caused these procedurals to be evaluated, if applicable.
+ * @param {Player} [player] - The player who caused these procedurals to be evaluated, if applicable.
  * @returns {string}
  */
 export function generateProceduralOutput(description, proceduralSelections, player) {

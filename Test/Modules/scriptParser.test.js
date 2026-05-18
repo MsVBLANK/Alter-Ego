@@ -101,27 +101,27 @@ describe('test scriptParser', () => {
                     const script = "findRoom('general-managers-office').removePlayer(player)";
                     expect(() => evaluate(script, container, qm)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findRoom().joinChannel() prohibited', () => {
                     const script = "findRoom('general-managers-office').joinChannel(player)";
                     expect(() => evaluate(script, container, qm)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findRoom().leaveChannel() prohibited', () => {
                     const script = "findRoom('general-managers-office').leaveChannel(player)";
                     expect(() => evaluate(script, container, qm)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findRoom().getExit().unlock() prohibited', () => {
                     const script = "findRoom('general-managers-office').getExit('DOOR').unlock()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findRoom().getExit().lock() prohibited', () => {
                     const script = "findRoom('general-managers-office').getExit('DOOR').lock()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findRoom().getExit().unlocked prohibited', () => {
                     const script = "findRoom('general-managers-office').getExit('DOOR').unlocked = true";
                     expect(() => evaluate(script, container, null)).toThrow(/Unsupported node type/);
@@ -208,21 +208,21 @@ describe('test scriptParser', () => {
                     const result = evaluate(script, container, qm);
                     expect(result).toBe(expected);
                 });
-                
+
                 test('findFixture().autoDeactivate', () => {
                     const script = "findFixture('MICROWAVE').autoDeactivate";
                     const expected = true;
                     const result = evaluate(script, container, qm);
                     expect(result).toBe(expected);
                 });
-                
+
                 test('findFixture().hidingSpotCapacity', () => {
                     const script = "findFixture('MICROWAVE').hidingSpotCapacity";
                     const expected = 0;
                     const result = evaluate(script, container, qm);
                     expect(result).toBe(expected);
                 });
-                
+
                 test('findFixture().preposition', () => {
                     const script = "findFixture('MICROWAVE').preposition";
                     const expected = "in";
@@ -278,12 +278,12 @@ describe('test scriptParser', () => {
                     const script = "findFixture('MICROWAVE').deactivate()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findFixture().processRecipes() prohibited', () => {
                     const script = "findFixture('MICROWAVE').processRecipes()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                            
+
                 test('findFixture().findRecipe() prohibited', () => {
                     const script = "findFixture('MICROWAVE').findRecipe()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
@@ -376,7 +376,7 @@ describe('test scriptParser', () => {
                     const result = evaluate(script, container, qm);
                     expect(result).toBe(expected);
                 });
-                
+
                 test('findPuzzle().outcome', () => {
                     const script = "findPuzzle('LEFT STAGE LIGHT SWITCH').outcome";
                     const expected = "OFF";
@@ -387,7 +387,6 @@ describe('test scriptParser', () => {
                 test('findPuzzle().outcome math', () => {
                     const script = "player.calculateMoveRate(true) >= parseFloat(findPuzzle('TREADMILL 1 PANEL').outcome)";
                     const expected = true;
-                    const player = { speed: 9 };
                     const result = evaluate(script, container, qm);
                     expect(result).toBe(expected);
                 });
@@ -500,22 +499,22 @@ describe('test scriptParser', () => {
                     const script = "findEvent('NIGHT').effectsTimer.stop()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findEvent().trigger() prohibited', () => {
                     const script = "findEvent('NIGHT').trigger()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findEvent().end() prohibited', () => {
                     const script = "findEvent('NIGHT').end()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findEvent().startTimer() prohibited', () => {
                     const script = "findEvent('NIGHT').startTimer()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
                 });
-                
+
                 test('findEvent().startEffectsTimer() prohibited', () => {
                     const script = "findEvent('NIGHT').startEffectsTimer()";
                     expect(() => evaluate(script, container, null)).toThrow(/Access prohibited/);
@@ -683,6 +682,19 @@ describe('test scriptParser', () => {
 
             test('this.constructor.constructor attempt is blocked', () => {
                 expect(() => evaluate("this.constructor.constructor('return process')()", container, null)).toThrow();
+            });
+
+            test('computed property access for blocked property is blocked', () => {
+                expect(() => evaluate("Math['constructor']", null, null)).toThrow(/Access prohibited/);
+            });
+
+            test('computed property access for blocked property on finder result is blocked', () => {
+                expect(() => evaluate("findRoom('general-managers-office')['constructor']", container, null)).toThrow(/Access prohibited/);
+            });
+
+            test('blocked property name probe with in operator is handled safely', () => {
+                const result = evaluate("'constructor' in findRoom('general-managers-office')", container, null);
+                expect(result).toBe(true);
             });
         });
 

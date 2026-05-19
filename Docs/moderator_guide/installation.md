@@ -104,9 +104,8 @@ You can also consult this [YouTube tutorial](https://www.youtube.com/watch?v=SGm
 
 Now that you have Alter Ego installed, you'll need to create a new Discord bot to bind its functionality to. Navigate
 to [the Discord Developer Portal](https://discord.com/developers/applications), and once you log in to your Discord
-account, create a new application. You can call it whatever you like. This example will use an application called
-"Alter Ego", but you can call it whatever you want. Once you create the application, you'll be taken to a page
-that looks like this:
+account, create a new application. This example will use an application called "Alter Ego", but you can call it
+whatever you like. Once you create the application, you'll be taken to a page that looks like this:
 
 ![The General Information page of a Discord Application](../images/discord_app_general_page.png)
 
@@ -217,7 +216,7 @@ On the next page, click the link that says **Manage service accounts**:
 
 ![Google Cloud's Credentials page](../images/google_cloud_credentials_page.png)
 
-On the next page, click the **Create service account**. You should be brought to a page like this:
+On the next page, click **Create service account**. You should be brought to a page like this:
 
 ![Google Cloud's Create service account page](../images/google_cloud_credentials_creation.png)
 

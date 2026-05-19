@@ -22,9 +22,8 @@ computer.
 
 Downloading Alter Ego as a ZIP file is not recommended however, as that makes it harder to keep your copy of Alter Ego
 up to date. If you do not already have Git, [install the official GitHub Desktop app](https://desktop.github.com/), and
-then click File > Clone Repository, then navigate to the URL tab and paste the Alter Ego repository link like so:
-
-![The "Clone a repository" menu of the GitHub Desktop app](../../images/github_desktop_clone_repo.png)
+then click File > Clone Repository, then navigate to the URL tab and paste the Alter Ego repository link into the URL
+input dialog.
 
 If you've done it this way, then you can update Alter Ego by clicking the **Pull origin** button in the GitHub Desktop
 app.
@@ -48,20 +47,14 @@ Where `VERSION` is the version of Alter Ego you wish to use (e.g. `2.0.0`).
 
 #### Without Git
 
-Go to the Alter Ego GitHub page and download the latest release. Click the releases box and select the latest one.
-
-![Click on the most recent release](../../images/github_releases_menu.png)
-
-There, you will see something like this.
-
-![The page for the most recent release of Alter Ego](../../images/github_release_page.png)
-
-Download the source code archive `Source code (zip)`. Use your favorite archive utility to open the archive (e.g. 7zip,
-GNOME Archive Manager, PeaZip), and extract the contents into your folder of choice.
+Go to the Alter Ego GitHub page and download open the **Assets** menu for the
+[latest release](https://github.com/MsVBLANK/Alter-Ego/releases). Then, download either `Source code (zip)` or
+`Source code (tar.gz)`, whichever you prefer. Then, use your favorite archive utility to open the archive
+(e.g. 7zip, GNOME Archive Manager, PeaZip), and extract the contents into your folder of choice.
 
 ## Step 2: Install Node.js with nvm
 
-Alter Ego runs on, Node.js a JavaScript runtime environment. Without installing it to your computer, you won't be able
+Alter Ego runs on Node.js, a JavaScript runtime environment. Without installing it to your computer, you won't be able
 to run Alter Ego.
 
 To make installing Node.js simpler, we recommend using nvm (Node Version Manager). Nvm helps you match your node version
@@ -93,9 +86,8 @@ the required dependencies.
 
 Now that you have Alter Ego installed, you'll need to create a new Discord bot to bind its functionality to. Navigate
 to [the Discord Developer Portal](https://discord.com/developers/applications), and once you log in to your Discord
-account, create a new application. You can call it whatever you like. This example will use an application called
-"Alter Ego", but you can call it whatever you want. Once you create the application, you'll be taken to a page
-that looks like this:
+account, create a new application. This example will use an application called "Alter Ego", but you can call it
+whatever you like. Once you create the application, you'll be taken to a page that looks like this:
 
 ![The General Information page of a Discord Application](../../images/discord_app_general_page.png)
 
@@ -206,7 +198,7 @@ On the next page, click the link that says **Manage service accounts**:
 
 ![Google Cloud's Credentials page](../../images/google_cloud_credentials_page.png)
 
-On the next page, click the **Create service account**. You should be brought to a page like this:
+On the next page, click **Create service account**. You should be brought to a page like this:
 
 ![Google Cloud's Create service account page](../../images/google_cloud_credentials_creation.png)
 

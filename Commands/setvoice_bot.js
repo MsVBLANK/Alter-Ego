@@ -18,7 +18,10 @@ export const config = {
         + `Note that unlike other commands which change a player's characteristics, the player's voice will **not** be `
         + `changed by being inflicted or cured of a status effect with the \`concealed\` behavior attribute. If this `
         + `command is used to change a character's voice, it must be used again to change it back to normal. It can be `
-        + `reset to their original voice descriptor by specifying the player without providing a voice descriptor.`,
+        + `reset to their original voice descriptor by specifying the player without providing a voice descriptor.\n\n`
+        + `Because the normal comma character is used as a delimiter in lists of bot commands, you cannot enter a `
+        + 'comma in a voice string with this command. Instead, use the full-width comma character (`，`). '
+        + 'It will be replaced with a normal comma in the voice string.',
     usableBy: "Bot",
     aliases: ["setvoice"],
     requiresGame: true
@@ -75,6 +78,6 @@ export async function execute(game, command, args, player, callee) {
                 }
             }
         }
-        player.voiceString = input;
+        player.voiceString = input.replace(/，/g, ',');
     }
 }

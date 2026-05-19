@@ -30,7 +30,11 @@ export const config = {
         + `It is possible to supply a custom narration for the fixture being activated/deactivated. Simply add a string of `
         + `text surrounded by quotation marks at the end of the command. This can be done even without supplying a player. `
         + `If the "player" argument is used, the text "player" (case-sensitive) within a custom narration will be `
-        + `replaced with the display name of the player who activates/deactivates the fixture.`,
+        + `replaced with the display name of the player who activates/deactivates the fixture.\n\n`
+        + `It is recommended that you do not add line breaks to cells on the sheet. To add line breaks to the `
+        + 'narration, enter `\n`. It will be replaced with an actual line break in the sent message.\n\n'
+        + 'Likewise, because the normal comma character is used as a delimiter in lists of bot commands, you can use '
+        + 'the full-width comma character instead (`，`), and it will be replaced with a normal comma in the message.',
     usableBy: "Bot",
     aliases: ["fixture", "object", "activate", "deactivate"],
     requiresGame: true
@@ -91,8 +95,10 @@ export async function execute(game, command, args, player, callee) {
         // Now clean up the announcement text.
         if (announcement.endsWith('"') || announcement.endsWith('”'))
             announcement = announcement.substring(0, announcement.length - 1);
-        if (!endsWithPunctuation(announcement))
+        if (announcement && !endsWithPunctuation(announcement))
             announcement += '.';
+        if (announcement)
+            announcement = announcement.replace(/\\n/g, '\n').replace(/，/g, ',').replace(/(?<=http(s?))@(?=.*?(jpg|jpeg|png|webp|avif))/g, ':').replace(/(?<=http(s?):.*?)\\(?=.*?(jpg|jpeg|png|webp|avif))/g, '/');
     }
 
     // Find the prospective list of fixtures.

@@ -2,6 +2,7 @@ import AttemptAction from "../Data/Actions/AttemptAction.ts";
 import SolveAction from "../Data/Actions/SolveAction.ts";
 import UnsolveAction from "../Data/Actions/UnsolveAction.ts";
 import Room from "../Data/Room.ts";
+import { endsWithPunctuation } from "../Modules/helpers.ts";
 
 /** @import GameSettings from '../Classes/GameSettings.js' */
 /** @import Game from '../Data/Game.ts' */
@@ -27,7 +28,11 @@ export const config = {
         + `replaced with the display name of the player who solves/unsolves the puzzle.\n\n`
         + `Additionally, if you specify a player, you can make them attempt the puzzle with the \`attempt\` option. `
         + `This makes it possible to force the player to fail the puzzle because they didn't provide a correct `
-        + `solution or they didn't satisfy the requirements for the puzzle to be solved/unsolved.`,
+        + `solution or they didn't satisfy the requirements for the puzzle to be solved/unsolved.\n\n`
+        + `It is recommended that you do not add line breaks to cells on the sheet. To add line breaks to the `
+        + 'narration, enter `\n`. It will be replaced with an actual line break in the sent message.\n\n'
+        + 'Likewise, because the normal comma character is used as a delimiter in lists of bot commands, you can use '
+        + 'the full-width comma character instead (`，`), and it will be replaced with a normal comma in the message.',
     usableBy: "Bot",
     aliases: ["puzzle", "solve", "unsolve", "attempt"],
     requiresGame: true
@@ -88,8 +93,10 @@ export async function execute(game, command, args, player, callee) {
         // Now clean up the announcement text.
         if (announcement.endsWith('"') || announcement.endsWith('”'))
             announcement = announcement.substring(0, announcement.length - 1);
-        if (!announcement.endsWith('.') && !announcement.endsWith('!'))
+        if (announcement && !endsWithPunctuation(announcement))
             announcement += '.';
+        if (announcement)
+            announcement = announcement.replace(/\\n/g, '\n').replace(/，/g, ',').replace(/(?<=http(s?))@(?=.*?(jpg|jpeg|png|webp|avif))/g, ':').replace(/(?<=http(s?):.*?)\\(?=.*?(jpg|jpeg|png|webp|avif))/g, '/');
     }
 
     // Now find the player, who should be the last argument.

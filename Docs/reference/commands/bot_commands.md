@@ -164,6 +164,12 @@ surrounded by quotation marks at the end of the command. This can be done even w
 player" argument is used, the text "player" (case-sensitive) within a custom narration will be replaced with the display
 name of the player who activates/deactivates the fixture.
 
+It is recommended that you do not add line breaks to cells on the sheet. To add line breaks to the
+narration, enter `\n`. It will be replaced with an actual line break in the sent message.
+
+Likewise, because the normal comma character is used as a delimiter in lists of bot commands, you can use
+the full-width comma character instead (`，`), and it will be replaced with a normal comma in the message.
+
 ### flag
 
 Set and clear flags.
@@ -379,6 +385,12 @@ player who solves/unsolves the puzzle.
 Additionally, if you specify a player, you can make them attempt the puzzle with the `attempt` option. This makes it
 possible to force the player to fail the puzzle because they didn't provide a correct solution or they didn't satisfy
 the requirements for the puzzle to be solved/unsolved.
+
+It is recommended that you do not add line breaks to cells on the sheet. To add line breaks to the
+narration, enter `\n`. It will be replaced with an actual line break in the sent message.
+
+Likewise, because the normal comma character is used as a delimiter in lists of bot commands, you can use
+the full-width comma character instead (`，`), and it will be replaced with a normal comma in the message.
 
 ### say
 
@@ -703,6 +715,10 @@ Note that unlike other commands which change a player's characteristics, the pla
 being inflicted or cured of a status effect with the `concealed` behavior attribute. If this command is used to change a
 character's voice, it must be used again to change it back to normal. It can be reset to their original voice descriptor
 by specifying the player without providing a voice descriptor.
+
+Because the normal comma character is used as a delimiter in lists of bot commands, you cannot enter a
+comma in a voice string with this command. Instead, use the full-width comma character (`，`).
+It will be replaced with a normal comma in the voice string.
 
 ### status
 

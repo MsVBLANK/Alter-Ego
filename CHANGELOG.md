@@ -13,9 +13,9 @@ This project does **not** adhere to [Semantic Versioning](https://semver.org/spe
 
 # Version 2.0: A New Alter Ego
 
-Alter Ego has received a major overhaul. This update, released on its sixth birthday, ushers in a near total rewrite of
-its inner workings. Although previous updates have focused on incremental improvements, this one marks a turning point
-in its development.
+Alter Ego has received a major overhaul. This update, released on its seventh birthday, ushers in a near total rewrite
+of its inner workings. Although previous updates have focused on incremental improvements, this one marks a turning
+point in its development.
 
 Alter Ego has been almost completely rewritten. While the core logic remains the same, the code base is now more
 organized, more modular, more reusable, more documented, and more maintainable. The goal of this update was primarily to

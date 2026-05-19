@@ -102,8 +102,8 @@ permission to view the channel. NPCs are also not given permission to view the c
 accounts. When a Player is removed from the Whisper, their permission to view the channel is revoked.
 
 When a Whisper is marked to be deleted, one of two things can happen. If the
-[autoDeleteWhisperChannels setting](../settings.md#auto_delete_whisper_channels) is `true`, then the channel will be
-deleted as well. If it is `false`, then the channel's name will be set to `archived-(Room ID)`. Discord only allows a
+[`AUTO_DELETE_WHISPER_CHANNELS` setting](../settings.md#auto_delete_whisper_channels) is `true`, then the channel will
+be deleted as well. If it is `false`, then the channel's name will be set to `archived-(Room ID)`. Discord only allows a
 single category to have up to 50 channels. Therefore, if Whisper channels are not automatically deleted, they must be
 moved to another category or manually deleted before this limit is reached. Otherwise, no new Whispers can be created.
 

@@ -90,9 +90,10 @@ the [whisper command](../commands/moderator_commands.md#whisper). For full Playe
 instead. Only NPCs have this set to a non-`null` value by default: the image URL in their ID.
 
 Much like the Player's display name, this can change during gameplay. It is automatically set to the
-[`defaultConcealedIconURL`](../settings.md#default_concealed_icon_url) defined in Alter Ego's settings when the Player
-is inflicted with a Status Effect that has the `concealed` behavior attribute, and it can be manually changed with the
-[setdisplayicon](../commands/moderator_commands.md#setdisplayicon) [command](../commands/bot_commands.md#setdisplayicon).
+[`DEFAULT_CONCEALED_ICON_URL`](../settings.md#default_concealed_icon_url) defined in Alter Ego's settings when the
+Player is inflicted with a Status Effect that has the `concealed` behavior attribute, and it can be manually changed
+with the [setdisplayicon](../commands/moderator_commands.md#setdisplayicon)
+[command](../commands/bot_commands.md#setdisplayicon).
 However, it should be noted this will **not** replace a full Player's avatar when they speak in a Room or Whisper
 channel by sending a message to it; it will only appear in spectate channels when this is the case.
 
@@ -483,7 +484,7 @@ in a [Room](room.md).
 The flat distance in pixels between the Player's current position and the desired Exit's position is calculated using
 the [distance formula](https://en.wikipedia.org/wiki/Euclidean_distance#Two_dimensions) with the two positions'
 respective [X](exit.md#x) and [Z](exit.md#z) coordinates. The flat distance is then converted to meters by dividing this
-value by the [pixelsPerMeter setting](../settings.md#pixels_per_m). The rise of the Exit's position
+value by the [`PIXELS_PER_METER` setting](../settings.md#pixels_per_meter). The rise of the Exit's position
 relative to the Player's is calculated by subtracting the Player's [Y coordinate](player.md#y)
 from [the Exit's](exit.md#y) and dividing the resulting value by the pixels per meter setting. The slope between the two
 positions is then calculated by dividing the rise in meters by the flat distance in meters.
@@ -576,7 +577,7 @@ In this formula are several variables:
 
 - \\(d\\) is the flat distance in meters the Player has moved in the past 100 milliseconds.
 - \\(m\\) is \\(1\\) if the Player is walking and \\(3\\) if the Player is running.
-- \\(u\\) is the [staminaUseRate setting](../settings.md#stamina_use_rate).
+- \\(u\\) is the [`STAMINA_USE_RATE` setting](../settings.md#stamina_use_rate).
 - \\(s\\) is the slope of the Player's movement, calculated by dividing the number of meters they've risen in meters by
   the flat distance in meters they've moved in the past 100 milliseconds.
 
@@ -1019,9 +1020,9 @@ This internal attribute uses the [setInterval method](https://nodejs.org/api/tim
 to handle the Player's movement. Every 100 milliseconds, 100 milliseconds are subtracted from the Player's
 [remaining time](player.md#remaining-time), and the Player's position and stamina are updated. However, if at least one
 Player in the game has the `heated` Status Effect, the amount of milliseconds subtracted from the Player's remaining
-time is first multiplied by the [heatedSlowdownRate setting](../settings.md#heated_slowdown_rate), effectively making
-the Player move more slowly. When the remaining time reaches 0, the Player [moves](action.md#move-action) to their
-destination, as long as the Exit leading to it is unlocked or [passable](puzzle.md#restricted-exit).
+time is first multiplied by the [`HEATED_SLOWDOWN_RATE` setting](../settings.md#heated_slowdown_rate), effectively
+making the Player move more slowly. When the remaining time reaches 0, the Player [moves](action.md#move-action) to
+their destination, as long as the Exit leading to it is unlocked or [passable](puzzle.md#restricted-exit).
 
 If the Player stops moving for any reason, the
 [clearInterval method](https://nodejs.org/api/timers.html#clearintervaltimeout) is used on this so that the Player's

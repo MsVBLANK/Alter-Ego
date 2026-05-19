@@ -153,7 +153,7 @@ data to the spreadsheet.
 This Boolean value indicates whether there is a heated situation occurring---a situation in which a Moderator is busy
 coordinating a combat encounter between two or more Players. If any Player has the "heated" Status Effect,
 this is `true`, and most in-game timers are affected by the
-[HEATED_SLOWDOWN_RATE setting](../settings.md#heated_slowdown_rate).
+[`HEATED_SLOWDOWN_RATE` setting](../settings.md#heated_slowdown_rate).
 
 ### Edit Mode
 

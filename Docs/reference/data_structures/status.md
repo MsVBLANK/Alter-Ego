@@ -83,7 +83,7 @@ instantiated Status Effect that has a duration. If the instantiated Status Effec
 the instantiated Status Effect is active, 1000 milliseconds are subtracted from this Duration every second until it is
 less than or equal to zero, at which point the Status Effect expires. However, the amount subtracted every second can
 vary. If at least one Player in the game has the "heated" Status Effect, the amount subtracted is multiplied by the
-`heatedSlowdownRate` [setting](../settings.md#heated_slowdown_rate), effectively making the Status
+[`HEATED_SLOWDOWN_RATE` setting](../settings.md#heated_slowdown_rate), effectively making the Status
 Effect take longer to expire.
 
 ### Fatal
@@ -462,7 +462,7 @@ Bracket characters (`[]`) should not be included when assigning behavior attribu
 - When the Player uses the say command, their display name appear as `Someone in the room with [Player voice string]`.
   However, their display name will not actually be changed.
 - When the Player uses the say command, their display icon will appear as the
-  [`hiddenIconURL`](../settings.md#hidden_icon_url) defined in Alter Ego's settings.
+  [`HIDDEN_ICON_URL`](../settings.md#hidden_icon_url) defined in Alter Ego's settings.
   However, their display icon will not actually be changed.
 - The Player can only steal Inventory Items from Players hiding in the same Fixture as them.
 - The Player can only take Room Items from the Fixture they're hiding in, from its child Puzzle,
@@ -479,7 +479,7 @@ Bracket characters (`[]`) should not be included when assigning behavior attribu
       it will be changed to `an individual wearing [Inventory Item single containing phrase]`. If the behavior attribute
       was inflicted some other way, it will be changed to `an individual wearing a MASK`.
     - The Player's [display icon](player.md#display-icon) will be changed to the
-      [`defaultConcealedIconURL`](../settings.md#default_concealed_icon_url) defined in Alter Ego's settings.
+      [`DEFAULT_CONCEALED_ICON_URL`](../settings.md#default_concealed_icon_url) defined in Alter Ego's settings.
     - The Player's [pronouns](player.md#pronouns) will be changed to `neutral`.
 - When this behavior attribute is cured:
     - The Player's display name will be reset.

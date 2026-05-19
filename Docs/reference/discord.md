@@ -33,7 +33,7 @@ This section lists how Discord is used to facilitate the game.
 
 A game is contained in one and only one Discord server. It is run by Alter Ego.
 
-Every [Player](data_structures/player.md), is represented by
+Every [Player](data_structures/player.md) is represented by
 a [Discord server member](https://discord.js.org/docs/packages/discord.js/14.25.1/GuildMember:Class), aside from NPCs.
 Each Player must have their own Discord account, unless they are an NPC.
 A single account cannot be used for multiple Players.
@@ -51,7 +51,7 @@ the Whisper will be granted read access to that channel. When a Player leaves th
 Room's channel, their read access to all Whispers they were in will be revoked. Their name will also be removed from the
 Whisper name, whose channel name will be edited accordingly. When all Players in a Whisper leave the Room, the Whisper
 channel will either be archived or immediately deleted, depending on the
-[autoDeleteWhisperChannels setting](settings.md#auto_delete_whisper_channels).
+[`AUTO_DELETE_WHISPER_CHANNELS` setting](settings.md#auto_delete_whisper_channels).
 
 Every [spectate channel](data_structures/player.md#spectate-channel) also has a Discord text channel. When
 Player data is loaded from the spreadsheet, Alter Ego will check to see if that Player already has a spectate channel in

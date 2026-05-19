@@ -25,9 +25,9 @@ During gameplay, this is typically not a problem. However, in the event of an er
 some other incident which causes Alter Ego to shut down during gameplay, its internal data will be lost. In order to
 combat this, Alter Ego regularly updates the spreadsheet with the most recent copy of its internal data using
 the [GameEntitySaver class](https://github.com/MsVBLANK/Alter-Ego/blob/master/Classes/GameEntitySaver.ts); the interval
-at which this occurs can be set with the [autoSaveInterval setting](../reference/settings.md#autosave_interval). While
-this still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a fairly
-recent backup to load from in order to minimize the amount of data loss.
+at which this occurs can be set with the [`AUTOSAVE_INTERVAL` setting](../reference/settings.md#autosave_interval).
+While this still guarantees that at least some data will be lost if Alter Ego goes offline, there will always be a
+fairly recent backup to load from in order to minimize the amount of data loss.
 
 However, because Alter Ego updates the entire spreadsheet at once (only
 the [Prefab](../reference/data_structures/prefab.md), [Recipe](../reference/data_structures/recipe.md),

@@ -47,8 +47,8 @@ subtracted from the base roll. The stat roll modifier, \\(M\\), is calculated wi
 In this formula are several variables:
 
 - \\(s\\) is the attacker's specified stat.
-- \\(a\\) is the [diceMax setting](../settings.md#dice_max).
-- \\(i\\) is the [diceMin setting](../settings.md#dice_min).
+- \\(a\\) is the [`DICE_MAX` setting](../settings.md#dice_max).
+- \\(i\\) is the [`DICE_MIN` setting](../settings.md#dice_min).
 
 ## Attributes
 
@@ -59,14 +59,14 @@ Dice have few attributes.
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.min`
 
-This is the minimum possible value for the base Die roll. This equals the diceMin setting.
+This is the minimum possible value for the base Die roll. This equals the `DICE_MIN` setting.
 
 ### Maximum
 
 - Class attribute: [Number](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
   `this.max`
 
-This is the maximum possible value for the base Die roll. This equals the diceMax setting.
+This is the maximum possible value for the base Die roll. This equals the `DICE_MAX` setting.
 
 ### Base Roll
 

@@ -22,6 +22,9 @@ SPDX-License-Identifier: CC-BY-SA-4.0
     <a href="https://github.com/MsVBLANK/Alter-Ego/releases">
         <img alt="GitHub Release" src="https://img.shields.io/github/v/release/MsVBLANK/Alter-Ego?style=flat-square&logo=github"/>
     </a>
+    <a href="https://github.com/MsVBLANK/Alter-Ego/actions/workflows/test.yml">
+        <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/MsVBLANK/Alter-Ego/test.yml?branch=master&style=flat-square&logo=github&label=tests">
+    </a>
     <br /><br />
 </div>
 

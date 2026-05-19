@@ -517,8 +517,8 @@ Set and clear flags.
     .setflag INDOOR TEMPERATURE -= 4.1
     .flag set SOUP OF THE DAY "French Onion"
     .setflag BLOOD SPLATTER “TWO MILKMEN GO COMEDY”
-    .flag set PRECIPITATION `` `findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true` ``
-    .setflag RANDOM ANIMAL `` `getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])` ``
+    .flag set PRECIPITATION `findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true`
+    .setflag RANDOM ANIMAL `getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])`
     .flag clear BLOOD SPLATTER
     .clearflag TV PROGRAMMING
 

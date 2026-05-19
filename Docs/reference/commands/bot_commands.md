@@ -184,8 +184,8 @@ Set and clear flags.
     setflag player BALANCE -= 21.5
     flag set SOUP OF THE DAY "French Onion"
     setflag BLOOD SPLATTER “player WAS HERE”
-    flag set PRECIPITATION `` `findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true` ``
-    setflag RANDOM ANIMAL `` `getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])` ``
+    flag set PRECIPITATION `findEvent('RAIN').ongoing === true || findEvent('SNOW').ongoing === true`
+    setflag RANDOM ANIMAL `getRandomString(['dog', 'cat', 'mouse', 'owl', 'bear'])`
     flag clear BLOOD SPLATTER
     clearflag TV PROGRAMMING
     flag clear player DEBT

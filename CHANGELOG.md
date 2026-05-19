@@ -9,6 +9,386 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 All notable changes to this project will be documented in this file.
 This project does **not** adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [v2.0.0] - 2026-05-20
+
+# Version 2.0: A New Alter Ego
+
+Alter Ego has received a major overhaul. This update, released on its sixth birthday, ushers in a near total rewrite of
+its inner workings. Although previous updates have focused on incremental improvements, this one marks a turning point
+in its development.
+
+Alter Ego has been almost completely rewritten. While the core logic remains the same, the code base is now more
+organized, more modular, more reusable, more documented, and more maintainable. The goal of this update was primarily to
+make Alter Ego easier to develop for.
+
+And easier to develop for it is! This release brings with it a whole host of **major** improvements to the user
+experience, including a wide variety of new and upgraded game mechanics, all of which were only made possible because of
+the new foundation on which Alter Ego is built.
+
+We've been hard at work on this update almost every day over the past seven months, and this changelog is our best
+attempt at a comprehensive but concise list of changes you need to be aware of. For more information on all of the
+changes covered here and more, check out the newly updated [Docs](https://msvblank.github.io/Alter-Ego/).
+
+# Changelog
+
+## Major Game Mechanic Changes
+
+- Added [Flag](https://msvblank.github.io/Alter-Ego/reference/data_structures/flag.html) data type. Flags revolve around
+  their `value` property, which can be used to store simple bits of data that can be quickly accessed by other data
+  types. Values can even be automatically computed by a given script, and evaluated on-demand. Flags can also have
+  command sets that execute different commands depending on what value the Flag was set with.
+- Expanded [Recipes](https://msvblank.github.io/Alter-Ego/reference/data_structures/recipe.html).
+    - Ingredients and products can now be required to be contained inside of other ingredients and products.
+    - It is now possible to set quantities for ingredients and products. Quantities determine how many of a given
+      ingredient are required to carry out the Recipe, and how many of a given product will be produced.
+    - It is now possible to set uses for ingredients and products. Uses determine how many of a given ingredient's uses
+      will be consumed when the Recipe is carried out, and how many uses a given product will be created with.
+    - Quantities and uses can be either constant or variable. If they are variable, the actual number used in the
+      products will depend on how many times the ingredients satisfy the Recipe.
+- Expanded [procedurals](https://msvblank.github.io/Alter-Ego/moderator_guide/writing_descriptions.html#procedural).
+    - Prefabs now keep track of the procedurals in their descriptions
+      as [procedural options](https://msvblank.github.io/Alter-Ego/reference/data_structures/prefab.html#procedural-options).
+    - Prefabs can now
+      have [different names](https://msvblank.github.io/Alter-Ego/reference/data_structures/prefab.html#possible-names)
+      and [containing phrases](https://msvblank.github.io/Alter-Ego/reference/data_structures/prefab.html#possible-containing-phrases)
+      based on what possibilities are selected when they're instantiated.
+    - When Items are instantiated, the `procedural` and `poss` tags that were selected are now kept in their
+      descriptions. These are their
+      [procedural](https://msvblank.github.io/Alter-Ego/reference/data_structures/room_item.html#procedural-selections)
+      [selections](https://msvblank.github.io/Alter-Ego/reference/data_structures/inventory_item.html#procedural-selections).
+    - It is no longer possible to instantiate Items with conflicting procedural selections.
+    - Procedural selections are now transferred when Items are transformed into their next stage.
+    - When Prefabs are used as ingredients in Recipes, the procedural selections of all ingredients are combined and
+      applied to all products, making them potentially infinitely transferable.
+- Added [Interactables](https://msvblank.github.io/Alter-Ego/reference/interactables.html). This robust new system
+  allows many of the most commonly performed actions in Alter Ego to be done with one or two clicks using Discord's
+  interactive components.
+
+![An example of a few messages from Alter Ego demonstrating Interactables](https://github.com/MsVBLANK/Alter-Ego/blob/master/Docs/images/interactables_action_rows_example.png?raw=true)
+
+## Updates to the Sheet
+
+- Added new tab for Flags.
+- Renamed Objects to [Fixtures](https://msvblank.github.io/Alter-Ego/reference/data_structures/fixture.html) to avoid
+  confusion with JavaScript's native Object data type.
+- Renamed Items to [Room Items](https://msvblank.github.io/Alter-Ego/reference/data_structures/room_item.html) to better
+  differentiate them from Inventory Items.
+- Added [Exit Phrase](https://msvblank.github.io/Alter-Ego/reference/data_structures/exit.html#phrase) column to Rooms
+  sheet.
+- Added [Exit Tags](https://msvblank.github.io/Alter-Ego/reference/data_structures/exit.html#tags) column to Rooms
+  sheet.
+    - `not knockable` is the only usable Exit tag right now, but more are planned for future releases.
+- Added
+  [Description When Unsolved](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#unsolved-description)
+  column to Puzzles sheet.
+- Renamed the Player property `talent` to
+  [`title`](https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html#title).
+- Renamed the Player stat `intelligence` to
+  [`perception`](https://msvblank.github.io/Alter-Ego/reference/data_structures/player.html#perception).
+- Updated the headings of almost all columns on the sheet.
+- Alter Ego will automatically update your sheet with all new tabs, columns, and headings when you boot it up after
+  updating.
+
+## New Game Development Options
+
+### Puzzle Enhancements
+
+- Events and Flags can now be used
+  as [requirements](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#requirements-strings) for
+  Puzzles.
+- If a Flag with a string value is used as a requirement for a
+  [`matrix`-type](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#matrix) Puzzle, the Flag's
+  value can be inserted into the Puzzle's solved commands.
+- If an Inventory Item is used as a requirement for a Puzzle and it has a limited number of uses, its uses will be
+  decremented when the Puzzle is solved.
+- [`media`-type](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#media) Puzzles can now have
+  an Already Solved Description separate from their Unsolved Description.
+- Added [`player toggle`](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#player-toggle)
+  Puzzle type that acts similarly to `toggle`-type Puzzles, but can only be unsolved by the Player who solved it.
+- Added [`take`](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#take) Puzzle type that can
+  be solved by taking one of the Room Items listed in its solutions from it.
+- Added [`drop`](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#drop) Puzzle type that can
+  be solved by dropping one of the Room Items listed in its solutions into it.
+- Added [`exit`](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#exit) Puzzle type that can
+  be solved by moving through the Exit whose name matches the name of the Puzzle.
+
+### Other Improvements
+
+- Descriptions [can now be set](https://msvblank.github.io/Alter-Ego/moderator_guide/writing_descriptions.html#desc) to
+  send messages with one of a few different display styles.
+- A Fixture's [Recipe tag](https://msvblank.github.io/Alter-Ego/reference/data_structures/fixture.html#recipe-tag) can
+  now be set dynamically to change what Recipes it can process.
+- Recipes can now be processed by Fixtures with child Puzzles. In this case, the ingredients must be contained inside of
+  the child Puzzle, and the products will be instantiated in the child Puzzle, rather than the Fixture itself.
+- The Use Verb property of Prefabs has been split into a Third Person Use Verb and Second Person Use Verb. Both are
+  still optional, but can be separated by a comma, with the Third Person Use Verb going first.
+- The `enable text` behavior attribute has been removed and replaced with three new behavior attributes:
+    - Although Players can now use the
+      [`.text` command](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#text) by default,
+      they require the `send text` behavior attribute in order to actually send anything.
+    - Players can only receive text messages if they have the `receive text` behavior attribute. If they don't, they
+      can't be selected as a recipient.
+    - The `disable text` behavior attribute can now be applied to a Player to prevent them from using the `.text`
+      command at all, even if they have the `send text` behavior attribute.
+
+## New Commands
+
+- Added
+  [`.monolog` Player command](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#monolog) so
+  Players can privately narrate their inner thoughts such that only they and spectators can see.
+- Added [`.narrate` Player](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#narrate)
+  and [Moderator commands](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#narrate) to
+  narrate a Player's non-verbal actions in a manner similar to Gestures, but with more flexibility.
+- Added [`.flag` Moderator](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#flag)
+  and [Bot commands](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#flag) to set and clear
+  Flag values, and to create new Flags that don't already exist.
+- Added
+  [`.find` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#find) that
+  allows Moderators to search for game entities of a given type and displays them in the command channel with row
+  numbers without having to open the spreadsheet. The command supports fuzzy search, and several game entities can be
+  filtered for more concise search results.
+- Added
+  [`.view` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#view) that
+  allows Moderators to view most of a game entity's attributes without having to open the spreadsheet.
+- Added
+  [`.setdefaultroomicon` Moderator](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#setdefaultroomicon)
+  and [Bot commands](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#setdefaultroomicon) to
+  dynamically set
+  the [default Room icon URL](https://msvblank.github.io/Alter-Ego/reference/settings.html#default_room_icon_url).
+- Added
+  [`.setroomicon` Moderator](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#setroomicon)
+  and [Bot commands](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#setroomicon) to
+  dynamically set the [icon URL](https://msvblank.github.io/Alter-Ego/reference/data_structures/room.html#icon-url) for
+  a given Room.
+- Added [`.say` Bot command](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#say) to make an
+  NPC say the given dialog, or to narrate a message in a given Room. This pairs well with
+  [`voice`-type Puzzles](https://msvblank.github.io/Alter-Ego/reference/data_structures/puzzle.html#voice), allowing
+  NPCs to respond to Player dialog with static responses, but it can also be used to implement audio or video recordings
+  that can be played on-demand, and more.
+- Added
+  [`.latch` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#latch)
+  that allows Moderators to latch onto a given NPC. When latched, a Moderator can control that NPC with Moderator
+  commands without specifying their name, and can even speak for them by sending messages in their Room or Whisper
+  channel without using the
+  [`.say` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#say).
+
+### Changes to Existing Commands
+
+- The command prefix character (`.` by default) is now optional when sending commands in DMs, or in the commands channel
+  for Moderators. It is still necessary when sending commands to Room channels, however.
+- Moderator commands can now be used in Room channels.
+- Many Moderator commands now support NPC latching, so that Moderators don't have to specify a Player to control if
+  they're latched onto an NPC.
+- Command help displays are now sent using Discord's Components V2, increasing their character limit. As such, nearly
+  all commands have had their details and examples updated to be clearer and more descriptive.
+- Command arguments are now split on any whitespace except newlines, making commands easier to parse.
+- Some commands are now whitespace-sensitive, so the text you enter will have its exact whitespace preserved. This is
+  true of:
+    - The [`.say` Player](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#say)
+      and [Moderator commands](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#say),
+    - The `.narrate` Player and Moderator commands, and
+    - The `.monolog` Player command.
+- Players with the Free Movement role can now choose to move normally instead of teleporting by specifying the name of
+  an Exit in the [`.move`](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#move) and
+  [`.run`](https://msvblank.github.io/Alter-Ego/reference/commands/player_commands.html#run) Player commands.
+- Renamed `.object` command to `.fixture`, for
+  both [Moderator](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#fixture)
+  and [Bot](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#fixture) variants. `.object` is
+  still a valid alias for both.
+- The `.fixture` Moderator and Bot commands can now be used to change a Fixture's Recipe tag.
+- Grouped `.trigger` and `.end` commands together into the
+  [`.event` Moderator](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#event)
+  and [Bot commands](https://msvblank.github.io/Alter-Ego/reference/commands/bot_commands.html#event). They are now
+  aliases of the same command, but their usage and behavior hasn't changed.
+- Renamed `.testparser` to the
+  [`.parse` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#parse).
+  `.testparser` remains a valid alias for it.
+- The `.parse` Moderator command can no longer be used to generate previews of removing and adding items to item lists.
+- The `.parse` Moderator command can now be used with the `plaintext` argument to output all parsed descriptions in
+  plain text only. If this is done, it will also output a dictionary file consisting of words used in all of the names
+  of in-game entities, which can be used in your spellchecking program of choice to find spelling mistakes.
+- `.view` is no longer a valid alias for the
+  [`.status` Moderator command](https://msvblank.github.io/Alter-Ego/reference/commands/moderator_commands.html#status).
+  To view a Player's status, you can now just use `.status` followed by their name.
+- Added and changed command aliases. Notable examples:
+    - `.craft` -> `.c`
+    - `.drop` -> `.place`
+    - `.gesture` -> `.g`
+    - `.stop` -> `.st`
+    - `.take` -> `.grab`
+    - `.uncraft` -> `.uc`
+    - `.destroy` -> `.ds`
+    - `.editmode` -> `.em`
+    - `.instantiate` -> `.is`, `.gn`
+    - `.location` -> `.l`
+    - `.setdisplayicon` -> `.sdi`
+    - `.setdisplayname` -> `.sdn`
+
+## Quality of Life Improvements
+
+- [`il` tags](https://msvblank.github.io/Alter-Ego/moderator_guide/writing_descriptions.html#il) in descriptions are now
+  populated automatically based on what items are currently contained inside of them when the description is parsed.
+  This means that item lists in descriptions should never again falsely mention containing items that no longer exist
+  ("ghost items").
+- When Rooms are loaded, Alter Ego automatically tries to create channels for them, if they don't already exist.
+  However, if all Room categories are full, it will be unable to do so unless more are created.
+- When Status Effects are loaded, Alter Ego will now throw an error if the following essential Status Effects are not
+  found:
+    - `heated`
+    - `weary`
+    - `asleep`
+    - `hidden`
+    - `concealed`
+- When Players are loaded, Alter Ego will now throw an error if a given Player is not in the server.
+- Alter Ego now accepts files with extensions of `.jpeg`, `.webp`, and `.avif` in places where image URLs can be set,
+  such as Room icons and Player display icons. Image URLs with query strings following the file extension are also now
+  accepted.
+
+## Dialog Revamp
+
+- The dialog system has been completely rebuilt from the ground up, with a robust, extensive suite of tests to ensure it
+  functions as intended, and to make new dialog features easier to develop in the future.
+- Out-of-character (OOC) messages are now communicated to Players who don't have access to the Room or Whisper channel,
+  but they are still not mirrored in spectate channels.
+- When recently-sent dialog messages are deleted, all mirrors of them in spectate channels are deleted, too.
+- Messages that begin
+  with [Discord's heading Markdown characters](https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline#h_01GY0EQVRRRB2F19HXC2BA30FG)
+  now count as shouted dialog, even if they're not in all uppercase.
+- Messages that begin
+  with [Discord's subtext Markdown characters](https://support.discord.com/hc/en-us/articles/210298617-Markdown-Text-101-Chat-Formatting-Bold-Italic-Underline#h_01J2HBMKS7587KC8PMAJ47PZR2)
+  are now _never_ counted as shouted dialog, even if they're in all uppercase.
+- The
+  [`no hearing` behavior attribute](https://msvblank.github.io/Alter-Ego/reference/data_structures/status.html#no-hearing)
+  no longer deletes all dialog messages sent to a Room channel and sends them to hearing Players. As such, it is
+  recommended that the `no hearing` behavior attribute be paired with the `no channel` behavior attribute from now on.
+
+## New Communication Handling
+
+- The new communication handler coordinates narration and notification messages to avoid sending multiple messages
+  communicating the same thing to the same channel. This issue was previously most prominent in spectate channels.
+- The message handler module has been rewritten to send messages more efficiently.
+- Most built-in narration and notification messages have been rewritten to be more customizable, consistent, and
+  descriptive, and to use more natural-sounding language (e.g. "puts on" instead of "equips").
+- Alter Ego now uses [Discord Components](https://docs.discord.com/developers/components/reference) in many of its
+  messages. It has several
+  new [message display types](https://msvblank.github.io/Alter-Ego/reference/discord.html#display-components) to send
+  messages with.
+
+![An example of a Room description using Discord Components](https://github.com/MsVBLANK/Alter-Ego/blob/master/Docs/images/room_description.png?raw=true)
+
+## Configuration Updates
+
+- Removed most config files.
+    - Existing `credentials.json` file can still be read.
+    - `serverconfig.json` still exists and can be read and written to.
+    - `demodata.json` is still used.
+    - All other config files will never be read or written to.
+- Migrated almost all configuration to `.env` file.
+- Added several new settings:
+    - `AUTO_LOAD`
+    - `DEFAULT_CONCEALED_ICON_URL`
+    - `HIDDEN_ICON_URL`
+    - `READ_MESSAGE_HISTORY`
+    - `EMBED_ACCENT_COLOR`
+    - `STANDARD_MESSAGE_DISPLAY_ACCENT_COLOR`
+    - `WARNING_MESSAGE_DISPLAY_ACCENT_COLOR`
+    - `ALERT_MESSAGE_DISPLAY_ACCENT_COLOR`
+    - `SHOW_ONLINE_PLAYER_COUNT`
+    - `GAME_IN_PROGRESS_ACTIVITY_URL`
+- Renamed `PIXELS_PER_M` to `PIXELS_PER_METER`.
+- Renamed `DEFAULT_DROP_OBJECT` to `DEFAULT_DROP_FIXTURE`.
+- Renamed `DEBUG_MODE_TYPE` to `DEBUG_MODE_ACTIVITY_TYPE`.
+- Renamed `DEBUG_MODE_STRING` to `DEBUG_MODE_ACTIVITY_STRING`.
+- Renamed `IN_PROGRESS_TYPE` to `GAME_IN_PROGRESS_ACTIVITY_TYPE`.
+- Renamed `IN_PROGRESS_STRING` to `GAME_IN_PROGRESS_ACTIVITY_STRING`.
+- Renamed `DEFAULT_INT` to `DEFAULT_PER`.
+- Renamed `HEADMASTER_ROLE` to `FREE_MOVEMENT_ROLE`.
+- Completely rewrote `demodata.json` to provide a larger, more in-depth demo environment for first-time users to
+  explore, with built-in tutorials to teach them the core mechanics of Alter Ego.
+- The stack trace limit for error messages printed to the console can now be set in your environment variables with
+  `STACK_TRACE_LIMIT`. This is not included in the `.env.example` file, as this is mainly intended for developers.
+
+## Under the Hood Changes
+
+- Created script parser module responsible for evaluating
+  [`if` tags](https://msvblank.github.io/Alter-Ego/moderator_guide/writing_descriptions.html#if),
+  [`var` tags](https://msvblank.github.io/Alter-Ego/moderator_guide/writing_descriptions.html#var),
+  and [Flag value scripts](https://msvblank.github.io/Alter-Ego/reference/data_structures/flag.html#value-script). It is
+  no longer possible to execute fully arbitrary code, and the scope of evaluated scripts is heavily restricted to
+  prevent dangerous code exploits. **This will most likely cause breaking changes**, especially if you frequently relied
+  on arbitrary code execution in your descriptions.
+- Added [Action](https://msvblank.github.io/Alter-Ego/reference/data_structures/action.html) data type to centralize
+  in-game actions and assist communication handler in coordinating messages.
+- Created [Game](https://msvblank.github.io/Alter-Ego/reference/data_structures/game.html) class to make Alter Ego more
+  object-oriented.
+- Rewrote much of the code base in TypeScript and added type hinting to the remaining JavaScript files.
+- _Heavily_ refactored code base.
+- Added automated test suite using [Vitest](https://vitest.dev/).
+- Replaced Moment.js dependency with [Luxon](https://moment.github.io/luxon/) and [date-fns](https://date-fns.org/).
+- Set the minimum version of Node.js required to use Alter Ego to 24.14.1.
+
+## How to Update
+
+This update introduces **breaking changes** to existing Alter Ego setups. While Alter Ego will automatically update your
+spreadsheet with the new Flags sheet, as well as add all of the new columns and update your column headings, there are
+several things it cannot do.
+
+Due to the major overhaul to the way that configuration files are read, it is recommended that you perform a fresh
+installation of Alter Ego.
+
+### With Docker
+
+All you have to do is repeat steps 1 and 10 of
+the [installation and setup tutorial](https://msvblank.github.io/Alter-Ego/moderator_guide/installation.html). When you
+fill in your `.env` file, you can copy and paste any values from your old configuration into their respective places,
+including your credentials. You can keep your `serverconfig.json` file. If you plan on using the `.createroomcategory`
+command, you should NOT fill in the `ROOM_CATEGORIES` setting in your `.env` file.
+
+### Without Docker
+
+The installation process for use with Node.js has changed slightly. You should read
+the [Node installation tutorial](https://msvblank.github.io/Alter-Ego/appendix/manual_installation/node.html) and repeat
+steps 1 - 3, then step 11. You will have to use the `.env` file from now on, too. You should be able to copy and paste
+the values from your old configuration files into their respective places, including your credentials. You can keep your
+`serverconfig.json` file. If you plan on using the `.createroomcategory` command, you should NOT fill in the
+`ROOM_CATEGORIES` setting in your `.env` file.
+
+### Migrating Your Spreadsheet
+
+See the [Migration Guide](https://msvblank.github.io/Alter-Ego/appendix/migration.html#upgrading-to-200) for
+instructions on how to update your spreadsheet.
+
+## Special Thanks
+
+- @flufflesamy for her help with converting a bunch of files to TypeScript, writing most of the Player Guide
+  documentation, offering feedback and ideas, creating Alter Ego Tools, and of course, getting me a new computer and
+  desk. None of this would have been possible if I didn't have a nice work environment, so thank you!
+- @LavCorps for all of her contributions on commands, rewriting the message handler, replacing old dependencies, writing
+  countless test cases (seriously, thank you =w=), figuring out how to make the updated Recipes system respect the law
+  of conservation of matter, and a ton more.
+- Alex, alucard, Coelpts, and everyone else who participated in the 2.0-alpha test game, Unbroken Confinement. You all
+  helped us catch and fix countless bugs, and your feedback was crucial in making this release what it is today. Having
+  the opportunity to run a game again reminded me what makes Alter Ego special, and why I do this. Thank you all for
+  expressing interest in the game, and for seeing it through to the end and making it such an emotionally fulfilling
+  sequel.
+
+## License
+
+Alter Ego now has a license! It uses AGPLv3. You are free to download, modify, host, and distribute Alter Ego to your
+heart's content, but all modifications must also be licensed under AGPLv3 (or later), and you must make the source code
+available to your players. For more
+information, [see the license included with Alter Ego](https://github.com/MsVBLANK/Alter-Ego/blob/master/LICENSE.md).
+
+You aren't required to do so, but if you think other Alter Ego users would benefit from your
+modifications, [please consider making a pull request](https://github.com/MsVBLANK/Alter-Ego/pulls).
+
+## Addendum
+
+Check out [Alter Ego Tools](https://github.com/flufflesamy/alter-ego-tools)! If you're able to run it, it can save you a
+lot of time writing descriptions, and it even has a very useful procedural generator.
+
+---
+
 # [v1.10.1] - 2025-11-24
 
 ## Fixed

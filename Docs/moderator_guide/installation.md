@@ -33,10 +33,8 @@ and [Linode](https://www.linode.com/pricing/).
 
 ## Step 1: Download Alter Ego
 
-First, you need to download Alter Ego itself. Go to the Alter Ego GitHub page and download the latest release. Click the
-releases box and select the latest one.
-
-![Click on the most recent release](../images/github_releases_menu.png)
+First, you need to download Alter Ego itself. Go to the GitHub
+[Releases page](https://github.com/MsVBLANK/Alter-Ego/releases) and find the latest release.
 
 There, you will see something like this.
 

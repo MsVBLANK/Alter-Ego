@@ -1,8 +1,8 @@
 name: Tests
-on: [ push, pull_request ]
+on: [push, pull_request]
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
   test:
@@ -14,7 +14,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
-          node-version: '>=24.14.1'
+          node-version: ">=24.14.1"
 
       - name: Install dependencies
         run: npm ci
@@ -23,7 +23,7 @@ jobs:
         run: npm test -- --coverage
 
       - name: Upload coverage reports
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: coverage-report
           path: coverage/

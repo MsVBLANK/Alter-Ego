@@ -170,22 +170,15 @@ The Alter Ego project values diversity. If you are new to conversations about di
    community to take action and correct these issues. All community change requires resources (such as time, influence,
    or money). We acknowledge that such resources will be spent towards correcting past bias and discrimination.
 
-<!--TODO: Figure this out-->
 ## Procedure for Handling Incidents
 
-    Reporter Guide
-
-    Moderator Procedures
-
-    Committee Procedures Guide
+<!--TODO: Figure this out-->
 
 ## License
 
 The Alter Ego Code of Conduct is licensed under a [Creative Commons Attribution-ShareAlike 4.0 International License].
 
 ## Attribution
-
-<!--TODO: List everything from the GNOME COC-->
 
 The Alter Ego Code of Conduct is based on the [GNOME Code of Conduct](https://conduct.gnome.org/), which is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License].
 

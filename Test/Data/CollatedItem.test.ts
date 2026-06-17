@@ -1,5 +1,6 @@
 import CollatedItem from "../../Data/CollatedItem.ts";
-import Fixture from "../../Data/Fixture.ts";
+import type Fixture from "../../Data/Fixture.ts";
+import type RoomItem from "../../Data/RoomItem.ts";
 
 describe('CollatedItem test', () => {
 	beforeAll(async () => {
@@ -741,16 +742,11 @@ describe('CollatedItem test', () => {
 		});
 
 		describe('canteen BURNERS', () => {
-			/** @type {Fixture} */
-			let burner;
-			/** @type {CollatedItem[]} */
-			let items;
-			/** @type {CollatedItem} */
-			let butter;
-			/** @type {CollatedItem} */
-			let cookingSherry;
-			/** @type {CollatedItem} */
-			let chickenBroth;
+			let burner: Fixture;
+			let items: CollatedItem<RoomItem>[];
+			let butter: CollatedItem<RoomItem>;
+			let cookingSherry: CollatedItem<RoomItem>;
+			let chickenBroth: CollatedItem<RoomItem>;
 
 			describe('BURNER 2', () => {
 				beforeAll(() => {

@@ -127,7 +127,7 @@ describe('Player test', () => {
             expect(recipe).not.toBeUndefined();
             {
                 player.craft(recipe);
-                const expectedProceduralSelections = new Map([
+                const expectedProceduralSelections = new Map<string, string>([
                     ["base color", "obscured"],
                     ["quality", "excellent"],
                     ["glaze color", "light blue"]
@@ -148,15 +148,15 @@ describe('Player test', () => {
             {
                 player.uncraft(rightHand.equippedItem, recipe);
                 // The original base color is expected to have been lost.
-                const clayPotRedProceduralSelections = new Map([
+                const clayPotRedProceduralSelections = new Map<string, string>([
                     ["base color", "red"],
                     ["quality", "excellent"]
                 ]);
-                const clayPotWhiteProceduralSelections = new Map([
+                const clayPotWhiteProceduralSelections = new Map<string, string>([
                     ["base color", "white"],
                     ["quality", "excellent"]
                 ]);
-                const glazeExpectedProceduralSelections = new Map([
+                const glazeExpectedProceduralSelections = new Map<string, string>([
                     ["glaze color", "light blue"],
                     ["base color", "obscured"],
                     ["secondary glaze color", "light blue"],

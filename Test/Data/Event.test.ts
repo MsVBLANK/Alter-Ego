@@ -6,11 +6,7 @@ beforeAll(() => {
 });
 
 describe('trigger times', () => {
-	/**
-	 * @param {DateTime<true> | DateTime<false>} moment1
-	 * @param {DateTime<true>} moment2
-	 */
-	function momentsEqual(moment1, moment2) {
+	function momentsEqual(moment1: DateTime<boolean>, moment2: DateTime<true>) {
 		return moment1 && moment2 &&
 		moment1.isValid && moment2.isValid &&
 		moment1.month === moment2.month &&

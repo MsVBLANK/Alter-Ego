@@ -6,8 +6,7 @@ describe('ItemInstance test', () => {
     describe('proceduralSelections test', () => {
         test('RoomItem CAPSULE proceduralSelections', () => {
             const entity = game.entityFinder.getRoomItem('CAPSULE', 'video-room', 'Fixture', 'FLOOR');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["color", "blue"],
                 ["species", "tortide"],
                 ["finish", "metal"]
@@ -21,8 +20,7 @@ describe('ItemInstance test', () => {
 
         test('RoomItem DEPLETED CAPSULE proceduralSelections', () => {
             const entity = game.entityFinder.getRoomItem('DEPLETED CAPSULE', 'video-room', 'Fixture', 'FLOOR');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["species", "loamander"]
             ]);
             expect(entity.proceduralSelections).toEqual(expected);
@@ -34,8 +32,7 @@ describe('ItemInstance test', () => {
 
         test('RoomItem WET CLAY POT proceduralSelections', () => {
             const entity = game.entityFinder.getRoomItem('WET CLAY POT', 'video-room', 'Fixture', 'KILN 1');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["base color", "white"],
                 ["quality", "decent"]
             ]);
@@ -48,8 +45,7 @@ describe('ItemInstance test', () => {
 
         test('RoomItem GLAZED CLAY POT proceduralSelections', () => {
             const entity = game.entityFinder.getRoomItem('GLAZED CLAY POT 1', 'video-room', 'Fixture', 'KILN 2');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["base color", "obscured"],
                 ["quality", "excellent"],
                 ["glaze color", "orange"],
@@ -67,7 +63,7 @@ describe('ItemInstance test', () => {
         test('InventoryItem CAPSULE proceduralSelections 1', () => {
             const entity = game.entityFinder.getInventoryItem('CAPSULE', 'Nero', undefined, 'RIGHT HAND');
             /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["color", "blue"],
                 ["species", "tortide"],
                 ["finish", "metal"]
@@ -81,8 +77,7 @@ describe('ItemInstance test', () => {
 
         test('InventoryItem CAPSULE proceduralSelections 2', () => {
             const entity = game.entityFinder.getInventoryItem('CAPSULE', 'Nero', undefined, 'LEFT HAND');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["color", "black"],
                 ["species", "lavazard"],
                 ["finish", "glass"]
@@ -96,8 +91,7 @@ describe('ItemInstance test', () => {
 
         test('InventoryItem FIRED CLAY POT proceduralSelections', () => {
             const entity = game.entityFinder.getInventoryItem('FIRED CLAY POT 91', '???', undefined, 'RIGHT HAND');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["base color", "red"],
                 ["quality", "excellent"]
             ]);
@@ -110,8 +104,7 @@ describe('ItemInstance test', () => {
 
         test('InventoryItem GLAZE proceduralSelections', () => {
             const entity = game.entityFinder.getInventoryItem('GLAZE', '???', undefined, 'LEFT HAND');
-            /** @type {Map<string, string>} */
-            const expected = new Map([
+            const expected = new Map<string, string>([
                 ["glaze color", "light blue"],
                 ["base color", "obscured"],
                 ["secondary glaze color", "light blue"],

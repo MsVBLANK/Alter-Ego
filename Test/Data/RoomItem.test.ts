@@ -6,7 +6,7 @@ describe('RoomItem test', () => {
     describe('decreaseUses test', () => {
         test('procedural selections are preserved when transformed into next stage', () => {
             const item = game.entityFinder.getRoomItem('CAPSULE', 'video-room', 'Fixture', 'FLOOR');
-            const expectedSelections = new Map([
+            const expectedSelections = new Map<string, string>([
                 ['species', 'tortide'],
                 ['finish', 'metal']
             ]);

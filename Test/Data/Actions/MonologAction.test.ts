@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import MonologAction from "../../../Data/Actions/MonologAction.ts";
 import type Player from "../../../Data/Player.ts";
 import type Room from "../../../Data/Room.ts";

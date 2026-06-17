@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import TakeAction from '../../../Data/Actions/TakeAction.ts';
 import StashAction from '../../../Data/Actions/StashAction.ts';
 import RoomItem from '../../../Data/RoomItem.ts';

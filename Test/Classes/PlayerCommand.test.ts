@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { isAsyncFunction } from "util/types";
 import PlayerCommand from "../../Classes/PlayerCommand.ts";
 

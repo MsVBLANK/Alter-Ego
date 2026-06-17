@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import DropAction from "../../../Data/Actions/DropAction.ts";
 import UnequipAction from "../../../Data/Actions/UnequipAction.ts";
 import TakeAction from "../../../Data/Actions/TakeAction.ts";

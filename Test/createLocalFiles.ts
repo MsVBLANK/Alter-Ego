@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import GameConstants from '../Classes/GameConstants.ts';
 import { loadDotEnv } from '../Modules/envLoader.ts';
 import { loadCredentials } from '../Modules/credentialsLoader.ts';

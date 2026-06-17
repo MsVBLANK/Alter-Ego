@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 describe('Prefab test', () => {
     beforeAll(async () => {
         if (game.prefabs.size === 0) await game.entityLoader.loadPrefabs(false);

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import type { Mock } from "vitest";
 import Description from "../../Data/Description.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import Description from "../../Data/Description.ts";
 import type Player from "../../Data/Player.ts";
 import { generateProceduralOutput } from "../../Modules/parser.js";

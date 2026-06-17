@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import UnstashAction from '../../../Data/Actions/UnstashAction.ts';
 import { clearQueue } from '../../../Modules/messageHandler.js';
 import { createMockMessage } from '../../__mocks__/libs/discord.js';

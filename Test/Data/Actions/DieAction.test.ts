@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import DieAction from "../../../Data/Actions/DieAction.ts";
 import Player from "../../../Data/Player.ts";
 import { createMockMessage } from "../../__mocks__/libs/discord.js";

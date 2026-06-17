@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { createMockMessage } from "../__mocks__/libs/discord.js";
 import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
 import Dialog from '../../Data/Dialog.ts';

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 describe('RoomItem test', () => {
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll(true, false);

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 export default (actual: any['size'], size: number) => {
 	if (!('size' in actual))
 		throw new TypeError('This must have size attribute!');

@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import Room from "../../Data/Room.ts";
 import RoomItem from "../../Data/RoomItem.ts";
 import Fixture from "../../Data/Fixture.ts";

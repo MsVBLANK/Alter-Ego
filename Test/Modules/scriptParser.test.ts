@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2019 Alter Ego Contributors
+//
+// SPDX-License-Identifier: AGPL-3.0-or-later
+
 import { default as evaluate, SCRIPT_SCOPE_OPTIONS} from "../../Modules/scriptParser.js";
 import * as finder from "../../Modules/finder.js";
 import type Player from "../../Data/Player.ts";

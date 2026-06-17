@@ -1,15 +1,11 @@
+import type Player from "../../Data/Player.ts";
 import Whisper from "../../Data/Whisper.ts";
-
-/** @typedef {import("../../Data/Player.ts").default} Player */
 
 describe('GameEntityManager test', () => {
     describe('createWhisper tests', () => {
-        /** @type {Player} */
-        let astrid;
-        /** @type {Player} */
-        let nero;
-        /** @type {Player} */
-        let asuka;
+        let astrid: Player;
+        let nero: Player;
+        let asuka: Player;
 
         beforeAll(async () => {
             await game.entityLoader.loadAll();

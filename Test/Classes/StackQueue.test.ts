@@ -5,8 +5,7 @@ describe("StackQueue test", () => {
         queue.clear();
     });
 
-    /** @type {StackQueue<number>} */
-    const queue = new StackQueue();
+    const queue = new StackQueue<number>();
 
     test("Usage Test", () => {
         queue.enqueue(1);

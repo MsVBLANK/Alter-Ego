@@ -2,11 +2,12 @@ import { createMockMessage } from "../__mocks__/libs/discord.js";
 import AnnounceAction from "../../Data/Actions/AnnounceAction.ts";
 import Dialog from '../../Data/Dialog.ts';
 import * as messageHandler from '../../Modules/messageHandler.js';
+import type Player from "../../Data/Player.ts";
 
 describe('GameCommunicationHandler test', () => {
-    let message;
-    let player;
-    let spectateChannelIds = [];
+    let message: UserMessage;
+    let player: Player;
+    let spectateChannelIds: string[] = [];
 	beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
         player = game.entityFinder.getLivingPlayer("Kyra");
@@ -35,8 +36,7 @@ describe('GameCommunicationHandler test', () => {
 	test('does not exceed action cache limit and evicts oldest actions', () => {
         const sendWebhookSpectateMessageSpy = vi.spyOn(messageHandler, 'sendWebhookSpectateMessage').mockImplementation(async (player, dialog, webHookUsername) => {});
 		const actionCacheLimit = 20;
-		/** @type {AnnounceAction[]} */
-		const actions = [];
+		const actions: AnnounceAction[] = [];
 		for (let i = 0; i < actionCacheLimit; i++) {
 			actions.push(new AnnounceAction(game, message, player, player.location, false));
 			const dialog = new Dialog(game, message, player, player.location, undefined, true);

@@ -1,3 +1,4 @@
+import type { Mock } from "vitest";
 import Description from "../../Data/Description.ts";
 import EquipmentSlot from "../../Data/EquipmentSlot.ts";
 import Event from "../../Data/Event.ts";
@@ -10,10 +11,10 @@ import Puzzle from "../../Data/Puzzle.ts";
 import Room from "../../Data/Room.ts";
 import RoomItem from "../../Data/RoomItem.ts";
 import sheets from "../__mocks__/libs/sheets.js";
+import type GameEntity from "../../Data/GameEntity.ts";
 
 describe('GameEntityLoader test', () => {
-    /** @type {Error[]} */
-    let errors;
+    let errors: Error[];
 
     beforeEach(() => {
         errors = [];
@@ -29,10 +30,10 @@ describe('GameEntityLoader test', () => {
 
     describe('loadAll test', () => {
         describe('standard load all response', () => {
-            let updatePresenceSpy;
-            let eventStartTimerSpy;
-            let eventStartEffectsTimerSpy;
-            let playerSendDescriptionSpy;
+            let updatePresenceSpy: Mock<() => void>;
+            let eventStartTimerSpy: Mock<() => void>;
+            let eventStartEffectsTimerSpy: Mock<() => void>;
+            let playerSendDescriptionSpy: Mock<(player: Player, container?: GameEntity) => Promise<void>>;
 
             beforeEach(() => {
                 updatePresenceSpy = vi.spyOn(game.botContext, 'updatePresence').mockImplementation(() => {});

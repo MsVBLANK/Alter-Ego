@@ -5,16 +5,13 @@ import SayAction from "../../Data/Actions/SayAction.ts";
 import SolveAction from "../../Data/Actions/SolveAction.ts";
 import * as messageHandler from "../../Modules/messageHandler.js";
 import { instantiateInventoryItem, destroyInventoryItem } from "../../Modules/itemManager.js";
-import { MessageFlags } from "discord.js";
-
-/**
- * @import HidingSpot from "../../Data/HidingSpot.ts"
- * @import Player from "../../Data/Player.ts"
- * @import Room from "../../Data/Room.ts"
- * @import Status from "../../Data/Status.ts"
- * @import Whisper from "../../Data/Whisper.ts"
- * @import { Message, TextChannel } from "discord.js"
- */
+import { Message, MessageFlags, TextChannel } from "discord.js";
+import type Player from "../../Data/Player.ts";
+import type Room from "../../Data/Room.ts";
+import type Status from "../../Data/Status.ts";
+import type { Mock } from "vitest";
+import type Whisper from "../../Data/Whisper.ts";
+import type HidingSpot from "../../Data/HidingSpot.ts";
 
 describe('messageHandler test', () => {
     /**
@@ -23,81 +20,72 @@ describe('messageHandler test', () => {
      * Behavior Attributes: concealed, no channel, see room, hear room
      *
      * Knows: vivian, nero
-     * @type {Player}
      */
-    let kyra;
+    let kyra: Player;
     /**
      * Location: general-managers-office
      *
      * Behavior Attributes:
      *
      * Knows: kyra, nero
-     * @type {Player}
      */
-    let vivian;
+    let vivian: Player;
     /**
      * Location: floor-1-hall-2
      *
      * Behavior Attributes:
      *
      * Knows: kiara
-     * @type {Player}
      */
-    let astrid;
+    let astrid: Player;
     /**
      * Location: break-room
      *
      * Behavior Attributes: sender, receiver
      *
      * Knows: vivian, kyra
-     * @type {Player}
      */
-    let nero;
+    let nero: Player;
     /**
      * Location: subject to change
      *
      * Behavior Attributes:
      *
      * Knows:
-     * @type {Player}
      */
-    let asuka;
+    let asuka: Player;
     /**
      * Location: subject to change
      *
      * Behavior Attributes:
      *
      * Knows:
-     * @type {Player}
      */
-    let luna;
+    let luna: Player;
     /**
      * Location: floor-1-hall-1
      *
      * Behavior Attributes:
      *
      * Knows: astrid
-     * @type {Player}
      */
-    let kiara;
+    let kiara: Player;
     /**
      * Location: command-center
      *
      * Behavior Attributes:
      *
      * Knows: everyone
-     * @type {Player}
      */
-    let amadeus;
+    let amadeus: Player;
     /**
      * Location: general-managers-office
      *
      * Behavior Attributes: hidden, sender, receiver
      *
      * Knows:
-     * @type {Player}
      */
-    let qm;
+    let qm: Player;
     /**
      * Tags: audio surveilled, audio monitoring
      *
@@ -106,9 +94,8 @@ describe('messageHandler test', () => {
      * Video Monitored By: lobby, command-center
      *
      * Occupants: nero
-     * @type {Room}
      */
-    let breakRoom;
+    let breakRoom: Room;
     /**
      * Tags: soundproof
      *
@@ -117,9 +104,8 @@ describe('messageHandler test', () => {
      * Video Monitored By:
      *
      * Occupants: vivian, qm (hidden in DESK)
-     * @type {Room}
      */
-    let gmOffice;
+    let gmOffice: Room;
     /**
      * Tags: video surveilled, audio surveilled
      *
@@ -128,9 +114,8 @@ describe('messageHandler test', () => {
      * Video Monitored By: lobby, command-center
      *
      * Occupants: kiara
-     * @type {Room}
      */
-    let f1h1;
+    let f1h1: Room;
     /**
      * Tags:
      *
@@ -139,9 +124,8 @@ describe('messageHandler test', () => {
      * Video Monitored By:
      *
      * Occupants: astrid
-     * @type {Room}
      */
-    let f1h2;
+    let f1h2: Room;
     /**
      * Tags: video monitoring, video surveilled, audio monitoring, audio surveilled
      *
@@ -150,9 +134,8 @@ describe('messageHandler test', () => {
      * Video Monitored By: command-center
      *
      * Occupants: subject to change
-     * @type {Room}
      */
-    let lobby;
+    let lobby: Room;
     /**
      * Tags: soundproof, video monitoring, video surveilled, audio monitoring, audio surveilled, secret
      *
@@ -161,9 +144,8 @@ describe('messageHandler test', () => {
      * Video Monitored By: lobby
      *
      * Occupants: kyra, amadeus
-     * @type {Room}
      */
-    let commandCenter;
+    let commandCenter: Room;
     /**
      * Tags:
      *
@@ -172,29 +154,18 @@ describe('messageHandler test', () => {
      * Video Monitored By:
      *
      * Occupants: subject to change
-     * @type {Room}
      */
-    let courtyard;
-    /** @type {Player[]} */
-    let players;
-    /** @type {Room[]} */
-    let rooms;
-    /** @type {Status} */
-    let asleep;
-    /** @type {Status} */
-    let blind;
-    /** @type {Status} */
-    let concealed;
-    /** @type {Status} */
-    let deaf;
-    /** @type {Status} */
-    let hidden;
-    /** @type {Status} */
-    let mute;
-    /** @type {Status} */
-    let acuteHearing;
-    /** @type {Status} */
-    let receiver;
+    let courtyard: Room;
+    let players: Player[];
+    let rooms: Room[];
+    let asleep: Status;
+    let blind: Status;
+    let concealed: Status;
+    let deaf: Status;
+    let hidden: Status;
+    let mute: Status;
+    let acuteHearing: Status;
+    let receiver: Status;
 
     beforeAll(async () => {
         await game.entityLoader.loadAll();
@@ -287,7 +258,7 @@ describe('messageHandler test', () => {
         });
 
         describe('announcement', () => {
-            let dialogConstructorSpy;
+            let dialogConstructorSpy: Mock<typeof DialogClass.default>;
 
             beforeEach(() => {
                 dialogConstructorSpy = vi.spyOn(DialogClass, 'default');
@@ -350,50 +321,27 @@ describe('messageHandler test', () => {
         });
 
         describe('say', () => {
-            let performSaySpy;
-            /** @type {UserMessage} */
-            let message;
-            /** @type {Message<boolean>} */
-            let kyraSpectateMessage;
-            /** @type {Message<boolean>} */
-            let vivianSpectateMessage;
-            /** @type {Message<boolean>} */
-            let astridSpectateMessage;
-            /** @type {Message<boolean>} */
-            let neroSpectateMessage;
-            /** @type {Message<boolean>} */
-            let asukaSpectateMessage;
-            /** @type {Message<boolean>} */
-            let lunaSpectateMessage;
-            /** @type {Message<boolean>} */
-            let kiaraSpectateMessage;
-            /** @type {Message<boolean>} */
-            let amadeusSpectateMessage;
-            /** @type {Message<boolean>} */
-            let kyraNotificationMessage;
-            /** @type {Message<boolean>} */
-            let vivianNotificationMessage;
-            /** @type {Message<boolean>} */
-            let astridNotificationMessage;
-            /** @type {Message<boolean>} */
-            let neroNotificationMessage;
-            /** @type {Message<boolean>} */
-            let asukaNotificationMessage;
-            /** @type {Message<boolean>} */
-            let lunaNotificationMessage;
-            /** @type {Message<boolean>} */
-            let kiaraNotificationMessage;
-            /** @type {Message<boolean>} */
-            let amadeusNotificationMessage;
+            let performSaySpy: Mock<(dialog: DialogClass.default) => void>;
+            let message: UserMessage;
+            let kyraSpectateMessage: Message<boolean>;
+            let vivianSpectateMessage: Message<boolean>;
+            let astridSpectateMessage: Message<boolean>;
+            let neroSpectateMessage: Message<boolean>;
+            let asukaSpectateMessage: Message<boolean>;
+            let lunaSpectateMessage: Message<boolean>;
+            let kiaraSpectateMessage: Message<boolean>;
+            let amadeusSpectateMessage: Message<boolean>;
+            let kyraNotificationMessage: Message<boolean>;
+            let vivianNotificationMessage: Message<boolean>;
+            let astridNotificationMessage: Message<boolean>;
+            let neroNotificationMessage: Message<boolean>;
+            let asukaNotificationMessage: Message<boolean>;
+            let lunaNotificationMessage: Message<boolean>;
+            let kiaraNotificationMessage: Message<boolean>;
+            let amadeusNotificationMessage: Message<boolean>;
             const plagueDoctorMaskIconURL = 'https://i.imgur.com/ajqKX5z.png';
 
-            /**
-             * @param {Player} player
-             * @param {string} messageText
-             * @param {TextChannel} [channel]
-             * @param {number} [flags]
-             */
-            const sendPlayerMessage = async (player, messageText, channel, flags = 0) => {
+            const sendPlayerMessage = async (player: Player, messageText: string, channel?: TextChannel, flags: number = 0) => {
                 message = discord.createPlayerMessage(player, messageText, channel, flags);
                 messageHandler.processIncomingMessage(game, message);
                 await messageHandler.sendQueuedMessages(game);
@@ -1484,8 +1432,7 @@ describe('messageHandler test', () => {
                 });
 
                 describe('player with `acute hearing` behavior attribute in room with whisper', () => {
-                    /** @type {Whisper} */
-                    let whisperLunaKiara;
+                    let whisperLunaKiara: Whisper;
 
                     beforeAll(async () => {
                         astrid.inflict(acuteHearing);
@@ -2047,8 +1994,7 @@ describe('messageHandler test', () => {
             });
 
             describe('dialog is communicated to whisper players', () => {
-                /** @type {Whisper} */
-                let whisperAmadeusLuna;
+                let whisperAmadeusLuna: Whisper;
 
                 beforeAll(async () => {
                     amadeus.location.removePlayer(amadeus);
@@ -2287,8 +2233,7 @@ describe('messageHandler test', () => {
                         });
 
                         describe('players are hidden', () => {
-                            /** @type {HidingSpot} */
-                            let hidingSpot;
+                            let hidingSpot: HidingSpot;
 
                             beforeAll(async () => {
                                 hidingSpot = game.entityFinder.getFixture("RECEPTION DESK", "lobby").hidingSpot;
@@ -2439,8 +2384,7 @@ describe('messageHandler test', () => {
                         });
 
                         describe('players are hidden', () => {
-                            /** @type {HidingSpot} */
-                            let hidingSpot;
+                            let hidingSpot: HidingSpot;
 
                             beforeAll(async () => {
                                 hidingSpot = game.entityFinder.getFixture("RECEPTION DESK", "lobby").hidingSpot;
@@ -2739,8 +2683,7 @@ describe('messageHandler test', () => {
                         });
 
                         describe('players are hidden', () => {
-                            /** @type {HidingSpot} */
-                            let hidingSpot;
+                            let hidingSpot: HidingSpot;
 
                             beforeAll(async () => {
                                 hidingSpot = game.entityFinder.getFixture("RECEPTION DESK", "lobby").hidingSpot;
@@ -2938,8 +2881,7 @@ describe('messageHandler test', () => {
                         });
 
                         describe('players are hidden', () => {
-                            /** @type {HidingSpot} */
-                            let hidingSpot;
+                            let hidingSpot: HidingSpot;
 
                             beforeAll(async () => {
                                 hidingSpot = game.entityFinder.getFixture("RECEPTION DESK", "lobby").hidingSpot;
@@ -3015,16 +2957,11 @@ describe('messageHandler test', () => {
             });
 
             describe('dialog is communicated to neighboring rooms', () => {
-                /** @type {Room[]} */
-                let neighboringRooms;
-                /** @type {Room[]} */
-                let neighboringAudioSurveilledRooms;
-                /** @type {Room[]} */
-                let excludedAudioMonitoringRooms;
-                /** @type {Room[]} */
-                let audioMonitoringRooms;
-                /** @type {Player[]} */
-                let excludedPlayers;
+                let neighboringRooms: Room[];
+                let neighboringAudioSurveilledRooms: Room[];
+                let excludedAudioMonitoringRooms: Room[];
+                let audioMonitoringRooms: Room[];
+                let excludedPlayers: Player[];
 
                 beforeAll(() => {
                     neighboringRooms = [f1h1, breakRoom];
@@ -3531,10 +3468,8 @@ describe('messageHandler test', () => {
             });
 
             describe('dialog is communicated to audio monitoring rooms', () => {
-                /** @type {Room[]} */
-                let audioVideoMonitoringRooms;
-                /** @type {Room[]} */
-                let onlyAudioMonitoringRooms;
+                let audioVideoMonitoringRooms: Room[];
+                let onlyAudioMonitoringRooms: Room[];
 
                 beforeAll(() => {
                     audioVideoMonitoringRooms = [lobby, commandCenter];
@@ -4260,14 +4195,10 @@ describe('messageHandler test', () => {
             });
 
             describe('dialog is communicated to receivers', () => {
-                /** @type {Room[]} */
-                let receiverRooms;
-                /** @type {Room[]} */
-                let audioVideoMonitoringRooms;
-                /** @type {Room[]} */
-                let onlyAudioMonitoringRooms;
-                /** @type {HidingSpot} */
-                let desk;
+                let receiverRooms: Room[];
+                let audioVideoMonitoringRooms: Room[];
+                let onlyAudioMonitoringRooms: Room[];
+                let desk: HidingSpot;
 
                 beforeAll(() => {
                     lobby.tags.delete('video monitoring');

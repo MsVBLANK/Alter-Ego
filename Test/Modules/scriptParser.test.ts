@@ -1,15 +1,11 @@
 import { default as evaluate, SCRIPT_SCOPE_OPTIONS} from "../../Modules/scriptParser.js";
 import * as finder from "../../Modules/finder.js";
-/**
- * @import Fixture from "../../Data/Fixture.ts";
- * @import Player from "../../Data/Player.ts";
- */
+import type Player from "../../Data/Player.ts";
+import type Fixture from "../../Data/Fixture.ts";
 
 describe('test scriptParser', () => {
-    /** @type {Player} */
-    let qm;
-    /** @type {Fixture} */
-    let container;
+    let qm: Player;
+    let container: Fixture;
 
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
@@ -623,15 +619,15 @@ describe('test scriptParser', () => {
         const blockedProps = SCRIPT_SCOPE_OPTIONS.blockedProperties;
 
         const blockedTargets = [
-            { expr: "findRoom('general-managers-office')" },
-            { expr: "findFixture('DESK')" },
-            { expr: "findPrefab('PEN')" },
-            { expr: "findRoomItem('FRYING PAN 1')" },
-            { expr: "findPuzzle('PANEL 1', 'floor-2-hall-1')" },
-            { expr: "findEvent('NIGHT')" },
-            { expr: "findStatusEffect('weary')" },
-            { expr: "findPlayer('Amadeus')" },
-            { expr: "findInventoryItem('KYRAS GLASSES', 'Kyra')" }
+            { expr: "findRoom('general-managers-office')", setter: () => {} },
+            { expr: "findFixture('DESK')", setter: () => {} },
+            { expr: "findPrefab('PEN')", setter: () => {} },
+            { expr: "findRoomItem('FRYING PAN 1')", setter: () => {} },
+            { expr: "findPuzzle('PANEL 1', 'floor-2-hall-1')", setter: () => {} },
+            { expr: "findEvent('NIGHT')", setter: () => {} },
+            { expr: "findStatusEffect('weary')", setter: () => {} },
+            { expr: "findPlayer('Amadeus')", setter: () => {} },
+            { expr: "findInventoryItem('KYRAS GLASSES', 'Kyra')", setter: () => {} }
         ];
 
         describe('properties are blocked', () => {

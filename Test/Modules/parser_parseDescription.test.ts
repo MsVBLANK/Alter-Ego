@@ -1,31 +1,21 @@
 import Description from "../../Data/Description.ts";
+import type Event from "../../Data/Event.ts";
+import type GameEntity from "../../Data/GameEntity.ts";
+import type Player from "../../Data/Player.ts";
+import type RoomItem from "../../Data/RoomItem.ts";
 import { parseDescription } from "../../Modules/parser.js";
-/** @import GameEntity from "../../Data/GameEntity.ts"; */
-/** @import Event from "../../Data/Event.ts"; */
-/** @import RoomItem from "../../Data/RoomItem.ts"; */
-/** @import Player from "../../Data/Player.ts"; */
 
 describe('test parseDescription', () => {
-	/** @type {Player} */
-	let kyra;
-	/** @type {Player} */
-	let vivian;
-	/** @type {Player} */
-	let astrid;
-	/** @type {Player} */
-	let nero;
-	/** @type {Player} */
-	let evad;
-	/** @type {Player} */
-	let asuka;
-	/** @type {Player} */
-	let luna;
-	/** @type {Player} */
-	let kiara;
-	/** @type {Player} */
-	let amadeus;
-	/** @type {Player} */
-	let qm;
+	let kyra: Player;
+	let vivian: Player;
+	let astrid: Player;
+	let nero: Player;
+	let evad: Player;
+	let asuka: Player;
+	let luna: Player;
+	let kiara: Player;
+	let amadeus: Player;
+	let qm: Player;
 
 	beforeAll(async () => {
 		await game.entityLoader.loadAll();
@@ -87,8 +77,7 @@ describe('test parseDescription', () => {
 
 	describe('test player perception', () => {
 		describe('joshua body', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You inspect Joshua's body.</s> <if cond="player.perception >= 5"><s>He looks pretty emaciated, like he hasn't eaten or drank in days.</s> <s>You don't find any injuries except for a gash in his **NECK**.</s></if> <if cond="player.perception < 5"><s>Nothing seems out of the ordinary except for a gash in his **NECK**.</s></if></desc>`, null, game);
@@ -108,8 +97,7 @@ describe('test parseDescription', () => {
 		});
 
 		describe('veronica with items', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You find Veronica's body lying face up.</s> <s>Her arms are extended straight out with her palms facing up.</s> <s>There's a bloody WOUND on her chest, and the blood has soaked her shirt.</s> <if cond="player.perception >= 5"><s>In her pockets, you find <il><item>a CIGARETTE</item>, <item>a KNIFE</item>, and <item>a pair of NEEDLES</item></il>.</s></if></desc>`, null, game);
@@ -129,8 +117,7 @@ describe('test parseDescription', () => {
 		});
 
 		describe('veronica with conditional items', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You find Veronica's body lying face up.</s> <s>Her arms are extended straight out with her palms facing up.</s> <s>There's a bloody WOUND on her chest, and the blood has soaked her shirt.</s> <s>In her pockets, you find <il><item>a CIGARETTE</item><if cond="player.perception >= 5">, <item>a KNIFE</item>,</if> and <item>a pair of NEEDLES</item></il>.</s></desc>`, null, game);
@@ -159,8 +146,7 @@ describe('test parseDescription', () => {
 
 	describe('test player title', () => {
 		describe('nemu tree', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You take a look at the nemu tree.</s> <s>It's unlike anything you've ever seen before.</s> <s>It has purple wood and blue leaves.</s> <s><if cond="player.title === 'Ultimate Farmer'">Supposedly if you boil a piece of bark from this it creates some kind of sleep medicine.</if></s></desc>`, null, game);
@@ -180,8 +166,7 @@ describe('test parseDescription', () => {
 		});
 
 		describe('pool table', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You examine the pool table.</s> <s>It seems to have everything you need to play a game of pool: <il><item>2 POOL STICKS</item>, <if cond="player.title === 'Ultimate Gamer'"><item>CHALK</item>,</if> <item>a TRIANGLE</item>, and <item>BALLS</item></il>.</s></desc>`, null, game);
@@ -201,8 +186,7 @@ describe('test parseDescription', () => {
 		});
 
 		describe('photo album', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You flip through the photo album.</s> <if cond="player.name === 'Kiara'"><s>It's full of pictures of your parents and all of the places they've gone.</s> <s>There are no pictures of you.</s></if><if cond="player.name === 'Astrid'"><s>It's full of pictures of Kiara's parents in various places, but there are no pictures of Kiara in here.</s></if><if cond="player.name !== 'Kiara' && player.name !== 'Astrid'"><s>It's full of pictures of a married couple in various places around the world.</s> <s>You've never seen these people before.</s></if></desc>`, null, game);
@@ -228,8 +212,7 @@ describe('test parseDescription', () => {
 		});
 
 		describe('locker conditional title', () => {
-			/** @type {Description} */
-			let description;
+			let description: Description;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You open the locker.</s> <s>Inside, you find <il><if cond="player.title === 'Ultimate Nurse'"><item>a SWIMSUIT</item></if></il>.</s></desc>`, null, game);
@@ -251,10 +234,8 @@ describe('test parseDescription', () => {
 
 	describe('test inventory items', () => {
 		describe('mountain dew', () => {
-			/** @type {Description} */
-			let description;
-			/** @type {RoomItem} */
-			let item;
+			let description: Description;
+			let item: RoomItem;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>It's a bottle of Code Red Mountain Dew, which has a cherry flavor.</s> <if cond="player.name === 'Asuka'"><s>This is your favorite flavor, naturally.</s></if><if cond="player.name !== 'Asuka'"><s>For some reason, when you hold it, you get the urge to play video games.</s></if> <s>The drink and label are both red.</s> <if cond="this.uses > 0"><s>It's nice and cold.</s></if><if cond="this.uses === 0"><s>It's empty.</s></if></desc>`, null, game);
@@ -280,10 +261,8 @@ describe('test parseDescription', () => {
 		});
 
 		describe('sniper rifle', () => {
-			/** @type {Description} */
-			let description;
-			/** @type {RoomItem} */
-			let item;
+			let description: Description;
+			let item: RoomItem;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>It's a long, black sniper rifle with an attached scope.</s> <s>It's the kind that you have to lodge into your shoulder to hold steadily.</s> <s>It's loaded with a 10-round box magazine.</s> <if cond="this.uses > 0"><s><var v="this.uses" /> shot<if cond="this.uses !== 1">s are</if><if cond="this.uses === 1"> is</if> left.</s></if><if cond="this.uses === 0"><s>Unfortunately, all the ammo has been depleted.</s></if></desc>`, null, game);
@@ -319,12 +298,9 @@ describe('test parseDescription', () => {
 
 	describe('test events', () => {
 		describe('single event blizzard', () => {
-			/** @type {Description} */
-			let description;
-			/** @type {GameEntity} */
-			let container;
-			/** @type {Event} */
-			let event;
+			let description: Description;
+			let container: GameEntity;
+			let event: Event;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>The ground beneath your feet is made of black tarmac.</s> <s>It's fairly smooth, with only a few cracks.</s> <if cond="findEvent('BLIZZARD').ongoing === false"><s>It's surprisingly quite clear of snow.</s></if><if cond="findEvent('BLIZZARD').ongoing === true"><s>Snow is quickly piling up in this blizzard.</s></if> <s>You find <il></il> haphazardly placed on it.</s></desc>`, null, game);
@@ -352,18 +328,12 @@ describe('test parseDescription', () => {
 		});
 
 		describe('multiple events winter checkpoint', () => {
-			/** @type {Description} */
-			let description;
-			/** @type {GameEntity} */
-			let container;
-			/** @type {Event} */
-			let snowEvent;
-			/** @type {Event} */
-			let blizzardEvent;
-			/** @type {Event} */
-			let overcastEvent;
-			/** @type {Event} */
-			let nightEvent;
+			let description: Description;
+			let container: GameEntity;
+			let snowEvent: Event;
+			let blizzardEvent: Event;
+			let overcastEvent: Event;
+			let nightEvent: Event;
 
 			beforeAll(() => {
 				description = new Description(`<desc><s>You exit the CHECKPOINT.</s> <if cond="findEvent('SNOW').ongoing === true"><s>Snowflakes gently fall from the cloudy sky above.</s></if><if cond="findEvent('BLIZZARD').ongoing === true"><s>You're immediately greeted by a blizzard blowing snow at you at a high speed.</s></if><if cond="findEvent('SNOW').ongoing === false && findEvent('BLIZZARD').ongoing === false"><if cond="findEvent('OVERCAST').ongoing === false && findEvent('NIGHT').ongoing === false"><s>Your eyes take a minute to adjust to the sunlight.</s></if><if cond="findEvent('OVERCAST').ongoing === true && findEvent('NIGHT').ongoing === false"><s>The sky above is covered by thick, light gray clouds.</s></if><if cond="findEvent('NIGHT').ongoing === true"><s>You breathe in the crisp, chilly nighttime air.</s></if></if> <s>The path ahead of you is short and thin, leading to the SOUTH PATH.</s></desc>`, null, game);
@@ -606,7 +576,7 @@ describe('test parseDescription', () => {
 			const result = parseDescription(container.description, container, kyra);
 			expect(result).toBe(expected);
 		});
-        
+
         test('items with the same prefab but different uses are collated', () => {
             const container = game.entityFinder.getFixture('SINK 1', 'video-room');
             const expected = `It's a sink. It has two knobs, one for hot water and one for cold water. It looks impeccably clean. In it, you find 20 DIRTY PLATES and 4 bottles of DETERGENT.`;

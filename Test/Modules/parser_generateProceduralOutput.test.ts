@@ -1,21 +1,18 @@
 import Description from "../../Data/Description.ts";
+import type Player from "../../Data/Player.ts";
 import { generateProceduralOutput } from "../../Modules/parser.js";
 
-/**
- * @import Player from "../../Data/Player.ts";
- */
-
-var expected = new Map();
-var actual = new Map();
-var proceduralSelections = new Map();
+let expected = new Map<string, number>();
+let actual = new Map<string, number>();
+let proceduralSelections = new Map<string, string>();
 const acceptableDeviation = 200;
 
 /**
- * @param {string} text - The text of the description to generate procedurals for.
- * @param {Map<string, string>} proceduralSelections - A Map of manually selected names of poss tags to keep.
- * @param {Player} [player] - The player who caused these procedurals to be evaluated, if applicable.
+ * @param text - The text of the description to generate procedurals for.
+ * @param proceduralSelections - A Map of manually selected names of poss tags to keep.
+ * @param player - The player who caused these procedurals to be evaluated, if applicable.
  */
-function generateActual(text, proceduralSelections, player) {
+function generateActual(text: string, proceduralSelections: Map<string, string>, player?: Player) {
     const description = new Description(text, game.entityFinder.getPrefab('SIGN IN SHEET'), game);
 	for (let i = 0; i < 10000; i++) {
         const proceduralSelectionsCopy = new Map(proceduralSelections);
@@ -26,15 +23,7 @@ function generateActual(text, proceduralSelections, player) {
 	}
 }
 
-/**
- * @param {Player} player
- * @param {number} str
- * @param {number} per
- * @param {number} dex
- * @param {number} spd
- * @param {number} sta
- */
-function setPlayerStats(player, str, per, dex, spd, sta) {
+function setPlayerStats(player: Player, str: number, per: number, dex: number, spd: number, sta: number) {
     player.strength = str;
     player.perception = per;
     player.dexterity = dex;
@@ -42,10 +31,7 @@ function setPlayerStats(player, str, per, dex, spd, sta) {
     player.stamina = sta;
 }
 
-/**
- * @param {Player} player
- */
-function resetPlayerStats(player) {
+function resetPlayerStats(player: Player) {
     player.strength = 5;
     player.perception = 5;
     player.dexterity = 5;
@@ -54,8 +40,7 @@ function resetPlayerStats(player) {
 }
 
 describe('test_parser_generateProceduralOutput', () => {
-    /** @type {Player} */
-    let qm;
+    let qm: Player;
 
     beforeAll(async () => {
         await game.entityLoader.loadAll();

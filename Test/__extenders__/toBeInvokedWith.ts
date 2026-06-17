@@ -1,10 +1,6 @@
 const truncateProperties = new Set(["game", "guild", "member", "channel", "spectateChannel", "timer"]);
 
-/**
- * @param {unknown} value
- * @returns {boolean}
- */
-function isBasic(value) {
+function isBasic(value: unknown): boolean {
     return (
         value === null ||
         typeof value === "string" ||
@@ -16,11 +12,7 @@ function isBasic(value) {
     );
 }
 
-/**
- * @param {any} object
- * @param {number} level
- */
-function prettyObject(object, level = 0) {
+function prettyObject(object: any, level: number = 0) {
     if (level >= 2) return `<Truncated [Depth]>`;
     else if (isBasic(object)) return object;
     const clone = Object.create(Object.getPrototypeOf(object));
@@ -48,29 +40,16 @@ function prettyObject(object, level = 0) {
     return clone;
 }
 
-/**
- * @param {unknown} obj
- * @returns {obj is import("vitest").Mock}
- */
-function isMock(obj) {
+function isMock(obj: unknown): obj is import("vitest").Mock {
     return typeof obj === "function" && "_isMockFunction" in obj && obj._isMockFunction === true;
 }
 
-/**
- * @param {unknown} obj
- * @returns {obj is {asymmetricMatch: (actual: any) => boolean}}
- */
-function isAsymmetric(obj) {
+function isAsymmetric(obj: unknown): obj is {asymmetricMatch: (actual: any) => boolean} {
     // @ts-ignore
     return obj && typeof obj === "object" && typeof obj?.asymmetricMatch === "function";
 }
 
-/**
- * @param {unknown} actual
- * @param {unknown} expected
- * @returns {boolean}
- */
-function deepEqual(actual, expected) {
+function deepEqual(actual: unknown, expected: unknown): boolean {
     if (isAsymmetric(expected)) {
         try {
             return expected.asymmetricMatch(actual);
@@ -86,12 +65,7 @@ function deepEqual(actual, expected) {
     return true;
 }
 
-/**
- * @param {unknown[]} actual
- * @param {unknown[]} expected
- * @returns {number}
- */
-function getFirstMismatchIndex(actual, expected) {
+function getFirstMismatchIndex(actual: unknown[], expected: unknown[]): number {
     if (actual.length !== expected.length) {
         return -1;
     }
@@ -103,19 +77,14 @@ function getFirstMismatchIndex(actual, expected) {
     return -2;
 }
 
-/**
- * @template {any[]} E
- * @param {unknown} received
- * @param {...E} args
- */
-export default function toBeInvokedWith(received, ...args) {
+export default function toBeInvokedWith<E extends any[]>(received: unknown, ...args: E) {
     if (isMock(received)) {
         if (received.mock.calls.length === 0) {
             return { pass: false, message: () => `Mock was never called` };
         }
         let firstMismatchedIndex = -2;
-        let firstExpected;
-        let firstActual;
+        let firstExpected: E;
+        let firstActual: E[number];
         for (const callArgs of received.mock.calls) {
             const mismatchIndex = getFirstMismatchIndex(callArgs, args);
             if (mismatchIndex === -2) {

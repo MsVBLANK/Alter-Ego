@@ -1,4 +1,4 @@
-export default (actual, size) => {
+export default (actual: any['size'], size: number) => {
 	if (!('size' in actual))
 		throw new TypeError('This must have size attribute!');
 	if (typeof actual.size !== 'number' || typeof size !== 'number')

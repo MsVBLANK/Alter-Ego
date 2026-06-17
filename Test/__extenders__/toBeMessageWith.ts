@@ -1,14 +1,12 @@
-/**
- * @import { Message } from "discord.js"
- */
+import type { Message } from "discord.js";
 
 /**
- * @param {Message} actual
- * @param {string} username - The username the webhook message should have.
- * @param {string} avatarURL - The avatar URL the webhook message should have.
- * @param {string} content - The text content the webhook message should have.
+ * @param actual
+ * @param username - The username the webhook message should have.
+ * @param avatarURL - The avatar URL the webhook message should have.
+ * @param content - The text content the webhook message should have.
  */
-export default (actual, username, avatarURL, content) => {
+export default (actual: Message, username: string, avatarURL: string, content: string) => {
 	if (!('webhookId' in actual))
 		throw new TypeError('This must be a message!');
 

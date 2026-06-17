@@ -1,4 +1,4 @@
-export default (actual, floor, ceiling) => {
+export default (actual: number, floor: number, ceiling: number) => {
   if (
     typeof actual !== 'number' ||
     typeof floor !== 'number' ||

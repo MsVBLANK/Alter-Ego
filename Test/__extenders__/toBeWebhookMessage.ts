@@ -1,11 +1,6 @@
-/**
- * @import { Message } from "discord.js"
- */
+import type { Message } from "discord.js";
 
-/**
- * @param {Message} actual
- */
-export default (actual) => {
+export default (actual: Message) => {
 	if (!('webhookId' in actual))
 		throw new TypeError('This must be a message!');
 

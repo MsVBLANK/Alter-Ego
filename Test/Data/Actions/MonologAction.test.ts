@@ -1,48 +1,27 @@
 import MonologAction from "../../../Data/Actions/MonologAction.ts";
+import type Player from "../../../Data/Player.ts";
+import type Room from "../../../Data/Room.ts";
 import { sendQueuedMessages } from "../../../Modules/messageHandler.js";
 
-/**
- * @import Player from "../../../Data/Player.ts"
- * @import Room from "../../../Data/Room.ts"
- */
-
 describe('MonologAction test', () => {
-	/** @type {Player} */
-	let kyra;
-	/** @type {Player} */
-	let vivian;
-	/** @type {Player} */
-	let astrid;
-	/** @type {Player} */
-	let nero;
-	/** @type {Player} */
-	let asuka;
-	/** @type {Player} */
-	let luna;
-	/** @type {Player} */
-	let kiara;
-	/** @type {Player} */
-	let amadeus;
-	/** @type {Player} */
-	let qm;
-	/** @type {Room} */
-	let breakRoom;
-	/** @type {Room} */
-	let gmOffice;
-	/** @type {Room} */
-	let f1h1;
-	/** @type {Room} */
-	let f1h2;
-	/** @type {Room} */
-	let lobby;
-	/** @type {Room} */
-	let commandCenter;
-	/** @type {Room} */
-	let courtyard;
-	/** @type {Player[]} */
-	let players;
-	/** @type {Room[]} */
-	let rooms;
+	let kyra: Player;
+	let vivian: Player;
+	let astrid: Player;
+	let nero: Player;
+	let asuka: Player;
+	let luna: Player;
+	let kiara: Player;
+	let amadeus: Player;
+	let qm: Player;
+	let breakRoom: Room;
+	let gmOffice: Room;
+	let f1h1: Room;
+	let f1h2: Room;
+	let lobby: Room;
+	let commandCenter: Room;
+	let courtyard: Room;
+	let players: Player[];
+	let rooms: Room[];
 
 	beforeAll(async () => {
 		if (!game.inProgress) await game.entityLoader.loadAll();

@@ -1,9 +1,20 @@
-import UnstashAction from '../../../Data/Actions/UnstashAction.ts';
 import DropAction from "../../../Data/Actions/DropAction.ts";
 import UnequipAction from "../../../Data/Actions/UnequipAction.ts";
 import TakeAction from "../../../Data/Actions/TakeAction.ts";
 import { clearQueue } from "../../../Modules/messageHandler.js";
 import { createMockMessage } from "../../__mocks__/libs/discord.js";
+
+type MockItem = {
+    name?: string;
+    pluralName?: string;
+    singleContainingPhrase?: string;
+    pluralContainingPhrase?: string;
+    quantity?: number;
+    uses?: number;
+    weight?: number;
+    size?: number;
+    inventory?: { size?: number };
+}
 
 describe('TakeAction test', () => {
     beforeAll(async () => {
@@ -24,10 +35,10 @@ describe('TakeAction test', () => {
         const floor = game.entityFinder.getFixture("FLOOR", kyra.location.id);
 
         // initialize repeat data
-        let coffeeData = {};
-        let jacketData = {};
-        let drawerData = {};
-        let pageData = {};
+        let coffeeData: MockItem = {};
+        let jacketData: MockItem = {};
+        let drawerData: MockItem = {};
+        let pageData: MockItem = {};
 
         {
             coffeeData.name = "COFFEE";

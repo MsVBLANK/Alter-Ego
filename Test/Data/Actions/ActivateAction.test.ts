@@ -1,12 +1,15 @@
 import {createMockMessage} from "../../__mocks__/libs/discord.js";
 import ActivateAction from "../../../Data/Actions/ActivateAction.ts";
 import Fixture from "../../../Data/Fixture.ts";
+import type Player from "../../../Data/Player.ts";
+import type Room from "../../../Data/Room.ts";
+import type { Mock } from "vitest";
 
 describe('ActivateAction test', () => {
-    let player;
-    let location;
-    let message;
-    let fixture;
+    let player: Player;
+    let location: Room;
+    let message: UserMessage;
+    let fixture: Fixture;
 
     beforeAll(async () => {
         if (!game.inProgress) await game.entityLoader.loadAll();
@@ -21,7 +24,7 @@ describe('ActivateAction test', () => {
     });
 
     describe('performActivate tests', () => {
-        let fixtureActivateSpy;
+        let fixtureActivateSpy: Mock<(player: Player) => void>;
 
         beforeEach(() => {
             fixture = game.entityFinder.getFixture('OVEN 1');

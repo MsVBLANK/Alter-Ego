@@ -66,7 +66,6 @@ describe('ItemInstance test', () => {
 
         test('InventoryItem CAPSULE proceduralSelections 1', () => {
             const entity = game.entityFinder.getInventoryItem('CAPSULE', 'Nero', undefined, 'RIGHT HAND');
-            /** @type {Map<string, string>} */
             const expected = new Map<string, string>([
                 ["color", "blue"],
                 ["species", "tortide"],

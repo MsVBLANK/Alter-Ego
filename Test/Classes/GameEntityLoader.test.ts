@@ -187,8 +187,7 @@ describe('GameEntityLoader test', () => {
 
         describe('standard room response', () => {
             test('errorChecking true', async () => {
-                /** @type {Error[]} */
-                let errors = [];
+                let errors: Error[] = [];
                 const roomCount = await game.entityLoader.loadRooms(true, errors);
                 expect(errors).toEqual([]);
                 expect(roomCount).toBe(198);

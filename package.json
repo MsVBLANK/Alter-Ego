@@ -8,7 +8,7 @@
     "run": "node bot.js",
     "start": "node bot.js",
     "createLocalFiles": "node Test/createLocalFiles.ts",
-    "test": "vitest run",
+    "test": "vitest run --no-coverage",
     "test:watch": "vitest --watch",
     "test:coverage": "vitest run --coverage"
   },

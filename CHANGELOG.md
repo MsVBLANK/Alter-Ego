@@ -9,6 +9,19 @@ SPDX-License-Identifier: CC-BY-SA-4.0
 All notable changes to this project will be documented in this file.
 This project does **not** adhere to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+---
+
+# [v2.0.4] - 2026-10-21
+
+## Security
+
+- Bumped the minimum Node version to address the eMudhra intermediate CA compromise.
+- Updated vulnerable dependencies.
+
+## Addendum
+
+Want help with Alter Ego? We have a new support server on Discord! [You can join it here](https://discord.gg/zdfnyu8A6w).
+
 # [v2.0.3] - 2026-08-04
 
 ## Fixed
@@ -1144,6 +1157,7 @@ https://docs.google.com/spreadsheets/d/1MqdWPqUmhR6qqJJsC5zMwyvIYmIwENEFcYENBd50
 
 ---
 
+[v2.0.4]: https://github.com/MsVBLANK/Alter-Ego/compare/2.0.3...2.0.4
 [v2.0.3]: https://github.com/MsVBLANK/Alter-Ego/compare/2.0.2...2.0.3
 [v2.0.2]: https://github.com/MsVBLANK/Alter-Ego/compare/2.0.1...2.0.2
 [v2.0.1]: https://github.com/MsVBLANK/Alter-Ego/compare/2.0.0...2.0.1
